@@ -9,7 +9,7 @@ module Tritium
 
     def run(xhtml_file, options = {})
       # Setup options
-      encoding = options["encoding"] || options[:encoding] || "utf8"
+      encoding = options["encoding"] || options[:encoding] || "UTF-8"
       env = options["env"] || options[:env] || {}
 
       doc = @parser.parse(xhtml_file, nil, encoding)
