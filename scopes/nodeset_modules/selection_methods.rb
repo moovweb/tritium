@@ -11,7 +11,6 @@ module Tritium
         # the entire tree. However, when its nested, it only searches a
         # subtree of nodes.
         #
-        #
         #  select("head") {
         #    select("meta") {
         #      remove()

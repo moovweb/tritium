@@ -44,9 +44,7 @@ module Tritium
       end
     
       def filter_url(link)
-        result = link.gsub(env["REWRITE_LINK_MATCHER"], env["REWRITE_LINK_TO"] + env["PROXY_DOMAIN"])
-        #puts "#{link.inspect} => #{result.inspect}"
-        result
+        link.gsub(env["rewrite_link_matcher"], env["rewrite_link_to"] + env["proxy_domain"])
       end
     
       def env
