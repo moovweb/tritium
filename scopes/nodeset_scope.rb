@@ -6,6 +6,7 @@ require_relative 'nodeset_modules/positioning_methods'
 module Tritium
   module Scope
     class Nodeset < Base
+      # @private
       def initialize(nodeset, root = nil, parent = nil)
         @nodeset = nodeset
         @root = root || nodeset

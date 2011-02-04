@@ -13,7 +13,7 @@ module Tritium
         #
         #
         #  select("head") {
-        #    select("/meta") {
+        #    select("meta") {
         #      remove()
         #    }
         #  }
@@ -47,21 +47,25 @@ module Tritium
         # You can yield to the attribute block and get an Attribute
         # scope, as described below.
         #
-        #  select("img")
-        #     name("a") # Renames the tag
+        # @example Changing <img> tags to <a> tags
+        #  # Search the whole document for img tags
+        #  select("img") {
+        #     # Renames the tag
+        #     name("a") 
+        #     # Grab its src attribute (or create it)
         #     attribute("src") {
+        #       # Open a [Scope::Text] for the name
         #       name {
         #         # Changes the name of the attribute from 'src' to 'href'
         #         set("href")
         #       }
+        #       # Open a [Scope::Text] for the value
         #       value {
         #         # rewrites the value with the result of a url filter
         #         set(filter_url(text))
         #       }
         #     }
         #  }
-        #
-        #
         #
         # *Note*: If you are trying to delete
         # attributes, you could have a massive inefficiency if 
@@ -98,6 +102,38 @@ module Tritium
           end
         end
 
+        # This is the main way to get access to the inner HTML inside
+        # of each of the nodes that are currently selected. 
+        # 
+        # Remember, if not used correctly, it can be very slow.
+        # Only use in very small trees
+        #
+        # @example Changing the h1 tag to be a link to the root
+        #  select("body") {
+        #    select("h1") {
+        #      html() {
+        #        # Completely overwrites the original contents of ALL matching h1's
+        #        set("<a href='/'>Moovweb!</a>")
+        #      }
+        #    }
+        #  }
+        #
+        # @example Replacing only part of the HTML
+        #  html() {
+        #    # Will replace "Hampton Catlin" with "Hampton 'Amazing' Catlin"
+        #    replace("Hampton Catlin", "Hampton 'Amazing' Catlin")
+        #
+        #    # if this found "Andrew 'Amazing' Farmer" it would replace it with "(Andrew is definitely not Amazing)"
+        #    replace(/Andrew '([^']*)' Farmer/, '(Andrew is definitely not \1)')
+        #    
+        #  }
+        #
+        # *Note*: A better way to do the above, is to use the insert_tag method as its more efficient
+        #
+        # Learn more about text manipulation by referencing the [Scope::Text]
+        #
+        # @yield [Scope::Text] A text manipulation scope that is raw html
+        # @return [nil]
         def html(&block)
           @nodeset.each do |node|
             node.inner_html = open_text_scope_with(node.inner_html, &block)
