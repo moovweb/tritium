@@ -34,11 +34,5 @@ module Tritium
       @text
     end
 
-    def asset(path)
-      # TODO AC: Figure out the proper way to specify the asset server URL
-      asset_server = "/assets"
-      @text = File.join(asset_server, path)
-    end
-
   end
 end
