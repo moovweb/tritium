@@ -21,7 +21,7 @@ module Tritium
 
       doc = @parser.parse(xhtml_file, nil, encoding)
       
-      root_scope = NodesetScope.new(doc)
+      root_scope = Scope::Nodeset.new(doc)
       root_scope.env.merge! env
       root_scope.instance_eval(@script_string)
       doc
@@ -30,6 +30,9 @@ module Tritium
       raise e
     end
     
+   private
+    # This inserts comments into the script so that
+    # we can debug easier
     def debug_prefilter(script, name = "main")
       count = 0
       (script.split("\n").collect do |line|
