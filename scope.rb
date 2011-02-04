@@ -42,6 +42,12 @@ module Tritium
       File.join(location, path)
     end
     
+    def filter_url(link)
+      result = link.gsub(env["REWRITE_LINK_MATCHER"], env["REWRITE_LINK_TO"] + env["PROXY_DOMAIN"])
+      #puts "#{link.inspect} => #{result.inspect}"
+      result
+    end
+    
     def env
       @env
     end
