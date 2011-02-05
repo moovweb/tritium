@@ -79,10 +79,17 @@ module Tritium
         # @yield [Scope::Attribute] A found or newly created Attribute scope
         # @return [nil]
         def attribute(name, value = nil, &block)
+          if value.is_a? Array
+            unless value.size == @nodeset.size
+              raise StandardError.new("Attribute value is the wrong length: #{value.size}. Should be: #{@nodeset.size}")
+            end
+          end
           if name.is_a?(String)
-            @nodeset.each do |node|
-              if value
+            @nodeset.each_with_index do |node, i|
+              if value.is_a? String
                 node[name] = value.to_s
+              elsif value.is_a? Array
+                node[name] = value[i].to_s
               end
 
               attribute_node = node.attributes[name]
@@ -139,6 +146,30 @@ module Tritium
           end
         end
         alias inner html
+
+
+        # This is how you select an element to pass it to a function.
+        # *Note*: that you can select attributes as I have done in the example.
+        #
+        # @example Setting some divs to have the onclick of their first anchor child.
+        # select("div.row") {
+        #   attribute("onclick", fetch("href", "a/@href"))
+        #   # Now that I've set the onclick, I'll make it work with 'window.location='
+        #   attribute("onclick") {
+        #     value {
+        #       prepend("window.location = '")
+        #       append("'")
+        #     }
+        #   }
+        # }
+        #
+        # @return [Array] An array of elements represented as strings
+        def fetch(selector)
+          @nodeset.search(selector).collect do |n|
+            n
+          end
+        end
+
       end
     end
   end
