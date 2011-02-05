@@ -31,6 +31,10 @@ module Tritium
         @text << text
       end
 
+      def prepend(text)
+        @text.insert(0,text)
+      end
+
       def text
         @text
       end
