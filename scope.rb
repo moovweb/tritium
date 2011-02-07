@@ -37,6 +37,8 @@ module Tritium
       def asset(path, type = "default")
         if type == "stylesheet"
           location = "/assets/stylesheets/.css/"
+        elsif type == "image"
+          location = "/assets/images/"
         else
           location = "/assets/"
         end
