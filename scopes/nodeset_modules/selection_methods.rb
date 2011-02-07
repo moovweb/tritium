@@ -88,7 +88,7 @@ module Tritium
             @nodeset.each_with_index do |node, i|
               if value.is_a? Array
                 node[name] = value[i].to_s
-              else
+              elsif value
                 node[name] = value.to_s
               end
               
