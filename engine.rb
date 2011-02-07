@@ -11,8 +11,10 @@ module Tritium
   class Engine
     PARSERS = {"xml" =>  Nokogiri::XML, "html" =>  Nokogiri::HTML}
     
-    def initialize(script_string, parser_name = nil)
-      @script_string = Preprocess::run(script_string)
+    def initialize(script_string, options = {})
+      parser_name = options["parser"] || options[:parser]
+      path = options["path"] || options[:path] || File.dirname(__FILE__)
+      @script_string = Preprocess::run(script_string, path, "main")
       @parser = PARSERS[parser_name || "xml"] || throw("Invalid parser")
     end
     
