@@ -86,12 +86,12 @@ module Tritium
           end
           if name.is_a?(String)
             @nodeset.each_with_index do |node, i|
-              if value.is_a? String
-                node[name] = value.to_s
-              elsif value.is_a? Array
+              if value.is_a? Array
                 node[name] = value[i].to_s
+              else
+                node[name] = value.to_s
               end
-
+              
               attribute_node = node.attributes[name]
 
               # If we don't have an attribute, make one!
