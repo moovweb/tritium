@@ -140,9 +140,14 @@ module Tritium
         #
         # @yield [Scope::Text] A text manipulation scope that is raw html
         # @return [nil]
-        def html(&block)
+        def html(value = nil, &block)
           @nodeset.each do |node|
-            node.inner_html = open_text_scope_with(node.inner_html, &block)
+            if value
+              node.inner_html = value
+            end
+            if block
+              node.inner_html = open_text_scope_with(node.inner_html, &block)
+            end
           end
         end
         alias inner html
