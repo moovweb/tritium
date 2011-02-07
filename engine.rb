@@ -15,6 +15,10 @@ module Tritium
       @script_string = Preprocess::run(script_string)
       @parser = PARSERS[parser_name || "xml"] || throw("Invalid parser")
     end
+    
+    def compiled_script
+      @script_string
+    end
 
     def run(xhtml_file, options = {})
       # Setup options
