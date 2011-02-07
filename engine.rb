@@ -1,3 +1,5 @@
+require_relative 'preprocess'
+
 module Tritium
   EXPECTED_ENVIRONMENT_VARIABLES = {
     "PROXY_DOMAIN" => "Set in the config file, this should be something like '.getmoov1.com'",
@@ -10,7 +12,7 @@ module Tritium
     PARSERS = {"xml" =>  Nokogiri::XML, "html" =>  Nokogiri::HTML}
     
     def initialize(script_string, parser_name = nil)
-      @script_string = debug_prefilter(script_string)
+      @script_string = Preprocess::run(script_string)
       @parser = PARSERS[parser_name || "xml"] || throw("Invalid parser")
     end
 
@@ -31,13 +33,6 @@ module Tritium
     end
     
    private
-    # This inserts comments into the script so that
-    # we can debug easier
-    def debug_prefilter(script, name = "main")
-      count = 0
-      (script.split("\n").collect do |line|
-        "$line = #{count += 1}; $script = '#{name}'\n" + line
-      end).join("\n")
-    end
+
   end
 end
