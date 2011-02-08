@@ -24,14 +24,14 @@ module Tritium
 
     def run(xhtml_file, options = {})
       # Setup options
-      encoding = options["encoding"] || options[:encoding]
       env = options["env"] || options[:env] || {}
 
-      doc = @parser.parse(xhtml_file, nil, encoding)
+      doc = @parser.parse(xhtml_file)
       
       root_scope = Scope::Nodeset.new(doc)
       root_scope.env.merge! env
       root_scope.instance_eval(@script_string)
+
       doc
     rescue StandardError => e
       e.message.gsub!(/$/, " on script line #{$line}")
