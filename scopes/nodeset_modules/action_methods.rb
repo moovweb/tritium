@@ -45,7 +45,7 @@ module Tritium
         end
 
         # TODO: HC implement 'map'
-        def move_to(selector, options = {}, &block)
+        def move_here(selector, options = {}, &block)
           #map = options[:map] || options["map"] || false
 
           move_position = @root.search(selector).first
