@@ -2,7 +2,7 @@ require_relative 'preprocess'
 
 module Tritium
   class Engine
-    PARSERS = {"xml" =>  Nokogiri::XML, "html" =>  Nokogiri::HTML}
+    PARSERS = {"xml" =>  Nokogiri::XML, "html" =>  Nokogiri::HTML, "xhtml" => Nokogiri::XML}
 
     def initialize(script_string, options = {})
       parser_name = options["parser"] || options[:parser]
@@ -20,12 +20,12 @@ module Tritium
       env = options["env"] || options[:env] || {}
 
       doc = @parser.parse(xhtml_file)
-      
+
       root_scope = Scope::Node.new(doc)
       root_scope.env.merge! env
       root_scope.instance_eval(@script_string)
 
-      doc
+      root_scope.root
     rescue StandardError => e
       e.message.gsub!(/$/, " on script line #{$_line.to_s}")
       raise e
