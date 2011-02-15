@@ -25,7 +25,7 @@ module Tritium
       root_scope.env.merge! env
       root_scope.instance_eval(@script_string)
 
-      root_scope.root
+      doc
     rescue StandardError => e
       e.message.gsub!(/$/, " on script line #{$_line.to_s}")
       raise e

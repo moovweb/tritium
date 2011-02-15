@@ -12,7 +12,7 @@ module Tritium
       # @private
       def initialize(node, root = nil, parent = nil)
         @node = node
-        @root = root || node
+        @root = root || self
         super
       end
       
