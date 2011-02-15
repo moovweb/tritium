@@ -22,13 +22,13 @@ module Tritium
         end
       end
 
-      def match(key, matcher, &block)
+      def match(value, matcher, &block)
         if matcher.is_a? Regexp
-          if(@env[key] =~ Regexp.new(matcher)) 
+          if(value =~ Regexp.new(matcher)) 
             self.instance_eval(&block)
           end
         else
-          if(@env[key] == matcher) 
+          if(value == matcher) 
             self.instance_eval(&block)
           end
         end
