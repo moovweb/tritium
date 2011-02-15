@@ -54,6 +54,10 @@ module Tritium
         @env
       end
 
+      def debug
+        puts @object.inspect
+      end
+
     protected
   
       def open_text_scope_with(text, &block)
