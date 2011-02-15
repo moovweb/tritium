@@ -2,6 +2,7 @@ module Tritium
   module Scope
     class Base
       def initialize(thing, root, parent)
+        @object ||= thing
         @root ||= root
         @parent ||= parent
         @env = (@parent ? @parent.env.clone : {})

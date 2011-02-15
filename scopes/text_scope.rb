@@ -4,7 +4,7 @@ module Tritium
   module Scope
     class Text < Base
       def initialize(text, root, parent)
-        @text = text
+        @object = @text = text
         super
       end
 
