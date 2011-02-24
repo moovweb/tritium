@@ -11,12 +11,22 @@ module Tritium
       @attribute.remove
     end
 
-    def name(&block)
-      @attribute.name = open_text_scope_with(@attribute.name, &block)
+    def name(value =  nil, &block)
+      if value
+        @attribute.name = value
+      end
+      if block
+        @attribute.name = open_text_scope_with(@attribute.name, &block)
+      end
     end
 
-    def value(&block)
-      @attribute.value = open_text_scope_with(@attribute.value, &block)
+    def value(value = nil, &block)
+      if value
+        @attribute.value = value
+      end
+      if block
+        @attribute.value = open_text_scope_with(@attribute.value, &block)
+      end
     end
   end
 end
