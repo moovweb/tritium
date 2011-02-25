@@ -1,0 +1,8 @@
+select: 
+  class: Select
+  scope: Node
+  arguments:
+    - 
+      name: XPath Selector
+      doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
+move_to: MoveTo
