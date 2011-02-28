@@ -19,17 +19,12 @@ module Tritium::Parser
     #
     # ONLY accepts a pre-processed Tritium script
     def read(script_string)
-      @root_instruction = Instruction.new
+      @root_instruction = Instruction.root
       @stack = [@root_instruction]
 
       eval(script_string)
 
       @root_instruction
-    end
-    
-    # For some reasons, select is defined on Object. Bastards.
-    def select(*args, &block)
-      method_missing('select', *args, &block)
     end
    
     # This is where the parsing magic happens.
@@ -37,13 +32,38 @@ module Tritium::Parser
     # and take note of the stack with each block that
     # gets called.
     def method_missing(name, *args, &block)
-      ins = Instruction.new(name.to_s, args)
-      @stack.last.add(ins)
+      ins = @stack.last.add(name.to_s, :args => args, :processed_line => @_processed_line, :line => @_line, :line_number => @_line_number)
       if block
         @stack.push(ins)
-        block.call
+        block.call(self)
         @stack.pop
       end
+    end
+    
+    ########### EXPANSIONS ######################
+    
+    
+    # For some reasons, select is defined on Object. Bastards.
+    def select(*args, &block)
+      method_missing('select', *args, &block)
+    end
+    
+    def position(set_to, &block)
+      # Set the position value the standard way and move on
+      eval("var('position', #{set_to.inspect})")
+      method_missing('position', &block)
+    end
+    def bottom(&block); position("bottom", &block); end
+    def top(&block);    position("top",    &block); end
+    def after(&block);  position("after",  &block); end
+    def before(&block); position("before", &block); end
+    
+    def attribute(name, value, &block)
+      method_missing('attribute', *[name], Proc.new { |this|
+        this.method_missing('set')
+        block.call(this)
+      })
+      
     end
   end
 end
