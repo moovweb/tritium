@@ -48,22 +48,36 @@ module Tritium::Parser
       method_missing('select', *args, &block)
     end
     
-    def position(set_to, &block)
+    def set_position(set_to, &block)
       # Set the position value the standard way and move on
       eval("var('position', #{set_to.inspect})")
       method_missing('position', &block)
     end
-    def bottom(&block); position("bottom", &block); end
-    def top(&block);    position("top",    &block); end
-    def after(&block);  position("after",  &block); end
-    def before(&block); position("before", &block); end
+    def bottom(&block); set_position("bottom", &block); end
+    def top(&block);    set_position("top",    &block); end
+    def after(&block);  set_position("after",  &block); end
+    def before(&block); set_position("before", &block); end
     
-    def attribute(name, value, &block)
-      method_missing('attribute', *[name], Proc.new { |this|
-        this.method_missing('set')
-        block.call(this)
-      })
-      
+    def value(set_value = nil, &block)
+      if set_value
+         method_missing('value', &(Proc.new { |this|
+           this.method_missing('set', set_value)
+           block.call(this) if block
+         }))
+      else
+        method_missing('value', &block)
+      end
+    end
+    
+    def attribute(name, set_value = nil, &block)
+      if set_value
+        method_missing('attribute', *[name], &(Proc.new { |this|
+          this.value(set_value)
+          block.call(this) if block
+        }))
+      else
+        method_missing('attribute', *[name], &block)
+      end
     end
   end
 end
