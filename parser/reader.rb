@@ -71,12 +71,34 @@ module Tritium::Parser
     
     def attribute(name, set_value = nil, &block)
       if set_value
-        method_missing('attribute', *[name], &(Proc.new { |this|
+        method_missing('attribute', name) do |this|
           this.value(set_value)
           block.call(this) if block
-        }))
+        end
       else
         method_missing('attribute', *[name], &block)
+      end
+    end
+    
+    def html(set_to = nil, &block)
+      if set_to
+        method_missing('html') do |this|
+          this.method_missing("set", set_to);
+          block.call(this) if block
+        end
+      else
+        method_missing('html', &block)
+      end
+    end
+    
+    def var(name, set_to = nil, &block)
+      if set_to
+        method_missing("var", name) do |this|
+          this.method_missing('set', set_to)
+          block.call if block
+        end
+      else
+        method_missing("var", name, &block)
       end
     end
   end
