@@ -59,6 +59,38 @@ module Tritium
         root == self
       end
       
+      def to_script
+        result = "#{name}(#{(args.collect &:inspect).join(",")})"
+        if children.size > 0
+          result << " {\n"
+          children.each do |child|
+            result << "  " + child.inspect.lines.to_a.join("  ")
+          end
+          result << "}"
+        end
+        result + "\n"
+      end
+      
+      def inspect
+        to_script
+      end
+      
+      def ==(to)
+        (to.name == name) && match_args(to) && match_children(to) && true
+      end
+      
+      def match_args(to)
+        to.args.each_with_index do |arg, index|
+          return false unless args[index] == arg
+        end
+      end
+      
+      def match_children(to)
+        children.each_with_index do |child, index|
+          return false unless to.children[index] == child
+        end
+      end
+      
       class Invalid < StandardError
       end
     end
