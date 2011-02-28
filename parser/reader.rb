@@ -101,5 +101,16 @@ module Tritium::Parser
         method_missing("var", name, &block)
       end
     end
+    
+    def name(set_name = nil, &block)
+      if set_name
+        method_missing("name") do 
+          set(set_name)
+          block.call if block
+        end
+      else
+        method_missing("name", &block)
+      end
+    end
   end
 end
