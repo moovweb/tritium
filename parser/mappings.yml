@@ -1,8 +1,170 @@
-select: 
-  class: Select
-  scope: Node
-  arguments:
-    - 
-      name: XPath Selector
-      doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
-move_to: MoveTo
+Base: &base
+  var:
+    opens: Text
+  match:
+  filter_url:
+    opens: Text
+  asset:
+    opens: Text
+
+
+
+Node:
+  <<: *base
+  select: 
+    opens: Node
+    doc: Search the tree and select all matching nodes
+    arguments:
+      - 
+        name: XPath Selector
+        doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
+        required: true
+  html:
+    opens: Text
+    docs: Opens up the entire innerHTML to text modification
+  attribute:
+    opens: Attribute
+    docs: Creates or opens the attribute named
+    arguments:
+      -
+        name: Attribute name
+        doc: The name of the attribute you are opening
+        default: ""
+      -
+        name: Value
+        doc: You can set the attribute value here if you want. Very optional!
+        default: ""
+        expansion: 'value'
+  fetch:
+    opens: Text
+    docs: This is how you select an element to pass it to a function.
+    arguments:
+      -
+        name: XPath Selector
+        docs: 
+  move_to: 
+    opens: Node
+    doc: Move the current node to some other location as indicated by the first argument
+    arguments:
+      -
+        name: XPath Selector
+        doc: Where we are moving the node to
+        required: true
+      -
+        name: Position
+        doc: Can be "bottom", "top", "after", or "before"
+        default: "bottom"
+  name:
+    opens: Text
+    doc: Rename the currently select Node's name. Aka, change a "div" to a "span"
+    arguments:
+      - 
+        name: The new name
+        doc: You can just yield to the block if you want to dynamically set the name. Otherwise, just pass it as the argument
+  remove:
+    doc: Delete the current node
+  position:
+    opens: Positional
+    doc: Low-level way to open a positional block
+    arguments:
+      -
+        name: position
+        doc: Can be "bottom", "top", "after", or "before"
+        required: true
+        default: "bottom"
+  bottom:
+    opens: Positional
+  top:
+    opens: Positional
+  after:
+    opens: Positional
+  before:
+    opens: Positional
+
+
+
+Positional:
+  <<: *base
+  insert_tag:
+    opens: Node
+    doc: Create a new HTML tag. Must be inside a Positional block
+    arguments:
+      - 
+        name: Tag Name
+        default: "div"
+        doc: The type of HTML node you want, aka "div" or "span"
+      -
+        name: Contents
+        default: ""
+        doc: Some text representing the innerHTML of the tag
+      -
+        name: Attributes
+        type: Hash
+        doc: The tag's attributes
+  insert:
+    opens: Node
+    doc: Inject some plain HTML into the document at the prescribed location
+    arguments:
+      -
+        name: HTML
+        required: true
+
+
+
+
+
+
+Attribute:
+  <<: *base
+  remove:
+    doc: Delete the current attribute
+  value:
+    opens: Text
+    doc: Allow us to edit the value (key="value") part of the attribute
+    arguments:
+      -
+        name: New Value
+        doc: You can instantly pass in a variable to set the value of the attribute
+  name:
+    opens: Text
+    doc: Allow us to edit the key (key="value") part of the attribute
+    arguments:
+      -
+        name: New Name
+        doc: You can instantly pass in a variable to set the name of the attribute
+
+
+
+
+
+Text:
+  <<: *base
+  set:
+    docs: Replace the entire current text with what you pass in
+    arguments:
+      -
+        name: String to replace
+        required: true
+  replace:
+    docs: Replace all instances of the first argument with the second argument
+    arguments:
+      -
+        name: String or Regex
+        required: true
+      -
+        name: Replacement String
+        required: true
+  prepend:
+    docs: Prepend the string to the front of the text area
+    arguments: 
+      -
+        name: Text to prepend
+        required: true
+  append:
+    docs: Append the string to the front of the text area
+    arguments: 
+      -
+        name: Text to append
+        required: true
+  remove:
+    docs: Set the whole thing to ""
