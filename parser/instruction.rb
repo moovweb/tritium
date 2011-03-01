@@ -10,6 +10,7 @@ module Tritium
       attr :root, true
       attr :scope
       attr :line_number
+      attr :script_name
       attr :line
       attr :processed_line
       

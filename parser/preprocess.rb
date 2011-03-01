@@ -2,6 +2,10 @@ module Tritium
   module Parser
     class Preprocess
       def self.run(script, path, name)
+        inner_run(script, path, name).gsub("\\$", "$")
+      end
+
+      def self.inner_run(script, path, name)
         path = File.absolute_path(path)
         self.imports(self.post_debug(self.variable_expansion(self.select_expansion(self.pre_debug(script, name)))), path)
       end
@@ -29,7 +33,7 @@ module Tritium
       def self.pre_debug(script, name = "main")
         count = 0
         (script.split("\n").collect do |line|
-          "@_line_number = #{count += 1}; @_script = '#{name}'; @_line = #{line.inspect}\n " + line
+          "@_line_number = #{count += 1}; @_script = '#{name}'; @_line = #{line.gsub('$', '\\$').inspect}\n " + line
         end).join("\n")
       end
 
