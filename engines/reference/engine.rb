@@ -20,7 +20,7 @@ module Tritium
 
         root_scope = Scope::Node.new(doc)
         root_scope.env.merge! env
-        root_scope.instance_eval(compiled_script)
+        root_scope.instance_eval(processed_script)
 
         doc
       rescue StandardError => e

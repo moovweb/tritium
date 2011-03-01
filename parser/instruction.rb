@@ -43,12 +43,13 @@ module Tritium
         # Debug information
         @line_number = options[:line_number] || options["line_number"] || 0
         @line = options[:line] || options["line"] || ''
+        @script_name = options[:script_name] || options["script_name"] || ''
         @processed_line = options[:processed_line] || options["processed_line"] || ''
       end
 
       def add(name, options = {})
         if scope_map[name].nil?
-          raise Invalid, "No such method '#{name}' allowed here!\nOnly allow: #{scope_map.keys.join(", ")}\n#{self.line}"
+          raise Invalid, "Line #{@line_number} in #{@script_name}\nNo such method #{name.inspect} allowed here!\nOnly allow: #{scope_map.keys.join(", ")}\n#{self.line}"
         end
         child = Instruction.new(name, options.merge(:root => self.root, :parent => self))
         children << child
