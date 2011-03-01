@@ -18,7 +18,6 @@ module Tritium
         script.gsub(/^([ ]*)\@import[ ]+([^\n]*)/).each do 
           spacer = $1
           file_name = $2
-          puts root_path.inspect
           (self.run(File.open(File.join(root_path, file_name)).read, root_path, file_name).lines.collect do |line|
             spacer + line
           end).join("\n")
