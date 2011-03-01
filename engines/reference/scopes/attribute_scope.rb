@@ -1,7 +1,7 @@
 require_relative '../scope'
 
-module Tritium
-  class Scope::Attribute < Scope::Base
+module Tritium::Engines::Reference::Scope
+  class Attribute < Base
     def initialize(attribute, root, parent)
       @object = @attribute = attribute
       super
