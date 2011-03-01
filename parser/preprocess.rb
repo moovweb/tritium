@@ -1,3 +1,13 @@
+# The seventh circle of hell.
+#
+# This handles imports, $var expansion, $("hello") expansion, and the insertion
+# of debug lines that the Parser ends up using.
+#
+# This thing is slow, finicky, and annoying.
+# 
+# Its tests are primarily in reader_test.rb
+
+
 module Tritium
   module Parser
     class Preprocess
