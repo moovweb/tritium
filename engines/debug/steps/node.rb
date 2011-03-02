@@ -1,0 +1,78 @@
+class Tritium::Engines::Debug
+  class Step::Node < Step
+    def search(selector)
+      if (selector[0..1] == "..")
+        @object.xpath(selector)
+      else
+        @object.search(selector)
+      end
+    end
+    
+    def select(selector)
+      child_nodeset = search(selector)
+      
+      log("Searching with #{selector} and found #{child_nodeset.size} matches")
+      
+      child_nodeset.each_with_index do |child_node, index|
+        log("Entering #{selector} match ##{index + 1} at #{child_node.path}")
+        execute_children_on(child_node)
+        log("Finishing #{selector} match ##{index + 1} at #{child_node.path}")
+      end
+      
+      log("Closing #{selector}")
+    end
+    
+    def remove
+      log("Removing #{object.path} and all children")
+      object.remove
+    end
+    
+    def html
+      log("Opening the raw text HTML of #{@object.path}")
+      @object.inner_html = execute_children_on(@object.inner_html)
+    end
+    
+    def attribute(name)
+      attribute_node = @object.attributes[name]
+      if attribute_node.nil?
+        @object[name] = ""
+        attribute_node = @object.attributes[name]
+      end
+      
+      @object.attributes[name] = execute_children_on(attribute_node)
+    end
+    
+    def move_to(selector)
+      target_node = search(selector).first
+      return nil if target_node.nil?
+
+      position_node(target_node, @object)
+
+      execute_children_on(target_node)
+      @object
+    end
+    
+    def name
+      @object.name = execute_children_on(@object.name)
+    end
+    
+    # Simply opens a Positional block
+    # We don't have to do anything, because this engine works with the ExpansionReader
+    # which has turned
+    #
+    #
+    #  bottom {
+    #    action
+    #  }
+    #
+    # into
+    #
+    #  var('position', 'bottom')
+    #  positioned {
+    #    action
+    #  }
+    def position
+      execute_children_on(@object)
+    end
+  end
+end

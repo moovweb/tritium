@@ -15,7 +15,7 @@ module Tritium
       attr :processed_line
       
       def self.root
-        Instruction.new("select", :args => ".", :scope => "Node")
+        Instruction.new("select", :args => "/.", :scope => "Node")
       end
       
       def self.map
@@ -62,8 +62,12 @@ module Tritium
         root == self
       end
       
+      def stub
+        "#{name}(#{(args.collect &:inspect).join(",")})"
+      end
+      
       def to_script
-        result = "#{name}(#{(args.collect &:inspect).join(",")})"
+        result = stub
         if children.size > 0
           result << " {\n"
           children.each do |child|
@@ -75,7 +79,7 @@ module Tritium
       end
       
       def inspect
-        to_script
+        "<TS:#{stub}@#{line_number}>"
       end
       
       def ==(to)

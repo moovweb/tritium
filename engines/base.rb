@@ -13,7 +13,11 @@ module Tritium
         @script_string = script_string
         @xml_parser = XML_PARSERS[xml_parser_name || "xml"] || throw("Invalid parser")
         @script_name = options[:script_name] || options["script_name"] || "MAIN"
-        @root_instruction = Tritium::Parser::Reader.new.read(processed_script)
+        @root_instruction = reader_klass.new.read(processed_script)
+      end
+      
+      def reader_klass
+        Tritium::Parser::Reader
       end
       
       def processed_script

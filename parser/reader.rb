@@ -33,11 +33,13 @@ module Tritium::Parser
     # gets called.
     def method_missing(name, *args, &block)
       ins = @stack.last.add(name.to_s, :args => args, :processed_line => @_processed_line, :line => @_line, :line_number => @_line_number, :script_name => @_script)
+
       if block
         @stack.push(ins)
         block.call(self)
         @stack.pop
       end
+      ins
     end
     
     # For some reasons, select is defined on Object. Bastards.

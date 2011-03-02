@@ -6,6 +6,7 @@ module Tritium::Parser
     def set_position(set_to, &block)
       # Set the position value the standard way and move on
       eval("var('position', #{set_to.inspect})")
+
       method_missing('position', &block)
     end
     def bottom(&block); set_position("bottom", &block); end
@@ -57,6 +58,11 @@ module Tritium::Parser
       end
     end
     
+    def move_to(selector, position_val = 'bottom', &block)
+      eval("var('position', #{position_val.inspect})")
+      method_missing('move_to', *[selector], &block)
+    end
+
     def name(set_name = nil, &block)
       if set_name
         method_missing("name") do 
