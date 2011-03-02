@@ -24,6 +24,7 @@ module Tritium
       def map; self.class.map; end
       def scope_map; @scope_map ||= map[scope]; end
       def information; @information ||= parent.scope_map[@name]; end
+      def opens; information['opens'] || parent.opens; end;
 
       def initialize(name, options = {})
         # Primary Attributes
