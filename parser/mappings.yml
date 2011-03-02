@@ -3,8 +3,6 @@ Base: &base
     opens: Text
   match:
     doc: 
-  filter_url:
-    opens: Text
   asset:
     opens: Text
 
@@ -134,6 +132,13 @@ Attribute:
 
 Text:
   <<: *base
+  rewrite:
+    docs: Filters the current text string through the named rewriter.
+    arguments:
+      -
+        name: Key for the rewriter
+        default: link
+        require: true
   set:
     docs: Replace the entire current text with what you pass in
     arguments:

@@ -2,6 +2,8 @@ require_relative '../scope'
 
 module Tritium::Engines::Reference::Scope
   class Text < Base
+    attr :text
+
     def initialize(text, root, parent)
       @object = @text = text
       super
@@ -34,8 +36,8 @@ module Tritium::Engines::Reference::Scope
       @text.insert(0,text)
     end
 
-    def text
-      @text
+    def rewrite(what)
+      replace(env["rewrite_#{what}_matcher"], env["rewrite_#{what}_to"] + env["proxy_domain"])
     end
   end
 end

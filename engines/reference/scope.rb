@@ -48,11 +48,7 @@ module Tritium
           end
           File.join(location, path)
         end
-  
-        def filter_url(link)
-          link.gsub(env["rewrite_link_matcher"], env["rewrite_link_to"] + env["proxy_domain"])
-        end
-  
+
         def env
           @env
         end
