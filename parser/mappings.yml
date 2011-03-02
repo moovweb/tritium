@@ -64,7 +64,7 @@ Node:
     doc: Delete the current node
   position:
     opens: Positional
-    doc: Low-level way to open a positional block. Doesn't actually set the var('position'). Use the bottom, top, after, and before methods!
+    doc: DO NOT USE! Low-level way to open a positional block. Doesn't actually set the var('position'). Use the bottom, top, after, and before methods!
   bottom:
     opens: Positional
   top:
