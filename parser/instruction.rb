@@ -71,7 +71,7 @@ module Tritium
         if children.size > 0
           result << " {\n"
           children.each do |child|
-            result << "  " + child.inspect.lines.to_a.join("  ")
+            result << "  " + child.to_script.lines.to_a.join("  ")
           end
           result << "}"
         end

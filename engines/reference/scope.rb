@@ -37,7 +37,6 @@ module Tritium
           end
         end
   
-  
         def asset(path, type = "default")
           if type == "stylesheet"
             location = "/assets/stylesheets/.css/"
