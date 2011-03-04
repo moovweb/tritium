@@ -32,6 +32,10 @@ module Tritium::Parser
     # and take note of the stack with each block that
     # gets called.
     def method_missing(name, *args, &block)
+      cmd(name, *args, &block)
+    end
+    
+    def cmd(name, *args, &block)
       ins = @stack.last.add(name.to_s, :args => args, :processed_line => @_processed_line, :line => @_line, :line_number => @_line_number, :script_name => @_script)
 
       if block
@@ -44,7 +48,7 @@ module Tritium::Parser
     
     # For some reasons, select is defined on Object. Bastards.
     def select(*args, &block)
-      method_missing('select', *args, &block)
+      cmd('select', *args, &block)
     end
   end
 end

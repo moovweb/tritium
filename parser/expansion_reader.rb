@@ -7,7 +7,7 @@ module Tritium::Parser
       # Set the position value the standard way and move on
       eval("var('position', #{set_to.inspect})")
 
-      method_missing('position', &block)
+      cmd('position', &block)
     end
     def bottom(&block); set_position("bottom", &block); end
     def top(&block);    set_position("top",    &block); end
@@ -16,45 +16,45 @@ module Tritium::Parser
     
     def value(set_value = nil, &block)
       if set_value
-         method_missing('value', &(Proc.new { |this|
+         cmd('value', &(Proc.new { |this|
            set(set_value)
            block.call(this) if block
          }))
       else
-        method_missing('value', &block)
+        cmd('value', &block)
       end
     end
     
     def attribute(name, set_value = nil, &block)
       if set_value
-        method_missing('attribute', name) do
+        cmd('attribute', name) do
           value(set_value)
           block.call(this) if block
         end
       else
-        method_missing('attribute', *[name], &block)
+        cmd('attribute', *[name], &block)
       end
     end
     
     def html(set_to = nil, &block)
       if set_to
-        method_missing('html') do |this|
-          this.method_missing("set", set_to);
+        cmd('html') do |this|
+          this.cmd("set", set_to);
           block.call(this) if block
         end
       else
-        method_missing('html', &block)
+        cmd('html', &block)
       end
     end
     
     def var(name, set_to = nil, &block)
       if set_to
-        method_missing("var", name) do |this|
-          this.method_missing('set', set_to)
+        cmd("var", name) do |this|
+          this.cmd('set', set_to)
           block.call if block
         end
       else
-        method_missing("var", name, &block)
+        cmd("var", name, &block)
       end
     end
     
@@ -65,12 +65,12 @@ module Tritium::Parser
 
     def name(set_name = nil, &block)
       if set_name
-        method_missing("name") do 
+        cmd("name") do 
           set(set_name)
           block.call if block
         end
       else
-        method_missing("name", &block)
+        cmd("name", &block)
       end
     end
   end
