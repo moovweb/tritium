@@ -52,6 +52,9 @@ class Tritium::Engines::Debug
       @object
     end
     
+    def insert_tag(named)
+    end
+    
     def name
       @object.name = execute_children_on(@object.name)
     end
