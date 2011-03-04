@@ -5,6 +5,9 @@ Base: &base
     doc: 
   asset:
     opens: Text
+  script:
+    opens: Text
+    docs: DO NOT USE. Wraps the entire script virtually!
 
 
 
