@@ -6,6 +6,8 @@ module Tritium
   module Engines
     class Base
       XML_PARSERS = {"xml" =>  Nokogiri::XML, "html" =>  Nokogiri::HTML, "xhtml" => Nokogiri::XML}
+      
+      attr :root_instruction
 
       def initialize(script_string, options = {})
         xml_parser_name = options["xml_parser"] || options[:xml_parser]
@@ -22,6 +24,10 @@ module Tritium
       
       def processed_script
         Tritium::Parser::Preprocess::run(@script_string, @script_path, @script_name)
+      end
+      
+      def to_script
+        @root_instruction.to_script
       end
     end
   end

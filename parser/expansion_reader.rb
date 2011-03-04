@@ -27,6 +27,9 @@ module Tritium::Parser
     
     def attribute(name, set_value = nil, &block)
       if set_value
+        if !set_value.is_a?(Instruction)
+          set_value = set_value.to_s
+        end
         cmd('attribute', name) do
           value(set_value)
           block.call(this) if block

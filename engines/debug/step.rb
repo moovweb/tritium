@@ -88,7 +88,7 @@ module Tritium::Engines
     # Otherwise, go up until I find a node. This is
     # mostly useful for fetch()
     def node
-      if self.is_a? Node
+      if self.is_a?(Node) || self.is_a?(Positional)
         return @object
       else
         @parent.node
