@@ -58,9 +58,8 @@ module Tritium::Engines
     end
     
     def mark!
-      @debug << {:object => object, :env => @env}
+      @debug << {:object => object.clone, :env => @env}
     end
-    
     
    # Actual Tritium methods
    
