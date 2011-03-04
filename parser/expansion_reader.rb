@@ -60,7 +60,26 @@ module Tritium::Parser
     
     def move_to(selector, position_val = 'bottom', &block)
       eval("var('position', #{position_val.inspect})")
-      method_missing('move_to', *[selector], &block)
+      cmd('move_to', *[selector], &block)
+    end
+    
+    def insert_tag(tag_name, contents = nil, attributes = {}, &block)
+      if contents.is_a? Hash
+        attributes = contents
+        contents = nil
+      end
+      
+      cmd("insert_tag", tag_name) do
+        if contents
+          html do
+            set(contents)
+          end
+        end
+        attributes.each do |name, val|
+          attribute(name.to_s, val.to_s)
+        end
+        block.call if block
+      end
     end
 
     def name(set_name = nil, &block)

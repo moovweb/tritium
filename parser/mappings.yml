@@ -21,6 +21,21 @@ Node:
   html:
     opens: Text
     docs: Opens up the entire innerHTML to text modification
+  insert_tag:
+    opens: Node
+    docs: Allows you to insert a tag
+    arguments:
+      -
+        name: Tag Name
+        doc: Something like "div"
+        required: true
+      -
+        name: Contents
+        doc: The inner HTML for the tag
+      - 
+        name: Attributes
+        type: Hash
+        doc: Any attributes you want to set
   attribute:
     opens: Attribute
     docs: Creates or opens the attribute named
