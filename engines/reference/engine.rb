@@ -10,13 +10,11 @@ module Tritium
         # Setup options
         env = options["env"] || options[:env] || {}
 
-        doc = @xml_parser.parse(xhtml_file)
-
-        root_scope = Scope::Node.new(doc)
+        root_scope = Scope::Text.new(xhtml_file)
         root_scope.env.merge! env
         root_scope.instance_eval(processed_script)
 
-        doc
+        root_scope.text
       rescue StandardError => e
         e.message.gsub!(/$/, " on script line #{@_line.to_s}")
         raise e

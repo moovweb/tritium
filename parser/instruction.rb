@@ -15,7 +15,7 @@ module Tritium
       attr :processed_line
       
       def self.root
-        Instruction.new("select", :args => "/.", :scope => "Node")
+        Instruction.new("script", :scope => "Text")
       end
       
       def self.map

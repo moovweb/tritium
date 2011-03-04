@@ -154,6 +154,14 @@ Text:
       -
         name: Replacement String
         required: true
+  doc:
+    docs: Parses the HTML/XML/etc and passes you back a Node scope
+    opens: Node
+    arguments:
+      -
+        name: Document Type
+        doc: "Can be: xml, html, xhtml"
+        required: true
   prepend:
     docs: Prepend the string to the front of the text area
     arguments: 

@@ -4,8 +4,10 @@ module Tritium::Engines::Reference::Scope
   class Text < Base
     attr :text
 
-    def initialize(text, root, parent)
-      @object = @text = text
+    # @private
+    def initialize(text, root = nil, parent = nil)
+      @text = text
+      @root = root || self
       super
     end
 
@@ -26,6 +28,14 @@ module Tritium::Engines::Reference::Scope
       else
         @text = ""
       end
+    end
+    
+    def doc(type = 'xhtml', &block)
+      parser_klass = Tritium::Engines.xml_parsers[type]
+      doc = parser_klass.parse(@text)
+      node_scope = Tritium::Engines::Reference::Scope::Node.new(doc, @root, self)
+      node_scope.instance_eval(&block)
+      @text = node_scope.node.send("to_" + type)
     end
   
     def append(text)
