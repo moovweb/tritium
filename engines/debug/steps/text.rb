@@ -19,6 +19,13 @@ class Tritium::Engines::Debug
         @object = ""
       end
     end
+    
+    def doc(parse_as = "xhtml")
+      parser_klass = Tritium::Engines.xml_parsers[parse_as]
+      doc = parser_klass.parse(@object)
+      execute_children_on(doc)
+      @object = doc.send("to_" + parse_as)
+    end
   
     def append(text)
       @object << text

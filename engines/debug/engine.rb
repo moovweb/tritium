@@ -9,12 +9,15 @@ module Tritium
 
       def run(xhtml_file, options = {})
         env = options["env"] || options[:env] || {}
-        doc = @xml_parser.parse(xhtml_file)
         
-        @root_step = Step::Node.new(@root_instruction)
-        @root_step.execute(doc, env)
+        @root_step = Step::Text.new(@root_instruction)
+        @root_step.execute(xhtml_file, env)
         
-        doc
+        @root_step.object
+      end
+      
+      def debug
+        @root_step.debug
       end
       
       def reader_klass

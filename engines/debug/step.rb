@@ -41,6 +41,8 @@ module Tritium::Engines
       return @object
     end
     
+    
+    
     def execute_children_on(obj)
       children << instruction.children.collect do |child|
         step = @child_type.new(child, self)
@@ -61,6 +63,10 @@ module Tritium::Engines
     
     
    # Actual Tritium methods
+   
+    def script
+      @object = execute_children_on(@object)
+    end
    
     def var(named)
       @env[named] ||= ""
