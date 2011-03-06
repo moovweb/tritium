@@ -2,11 +2,14 @@ require 'nokogiri'
 require_relative '../parser/reader'
 require_relative '../parser/preprocess'
 
+class Nokogiri::HTML::DocumentFragment
+  alias :to_html_fragment :to_html
+end
 module Tritium
   module Engines
     
     def self.xml_parsers
-      {"xml" =>  Nokogiri::XML, "html" =>  Nokogiri::HTML, "xhtml" => Nokogiri::XML}
+      {"xml" =>  Nokogiri::XML, "html" =>  Nokogiri::HTML, "xhtml" => Nokogiri::XML, "html_fragment" => Nokogiri::HTML::DocumentFragment}
     end
 
     class Base
