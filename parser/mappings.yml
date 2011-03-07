@@ -150,6 +150,7 @@ Text:
         required: true
   replace:
     docs: Replace all instances of the first argument with the second argument
+    opens: Text
     arguments:
       -
         name: String or Regex
