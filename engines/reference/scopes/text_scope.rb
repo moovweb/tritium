@@ -26,7 +26,7 @@ module Tritium::Engines::Reference::Scope
         end
         replace = replacement
         (replace = open_text_scope_with(replace, &block)) if block
-        replace.gsub(/([\1\2\3\4\5\6\7\8\9])/) do |var_match|
+        replace.gsub(/([\1\2\3\4])/) do |var_match|
           index = $1.getbyte(0).to_s
           var(index)
         end
