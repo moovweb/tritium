@@ -15,11 +15,22 @@ module Tritium::Engines::Reference::Scope
       @text = text
     end
 
-    def replace(matcher, replacement)
+    def replace(matcher, replacement = "", &block)
       if matcher.is_a? String
         matcher = Regexp.new(matcher)
       end
-      @text.gsub!(matcher, replacement)
+
+      @text.gsub!(matcher) do |match|
+        $~.captures.each_with_index do |arg, index|
+          var("#{index + 1}", arg)
+        end
+        replace = replacement
+        (replace = open_text_scope_with(replace, &block)) if block
+        replace.gsub(/([\1\2\3\4\5\6\7\8\9])/) do |var_match|
+          index = $1.getbyte(0).to_s
+          var(index)
+        end
+      end 
     end
   
     def remove(matcher = nil)
