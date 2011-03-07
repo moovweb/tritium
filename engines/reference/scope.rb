@@ -17,7 +17,6 @@ module Tritium
           elsif(value)
             @env[name] = value
           else
-            name = name.strip
             if(block)
               @env[name] = open_text_scope_with(@env[name], &block)
             else
