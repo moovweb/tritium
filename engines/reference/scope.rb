@@ -8,7 +8,7 @@ module Tritium
           @object ||= thing
           @root ||= root
           @parent ||= parent
-          @env = (@parent ? @parent.env.clone : {})
+          @env = (@parent ? @parent.env : {})
         end
 
         def var(name = nil, value = nil, &block)
