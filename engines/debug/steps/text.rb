@@ -5,11 +5,19 @@ class Tritium::Engines::Debug
       @object = text
     end
 
-    def replace(matcher, replacement)
+    def replace(matcher)
       if matcher.is_a? String
         matcher = Regexp.new(matcher)
       end
-      @object.gsub!(matcher, replacement)
+      @object.gsub!(matcher) do |match|
+        $~.captures.each_with_index do |arg, index|
+          @env["#{index + 1}"] = arg
+        end
+        replacement = execute_children_on(match)
+        replacement.gsub(/\\([\d])/) do
+          @env[$1]
+        end
+      end
     end
   
     def remove(matcher = nil)
