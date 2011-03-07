@@ -84,6 +84,15 @@ module Tritium::Parser
         block.call if block
       end
     end
+    
+    def replace(matcher, value = nil, &block)
+      cmd("replace", matcher) do
+        if value
+          set(value)
+        end
+        block.call if block
+      end
+    end
 
     def name(set_name = nil, &block)
       if set_name
