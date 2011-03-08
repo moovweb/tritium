@@ -86,7 +86,7 @@ module Tritium::Parser
     end
     
     def replace(matcher, value = nil, &block)
-      cmd("replace", matcher) do
+      cmd("replace", Regexp.new(matcher)) do
         if value
           set(value)
         end
