@@ -93,6 +93,17 @@ module Tritium::Engines
       node.search(selector).first
     end
     
+    def asset(path, type = "default")
+      if type == "stylesheet"
+        location = "/assets/stylesheets/.css/"
+      elsif type == "image"
+        location = "/assets/images/"
+      else
+        location = "/assets/"
+      end
+      File.join(location, path)
+    end
+    
     # If I'm a NodeStep, this should return @object
     # Otherwise, go up until I find a node. This is
     # mostly useful for fetch()
