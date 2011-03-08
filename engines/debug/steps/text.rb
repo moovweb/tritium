@@ -6,9 +6,6 @@ class Tritium::Engines::Debug
     end
 
     def replace(matcher)
-      if matcher.is_a? String
-        matcher = Regexp.new(matcher)
-      end
       @object.gsub!(matcher) do |match|
         $~.captures.each_with_index do |arg, index|
           @env["#{index + 1}"] = arg
