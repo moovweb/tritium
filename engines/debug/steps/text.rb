@@ -41,7 +41,7 @@ class Tritium::Engines::Debug
     end
 
     def rewrite(what)
-      replace(@env["rewrite_#{what}_matcher"], @env["rewrite_#{what}_to"] + @env["proxy_domain"])
+      @object.gsub!(Regexp.new(@env["rewrite_#{what}_matcher"]),  @env["rewrite_#{what}_to"] + @env["proxy_domain"])
     end
   end
 end
