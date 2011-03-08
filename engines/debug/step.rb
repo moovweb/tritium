@@ -75,8 +75,12 @@ module Tritium::Engines
     
     def match(value, matcher)
       if matcher.is_a? Regexp
+        log "matching #{value} against #{matcher}"
         if(value =~ Regexp.new(matcher)) 
+          log "Match successful!"
           execute_children_on(object)
+        else
+          log "Failed match."
         end
       else
         if(value == matcher) 
