@@ -7,6 +7,7 @@ module Tritium::Engines
     attr :children
     attr :debug
     attr :object
+    attr :sid
     
     require_relative 'steps/node'
     require_relative 'steps/attribute'
@@ -17,6 +18,13 @@ module Tritium::Engines
       @instruction = instruction
       
       @parent = parent
+
+      if parent
+        @sid = (parent.sid << parent.children.size)
+      else
+        @sid = [0]
+      end
+
       @child_type = eval(instruction.opens)
       @children = []
       @debug = []
@@ -54,11 +62,11 @@ module Tritium::Engines
     end
     
     def log(message)
-      @debug << {:message => message, :instruction => instruction}
+      @debug << {:message => message, :instruction => instruction, :step => self}
     end
     
     def mark!
-      @debug << {:object => object.clone, :env => @env}
+      @debug << {:object => object.clone, :env => @env, :step => self}
     end
     
    # Actual Tritium methods
