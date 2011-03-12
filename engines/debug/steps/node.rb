@@ -1,11 +1,7 @@
 class Tritium::Engines::Debug
   class Step::Node < Step
     def search(selector)
-      if (selector[0..1] == "..")
-        @object.xpath(selector)
-      else
-        @object.search(selector)
-      end
+      @object.xpath(selector)
     end
     
     def select(selector)
