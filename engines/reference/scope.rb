@@ -46,7 +46,7 @@ module Tritium
             location = "/"
           end
           # TODO: configure the asset prefix somewhere
-          prefix = "http://localhost:3000/assets/"
+          prefix = "http://localhost:3001/assets/"
           File.join(prefix, location, path)
         end
 
