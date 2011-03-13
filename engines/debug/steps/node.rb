@@ -19,7 +19,7 @@ class Tritium::Engines::Debug
     end
     
     def remove
-      log("Removing #{object.path} and all children")
+      log("Removing #{object.path}")
       object.remove
     end
     
