@@ -39,13 +39,15 @@ module Tritium
   
         def asset(path, type = "default")
           if type == "stylesheet"
-            location = "/assets/stylesheets/.css/"
+            location = "/stylesheets/.css/"
           elsif type == "image"
-            location = "/assets/images/"
+            location = "/images/"
           else
-            location = "/assets/"
+            location = "/"
           end
-          File.join(location, path)
+          # TODO: configure the asset prefix somewhere
+          prefix = "http://localhost:3000/assets/"
+          File.join(prefix, location, path)
         end
 
         def env
