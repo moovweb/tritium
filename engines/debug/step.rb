@@ -91,7 +91,7 @@ module Tritium::Engines
    
     def var(named)
       @env[named] ||= ""
-      log("Looking up var #{named}")
+      log("Looking up var #{named} and found #{@env[named].inspect}")
       @env[named] = execute_children_on(@env[named])
     end
     
