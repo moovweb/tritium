@@ -28,13 +28,13 @@ module Tritium::Engines
 
       @child_type = eval(instruction.opens)
       @children = []
-      @debug = []
+      @debug = instruction.to_hash.merge({:step_id => @sid, :objects => [], :children => [], :log => []})
     end
     
     def execute(obj, env = {})
       @object = obj
       @env = env
-      mark!
+      @debug[:env] = @env.clone
       args = (instruction.args || []).collect do |arg|
         if arg.is_a?(Tritium::Parser::Instruction)
           if arg.name == "var"
@@ -49,25 +49,27 @@ module Tritium::Engines
 
       return @object
     end
-    
-    
-    
+
     def execute_children_on(obj)
+      return obj if (instruction.children.size == 0)
+      
+      children_debug = []
       children << instruction.children.collect do |child|
         step = @child_type.new(child, self)
         obj = step.execute(obj, @env)
-        @debug << step.debug
+        children_debug << step.debug
         step
       end
+      @debug[:children] << children_debug
       obj
     end
     
     def log(message)
-      @debug << {:message => message, :instruction => instruction, :step => self}
+      @debug[:log] << message.to_s
     end
     
-    def mark!
-      @debug << {:object => object.clone, :env => @env, :step => self}
+    def mark!(obj = nil)
+      @debug[:objects] << (obj || @object)
     end
     
    # Actual Tritium methods
