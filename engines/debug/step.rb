@@ -25,6 +25,8 @@ module Tritium::Engines
       else
         @sid = [0]
       end
+      
+      
 
       @child_type = eval(instruction.opens)
       @children = []
@@ -35,6 +37,9 @@ module Tritium::Engines
       @object = obj
       @env = env
       @debug[:env] = @env.clone
+      @child_time = 0
+      start = Time.now
+
       args = (instruction.args || []).collect do |arg|
         if arg.is_a?(Tritium::Parser::Instruction)
           if arg.name == "var"
@@ -45,25 +50,21 @@ module Tritium::Engines
         end
         arg
       end
-      (@debug[:args] = args) if args.size > 0
-      start = Time.now
-      self.send(instruction.name, *(args))
-      @debug[:total_time] = Time.now - start
-      child_time = 0.0
 
-      @debug[:children].each do |child_group|
-        child_group.each do |child|
-          child_time += child[:total_time]
-        end
-      end
-      (@debug[:child_time] = child_time) if child_time > 0
+      self.send(instruction.name, *(args))
+
+      @debug[:total_time_cs] = ((Time.now - start) * 10000).to_i
+
+      (@debug[:args] = args) if args.size > 0
+      @debug[:child_time_cs] = @child_time
+      @debug[:time_cs] = @debug[:total_time_cs] - @child_time
       @debug.delete(:children) if @debug[:children].size == 0
       return @object
     end
 
     def execute_children_on(obj)
       return obj if (instruction.children.size == 0)
-      
+      timer = Time.now
       children_debug = []
       children << instruction.children.collect do |child|
         step = @child_type.new(child, self)
@@ -72,6 +73,7 @@ module Tritium::Engines
         step
       end
       @debug[:children] << children_debug
+      @child_time += ((Time.now - timer) * 10000).to_i
       obj
     end
     
