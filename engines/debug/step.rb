@@ -45,8 +45,19 @@ module Tritium::Engines
         end
         arg
       end
+      (@debug[:args] = args) if args.size > 0
+      start = Time.now
       self.send(instruction.name, *(args))
+      @debug[:total_time] = Time.now - start
+      child_time = 0.0
 
+      @debug[:children].each do |child_group|
+        child_group.each do |child|
+          child_time += child[:total_time]
+        end
+      end
+      (@debug[:child_time] = child_time) if child_time > 0
+      @debug.delete(:children) if @debug[:children].size == 0
       return @object
     end
 
