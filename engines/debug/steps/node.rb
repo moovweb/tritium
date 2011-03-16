@@ -7,7 +7,7 @@ class Tritium::Engines::Debug
     def select(selector)
       child_nodeset = search(selector)
       
-      log("Searching with #{selector} and found #{child_nodeset.size} matches")
+      log("Searching #{object.path} with #{selector} and found #{child_nodeset.size} matches")
       
       child_nodeset.each_with_index do |child_node, index|
         log("Entering #{selector} match ##{index + 1} at #{child_node.path}")
