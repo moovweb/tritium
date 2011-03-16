@@ -1,4 +1,5 @@
 require_relative '../../parser/expansion_reader'
+require 'yajl'
 
 module Tritium
   module Engines
@@ -12,13 +13,21 @@ module Tritium
         
         @root_step = Step::Text.new(@root_instruction)
         @root_step.execute(xhtml_file, env)
+
+        return @root_step.object unless @root_step.debug[:env]["content_type"].include?("html")
+        
+
+        trace = File.join(@script_path, "../tmp/debug.json")
+
+        
+        f = File.open(trace, "w+")
+        
+        Yajl::Encoder.encode(@root_step.debug, f, :pretty => true, :indent => '  ')
+        f.close
         
         @root_step.object
       end
-      
-      def debug
-        @root_step.debug
-      end
+
       
       def reader_klass
         Tritium::Parser::ExpansionReader
