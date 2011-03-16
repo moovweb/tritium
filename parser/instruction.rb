@@ -78,6 +78,16 @@ module Tritium
         result + "\n"
       end
       
+      def to_hash
+        { :line_number => @line_number,
+          :line => @line,
+          :script_name => @script_name,
+          :processed_line => @processed_line,
+          :args => @args,
+          :scope => @scope,
+          :stub => stub }
+      end
+      
       def inspect
         "<TS:#{stub}@#{line_number}>"
       end
