@@ -20,7 +20,8 @@ module Tritium::Engines
       @parent = parent
 
       if parent
-        @sid = (parent.sid << parent.children.size)
+        @sid = parent.sid.clone
+        @sid << parent.children.size
       else
         @sid = [0]
       end
