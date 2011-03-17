@@ -1,4 +1,5 @@
 require 'yaml'
+YAML::ENGINE.yamler= 'syck'
 
 module Tritium
   module Parser
