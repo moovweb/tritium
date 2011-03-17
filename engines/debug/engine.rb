@@ -14,7 +14,7 @@ module Tritium
         @root_step = Step::Text.new(@root_instruction)
         @root_step.execute(xhtml_file, env)
 
-        return @root_step.object if $TEST || !$TRITIUM_DEBUG
+        return @root_step.object if $TEST || !ENV["TRITIUM_DEBUG"] || !env["content_type"].include?("html")
         
 
         trace = File.join(@script_path, "../tmp/debug.json")
