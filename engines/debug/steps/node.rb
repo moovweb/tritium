@@ -14,6 +14,7 @@ class Tritium::Engines::Debug
       
       child_nodeset.each_with_index do |child_node, index|
         log("Entering #{selector} match ##{index + 1} at #{child_node.path}")
+        @name = child_node.path
         execute_children_on(child_node)
         log("Finishing #{selector} match ##{index + 1} at #{child_node.path}")
       end
