@@ -72,7 +72,7 @@ module Tritium::Engines
         children_debug << step.debug
         step
       end
-      @debug[:children] << children_debug
+      @debug[:children] << {:steps => children_debug, :name => @name}
       @child_time += ((Time.now - timer) * 10000).to_i
       obj
     end
