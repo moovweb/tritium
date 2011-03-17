@@ -1,0 +1,12 @@
+
+
+%li
+  = step["stub"]
+  - (step["children"] || []).each do |execution_set|
+    %br/
+    {
+    = execution_set["name"]
+    %ul
+      - execution_set["steps"].each do |child|
+        = haml :_step, :locals => {:step => child}
+    }
