@@ -65,6 +65,17 @@ Node:
         doc: You can just yield to the block if you want to dynamically set the name. Otherwise, just pass it as the argument
   remove:
     doc: Delete the current node
+  wrap:
+    opens: Node
+    doc: Wrap the currently selected node with a tag and then yield to that new wrapper
+    arguments:
+      -
+        name: The name of the wrapping tag
+      -
+        name: Attributes
+        type: Hash
+        doc: The tag's attributes
+        
   position:
     opens: Positional
     doc: DO NOT USE! Low-level way to open a positional block. Doesn't actually set the var('position'). Use the bottom, top, after, and before methods!
