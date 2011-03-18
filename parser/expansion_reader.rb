@@ -97,7 +97,7 @@ module Tritium::Parser
     def asset(name, type = nil, &block)
       var("tmp") {
         set(name)
-        prepend(type.to_s + "_asset_location")
+        prepend(var(type.to_s + "_asset_location"))
       }
     end
     
