@@ -1,5 +1,4 @@
 
-
 %li.step
   = step["stub"]
   - (step["children"] || []).each_with_index do |execution_set, set_index|
@@ -15,7 +14,8 @@
       .execution
         {
         .name= execution_set["name"]
-        %ol.steps
+        %ol.steps{:class => "color_#{step['step_id'].size % 5}"}
+          
           - execution_set["steps"].each do |child|
             = haml :_step, :locals => {:step => child}
         }

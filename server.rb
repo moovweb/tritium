@@ -1,6 +1,7 @@
 require 'yajl'
 require 'sinatra/base'
 require 'sinatra/reloader'
+require 'sass'
 
 module Larry
   class Server < Sinatra::Base
@@ -9,6 +10,10 @@ module Larry
     get '/' do
       load_data
       haml :index
+    end
+
+    get '/main.css' do
+      sass :main
     end
     
     def load_data
