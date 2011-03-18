@@ -1,12 +1,21 @@
 
 
-%li
+%li.step
   = step["stub"]
-  - (step["children"] || []).each do |execution_set|
-    %br/
-    {
-    = execution_set["name"]
-    %ul
-      - execution_set["steps"].each do |child|
-        = haml :_step, :locals => {:step => child}
-    }
+  - (step["children"] || []).each_with_index do |execution_set, set_index|
+    - if set_index > 5
+      \.
+    - elsif set_index == 5
+      %br/
+      Executed 
+      = (step["children"] || []).size - 5
+      more times
+      %br/
+    - else
+      .execution
+        {
+        .name= execution_set["name"]
+        %ol.steps
+          - execution_set["steps"].each do |child|
+            = haml :_step, :locals => {:step => child}
+        }
