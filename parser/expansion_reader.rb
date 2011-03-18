@@ -94,6 +94,13 @@ module Tritium::Parser
       end
     end
     
+    def asset(name, type = nil, &block)
+      var("tmp") {
+        set(name)
+        prepend(type.to_s + "_asset_location")
+      }
+    end
+    
     def replace(matcher, value = nil, &block)
       cmd("replace", Regexp.new(matcher)) do
         if value
