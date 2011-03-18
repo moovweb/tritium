@@ -79,7 +79,10 @@ module Tritium::Parser
           end
         end
         attributes.each do |name, val|
-          attribute(name.to_s, val.to_s)
+          if name.is_a? Symbol
+            name = name.to_s
+          end
+          attribute(name, val)
         end
         block.call if block
       end
