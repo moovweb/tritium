@@ -92,9 +92,6 @@ module Tritium::Parser
       move_to("preceding-sibling::#{name}[1]", "top") do
         block.call if block
       end
-      #select("..") {
-        
-      #}
     end
     
     def replace(matcher, value = nil, &block)
