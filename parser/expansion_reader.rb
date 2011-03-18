@@ -85,6 +85,18 @@ module Tritium::Parser
       end
     end
     
+    def wrap(name, attributes = {}, &block)
+      before {
+        insert_tag(name, attributes)
+      }
+      move_to("preceding-sibling::#{name}[1]", "top") do
+        block.call if block
+      end
+      #select("..") {
+        
+      #}
+    end
+    
     def replace(matcher, value = nil, &block)
       cmd("replace", Regexp.new(matcher)) do
         if value
