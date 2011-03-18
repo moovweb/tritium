@@ -37,15 +37,8 @@ module Tritium
           end
         end
   
-        def asset(path, type = "default")
-          if type == "stylesheet"
-            location = "/assets/stylesheets/.css/"
-          elsif type == "image"
-            location = "/assets/images/"
-          else
-            location = "/assets/"
-          end
-          File.join(location, path)
+        def asset(file_name, type = nil)
+          File.join(@env["#{type}_asset_location"], file_name)
         end
 
         def env
