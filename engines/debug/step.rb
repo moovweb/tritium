@@ -25,8 +25,6 @@ module Tritium::Engines
       else
         @sid = [0]
       end
-      
-      
 
       @child_type = eval(instruction.opens)
       @children = []
