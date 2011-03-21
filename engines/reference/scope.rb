@@ -38,10 +38,11 @@ module Tritium
         end
   
         def asset(file_name, type = nil)
-          # AF: HACK: There needs to be a way to specify a dev asset server
-          # and a production asset server. Not a project-specific config.
-          server = "http://localhost:3003"
-          File.join(server, @env["#{type}_asset_location"], file_name)
+          if @env["#{type}_asset_location"][0..6] == "http://"
+            File.join(@env["#{type}_asset_location"], file_name)
+          else
+            File.join(@env["asset_host"], @env["#{type}_asset_location"], file_name)
+          end
         end
 
         def env

@@ -97,13 +97,16 @@ module Tritium::Parser
       end
     end
     
-    def asset(name, type = nil, &block)
+    def asset(name, type, &block)
       var("tmp") {
         set(name)
         prepend(var(type.to_s + "_asset_location"))
-        # AF: HACK: There needs to be a way to specify a dev asset server
-        # and a production asset server. Not a project-specific config.
-        prepend("http://localhost:3003")
+
+        # If we don't start with http, then add on the asset host
+        # Really though, this should be done by the server before we ever get here
+        match(var(type.to_s + "_asset_location"), /^((?!http\:\/\/).)*$/) {
+          prepend(var("asset_host"))
+        }
       }
     end
     
