@@ -12,9 +12,12 @@ module Tritium
         env = options["env"] || options[:env] || {}
         debug = !($TEST || !ENV["TRITIUM_DEBUG"] || !env["content_type"].include?("html"))
         
+        tmp_dir = File.join(@script_path, "../tmp")
+        Dir.mkdir(tmp_dir) unless File.directory?(tmp_dir)
+
         if debug
           # Write out the whole parsed script to the tmp folder for debugging!
-          File.open(File.join(@script_path, "../tmp/script.ts"), "w+") do |f|
+          File.open(File.join(tmp_dir, "script.ts"), "w+") do |f|
             f.write @root_instruction.to_script
           end
         end
@@ -25,7 +28,7 @@ module Tritium
         return @root_step.object if !debug
         
 
-        trace = File.join(@script_path, "../tmp/debug.json")
+        trace = File.join(tmp_dir, "debug.json")
 
         
         f = File.open(trace, "w+")
