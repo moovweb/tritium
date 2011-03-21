@@ -79,10 +79,32 @@ module Tritium::Parser
           end
         end
         attributes.each do |name, val|
-          attribute(name.to_s, val.to_s)
+          if name.is_a? Symbol
+            name = name.to_s
+          end
+          attribute(name, val)
         end
         block.call if block
       end
+    end
+    
+    def wrap(name, attributes = {}, &block)
+      before {
+        insert_tag(name, attributes)
+      }
+      move_to("preceding-sibling::#{name}[1]", "top") do
+        block.call if block
+      end
+    end
+    
+    def asset(name, type = nil, &block)
+      var("tmp") {
+        set(name)
+        prepend(var(type.to_s + "_asset_location"))
+        # AF: HACK: There needs to be a way to specify a dev asset server
+        # and a production asset server. Not a project-specific config.
+        prepend("http://localhost:3003")
+      }
     end
     
     def replace(matcher, value = nil, &block)

@@ -45,9 +45,9 @@ class Tritium::Engines::Debug
 
       # AF: HACK: Set the port properly for development
       if (@object =~ /^https/)
-        replace(/\:3000/, ":3002")
+        @object.gsub(/\:3000/, ":3002")
       elsif (@object =~ /^http\:/)
-        replace(/\:3002/, ":3000")
+        @object.gsub(/\:3002/, ":3000")
       end
     end
   end

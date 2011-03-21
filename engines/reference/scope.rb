@@ -37,17 +37,11 @@ module Tritium
           end
         end
   
-        def asset(path, type = "default")
-          if type == "stylesheet"
-            location = "/stylesheets/.css/"
-          elsif type == "image"
-            location = "/images/"
-          else
-            location = "/"
-          end
-          # TODO: configure the asset prefix somewhere
-          prefix = "http://localhost:3001/assets/"
-          File.join(prefix, location, path)
+        def asset(file_name, type = nil)
+          # AF: HACK: There needs to be a way to specify a dev asset server
+          # and a production asset server. Not a project-specific config.
+          server = "http://localhost:3003"
+          File.join(server, @env["#{type}_asset_location"], file_name)
         end
 
         def env
