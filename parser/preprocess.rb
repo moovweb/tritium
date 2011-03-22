@@ -25,7 +25,7 @@ module Tritium
       end
     
       def self.imports(script, root_path)
-        script.gsub(/^([ ]*)\@import[ ]+([^\n]*)/).each do 
+        script.gsub(/^([ ]*)\@import[ ]+([^\n\s]*)/).each do 
           spacer = $1
           file_name = $2
           (self.run(File.open(File.join(root_path, file_name)).read, root_path, file_name).lines.collect do |line|
