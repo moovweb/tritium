@@ -28,7 +28,8 @@ module Tritium
         script.gsub(/^([ ]*)\@import[ ]+([^\n\s]*)/).each do 
           spacer = $1
           file_name = $2
-          (self.run(File.open(File.join(root_path, file_name)).read, root_path, file_name).lines.collect do |line|
+          new_root_path = File.dirname(File.join(root_path, file_name)) # IF we are passed @import scripts/me.ts, then make sure our new path has /scripts/ on it for successive imports!
+          (self.run(File.open(File.join(root_path, file_name)).read, new_root_path, file_name).lines.collect do |line|
             spacer + line
           end).join("\n")
         end
