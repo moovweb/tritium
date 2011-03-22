@@ -8,7 +8,13 @@ Base: &base
   script:
     opens: Text
     docs: DO NOT USE. Wraps the entire script virtually!
-
+  fetch:
+    opens: Text
+    docs: This is how you select an element to pass it to a function.
+    arguments:
+      -
+        name: XPath Selector
+        docs:
 
 
 Node:
@@ -37,13 +43,6 @@ Node:
         doc: You can set the attribute value here if you want. Very optional!
         default: ""
         expansion: 'value'
-  fetch:
-    opens: Text
-    docs: This is how you select an element to pass it to a function.
-    arguments:
-      -
-        name: XPath Selector
-        docs: 
   move_to: 
     opens: Node
     doc: Move the current node to some other location as indicated by the first argument
