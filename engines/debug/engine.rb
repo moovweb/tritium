@@ -11,11 +11,11 @@ module Tritium
       def run(xhtml_file, options = {})
         env = options["env"] || options[:env] || {}
         debug = !($TEST || !ENV["TRITIUM_DEBUG"] || !env["content_type"].include?("html"))
-        
-        tmp_dir = File.join(@script_path, "../tmp")
-        Dir.mkdir(tmp_dir) unless File.directory?(tmp_dir)
 
         if debug
+          tmp_dir = File.join(@script_path, "../tmp")
+          Dir.mkdir(tmp_dir) unless File.directory?(tmp_dir)
+          
           # Write out the whole parsed script to the tmp folder for debugging!
           File.open(File.join(tmp_dir, "script.ts"), "w+") do |f|
             f.write @root_instruction.to_script

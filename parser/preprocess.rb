@@ -21,14 +21,15 @@ module Tritium
       end
     
       def self.select_expansion(script)
-        script.gsub(/^([^@]+)\$\(/, '\1select(')
+        script.gsub(/^([^@#]*)\$\(/, '\1select(')
       end
     
       def self.imports(script, root_path)
         script.gsub(/^([ ]*)\@import[ ]+([^\n\s]*)/).each do 
           spacer = $1
           file_name = $2
-          (self.run(File.open(File.join(root_path, file_name)).read, root_path, file_name).lines.collect do |line|
+          new_root_path = File.dirname(File.join(root_path, file_name)) # IF we are passed @import scripts/me.ts, then make sure our new path has /scripts/ on it for successive imports!
+          (self.run(File.open(File.join(root_path, file_name)).read, new_root_path, file_name).lines.collect do |line|
             spacer + line
           end).join("\n")
         end
@@ -42,7 +43,8 @@ module Tritium
       def self.pre_debug(script, name = "main")
         count = 0
         (script.split("\n").collect do |line|
-          "@_line_number = #{count += 1}; @_script = '#{name}'; @_line = #{line.gsub('$', '\\$').inspect}\n " + line
+          escaped_line = line.inspect.gsub('$', '\\$')
+          "@_line_number = #{count += 1}; @_script = '#{name}'; @_line = #{escaped_line}\n " + line
         end).join("\n")
       end
 
