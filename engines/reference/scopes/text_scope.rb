@@ -59,7 +59,7 @@ module Tritium::Engines::Reference::Scope
     end
 
     def rewrite(what)
-      replace(env["rewrite_#{what}_matcher"], env["rewrite_#{what}_to"] + env["proxy_domain"])
+      replace(env["rewrite_#{what}_matcher"], env["rewrite_#{what}_to"])
       
       # AF: HACK: Set the port properly for development
       if (@text =~ /^https/)
