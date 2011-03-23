@@ -28,7 +28,7 @@ module Tritium::Engines
 
       @child_type = eval(instruction.opens)
       @children = []
-      @debug = instruction.to_hash.merge({:step_id => @sid, :objects => [], :children => [], :log => []})
+      @debug = instruction.to_hash.merge({:step_id => @sid.join(","), :objects => [], :children => [], :log => []})
     end
     
     def execute(obj, env = {})
