@@ -61,11 +61,6 @@ module Tritium::Parser
       end
     end
     
-    def move_to(selector, position_val = 'bottom', &block)
-      eval("var('position', #{position_val.inspect})")
-      cmd('move_to', *[selector], &block)
-    end
-    
     def insert_tag(tag_name, contents = nil, attributes = {}, &block)
       if contents.is_a? Hash
         attributes = contents

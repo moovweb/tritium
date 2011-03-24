@@ -42,11 +42,11 @@ class Tritium::Engines::Debug
       @object.attributes[name] = execute_children_on(attribute_node)
     end
     
-    def move_to(selector)
+    def move_to(selector, position = "bottom")
       target_node = search(selector).first
       return nil if target_node.nil?
 
-      position_node(target_node, @object)
+      position_node(target_node, @object, position)
 
       execute_children_on(target_node)
       @object
