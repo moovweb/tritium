@@ -10,6 +10,9 @@ class Tritium::Engines::Debug
 
     def value
       @object.value = execute_children_on(@object.value)
+      if @object.value == ""
+        @object.remove
+      end
     end
   end
 end
