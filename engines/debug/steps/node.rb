@@ -43,30 +43,33 @@ class Tritium::Engines::Debug
     end
 
     def move_to(selector, position = "bottom")
-      move(@object, selector, position, false)
+      to = @object.xpath(selector).first
+      return if to.nil?
+      position_node(to, @object, position)
+      execute_children_on(to)
     end
     
     def move_here(selector, position = "bottom")
       move(selector, @object, position)
     end
     
-    def move(what, to, position, use_what = true)
+    def move(what, to, position)
       if what.is_a?(String)
-        log("Searching for #{what.inspect}")
-        what = @object.xpath(what).first
+        what = node.xpath(what)
       end
 
       if to.is_a?(String)
-        log("Searching for #{to.inspect}")
-        to = @object.xpath(to).first
+        to = node.xpath(to)
       end
-      
-      if what && to
-        position_node(to, what, position)
-        execute_children_on(use_what ? what : to)
-        what
-      else
-        log("This action failed because of a bad selector!")
+
+      to = [to].flatten
+      what = [what].flatten
+
+      to.each do |to_target|
+        what.each do |what_target|
+          position_node(to_target, what_target, position)
+          execute_children_on(what_target)
+        end
       end
     end
     
