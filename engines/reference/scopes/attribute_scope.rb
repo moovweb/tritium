@@ -26,6 +26,9 @@ module Tritium::Engines::Reference::Scope
       end
       if block
         @attribute.value = open_text_scope_with(@attribute.value, &block)
+        if @attribute.value == ""
+          @attribute.remove
+        end
       end
     end
   end
