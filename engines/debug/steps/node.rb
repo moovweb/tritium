@@ -52,17 +52,22 @@ class Tritium::Engines::Debug
     
     def move(what, to, position, use_what = true)
       if what.is_a?(String)
+        log("Searching for #{what.inspect}")
         what = @object.xpath(what).first
       end
-      
+
       if to.is_a?(String)
+        log("Searching for #{to.inspect}")
         to = @object.xpath(to).first
       end
       
-      position_node(to, what, position)
-      
-      execute_children_on(use_what ? what : to)
-      what
+      if what && to
+        position_node(to, what, position)
+        execute_children_on(use_what ? what : to)
+        what
+      else
+        log("This action failed because of a bad selector!")
+      end
     end
     
     def copy_to(selector, position = "bottom")
