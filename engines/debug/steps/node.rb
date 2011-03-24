@@ -41,15 +41,36 @@ class Tritium::Engines::Debug
       
       @object.attributes[name] = execute_children_on(attribute_node)
     end
-    
+
     def move_to(selector, position = "bottom")
-      target_node = search(selector).first
-      return nil if target_node.nil?
-
-      position_node(target_node, @object, position)
-
-      execute_children_on(target_node)
-      @object
+      move(@object, selector, position, false)
+    end
+    
+    def move_here(selector, position = "bottom")
+      move(selector, @object, position)
+    end
+    
+    def move(what, to, position, use_what = true)
+      if what.is_a?(String)
+        what = @object.xpath(what).first
+      end
+      
+      if to.is_a?(String)
+        to = @object.xpath(to).first
+      end
+      
+      position_node(to, what, position)
+      
+      execute_children_on(use_what ? what : to)
+      what
+    end
+    
+    def copy_to(selector, position = "bottom")
+      move(@object.dup, selector, position)
+    end
+    
+    def copy_here(selector, position = "bottom")
+      move(@object.xpath(selector).first.dup, @object, position)
     end
     
     def name
