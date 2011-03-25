@@ -20,7 +20,7 @@ module Tritium
       end
       
       def self.map
-        @@map ||= YAML.load(File.open(File.dirname(__FILE__) + "/mappings.yml").read)
+        @@map ||= YAML.load(File.open(File.dirname(__FILE__) + "/../spec.yml").read)
       end
       def map; self.class.map; end
       def scope_map; @scope_map ||= map[scope]; end
