@@ -1,4 +1,21 @@
+Debug: &debug
+  log:
+    opens: Text
+    doc: Writes out a string to the console and debug log
+    arguments:
+      - 
+        name: Log message
+        doc: Debug Line! Just type something!
+  debug:
+    opens: Text
+    docs: Write down everything! This request will be logged if you call this
+    arguments:
+      -
+        name: Debug ID
+        doc: Whatever ID you give it, that will be how the project is written down in the debug database!
+
 Base: &base
+  <<: *debug
   var:
     opens: Text
   match:
@@ -15,7 +32,6 @@ Base: &base
       -
         name: XPath Selector
         docs:
-
 
 Node:
   <<: *base
@@ -150,10 +166,6 @@ Positional:
       -
         name: HTML
         required: true
-
-
-
-
 
 
 Attribute:
