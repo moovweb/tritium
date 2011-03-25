@@ -38,7 +38,7 @@ module Tritium
         end
   
         def asset(file_name, type = nil)
-          if @env["#{type}_asset_location"][0..6] == "http://"
+          if (@env["#{type}_asset_location"][0..6] == "http://") || (@env["#{type}_asset_location"][0..1] == "//")
             File.join(@env["#{type}_asset_location"], file_name)
           else
             File.join(@env["asset_host"], @env["#{type}_asset_location"], file_name)
