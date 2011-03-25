@@ -75,7 +75,7 @@ module Tritium::Engines
       obj
     end
     
-    def log(message)
+    def debug_log(message)
       @debug[:log] << message.to_s
     end
     
@@ -91,17 +91,17 @@ module Tritium::Engines
    
     def var(named)
       @env[named] ||= ""
-      log("Looking up var #{named} and found #{@env[named].inspect}")
+      debug_log("Looking up var #{named} and found #{@env[named].inspect}")
       @env[named] = execute_children_on(@env[named])
     end
     
     def match(value, matcher)
-      log "matching #{value} against #{matcher}"
+      debug_log "matching #{value} against #{matcher}"
       if(value =~ Regexp.new(matcher)) 
-        log "Match successful!"
+        debug_log "Match successful!"
         @object = execute_children_on(object)
       else
-        log "Match failed."
+        debug_log "Match failed."
       end
     end
     

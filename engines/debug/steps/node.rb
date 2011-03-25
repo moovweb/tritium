@@ -8,27 +8,27 @@ class Tritium::Engines::Debug
       start = Time.now
       child_nodeset = search(selector)
       
-      log("Searching #{object.path} with #{selector} and found #{child_nodeset.size} matches")
+      debug_log("Searching #{object.path} with #{selector} and found #{child_nodeset.size} matches")
       
       @debug[:search_time_cs] = ((Time.now - start) * 10000).to_i
       
       child_nodeset.each_with_index do |child_node, index|
-        log("Entering #{selector} match ##{index + 1} at #{child_node.path}")
+        debug_log("Entering #{selector} match ##{index + 1} at #{child_node.path}")
         @name = child_node.path
         execute_children_on(child_node)
-        log("Finishing #{selector} match ##{index + 1} at #{child_node.path}")
+        debug_log("Finishing #{selector} match ##{index + 1} at #{child_node.path}")
       end
       
-      log("Closing #{selector}")
+      debug_log("Closing #{selector}")
     end
     
     def remove
-      log("Removing #{object.path}")
+      debug_log("Removing #{object.path}")
       object.remove
     end
     
     def html
-      log("Opening the raw text HTML of #{@object.path}")
+      debug_log("Opening the raw text HTML of #{@object.path}")
       @object.inner_html = execute_children_on(@object.inner_html)
     end
     
