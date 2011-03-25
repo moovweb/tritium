@@ -8,6 +8,7 @@ module Tritium::Engines
     attr :debug
     attr :object
     attr :sid
+    attr :logger, true
     
     require_relative 'steps/node'
     require_relative 'steps/attribute'
@@ -16,6 +17,7 @@ module Tritium::Engines
     
     def initialize(instruction, parent = nil)
       @instruction = instruction
+      @logger ||= parent.logger if parent
       
       @parent = parent
 
@@ -118,6 +120,11 @@ module Tritium::Engines
       else
         @parent.node
       end
+    end
+    
+    def log(message)
+      message = execute_children_on(message)
+      @logger.info(message)
     end
     
     private

@@ -4,10 +4,13 @@ module Tritium
   module Engines
     module Reference::Scope
       class Base
+        attr :logger, true
+
         def initialize(thing, root, parent)
           @object ||= thing
           @root ||= root
           @parent ||= parent
+          @logger ||= root.logger if root
           @env = (@parent ? @parent.env : {})
         end
 
@@ -51,6 +54,13 @@ module Tritium
 
         def debug
           puts @object.inspect
+        end
+        
+        def log(message, &block)
+          if block
+            message = open_text_scope_with(message, &block)
+          end
+          @root.logger.info(message)
         end
 
       protected

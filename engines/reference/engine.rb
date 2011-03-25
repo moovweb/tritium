@@ -11,6 +11,7 @@ module Tritium
         env = options["env"] || options[:env] || {}
 
         root_scope = Scope::Text.new(xhtml_file)
+        root_scope.logger = @logger
         root_scope.env.merge! env
         root_scope.instance_eval(processed_script)
 

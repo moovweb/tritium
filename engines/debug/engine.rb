@@ -23,6 +23,7 @@ module Tritium
         end
         
         @root_step = Step::Text.new(@root_instruction)
+        @root_step.logger = @logger
         @root_step.execute(xhtml_file, env)
 
         return @root_step.object if !debug
