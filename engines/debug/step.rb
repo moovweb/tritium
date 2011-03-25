@@ -34,7 +34,7 @@ module Tritium::Engines
     def execute(obj, env = {})
       @object = obj
       @env = env
-      @debug[:env] = @env.clone
+      #@debug[:env] = @env.clone
       @child_time = 0
       start = Time.now
 
