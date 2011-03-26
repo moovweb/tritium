@@ -17,7 +17,5 @@ require 'bundler'
 Bundler.setup
 Bundler.require
 
-# ============= SIMPLE PROXY SETUP ===========
-
 require ::File.dirname(__FILE__) + '/server'
 run Larry::Server
