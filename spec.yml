@@ -20,6 +20,14 @@ Base: &base
   var:
     opens: Text
     alias: $
+    arguments:
+      -
+        name: Name
+        doc: The name of the var. Something like $name or var('name')
+      -
+        name: Value
+        doc: The value you want to set the var to. Same as var('name') { set('value') }
+        expansion: true
   match:
     doc: 
   asset:
@@ -40,7 +48,7 @@ Base: &base
     doc: This is how you select an element to pass it to a function.
     arguments:
       -
-        name: XPath Selector
+        name: Selector
         doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
 
 Node:
@@ -51,33 +59,38 @@ Node:
     alias: $()
     arguments:
       - 
-        name: XPath Selector
+        name: Selector
         doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
-        required: true
+        
   html:
     opens: Text
     doc: Opens up the entire innerHTML to text modification
+    arguments:
+      -
+        name: HTML
+        doc: You can optionally just pass in HTML to set the innerHTML. Remember, this is the same as html { set('value') } and will clobber the internals
+        
+        expansion: true
   attribute:
     opens: Attribute
     doc: Creates or opens the attribute named
     arguments:
       -
-        name: Attribute name
+        name: Name
         doc: The name of the attribute you are opening
-        default: ""
       -
         name: Value
         doc: You can set the attribute value here if you want. Very optional!
         default: ""
-        expansion: 'value'
+        expansion: true
+        
   move_here: 
     opens: Node
     doc: Move the indicated node to the current node at the specified position
     arguments:
       -
-        name: XPath Selector
+        name: Selector
         doc: The node we want to move here
-        required: true
       -
         name: Position
         doc: Can be "bottom", "top", "after", or "before"
@@ -87,9 +100,8 @@ Node:
     doc: Move the current node to some other location as indicated by the first argument. Yields to the node represented by the selector! (Not the node you are on!)
     arguments:
       -
-        name: XPath Selector
+        name: Selector
         doc: Where we are moving the node to
-        required: true
       -
         name: Position
         doc: Can be "bottom", "top", "after", or "before"
@@ -99,9 +111,8 @@ Node:
     doc: Copy the indicated node(set) to the current Node, with the indicated position.
     arguments:
       -
-        name: XPath Selector
+        name: Selector
         doc: The node we are copying
-        required: true
       -
         name: Position
         doc: Can be "bottom", "top", "after", or "before"
@@ -111,9 +122,8 @@ Node:
     doc: Copy the current node to the indicated selector, at the indicated position
     arguments:
       -
-        name: XPath Selector
+        name: Selector
         doc: The node we are copying ourselves to
-        required: true
       -
         name: Position
         doc: Can be "bottom", "top", "after", or "before"
@@ -123,21 +133,22 @@ Node:
     doc: Rename the currently select Node's name. Aka, change a "div" to a "span"
     arguments:
       - 
-        name: The new name
+        name: Name
         doc: You can just yield to the block if you want to dynamically set the name. Otherwise, just pass it as the argument
+        expansion: true
+        
   remove:
     doc: Delete the current node
   wrap:
     opens: Node
-    doc: Wrap the currently selected node with a tag and then yield to that new wrapper
+    doc: Wrap the currently selected node with a tag and then yield to that new wrapper. Obviously, the contents is the current node.
     arguments:
       -
-        name: The name of the wrapping tag
+        name: Tag Name
       -
         name: Attributes
         type: Hash
         doc: The tag's attributes
-        
   position:
     opens: Positional
     hide: true
@@ -167,17 +178,18 @@ Positional:
         name: Contents
         default: ""
         doc: Some text representing the innerHTML of the tag
+        expansion: true
       -
         name: Attributes
         type: Hash
         doc: The tag's attributes
+        expansion: true
   insert:
     opens: Node
     doc: Inject some plain HTML into the document at the prescribed location
     arguments:
       -
         name: HTML
-        required: true
 
 
 Attribute:
@@ -189,19 +201,17 @@ Attribute:
     doc: Allow us to edit the value (key="value") part of the attribute
     arguments:
       -
-        name: New Value
+        name: Value
         doc: You can instantly pass in a variable to set the value of the attribute
+        expansion: true
   name:
     opens: Text
     doc: Allow us to edit the key (key="value") part of the attribute
     arguments:
       -
-        name: New Name
+        name: Name
         doc: You can instantly pass in a variable to set the name of the attribute
-
-
-
-
+        expansion: true
 
 Text:
   <<: *base
@@ -216,18 +226,19 @@ Text:
     doc: Replace the entire current text with what you pass in
     arguments:
       -
-        name: String to replace
-        required: true
+        name: Value
+        doc: The string you want to replace the whole thing with!
+        
   replace:
-    doc: Replace all instances of the first argument with the second argument
+    doc: Replace all instances of the first argument with the second argument. This yields to a Text scope that allows you to set the Replacement string. Very powerful stuff. Look at the examples.
     opens: Text
     arguments:
       -
-        name: String or Regex
-        required: true
+        name: Regex
       -
         name: Replacement String
-        required: true
+        doc: Should be in the format of "\\1.name\\2" where \\1 and \\2 are the groups from the Regex.
+        expansion: true
   doc:
     doc: Parses the HTML/XML/etc and passes you back a Node scope
     opens: Node
@@ -235,18 +246,18 @@ Text:
       -
         name: Document Type
         doc: "Can be: xml, html, xhtml"
-        required: true
+        
   prepend:
     doc: Prepend the string to the front of the text area
     arguments: 
       -
         name: Text to prepend
-        required: true
+        
   append:
     doc: Append the string to the front of the text area
     arguments: 
       -
         name: Text to append
-        required: true
+        
   remove:
     doc: Set the whole thing to ""
