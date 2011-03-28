@@ -9,6 +9,7 @@ Debug: &debug
   debug:
     opens: Text
     doc: Write down everything! This request will be logged if you call this
+    hide: true
     arguments:
       -
         name: Debug ID
@@ -18,6 +19,7 @@ Base: &base
   <<: *debug
   var:
     opens: Text
+    alias: $
   match:
     doc: 
   asset:
@@ -38,6 +40,7 @@ Node:
   select: 
     opens: Node
     doc: Search the tree and select all matching nodes
+    alias: $()
     arguments:
       - 
         name: XPath Selector
@@ -129,6 +132,7 @@ Node:
         
   position:
     opens: Positional
+    hide: true
     doc: DO NOT USE! Low-level way to open a positional block. Doesn't actually set the var('position'). Use the bottom, top, after, and before methods!
   bottom:
     opens: Positional
