@@ -14,6 +14,7 @@ module Tritium
       attr :script_name
       attr :line
       attr :processed_line
+      attr :iid
       
       def self.root
         Instruction.new("script", :scope => "Text")
@@ -34,6 +35,12 @@ module Tritium
         @root   = options[:root]   || options["root"]  || self
         @parent = options[:parent] || options["parent"]
         @scope  = options[:scope]  || options["scope"] || information["opens"] || @parent.scope
+        
+        if @parent
+          @iid = @parent.iid + "_#{@parent.children}"
+        else
+          @iid = "0"
+        end
 
         # Default Setup
         @children = []
