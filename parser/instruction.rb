@@ -37,7 +37,7 @@ module Tritium
         @scope  = options[:scope]  || options["scope"] || information["opens"] || @parent.scope
         
         if @parent
-          @iid = @parent.iid + "_#{@parent.children}"
+          @iid = @parent.iid + "_#{@parent.children.size}"
         else
           @iid = "0"
         end
@@ -93,6 +93,7 @@ module Tritium
           :processed_line => @processed_line,
           :args => @args,
           :scope => @scope,
+          :name => @name,
           :stub => stub }
       end
       
