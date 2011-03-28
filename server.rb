@@ -17,7 +17,7 @@ module Larry
     end
     
     def load_data
-      @data = Yajl::Parser.parse(File.open($PROJECT_PATH + "/tmp/debug.json"))
+      @data = Yajl::Parser.parse(File.read($PROJECT_PATH + "/tmp/debug.json"))
     end
   end
 end
