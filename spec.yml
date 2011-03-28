@@ -24,6 +24,14 @@ Base: &base
     doc: 
   asset:
     opens: Text
+    doc: Use this to call any files kept in the project's asset folder.
+    arguments:
+      -
+        name: Filename
+        doc: The name of the file (and maybe its subfolder). For instance, "my.css"
+      -
+        name: Asset Type
+        doc: The asset type. This is usually something like "stylesheet", "javascript", or "image"
   script:
     opens: Text
     doc: DO NOT USE. Wraps the entire script virtually!
@@ -33,7 +41,7 @@ Base: &base
     arguments:
       -
         name: XPath Selector
-        doc:
+        doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
 
 Node:
   <<: *base
