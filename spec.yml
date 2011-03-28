@@ -8,7 +8,7 @@ Debug: &debug
         doc: Debug Line! Just type something!
   debug:
     opens: Text
-    docs: Write down everything! This request will be logged if you call this
+    doc: Write down everything! This request will be logged if you call this
     arguments:
       -
         name: Debug ID
@@ -24,14 +24,14 @@ Base: &base
     opens: Text
   script:
     opens: Text
-    docs: DO NOT USE. Wraps the entire script virtually!
+    doc: DO NOT USE. Wraps the entire script virtually!
   fetch:
     opens: Text
-    docs: This is how you select an element to pass it to a function.
+    doc: This is how you select an element to pass it to a function.
     arguments:
       -
         name: XPath Selector
-        docs:
+        doc:
 
 Node:
   <<: *base
@@ -45,10 +45,10 @@ Node:
         required: true
   html:
     opens: Text
-    docs: Opens up the entire innerHTML to text modification
+    doc: Opens up the entire innerHTML to text modification
   attribute:
     opens: Attribute
-    docs: Creates or opens the attribute named
+    doc: Creates or opens the attribute named
     arguments:
       -
         name: Attribute name
@@ -85,7 +85,7 @@ Node:
         default: "bottom"
   copy_here:
     opens: Node
-    docs: Copy the indicated node(set) to the current Node, with the indicated position.
+    doc: Copy the indicated node(set) to the current Node, with the indicated position.
     arguments:
       -
         name: XPath Selector
@@ -97,7 +97,7 @@ Node:
         default: "bottom"
   copy_to:
     opens: Node
-    docs: Copy the current node to the indicated selector, at the indicated position
+    doc: Copy the current node to the indicated selector, at the indicated position
     arguments:
       -
         name: XPath Selector
@@ -194,20 +194,20 @@ Attribute:
 Text:
   <<: *base
   rewrite:
-    docs: Filters the current text string through the named rewriter.
+    doc: Filters the current text string through the named rewriter.
     arguments:
       -
         name: Key for the rewriter
         default: link
         require: true
   set:
-    docs: Replace the entire current text with what you pass in
+    doc: Replace the entire current text with what you pass in
     arguments:
       -
         name: String to replace
         required: true
   replace:
-    docs: Replace all instances of the first argument with the second argument
+    doc: Replace all instances of the first argument with the second argument
     opens: Text
     arguments:
       -
@@ -217,7 +217,7 @@ Text:
         name: Replacement String
         required: true
   doc:
-    docs: Parses the HTML/XML/etc and passes you back a Node scope
+    doc: Parses the HTML/XML/etc and passes you back a Node scope
     opens: Node
     arguments:
       -
@@ -225,16 +225,16 @@ Text:
         doc: "Can be: xml, html, xhtml"
         required: true
   prepend:
-    docs: Prepend the string to the front of the text area
+    doc: Prepend the string to the front of the text area
     arguments: 
       -
         name: Text to prepend
         required: true
   append:
-    docs: Append the string to the front of the text area
+    doc: Append the string to the front of the text area
     arguments: 
       -
         name: Text to append
         required: true
   remove:
-    docs: Set the whole thing to ""
+    doc: Set the whole thing to ""
