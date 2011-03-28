@@ -1,10 +1,12 @@
 require_relative '../../parser/expansion_reader'
+
 require 'yajl'
 
 module Tritium
   module Engines
     require_relative '../base'
     class Debug < Engines::Base
+      require_relative 'database'
       require_relative 'step'
       attr :root_step
 
@@ -16,10 +18,9 @@ module Tritium
           tmp_dir = File.join(@script_path, "../tmp")
           Dir.mkdir(tmp_dir) unless File.directory?(tmp_dir)
           
-          # Write out the whole parsed script to the tmp folder for debugging!
-          File.open(File.join(tmp_dir, "script.ts"), "w+") do |f|
-            f.write @root_instruction.to_script
-          end
+          db = Database.new(File.join(tmp_dir, "debug.sqlite"))
+  
+          db.insert_instruction(@root_instruction)
         end
         
         @root_step = Step::Text.new(@root_instruction)
@@ -28,14 +29,7 @@ module Tritium
 
         return @root_step.object if !debug
         
-
-        trace = File.join(tmp_dir, "debug.json")
-
-        
-        f = File.open(trace, "w+")
-        
-        Yajl::Encoder.encode(@root_step.debug, f, :pretty => true, :indent => '  ')
-        f.close
+        db.insert_step(@root_step)
         
         @root_step.object
       end
