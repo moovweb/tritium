@@ -1,9 +1,2 @@
-!!!
-%html
-  %head
-    %link{type: "text/css", rel: "stylesheet", href: "/main.css"}/
-    %script{src: "http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"}
-    %script{src: "/application.js", type: "text/javascript"}
-  %body
-    #step_view
-      %ol.steps= haml :_step, :locals => { :step => @data }
+#step_view
+  %ol.steps= haml :_step, :locals => { :step => @data }
