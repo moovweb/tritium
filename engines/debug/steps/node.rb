@@ -13,13 +13,10 @@ class Tritium::Engines::Debug
       @debug[:search_time_cs] = ((Time.now - start) * 10000).to_i
       
       child_nodeset.each_with_index do |child_node, index|
-        debug_log("Entering #{selector} match ##{index + 1} at #{child_node.path}")
+        debug_log("Match ##{index + 1} at #{child_node.path}")
         @name = child_node.path
         execute_children_on(child_node)
-        debug_log("Finishing #{selector} match ##{index + 1} at #{child_node.path}")
       end
-      
-      debug_log("Closing #{selector}")
     end
     
     def remove
