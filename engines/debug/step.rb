@@ -30,13 +30,13 @@ module Tritium::Engines
 
       @child_type = eval(instruction.opens)
       @children = []
-      @debug = instruction.to_hash.merge({:step_id => @sid.join("_"), :objects => [], :children => [], :log => []})
+      @debug = instruction.to_hash.merge({:step_id => @sid.join("_"), :objects => [], :log => []})
     end
     
     def execute(obj, env = {})
       @object = obj
       @env = env
-      #@debug[:env] = @env.clone
+      @debug[:env] = @env.clone
       @child_time = 0
       start = Time.now
 
@@ -58,21 +58,18 @@ module Tritium::Engines
       (@debug[:args] = args) if args.size > 0
       @debug[:child_time_cs] = @child_time
       @debug[:time_cs] = @debug[:total_time_cs] - @child_time
-      @debug.delete(:children) if @debug[:children].size == 0
+      #@debug.delete(:children) if @debug[:children].size == 0
       return @object
     end
 
     def execute_children_on(obj)
       return obj if (instruction.children.size == 0)
       timer = Time.now
-      children_debug = []
-      children << instruction.children.collect do |child|
+      @children << instruction.children.collect do |child|
         step = @child_type.new(child, self)
         obj = step.execute(obj, @env)
-        children_debug << step.debug
         step
       end
-      @debug[:children] << {:steps => children_debug, :name => @name}
       @child_time += ((Time.now - timer) * 10000).to_i
       obj
     end
@@ -98,7 +95,7 @@ module Tritium::Engines
     end
     
     def match(value, matcher)
-      debug_log "matching #{value} against #{matcher}"
+      debug_log "matching #{value.inspect} against #{matcher.inspect}"
       if(value =~ Regexp.new(matcher)) 
         debug_log "Match successful!"
         @object = execute_children_on(object)
