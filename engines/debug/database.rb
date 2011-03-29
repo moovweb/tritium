@@ -30,10 +30,17 @@ module Tritium
             String :stub
           end
           
+          @db.create_table :debug_sessions do
+            primary_key :id
+            String :name
+          end
+          
           @db.create_table :steps do
             primary_key :id
             String :sid
             index :sid
+            Integer :debug_session_id
+            index :debug_session_id
             Integer :instruction_id
             index :instruction_id
             Integer :parent_id
@@ -68,6 +75,22 @@ module Tritium
           end
         end
         
+        def process_debug(debug_list)
+          debug_list.each do |name, step|
+            insert_debug_session(name, step)
+          end
+        end
+        
+        def insert_debug_session(name, steps)
+          debug_session_id = @db[:debug_sessions].insert(:name => name)
+          root_ids = []
+          steps.each do |step|
+            root_ids << insert_step(step)
+          end
+          @db[:steps].filter(:id => root_ids).update(:debug_session_id => debug_session_id)
+          debug_session_id
+        end
+        
         def insert_step(step, parent_id = nil)
           data = {}
           data[:sid] = step.debug[:step_id]
@@ -83,6 +106,7 @@ module Tritium
               insert_step(child, id)
             end
           end
+          id
         end
       end
     end

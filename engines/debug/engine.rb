@@ -14,22 +14,21 @@ module Tritium
         env = options["env"] || options[:env] || {}
         debug = !($TEST || !ENV["TRITIUM_DEBUG"] || !env["content_type"].include?("html"))
 
-        if debug
-          tmp_dir = File.join(@script_path, "../tmp")
-          Dir.mkdir(tmp_dir) unless File.directory?(tmp_dir)
-          
-          db = Database.new(File.join(tmp_dir, "debug.sqlite"))
-  
-          db.insert_instruction(@root_instruction)
-        end
-        
         @root_step = Step::Text.new(@root_instruction)
         @root_step.logger = @logger
-        @root_step.execute(xhtml_file, env)
+        global_debug = {}
+        @root_step.execute(xhtml_file, env, global_debug)
 
-        return @root_step.object if !debug
+        return @root_step.object if !debug || !global_debug.any?
         
-        db.insert_step(@root_step)
+        tmp_dir = File.join(@script_path, "../tmp")
+        Dir.mkdir(tmp_dir) unless File.directory?(tmp_dir)
+        
+        db = Database.new(File.join(tmp_dir, "debug.sqlite"))
+
+        db.insert_instruction(@root_instruction)
+        
+        db.process_debug(global_debug)
         
         @root_step.object
       end

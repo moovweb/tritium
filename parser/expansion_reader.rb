@@ -105,6 +105,13 @@ module Tritium::Parser
       }
     end
     
+    def debug(name = "untitled", &block)
+      var("debug_depth", @stack.size + 1)
+      var("debug", name)
+      block.call if block
+      var("debug", "")
+    end
+    
     def replace(matcher, value = nil, &block)
       cmd("replace", Regexp.new(matcher)) do
         if value

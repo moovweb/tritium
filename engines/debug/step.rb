@@ -30,15 +30,19 @@ module Tritium::Engines
 
       @child_type = eval(instruction.opens)
       @children = []
-      @debug = instruction.to_hash.merge({:step_id => @sid.join("_"), :objects => [], :log => []})
+      @debug = instruction.to_hash.merge({:step_id => @sid.join("_"), :log => []})
     end
     
-    def execute(obj, env = {})
+    def execute(obj, env = {}, global_debug = {})
       @object = obj
       @env = env
-      @debug[:env] = @env.clone
-      @child_time = 0
-      start = Time.now
+      @global_debug = global_debug
+      
+      if debug?
+        @debug[:env] = @env.clone
+        @child_time = 0
+        start = Time.now
+      end
 
       args = (instruction.args || []).collect do |arg|
         if arg.is_a?(Tritium::Parser::Instruction)
@@ -53,12 +57,22 @@ module Tritium::Engines
 
       self.send(instruction.name, *(args))
 
-      @debug[:total_time_cs] = ((Time.now - start) * 10000).to_i
+      if debug?
+        puts "We are debugging #{@env['debug'].inspect}, baby! #{@sid.size} depth = #{@env["debug_depth"].inspect}"
+        @debug[:total_time_cs] = ((Time.now - start) * 10000).to_i
 
-      (@debug[:args] = args) if args.size > 0
-      @debug[:child_time_cs] = @child_time
-      @debug[:time_cs] = @debug[:total_time_cs] - @child_time
-      #@debug.delete(:children) if @debug[:children].size == 0
+        (@debug[:args] = args) if args.size > 0
+        @debug[:child_time_cs] = @child_time
+        @debug[:time_cs] = @debug[:total_time_cs] - @child_time
+        
+        @debug[:object] = @object
+        
+        if (@env["debug_depth"].to_i == @sid.size) && @env["debug"] != ""
+          global_debug[@env["debug"]] ||= []
+          global_debug[@env["debug"]] << self
+        end
+      end
+
       return @object
     end
 
@@ -67,19 +81,27 @@ module Tritium::Engines
       timer = Time.now
       @children << instruction.children.collect do |child|
         step = @child_type.new(child, self)
-        obj = step.execute(obj, @env)
+        obj = step.execute(obj, @env, @global_debug)
         step
       end
-      @child_time += ((Time.now - timer) * 10000).to_i
+      if @child_time
+        @child_time += ((Time.now - timer) * 10000).to_i
+      end
       obj
     end
     
-    def debug_log(message)
-      @debug[:log] << message.to_s
+    def debug?
+      if @run_debug.nil?
+        @run_debug = ((@env["debug"] != nil) && (@env["debug"] != ""))
+      else
+        @run_debug
+      end
     end
     
-    def mark!(obj = nil)
-      @debug[:objects] << (obj || @object)
+    def debug_log(message)
+      if debug?
+        @debug[:log] << message.to_s
+      end
     end
     
    # Actual Tritium methods
