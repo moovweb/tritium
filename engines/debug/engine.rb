@@ -21,6 +21,8 @@ module Tritium
 
         return @root_step.object if !debug || !global_debug.any?
         
+        puts "DEBUG START!"
+        
         tmp_dir = File.join(@script_path, "../tmp")
         Dir.mkdir(tmp_dir) unless File.directory?(tmp_dir)
         
@@ -29,6 +31,8 @@ module Tritium
         db.insert_instruction(@root_instruction)
         
         db.process_debug(global_debug)
+        
+        puts "DEBUG FINISHED!"
         
         @root_step.object
       end

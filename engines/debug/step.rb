@@ -58,7 +58,6 @@ module Tritium::Engines
       self.send(instruction.name, *(args))
 
       if debug?
-        puts "We are debugging #{@env['debug'].inspect}, baby! #{@sid.size} depth = #{@env["debug_depth"].inspect}"
         @debug[:total_time_cs] = ((Time.now - start) * 10000).to_i
 
         (@debug[:args] = args) if args.size > 0
