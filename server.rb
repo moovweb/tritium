@@ -6,6 +6,7 @@ require 'sass'
 
 DB = Sequel.sqlite(File.join(ENV["PROJECT_PATH"], "tmp/debug.sqlite"))
 
+require_relative 'models/debug_session'
 require_relative 'models/instruction'
 require_relative 'models/step'
 
@@ -32,6 +33,23 @@ module Larry
       data = ins.values
       data[:children] = ins.children.collect &:id
       data.to_json
+    end
+    
+    get '/sessions' do
+      if DebugSession.count > 0
+        redirect '/sessions/' + DebugSession.first.id.to_s
+      end
+      haml :no_session
+    end
+    
+    get '/sessions/:id' do
+      @session = DebugSession.filter(:id => params[:id]).first
+      if @session.nil?
+        redirect '/sessions'
+      else
+        @steps = @session.steps
+        haml :index
+      end
     end
     
     get '/instructions' do
