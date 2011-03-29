@@ -11,7 +11,7 @@ module Larry
     def args_list
       require 'json'
       JSON::parse(args).collect do |arg|
-        split = arg.split("_")
+        split = arg.to_s.split("_")
         if split[0] == "INSTRUCTION"
           arg_iid = split[1..-1].join("_")
           Instruction.filter(:iid => arg_iid).first
