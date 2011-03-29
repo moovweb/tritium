@@ -1,22 +1,12 @@
 
-%li.step{:class => "color_#{step['step_id'].size % 5}", :id => "step_#{step['step_id']}"}
-  = step["stub"]
-  - (step["children"] || []).each_with_index do |execution_set, set_index|
-    - if set_index > 5
-      \.
-    - elsif set_index == 5
-      %br/
-      Executed 
-      = (step["children"] || []).size - 5
-      more times
-      %br/
-    - else
-      .execution_wrapper
-        {
-        %button Open
-        .execution
-          .name= execution_set["name"]
-          %ol.steps
-            - execution_set["steps"].each do |child|
-              = haml :_step, :locals => {:step => child}
-        }
+%li.step{:class => "color_#{step.sid.split("_").size % 5}", :id => "step_#{step.sid}"}
+  = step.instruction.stub
+  - step.children.group_by(&:group_id).each do |group_id, children|
+    .execution_wrapper
+      {
+      %button Open
+      .execution
+        %ol.steps
+          - children.each do |child|
+            = haml :_step, :locals => {:step => child}
+      }

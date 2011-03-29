@@ -1,2 +1,3 @@
 #step_view
-  %ol.steps= haml :_step, :locals => { :step => @data }
+  - @steps.each do |step|
+    %ol.steps= haml :_step, :locals => { :step => step }

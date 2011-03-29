@@ -53,7 +53,7 @@ module Larry
     end
     
     get '/instructions' do
-      @instructions = Instruction.eager(:children).all
+      @instructions = Instruction.eager(:children)
       haml :instructions
     end
 
