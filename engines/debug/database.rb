@@ -41,6 +41,8 @@ module Tritium
             index :sid
             Integer :debug_session_id
             index :debug_session_id
+            Integer :group_id
+            index :group_id
             Integer :instruction_id
             index :instruction_id
             Integer :parent_id
@@ -84,14 +86,14 @@ module Tritium
         def insert_debug_session(name, steps)
           debug_session_id = @db[:debug_sessions].insert(:name => name)
           root_ids = []
-          steps.each do |step|
-            root_ids << insert_step(step)
+          steps.each_with_index do |step, index|
+            root_ids << insert_step(step, index)
           end
           @db[:steps].filter(:id => root_ids).update(:debug_session_id => debug_session_id)
           debug_session_id
         end
         
-        def insert_step(step, parent_id = nil)
+        def insert_step(step, group_id = 0, parent_id = nil)
           data = {}
           data[:sid] = step.debug[:step_id]
           data[:log] = step.debug[:log].to_json
@@ -100,10 +102,11 @@ module Tritium
           data[:search_time_cs] = step.debug[:search_time_cs]
           data[:parent_id] = parent_id
           data[:time_cs] = step.debug[:time_cs]
+          data[:group_id] = group_id
           id = @db[:steps].insert(data)
-          step.children.each do |child_set|
+          step.children.each_with_index do |child_set, index|
             child_set.each do |child|
-              insert_step(child, id)
+              insert_step(child, index, id)
             end
           end
           id
