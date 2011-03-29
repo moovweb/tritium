@@ -29,14 +29,8 @@ module Tritium
         end
 
         def match(value, matcher, &block)
-          if matcher.is_a? Regexp
-            if(value =~ Regexp.new(matcher)) 
-              self.instance_eval(&block)
-            end
-          else
-            if(value == matcher) 
-              self.instance_eval(&block)
-            end
+          if(value =~ Regexp.new(matcher)) 
+            self.instance_eval(&block)
           end
         end
   
