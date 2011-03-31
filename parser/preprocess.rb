@@ -36,7 +36,7 @@ module Tritium
       end
 
       def self.variable_expansion(script)
-        script.gsub(/([^\\]+)\$([^_\(][a-zA-Z_\-]*)/, '\1var(\'\2\')')
+        script.gsub(/([^\\]+)\$([^_\(\/, ][a-zA-Z0-9_\-]*)/, '\1var(\'\2\')')
       end
 
       # we can debug easier
