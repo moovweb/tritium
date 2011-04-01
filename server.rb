@@ -43,13 +43,10 @@ module Larry
     end
     
     get '/sessions/:id' do
+      @sessions = DebugSession.all
       @session = DebugSession.filter(:id => params[:id]).first
-      if @session.nil?
-        redirect '/sessions'
-      else
-        @steps = @session.steps
-        haml :index
-      end
+      @steps = Step.filter(:debug_session_id => params[:id], :parent_id => nil)
+      haml :index
     end
     
     get '/instructions' do
@@ -59,10 +56,6 @@ module Larry
 
     get '/main.css' do
       sass :main
-    end
-    
-    def load_data
-      @data = Yajl::Parser.parse(File.read($PROJECT_PATH + "/tmp/debug.json"))
     end
   end
 end

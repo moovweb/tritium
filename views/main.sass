@@ -1,23 +1,33 @@
 @import ../../../default/assets/stylesheets/_init.sass
 
-#step_view
-  ol.steps
-    margin-left: 10px
+#sessions
+  width: 250px
+  float: left
+  word-wrap: break-word
+
+#steps
+  margin-left: 260px
+  width: 700px
+  #step_view
+    ol.steps
+      margin-left: 20px
     
-    .step
-      border: 1px solid gray
-      .execution
-        display: none
-    li.color_1
-      background: pink
-    li.color_2
-      background: aqua
-    li.color_3
-      background: lightgreen
-    li.color_4
-      background: yellow
-    li.color_0 
-      background: lightgray
+      .step
+        border: 1px solid gray
+        .execution_wrapper.closable
+          display: none
+        .time
+          float: right
+      li.color_1
+        background: pink
+      li.color_2
+        background: aqua
+      li.color_3
+        background: lightgreen
+      li.color_4
+        background: yellow
+      li.color_0 
+        background: lightgray
   
-.instructions
-  padding-left:  5px
+  .instructions
+    padding-left:  5px
