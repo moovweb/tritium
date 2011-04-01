@@ -1,8 +1,7 @@
 #sessions
   - @sessions.each do |session|
     .session
-      = session.created_at
-      %a{:href => "/sessions/#{session.id}"}= session.path
+      %a{:href => "/sessions/#{session.id}"}= session.name
 
 - if @session
   #steps
