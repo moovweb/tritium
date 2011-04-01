@@ -48,6 +48,7 @@ module Tritium
             Integer :parent_id
             index :parent_id
             String :log
+            String :env
             Integer :total_time_cs
             Integer :search_time_cs
             Integer :time_cs
@@ -102,6 +103,7 @@ module Tritium
           data[:search_time_cs] = step.debug[:search_time_cs]
           data[:parent_id] = parent_id
           data[:time_cs] = step.debug[:time_cs]
+          data[:env] = step.debug[:env].to_json
           data[:group_id] = group_id
           id = @db[:steps].insert(data)
           step.children.each_with_index do |child_set, index|
