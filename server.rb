@@ -18,7 +18,7 @@ module Larry
     set :logging, true
 
     get '/' do
-      haml :debug
+      redirect "/sessions"
     end
 
     get '/step/:id' do
