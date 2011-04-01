@@ -39,9 +39,10 @@ module Tritium::Engines
       @global_debug = global_debug
       
       if debug?
-        @debug[:env] = @env.clone
+        @debug[:start_env] = @env.clone
         @child_time = 0
         start = Time.now
+        @debug[:start_object] = @object.clone
       end
 
       args = (instruction.args || []).collect do |arg|
@@ -63,8 +64,10 @@ module Tritium::Engines
         (@debug[:args] = args) if args.size > 0
         @debug[:child_time_cs] = @child_time
         @debug[:time_cs] = @debug[:total_time_cs] - @child_time
+        # Save the last_env if anything changed
+        (@debug[:last_env] = @env.clone) if @env.values != @debug[:start_env].values
         
-        @debug[:object] = @object
+        (@debug[:last_object] = @object.clone) if @object != @debug[:start_object]
         
         if (@env["debug_depth"].to_i == @sid.size) && @env["debug"] != ""
           global_debug[@env["debug"]] ||= []
@@ -81,6 +84,7 @@ module Tritium::Engines
       @children << instruction.children.collect do |child|
         step = @child_type.new(child, self)
         obj = step.execute(obj, @env, @global_debug)
+        (step.debug[:group_name] = @name) if debug?
         step
       end
       if @child_time

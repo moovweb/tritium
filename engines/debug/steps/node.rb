@@ -10,7 +10,7 @@ class Tritium::Engines::Debug
       
       debug_log("Searching #{object.path} with #{selector} and found #{child_nodeset.size} matches")
       
-      @debug[:search_time_cs] = ((Time.now - start) * 10000).to_i
+      @debug[:search_time_ns] = ((Time.now - start) * 1000000000).to_i
       
       child_nodeset.each_with_index do |child_node, index|
         debug_log("Match ##{index + 1} at #{child_node.path}")

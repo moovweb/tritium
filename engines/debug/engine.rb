@@ -12,33 +12,37 @@ module Tritium
 
       def run(xhtml_file, options = {})
         env = options["env"] || options[:env] || {}
+        tmp_dir = File.join(@script_path, "../tmp")
+        Dir.mkdir(tmp_dir) unless File.directory?(tmp_dir)
 
-        # Now we will return if there is global debug info.
-        #debug = !($TEST || !ENV["TRITIUM_DEBUG"] || !env["content_type"].include?("html"))
+        # Dump the compiled script to the /tmp folder as script.ts
+        script_file = File.join(tmp_dir, "script.ts")
+        File.open(script_file, "w+") { |f| f.write(@root_instruction.to_script) }
 
+        # Actually run the code
         @root_step = Step::Text.new(@root_instruction)
         @root_step.logger = @logger
         global_debug = {}
         @root_step.execute(xhtml_file, env, global_debug)
 
         return @root_step.object if !global_debug.any?
-        
-        
-        
-        tmp_dir = File.join(@script_path, "../tmp")
-        Dir.mkdir(tmp_dir) unless File.directory?(tmp_dir)
+
+        # If we called debug(), then do all of this
+
         debug_file = File.join(tmp_dir, "debug.sqlite")
-        
+
         puts "DEBUG START! (to #{debug_file})"
 
+        # Build the new DB object
         db = Database.new(debug_file)
 
+        # Insert everything into the DB
         db.insert_instruction(@root_instruction)
-        
         db.process_debug(global_debug)
-        
+
         puts "DEBUG FINISHED!"
         
+        # Return the result object
         @root_step.object
       end
 

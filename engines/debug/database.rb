@@ -33,6 +33,11 @@ module Tritium
           @db.create_table :debug_sessions do
             primary_key :id
             String :name
+            String :content_type
+            String :path
+            Text :start_env
+            Text :last_env
+            DateTime :created_at
           end
           
           @db.create_table :steps do
@@ -43,14 +48,14 @@ module Tritium
             index :debug_session_id
             Integer :group_id
             index :group_id
+            String :group_name # optional... normally something like the XPath result for a group.
             Integer :instruction_id
             index :instruction_id
             Integer :parent_id
             index :parent_id
             String :log
-            String :env
             Integer :total_time_cs
-            Integer :search_time_cs
+            Integer :search_time_ns
             Integer :time_cs
           end
         end
@@ -85,30 +90,38 @@ module Tritium
         end
         
         def insert_debug_session(name, steps)
-          debug_session_id = @db[:debug_sessions].insert(:name => name)
+          data = {:name => name, 
+                  :start_env => steps.first.debug[:start_env].to_json, 
+                  :last_env => steps.last.debug[:last_env].to_json,
+                  :path => steps.first.debug[:start_env]['path'],
+                  :content_type => steps.first.debug[:start_env]['content_type'],
+                  :created_at => Time.now}
+          debug_session_id = @db[:debug_sessions].insert(data)
           root_ids = []
           steps.each_with_index do |step, index|
-            root_ids << insert_step(step, index)
+            root_ids << insert_step(step, index, debug_session_id)
           end
-          @db[:steps].filter(:id => root_ids).update(:debug_session_id => debug_session_id)
           debug_session_id
         end
         
-        def insert_step(step, group_id = 0, parent_id = nil)
+        def insert_step(step, group_id = 0, debug_session_id = nil, parent_id = nil)
           data = {}
           data[:sid] = step.debug[:step_id]
           data[:log] = step.debug[:log].to_json
           data[:total_time_cs] = step.debug[:total_time_cs] 
+          data[:debug_session_id] = debug_session_id
           data[:instruction_id] = @db[:instructions].select(:id).filter(:iid => step.instruction.iid).first[:id]
-          data[:search_time_cs] = step.debug[:search_time_cs]
+          data[:search_time_ns] = step.debug[:search_time_ns]
+          data[:group_name] = step.debug[:group_name]
           data[:parent_id] = parent_id
           data[:time_cs] = step.debug[:time_cs]
-          data[:env] = step.debug[:env].to_json
+          #data[:env] = step.debug[:env].to_json
           data[:group_id] = group_id
+          
           id = @db[:steps].insert(data)
           step.children.each_with_index do |child_set, index|
             child_set.each do |child|
-              insert_step(child, index, id)
+              insert_step(child, index, debug_session_id, id)
             end
           end
           id
