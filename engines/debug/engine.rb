@@ -12,12 +12,15 @@ module Tritium
 
       def run(xhtml_file, options = {})
         env = options["env"] || options[:env] || {}
-        tmp_dir = File.join(@script_path, "../tmp")
-        Dir.mkdir(tmp_dir) unless File.directory?(tmp_dir)
-
-        # Dump the compiled script to the /tmp folder as script.ts
-        script_file = File.join(tmp_dir, "script.ts")
-        File.open(script_file, "w+") { |f| f.write(@root_instruction.to_script) }
+        
+        if ENV["TEST"].nil?
+          tmp_dir = File.join(@script_path, "../tmp")
+          Dir.mkdir(tmp_dir) unless File.directory?(tmp_dir)
+          
+          # Dump the compiled script to the /tmp folder as script.ts
+          script_file = File.join(tmp_dir, "script.ts")
+          File.open(script_file, "w+") { |f| f.write(@root_instruction.to_script) }
+        end
 
         # Actually run the code
         @root_step = Step::Text.new(@root_instruction)
