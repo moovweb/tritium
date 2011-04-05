@@ -75,7 +75,12 @@ class Tritium::Engines::Debug
     end
     
     def copy_here(selector, position = "bottom")
-      move(@object.xpath(selector).first.dup, @object, position)
+      target = @object.xpath(selector).first
+      if target.nil?
+        log("copy_here(#{selector.inspect}) failed to copy.")
+      else
+        move(target.dup, @object, position)
+      end
     end
     
     def name
