@@ -4,7 +4,8 @@ require 'sinatra/reloader'
 require 'json'
 require 'sass'
 
-DB = Sequel.sqlite(File.join(ENV["PROJECT_PATH"], "tmp/debug.sqlite"))
+DB_PATH = File.join(ENV["PROJECT_PATH"], "tmp/debug.sqlite")
+DB = Sequel.sqlite(DB_PATH)
 
 require_relative 'models/debug_session'
 require_relative 'models/instruction'
@@ -16,6 +17,13 @@ module Larry
     set :views, File.dirname(__FILE__) + '/views'
     set :public, File.dirname(__FILE__) + '/public'
     set :logging, true
+    
+    before do
+      if DB
+        DB.disconnect
+      end
+      DB.connect(DB_PATH)
+    end
 
     get '/' do
       redirect "/sessions"
