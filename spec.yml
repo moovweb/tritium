@@ -7,7 +7,6 @@ Debug: &debug
         name: Log message
         doc: Debug Line! Just type something!
   debug:
-    opens: Text
     doc: Write down everything! This request will be logged if you call this
     hide: true
     arguments:
