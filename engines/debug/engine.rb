@@ -28,7 +28,7 @@ module Tritium
         global_debug = {}
         @root_step.execute(xhtml_file, env, global_debug)
 
-        return @root_step.object if !global_debug.any?
+        return @root_step.object if !global_debug.any? || ENV["TEST"]
 
         # If we called debug(), then do all of this
 
