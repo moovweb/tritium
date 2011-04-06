@@ -15,10 +15,6 @@ module Tritium::Engines::Reference::Scope
       super
     end
 
-    def debug
-      puts @node.css_path
-    end
-
     include NodeModules::SelectionMethods
     include NodeModules::ActionMethods
     include NodeModules::PositioningMethods

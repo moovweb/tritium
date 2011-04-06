@@ -46,8 +46,8 @@ module Tritium
           @env
         end
 
-        def debug
-          puts @object.inspect
+        def debug(arg = nil, &block)
+          self.instance_eval(&block)
         end
         
         def log(message, &block)
