@@ -160,9 +160,9 @@ module Tritium::Engines
          else
            target.add_child(node)
          end
-       when "after"
+       when "after", "below"
          target.add_next_sibling(node)
-       when "before"
+       when "before", "above"
          target.add_previous_sibling(node)
        end
      end
