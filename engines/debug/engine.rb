@@ -13,6 +13,8 @@ module Tritium
       def run(xhtml_file, options = {})
         env = options["env"] || options[:env] || {}
         
+        start = Time.now
+        
         if ENV["TEST"].nil?
           tmp_dir = File.join(@script_path, "../tmp")
           Dir.mkdir(tmp_dir) unless File.directory?(tmp_dir)
@@ -27,6 +29,9 @@ module Tritium
         @root_step.logger = @logger
         global_debug = {}
         @root_step.execute(xhtml_file, env, global_debug)
+        
+        took = Time.now - start
+        @logger.info("Script took #{took} sec to process")
 
         return @root_step.object if !global_debug.any? || ENV["TEST"]
 
