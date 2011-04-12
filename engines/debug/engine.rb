@@ -9,11 +9,9 @@ module Tritium
       require_relative 'database'
       require_relative 'step'
       attr :root_step
-
-      def run(xhtml_file, options = {})
-        env = options["env"] || options[:env] || {}
-        
-        start = Time.now
+      
+      def initialize(script_string, options = {})
+        super
         
         if ENV["TEST"].nil?
           tmp_dir = File.join(@script_path, "../tmp")
@@ -23,6 +21,12 @@ module Tritium
           script_file = File.join(tmp_dir, "script.ts")
           File.open(script_file, "w+") { |f| f.write(@root_instruction.to_script) }
         end
+      end
+
+      def run(xhtml_file, options = {})
+        env = options["env"] || options[:env] || {}
+        
+        start = Time.now
 
         # Actually run the code
         @root_step = Step::Text.new(@root_instruction)
