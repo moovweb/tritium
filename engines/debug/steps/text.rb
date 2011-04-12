@@ -2,7 +2,7 @@ class Tritium::Engines::Debug
   class Step::Text < Step
 
     def set(text)
-      @object = text
+      @object = text.to_s.dup
     end
 
     def replace(matcher)
