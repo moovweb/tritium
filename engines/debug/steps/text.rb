@@ -42,13 +42,6 @@ class Tritium::Engines::Debug
 
     def rewrite(what)
       @object.gsub!(Regexp.new(@env["rewrite_#{what}_matcher"]),  @env["rewrite_#{what}_replacement"])
-
-      # AF: HACK: Set the port properly for development
-      if (@object =~ /^https/)
-        @object.gsub!(/\:3000/, ":3002")
-      elsif (@object =~ /^http\:/)
-        @object.gsub!(/\:3002/, ":3000")
-      end
     end
   end
 end
