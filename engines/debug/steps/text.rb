@@ -37,7 +37,7 @@ class Tritium::Engines::Debug
     end
 
     def prepend(text)
-      @object.insert(0,text)
+      @object = text + @object
     end
 
     def rewrite(what)
