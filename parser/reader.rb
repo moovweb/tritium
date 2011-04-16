@@ -23,7 +23,9 @@ module Tritium::Parser
       @stack = [@root_instruction]
 
       eval(script_string)
-
+      
+      # Makes sure to de-parent and mark any arg-Instructions
+      @root_instruction.clean_args!
       @root_instruction
     end
    
