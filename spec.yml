@@ -148,6 +148,16 @@ Node:
         name: Attributes
         type: Hash
         doc: The tag's attributes
+  inner_wrap:
+    opens: Node
+    doc: Wraps the contents of the currently selected node with a tag and then yield to that new wrapper.
+    arguments:
+      -
+        name: Tag Name
+      -
+        name: Attributes
+        type: Hash
+        doc: The tag's attributes. CAN NOT BE DYAMIC. That means no fetch() or anything like that. If you need to use that, open the yielding block and use attribute()
   position:
     opens: Positional
     hide: true

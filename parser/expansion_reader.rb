@@ -92,6 +92,31 @@ module Tritium::Parser
       end
     end
     
+    def inner_wrap(name, attributes = {}, &block)
+      if name.is_a?(Instruction)
+        throw "Cannot use dynamic tag names with inner_wrap(). See documentation for details."
+      end
+
+      attribute_list = attributes.collect do |k, v|
+        # We are statically building the tag that we will wrap the contents with, therefore we can't support
+        # dynamic attributes or tag names
+        if k.is_a?(Instruction) || v.is_a?(Instruction)
+          throw "Cannot use dynamic attributes with inner_wrap(). See documentation for details."
+        end
+        
+        "#{k.to_s.inspect}=#{v.to_s.inspect}"
+      end
+      html() {
+        prepend("<#{name} #{attribute_list.join(' ')}>")
+        append("</#{name}>")
+      }
+      if block
+        select("./*[1]") {
+          block.call
+        }
+      end
+    end
+    
     def asset(name, type, &block)
       var("tmp") {
         set(name)
