@@ -8,6 +8,7 @@ module Tritium
       attr :args, true
       attr :children, true
       attr :parent, true
+      attr :is_arg, true
       attr :root, true
       attr :scope
       attr :line_number
@@ -71,19 +72,23 @@ module Tritium
       end
       
       def stub
-        "#{name}(#{(args.collect &:inspect).join(",")})"
+        arg_list = args.collect { |a| a.respond_to?("to_script") ? a.to_script : a.inspect}
+        "#{name}(#{arg_list.join(",\n" + (' ' * (name.size + 1)))})"
       end
       
       def to_script
         result = stub
         if children.size > 0
-          result << " {\n"
+          result << " {  \n"
           children.each do |child|
             result << "  " + child.to_script.lines.to_a.join("  ")
           end
           result << "}"
         end
-        result + "\n"
+        if !is_arg
+          result = result + "\n"
+        end
+        result
       end
       
       def to_hash
@@ -108,6 +113,22 @@ module Tritium
       def match_args(to)
         to.args.each_with_index do |arg, index|
           return false unless args[index] == arg
+        end
+      end
+      
+      # During reading, if this Instruction has an Arg that is an Instruction, that instruction
+      # will be tracked by the parent Instruction as a child. We don't really want that, so this
+      # is run recusively after reading is complete.
+      def clean_args!
+        children.each do |child|
+          child.args.each do |arg|
+            if arg.is_a?(Instruction)
+              arg.is_arg = true
+              # Deparent any args
+              puts self.children.delete(arg)
+            end
+          end
+          child.clean_args!
         end
       end
       

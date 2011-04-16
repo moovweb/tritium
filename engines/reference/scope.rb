@@ -13,6 +13,10 @@ module Tritium
           @logger ||= root.logger if root
           @env = (@parent ? @parent.env : {})
         end
+        
+        def script(&block)
+          self.instance_eval(&block)
+        end
 
         def var(name = nil, value = nil, &block)
           if name == nil

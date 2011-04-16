@@ -14,6 +14,29 @@ module Tritium::Parser
     def after(&block);  set_position("after",  &block); end
     def before(&block); set_position("before", &block); end
     
+    # If we are passed an ./@attribute selector, then def automaticall
+    # open the attribute block
+    
+    # If we are passed a text() selector, then automatically open html()
+    def select(selector, &block)
+      selectors = selector.split("/")
+      if selectors.last[0] == "@"
+        if selectors[-2] == "."
+          attribute(last[1..-1], &block)
+        else
+          cmd("select", selectors[0..-2].join("/")) {
+            attribute(last[1..-1], &block)
+          }
+        end
+      elsif selectors.last == "text()"
+        cmd("select", selectors[0..-2].join("/")) {
+          html(&block)
+        }
+      else
+        cmd("select", selectors.join("/"), &block)
+      end
+    end
+    
     def value(set_value = nil, &block)
       if set_value
          cmd('value', &(Proc.new { |this|
@@ -89,6 +112,31 @@ module Tritium::Parser
       }
       move_to("preceding-sibling::#{name}[1]", "top") do
         block.call if block
+      end
+    end
+    
+    def inner_wrap(name, attributes = {}, &block)
+      if name.is_a?(Instruction)
+        throw "Cannot use dynamic tag names with inner_wrap(). See documentation for details."
+      end
+
+      attribute_list = attributes.collect do |k, v|
+        # We are statically building the tag that we will wrap the contents with, therefore we can't support
+        # dynamic attributes or tag names
+        if k.is_a?(Instruction) || v.is_a?(Instruction)
+          throw "Cannot use dynamic attributes with inner_wrap(). See documentation for details."
+        end
+        
+        "#{k.to_s.inspect}=#{v.to_s.inspect}"
+      end
+      html() {
+        prepend("<#{name} #{attribute_list.join(' ')}>")
+        append("</#{name}>")
+      }
+      if block
+        select("./*[1]") {
+          block.call
+        }
       end
     end
     
