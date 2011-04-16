@@ -14,6 +14,29 @@ module Tritium::Parser
     def after(&block);  set_position("after",  &block); end
     def before(&block); set_position("before", &block); end
     
+    # If we are passed an ./@attribute selector, then def automaticall
+    # open the attribute block
+    
+    # If we are passed a text() selector, then automatically open html()
+    def select(selector, &block)
+      selectors = selector.split("/")
+      if selectors.last[0] == "@"
+        if selectors[-2] == "."
+          attribute(last[1..-1], &block)
+        else
+          cmd("select", selectors[0..-2].join("/")) {
+            attribute(last[1..-1], &block)
+          }
+        end
+      elsif selectors.last == "text()"
+        cmd("select", selectors[0..-2].join("/")) {
+          html(&block)
+        }
+      else
+        cmd("select", selectors.join("/"), &block)
+      end
+    end
+    
     def value(set_value = nil, &block)
       if set_value
          cmd('value', &(Proc.new { |this|
