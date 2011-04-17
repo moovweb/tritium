@@ -31,7 +31,7 @@ module Tritium
 
       def initialize(name, options = {})
         # Primary Attributes
-        @name = name
+        @name   = name
         @args   =[options[:args]   || options["args"]  || []].flatten
         @root   = options[:root]   || options["root"]  || self
         @parent = options[:parent] || options["parent"]
