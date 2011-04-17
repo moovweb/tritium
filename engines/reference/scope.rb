@@ -60,6 +60,30 @@ module Tritium
           end
           @root.logger.info(message)
         end
+        
+        # This is how you select an element to pass it to a function.
+        # *Note*: that you can select attributes as I have done in the example.
+        #
+        # @example Setting some divs to have the onclick of their first anchor child.
+        # select("div.row") {
+        #   attribute("onclick", fetch("href", "a/@href"))
+        #   # Now that I've set the onclick, I'll make it work with 'window.location='
+        #   attribute("onclick") {
+        #     value {
+        #       prepend("window.location = '")
+        #       append("'")
+        #     }
+        #   }
+        # }
+        #
+        # @return [Array] An array of elements represented as strings
+        def fetch(selector)
+          if @object.class == Nokogiri::XML::Element
+            @object.search(selector).first.to_s
+          else
+            @parent.fetch(selector)
+          end
+        end
 
       protected
 
