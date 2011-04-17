@@ -14,7 +14,7 @@ module Tritium
         root_scope = Scope::Text.new(xhtml_file)
         root_scope.logger = @logger
         root_scope.env.merge! env
-        root_scope.instance_eval(processed_script)
+        root_scope.instance_eval(@root_instruction.to_script) #processed_script)
 
         took = Time.now - start
         @logger.info("Script took #{took} sec to process")
