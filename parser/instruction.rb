@@ -125,7 +125,7 @@ module Tritium
             if arg.is_a?(Instruction)
               arg.is_arg = true
               # Deparent any args
-              puts self.children.delete(arg)
+              self.children.delete(arg)
             end
           end
           child.clean_args!
