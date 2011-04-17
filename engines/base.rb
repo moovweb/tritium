@@ -28,7 +28,7 @@ module Tritium
       end
       
       def reader_klass
-        Tritium::Parser::Reader
+        Tritium::Parser::ExpansionReader
       end
       
       def processed_script

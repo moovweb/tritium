@@ -35,7 +35,7 @@ module Tritium
         @root_step.execute(xhtml_file, env, global_debug)
         
         took = Time.now - start
-        @logger.info("Script took #{took} sec to process")
+        @logger.info("Script took #{took} sec to process") unless ENV["TEST"]
 
         return @root_step.object if !global_debug.any? || ENV["TEST"]
 

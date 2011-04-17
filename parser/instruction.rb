@@ -31,7 +31,7 @@ module Tritium
 
       def initialize(name, options = {})
         # Primary Attributes
-        @name = name
+        @name   = name
         @args   =[options[:args]   || options["args"]  || []].flatten
         @root   = options[:root]   || options["root"]  || self
         @parent = options[:parent] || options["parent"]
@@ -73,21 +73,39 @@ module Tritium
       
       def stub
         arg_list = args.collect { |a| a.respond_to?("to_script") ? a.to_script : a.inspect}
-        "#{name}(#{arg_list.join(",\n" + (' ' * (name.size + 1)))})"
+        "#{name}(#{arg_list.join(", ")})"
       end
       
       def to_script
         result = stub
         if children.size > 0
-          result << " {  \n"
+          if parent_arg?
+            result = "(" + result
+          end
+          result << " {  "
+          if !is_arg
+            result << "\n"
+          end
           children.each do |child|
-            result << "  " + child.to_script.lines.to_a.join("  ")
+            unless child.is_arg
+              if !parent_arg?
+                result << "  "
+              end
+              result <<  child.to_script.lines.to_a.join("  ")
+            end
           end
           result << "}"
+          if parent_arg?
+            result << ")"
+          end
         end
         if !is_arg
-          result = result + "\n"
+          result << "\n"
         end
+        if parent_arg?
+          result.gsub!("\n", "; ")
+        end
+        
         result
       end
       
@@ -116,6 +134,11 @@ module Tritium
         end
       end
       
+      # I'm somewhere nested in an arg list. Useful for #to_script
+      def parent_arg?
+        is_arg || (parent ? parent.is_arg : false)
+      end
+      
       # During reading, if this Instruction has an Arg that is an Instruction, that instruction
       # will be tracked by the parent Instruction as a child. We don't really want that, so this
       # is run recusively after reading is complete.
@@ -125,7 +148,7 @@ module Tritium
             if arg.is_a?(Instruction)
               arg.is_arg = true
               # Deparent any args
-              self.children.delete(arg)
+              arg.clean_args!
             end
           end
           child.clean_args!
