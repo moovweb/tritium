@@ -23,7 +23,7 @@ module Tritium
         end
       end
 
-      def run(xhtml_file, options = {})
+      def run(doc, options = {})
         env = options["env"] || options[:env] || {}
         
         start = Time.now
@@ -32,7 +32,7 @@ module Tritium
         @root_step = Step::Text.new(@root_instruction)
         @root_step.logger = @logger
         global_debug = {}
-        @root_step.execute(xhtml_file, env, global_debug)
+        @root_step.execute(doc.dup, env, global_debug)
         
         took = Time.now - start
         @logger.info("Script took #{took} sec to process") unless ENV["TEST"]

@@ -6,12 +6,12 @@ module Tritium
     class Reference < Engines::Base
       require_relative 'scope'
       
-      def run(xhtml_file, options = {})
+      def run(doc, options = {})
         # Setup options
         env = options["env"] || options[:env] || {}
         start = Time.now
 
-        root_scope = Scope::Text.new(xhtml_file)
+        root_scope = Scope::Text.new(doc.dup)
         root_scope.logger = @logger
         root_scope.env.merge! env
         root_scope.instance_eval(@root_instruction.to_script) #processed_script)
