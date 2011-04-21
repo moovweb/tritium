@@ -127,7 +127,7 @@ module Tritium::Parser
           throw "Cannot use dynamic attributes with inner_wrap(). See documentation for details."
         end
         
-        "#{k.to_s.inspect}=#{v.to_s.inspect}"
+        "#{k.to_s}=#{v.to_s.inspect}"
       end
       html() {
         prepend("<#{name} #{attribute_list.join(' ')}>")
