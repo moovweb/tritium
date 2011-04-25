@@ -125,12 +125,18 @@ module Tritium
       end
       
       def ==(to)
-        (to.name == name) && match_args(to) && match_children(to) && true
+        (to.name == name) && compare_args(to) && compare_children(to) && true
       end
       
-      def match_args(to)
+      def compare_args(to)
         to.args.each_with_index do |arg, index|
           return false unless args[index] == arg
+        end
+      end
+      
+      def compare_children(to)
+        children.each_with_index do |child, index|
+          return false unless to.children[index] == child
         end
       end
       
