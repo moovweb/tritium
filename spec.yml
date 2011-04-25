@@ -29,6 +29,12 @@ Base: &base
         expansion: true
   match:
     doc: 
+  not_matcher:
+    doc: Used with match($var, not('hi'))
+    hide: true
+  else_do:
+    doc: Else command for match()
+    hide: true
   asset:
     opens: Text
     doc: Use this to call any files kept in the project's asset folder.

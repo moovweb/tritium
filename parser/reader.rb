@@ -42,7 +42,7 @@ module Tritium::Parser
 
       if block
         @stack.push(ins)
-        block.call(self)
+        block.call(self, ins)
         @stack.pop
       end
       ins

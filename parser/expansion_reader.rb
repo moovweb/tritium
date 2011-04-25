@@ -84,6 +84,28 @@ module Tritium::Parser
       end
     end
     
+    def not_matcher(matcher)
+      {:not => matcher}
+    end
+    
+    def match(what, with, &block)
+      opposite_matcher = false
+      if with.is_a?(Hash) && with[:not]
+        with = with[:not]
+        opposite_matcher = true
+      end
+      @last_matcher = cmd("match", what, with, opposite_matcher) do
+        block.call if block
+      end
+    end
+    
+    def else_do(&block)
+      what, with, opposite_matcher = @last_matcher.args
+      cmd("match", what.dup, with.dup, !opposite_matcher) do |this, ins|
+        block.call if block
+      end
+    end
+    
     def insert_tag(tag_name, contents = nil, attributes = {}, &block)
       if contents.is_a? Hash
         attributes = contents

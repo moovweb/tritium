@@ -17,7 +17,7 @@ module Tritium
 
       def self.inner_run(script, path, name)
         path = File.absolute_path(path)
-        self.imports(self.post_debug(self.variable_expansion(self.select_expansion(self.pre_debug(script, name)))), path)
+        self.imports(self.post_debug(self.variable_expansion(self.else_expansion(self.not_expansion(self.select_expansion(self.pre_debug(script, name)))))), path)
       end
     
       def self.select_expansion(script)
@@ -33,6 +33,14 @@ module Tritium
             spacer + line
           end).join("\n")
         end
+      end
+      
+      def self.else_expansion(script)
+        script.gsub("else()", "else_do()")
+      end
+      
+      def self.not_expansion(script)
+        script.gsub(/not\((.*)\)/, "not_matcher(\\1)")
       end
 
       def self.variable_expansion(script)

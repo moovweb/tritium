@@ -34,9 +34,15 @@ module Tritium
           end
         end
 
-        def match(value, matcher, &block)
+        def match(value, matcher, opposite_matcher, &block)
           if(value =~ Regexp.new(matcher)) 
-            self.instance_eval(&block)
+            if !opposite_matcher
+              self.instance_eval(&block)
+            end
+          else
+            if opposite_matcher
+              self.instance_eval(&block)
+            end
           end
         end
   

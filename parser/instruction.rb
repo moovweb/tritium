@@ -161,12 +161,6 @@ module Tritium
         end
       end
       
-      def match_children(to)
-        children.each_with_index do |child, index|
-          return false unless to.children[index] == child
-        end
-      end
-      
       class Invalid < StandardError
       end
     end

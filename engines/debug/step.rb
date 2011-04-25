@@ -124,13 +124,16 @@ module Tritium::Engines
       @env[named] = execute_children_on(@env[named])
     end
     
-    def match(value, matcher)
+    def match(value, matcher, opposite_matcher)
       debug_log "matching #{value.inspect} against #{matcher.inspect}"
-      if(value =~ Regexp.new(matcher)) 
-        debug_log "Match successful!"
-        @object = execute_children_on(object)
+      if(value =~ Regexp.new(matcher))
+        if !opposite_matcher
+          @object = execute_children_on(object)
+        end
       else
-        debug_log "Match failed."
+        if opposite_matcher
+          @object = execute_children_on(object)
+        end
       end
     end
     
