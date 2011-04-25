@@ -78,11 +78,11 @@ module Tritium::Engines
 
       return @object
     end
-
-    def execute_children_on(obj)
-      return obj if (instruction.children.size == 0)
+    
+    def execute_instructions(instructions, obj)
+      return obj if (instructions.size == 0)
       timer = Time.now
-      @children << instruction.children.collect do |child|
+      @children << instructions.collect do |child|
         step = @child_type.new(child, self)
         obj = step.execute(obj, @env, @global_debug, @export_vars)
         (step.debug[:group_name] = @name) if debug?
@@ -92,6 +92,10 @@ module Tritium::Engines
         @child_time += ((Time.now - timer) * 10000).to_i
       end
       obj
+    end
+
+    def execute_children_on(obj)
+      execute_instructions(instruction.children, obj)
     end
     
     def debug?
