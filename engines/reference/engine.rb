@@ -18,7 +18,7 @@ module Tritium
 
         took = Time.now - start
         @logger.info("Script took #{took} sec to process")
-        [root_scope.text, []]
+        [root_scope.text, root_scope.export_vars]
       rescue StandardError => e
         e.message.gsub!(/$/, " on script line #{@_line.to_s}")
         raise e

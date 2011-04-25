@@ -32,12 +32,13 @@ module Tritium
         @root_step = Step::Text.new(@root_instruction)
         @root_step.logger = @logger
         global_debug = {}
-        @root_step.execute(doc.dup, env, global_debug)
+        export_vars = []
+        @root_step.execute(doc.dup, env, global_debug, export_vars)
         
         took = Time.now - start
         @logger.info("Script took #{took} sec to process") unless ENV["TEST"]
 
-        return [@root_step.object, []] if !global_debug.any? || ENV["TEST"]
+        return [@root_step.object, export_vars] if !global_debug.any? || ENV["TEST"]
 
         # If we called debug(), then do all of this
 

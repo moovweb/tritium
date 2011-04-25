@@ -5,6 +5,7 @@ module Tritium
     module Reference::Scope
       class Base
         attr :logger, true
+        attr :export_vars, true
 
         def initialize(thing, root, parent)
           @object ||= thing
@@ -12,6 +13,7 @@ module Tritium
           @parent ||= parent
           @logger ||= root.logger if root
           @env = (@parent ? @parent.env : {})
+          @export_vars = (@parent ? @parent.export_vars : [])
         end
         
         def script(&block)
@@ -83,6 +85,10 @@ module Tritium
           else
             @parent.fetch(selector)
           end
+        end
+        
+        def export(key, value)
+          @export_vars << [key, value]
         end
 
       protected

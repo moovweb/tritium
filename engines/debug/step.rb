@@ -33,9 +33,10 @@ module Tritium::Engines
       @debug = instruction.to_hash.merge({:step_id => @sid.join("_"), :log => []})
     end
     
-    def execute(obj, env = {}, global_debug = {})
+    def execute(obj, env, global_debug, export_vars)
       @object = obj
       @env = env
+      @export_vars = export_vars
       @global_debug = global_debug
       
       if debug?
@@ -83,7 +84,7 @@ module Tritium::Engines
       timer = Time.now
       @children << instruction.children.collect do |child|
         step = @child_type.new(child, self)
-        obj = step.execute(obj, @env, @global_debug)
+        obj = step.execute(obj, @env, @global_debug, @export_vars)
         (step.debug[:group_name] = @name) if debug?
         step
       end
@@ -131,6 +132,10 @@ module Tritium::Engines
     
     def fetch(selector)
       node.search(selector).first
+    end
+    
+    def export(key, value)
+      @export_vars << [key, value]
     end
     
     # If I'm a NodeStep, this should return @object

@@ -49,7 +49,16 @@ Base: &base
       -
         name: Selector
         doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
-
+  export:
+    opens: Text
+    doc: This is a the way that we have Tritium communicate variables back to its execution environment. That sounds complicated, but in most uses of Tritium, it would be something like export("Content-Type", "application/js") to tell the app to change the content-type. Look at the reference for your server for more information on what you can export.
+    arguments:
+      -
+        name: Key name
+        type: String
+      -
+        name: Value
+        type: String
 Node:
   <<: *base
   select: 
