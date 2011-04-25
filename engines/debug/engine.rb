@@ -37,7 +37,7 @@ module Tritium
         took = Time.now - start
         @logger.info("Script took #{took} sec to process") unless ENV["TEST"]
 
-        return @root_step.object if !global_debug.any? || ENV["TEST"]
+        return [@root_step.object, []] if !global_debug.any? || ENV["TEST"]
 
         # If we called debug(), then do all of this
 
@@ -55,7 +55,7 @@ module Tritium
         puts "DEBUG FINISHED!"
         
         # Return the result object
-        @root_step.object
+        [@root_step.object, []]
       end
 
       
