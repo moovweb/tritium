@@ -20,7 +20,7 @@ module Tritium::Parser
     # If we are passed a text() selector, then automatically open html()
     def select(selector, &block)
       selectors = selector.split("/")
-      if selectors.last[0] == "@"
+      if selectors.last && selectors.last[0] == "@"
         if selectors[-2] == "."
           attribute(last[1..-1], &block)
         else
@@ -87,16 +87,12 @@ module Tritium::Parser
         with = with[:not]
         opposite_matcher = true
       end
-      @last_matcher = cmd("match", what, with, opposite_matcher) do
-        block.call if block
-      end
+      @last_matcher = cmd("match", what, with, opposite_matcher, &block)
     end
     
     def else_do(&block)
       what, with, opposite_matcher = @last_matcher.args
-      cmd("match", what.dup, with.dup, !opposite_matcher) do |this, ins|
-        block.call if block
-      end
+      cmd("match", what.dup, with.dup, !opposite_matcher, &block)
     end
     
     def html(value = nil, &block)
