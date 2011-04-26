@@ -22,7 +22,16 @@ module Tritium::Parser
       @root_instruction = Instruction.root
       @stack = [@root_instruction]
 
-      eval(script_string)
+      begin
+        eval(script_string)
+      rescue StandardError => e
+        puts "ERROR AT: #{@_script}:#{@_line_number}" 
+        puts "SCRIPT LINE: #{@_line}"
+        puts "PROCESSED SCRIPT: #{@_processed_line}"
+        puts @stack.inspect
+        
+        raise e
+      end
       
       # Makes sure to de-parent and mark any arg-Instructions
       @root_instruction.clean_args!
