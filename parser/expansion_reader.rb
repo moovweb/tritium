@@ -20,24 +20,30 @@ module Tritium::Parser
     # If we are passed a text() selector, then automatically open html()
     def select(selector, &block)
       selectors = selector.split("/")
-      if selectors.last && selectors.last[0] == "@"
-        if selectors[-2] == "."
-          attribute(last[1..-1], &block)
-        else
-          cmd("select", selectors[0..-2].join("/")) {
+      if selectors.size > 0
+        if selectors.last[0] == "@"
+          if selectors[-2] == "."
             attribute(last[1..-1], &block)
+          else
+            cmd("select", selectors[0..-2].join("/")) {
+              attribute(last[1..-1], &block)
+            }
+          end
+        elsif selectors.last == "text()"
+          cmd("select", selectors[0..-2].join("/")) {
+            text(&block)
           }
+        elsif selectors.last == "html()"
+          cmd("select", selectors[0..-2].join("/")) {
+            html(&block)
+          }
+        else
+          # We had something in the selector, but... not interesting to us. Join it back!
+          cmd("select", selectors.join("/"), &block)
         end
-      elsif selectors.last == "text()"
-        cmd("select", selectors[0..-2].join("/")) {
-          text(&block)
-        }
-      elsif selectors.last == "html()"
-        cmd("select", selectors[0..-2].join("/")) {
-          html(&block)
-        }
       else
-        cmd("select", selectors.join("/"), &block)
+        # The selector was either empty or was a single slash... so just pass it through
+        cmd("select", selector, &block)
       end
     end
     
