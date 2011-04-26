@@ -78,7 +78,16 @@ Node:
         
   html:
     opens: Text
-    doc: Opens up the entire innerHTML to text modification
+    doc: Opens up the entire innerHTML to text modification. Alias of text().
+    arguments:
+      -
+        name: HTML
+        doc: You can optionally just pass in HTML to set the innerHTML. Remember, this is the same as html { set('value') } and will clobber the internals
+        
+        expansion: true
+  text:
+    opens: Text
+    doc: Opens up the entire innerHTML to text modification. 
     arguments:
       -
         name: HTML

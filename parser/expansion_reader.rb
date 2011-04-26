@@ -62,17 +62,6 @@ module Tritium::Parser
       end
     end
     
-    def html(set_to = nil, &block)
-      if set_to
-        cmd('html') do |this|
-          this.cmd("set", set_to);
-          block.call(this) if block
-        end
-      else
-        cmd('html', &block)
-      end
-    end
-    
     def var(name, set_to = nil, &block)
       if set_to
         cmd("var", name) do |this|
@@ -104,6 +93,17 @@ module Tritium::Parser
       cmd("match", what.dup, with.dup, !opposite_matcher) do |this, ins|
         block.call if block
       end
+    end
+    
+    def html(value = nil, &block)
+      text(value, &block)
+    end
+    
+    def text(value = nil, &block)
+      cmd("text") {
+        set(value) if value
+        block.call if block
+      }
     end
     
     def insert_tag(tag_name, contents = nil, attributes = {}, &block)
