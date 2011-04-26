@@ -30,6 +30,10 @@ module Tritium::Parser
         end
       elsif selectors.last == "text()"
         cmd("select", selectors[0..-2].join("/")) {
+          text(&block)
+        }
+      elsif selectors.last == "html()"
+        cmd("select", selectors[0..-2].join("/")) {
           html(&block)
         }
       else
@@ -96,7 +100,10 @@ module Tritium::Parser
     end
     
     def html(value = nil, &block)
-      text(value, &block)
+      cmd("html") {
+        set(value) if value
+        block.call if block
+      }
     end
     
     def text(value = nil, &block)

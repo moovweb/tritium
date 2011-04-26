@@ -78,7 +78,7 @@ Node:
         
   html:
     opens: Text
-    doc: Opens up the entire innerHTML to text modification. Alias of text().
+    doc: Opens up the entire innerHTML to text modification. Any html you insert WILL get interpreted as actual tags.
     arguments:
       -
         name: HTML
@@ -87,11 +87,11 @@ Node:
         expansion: true
   text:
     opens: Text
-    doc: Opens up the entire innerHTML to text modification. 
+    doc: Opens up the contents to text modification. All HTML will get escaped. Use html() if you want to insert/modify tags.
     arguments:
       -
-        name: HTML
-        doc: You can optionally just pass in HTML to set the innerHTML. Remember, this is the same as html { set('value') } and will clobber the internals
+        name: Contents
+        doc: You can optionally just pass in contents to set the contents. Remember, this is the same as text { set('value') } and will clobber whatever was there before.
         
         expansion: true
   attribute:

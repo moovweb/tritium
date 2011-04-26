@@ -24,9 +24,13 @@ class Tritium::Engines::Debug
       object.remove
     end
     
-    def text
+    def html
       debug_log("Opening the raw text HTML of #{@object.path}")
       @object.inner_html = execute_children_on(@object.inner_html)
+    end
+    
+    def text
+      @object.content = execute_children_on(@object.content)
     end
     
     def attribute(name)
