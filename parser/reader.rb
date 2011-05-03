@@ -9,6 +9,11 @@ require_relative 'instruction'
 
 module Tritium::Parser
   class Reader
+
+    def initialize(logger=nil)
+      @logger = logger || Logger.new(STDOUT)
+    end
+
     # This is the method that actually runs the 
     # parsing. The ruby interpreter runs the string
     # and keeps hitting the method_missing method below
@@ -25,10 +30,11 @@ module Tritium::Parser
       begin
         eval(script_string)
       rescue StandardError => e
-        puts "ERROR AT: #{@_script}:#{@_line_number}" 
-        puts "SCRIPT LINE: #{@_line}"
-        puts "PROCESSED SCRIPT: #{@_processed_line}"
-        puts @stack.inspect
+        msg =  "ERROR AT: #{@_script}:#{@_line_number}\n"
+        msg << "SCRIPT LINE: #{@_line}\n"
+        msg << "PROCESSED SCRIPT: #{@_processed_line}\n"
+        msg << @stack.inspect
+        @logger.error msg
         
         raise e
       end

@@ -24,7 +24,7 @@ module Tritium
         @xml_parser = xml_parser_name || "xml"
         @logger = options[:logger] || options["logger"] || Logger.new(STDOUT)
         @script_name = options[:script_name] || options["script_name"] || "MAIN"
-        @root_instruction = reader_klass.new.read(processed_script)
+        @root_instruction = reader_klass.new(@logger).read(processed_script)
       end
       
       def reader_klass
