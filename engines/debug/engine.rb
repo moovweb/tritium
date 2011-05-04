@@ -36,7 +36,9 @@ module Tritium
         @root_step.execute(doc.dup, env, global_debug, export_vars)
         
         took = Time.now - start
-        @logger.info("Script took #{took} sec to process") unless ENV["TEST"]
+        unless ENV["TEST"]
+          @logger.stats("Script took #{took} sec to process") if @logger.respond_to? :stats
+        end
 
         return [@root_step.object, export_vars] if !global_debug.any? || ENV["TEST"]
 

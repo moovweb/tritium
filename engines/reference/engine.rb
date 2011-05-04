@@ -17,7 +17,7 @@ module Tritium
         root_scope.instance_eval(@root_instruction.to_script) #processed_script)
 
         took = Time.now - start
-        @logger.info("Script took #{took} sec to process")
+        @logger.stats("Script took #{took} sec to process") if @logger.respond_to? :stats
         [root_scope.text, root_scope.export_vars]
       rescue StandardError => e
         e.message.gsub!(/$/, " on script line #{@_line.to_s}")
