@@ -44,7 +44,7 @@ module Tritium
           begin
             xhtml_file = TidyFFI::Tidy.new(orig_xhtml_file).clean
           rescue Exception => msg
-            puts "revert clean due to ", msg
+            @logger.info "revert clean due to #{msg}"
             xhtml_file = orig_xhtml_file
           end
           if add_html
@@ -63,7 +63,7 @@ module Tritium
           #xhtml_file.gsub!(/\n/, "") #this is needed when json content is received as html; we should ask our customers to set the content-type header correctly
           xhtml_file.strip!
           end_t = Time.now.to_f
-          puts "tidy clean took", (end_t-start_t), "sec"
+          @logger.info "tidy clean took #{end_t-start_t} sec"
         end
         super(xhtml_file, options)
       end
