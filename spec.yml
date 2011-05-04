@@ -159,7 +159,14 @@ Node:
         name: Name
         doc: You can just yield to the block if you want to dynamically set the name. Otherwise, just pass it as the argument
         expansion: true
-        
+  add_class:
+    opens: Attribute
+    doc: Appends the class you specify to the currently selected element. Its the same thing as attribute("class") { append(" whatever") } }.
+    arguments:
+      -
+        name: Class Name
+        doc: The name of the class you want to append
+        expansion: true
   remove:
     doc: Delete the current node
   wrap:
