@@ -1,5 +1,5 @@
 require 'nokogiri'
-require 'log4r'
+require 'logger'
 require_relative '../parser/reader'
 require_relative '../parser/preprocess'
 
@@ -22,7 +22,7 @@ module Tritium
         @script_path = options["path"] || options[:path] || File.dirname(__FILE__)
         @script_string = script_string
         @xml_parser = xml_parser_name || "xml"
-        @logger = options[:logger] || options["logger"] || Log4r::Logger["moov::tritium"] || Log4r::Logger.new("moov::tritium")
+        @logger = options[:logger] || options["logger"] || Logger.new(STDOUT)
         @script_name = options[:script_name] || options["script_name"] || "MAIN"
         @root_instruction = reader_klass.new(@logger).read(processed_script)
       end
