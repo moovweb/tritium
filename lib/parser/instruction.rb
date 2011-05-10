@@ -1,4 +1,5 @@
 require 'yaml'
+require_relative "../tritium"
 YAML::ENGINE.yamler= 'syck'
 
 module Tritium
@@ -20,13 +21,9 @@ module Tritium
       def self.root
         Instruction.new("script", :scope => "Text")
       end
-      
-      def self.map
-        @@map ||= YAML.load(File.read(File.dirname(__FILE__) + "/../../spec.yml"))
-      end
-      def map; self.class.map; end
-      def scope_map; @scope_map ||= map[scope]; end
-      def information; @information ||= parent.scope_map[@name]; end
+
+      def scope_spec; @scope_spec ||= Tritium.spec[scope]; end
+      def information; @information ||= parent.scope_spec[@name]; end
       def opens; information['opens'] || parent.opens; end;
 
       def initialize(name, options = {})
@@ -48,7 +45,7 @@ module Tritium
         
         if root?
           # This should only really happen if you are root
-          @information = scope_map[name]
+          @information = scope_spec[name]
         end
 
         # Debug information
@@ -59,8 +56,8 @@ module Tritium
       end
 
       def add(name, options = {})
-        if scope_map[name].nil?
-          raise Invalid, "Line #{@line_number} in #{@script_name}\nNo such method #{name.inspect} allowed here!\nOnly allow: #{scope_map.keys.join(", ")}\n#{self.line}"
+        if scope_spec[name].nil?
+          raise Invalid, "Line #{@line_number} in #{@script_name}\nNo such method #{name.inspect} allowed here!\nOnly allow: #{scope_spec.keys.join(", ")}\n#{self.line}"
         end
         child = Instruction.new(name, options.merge(:root => self.root, :parent => self))
         children << child
