@@ -1,0 +1,17 @@
+PATH
+  remote: .
+  specs:
+    tritium (0.1)
+      bundler
+      yajl-ruby
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    yajl-ruby (0.8.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  tritium!
