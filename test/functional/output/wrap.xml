@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<people>
+<person>
+  <name false="false" true="true"><first>Hampton</first><lname>Catlin</lname></name>
+  
+  <address>
+    <number>1868</number>
+    <street>Shadowlawn St</street>
+    <city>Jacksonville</city>
+    <state>FL</state>
+  </address>
+  <email>hcatlin@gmail.com</email>
+</person>
+</people>

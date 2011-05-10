@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<root>
+  <!-- Comment at the top -->
+  <top index="1"/>
+  <middle index="2"/>
+  <bottom index="3">hello, world!</bottom>
+</root>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<div id="rows">
+  <div class="row" onclick="window.location = '/bird'">
+    <div class="nest">
+      <span>Bird</span>
+      <a>/bird</a>
+    </div>
+  </div>
+  <div class="row" onclick="window.location = '/cow'">
+    <div class="field">
+      <span>Cow</span>
+      <a>/cow</a>
+    </div>
+  </div>
+</div>
