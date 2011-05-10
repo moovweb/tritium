@@ -37,7 +37,7 @@ end
 
 desc 'build the developer gem'
 task :devgem do
-  puts `gem build manhattan.gemspec`
+  puts `gem build tritium.gemspec`
 end
 
 desc 'upload the gem to the production gemserver'
