@@ -2,7 +2,7 @@
 
 require 'minitest/autorun'
 require 'yaml'
-require_relative '../../../lib/tritium/parser/instruction'
+require_relative '../../lib/parser/instruction'
 
 class InstructionTest < MiniTest::Unit::TestCase
   include Tritium::Parser
