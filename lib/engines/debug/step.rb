@@ -156,6 +156,10 @@ module Tritium::Engines
       end
     end
     
+    def dump
+      log(@object.to_s)
+    end
+    
     def log(message)
       message = execute_children_on(message)
       @logger.info(message)

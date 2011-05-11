@@ -20,6 +20,14 @@ module  EngineTests
     engine.run("")
     @logger.verify
   end
+  
+  def test_log_dump
+    @logger = MiniTest::Mock.new
+    @logger.expect("info", nil, ['<a>hi mom!</a>'])
+    engine = engine_class.new("doc('html') { $('//a') { dump() } }", :logger => @logger)
+    engine.run("<html><body><a>hi mom!</a></body></html>")
+    @logger.verify
+  end
 
   def test_import
     import("move.ts")

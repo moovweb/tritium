@@ -69,6 +69,10 @@ module Tritium
           @root.logger.info(message)
         end
         
+        def dump
+          log(@object.to_s)
+        end
+        
         # This is how you select an element to pass it to a function.
         # *Note*: that you can select attributes as I have done in the example.
         #
