@@ -17,7 +17,7 @@ Rake::TestTask.new(:test) do |t|
 end
 
 task :benchmark do
-  puts `ruby #{File.dirname(__FILE__)}/test/tritium/engines/benchmarks.rb`
+  puts `ruby #{File.dirname(__FILE__)}/test/engines/benchmarks.rb`
 end
 
 desc 'bundle the gems'
