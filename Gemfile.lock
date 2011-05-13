@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tritium (0.1)
+    tritium (0.1.1)
       bundler
       yajl-ruby
 
