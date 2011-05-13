@@ -14,11 +14,11 @@ module Tritium
         super
         
         if ENV["TEST"].nil?
-          tmp_dir = File.join(@script_path, "../tmp")
-          Dir.mkdir(tmp_dir) unless File.directory?(tmp_dir)
+          @tmp_dir = File.join(@script_path, "../tmp")
+          Dir.mkdir(@tmp_dir) unless File.directory?(@tmp_dir)
           
           # Dump the compiled script to the /tmp folder as script.ts
-          script_file = File.join(tmp_dir, "script.ts")
+          script_file = File.join(@tmp_dir, "script.ts")
           File.open(script_file, "w+") { |f| f.write(@root_instruction.to_script) }
         end
       end
@@ -44,7 +44,7 @@ module Tritium
 
         # If we called debug(), then do all of this
 
-        debug_file = File.join(tmp_dir, "debug.sqlite")
+        debug_file = File.join(@tmp_dir, "debug.sqlite")
 
         puts "DEBUG START! (to #{debug_file})"
 
