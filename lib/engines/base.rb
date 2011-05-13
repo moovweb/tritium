@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'logger'
 require_relative '../parser/reader'
+require_relative '../parser/expansion_reader'
 require_relative '../parser/preprocess'
 
 class Nokogiri::HTML::DocumentFragment
