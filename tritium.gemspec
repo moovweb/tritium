@@ -19,12 +19,13 @@ Gem::Specification.new do |s|
   s.email       = ["hcatlin@moovweb.com"]
   s.homepage    = "https://github.com/moovweb/tritium"
 
-  s.files        = Dir['README.md', 'BUILD_VERSION', 'Gemfile', 'Rakefile', 'spec.yml', '{bin,lib,default,command}/**/*']
+  s.files        = Dir['README.md', 'BUILD_VERSION', 'Gemfile', 'Rakefile', 'spec.yml', 'lib/**/*']
   s.executables  = []
   s.test_files   = Dir['test/**/*']
   s.require_path = 'lib'
 
   s.add_dependency('yajl-ruby')
   s.add_dependency('nokogiri')
+  s.add_dependency('tidy_ffi')
   s.add_dependency('bundler')
 end
