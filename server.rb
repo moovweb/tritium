@@ -3,6 +3,7 @@ require 'sinatra/base'
 require 'sinatra/reloader'
 require 'json'
 require 'sass'
+require 'sequel'
 
 DB_PATH = File.join(ENV["PROJECT_PATH"], "tmp/debug.sqlite")
 DB = Sequel.sqlite(DB_PATH)
