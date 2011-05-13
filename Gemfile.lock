@@ -8,10 +8,12 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
+    rake (0.8.7)
     yajl-ruby (0.8.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  rake
   tritium!
