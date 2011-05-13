@@ -1,9 +1,11 @@
 require "tidy_ffi"
-require_relative "../debug/engine"
+
 
 module Tritium
   module Engines
-    class Tidy < Debug
+    require_relative "../debug/engine"
+    Tritium::Engines::Debug
+    class Tidy < Engines::Debug
       TidyFFI::Tidy.default_options.char_encoding = 'utf8' #encoding for both input and output
       TidyFFI::Tidy.default_options.show_warnings = 0
       TidyFFI::Tidy.default_options.show_errors = 0

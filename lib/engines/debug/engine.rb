@@ -1,5 +1,3 @@
-require_relative '../../parser/expansion_reader'
-
 require 'yajl'
 
 module Tritium

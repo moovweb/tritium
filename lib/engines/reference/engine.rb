@@ -1,9 +1,8 @@
+require_relative "../base"
 
 module Tritium
   module Engines
-    require_relative '../base'
-
-    class Reference < Engines::Base
+    class Reference < Base
       require_relative 'scope'
       
       def run(doc, options = {})

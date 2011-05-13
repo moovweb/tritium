@@ -27,5 +27,6 @@ Gem::Specification.new do |s|
   s.add_dependency('yajl-ruby')
   s.add_dependency('nokogiri')
   s.add_dependency('tidy_ffi')
+  s.add_dependency('sequel')
   s.add_dependency('bundler')
 end

@@ -4,6 +4,7 @@ PATH
     tritium (0.1.1)
       bundler
       nokogiri
+      sequel
       tidy_ffi
       yajl-ruby
 
@@ -14,6 +15,7 @@ GEM
       rake (>= 0.8.7)
     nokogiri (1.4.4)
     rake (0.8.7)
+    sequel (3.23.0)
     tidy_ffi (0.1.3)
       ffi (>= 0.3.5)
     yajl-ruby (0.8.2)
