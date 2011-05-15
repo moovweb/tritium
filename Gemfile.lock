@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    tritium (0.2.23)
+    tritium (0.2)
       bundler
-      moov_build_tasks (>= 0.2)
+      moov_build_tasks
       nokogiri
       rake
       sequel
