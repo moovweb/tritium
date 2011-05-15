@@ -1,5 +1,5 @@
 version = File.read("VERSION").strip
-if File.exists?"JENKINS"
+if File.exists?("JENKINS")
   version += "."
   version += File.read("JENKINS").strip
 end
@@ -30,5 +30,5 @@ Gem::Specification.new do |s|
   s.add_dependency('sequel')
   s.add_dependency('bundler')
   s.add_dependency('rake')
-  s.add_dependency('moov_build_tasks', [">= 0.2"])
+  s.add_dependency('moov_build_tasks')
 end
