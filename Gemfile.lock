@@ -5,6 +5,7 @@ PATH
       bundler
       moov_build_tasks (>= 0.2)
       nokogiri
+      rake
       sequel
       tidy_ffi
       yajl-ruby
@@ -28,5 +29,4 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  rake
   tritium!

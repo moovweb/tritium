@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.email       = ["hcatlin@moovweb.com"]
   s.homepage    = "https://github.com/moovweb/tritium"
 
-  s.files        = Dir['README.md', 'BUILD_VERSION', 'Gemfile', 'Rakefile', 'spec.yml', 'lib/**/*', 'test/**/*']
+  s.files        = Dir['README.md', 'BUILD_VERSION', 'Gemfile', 'Gemfile.lock', 'Rakefile', 'spec.yml', 'lib/**/*', 'test/**/*']
   s.executables  = []
   s.test_files   = Dir['test/**/*']
   s.require_path = 'lib'
@@ -29,5 +29,6 @@ Gem::Specification.new do |s|
   s.add_dependency('tidy_ffi')
   s.add_dependency('sequel')
   s.add_dependency('bundler')
+  s.add_dependency('rake')
   s.add_dependency('moov_build_tasks', [">= 0.2"])
 end
