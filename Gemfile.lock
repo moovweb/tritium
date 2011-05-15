@@ -3,9 +3,8 @@ PATH
   specs:
     tritium (0.2)
       bundler
-      moov_build_tasks
+      moov_build_tasks (>= 0.2)
       nokogiri
-      rake
       sequel
       tidy_ffi
       yajl-ruby
