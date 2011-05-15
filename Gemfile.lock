@@ -3,6 +3,7 @@ PATH
   specs:
     tritium (0.2)
       bundler
+      moov_build_tasks
       nokogiri
       sequel
       tidy_ffi
@@ -11,8 +12,9 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    ffi (1.0.7)
-      rake (>= 0.8.7)
+    ffi (1.0.8)
+    moov_build_tasks (0.1)
+      rake
     nokogiri (1.4.4)
     rake (0.8.7)
     sequel (3.23.0)
