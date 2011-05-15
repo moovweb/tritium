@@ -20,7 +20,7 @@ class Tritium::Engines::Debug
     end
     
     def remove
-      debug_log("Removing #{object.path}")
+      #debug_log("Removing #{object.path}")
       object.remove
     end
     
