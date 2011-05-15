@@ -11,6 +11,7 @@ PATH
 
 GEM
   remote: http://rubygems.org/
+  remote: http://gems.moovweb.org/
   specs:
     ffi (1.0.8)
     moov_build_tasks (0.1)
