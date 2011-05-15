@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.email       = ["hcatlin@moovweb.com"]
   s.homepage    = "https://github.com/moovweb/tritium"
 
-  s.files        = Dir['README.md', 'BUILD_VERSION', 'Gemfile', 'Rakefile', 'spec.yml', 'lib/**/*']
+  s.files        = Dir['README.md', 'BUILD_VERSION', 'Gemfile', 'Rakefile', 'spec.yml', 'lib/**/*', 'test/**/*']
   s.executables  = []
   s.test_files   = Dir['test/**/*']
   s.require_path = 'lib'
