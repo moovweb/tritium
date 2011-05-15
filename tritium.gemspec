@@ -29,5 +29,5 @@ Gem::Specification.new do |s|
   s.add_dependency('tidy_ffi')
   s.add_dependency('sequel')
   s.add_dependency('bundler')
-  s.add_dependency('moov_build_tasks')
+  s.add_dependency('moov_build_tasks', [">= 0.2"])
 end

@@ -4,6 +4,9 @@
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'tasks')
 
+require 'bundler'
+Bundler.setup
+
 require 'moov_build_tasks'
 Moov::BuildTasks.load!
 
