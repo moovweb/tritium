@@ -1,0 +1,49 @@
+GRAMMAR:
+
+script	::	<nothing>
+	|	stmt script
+
+stmt	::	func args scope
+	|	<var> '=' func args scope
+	|	'@import' path
+
+func	::	<identifier>
+
+args	::	<nothing>
+	|	'(' vals ')'
+
+vals	::	<nothing>
+	|	first rest
+
+first	::	<string>
+	|	<var>
+	|	func args
+	|	<kwd> <string>
+	|	<kwd> func args
+
+rest	::	<nothing>
+	|	',' first rest
+
+scope	::	<nothing>
+	|	'{' script '}'
+
+path	::	<string>
+	|	<word>
+
+
+LEXICAL RULES:
+
+<string>	::	"(\\.|[^"\\])*"		(double quoted strings)
+		|	'(\\.|[^'\\])*'		(single quoted strings)
+		|	\/(\\.|[^\/\\])*\/	(Ruby regexes)
+
+<identifier>	::	\$|[_a-zA-Z]\w*		(the usual, or '$')
+
+<var>		::	\$\w+			('$' + the usual)
+
+<kwd>		::	[_a-zA-Z\-](\w|\-)*:	(the usual w/ hyphens + ':')
+
+<word>		::	\S+			(block of non-whitespace)
+
+<comment>	::	#.*			(. doesn't match \n)
+		|	'#[' thru matching ']#'	(comments will nest properly)
