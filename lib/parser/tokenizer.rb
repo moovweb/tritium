@@ -159,6 +159,12 @@ module Tritium
           yield token
         end
       end
+      
+      def to_a
+        result = []
+        self.each { |t| result << t }
+        result
+      end
     end
   end
 end
