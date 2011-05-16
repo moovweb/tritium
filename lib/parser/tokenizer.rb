@@ -14,10 +14,10 @@ module Tritium
       end
 
       class Token
-        attr_reader :lexeme, :value
+        attr_reader :lexeme, :value, :filename, :line
 
-        def initialize(lexeme, value = nil, file = nil, line = nil)
-          @lexeme, @value, @file, @line = lexeme, value, file, line
+        def initialize(lexeme, value = nil, filename = nil, line = nil)
+          @lexeme, @value, @filename, @line = lexeme, value, filename, line
         end
 
         def to_s
