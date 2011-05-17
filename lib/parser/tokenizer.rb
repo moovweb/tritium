@@ -1,18 +1,18 @@
 module Tritium
   module Parser
-    class Tokenizer
-      class Error
-        attr_reader :filename, :line, :message
-
-        def initialize(filename, line, message)
-          @filename, @line, @message = filename, line, message
-        end
-
-        def to_s
-          "Error in #{@filename}, line #{@line}: #{@message}"
-        end
+    class Error
+      attr_reader :filename, :line, :message
+      
+      def initialize(filename, line, message)
+        @filename, @line, @message = filename, line, message
       end
+  
+      def to_s
+        "Error in #{@filename}, line #{@line}: #{@message}"
+      end
+    end
 
+    class Tokenizer
       class Token
         attr_reader :lexeme, :value, :filename, :line
 
@@ -80,6 +80,12 @@ module Tritium
       end
       private :ignore_multicomment!
 
+      def munch_error!(msg)
+        error = Error.new(@filename, @line_num, msg)
+        next_line!
+        return error
+      end
+
       def munch!
         while @line do
           @line.lstrip!
@@ -108,11 +114,7 @@ module Tritium
                                @filename,
                                @line_num)
             else
-              error = Error.new(@filename,
-                                @line_num,
-                                "unterminated string or regexp #{@line}")
-              next_line!
-              return error
+              return munch_error!("unterminated string or regexp #{@line}")
             end
           when m = pop_match!(/^\$\w+/)
             return Token.new(:VAR, m[1, m.length], @filename, @line_num)
@@ -128,18 +130,10 @@ module Tritium
             elsif m = pop_match!(/^(\S)+/) then
               return Token.new(:IMPORT, m, @filename, @line_num)
             else
-              error = Error.new(@filename,
-                                @line_num,
-                                "malformed import filename #{@line}")
-              next_line!
-              return error
+              return munch_error!("malformed import")
             end
           else
-            error = Error.new(@filename,
-                              @line_num,
-                              "unrecognized tokens in #{@line}")
-            next_line!
-            return error
+            return munch_error!("unrecognized tokens in #{@line}")
           end
         end
       end
@@ -151,6 +145,12 @@ module Tritium
 
       def pop!
         tmp, @lookahead = @lookahead, munch!
+        if Token === tmp and tmp.lexeme == :STRING then
+          while Token === @lookahead and @lookahead.lexeme == :STRING do
+            tmp.value << @lookahead.value
+            @lookahead = munch!
+          end
+        end
         return tmp
       end
 
@@ -159,7 +159,7 @@ module Tritium
           yield token
         end
       end
-      
+
       def to_a
         result = []
         self.each { |t| result << t }
