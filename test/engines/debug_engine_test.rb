@@ -13,7 +13,9 @@ class DebugEngineTest < MiniTest::Unit::TestCase
   end
   
   def test_debug
-    engine = engine_class.new("doc('xml') { $('.//body') {\n  select('.//a') { remove } \n}\n}", :path => "/scripts")
+    log = Logger.new(STDOUT)
+    log.level = Logger::ERROR
+    engine = engine_class.new("doc('xml') { $('.//body') {\n  select('.//a') { remove } \n}\n}", :path => "/scripts", :logger => log)
     result, export_vars = engine.run("<body><div><a></a></div></body>")
     doc = Nokogiri::XML.parse(result)
     
