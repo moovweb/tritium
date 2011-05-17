@@ -68,7 +68,7 @@ module Tritium::Engines
         # Save the last_env if anything changed
         (@debug[:last_env] = @env.clone) if @env.values != @debug[:start_env].values
         
-        (@debug[:last_object] = @object.clone) if @object != @debug[:start_object]
+        #(@debug[:last_object] = @object.clone) if @object != @debug[:start_object]
         
         if (@env["debug_depth"].to_i == @sid.size) && @env["debug"] != ""
           global_debug[@env["debug"]] ||= []
