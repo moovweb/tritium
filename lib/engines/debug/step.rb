@@ -93,6 +93,15 @@ module Tritium::Engines
       end
       obj
     end
+    
+    def each(&block)
+      block.call(self)
+      @children.each do |execution_block|
+        execution_block.each do |child_step|
+          child_step.each(&block)
+        end
+      end
+    end
 
     def execute_children_on(obj)
       execute_instructions(instruction.children, obj)

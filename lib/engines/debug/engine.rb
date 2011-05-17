@@ -24,6 +24,9 @@ module Tritium
       def run(doc, options = {})
         env = options["env"] || options[:env] || {}
         
+        # Set this so that we run a full debug stack on every execution
+        env["debug"] = "main"
+        
         start = Time.now
 
         # Actually run the code
@@ -38,25 +41,44 @@ module Tritium
           @logger.stats("Script took #{took} sec to process") if @logger.respond_to? :stats
         end
 
-        return [@root_step.object, export_vars] if !global_debug.any? || ENV["TEST"]
+        return [@root_step.object, export_vars] if ENV["TEST"]
 
         # If we called debug(), then do all of this
-
-        debug_file = File.join(@tmp_dir, "debug.sqlite")
-
-        puts "DEBUG START! (to #{debug_file})"
-
-        # Build the new DB object
-        db = Database.new(debug_file)
-
-        # Insert everything into the DB
-        db.insert_instruction(@root_instruction)
-        db.process_debug(global_debug)
-
-        puts "DEBUG FINISHED!"
         
-        # Return the result object
-        [@root_step.object, []]
+        print_stats(@root_step)
+
+        #debug_file = File.join(@tmp_dir, "debug.sqlite")
+        #
+        #puts "DEBUG START! (to #{debug_file})"
+        #
+        ## Build the new DB object
+        #db = Database.new(debug_file)
+        #
+        ## Insert everything into the DB
+        #db.insert_instruction(@root_instruction)
+        #db.process_debug(global_debug)
+        #
+        #puts "DEBUG FINISHED!"
+        #
+        ## Return the result object
+        [@root_step.object, export_vars]
+      end
+
+      def print_stats(root_step)
+        selectors = []
+
+        root_step.each do |step|
+          if step.debug[:search_time_ns]
+            selectors << step
+          end
+        end
+        
+        selectors = selectors.sort_by { |s| s.debug[:search_time_ns] }
+        selectors.reverse!
+        @logger.info "Slowest Searches:"
+        selectors[0..8].each_with_index do |step, index|
+          @logger.info "##{index + 1} #{step.debug[:search_time_ns]} - #{step.instruction.args.first.inspect}"
+        end
       end
 
       
