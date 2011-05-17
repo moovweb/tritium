@@ -121,6 +121,10 @@ module Tritium
         "<TS:#{stub}@#{line_number}>"
       end
       
+      def location
+        "#{script_name}:#{line_number}"
+      end
+      
       def ==(to)
         (to.name == name) && compare_args(to) && compare_children(to) && true
       end

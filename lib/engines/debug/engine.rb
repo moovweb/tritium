@@ -41,7 +41,7 @@ module Tritium
           @logger.stats("Script took #{took} sec to process") if @logger.respond_to? :stats
         end
 
-        return [@root_step.object, export_vars] if ENV["TEST"]
+        #return [@root_step.object, export_vars] if ENV["TEST"]
 
         # If we called debug(), then do all of this
         
@@ -68,16 +68,17 @@ module Tritium
         selectors = []
 
         root_step.each do |step|
-          if step.debug[:search_time_ns]
+          if step.debug[:search_time]
             selectors << step
           end
         end
         
-        selectors = selectors.sort_by { |s| s.debug[:search_time_ns] }
+        selectors = selectors.sort_by { |s| s.debug[:search_time] }
         selectors.reverse!
         @logger.info "Slowest Searches:"
+
         selectors[0..8].each_with_index do |step, index|
-          @logger.info "##{index + 1} #{step.debug[:search_time_ns]} - #{step.instruction.args.first.inspect}"
+          @logger.info "##{index + 1} #{(step.debug[:search_time] * 1000).to_i}ms - #{step.instruction.args.first.inspect} in #{step.instruction.location}"
         end
       end
 
