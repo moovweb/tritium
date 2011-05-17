@@ -1,0 +1,21 @@
+
+%li.step{:class => "color_#{step.sid.split("_").size % 5}", :id => "step_#{step.sid}"}
+  .time
+    = step.time_cs / 10.0
+    \/
+    = step.total_time_cs / 10.0
+    ms
+  = step.instruction.stub
+  - children_groups = step.children.group_by(&:group_id)
+  - closed = children_groups.count > 1
+  - if closed
+    %button Open
+  - children_groups.each do |group_id, children|
+    .execution_wrapper{:class => (closed ? "closable" : "single")}
+      {
+      .execution
+        %ol.steps
+          - children.each do |child|
+            = haml :_step, :locals => {:step => child}
+      }
+      = children.first.group_name
