@@ -106,6 +106,14 @@ module Tritium
         result
       end
       
+      def to_debug_script
+        debug_script = []
+        self.to_script.split("\n").each_with_index do |line, index|
+          debug_script << "$line = #{index + 1}\n#{line}"
+        end
+        debug_script.join("\n")
+      end
+      
       def to_hash
         { :line_number => @line_number,
           :line => @line,
@@ -119,6 +127,10 @@ module Tritium
       
       def inspect
         "<TS:#{stub}@#{line_number}>"
+      end
+      
+      def location
+        "#{script_name}:#{line_number}"
       end
       
       def ==(to)

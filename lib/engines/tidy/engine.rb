@@ -4,7 +4,6 @@ require "tidy_ffi"
 module Tritium
   module Engines
     require_relative "../debug/engine"
-    Tritium::Engines::Debug
     class Tidy < Engines::Debug
       TidyFFI::Tidy.default_options.char_encoding = 'utf8' #encoding for both input and output
       TidyFFI::Tidy.default_options.show_warnings = 0

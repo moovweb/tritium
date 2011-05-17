@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.version     = version
   s.platform    = Gem::Platform::RUBY
   s.summary     = "A scripting language for document transformations"
-  s.description = ""
+  s.description = "A scripting language for document transformations"
 
   s.authors     = ["Hampton Catlin"]
   s.email       = ["hcatlin@moovweb.com"]
