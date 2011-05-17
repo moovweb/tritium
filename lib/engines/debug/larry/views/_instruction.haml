@@ -1,8 +1,0 @@
-%div[instruction]
-  %a{:href => "/instruction/#{instruction.id}/steps"}= instruction.to_s
-  - if instruction.children.any?
-    {
-    .instructions
-      - instruction.children.each do |child|
-        = haml :_instruction, :locals => { :instruction => child }
-    }
