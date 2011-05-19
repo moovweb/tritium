@@ -9,8 +9,7 @@ stmt	::	func args scope
 
 func	::	<identifier>
 
-args	::	<nothing>
-	|	'(' vals ')'
+args	::	'(' vals ')'
 
 vals	::	<nothing>
 	|	first rest
