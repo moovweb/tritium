@@ -29,7 +29,7 @@ module Tritium
             if(block)
               @env[name] = open_text_scope_with(@env[name], &block)
             else
-              @env[name]
+              @env[name].clone
             end
           end
         end
@@ -47,11 +47,10 @@ module Tritium
         end
   
         def asset(file_name, type = nil)
-          file_name = file_name.clone
           if (@env["#{type}_asset_location"][0..6] == "http://") || (@env["#{type}_asset_location"][0..1] == "//")
-            File.join(@env["#{type}_asset_location"], file_name)
+            File.join(@env["#{type}_asset_location"].clone, file_name)
           else
-            File.join(@env["asset_host"], @env["#{type}_asset_location"], file_name)
+            File.join(@env["asset_host"].clone, @env["#{type}_asset_location"].clone, file_name)
           end
         end
 
