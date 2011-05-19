@@ -29,7 +29,7 @@ module Tritium
             if(block)
               @env[name] = open_text_scope_with(@env[name], &block)
             else
-              @env[name].clone
+              (@env[name] || "").clone
             end
           end
         end
