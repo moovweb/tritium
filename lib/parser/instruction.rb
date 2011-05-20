@@ -176,6 +176,13 @@ module Tritium
       end
       
       class Invalid < StandardError
+        def initialize(instruction = nil)
+          @instruction = instruction
+        end
+        
+        def message
+          "Something is wrong with #{@instruction.location}"
+        end
       end
     end
   end
