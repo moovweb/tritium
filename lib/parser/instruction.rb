@@ -70,7 +70,7 @@ module Tritium
       
       def stub
         arg_list = args.collect do |a|
-          if a === self
+          if a.object_id == self.object_id
             puts "HOLY CRAP! WEIRDNESS AT #{location}"
           end
           a.respond_to?("to_script") ? a.to_script : a.inspect
