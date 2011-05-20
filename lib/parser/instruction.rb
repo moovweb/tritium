@@ -69,7 +69,12 @@ module Tritium
       end
       
       def stub
-        arg_list = args.collect { |a| a.respond_to?("to_script") ? a.to_script : a.inspect}
+        arg_list = args.collect do |a|
+          if a == self
+            puts "HOLY CRAP! WEIRDNESS AT #{location}"
+          end
+          a.respond_to?("to_script") ? a.to_script : a.inspect
+        end
         "#{name}(#{arg_list.join(", ")})"
       end
       

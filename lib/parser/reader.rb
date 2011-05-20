@@ -36,7 +36,7 @@ module Tritium
           msg << "PROCESSED SCRIPT: #{@_processed_line}\n"
           msg << @stack.inspect
           @logger.error msg
-        
+          @logger.error e.backtrace.join("\n")
           raise e
         end
       
