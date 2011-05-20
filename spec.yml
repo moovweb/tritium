@@ -19,6 +19,7 @@ Base: &base
   var:
     opens: Text
     alias: $
+    returns: true
     arguments:
       -
         name: Name
@@ -38,6 +39,7 @@ Base: &base
   asset:
     opens: Text
     doc: Use this to call any files kept in the project's asset folder.
+    returns: true
     arguments:
       -
         name: Filename
@@ -50,6 +52,7 @@ Base: &base
     doc: DO NOT USE. Wraps the entire script virtually!
   fetch:
     opens: Text
+    returns: true
     doc: This is how you select an element to pass it to a function.
     arguments:
       -
@@ -66,6 +69,7 @@ Base: &base
         name: Value
         type: String
   dump:
+    returns: true
     doc: This is a debug-feature. Please don't use this in production. It will return whatever the current object is in a stringified form.
 Node:
   <<: *base
@@ -240,6 +244,7 @@ Attribute:
     doc: Delete the current attribute
   value:
     opens: Text
+    returns: true
     doc: Allow us to edit the value (key="value") part of the attribute
     arguments:
       -
@@ -248,6 +253,7 @@ Attribute:
         expansion: true
   name:
     opens: Text
+    returns: true
     doc: Allow us to edit the key (key="value") part of the attribute
     arguments:
       -
@@ -259,6 +265,7 @@ Text:
   <<: *base
   rewrite:
     doc: Filters the current text string through the named rewriter.
+    returns: true
     arguments:
       -
         name: Key for the rewriter

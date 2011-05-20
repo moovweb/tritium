@@ -9,7 +9,7 @@ class ExpansionReaderTest < MiniTest::Unit::TestCase
   include Tritium::Parser
 
   def setup
-    @reader = ExpansionReader.new
+    @reader = ExpansionReader.new(Logger.new(nil))
   end
   
   def test_positions
@@ -51,6 +51,13 @@ class ExpansionReaderTest < MiniTest::Unit::TestCase
     output = read("bottom { insert_tag('a', href: '/') { remove } }")
     expected_output = read("bottom { insert_tag('a') { attribute('href') { value { set('/') } }; remove } }")
     assert_equal expected_output.to_script, output.to_script
+  end
+  
+  def test_non_returning_arg
+    output = read('text(top)')
+    assert(false)
+  rescue Instruction::Invalid
+    assert(true)
   end
   
  private

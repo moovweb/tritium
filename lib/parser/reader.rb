@@ -54,6 +54,12 @@ module Tritium
       end
     
       def cmd(name, *args, &block)
+        args.each do |arg|
+          if arg.is_a?(Instruction) && !arg.information["returns"]
+            raise Instruction::Invalid.new(arg)
+          end
+        end
+        
         ins = @stack.last.add(name.to_s, :args => args, :processed_line => @_processed_line, :line => @_line, :line_number => @_line_number, :script_name => @_script)
 
         if block
