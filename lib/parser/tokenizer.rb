@@ -118,7 +118,7 @@ module Tritium
             end
           when m = pop_match!(/^\$\w+/)
             return Token.new(:VAR, m[1, m.length], @filename, @line_num)
-          when m = pop_match!(/^[_a-zA-Z\-](\w|\-)*:/)
+          when m = pop_match!(/^[a-zA-Z_:][-\w:.]*:/)
             return Token.new(:KWD, m[0, m.length-1], @filename, @line_num)
           when m = pop_match!(/^\$|^[_a-zA-Z]\w*/)
             return Token.new(:FUNC, m, @filename, @line_num)
