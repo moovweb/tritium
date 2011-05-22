@@ -36,16 +36,16 @@ module Tritium
         '/' => /^\/(\\.|[^\/\\])*\/[imxouesn]*/
       }
 
-      def initialize(filename)
+      def initialize(script_string, filename)
         @filename = filename
-        @instream = open @filename
+        @lines = script_string.lines.to_a
         @line_num = 0
         next_line!
         @lookahead = munch!
       end
 
       def next_line!
-        @line = @instream.gets
+        @line = @lines[@line_num]
         if @line then
           @line.rstrip!
           @line_num += 1
