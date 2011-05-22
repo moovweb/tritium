@@ -33,7 +33,7 @@ module Tritium
       @@string_matchers = {
         '"' => /^"(\\.|[^"\\])*"/,
         "'" => /^'(\\.|[^'\\])*'/,
-        '/' => /^\/(\\.|[^\/\\])*\//
+        '/' => /^\/(\\.|[^\/\\])*\/[imxouesn]*/
       }
 
       def initialize(filename)
