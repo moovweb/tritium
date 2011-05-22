@@ -9,7 +9,7 @@
 ## space between func name and arg list
 $path = magic ("whatever")
 
-match ( $path, /.*whatsaaroneating.com\/.*/ ) {
+match ( $path, /.*whatsaaroneating.com\/.*/i ) {
 
   ## "not" in xpath, import not on its own line
   $("/html/body/div[not(@ignore-me)]") { @import look-at-me.ts }
@@ -19,7 +19,7 @@ match ( $path, /.*whatsaaroneating.com\/.*/ ) {
     "/p[@class='i\'m-getting-tired-of-this-example-xpath-string']") {
 
     ## keyword arg with hyphens
-    wrap("span", long-example: "true") {
+    wrap("span", long-example: "true", with:colons: "blah") {
 
       ## multi-line arglist
       move_here("//bah//who//knows//where//these//are//coming//from",
