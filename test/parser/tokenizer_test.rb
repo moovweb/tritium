@@ -21,6 +21,7 @@ class TokenizerTest < MiniTest::Unit::TestCase
     tokenizer = get_tokenizer("invalid.ts")
     tokens = tokenizer.to_a
     assert_equal tokens[1].class, Error
+    tokens.each { |token| puts token }
   end
 
   def test_false_negatives_script
