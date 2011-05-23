@@ -8,7 +8,7 @@ class TokenizerTest < MiniTest::Unit::TestCase
   def get_tokenizer(file)
     fullname = File.join(File.dirname(__FILE__), "scripts/" + file)
     script_string = IO.read(fullname)
-    Tokenizer.new(script_string, fullname)
+    Tokenizer.new(script_string, file)
   end
   
   def test_basic_script
