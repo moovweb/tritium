@@ -5,10 +5,11 @@ require_relative '../../lib/parser/tokenizer'
 
 class TokenizerTest < MiniTest::Unit::TestCase
   include Tritium::Parser
-  def get_tokenizer(file)
-    fullname = File.join(File.dirname(__FILE__), "scripts/" + file)
+
+  def get_tokenizer(filename)
+    fullname = File.join(File.dirname(__FILE__), "scripts/" + filename)
     script_string = IO.read(fullname)
-    Tokenizer.new(script_string, file)
+    Tokenizer.new(script_string, :filename => filename)
   end
   
   def test_basic_script
