@@ -203,7 +203,8 @@ module Tritium::Parser
     def add_class(class_name, &block)
       cmd("attribute", "class") {
         value() {
-          append(" " + class_name)
+          append(" ")
+          append(class_name)
         }
         block.call if block
       }

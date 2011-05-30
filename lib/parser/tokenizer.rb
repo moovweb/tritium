@@ -37,8 +37,8 @@ module Tritium
         '/' => /^\/(\\.|[^\/\\])*\/[imxouesn]*/
       }
 
-      def initialize(script_string, filename)
-        @filename = filename
+      def initialize(script_string, options = {})
+        @filename = options[:filename] || "MAIN"
         @lines = script_string.lines.to_a
         @line_num = 0
         next_line!
