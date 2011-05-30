@@ -1,23 +1,24 @@
 module Tritium
   module Parser
     class Error
-      attr_reader :filename, :line, :message
+      attr_reader :filename, :line_num, :message
       
-      def initialize(filename, line, message)
-        @filename, @line, @message = filename, line, message
+      def initialize(filename, line_num, message)
+        @filename, @line_num, @message = filename, line_num, message
       end
   
       def to_s
-        "Error in #{@filename}, line #{@line}: #{@message}"
+        "Error in #{@filename}, line #{@line_num}: #{@message}"
       end
     end
 
     class Tokenizer
       class Token
-        attr_reader :lexeme, :value, :filename, :line
+        attr_reader :lexeme, :value, :filename, :line_num
 
-        def initialize(lexeme, value = nil, filename = nil, line = nil)
-          @lexeme, @value, @filename, @line = lexeme, value, filename, line
+        def initialize(lexeme, value = nil, filename = nil, line_num = nil)
+          @lexeme, @value = lexeme, value
+          @filename, @line_num = filename, line_num
         end
 
         def to_s
