@@ -1,48 +1,44 @@
 GRAMMAR:
 
-script	::	<nothing>
-	|	stmt script
+script		::	statement*
 
-stmt	::	func args scope
-	|	<var> '=' func args scope
-	|	'@import' path
+statement	::	'@import' path
+		|	<var> '=' term
+		|	<id> arglist block
 
-func	::	<identifier>
+path		::	<word>
+		|	<string>
 
-args	::	'(' vals ')'
+arglist		::	'(' args? ')'
 
-vals	::	<nothing>
-	|	first rest
+args		::	arg ( ',' arg )*
 
-first	::	<string>
-	|	<var>
-	|	func args
-	|	<kwd> <string>
-	|	<kwd> func args
+arg		::	term
+		|	<kwd> term
 
-rest	::	<nothing>
-	|	',' first rest
+term		::	<string>
+		|	<regexp>
+		|	<var>
+		|	<id> arglist
 
-scope	::	<nothing>
-	|	'{' script '}'
-
-path	::	<string>
-	|	<word>
+block		::	<nothing>
+		|	'{' script '}'
 
 
 LEXICAL RULES:
 
+<word>		::	\S+			(block of non-whitespace)
+
 <string>	::	"(\\.|[^"\\])*"		(double quoted strings)
 		|	'(\\.|[^'\\])*'		(single quoted strings)
-		|	\/(\\.|[^\/\\])*\/	(Ruby regexes)
 
-<identifier>	::	\$|[_a-zA-Z]\w*		(the usual, or '$')
+<regexp>	::	\/(\\.|[^\/\\])*\/[imxouesn]*	(Ruby regexes)
 
 <var>		::	\$\w+			('$' + the usual)
 
-<kwd>		::	[_a-zA-Z\-](\w|\-)*:	(the usual w/ hyphens + ':')
+<id>		::	\$|[_a-zA-Z]\w*		(the usual, or '$')
 
-<word>		::	\S+			(block of non-whitespace)
+<kwd>		::	[a-zA-Z_:][-\w:.]*:	(XML attributes << ':')
 
-<comment>	::	#.*			(. doesn't match \n)
-		|	'#[' thru matching ']#'	(comments will nest properly)
+<comment>	::	#.*			(single line)
+		|	'#[' thru matching ']#'	(multiline, matched/nested)
