@@ -21,8 +21,7 @@ term		::	<string>
 		|	<var>
 		|	<id> arglist
 
-block		::	<nothing>
-		|	'{' script '}'
+block		::	( '{' script '}' )?
 
 
 LEXICAL RULES:
