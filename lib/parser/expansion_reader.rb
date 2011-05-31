@@ -1,4 +1,5 @@
 require_relative 'reader'
+require_relative '../extensions/regexp'
 
 module Tritium::Parser
   class ExpansionReader < Reader
@@ -84,21 +85,28 @@ module Tritium::Parser
     end
     
     def not_matcher(matcher)
-      {:not => matcher}
+      r = Regexp.new(matcher)
+      r.opposite = true
+      return r
     end
     
-    def match(what, with, &block)
-      opposite_matcher = false
-      if with.is_a?(Hash) && with[:not]
-        with = with[:not]
-        opposite_matcher = true
+    def match(what, one_matcher = nil, &block)
+      @last_matcher = cmd("match", what) do
+        if one_matcher
+          with(one_matcher, &block)
+        else
+          block.call
+        end
       end
-      @last_matcher = cmd("match", what, with, opposite_matcher, &block)
+    end
+    
+    def with(matcher, &block)
+      matcher = Regexp.new(matcher) unless matcher.is_a?(Regexp)
+      cmd("with", matcher, &block)
     end
     
     def else_do(&block)
-      what, with, opposite_matcher = @last_matcher.args
-      cmd("match", what.dup, with.dup, !opposite_matcher, &block)
+      with(".*", &block)
     end
     
     def html(value = nil, &block)

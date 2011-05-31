@@ -33,6 +33,12 @@ Base: &base
   not_matcher:
     doc: Used with match($var, not('hi'))
     hide: true
+  with:
+    doc: Used as a child of match("something")
+    arguments:
+      -
+        name: Regex
+        doc: The regular expression to match with
   else_do:
     doc: Else command for match()
     hide: true
