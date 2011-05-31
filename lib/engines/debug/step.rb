@@ -8,7 +8,9 @@ module Tritium::Engines
     attr :debug
     attr :object
     attr :sid
+    attr :return
     attr :logger, true
+    attr :continue, true
     
     require_relative 'steps/node'
     require_relative 'steps/attribute'
@@ -18,6 +20,8 @@ module Tritium::Engines
     def initialize(instruction, parent = nil)
       @instruction = instruction
       @logger ||= parent.logger if parent
+      
+      @continue = true
       
       @parent = parent
 
@@ -47,17 +51,10 @@ module Tritium::Engines
       end
 
       args = (instruction.args || []).collect do |arg|
-        if arg.is_a?(Tritium::Parser::Instruction)
-          if arg.name == "var"
-            arg = @env[arg.args.first]
-          else
-            arg = @parent.send(arg.name, *arg.args).to_s
-          end
-        end
-        arg
+        resolve_arg(arg, @parent)
       end
 
-      self.send(instruction.name, *(args))
+      @return = self.send(instruction.name, *args)
 
       if debug?
         @debug[:total_time_cs] = ((Time.now - start) * 10000).to_i
@@ -83,15 +80,32 @@ module Tritium::Engines
       return obj if (instructions.size == 0)
       timer = Time.now
       @children << instructions.collect do |child|
-        step = @child_type.new(child, self)
-        obj = step.execute(obj, @env, @global_debug, @export_vars)
-        (step.debug[:group_name] = @name) if debug?
+        step = execute_instruction(child, obj)
+        obj = step.object
         step
       end
       if @child_time
         @child_time += ((Time.now - timer) * 10000).to_i
       end
       obj
+    end
+    
+    def resolve_arg(arg, scope = self)
+      if arg.is_a?(Tritium::Parser::Instruction)
+        if arg.name == "var"
+          arg = @env[arg.args.first]
+        else
+          arg = scope.send(arg.name, *arg.args).to_s
+        end
+      end
+      arg
+    end
+    
+    def execute_instruction(ins, obj, parent = self)
+      step = @child_type.new(ins, parent)
+      step.execute(obj, @env, @global_debug, @export_vars)
+      (step.debug[:group_name] = @name) if debug?
+      step
     end
     
     def each(&block)
@@ -133,21 +147,29 @@ module Tritium::Engines
       @env[named] = execute_children_on(@env[named])
     end
     
-    def match(value, matcher, opposite_matcher)
-      debug_log "matching #{value.inspect} against #{matcher.inspect}"
-      if(value =~ Regexp.new(matcher))
-        if !opposite_matcher
+    def match(value)
+      @object = execute_children_on(object)
+    end
+    
+    def with(matcher)
+      if @parent.continue
+        match_val = resolve_arg(@parent.instruction.args.first)
+        if matcher.match?(match_val)
           @object = execute_children_on(object)
-        end
-      else
-        if opposite_matcher
-          @object = execute_children_on(object)
+          @parent.continue = false
+          debug_log "Matched #{matcher.to_script} with #{match_val.inspect}"
+        else 
+          debug_log "Did not match #{matcher.to_script} with #{match_val.inspect}"
         end
       end
     end
     
     def fetch(selector)
-      node.search(selector).first
+      result = node.search(selector).first
+      if result.is_a?(Nokogiri::XML::Attr)
+        result = result.value
+      end
+      result
     end
     
     def export(key, value)
