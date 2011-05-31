@@ -1,3 +1,11 @@
+# If you want to only run one of these scripts, then just run
+#
+#  rake SCRIPT=asset
+#
+# Where asset is the name of the script you want to run
+
+
+
 ENV["TEST"] = "true"
 
 require 'minitest/unit'
