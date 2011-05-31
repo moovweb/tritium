@@ -191,6 +191,7 @@ module Tritium::Parser
             prepend(var("asset_host"))
           }
         }
+        block.call if block
       }
     end
     
