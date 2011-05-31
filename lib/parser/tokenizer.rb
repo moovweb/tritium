@@ -133,6 +133,10 @@ module Tritium
             return munch_error!("unrecognized tokens in #{@line}")
           end
         end
+        if not @done then
+          @done = true
+          return token(:EOF)
+        end
       end
       private :munch!
 
