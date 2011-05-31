@@ -4,10 +4,10 @@ doc("xml") {
       match($path, "roduck") {
         $("/")
       }
-      else() {
+      match($path, not("roduck")) {
         match($path, not("product/index.ognc")) {
         } 
-        else() {
+        match($path, "product/index.ognc") {
           select(".//*[@id='ac']") {
             remove()
           }
