@@ -186,8 +186,10 @@ module Tritium::Parser
 
         # If we don't start with http, then add on the asset host
         # Really though, this should be done by the server before we ever get here
-        match(var(type.to_s + "_asset_location"), /^((?!(http\:\/\/|\/\/)).)*$/) {
-          prepend(var("asset_host"))
+        match(var(type.to_s + "_asset_location")) {
+          with(not_matcher("(http:|)\/\/")) {
+            prepend(var("asset_host"))
+          }
         }
       }
     end
