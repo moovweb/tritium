@@ -1,4 +1,4 @@
-
+require_relative '../../extensions/regexp'
 
 module Tritium
   module Engines
@@ -12,6 +12,7 @@ module Tritium
           @root ||= root
           @parent ||= parent
           @logger ||= root.logger if root
+          @matchers ||= []
           @env = (@parent ? @parent.env : {})
           @export_vars = (@parent ? @parent.export_vars : [])
         end
@@ -33,15 +34,26 @@ module Tritium
             end
           end
         end
+        
+        def not_matcher(matcher)
+          r = Regexp.new(matcher)
+          r.opposite = true
+          return r
+        end
 
-        def match(value, matcher, opposite_matcher, &block)
-          if(value =~ Regexp.new(matcher)) 
-            if !opposite_matcher
-              self.instance_eval(&block)
-            end
-          else
-            if opposite_matcher
-              self.instance_eval(&block)
+        def match(value, &block)
+          @matchers << {:value => value, :continue => true}
+          self.instance_eval(&block)
+          @matchers.pop
+        end
+        
+        def with(matcher, &block)
+          # if we are still running... (remember, they select in series)
+          if @matchers.last[:continue]
+            # Do I match?
+            if matcher.match?(@matchers.last[:value])
+              @matchers.last[:continue] = false
+              block.call
             end
           end
         end
