@@ -16,6 +16,10 @@ module Tritium
             return "Error in #{@filename}, line #{@line_num}: #{@value}"
           end
         end
+
+        def ===(symbol)
+          @lexeme == symbol
+        end
       end
 
       @@symbols = {
