@@ -11,7 +11,7 @@ module Tritium
 
         def to_s
           if @lexeme then
-            return @value ? "[#{@lexeme}: #{@value}]" : "[#{lexeme}]"
+            return @value ? "[#{@lexeme}: #{@value}]" : "[#{@lexeme}]"
           else
             return "Error in #{@filename}, line #{@line_num}: #{@value}"
           end
