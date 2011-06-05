@@ -4,7 +4,7 @@ script		::	statement*
 
 statement	::	'@import' path
 		|	<var> '=' term
-		|	<id> arglist block
+		|	<id> arglist block?
 
 path		::	<word>
 		|	<string>
@@ -21,21 +21,21 @@ term		::	<string>
 		|	<var>
 		|	<id> arglist
 
-block		::	( '{' script '}' )?
+block		::	'{' script '}'
 
 
 LEXICAL RULES:
 
-<word>		::	\S+			(block of non-whitespace)
+<word>		::	[-+.*?:\/\w]+		(reasonable filenames & paths)
 
 <string>	::	"(\\.|[^"\\])*"		(double quoted strings)
 		|	'(\\.|[^'\\])*'		(single quoted strings)
 
-<regexp>	::	\/(\\.|[^\/\\])*\/[imxouesn]*	(Ruby regexes)
+<regexp>	::	\/(\\.|[^\/\\])*\/[imxouesn]*	(Ruby regexps)
 
-<var>		::	\$\w+			('$' + the usual)
+<var>		::	\$\w+			('$' << the usual)
 
-<id>		::	\$|[_a-zA-Z]\w*		(the usual, or '$')
+<id>		::	\$|[_a-zA-Z](\w|\$)*	(the usual, including '$')
 
 <kwd>		::	[a-zA-Z_:][-\w:.]*:	(XML attributes << ':')
 
