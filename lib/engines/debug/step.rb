@@ -25,16 +25,24 @@ module Tritium::Engines
       
       @parent = parent
 
+      #if parent
+      #  @sid = parent.sid.clone
+      #  @sid << parent.children.size
+      #else
+      #  @sid = [0]
+      #end
+
+      iid = instruction.iid.split("_")
       if parent
         @sid = parent.sid.clone
-        @sid << parent.children.size
+        @sid << iid[-1]+":"+parent.children.size.to_s
       else
-        @sid = [0]
+        @sid = [iid[-1]+":0"]
       end
 
       @child_type = eval(instruction.opens)
       @children = []
-      @debug = instruction.to_hash.merge({:step_id => @sid.join("_"), :log => []})
+      @debug = instruction.to_hash.merge({:step_id => @sid.join("->"), :log => []})
     end
     
     def execute(obj, env, global_debug, export_vars)
@@ -66,7 +74,6 @@ module Tritium::Engines
         (@debug[:last_env] = @env.clone) if @env.values != @debug[:start_env].values
         
         #(@debug[:last_object] = @object.clone) if @object != @debug[:start_object]
-        
         if (@env["debug_depth"].to_i == @sid.size) && @env["debug"] != ""
           global_debug[@env["debug"]] ||= []
           global_debug[@env["debug"]] << self
