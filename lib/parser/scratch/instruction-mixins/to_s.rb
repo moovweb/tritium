@@ -10,13 +10,15 @@ end
 
 class Reference
   def to_s(depth = 0)
-    "#{@@tab * depth}#{@name}"
+    "#{@@tab * depth}var(#{@name.to_s.inspect})"
   end
 end
 
 class Assignment
   def to_s(depth = 0)
-    super(depth) << " = #{@value}"
+    result = super(depth)
+    result[-1,0] = ", #{@value}"
+    return result
   end
 end
 
