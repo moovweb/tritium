@@ -38,24 +38,12 @@ class InvocationWithBlock < Invocation
     super(filename, line_num, name, pos_args, kwd_args)
     @statements = statements
   end
-
-  def <<(statement)
-    @statements << statement
-    return self
-  end
-
-  def +=(statements)
-    @statements += statements
-    return self
-  end
 end
 
 class InlineBlock < InvocationWithBlock
   def initialize(filename, line_num, statements)
     @filename, @line_num, @statements = filename, line_num, statements
   end
-
-  def to_a
-    @statements
-  end
 end
+
+require_relative "instruction-mixins/to_s"

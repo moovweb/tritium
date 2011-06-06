@@ -1,4 +1,8 @@
-require_relative "tokenizer.rb"
+require_relative "tokenizer"
+require_relative "instruction"
+
+$macro_calls = []
+$imports = []
 
 class Parser
   @@macros = { }
@@ -6,7 +10,7 @@ class Parser
   def initialize(script_string, options = {})
     @filename = options[:filename] || "MAIN"
     @path = options[:path] || File.dirname(__FILE__)
-    @tokens = Tokenizer.new(script_string, @filename)
+    @tokens = Tokenizer.new(script_string, filename: @filename)
     @line_num = @tokens.peek.line_num
   end
 
@@ -28,21 +32,25 @@ class Parser
   private :cmd
 
   def parse()
+    puts "parse"
     statements = []
-    while not(peek === :EOF) do
+    while not(peek.lexeme == :EOF) do
       statements << statement()
     end
     return cmd(InlineBlock, statements)
   end
 
   def statement()
-    case peek
+    case peek.lexeme
     when :IMPORT then
       return import()
     when :VAR then
       return reference()
     when :ID then
+      puts "statement: id"
       return invocation()
+    else
+      puts peek
     end  # ADD ERROR HANDLING
   end
       
@@ -56,7 +64,7 @@ class Parser
 
   def reference()
     var_name, value = pop!.value, nil
-    if peek === :EQUAL then
+    if peek.lexeme == :EQUAL then
       pop!
       value = term()
     end
@@ -64,11 +72,12 @@ class Parser
   end
 
   def invocation()
+    puts "invocation"
     func_name = pop!.value
-    if peek === :LPAREN then
+    if peek.lexeme == :LPAREN then
       args = arguments()
     end  # ADD ERROR HANDLING
-    stmts = peek === :LBRACE ? block() : nil
+    stmts = peek.lexeme == :LBRACE ? block() : nil
     signature = [func_name, args.length]
     if @@macros[signature] then
       stub = cmd(stmts ? InvocationWithBlock : Invocation,
@@ -82,26 +91,28 @@ class Parser
       }
     else
       stmts = stmts ? [stmts] : []
-      return cmd(stmts ? InvocationWithBlock : Invocation,
+      if not(stmts.empty?) then puts "invocation with block" end
+      return cmd(stmts.empty? ? Invocation : InvocationWithBlock,
                  func_name, args[:pos], args[:kwd], *stmts)
     end
   end
 
   def arguments()
+    puts "arguments"
     pos_args, kwd_args = [], {}
     pop!
-    if peek === :RPAREN then
+    if peek.lexeme == :RPAREN then
       pop!
       return { pos: pos_args, kwd: kwd_args }
     end
-    if peek === :KWD then
+    if peek.lexeme == :KWD then
       kwd_args[pop!.value] = term()
     else
       pos_args << term()
     end
-    while not(peek === :RPAREN) do
+    while not(peek.lexeme == :RPAREN) do
       pop!  # CHECK FOR COMMA
-      if peek === :KWD then
+      if peek.lexeme == :KWD then
         kwd_args[pop!.value] = term()
       else
         pos_args << term()
@@ -112,24 +123,27 @@ class Parser
   end
 
   def term()
-    case pop!
+    puts "term"
+    case pop!.lexeme
     when :STRING, :REGEXP
       return cmd(Literal, @token.value)
     when :VAR
       return cmd(Reference, @token.value)
     when :ID
       # CHECK FOR LPAREN
+      func_name = @token.value
       args = arguments()
-      return cmd(Invocation, @token.value, args[:pos], args[:kwd])
+      return cmd(Invocation, func_name, args[:pos], args[:kwd])
     end  # ADD ERROR HANDLING
   end
 
   def block()
     stmts = []
     pop!
-    while not(peek === :RBRACE) do
+    while not(peek.lexeme == :RBRACE) do
       stmts << statement()
     end
+    pop!
     return stmts
   end
 end

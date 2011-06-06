@@ -4,13 +4,13 @@ end
 
 class Literal
   def to_s(depth = 0)
-    "#{@@tab * depth}{@value}"
+    "#{@@tab * depth}#{@value.inspect}"
   end
 end
 
 class Reference
   def to_s(depth = 0)
-    "#{@@tab * depth}{@name}"
+    "#{@@tab * depth}#{@name}"
   end
 end
 
@@ -22,7 +22,7 @@ end
 
 class Invocation
   def to_s(depth = 0)
-    result = "#{@@tab * depth}#{name}("
+    result = "#{@@tab * depth}#{@name}("
     @pos_args.each { |arg| result << "#{arg}, " }
     @kwd_args.each { |kwd, arg| result << "#{kwd}: #{arg}, " }
     result[-2,2] = "" if result[-2,2] == ", "
@@ -45,4 +45,8 @@ end
 
 class InlineBlock
   def to_s(depth = 0)
-    
+    result = "#{@@tab * depth}# In file #{@filename}\n"
+    @statements.each { |stmt| result << stmt.to_s(depth) << "\n" }
+    return result
+  end
+end
