@@ -45,8 +45,9 @@ end
 
 class InlineBlock
   def to_s(depth = 0)
-    result = "#{@@tab * depth}# In file #{@filename}\n"
+    result = "#{@@tab * depth}# IMPORT: #{@filename}\n"
     @statements.each { |stmt| result << stmt.to_s(depth) << "\n" }
+    result << "#{@@tab * depth}# END IMPORT: #{@filename}\n"
     return result
   end
 end

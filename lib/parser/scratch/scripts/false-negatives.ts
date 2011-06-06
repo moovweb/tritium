@@ -12,7 +12,8 @@ $path = magic ("whatever")
 match ( $path, /.*whatsaaroneating.com\/.*/i ) {
 
   ## "not" in xpath, import not on its own line
-  $("/html/body/div[not(@ignore-me)]") { @import look-at-me.ts }
+  $("/html/body/div[not(@ignore-me)]") { @import
+                                         import-1.ts }
 
   ## adjacent string concatenation
   $("/html/body/div[@id='content']/div[@class='daily-entry']"
@@ -26,14 +27,14 @@ match ( $path, /.*whatsaaroneating.com\/.*/i ) {
                 "after") {
         remove ()
       }
-      @import ../some/pathy/looking/thing.ts  # another comment
     }
-    @import "a filename with spaces.ts"  #[ yet another comment! ]#
+    @import "import 2.ts"  #[ yet another comment! ]#
   }
-  blah("whatever" 'and so forth',
+  blah("whatever" ' CONCAT ' 'and so forth',
        fetch("bloo")) {
     blee()
   }
+  @import ../scripts/import-3.ts
 }
 
 ## End of sample.

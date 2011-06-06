@@ -56,8 +56,8 @@ class Parser
       
   def import()
     import_name = pop!.value
-    script_string = File.read(import_name)
-    parser = Parser.new(script_string, filename: import_name)
+    script_string = File.read(File.join(@path, import_name))
+    parser = Parser.new(script_string, filename: import_name, path: @path)
     $imports << { importer: @filename, importee: import_name }
     return parser.parse()
   end
