@@ -181,7 +181,7 @@ module Tritium
         end
         
         def message
-          "Something is wrong with #{@instruction.location}"
+          super + "Something is wrong with #{@instruction.location}"
         end
       end
     end
