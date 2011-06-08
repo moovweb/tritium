@@ -46,7 +46,7 @@ module Tritium::Engines::Reference::Scope
       parser_klass = Tritium::Engines.xml_parsers[type]
       doc = parser_klass.parse(@text)
       node_scope = Tritium::Engines::Reference::Scope::Node.new(doc, @root, self)
-      node_scope.instance_eval(&block)
+      node_scope.instance_eval(&block) if block
       @text = node_scope.node.send("to_" + type)
     end
   
