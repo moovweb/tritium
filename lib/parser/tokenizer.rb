@@ -57,7 +57,7 @@ module Tritium
       end
       private :pop_match!
 
-      def ignore_multicomment!
+      def skip_multicomment!
         pop_match!(/^#\[/)
         depth = 1
         while depth > 0 and @line do
@@ -74,6 +74,21 @@ module Tritium
         end
       end
       private :ignore_multicomment!
+
+      def skip_whitespace_and_comments!
+        while skip_whitespace! and @line do
+          case
+          when @line[/^#\[/]
+            skip_multicomment!
+            next
+          when @line[/^#/]
+            next_line!
+            next
+          else break
+          end
+        end
+        return true
+      end
 
       def munch_error!(msg, len = nil)
         error = Token.new(@filename, @line_num, nil, msg)
@@ -92,16 +107,10 @@ module Tritium
       private :token
 
       def munch!
-        while skip_whitespace! and @line do
+        while skip_whitespace_and_comments! and @line do
           case
-          when @line[/^#\[/]
-            ignore_multicomment!
-            next
           when @line[/^\]#/]
             return munch_error!("unmatched comment terminator")
-          when @line[/^#/]
-            next_line!
-            next
           when m = pop_match!(/^(=|,|\(|\)|\{|\})/)
             return token(@@symbols[m])
           when @line[/^("|'|\/)/]
@@ -118,7 +127,7 @@ module Tritium
           when m = pop_match!(/^(\$|[_a-zA-Z](\w|\$)*)/)
             return token(:ID, m.intern)
           when m = pop_match!(/^@import\b/)
-            skip_whitespace!
+            skip_whitespace_and_comments!
             if not @line then
               return munch_error!("malformed import")
             elsif m = pop_match!(@@string_matchers['"']) or
