@@ -1,7 +1,4 @@
-doc('html') {
-  select("body") {
-  }
-}
+doc('html')
 set("")
 replace("", "$")
 match("layer.*$", "$PROD_DETAIL_ZOOM$")
