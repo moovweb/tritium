@@ -73,7 +73,7 @@ module Tritium
           next
         end
       end
-      private :ignore_multicomment!
+      private :skip_multicomment!
 
       def skip_whitespace_and_comments!
         while skip_whitespace! and @line do
