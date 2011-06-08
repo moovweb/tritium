@@ -19,6 +19,12 @@ module Tritium
           script_file = File.join(@tmp_dir, "script.ts")
           File.open(script_file, "w+") { |f| f.write(@root_instruction.to_script) }
         end
+        if options[:tr_dbg_to_db]
+          debug_file = File.join(@tmp_dir, "debug.sqlite")
+          @db = Database.new(debug_file, @root_instruction)
+        else
+          @db = nil
+        end
       end
 
       def run(doc, options = {})
@@ -46,20 +52,10 @@ module Tritium
         # If we called debug(), then do all of this
         
         print_stats(@root_step)
+        
+        #dump steps into DB if needed 
+        @db.process_debug(global_debug) unless @db.nil? 
 
-        #debug_file = File.join(@tmp_dir, "debug.sqlite")
-        #
-        #puts "DEBUG START! (to #{debug_file})"
-        #
-        ## Build the new DB object
-        #db = Database.new(debug_file)
-        #
-        ## Insert everything into the DB
-        #db.insert_instruction(@root_instruction)
-        #db.process_debug(global_debug)
-        #
-        #puts "DEBUG FINISHED!"
-        #
         ## Return the result object
         [@root_step.object, export_vars]
       end
