@@ -40,7 +40,8 @@ module Tritium
       end
       
       def self.not_expansion(script)
-        script.gsub(/not\((.*)\)/, "not_matcher(\\1)")
+        tmp = script.gsub(/with\([ ]?not\((.*)\)\)/, "with(not_matcher(\\1))")
+        tmp.gsub(/,[ ]?not\((.*)\)/, ", not_matcher(\\1)")
       end
 
       def self.variable_expansion(script)
