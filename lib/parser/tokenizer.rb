@@ -155,8 +155,8 @@ module Tritium
 
       def pop!
         tmp, @lookahead = @lookahead, munch!
-        if tmp and tmp === :STRING then
-          while @lookahead and @lookahead === :STRING do
+        if tmp and tmp.lexeme == :STRING then
+          while @lookahead and @lookahead.lexeme == :STRING do
             tmp.value << @lookahead.value
             @lookahead = munch!
           end
