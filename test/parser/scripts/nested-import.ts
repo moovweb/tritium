@@ -1,0 +1,3 @@
+attribute("style") {
+  remove()
+}

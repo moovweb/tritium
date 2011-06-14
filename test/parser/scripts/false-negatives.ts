@@ -1,39 +1,39 @@
-#[ Open this file with
-   a multi-line
-   #[ nested ]#
-   comment.
-   But seriously, this file contains Tritium code which
-   ought to be valid, but chokes the current reader. ]#
+#[ Test file. Contains things which should pass, but
+   will choke the old parser.
+   #[ These comments nest properly, ]#
+   #[ by the way. ]#
+ ]#
 
+$x = whatever()
 
-## space between func name and arg list
-$path = magic ("whatever")
+doc() {
+  $("html") {
 
-match ( $path, /.*whatsaaroneating.com\/.*/i ) {
+    # Space between function name and arglist
+    $ ("body") {
+      @import #[ Intra-line comment! ]# import-1.ts
 
-  ## "not" in xpath, import not on its own line
-  $("/html/body/div[not(@ignore-me)]") { @import look-at-me.ts }
+      # Adjacent string concatenation and multi-line arglists
+      move_here("some/long/path/to/something"
+                "/split/across/multiple/lines"
+                "/and/concatenated",
+                "top") {
 
-  ## adjacent string concatenation
-  $("/html/body/div[@id='content']/div[@class='daily-entry']"
-    "/p[@class='i\'m-getting-tired-of-this-example-xpath-string']") {
+        # Keyword args with hyphens and colons
+        wrap("div", data-ur-bleeble:blabble: "bork")
 
-    ## keyword arg with hyphens
-    wrap("span", long-example: "true", with:colons: "blah") {
-
-      ## multi-line arglist
-      move_here("//bah//who//knows//where//these//are//coming//from",
-                "after") {
-        remove ()
+        # import broken across lines, with quoted string arg
+        @import
+        "import 2.ts"
       }
-      @import ../some/pathy/looking/thing.ts  # another comment
+
+      attribute("class", fetch(fetch("where/is/this/coming/from?")))
+      add_class("something-else")
+
+      # 'not' in xpaths
+      copy_here(".//img[not(@alt)]")
+
+      @import ../scripts/import-3.ts
     }
-    @import "a filename with spaces.ts"  #[ yet another comment! ]#
-  }
-  blah("whatever" 'and so forth',
-       fetch("bloo")) {
-    blee()
   }
 }
-
-## End of sample.

@@ -11,7 +11,7 @@ module Tritium
 
         def to_s
           if @lexeme then
-            return @value ? "[#{@lexeme}: #{@value}]" : "[#{lexeme}]"
+            return @value ? "[#{@lexeme}: #{@value}]" : "[#{@lexeme}]"
           else
             return "Error in #{@filename}, line #{@line_num}: #{@value}"
           end
@@ -38,13 +38,17 @@ module Tritium
       end
 
       def next_line!
-        @line = @lines[@line_num]
-        if @line then
-          @line.rstrip!
-          @line_num += 1
-        end
+        @line = @lines[@line_num] and @line_num += 1
       end
       private :next_line!
+
+      def skip_whitespace!
+        while @line and (@line.empty? or @line.lstrip! and @line.empty?) do
+          next_line!
+        end
+        return true
+      end
+      private :skip_whitespace!
 
       def pop_match!(rgx)
         m = @line[rgx]
@@ -53,14 +57,12 @@ module Tritium
       end
       private :pop_match!
 
-      def ignore_multicomment!
+      def skip_multicomment!
         pop_match!(/^#\[/)
         depth = 1
         while depth > 0 and @line do
-          @line.lstrip!
+          skip_whitespace!
           case
-          when @line.empty?
-            next_line!
           when pop_match!(/^#\[/)
             depth += 1
           when pop_match!(/^\]#/)
@@ -71,7 +73,22 @@ module Tritium
           next
         end
       end
-      private :ignore_multicomment!
+      private :skip_multicomment!
+
+      def skip_whitespace_and_comments!
+        while skip_whitespace! and @line do
+          case
+          when @line[/^#\[/]
+            skip_multicomment!
+            next
+          when @line[/^#/]
+            next_line!
+            next
+          else break
+          end
+        end
+        return true
+      end
 
       def munch_error!(msg, len = nil)
         error = Token.new(@filename, @line_num, nil, msg)
@@ -90,20 +107,10 @@ module Tritium
       private :token
 
       def munch!
-        while @line do
-          @line.lstrip!
+        while skip_whitespace_and_comments! and @line do
           case
-          when @line.empty?
-            next_line!
-            next
-          when @line[/^#\[/]
-            ignore_multicomment!
-            next
           when @line[/^\]#/]
             return munch_error!("unmatched comment terminator")
-          when @line[/^#/]
-            next_line!
-            next
           when m = pop_match!(/^(=|,|\(|\)|\{|\})/)
             return token(@@symbols[m])
           when @line[/^("|'|\/)/]
@@ -114,17 +121,19 @@ module Tritium
               return munch_error!("unterminated string or regexp #{@line}")
             end
           when m = pop_match!(/^\$\w+/)
-            return token(:VAR, m[1, m.length])
+            return token(:VAR, m[1, m.length].intern)
           when m = pop_match!(/^[a-zA-Z_:][-\w:.]*:/)
-            return token(:KWD, m[0, m.length-1])
-          when m = pop_match!(/^\$|^[_a-zA-Z]\w*/)
-            return token(:ID, m)
+            return token(:KWD, m[0, m.length-1].intern)
+          when m = pop_match!(/^(\$|[_a-zA-Z](\w|\$)*)/)
+            return token(:ID, m.intern)
           when m = pop_match!(/^@import\b/)
-            @line.lstrip!
-            if m = pop_match!(@@string_matchers['"']) or
+            skip_whitespace_and_comments!
+            if not @line then
+              return munch_error!("malformed import")
+            elsif m = pop_match!(@@string_matchers['"']) or
                m = pop_match!(@@string_matchers["'"]) then
               return token(:IMPORT, eval(m))
-            elsif m = pop_match!(/^(\S)+/) then
+            elsif m = pop_match!(/^[-+.*?:\/\w]+/) then
               return token(:IMPORT, m)
             else
               return munch_error!("malformed import")
