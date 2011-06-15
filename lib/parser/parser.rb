@@ -3,16 +3,15 @@ require_relative "instruction"
 
 module Tritium
   module Parser
-
-    $macro_calls = []
-    $imports = []
-
     class Parser
-      @@macros = { }
+      @@macros = {}
       
       def initialize(script_string, options = {})
-        @filename = options[:filename] || "MAIN"
-        @path = options[:path] || File.dirname(__FILE__)
+        @filename    = options[:filename]    || "MAIN"
+        @path        = options[:path]        || File.dirname(__FILE__)
+        @macro_calls = options[:macro_calls] || []
+        @imports     = options[:imports]     || []
+        
         @tokens = Tokenizer.new(script_string, filename: @filename)
         @line_num = @tokens.peek.line_num
       end
@@ -56,8 +55,8 @@ module Tritium
       def import()
         import_name = pop!.value
         script_string = File.read(File.join(@path, import_name))
-        parser = Parser.new(script_string, filename: import_name, path: @path)
-        $imports << { importer: @filename, importee: import_name }
+        parser = Parser.new(script_string, filename: import_name, path: @path, imports: @imports, macro_calls: @macro_calls)
+        @imports << { importer: @filename, importee: import_name }
         return parser.parse()
       end
 
@@ -80,7 +79,7 @@ module Tritium
         if @@macros[signature] then
           stub = cmd(stmts ? InvocationWithBlock : Invocation,
                      :"macro-expansion stub")
-          $macro_calls << {
+          @macro_calls << {
             name: func_name,
             pos_args: args[:pos],
             kwd_args: args[:kwd],
