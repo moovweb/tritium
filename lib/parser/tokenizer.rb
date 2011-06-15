@@ -10,7 +10,7 @@ module Tritium
         end
 
         def to_s
-          if @lexeme then
+          if @lexeme != :ERROR then
             return @value ? "[#{@lexeme}: #{@value}]" : "[#{@lexeme}]"
           else
             return "Error in #{@filename}, line #{@line_num}: #{@value}"
@@ -91,7 +91,7 @@ module Tritium
       end
 
       def munch_error!(msg, len = nil)
-        error = Token.new(@filename, @line_num, nil, msg)
+        error = Token.new(@filename, @line_num, :ERROR, msg)
         if not len then
           next_line!
         else

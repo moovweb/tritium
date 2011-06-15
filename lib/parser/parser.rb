@@ -3,6 +3,7 @@ require_relative "instruction"
 
 module Tritium
   module Parser
+    class SyntaxError < StandardError; end
 
     $macro_calls = []
     $imports = []
@@ -35,6 +36,14 @@ module Tritium
       private :cmd
 
       def parse()
+        begin
+          return inline_block()
+        rescue SyntaxError => err
+          puts err.message
+        end
+      end
+
+      def inline_block()
         statements = []
         while not(peek.lexeme == :EOF) do
           statements << statement()
@@ -58,7 +67,7 @@ module Tritium
         script_string = File.read(File.join(@path, import_name))
         parser = Parser.new(script_string, filename: import_name, path: @path)
         $imports << { importer: @filename, importee: import_name }
-        return parser.parse()
+        return parser.inline_block()
       end
 
       def reference()
@@ -76,7 +85,7 @@ module Tritium
           args = arguments()
         end  # ADD ERROR HANDLING
         stmts = peek.lexeme == :LBRACE ? block() : nil
-        signature = [func_name, args.length]
+        signature = [func_name, args[:pos].length]
         if @@macros[signature] then
           stub = cmd(stmts ? InvocationWithBlock : Invocation,
                      :"macro-expansion stub")
@@ -87,6 +96,7 @@ module Tritium
             block: stmts,
             expansion_site: stub
           }
+          return stub
         else
           stmts = stmts ? [stmts] : []
           return cmd(stmts.empty? ? Invocation : InvocationWithBlock,
