@@ -1,7 +1,7 @@
 require 'minitest/autorun'
 require_relative '../../lib/parser/parser'
 
-class TokenizerTest < MiniTest::Unit::TestCase
+class ParserTest < MiniTest::Unit::TestCase
   include Tritium::Parser
 
   def test_parser
