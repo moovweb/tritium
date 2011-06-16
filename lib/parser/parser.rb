@@ -3,10 +3,17 @@ require_relative "instruction"
 
 module Tritium
   module Parser
-    class SyntaxError < StandardError; end
+    class SyntaxError
+      attr_reader :filename, :line_num, :message, :value
+      def initialize(filename, line_num, message, value)
+        @filename, @line_num = filename, line_num
+        @message, @value = message, value
+      end
+    end
 
     $macro_calls = []
     $imports = []
+    $errors = []
 
     class Parser
       @@macros = { }
@@ -35,6 +42,16 @@ module Tritium
       end
       private :cmd
 
+      def raise_error(message)
+        unexpected = pop!
+        case unexpected.lexeme
+        when :ERROR
+          raise unexpected
+        else
+          raise SyntaxError.new(@filename, @line_num, message, unexpected)
+        end
+      end
+
       def parse()
         begin
           return inline_block()
@@ -59,7 +76,9 @@ module Tritium
           return reference()
         when :ID then
           return invocation()
-        end  # ADD ERROR HANDLING
+        else
+          raise_error("statement cannot begin with")
+        end
       end
       
       def import()
@@ -72,18 +91,27 @@ module Tritium
 
       def reference()
         var_name, value = pop!.value, nil
-        if peek.lexeme == :EQUAL then
+        case peek.lexeme
+        when :EQUAL
           pop!
-          value = term()
+          case peek.lexeme
+          when :STRING, :REGEXP, :VAR, :ID
+            value = term()
+          else
+            raise_error("assigned value is not a valid term")
+          end
         end
         return cmd(value ? Assignment : Reference, var_name, *value)
       end
 
       def invocation()
         func_name = pop!.value
-        if peek.lexeme == :LPAREN then
+        case peek.lexeme
+        when :LPAREN then
           args = arguments()
-        end  # ADD ERROR HANDLING
+        else
+          raise_error("function call is missing argument list")
+        end
         stmts = peek.lexeme == :LBRACE ? block() : nil
         signature = [func_name, args[:pos].length]
         if @@macros[signature] then
@@ -104,7 +132,7 @@ module Tritium
         end
       end
 
-      def arguments()
+      def arguments() # LEFT OFF HERE (2011/06/15)
         pos_args, kwd_args = [], {}
         pop!
         if peek.lexeme == :RPAREN then
