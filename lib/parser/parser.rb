@@ -3,6 +3,7 @@ require_relative "instruction"
 
 module Tritium
   module Parser
+<<<<<<< HEAD
     class SyntaxError
       attr_reader :filename, :line_num, :message, :value
       def initialize(filename, line_num, message, value)
@@ -15,12 +16,17 @@ module Tritium
     $imports = []
     $errors = []
 
+=======
+>>>>>>> 9acd5ff4b74ee8dd091cc319d95289de837b52ca
     class Parser
-      @@macros = { }
+      @@macros = {}
       
       def initialize(script_string, options = {})
-        @filename = options[:filename] || "MAIN"
-        @path = options[:path] || File.dirname(__FILE__)
+        @filename    = options[:filename]    || "MAIN"
+        @path        = options[:path]        || File.dirname(__FILE__)
+        @macro_calls = options[:macro_calls] || []
+        @imports     = options[:imports]     || []
+        
         @tokens = Tokenizer.new(script_string, filename: @filename)
         @line_num = @tokens.peek.line_num
       end
@@ -84,9 +90,15 @@ module Tritium
       def import()
         import_name = pop!.value
         script_string = File.read(File.join(@path, import_name))
+<<<<<<< HEAD
         parser = Parser.new(script_string, filename: import_name, path: @path)
         $imports << { importer: @filename, importee: import_name }
         return parser.inline_block()
+=======
+        parser = Parser.new(script_string, filename: import_name, path: @path, imports: @imports, macro_calls: @macro_calls)
+        @imports << { importer: @filename, importee: import_name }
+        return parser.parse()
+>>>>>>> 9acd5ff4b74ee8dd091cc319d95289de837b52ca
       end
 
       def reference()
@@ -117,7 +129,7 @@ module Tritium
         if @@macros[signature] then
           stub = cmd(stmts ? InvocationWithBlock : Invocation,
                      :"macro-expansion stub")
-          $macro_calls << {
+          @macro_calls << {
             name: func_name,
             pos_args: args[:pos],
             kwd_args: args[:kwd],

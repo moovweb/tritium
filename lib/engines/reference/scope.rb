@@ -43,7 +43,7 @@ module Tritium
 
         def match(value, &block)
           @matchers << {:value => value, :continue => true}
-          self.instance_eval(&block)
+          self.instance_eval(&block) if block
           @matchers.pop
         end
         
@@ -53,7 +53,7 @@ module Tritium
             # Do I match?
             if matcher.match?(@matchers.last[:value])
               @matchers.last[:continue] = false
-              block.call
+              block.call if block
             end
           end
         end
