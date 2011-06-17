@@ -3,7 +3,6 @@ require_relative "instruction"
 
 module Tritium
   module Parser
-<<<<<<< HEAD
     class SyntaxError
       attr_reader :filename, :line_num, :message, :value
       def initialize(filename, line_num, message, value)
@@ -12,12 +11,6 @@ module Tritium
       end
     end
 
-    $macro_calls = []
-    $imports = []
-    $errors = []
-
-=======
->>>>>>> 9acd5ff4b74ee8dd091cc319d95289de837b52ca
     class Parser
       @@macros = {}
       
@@ -58,57 +51,53 @@ module Tritium
         end
       end
 
-      def parse()
+      def parse
         begin
-          return inline_block()
+          return inline_block
         rescue SyntaxError => err
           puts err.message
         end
       end
 
-      def inline_block()
-        statements = []
+      def inline_block
+        stmts = []
         while not(peek.lexeme == :EOF) do
-          statements << statement()
+          stmts << statement
         end
-        return cmd(InlineBlock, statements)
+        return cmd(InlineBlock, stmts)
       end
 
-      def statement()
+      def statement
         case peek.lexeme
         when :IMPORT then
-          return import()
+          return import
         when :VAR then
-          return reference()
+          return reference
         when :ID then
-          return invocation()
+          return invocation
         else
-          raise_error("statement cannot begin with")
+          raise_error("invalid statement")
         end
       end
       
-      def import()
+      def import
         import_name = pop!.value
         script_string = File.read(File.join(@path, import_name))
-<<<<<<< HEAD
-        parser = Parser.new(script_string, filename: import_name, path: @path)
-        $imports << { importer: @filename, importee: import_name }
-        return parser.inline_block()
-=======
-        parser = Parser.new(script_string, filename: import_name, path: @path, imports: @imports, macro_calls: @macro_calls)
+        parser = Parser.new(script_string,
+                            filename: import_name, path: @path,
+                            imports: @imports, macro_calls: @macro_calls)
         @imports << { importer: @filename, importee: import_name }
-        return parser.parse()
->>>>>>> 9acd5ff4b74ee8dd091cc319d95289de837b52ca
+        return parser.parse
       end
 
-      def reference()
+      def reference
         var_name, value = pop!.value, nil
         case peek.lexeme
         when :EQUAL
           pop!
           case peek.lexeme
           when :STRING, :REGEXP, :VAR, :ID
-            value = term()
+            value = term
           else
             raise_error("assigned value is not a valid term")
           end
@@ -116,14 +105,11 @@ module Tritium
         return cmd(value ? Assignment : Reference, var_name, *value)
       end
 
-      def invocation()
+      def invocation
         func_name = pop!.value
-        case peek.lexeme
-        when :LPAREN then
-          args = arguments()
-        else
-          raise_error("function call is missing argument list")
-        end
+        raise_error("function call is missing a valid argument list") if
+          peek.lexeme != :LPAREN
+        args = arguments
         stmts = peek.lexeme == :LBRACE ? block() : nil
         signature = [func_name, args[:pos].length]
         if @@macros[signature] then
@@ -144,51 +130,67 @@ module Tritium
         end
       end
 
-      def arguments() # LEFT OFF HERE (2011/06/15)
-        pos_args, kwd_args = [], {}
-        pop!
+      def arguments
+        pos_args, kwd_args, kwd = [], {}, nil
+        pop! # pop the lparen
         if peek.lexeme == :RPAREN then
           pop!
           return { pos: pos_args, kwd: kwd_args }
         end
-        if peek.lexeme == :KWD then
-          kwd_args[pop!.value] = term()
+
+        # handle the head of the argument list
+        kwd = pop!.value if peek.lexeme == :KWD
+        case peek.lexeme
+        when :STRING, :REGEXP, :VAR, :ID
+          arg = term
         else
-          pos_args << term()
+          raise_error("invalid argument")
         end
+        kwd ? kwd_args[kwd] = arg : pos_args << arg; kwd = nil
+
+        # handle the comma-separated tail of the argument list
         while not(peek.lexeme == :RPAREN) do
-          pop!  # CHECK FOR COMMA
-          if peek.lexeme == :KWD then
-            kwd_args[pop!.value] = term()
+          raise_error("arguments must be separated by commas") if
+            not peek.lexeme == :COMMA
+          pop!
+          kwd = pop!.value if peek.lexeme == :KWD
+          case peek.lexeme
+          when :STRING, :REGEXP, :VAR, :ID
+            arg = term
           else
-            pos_args << term()
+            raise_error("invalid argument")
           end
+          kwd ? kwd_args[kwd] = arg : pos_args << arg; kwd = nil
         end
-        pop!
+
+        pop! # pop the rparen
         return { pos: pos_args, kwd: kwd_args }
       end
 
-      def term()
+      def term
         case pop!.lexeme
         when :STRING, :REGEXP
           return cmd(Literal, @token.value)
         when :VAR
           return cmd(Reference, @token.value)
         when :ID
-          # CHECK FOR LPAREN
           func_name = @token.value
-          args = arguments()
+          raise_error("function call is missing a valid argument list") if
+            peek.lexeme != :LPAREN
+          args = arguments
           return cmd(Invocation, func_name, args[:pos], args[:kwd])
-        end  # ADD ERROR HANDLING
+        else
+          raise_error("invalid term")
+        end
       end
 
-      def block()
+      def block
         stmts = []
-        pop!
+        pop! # pop the lbrace
         while not(peek.lexeme == :RBRACE) do
-          stmts << statement()
+          stmts << statement
         end
-        pop!
+        pop! # pop the rbrace
         return stmts
       end
     end
