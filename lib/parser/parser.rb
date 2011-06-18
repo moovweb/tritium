@@ -87,7 +87,7 @@ module Tritium
                             filename: import_name, path: @path,
                             imports: @imports, macro_calls: @macro_calls)
         @imports << { importer: @filename, importee: import_name }
-        return parser.parse
+        return parser.inline_block
       end
 
       def reference
@@ -138,7 +138,7 @@ module Tritium
           return { pos: pos_args, kwd: kwd_args }
         end
 
-        # handle the head of the argument list
+        # parse the head of the argument list
         kwd = pop!.value if peek.lexeme == :KWD
         case peek.lexeme
         when :STRING, :REGEXP, :VAR, :ID
@@ -148,7 +148,7 @@ module Tritium
         end
         kwd ? kwd_args[kwd] = arg : pos_args << arg; kwd = nil
 
-        # handle the comma-separated tail of the argument list
+        # parse the comma-separated tail of the argument list
         while not(peek.lexeme == :RPAREN) do
           raise_error("arguments must be separated by commas") if
             not peek.lexeme == :COMMA
