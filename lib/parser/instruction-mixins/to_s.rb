@@ -26,7 +26,8 @@ module Tritium::Parser
 
   class Invocation
     def to_s(depth = 0)
-      result = "#{@@tab * depth}#{@name}("
+      name = @name.to_s.gsub(/\$/, "select")
+      result = "#{@@tab * depth}#{name}("
       @pos_args.each { |arg| result << "#{arg}, " }
       @kwd_args.each { |kwd, arg| result << "#{kwd.inspect} => #{arg}, " }
       result[-2,2] = "" if result.end_with? ", "

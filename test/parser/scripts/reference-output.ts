@@ -1,8 +1,8 @@
 # ENTERING FILE: false-negatives.ts
 var("x", whatever())
 doc() {
-  $("html") {
-    $("body") {
+  select("html") {
+    select("body") {
       # ENTERING FILE: import-1.ts
       attribute("data-foo", "in-the-body")
       log("blah")
