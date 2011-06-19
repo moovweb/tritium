@@ -190,6 +190,7 @@ module Tritium
         while not(peek.lexeme == :RBRACE) do
           stmts << statement
         end
+        raise_error("unterminated block") if peek.lexeme != :RBRACE
         pop! # pop the rbrace
         return stmts
       end
