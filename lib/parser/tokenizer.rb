@@ -13,7 +13,8 @@ module Tritium
           if @lexeme != :ERROR then
             return @value ? "[#{@lexeme}: #{@value}]" : "[#{@lexeme}]"
           else
-            return "Error in #{@filename}, line #{@line_num}: #{@value}"
+            return "Lexical error in #{@filename}, line #{@line_num}:\n" \
+                   "#{@value}\n\n"
           end
         end
       end

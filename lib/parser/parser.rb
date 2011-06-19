@@ -3,15 +3,21 @@ require_relative "instruction"
 
 module Tritium
   module Parser
-    class SyntaxError
-      attr_reader :filename, :line_num, :message, :value
-      def initialize(filename, line_num, message, value)
-        @filename, @line_num = filename, line_num
-        @message, @value = message, value
-      end
-    end
-
     class Parser
+      class SyntaxError
+        attr_reader :filename, :line_num, :message, :value
+
+        def initialize(filename, line_num, message, value)
+          @filename, @line_num = filename, line_num
+          @message, @value = message, value
+        end
+
+        def to_s
+          return "Syntax error in #{@filename}, line #{@line_num}:\n" \
+                 "#{@message}; found unexpected #{@value}\n\n"
+        end
+      end
+
       @@macros = {}
       
       def initialize(script_string, options = {})
