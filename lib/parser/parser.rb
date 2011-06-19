@@ -54,17 +54,22 @@ module Tritium
       def parse
         begin
           return inline_block
-        rescue SyntaxError => err
-          puts err.message
+        rescue => err
+          puts err
         end
       end
 
       def inline_block
-        stmts = []
-        while not(peek.lexeme == :EOF) do
-          stmts << statement
+        begin
+          stmts = []
+          while not(peek.lexeme == :EOF) do
+            stmts << statement
+          end
+          return cmd(InlineBlock, stmts)
+        rescue => err
+          @tokens.each { |token| puts token if token.lexeme == :ERROR }
+          raise err
         end
-        return cmd(InlineBlock, stmts)
       end
 
       def statement
