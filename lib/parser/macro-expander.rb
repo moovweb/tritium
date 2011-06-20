@@ -4,22 +4,6 @@ module Tritium
   module Parser
     class MacroExpander
       @@macros = {}
-
-      def splice(node)
-        case node
-        when Literal
-          val = eval(node.to_s)
-          return Regexp === val ? val.inspect : val
-        when Hash
-          result = ""
-          node.each { |k,v| result << ", #{k}: #{v}" }
-          result[0,2] = ""
-          return result
-        else
-          return node.to_s
-        end
-      end
-
       def expand(macro_call)
         macro_name     = macro_call[:name]
         pos_args       = macro_call[:pos_args]
@@ -28,7 +12,14 @@ module Tritium
         expansion_site = macro_call[:expansion_site]
 
         expander = @@macros[[macro_name, pos_args.length]]
-        expansion = expander.call(*pos_args, kwd_args)
+        if kwd_args.empty? then
+          expansion_string = expander.call(*pos_args)
+        else
+          expansion_string = expander.call(*pos_args, kwd_args)
+        end
+
+        expansion = Parser.new(expansion_string,
+                               macro_calls: @macro_calls).parse
 
         expansion.statements.each { |statement|
           expansion_site.statements << statement
