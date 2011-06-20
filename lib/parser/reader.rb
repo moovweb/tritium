@@ -74,6 +74,10 @@ module Tritium
       def select(*args, &block)
         cmd('select', *args, &block)
       end
+      # For some reasons, remove is defined on Rake Object. Bastards.
+      def remove(*args, &block)
+        cmd('remove', *args, &block)
+      end
     end
   end
 end
