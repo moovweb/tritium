@@ -71,4 +71,5 @@ $(#{selector}) {
 EXPANSION
     }
 
-    
+  end
+end
