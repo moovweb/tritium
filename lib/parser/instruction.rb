@@ -45,7 +45,7 @@ module Tritium
     end
 
     class InlineBlock < InvocationWithBlock
-      def initialize(filename, line_num, statements)
+      def initialize(filename, line_num, statements = [])
         @filename, @line_num, @statements = filename, line_num, statements
       end
     end

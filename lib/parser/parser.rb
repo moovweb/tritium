@@ -124,8 +124,9 @@ module Tritium
         stmts = peek.lexeme == :LBRACE ? block() : nil
         signature = [func_name, args[:pos].length]
         if @@macros[signature] then
-          stub = cmd(stmts ? InvocationWithBlock : Invocation,
-                     :"macro-expansion stub")
+          # stub = cmd(stmts ? InvocationWithBlock : Invocation,
+          #            :"macro-expansion stub")
+          stub = cmd(InlineBlock)
           @macro_calls << {
             name: func_name,
             pos_args: args[:pos],
