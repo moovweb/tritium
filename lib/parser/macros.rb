@@ -8,9 +8,9 @@ module Tritium::Parser
     end
   end
 
-  def splice(hash)
+  def splice(tbl)
     result = ""
-    node.each { |k,v| result << ", #{k}: #{v}" }
+    tbl.each { |k,v| result << ", #{k}: #{v}" }
     result[0,2] = ""
     return result
   end
