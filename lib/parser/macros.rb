@@ -66,6 +66,7 @@ EXPANSION
 
 $(#{selector}) {
   move_here("*", "before")
+  remove()
 }
 
 EXPANSION
