@@ -30,6 +30,10 @@ module Tritium
       def run(doc, options = {})
         env = options["env"] || options[:env] || {}
         
+        puts "Tritium env keys:"
+        puts env.keys
+        puts "Request ID: #{env["request_id"]}"
+
         # Set this so that we run a full debug stack on every execution
         env["debug"] = "main"
 
@@ -47,7 +51,11 @@ module Tritium
         print_stats(@root_step)
         
         #dump steps into DB if needed 
-        @db.process_debug(global_debug) unless @db.nil? 
+        puts "global debug info: #{global_debug.keys}"
+        puts "contents: #{global_debug[global_debug.keys.first].class}"
+        puts "contents: #{global_debug[global_debug.keys.first].size}"
+        puts "contents: #{global_debug[global_debug.keys.first][0].class}"
+        @db.process_debug(global_debug, env["request_id"]) unless @db.nil? 
 
         ## Return the result object
         [@root_step.object, export_vars]
