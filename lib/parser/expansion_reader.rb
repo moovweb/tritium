@@ -15,35 +15,45 @@ module Tritium::Parser
     def after(&block);  set_position("after",  &block); end
     def before(&block); set_position("before", &block); end
     
-    # If we are passed an ./@attribute selector, then def automaticall
+    # If we are passed an ./@attribute selector, then automatically
     # open the attribute block
-    
     # If we are passed a text() selector, then automatically open html()
     def select(selector, &block)
-      selectors = selector.split("/")
-      if selectors.size > 0
-        if selectors.last[0] == "@"
-          if selectors[-2] == "."
-            attribute(last[1..-1], &block)
-          else
-            cmd("select", selectors[0..-2].join("/")) {
-              attribute(last[1..-1], &block)
-            }
-          end
-        elsif selectors.last == "text()"
-          cmd("select", selectors[0..-2].join("/")) {
+      # not truly comprehensive, but good enough
+      attr_rgx = /@[a-zA-Z_:][-\w:.]*\z/
+      text_rgx = /text\s*\(\s*\)\z/
+      html_rgx = /html\s*\(\s*\)\z/
+
+      # This will behave badly if @attr, text(), or html() is preceded by '//'
+      # But who's gonna' do that?
+      if attr = selector[attr_rgx] then
+        path = selector.sub(attr_rgx, "")
+        if path.empty? or path == "./" then
+          attribute(attr[1..-1], &block)
+        else
+          cmd("select", path[0..-2]) {
+            attribute(attr[1..-1], &block)
+          }
+        end
+      elsif txt = selector[text_rgx] then
+        path = selector.sub(text_rgx, "")
+        if path.empty? or path == "./" then
+          text(&block)
+        else
+          cmd("select", path[0..-2]) {
             text(&block)
           }
-        elsif selectors.last == "html()"
-          cmd("select", selectors[0..-2].join("/")) {
+        end
+      elsif htm = selector[html_rgx] then
+        path = selector.sub(html_rgx, "")
+        if path.empty? or path == "./" then
+          html(&block)
+        else
+          cmd("select", path[0..-2]) {
             html(&block)
           }
-        else
-          # We had something in the selector, but... not interesting to us. Join it back!
-          cmd("select", selectors.join("/"), &block)
         end
       else
-        # The selector was either empty or was a single slash... so just pass it through
         cmd("select", selector, &block)
       end
     end
