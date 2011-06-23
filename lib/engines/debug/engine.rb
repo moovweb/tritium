@@ -42,11 +42,6 @@ module Tritium
         export_vars = []
         @root_step.execute(doc.dup, env, global_debug, export_vars)
         
-        took = Time.now - start
-        unless ENV["TEST"]
-          @logger.stats("Script took #{took} sec to process") if @logger.respond_to? :stats
-        end
-
         #return [@root_step.object, export_vars] if ENV["TEST"]
 
         # If we called debug(), then do all of this
@@ -55,6 +50,9 @@ module Tritium
         
         #dump steps into DB if needed 
         @db.process_debug(global_debug) unless @db.nil? 
+
+        took = Time.now - start
+        @logger.debug("Script took #{took} sec to process")
 
         ## Return the result object
         [@root_step.object, export_vars]
