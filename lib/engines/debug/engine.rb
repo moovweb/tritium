@@ -32,8 +32,6 @@ module Tritium
         
         # Set this so that we run a full debug stack on every execution
         env["debug"] = "main"
-        
-        start = Time.now
 
         # Actually run the code
         @root_step = Step::Text.new(@root_instruction)
@@ -41,11 +39,6 @@ module Tritium
         global_debug = {}
         export_vars = []
         @root_step.execute(doc.dup, env, global_debug, export_vars)
-        
-        took = Time.now - start
-        unless ENV["TEST"]
-          @logger.stats("Script took #{took} sec to process") if @logger.respond_to? :stats
-        end
 
         #return [@root_step.object, export_vars] if ENV["TEST"]
 
