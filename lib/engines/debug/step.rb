@@ -44,7 +44,7 @@ module Tritium::Engines
       @children = []
       @debug = instruction.to_hash.merge({:step_id => @sid.join("->"), :log => []})
     end
-
+    
     def execute(obj, env, global_debug, export_vars)
       @object = obj
       @env = env
@@ -63,7 +63,7 @@ module Tritium::Engines
       end
 
       @return = self.send(instruction.name, *args)
-      
+
       if debug?
         @debug[:total_time_cs] = ((Time.now - start) * 10000).to_i
 

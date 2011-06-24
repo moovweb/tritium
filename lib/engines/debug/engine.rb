@@ -29,7 +29,7 @@ module Tritium
 
       def run(doc, options = {})
         env = options["env"] || options[:env] || {}
-
+        
         # Set this so that we run a full debug stack on every execution
         env["debug"] = "main"
 
