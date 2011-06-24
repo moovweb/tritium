@@ -50,7 +50,7 @@ module Tritium::Engines
       @env = env
       @export_vars = export_vars
       @global_debug = global_debug
-
+      
       if debug?
         @debug[:start_env] = @env.clone
         @child_time = 0
@@ -63,7 +63,7 @@ module Tritium::Engines
       end
 
       @return = self.send(instruction.name, *args)
-
+      
       if debug?
         @debug[:total_time_cs] = ((Time.now - start) * 10000).to_i
 
