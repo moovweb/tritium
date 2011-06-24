@@ -44,13 +44,13 @@ module Tritium::Engines
       @children = []
       @debug = instruction.to_hash.merge({:step_id => @sid.join("->"), :log => []})
     end
-    
+
     def execute(obj, env, global_debug, export_vars)
       @object = obj
       @env = env
       @export_vars = export_vars
       @global_debug = global_debug
-      
+
       if debug?
         @debug[:start_env] = @env.clone
         @child_time = 0
