@@ -38,7 +38,7 @@ module Tritium
               Text :start_env
               Text :last_env
               DateTime :created_at
-              Integer :request_id
+              String :request_id
             end
             
             @db.create_table :steps do
@@ -109,7 +109,7 @@ module Tritium
                   :path => steps.first.debug[:start_env]['path'],
                   :content_type => steps.first.debug[:start_env]['content_type'],
                   :created_at => Time.now,
-                  :request_id => request_id
+                  :request_id => request_id.to_s
           }
           debug_session_id = @db[:debug_sessions].insert(data)
           steps.each_with_index do |step, index|
