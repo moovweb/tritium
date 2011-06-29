@@ -1,10 +1,21 @@
+require "logger"
 require_relative "tokenizer"
 require_relative "instruction"
 
 module Tritium
   module Parser
     class Parser
-      class SyntaxError
+      class LexicalError < StandardError
+        def initialize(error_token)
+          @error_token = error_token
+        end
+
+        def to_s
+          @error_token.to_s
+        end
+      end
+
+      class SyntaxError < StandardError
         attr_reader :filename, :line_num, :message, :value
 
         def initialize(filename, line_num, message, value)
@@ -25,6 +36,7 @@ module Tritium
         @path        = options[:path]        || File.dirname(__FILE__)
         @macro_calls = options[:macro_calls] || []
         @imports     = options[:imports]     || []
+        @logger      = options[:logger]      || Logger.new(STDOUT)
         
         @tokens = Tokenizer.new(script_string, filename: @filename)
         @line_num = @tokens.peek.line_num
@@ -51,7 +63,7 @@ module Tritium
         unexpected = pop!
         case unexpected.lexeme
         when :ERROR
-          raise unexpected
+          raise LexicalError.new(unexpected)
         else
           raise SyntaxError.new(@filename, @line_num, message, unexpected)
         end
@@ -61,7 +73,7 @@ module Tritium
         begin
           return inline_block
         rescue => err
-          puts err
+          @logger.error err
         end
       end
 
