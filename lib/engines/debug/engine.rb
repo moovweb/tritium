@@ -20,7 +20,7 @@ module Tritium
           File.open(script_file, "w+") { |f| f.write(@root_instruction.to_script) }
         end
 
-        if options[:trtium_debug_to_db]
+        if options[:tritium_debug_to_db]
           debug_file = File.join(@tmp_dir, "debug.sqlite")
           @db = Database.new(debug_file, @root_instruction)
         else
