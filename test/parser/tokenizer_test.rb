@@ -30,10 +30,10 @@ class TokenizerTest < MiniTest::Unit::TestCase
   
   Dir.glob(File.join(File.dirname(__FILE__), "../functional/scripts/*.ts")).each do |script_file|
     name = script_file.split("/").last.split(".").first
-    eval "def test_tokenizing_#{name}_script; test_script('#{script_file}'); end"
+    eval "def test_tokenizing_#{name}_script; run_script_tests('#{script_file}'); end"
   end
   
-  def test_script(script_file)
+  def run_script_tests(script_file)
     script_string = File.open(script_file).read
     tokenizer = Tokenizer.new(script_string, :filename => script_file)
     tokens = tokenizer.to_a
