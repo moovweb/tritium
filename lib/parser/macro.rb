@@ -1,6 +1,10 @@
 module Tritium
   module Parser
     class Macro
+      # The location of the built-in macros
+      @@location = File.expand_path(File.join(File.dirname(__FILE__), "../../lib/parser/macros/"))
+      def self.location; @@location; end
+
       # This is the internal initializer for a Macro object.
       # The block is required and MUST have an argv value of 1. 
       # That arg MUST be an array. This allows us to have a common

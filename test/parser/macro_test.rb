@@ -7,7 +7,7 @@ class MacroTest < MiniTest::Unit::TestCase
   include Tritium::Parser
   
   def load_macro(named)
-    Macro.load_file(File.join(File.dirname(__FILE__), "../../lib/parser/macros/#{named}"))
+    Macro.load_file(File.join(Macro.location, "#{named}"))
   end
 
   def test_simple_macro
