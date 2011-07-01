@@ -3,7 +3,7 @@
 
   $("#{unquote selector}[1]") {
     wrap(#{tag}, #{splice attributes}) {
-    move_here("../#{unquote selector}")
+      move_here("../#{unquote selector}")
     }
   }
 
