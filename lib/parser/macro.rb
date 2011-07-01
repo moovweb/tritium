@@ -68,10 +68,6 @@ module Tritium
         end
         @expansion_block.call(args)
       end
-
-      def splice(options_hash)
-        (options_hash.collect { |k,v| "#{k}: #{v}" }).join(", ")
-      end
     end
   end
 end
