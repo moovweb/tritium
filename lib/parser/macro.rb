@@ -15,9 +15,9 @@ module Tritium
       # Note: Initializing a macro is NOT the same as registering it with the
       # parser. This is a seperate process.
       #
-      def initialize(name, arg_length, &block)
+      def initialize(name, arg_length, &expansion_block)
         @name, @arg_length = name, arg_length
-        @block = block
+        @expansion_block = expansion_block
       end
     
       # This is the primary method for creating and loading
@@ -49,10 +49,10 @@ module Tritium
 
         Macro.new(name, arg_length) do |args|
           # Go through each passed in arg and replace it in the macro file. 
-          args.each do |index, value|
+          args.each_with_index do |value, index|
             # The @ variables start counting at 1. So, increase the index by one
             num = index + 1
-            macro = macro.gsub("@#{num}", args[arg_num].inspect)
+            macro = macro.gsub("@#{num}", value.inspect)
           end
           macro
         end
@@ -60,11 +60,18 @@ module Tritium
     
       def self.load_macro_rb_file(filename)
       end
+      
+      def expand(*args)
+        # Code so we can handle run(*args) and run(args)
+        if args.size == 1 && args[0].is_a?(Array)
+          args = args.first
+        end
+        @expansion_block.call(args)
+      end
     
       def unquote(node)
         if Literal === node then
-          val = eval(node.to_s)
-          return Regexp === val ? val.inspect : val
+          
         else
           return node.to_s
         end
