@@ -1,4 +1,4 @@
-->(selector, tag, attributes) {
+->(selector, tag, attributes) do
   <<EXPANSION
 
   $("#{unquote selector}[1]") {
@@ -8,4 +8,4 @@
   }
 
   EXPANSION
-}
+end
