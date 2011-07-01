@@ -51,15 +51,21 @@ module Tritium
         # file into a proper Proc for the expansion.
         Macro.new(name, arg_length) do |args|
           # Go through each passed in arg and replace it in the macro file. 
-          args.each_with_index do |value, index|
+          arg_length.times do |index|
+            # We are using index instead of each on the args, because
+            # we want to make sure that if one is nil, then its still replaced!
+            value = args[index]
+            
             # The @ variables start counting at 1. So, increase the index by one
             num = index + 1
-            if value.respond_to?(:unquote)
-              unquoted = value.unquote
-            else
-              unquoted = value.to_s
+
+            if value.is_a?(Hash)
+              value = (value.collect {|k,v| "#{k}: #{v.inspect}"}).join(", ")
             end
-            macro_text = macro_text.gsub("\#{@#{num}}", unquoted)
+
+            # If you want a non-inspected value, then use #{@1} (or whatever number matches)
+            macro_text = macro_text.gsub("\#{@#{num}}", (value.respond_to?(:unquote) ? value.unquote : value.to_s))
+            # If you want the inspected value, use @1
             macro_text = macro_text.gsub("@#{num}", value.inspect)
           end
           macro_text

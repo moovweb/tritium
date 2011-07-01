@@ -21,7 +21,11 @@ class MacroTest < MiniTest::Unit::TestCase
     result = macro.expand(["./home", "./me"])
     assert_equal "$(\"./home[1]\") {\n  wrap(\"./me\") {\n    move_here(\".././home\")\n  }\n}", result
   end
-    result = macro.expand(["./home", "./me"])
-    puts result
+  
+  def test_macro_with_keywords
+    macro = load_macro("wrap_together.3.macro")
+    result = macro.expand(["./home", "./me", {:color => "red"}])
+    expected = "$(\"./home[1]\") {\n  wrap(\"./me\", color: \"red\") {\n    move_here(\".././home\")\n  }\n}"
+    assert_equal expected, result
   end
 end
