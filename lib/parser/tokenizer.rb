@@ -115,8 +115,6 @@ module Tritium
             return munch_error!("unmatched comment terminator")
           when m = pop_match!(/^(=|,|\(|\)|\{|\})/)
             return token(@@symbols[m])
-          when m = pop_match!(/;/)
-            next
           when @line[/^("|'|\/|[0-9])/]
             if m = pop_match!(@@string_matchers[@line[0]] || @@string_matchers.values.last) then
               m = eval m
@@ -130,6 +128,8 @@ module Tritium
             return token(:KWD, m[0, m.length-1].intern)
           when m = pop_match!(/^(\$|[_a-zA-Z](\w|\$)*)/)
             return token(:ID, m.intern)
+          when m = pop_match!(/;/)
+            next
           when m = pop_match!(/^@import\b/)
             skip_whitespace_and_comments!
             if not @line then
