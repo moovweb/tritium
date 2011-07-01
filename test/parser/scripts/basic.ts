@@ -1,10 +1,11 @@
 $hello = "hi"
 
 doc("html") {
-  $('"redirect_url":"([^"]*)"') {
+  $('"redirect_\'url":"([^"]*)"') {
     attribute("yo()){}") {
       set($hello);
-      insert("<div class='criminal'>;(</div>")
+      insert("</div>")
+      insert(";")
       replace(5, index: 4);
     }
   }
