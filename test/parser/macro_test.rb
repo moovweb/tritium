@@ -1,6 +1,5 @@
 
 require 'minitest/autorun'
-require 'yaml'
 require_relative '../../lib/parser/macro'
 
 class MacroTest < MiniTest::Unit::TestCase
