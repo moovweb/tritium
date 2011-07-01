@@ -2,6 +2,8 @@ module Tritium
   module Parser
 
     class Instruction
+      attr :filename
+      attr :line_num
       def initialize(filename, line_num)
         @filename, @line_num = filename, line_num
       end
