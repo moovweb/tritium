@@ -38,6 +38,7 @@ module Tritium
               Text :start_env
               Text :last_env
               DateTime :created_at
+              String :request_id
             end
             
             @db.create_table :steps do
@@ -95,19 +96,21 @@ module Tritium
           ret
         end
         
-        def process_debug(debug_list)
+        def process_debug(debug_list, request_id=nil)
           debug_list.each do |name, step|
-            insert_debug_session(name, step)
+            insert_debug_session(name, step, request_id)
           end
         end
         
-        def insert_debug_session(name, steps)
+        def insert_debug_session(name, steps, request_id=nil)
           data = {:name => name, 
                   :start_env => steps.first.debug[:start_env].to_json, 
                   :last_env => steps.last.debug[:last_env].to_json,
                   :path => steps.first.debug[:start_env]['path'],
                   :content_type => steps.first.debug[:start_env]['content_type'],
-                  :created_at => Time.now}
+                  :created_at => Time.now,
+                  :request_id => request_id.to_s
+          }
           debug_session_id = @db[:debug_sessions].insert(data)
           steps.each_with_index do |step, index|
             insert_step(step, index, debug_session_id)

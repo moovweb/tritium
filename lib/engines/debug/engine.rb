@@ -12,14 +12,15 @@ module Tritium
         super
         
         if ENV["TEST"].nil?
-          @tmp_dir = File.join(@script_path, "../tmp")
+          @tmp_dir = options[:debug_log_foler] || File.join(@script_path, "../tmp")
           Dir.mkdir(@tmp_dir) unless File.directory?(@tmp_dir)
           
           # Dump the compiled script to the /tmp folder as script.ts
           script_file = File.join(@tmp_dir, "script.ts")
           File.open(script_file, "w+") { |f| f.write(@root_instruction.to_script) }
         end
-        if options[:tr_dbg_to_db]
+
+        if options[:tritium_debug_to_db]
           debug_file = File.join(@tmp_dir, "debug.sqlite")
           @db = Database.new(debug_file, @root_instruction)
         else
@@ -32,8 +33,6 @@ module Tritium
         
         # Set this so that we run a full debug stack on every execution
         env["debug"] = "main"
-        
-        start = Time.now
 
         # Actually run the code
         @root_step = Step::Text.new(@root_instruction)
@@ -41,11 +40,6 @@ module Tritium
         global_debug = {}
         export_vars = []
         @root_step.execute(doc.dup, env, global_debug, export_vars)
-        
-        took = Time.now - start
-        unless ENV["TEST"]
-          @logger.stats("Script took #{took} sec to process") if @logger.respond_to? :stats
-        end
 
         #return [@root_step.object, export_vars] if ENV["TEST"]
 
@@ -54,7 +48,7 @@ module Tritium
         print_stats(@root_step)
         
         #dump steps into DB if needed 
-        @db.process_debug(global_debug) unless @db.nil? 
+        @db.process_debug(global_debug, env["request_id"]) unless @db.nil? 
 
         ## Return the result object
         [@root_step.object, export_vars]
