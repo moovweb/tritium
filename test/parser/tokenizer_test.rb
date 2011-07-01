@@ -27,6 +27,20 @@ class TokenizerTest < MiniTest::Unit::TestCase
     assert(tokens[1].lexeme == :ERROR)
     # tokens.each { |token| puts token }
   end
+  
+  Dir.glob(File.join(File.dirname(__FILE__), "../functional/scripts/*.ts")).each do |script_file|
+    name = script_file.split("/").last.split(".").first
+    eval "def test_tokenizing_#{name}_script; test_script('#{script_file}'); end"
+  end
+  
+  def test_script(script_file)
+    script_string = File.open(script_file).read
+    tokenizer = Tokenizer.new(script_string, :filename => script_file)
+    tokens = tokenizer.to_a
+    tokens.each do |token|
+      assert token.lexeme != :ERROR, token.to_s
+    end
+  end
 
   def test_false_negatives_script
     tokenizer = get_tokenizer("false-negatives.ts")
