@@ -4,6 +4,7 @@ module Tritium::Parser
     @@tab = "  "
     
     def ruby_debug_line(depth = 0)
+      return ""
       ["#{@@tab * depth}#[",
         "@_line_number = #{@line_num.inspect}",
         "@_script = #{@filename.inspect}",
