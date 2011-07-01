@@ -1,4 +1,5 @@
-->(selector, tag, attributes) do
+->(args) do
+  selector, tag, attributes = args
   <<EXPANSION
 
   $("#{unquote selector}[1]") {
