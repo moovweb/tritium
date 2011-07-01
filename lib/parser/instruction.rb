@@ -5,12 +5,19 @@ module Tritium
       def initialize(filename, line_num)
         @filename, @line_num = filename, line_num
       end
+      
+      alias unquote to_s
     end
 
     class Literal < Instruction
       def initialize(filename, line_num, value)
         super(filename, line_num)
         @value = value
+      end
+      
+      def unquote
+        val = eval(node.to_s)
+        Regexp === val ? val.inspect : val
       end
     end
 

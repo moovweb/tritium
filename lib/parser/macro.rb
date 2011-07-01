@@ -68,14 +68,6 @@ module Tritium
         end
         @expansion_block.call(args)
       end
-    
-      def unquote(node)
-        if Literal === node then
-          
-        else
-          return node.to_s
-        end
-      end
 
       def splice(options_hash)
         (options_hash.collect { |k,v| "#{k}: #{v}" }).join(", ")
