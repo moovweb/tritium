@@ -19,8 +19,9 @@ module Tritium::Parser
   class Assignment
     def to_s(depth = 0)
       result = super(depth)
-      result[-1,0] = ", #{@value}"
-      return result
+      new_depth = depth + 1
+      result[-1,0] = ") {\n#{@@tab * new_depth}set(#{@value})\n#{@@tab * depth}}"
+      return result[0..-2]
     end
   end
 
