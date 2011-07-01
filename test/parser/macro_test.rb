@@ -16,8 +16,11 @@ class MacroTest < MiniTest::Unit::TestCase
     assert_equal "var(\"hi\") {\n  set(\"mom\")\n}", result
   end
   
-  def test_rb_macro
-    macro = load_macro("wrap_together.2.rb")
+  def test_complex_macro
+    macro = load_macro("wrap_together.2.macro")
+    result = macro.expand(["./home", "./me"])
+    assert_equal "$(\"./home[1]\") {\n  wrap(\"./me\") {\n    move_here(\".././home\")\n  }\n}", result
+  end
     result = macro.expand(["./home", "./me"])
     puts result
   end

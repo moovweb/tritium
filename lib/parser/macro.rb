@@ -38,27 +38,38 @@ module Tritium
       def self.load_file(filename)
         name, arg_length, filetype = filename.split("/").last.split(".")
         if filetype == "macro"
-          load_simple_macro_file(filename, name, arg_length.to_i)
+          load_macro_file(filename, name, arg_length.to_i)
         elsif filetype == "rb"
           load_rb_macro_file(filename, name, arg_length.to_i)
         end
       end
     
-      def self.load_simple_macro_file(filename, name, arg_length)
-        macro = File.open(filename).read
+      def self.load_macro_file(filename, name, arg_length)
+        macro_text = File.open(filename).read
 
+        # Build a new Macro object and pass in the block to convert the macro
+        # file into a proper Proc for the expansion.
         Macro.new(name, arg_length) do |args|
           # Go through each passed in arg and replace it in the macro file. 
           args.each_with_index do |value, index|
             # The @ variables start counting at 1. So, increase the index by one
             num = index + 1
-            macro = macro.gsub("@#{num}", value.inspect)
+            if value.respond_to?(:unquote)
+              unquoted = value.unquote
+            else
+              unquoted = value.to_s
+            end
+            macro_text = macro_text.gsub("\#{@#{num}}", unquoted)
+            macro_text = macro_text.gsub("@#{num}", value.inspect)
           end
-          macro
+          macro_text
         end
       end
     
       def self.load_rb_macro_file(filename, name, arg_length)
+        macro_text = File.open(filename).read
+        expansion_block = eval(macro_text)
+        Macro.new(name, arg_length, &expansion_block)
       end
       
       def expand(*args)
