@@ -1,6 +1,7 @@
 require "logger"
 require_relative "tokenizer"
 require_relative "instruction"
+require_relative "macro_expander"
 
 module Tritium
   module Parser
@@ -37,6 +38,7 @@ module Tritium
         @macro_calls = options[:macro_calls] || []
         @imports     = options[:imports]     || []
         @logger      = options[:logger]      || Logger.new(STDOUT)
+        @expander    = options[:expander]    || MacroExpander.new
         
         @tokens = Tokenizer.new(script_string, filename: @filename)
         @line_num = @tokens.peek.line_num
@@ -135,17 +137,16 @@ module Tritium
         args = arguments
         stmts = peek.lexeme == :LBRACE ? block() : nil
         signature = [func_name, args[:pos].length]
-        if @@macros[signature] then
-          # stub = cmd(stmts ? InvocationWithBlock : Invocation,
-          #            :"macro-expansion stub")
+        if @expander.is_macro?(signature)
           stub = cmd(InlineBlock)
-          @macro_calls << {
-            name: func_name,
-            pos_args: args[:pos],
-            kwd_args: args[:kwd],
-            block: stmts,
-            expansion_site: stub
-          }
+          macro_call = { signature: signature,
+                         pos_args: args[:pos],
+                         kwd_args: args[:kwd],
+                         block: stmts,
+                         expansion_site: stub}
+          
+          @expander.expand(macro_call)
+          @macro_calls << macro_call
           return stub
         else
           stmts = stmts ? [stmts] : []
