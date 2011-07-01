@@ -1,6 +1,6 @@
 doc("xml") {
   select(".//*[@id='a']") {
-    html {
+    html() {
       set("<div id='b'>hello, world!</div>")
       replace("div", "span")
     }

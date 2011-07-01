@@ -3,7 +3,7 @@ doc("xml") {
   # Hopefully it is not interpretted as the beginning of a tritium variable
   match($path, /baby$/) {
     $(".//span[@id='b']") {
-      remove
+      remove()
     }
   }
 }

@@ -1,14 +1,14 @@
 doc("xml") {
   $(".//div") {
     attribute("id") {
-      value {
+      value() {
         replace(/there is no id/, "and this replacement wont create one")
       }
     }
   }
   $(".//script") {
     attribute("src") {
-      value {
+      value() {
         # After this replace runs the attribute becomes the empty string so tritium will totally remove the attribute
         replace(/remove\_me/, "")
       }
@@ -16,7 +16,7 @@ doc("xml") {
   }
   $(".//a") {
     attribute("href") {
-      value {
+      value() {
         replace(/there was a blank href/, "but this non-matching regex will remove it")
       }
     }

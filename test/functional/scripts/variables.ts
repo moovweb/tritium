@@ -23,7 +23,7 @@ doc("xml") {
     # and to prove we have access to the parents variable set
     match($first, /worked/) {
       attribute("win") {
-        value {
+        value() {
           set("creating attribtues works")
         }
       }
@@ -36,7 +36,7 @@ doc("xml") {
         match($fourth, "worked") {
           match($fifth, "worked") {
             select("//*") {
-              html {
+              html() {
                 set("Worked!")
               }
             }

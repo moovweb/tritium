@@ -5,7 +5,7 @@ doc("html") {
       var("address", fetch("div[@class = 'address']"))
     }
     $(".//div[@class='shopping_cart']") {
-      html {
+      html() {
         replace(" items", "")
       }
       var("cart_items", fetch("./text()"))
@@ -15,19 +15,19 @@ doc("html") {
 set("<cache/>")
 doc("xml") {
   $("cache") {
-    bottom {
+    bottom() {
       insert_tag("item", key: "name") {
-        html {
+        html() {
           set($name)
         }
       }
       insert_tag("item", key: "cart_items") {
-        html {
+        html() {
           set($cart_items)
         }
       }
       insert_tag("item", key: "address_html") {
-        html {
+        html() {
           set($address)
           prepend("<![CDATA[")
           append("]]>")

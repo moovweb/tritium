@@ -1,16 +1,16 @@
 doc("xml") {
   select('root') {
-    bottom {
+    bottom() {
       insert_tag("middle", index: 2)
 
       insert_tag("bottom", "hello", index: 3) {
-        html {
+        html() {
           replace(/llo/, "llo, world!")
         }
       }
     }
 
-    top {
+    top() {
       insert_tag("top") {
         attribute("index", 1)
       }

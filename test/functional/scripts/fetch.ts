@@ -7,7 +7,7 @@ doc("xml") {
       # Move the anchor href up to an onclick
       attribute("onclick", fetch("a/@href"))
       attribute("onclick") {
-        value {
+        value() {
           prepend("window.location = '")
           append("'")
         }
@@ -15,7 +15,7 @@ doc("xml") {
       select(".//a") {
         html(fetch("@href"))
         attribute("href") {
-          remove
+          remove()
         }
       }
     }
