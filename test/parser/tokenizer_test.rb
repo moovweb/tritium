@@ -18,7 +18,7 @@ class TokenizerTest < MiniTest::Unit::TestCase
     tokens.each do |token|
       assert token.lexeme != :ERROR, token.to_s
     end
-    tokens.each { |token| puts token }
+    # tokens.each { |token| puts token }
   end
   
   def test_invalid_script
@@ -32,7 +32,7 @@ class TokenizerTest < MiniTest::Unit::TestCase
     tokenizer = get_tokenizer("false-negatives.ts")
     tokens = tokenizer.to_a
     tokens.each do |token|
-      assert token.lexeme != :ERROR
+      assert token.lexeme != :ERROR, token.to_s
     end
     # tokens.each { |token| puts token }
   end
