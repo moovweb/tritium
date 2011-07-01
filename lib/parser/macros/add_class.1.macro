@@ -1,0 +1,6 @@
+attribute("class") {
+  value() {
+    append(" ")
+    append(@1)
+  }
+}

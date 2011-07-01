@@ -58,6 +58,14 @@ module Tritium
         @filename, @line_num, @statements = filename, line_num, statements
       end
     end
+    
+    # This class is ONLY used to indicate that the inline block used was
+    # an expansion block. Walk over this and ignore it.
+    class ExpansionInlineBlock < InlineBlock
+      def to_s(depth)
+        return (@statements.collect { |s| s.to_s(depth) }).join("\n")
+      end
+    end
 
     require_relative "instruction_mixins/to_s"
 
