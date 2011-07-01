@@ -1,0 +1,4 @@
+$(@1) {
+  move_here("*", "before")
+  remove()
+}

@@ -1,0 +1,5 @@
+attribute(@1) {
+  value() {
+    set(@2)
+  }
+}
