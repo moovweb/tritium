@@ -23,6 +23,10 @@ module Tritium
           @filename, @line_num = filename, line_num
           @message, @value = message, value
         end
+        
+        def message
+          to_s
+        end
 
         def to_s
           return "Syntax error in #{@filename}, line #{@line_num}:\n" \
