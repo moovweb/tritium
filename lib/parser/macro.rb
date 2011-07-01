@@ -70,11 +70,8 @@ module Tritium
         end
       end
 
-      def splice(tbl)
-        result = ""
-        tbl.each { |k,v| result << ", #{k}: #{v}" }
-        result[0,2] = ""
-        return result
+      def splice(options_hash)
+        (options_hash.collect { |k,v| "#{k}: #{v}" }).join(", ")
       end
     end
   end
