@@ -50,7 +50,7 @@ module Tritium
       end
     end
 
-    require_relative "instruction-mixins/to_s"
+    require_relative "instruction_mixins/to_s"
 
   end
 end
