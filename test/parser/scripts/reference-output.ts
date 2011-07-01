@@ -1,4 +1,4 @@
-.# ENTERING FILE: false-negatives.ts
+# ENTERING FILE: false-negatives.ts
 var("x") {
   set(whatever())
 }

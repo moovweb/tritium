@@ -27,17 +27,16 @@ class ParserTest < MiniTest::Unit::TestCase
 
   def test_parser
     script_string, parser, output = build_parser("false-negatives.ts")
-    puts output.to_s
     assert_equal read_script("reference-output.ts"), output.to_s
   end
   
   def test_var_expansion
-    script_string, parser, output = build_parser("unexpanded_var.ts")
-    puts output.inspect
+    script_string, parser, output = build_parser("var.ts")
+    assert_equal read_script("var_output.ts"), output.to_s
   end
   
   def test_add_class_expansion
     script_string, parser, output = build_parser("add_class.ts")
-    puts output.inspect
+    assert_equal read_script("add_class_output.ts"), output.to_s
   end
 end
