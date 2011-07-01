@@ -48,10 +48,6 @@ module Tritium
           last_statement.statements += block
         end
       end
-
-      def expand_all
-        @macro_calls.each { |macro_call| expand(macro_call) }
-      end
     end
   end
 end
