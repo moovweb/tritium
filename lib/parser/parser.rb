@@ -144,9 +144,10 @@ module Tritium
                          kwd_args: args[:kwd],
                          block: stmts,
                          expansion_site: stub}
+          @macro_calls << macro_call
           
           @expander.expand(macro_call)
-          @macro_calls << macro_call
+
           return stub
         else
           stmts = stmts ? [stmts] : []
