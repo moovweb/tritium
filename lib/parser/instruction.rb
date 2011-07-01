@@ -16,7 +16,7 @@ module Tritium
       end
       
       def unquote
-        val = eval(node.to_s)
+        val = eval(self.to_s)
         Regexp === val ? val.inspect : val
       end
     end
@@ -44,6 +44,7 @@ module Tritium
     end
 
     class InvocationWithBlock < Invocation
+      attr :statements, true
       def initialize(filename, line_num,
                      name = nil, pos_args = [], kwd_args = {}, statements = [])
         super(filename, line_num, name, pos_args, kwd_args)
@@ -52,6 +53,7 @@ module Tritium
     end
 
     class InlineBlock < InvocationWithBlock
+      attr :statements, true
       def initialize(filename, line_num, statements = [])
         @filename, @line_num, @statements = filename, line_num, statements
       end

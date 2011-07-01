@@ -4,6 +4,10 @@ module Tritium
       # The location of the built-in macros
       @@location = File.expand_path(File.join(File.dirname(__FILE__), "../../lib/parser/macros/"))
       def self.location; @@location; end
+      
+      attr :name
+      attr :arg_length
+      attr :signature
 
       # This is the internal initializer for a Macro object.
       # The block is required and MUST have an argv value of 1. 
@@ -21,6 +25,7 @@ module Tritium
       #
       def initialize(name, arg_length, &expansion_block)
         @name, @arg_length = name, arg_length
+        @signature = [@name.intern, @arg_length]
         @expansion_block = expansion_block
       end
     
@@ -37,6 +42,10 @@ module Tritium
         files.collect do |file|
           load_file(file)
         end
+      end
+      
+      def self.load_defaults
+        load(*Dir.glob(File.join(Macro.location, "/*")))
       end
     
       def self.load_file(filename)
@@ -82,6 +91,7 @@ module Tritium
         Macro.new(name, arg_length, &expansion_block)
       end
       
+      # This is the heart of the Macro. It does the actual expansion
       def expand(*args)
         # Code so we can handle run(*args) and run(args)
         if args.size == 1 && args[0].is_a?(Array)

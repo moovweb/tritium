@@ -1,38 +1,56 @@
 require_relative "parser"
+require_relative "macro"
 
 module Tritium
   module Parser
     class MacroExpander
-      @@macros = {}
+      def initialize
+        @macros = {}
+        load_macros!
+      end
+      
+      def load_macros!
+        Macro.load_defaults.each {|m| register_macro(m)}
+      end
+
+      # Returns true or false if the signature matches a macro
+      def is_macro?(signature)
+        !!lookup_macro(signature)
+      end
+      
+      def lookup_macro(signature)
+        @macros[signature]
+      end
+      
+      def register_macro(macro)
+        @macros[macro.signature] = macro
+      end
+      
       def expand(macro_call)
-        macro_name     = macro_call[:name]
+        signature      = macro_call[:signature]
         pos_args       = macro_call[:pos_args]
-        kwd_args       = macro_call[:kwd_args]
+        kwd_args       = macro_call[:kwd_args]       || {}
         block          = macro_call[:block]          || []
         expansion_site = macro_call[:expansion_site]
+        args           = pos_args + [kwd_args]
 
-        expander = @@macros[[macro_name, pos_args.length]]
-        if kwd_args.empty? then
-          expansion_string = expander.call(*pos_args)
-        else
-          expansion_string = expander.call(*pos_args, kwd_args)
-        end
+        macro = lookup_macro(signature)
+        expansion_string = macro.expand(args)
 
         expansion = Parser.new(expansion_string,
-                               macro_calls: @macro_calls).parse
+                               macro_calls: @macro_calls,
+                               expander: self).parse
 
-        expansion.statements.each { |statement|
-          expansion_site.statements << statement
-        }
+        expansion_site.statements += expansion.statements
 
         last_statement = expansion_site.statements.last
-        block.each { |statement|
-          last_statement.statements << statement
-        } if InvocationWithBlock === last_statement
+        if last_statement.is_a?(InvocationWithBlock)
+          last_statement.statements += block
+        end
       end
 
       def expand_all
-        @macro_calls.each { |macro_call| expand macro_call }
+        @macro_calls.each { |macro_call| expand(macro_call) }
       end
     end
   end
