@@ -27,4 +27,10 @@ class MacroTest < MiniTest::Unit::TestCase
     expected = "$(\"./home[1]\") {\n  wrap(\"./me\", color: \"red\") {\n    move_here(\".././home\")\n  }\n}"
     assert_equal expected, result
   end
+  
+  def test_piglatin
+    macro = load_macro("piglatin.1.rb")
+    result = macro.expand(["Hampton Catlin"])
+    assert_equal "\"ampton Hay atlin Cay\"", result
+  end
 end
