@@ -38,13 +38,13 @@ module Tritium
       def self.load_file(filename)
         name, arg_length, filetype = filename.split("/").last.split(".")
         if filetype == "macro"
-          load_macro_file(filename, name, arg_length.to_i)
+          load_simple_macro_file(filename, name, arg_length.to_i)
         elsif filetype == "rb"
-          load_macro_rb_file(filename, name, arg_length.to_i)
+          load_rb_macro_file(filename, name, arg_length.to_i)
         end
       end
     
-      def self.load_macro_file(filename, name, arg_length)
+      def self.load_simple_macro_file(filename, name, arg_length)
         macro = File.open(filename).read
 
         Macro.new(name, arg_length) do |args|
@@ -58,7 +58,7 @@ module Tritium
         end
       end
     
-      def self.load_macro_rb_file(filename)
+      def self.load_rb_macro_file(filename, name, arg_length)
       end
       
       def expand(*args)
