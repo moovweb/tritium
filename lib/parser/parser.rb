@@ -77,10 +77,14 @@ module Tritium
 
       def parse
         begin
-          return inline_block
+          return parse!
         rescue => err
           @logger.error err
         end
+      end
+      
+      def parse!
+        inline_block
       end
 
       def inline_block
