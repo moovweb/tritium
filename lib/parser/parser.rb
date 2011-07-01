@@ -6,35 +6,7 @@ require_relative "macro_expander"
 module Tritium
   module Parser
     class Parser
-      class LexicalError < StandardError
-        def initialize(error_token)
-          @error_token = error_token
-        end
-
-        def to_s
-          @error_token.to_s
-        end
-      end
-
-      class SyntaxError < StandardError
-        attr_reader :filename, :line_num, :message, :value
-
-        def initialize(filename, line_num, message, value)
-          @filename, @line_num = filename, line_num
-          @message, @value = message, value
-        end
-        
-        def message
-          to_s
-        end
-
-        def to_s
-          return "Syntax error in #{@filename}, line #{@line_num}:\n" \
-                 "#{@message}; found unexpected #{@value}\n\n"
-        end
-      end
-
-      @@macros = {}
+      require_relative 'parser_errors'
       
       def initialize(script_string, options = {})
         @filename    = options[:filename]    || "MAIN"
@@ -43,6 +15,7 @@ module Tritium
         @imports     = options[:imports]     || []
         @logger      = options[:logger]      || Logger.new(STDOUT)
         @expander    = options[:expander]    || MacroExpander.new
+        @errors      = options[:errors]      || ScriptErrors.new
         
         @tokens = Tokenizer.new(script_string, filename: @filename)
         @line_num = @tokens.peek.line_num
@@ -55,7 +28,7 @@ module Tritium
 
       def pop!
         @token = @tokens.pop!
-        @line_num = @token.line_num
+        @line_num = @token.line_num if @token
         return @token
       end
       private :pop!
@@ -69,22 +42,18 @@ module Tritium
         unexpected = pop!
         case unexpected.lexeme
         when :ERROR
-          raise LexicalError.new(unexpected)
+          @errors << LexicalError.new(unexpected)
         else
-          raise SyntaxError.new(@filename, @line_num, message, unexpected)
+          @errors << SyntaxError.new(@filename, @line_num, message, unexpected)
         end
       end
 
       def parse
-        begin
-          return parse!
-        rescue => err
-          @logger.error err
+        result = inline_block
+        if @errors.any?
+          raise @errors
         end
-      end
-      
-      def parse!
-        inline_block
+        result
       end
 
       def inline_block
@@ -115,7 +84,12 @@ module Tritium
       
       def import
         import_name = pop!.value
-        script_string = File.read(File.join(@path, import_name))
+        begin
+          script_string = File.read(File.join(@path, import_name))
+        rescue Exception => e
+          @errors << e
+          return nil
+        end
         parser = Parser.new(script_string,
                             filename: import_name, path: @path,
                             imports: @imports, macro_calls: @macro_calls)
@@ -150,7 +124,8 @@ module Tritium
           macro_call = { signature: signature,
                          pos_args: args[:pos],
                          kwd_args: args[:kwd],
-                         block: stmts,
+                         block:    stmts,
+                         errors:   @errors,
                          expansion_site: stub}
           @macro_calls << macro_call
           
@@ -165,6 +140,7 @@ module Tritium
       end
 
       def arguments
+        default_return = { pos: [], kwd: {}}
         pos_args, kwd_args, kwd = [], {}, nil
         pop! # pop the lparen
         if peek.lexeme == :RPAREN then
@@ -179,13 +155,16 @@ module Tritium
           arg = term
         else
           raise_error("invalid argument")
+          return default_return
         end
         kwd ? kwd_args[kwd] = arg : pos_args << arg; kwd = nil
 
         # parse the comma-separated tail of the argument list
         while not(peek.lexeme == :RPAREN) do
-          raise_error("arguments must be separated by commas") if
-            not peek.lexeme == :COMMA
+          if peek.lexeme != :COMMA
+            raise_error("arguments must be separated by commas")
+            return default_return
+          end
           pop!
           kwd = pop!.value if peek.lexeme == :KWD
           case peek.lexeme
@@ -193,6 +172,7 @@ module Tritium
             arg = term
           else
             raise_error("invalid argument")
+            return default_return
           end
           kwd ? kwd_args[kwd] = arg : pos_args << arg; kwd = nil
         end
@@ -215,6 +195,7 @@ module Tritium
           return cmd(Invocation, func_name, args[:pos], args[:kwd])
         else
           raise_error("invalid term")
+          return 
         end
       end
 

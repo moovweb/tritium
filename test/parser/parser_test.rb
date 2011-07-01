@@ -39,4 +39,12 @@ class ParserTest < MiniTest::Unit::TestCase
     script_string, parser, output = build_parser("add_class.ts")
     assert_equal read_script("add_class_output.ts"), output.to_s
   end
+  
+  def test_error_handling
+    build_parser("invalid.ts")
+    assert false, "Should have failed"
+  rescue Exception => e
+    assert e.any?
+    assert e.size > 2
+  end
 end
