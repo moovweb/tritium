@@ -74,7 +74,7 @@ module Tritium
         def collect_instruction(instruction, parent_iid = nil)
           data = instruction.to_hash
           args = data[:args].collect do |arg|
-            if arg.is_a?(::Tritium::Parser::Instruction)
+            if arg.is_a?(::Tritium::Parser::ReaderInstruction)
               ins = @db[:instructions].filter(:iid => arg.iid).update(:parent_iid => nil, :arg_for_iid => instruction.iid)
               "INSTRUCTION_#{arg.iid}"
             elsif arg.is_a?(Regexp)

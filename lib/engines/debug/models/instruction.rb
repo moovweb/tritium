@@ -1,5 +1,5 @@
 module Larry
-  class Instruction < Sequel::Model
+  class ReaderInstruction < Sequel::Model
     one_to_many :steps
     one_to_many :children, :key => "parent_id", :class => self
     many_to_one :parent, :key => "parent_id", :class => self
@@ -14,7 +14,7 @@ module Larry
         split = arg.to_s.split("_")
         if split[0] == "INSTRUCTION"
           arg_iid = split[1..-1].join("_")
-          Instruction.filter(:iid => arg_iid).first
+          ReaderInstruction.filter(:iid => arg_iid).first
         else
           arg.inspect
         end

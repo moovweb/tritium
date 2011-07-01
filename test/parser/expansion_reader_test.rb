@@ -56,7 +56,7 @@ class ExpansionReaderTest < MiniTest::Unit::TestCase
   def test_non_returning_arg
     output = read('text(top)')
     assert(false)
-  rescue Instruction::Invalid
+  rescue ReaderInstruction::Invalid
     assert(true)
   end
   

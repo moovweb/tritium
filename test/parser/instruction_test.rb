@@ -4,11 +4,11 @@ require 'minitest/autorun'
 require 'yaml'
 require_relative '../../lib/parser/instruction'
 
-class InstructionTest < MiniTest::Unit::TestCase
+class ReaderInstructionTest < MiniTest::Unit::TestCase
   include Tritium::Parser
   
   def test_parent
-    root = Instruction.root
+    root = ReaderInstruction.root
     doc = root.add("doc", :args => ["html"])
     child = doc.add("select", :args => ["body"])
     grand_child = child.add("attribute", :args => "xml:lang")
@@ -35,11 +35,11 @@ class InstructionTest < MiniTest::Unit::TestCase
   end
   
   def test_bad_method_name
-    root = Instruction.root
+    root = ReaderInstruction.root
     begin
       child = root.add("nomethod")
       assert false
-    rescue Tritium::Parser::Instruction::Invalid
+    rescue Tritium::Parser::ReaderInstruction::Invalid
       assert true
     end
   end

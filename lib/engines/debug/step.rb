@@ -98,7 +98,7 @@ module Tritium::Engines
     end
     
     def resolve_arg(arg, scope = self)
-      if arg.is_a?(Tritium::Parser::Instruction)
+      if arg.is_a?(Tritium::Parser::ReaderInstruction)
         if arg.name == "var"
           arg = @env[arg.args.first]
         else

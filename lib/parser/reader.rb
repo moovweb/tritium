@@ -1,7 +1,7 @@
-require_relative 'instruction'
+require_relative 'reader_instruction'
 
 # The Parser::Reader is what actually evals the script
-# and returns a tree of Instruction objects.
+# and returns a tree of ReaderInstruction objects.
 #
 # Currently, the parser does *NO* validation.
 #
@@ -20,12 +20,12 @@ module Tritium
       # and keeps hitting the method_missing method below
       # for every instruction that goes through.
       # 
-      # This actually returns an Instruction object that is
+      # This actually returns an ReaderInstruction object that is
       # the fully built parse tree.
       #
       # ONLY accepts a pre-processed Tritium script
       def read(script_string)
-        @root_instruction = Instruction.root
+        @root_instruction = ReaderInstruction.root
         @stack = [@root_instruction]
 
         begin
@@ -40,7 +40,7 @@ module Tritium
           raise e
         end
       
-        # Makes sure to de-parent and mark any arg-Instructions
+        # Makes sure to de-parent and mark any arg-ReaderInstructions
         @root_instruction.clean_args!
         @root_instruction
       end
@@ -55,8 +55,8 @@ module Tritium
     
       def cmd(name, *args, &block)
         args.each do |arg|
-          if arg.is_a?(Instruction) && !arg.information["returns"]
-            raise Instruction::Invalid.new(arg)
+          if arg.is_a?(ReaderInstruction) && !arg.information["returns"]
+            raise ReaderInstruction::Invalid.new(arg)
           end
         end
         

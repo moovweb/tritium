@@ -61,7 +61,7 @@ module Tritium::Parser
     
     def attribute(name, set_value = nil, &block)
       if set_value
-        if !set_value.is_a?(Instruction)
+        if !set_value.is_a?(ReaderInstruction)
           set_value = set_value.to_s
         end
         cmd('attribute', name) do
@@ -155,14 +155,14 @@ module Tritium::Parser
     end
     
     def inner_wrap(name, attributes = {}, &block)
-      if name.is_a?(Instruction)
+      if name.is_a?(ReaderInstruction)
         throw "Cannot use dynamic tag names with inner_wrap(). See documentation for details."
       end
 
       attribute_list = attributes.collect do |k, v|
         # We are statically building the tag that we will wrap the contents with, therefore we can't support
         # dynamic attributes or tag names
-        if k.is_a?(Instruction) || v.is_a?(Instruction)
+        if k.is_a?(ReaderInstruction) || v.is_a?(ReaderInstruction)
           throw "Cannot use dynamic attributes with inner_wrap(). See documentation for details."
         end
         
