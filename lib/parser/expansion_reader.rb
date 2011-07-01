@@ -220,6 +220,17 @@ module Tritium::Parser
         block.call if block
       end
     end
+    
+    
+    def add_class(class_name, &block)
+      cmd("attribute", "class") {
+        value() {
+          append(" ")
+          append(class_name)
+        }
+        block.call if block
+      }
+    end
 
     def name(set_name = nil, &block)
       if set_name
