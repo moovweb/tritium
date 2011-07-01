@@ -35,7 +35,5 @@ module Tritium
         @macro_calls.each { |macro_call| expand macro_call }
       end
     end
-
-    # require_relative "macros"
   end
 end
