@@ -7,6 +7,13 @@ module Tritium
   module Parser
     class Parser
       require_relative 'parser_errors'
+      attr :filename
+      attr :path
+      attr :macro_calls
+      attr :imports
+      attr :logger
+      attr :expander
+      attr :errors
       
       def initialize(script_string, options = {})
         @filename    = options[:filename]    || "MAIN"
@@ -28,6 +35,7 @@ module Tritium
 
       def pop!
         @token = @tokens.pop!
+        #TODO Linenum should stay consistent in subparsers
         @line_num = @token.line_num if @token
         return @token
       end
@@ -92,7 +100,8 @@ module Tritium
         end
         parser = Parser.new(script_string,
                             filename: import_name, path: @path,
-                            imports: @imports, macro_calls: @macro_calls)
+                            imports: @imports, macro_calls: @macro_calls,
+                            errors: @errors)
         @imports << { importer: @filename, importee: import_name }
         return parser.inline_block
       end
@@ -125,7 +134,7 @@ module Tritium
                          pos_args: args[:pos],
                          kwd_args: args[:kwd],
                          block:    stmts,
-                         errors:   @errors,
+                         parser:   self,
                          expansion_site: stub}
           @macro_calls << macro_call
           

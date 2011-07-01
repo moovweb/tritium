@@ -32,16 +32,19 @@ module Tritium
         kwd_args       = macro_call[:kwd_args]       || {}
         block          = macro_call[:block]          || []
         expansion_site = macro_call[:expansion_site]
-        errors         = macro_call[:errors]
+        parser         = macro_call[:parser]
         args           = pos_args + [kwd_args]
 
         macro = lookup_macro(signature)
         expansion_string = macro.expand(args)
 
         expansion = Parser.new(expansion_string,
-                               macro_calls: @macro_calls,
+                               macro_calls: parser.macro_calls,
                                expander: self,
-                               errors: errors).parse
+                               errors: parser.errors,
+                               filename: parser.filename,
+                               path: parser.path,
+                               logger: parser.logger).parse
 
         if expansion
           expansion_site.statements += expansion.statements
