@@ -27,8 +27,7 @@ module Tritium
       @@string_matchers = {
         '"' => /^"(\\.|[^"\\])*"/,
         "'" => /^'(\\.|[^'\\])*'/,
-        '/' => /^\/(\\.|[^\/\\])*\/[imxouesn]*/,
-        'n' => /^[0-9]*/
+        '/' => /^\/(\\.|[^\/\\])*\/[imxouesn]*/
       }
 
       def initialize(script_string, options = {})
@@ -115,8 +114,10 @@ module Tritium
             return munch_error!("unmatched comment terminator")
           when m = pop_match!(/^(=|,|\(|\)|\{|\})/)
             return token(@@symbols[m])
-          when @line[/^("|'|\/|[0-9])/]
-            if m = pop_match!(@@string_matchers[@line[0]] || @@string_matchers.values.last) then
+          when m = pop_match!(/^\d+/)
+            return token(:STRING, m)
+          when @line[/^("|'|\/)/]
+            if m = pop_match!(@@string_matchers[@line[0]]) then
               m = eval m
               return token(Regexp === m ? :REGEXP : :STRING, m)
             else
