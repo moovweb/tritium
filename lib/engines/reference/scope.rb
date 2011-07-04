@@ -109,6 +109,10 @@ module Tritium
           end
         end
         
+        def concat(*strings)
+          strings.join("")
+        end
+        
         def export(key, value)
           @export_vars << [key, value]
         end
