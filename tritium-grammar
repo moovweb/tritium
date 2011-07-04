@@ -3,25 +3,30 @@ GRAMMAR:
 script		::	statement*
 
 statement	::	'@import' path
+<<<<<<< HEAD:tritium-grammar
 		|	<var> '=' term
 		|	<id> arglist block?
+=======
+		      |	  <var> '=' term
+		      |	  <id> arglist block
+>>>>>>> 354409c724675d4e6f2a0da6642a442cf5a60332:tritium.bnf
 
-path		::	<word>
-		|	<string>
+path		  ::	<word>
+		      |	  <string>
 
 arglist		::	'(' args? ')'
 
-args		::	arg ( ',' arg )*
+args		  ::	arg ( ',' arg )*
 
-arg		::	term
-		|	<kwd> term
+arg		    ::	term
+		      |	  <kwd> term
 
-term		::	<string>
-		|	<regexp>
-		|	<var>
-		|	<id> arglist
+term		  ::	<string>
+		      |	  <regexp>
+		      |	  <var>
+		      |	  <id> arglist
 
-block		::	'{' script '}'
+block		  ::	( '{' script '}' )?
 
 
 LEXICAL RULES:
@@ -29,7 +34,7 @@ LEXICAL RULES:
 <word>		::	[-+.*?:\/\w]+		(reasonable filenames & paths)
 
 <string>	::	"(\\.|[^"\\])*"		(double quoted strings)
-		|	'(\\.|[^'\\])*'		(single quoted strings)
+		      |	  '(\\.|[^'\\])*'		(single quoted strings)
 
 <regexp>	::	\/(\\.|[^\/\\])*\/[imxouesn]*	(Ruby regexps)
 
@@ -37,7 +42,7 @@ LEXICAL RULES:
 
 <id>		::	\$|[_a-zA-Z](\w|\$)*	(the usual, including '$')
 
-<kwd>		::	[a-zA-Z_:][-\w:.]*:	(XML attributes << ':')
+<kwd>		  ::	[a-zA-Z_:][-\w:.]*:	(XML attributes << ':')
 
 <comment>	::	#.*			(single line)
-		|	'#[' thru matching ']#'	(multiline, matched/nested)
+		      |	  '#[' thru matching ']#'	(multiline, matched/nested)
