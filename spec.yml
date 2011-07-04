@@ -64,6 +64,15 @@ Base: &base
       -
         name: Selector
         doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
+  concat:
+    opens: Text
+    returns: true
+    doc: A function for concatenating strings
+    arguments:
+      -
+        name: Strings
+        type: Array
+        doc: zero or more strings to concatenate
   export:
     opens: Text
     doc: This is a the way that we have Tritium communicate variables back to its execution environment. That sounds complicated, but in most uses of Tritium, it would be something like export("Content-Type", "application/js") to tell the app to change the content-type. Look at the reference for your server for more information on what you can export.
@@ -201,6 +210,16 @@ Node:
         name: Attributes
         type: Hash
         doc: The tag's attributes. CAN NOT BE DYAMIC. That means no fetch() or anything like that. If you need to use that, open the yielding block and use attribute()
+  wrap_text_children:
+    opens: Node
+    doc: Wraps each text child inside the specified tag with the supplied attributes. If a block is supplied, it is run within each of the wrapped children.
+    arguments:
+      -
+        name: Tag Name
+      -
+        name: Attributes
+        type: Hash
+        doc: The tag's attributes.
   position:
     opens: Positional
     hide: true
