@@ -3,25 +3,25 @@ GRAMMAR:
 script		::	statement*
 
 statement	::	'@import' path
-		|	<var> '=' term
-		|	<id> arglist block
+		      |	  <var> '=' term
+		      |	  <id> arglist block
 
-path		::	<word>
-		|	<string>
+path		  ::	<word>
+		      |	  <string>
 
 arglist		::	'(' args? ')'
 
-args		::	arg ( ',' arg )*
+args		  ::	arg ( ',' arg )*
 
-arg		::	term
-		|	<kwd> term
+arg		    ::	term
+		      |	  <kwd> term
 
-term		::	<string>
-		|	<regexp>
-		|	<var>
-		|	<id> arglist
+term		  ::	<string>
+		      |	  <regexp>
+		      |	  <var>
+		      |	  <id> arglist
 
-block		::	( '{' script '}' )?
+block		  ::	( '{' script '}' )?
 
 
 LEXICAL RULES:
@@ -29,15 +29,15 @@ LEXICAL RULES:
 <word>		::	\S+			(block of non-whitespace)
 
 <string>	::	"(\\.|[^"\\])*"		(double quoted strings)
-		|	'(\\.|[^'\\])*'		(single quoted strings)
+		      |	  '(\\.|[^'\\])*'		(single quoted strings)
 
 <regexp>	::	\/(\\.|[^\/\\])*\/[imxouesn]*	(Ruby regexes)
 
-<var>		::	\$\w+			('$' + the usual)
+<var>		  ::	\$\w+			('$' + the usual)
 
-<id>		::	\$|[_a-zA-Z]\w*		(the usual, or '$')
+<id>		  ::	\$|[_a-zA-Z]\w*		(the usual, or '$')
 
-<kwd>		::	[a-zA-Z_:][-\w:.]*:	(XML attributes << ':')
+<kwd>		  ::	[a-zA-Z_:][-\w:.]*:	(XML attributes << ':')
 
 <comment>	::	#.*			(single line)
-		|	'#[' thru matching ']#'	(multiline, matched/nested)
+		      |	  '#[' thru matching ']#'	(multiline, matched/nested)
