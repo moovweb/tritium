@@ -29,7 +29,7 @@ LEXICAL RULES:
 <word>     ::  \S+                            (block of non-whitespace)
 
 <string>   ::  "(\\.|[^"\\])*"                (double quoted strings)
-            |  '(\\.|[^'\\])*'                (single quoted strings)
+           |   '(\\.|[^'\\])*'                (single quoted strings)
 
 <regexp>   ::  \/(\\.|[^\/\\])*\/[imxouesn]*  (Ruby regexes)
 
@@ -40,4 +40,4 @@ LEXICAL RULES:
 <kwd>      ::  [a-zA-Z_:][-\w:.]*:            (XML attributes << ':')
 
 <comment>  ::  #.*                            (single line)
-            |  '#[' thru matching ']#'        (multiline, matched/nested)
+           |   '#[' thru matching ']#'        (multiline, matched/nested)
