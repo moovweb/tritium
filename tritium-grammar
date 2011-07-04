@@ -26,16 +26,16 @@ block      ::  '{' script '}'
 
 LEXICAL RULES:
 
-<word>     ::  \S+                            (block of non-whitespace)
+<word>     ::  [-+.*?:\/\w]+                  (reasonable filename)
 
 <string>   ::  "(\\.|[^"\\])*"                (double quoted strings)
            |   '(\\.|[^'\\])*'                (single quoted strings)
 
 <regexp>   ::  \/(\\.|[^\/\\])*\/[imxouesn]*  (Ruby regexes)
 
-<var>      ::  \$\w+                          ('$' + the usual)
+<var>      ::  \$\w+                          ('$' << the usual)
 
-<id>       ::  \$|[_a-zA-Z]\w*                (the usual, or '$')
+<id>       ::  \$|[_a-zA-Z](\w|\$)*           ($ or the usual + '$')
 
 <kwd>      ::  [a-zA-Z_:][-\w:.]*:            (XML attributes << ':')
 
