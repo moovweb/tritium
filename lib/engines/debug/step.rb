@@ -203,6 +203,10 @@ module Tritium::Engines
       @logger.info(message)
     end
     
+    def concat(*strings)
+      strings.join("")
+    end
+    
     private
      def position_node(target, node, position = nil)
        case (position || @env["position"])
