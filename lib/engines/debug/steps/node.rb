@@ -84,6 +84,19 @@ class Tritium::Engines::Debug
       end
     end
     
+    def wrap_text_children(tag_name, attributes = {})
+      @object.children.each do |child|
+        next if not child.text? or child.text.strip.empty?
+        wrapper = child.add_previous_sibling("<#{tag_name} />").first
+        attributes.each do |key, val|
+          key = key.to_s if key.is_a? Symbol
+          wrapper[key] = val
+        end
+        wrapper.add_child(child)
+        execute_children_on(child)
+      end
+    end
+    
     def name
       @object.name = execute_children_on(@object.name)
     end
