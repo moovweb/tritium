@@ -2,7 +2,7 @@ module Tritium
   module Parser
     class Macro
       # The location of the built-in macros
-      @@location = File.expand_path(File.join(File.dirname(__FILE__), "../../lib/parser/macros/"))
+      @@location = File.expand_path(File.join(File.dirname(__FILE__), "macros"))
       def self.location; @@location; end
       
       attr :name

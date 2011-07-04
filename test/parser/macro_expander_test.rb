@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require_relative '../../lib/parser/macro_expander'
+require_relative '../../lib/tritium/parser/macro_expander'
 
 class MacroTest < MiniTest::Unit::TestCase
   include Tritium::Parser

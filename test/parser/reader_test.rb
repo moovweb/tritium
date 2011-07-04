@@ -2,8 +2,8 @@
 
 require 'minitest/autorun'
 require 'yaml'
-require_relative '../../lib/parser/reader'
-require_relative '../../lib/parser/preprocess'
+require_relative '../../lib/tritium/parser/reader'
+require_relative '../../lib/tritium/parser/preprocess'
 
 class ReaderTest < MiniTest::Unit::TestCase
   include Tritium::Parser

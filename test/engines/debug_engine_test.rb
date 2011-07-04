@@ -1,7 +1,7 @@
 
 require 'yaml'
 require 'minitest/unit'
-require_relative '../../lib/engines/debug/engine'
+require_relative '../../lib/tritium/engines/debug/engine'
 require_relative 'engine_tests'
 
 class DebugEngineTest < MiniTest::Unit::TestCase
