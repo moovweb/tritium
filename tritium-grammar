@@ -1,48 +1,43 @@
 GRAMMAR:
 
-script		::	statement*
+script     ::  statement*
 
-statement	::	'@import' path
-<<<<<<< HEAD:tritium-grammar
-		|	<var> '=' term
-		|	<id> arglist block?
-=======
-		      |	  <var> '=' term
-		      |	  <id> arglist block
->>>>>>> 354409c724675d4e6f2a0da6642a442cf5a60332:tritium.bnf
+statement  ::  '@import' path
+           |   <var> '=' term
+           |   <id> arglist block?
 
-path		  ::	<word>
-		      |	  <string>
+path       ::  <word>
+           |   <string>
 
-arglist		::	'(' args? ')'
+arglist    ::  '(' args? ')'
 
-args		  ::	arg ( ',' arg )*
+args       ::  arg ( ',' arg )*
 
-arg		    ::	term
-		      |	  <kwd> term
+arg        ::  term
+           |   <kwd> term
 
-term		  ::	<string>
-		      |	  <regexp>
-		      |	  <var>
-		      |	  <id> arglist
+term       ::  <string>
+           |   <regexp>
+           |   <var>
+           |   <id> arglist
 
-block		  ::	( '{' script '}' )?
+block      ::  '{' script '}'
 
 
 LEXICAL RULES:
 
-<word>		::	[-+.*?:\/\w]+		(reasonable filenames & paths)
+<word>     ::  \S+                            (block of non-whitespace)
 
-<string>	::	"(\\.|[^"\\])*"		(double quoted strings)
-		      |	  '(\\.|[^'\\])*'		(single quoted strings)
+<string>   ::  "(\\.|[^"\\])*"                (double quoted strings)
+            |  '(\\.|[^'\\])*'                (single quoted strings)
 
-<regexp>	::	\/(\\.|[^\/\\])*\/[imxouesn]*	(Ruby regexps)
+<regexp>   ::  \/(\\.|[^\/\\])*\/[imxouesn]*  (Ruby regexes)
 
-<var>		::	\$\w+			('$' << the usual)
+<var>      ::  \$\w+                          ('$' + the usual)
 
-<id>		::	\$|[_a-zA-Z](\w|\$)*	(the usual, including '$')
+<id>       ::  \$|[_a-zA-Z]\w*                (the usual, or '$')
 
-<kwd>		  ::	[a-zA-Z_:][-\w:.]*:	(XML attributes << ':')
+<kwd>      ::  [a-zA-Z_:][-\w:.]*:            (XML attributes << ':')
 
-<comment>	::	#.*			(single line)
-		      |	  '#[' thru matching ']#'	(multiline, matched/nested)
+<comment>  ::  #.*                            (single line)
+            |  '#[' thru matching ']#'        (multiline, matched/nested)
