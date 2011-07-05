@@ -7,3 +7,6 @@ inject_bottom()
 insert() => inject()
 insert_tag() => insert()
 
+
+
+html() becomes inner_xml()
