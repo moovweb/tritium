@@ -56,12 +56,16 @@ module Tritium
       end
 
       def add(name, options = {})
-        if scope_spec[name].nil?
+        if scope_spec[name.to_s].nil?
           raise Invalid.new(self), "Line #{@line_number} in #{@script_name}\nNo such method #{name.inspect} allowed here!\nAPI Version: #{scope_spec.api_version}\nOnly allow: #{scope_spec.keys.join(", ")}\n#{self.line}"
         end
         child = ReaderInstruction.new(name, options.merge(:root => self.root, :parent => self))
         children << child
         child
+      rescue StandardError => e
+        puts "SCOPE SPEC IS = #{scope.to_s}"
+        puts e.message
+        puts e.backtrace.join("\n!!!")
       end
       
       def root?

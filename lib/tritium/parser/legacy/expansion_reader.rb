@@ -120,14 +120,13 @@ module Tritium::Parser
     end
     
     def html(value = nil, &block)
-      if @stack.size > 1
+      if value || @stack.size > 1
         cmd("inner_xml") {
           set(value) if value
           block.call if block
         }
       else
-        cmd("html")
-        block.call if block
+        cmd("html", &block)
       end
     end
     

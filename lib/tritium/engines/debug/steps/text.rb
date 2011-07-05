@@ -31,6 +31,19 @@ class Tritium::Engines::Debug
       execute_children_on(doc)
       @object = doc.send("to_" + parse_as)
     end
+    
+    def xml
+      doc "xml"
+    end
+    def xhtml
+      doc "xhtml"
+    end
+    def html_fragment
+      doc "html_fragment"
+    end
+    def html
+      doc "html"
+    end
   
     def append(text)
       @object << text

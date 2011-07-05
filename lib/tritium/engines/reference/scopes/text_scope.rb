@@ -49,6 +49,19 @@ module Tritium::Engines::Reference::Scope
       node_scope.instance_eval(&block) if block
       @text = node_scope.node.send("to_" + type)
     end
+    
+    def xml(&block)
+      doc "xml", &block
+    end
+    def xhtml(&block)
+      doc "xhtml", &block
+    end
+    def html_fragment(&block)
+      doc "html_fragment", &block
+    end
+    def html(&block)
+      doc "html", &block
+    end
   
     def append(text)
       @text << text
