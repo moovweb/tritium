@@ -1,11 +1,13 @@
 module Tritium
   
-  def self.spec_file
-    File.read(File.dirname(__FILE__) + "/../../spec.1-1.yml")
+  def self.spec_file(version)
+    File.read(File.dirname(__FILE__) + "/../../spec.#{version}.yml")
   end
 
-  def self.spec
-    @@spec ||= Spec.load(spec_file)
+  def self.spec(version = nil)
+    @@specs ||= {}
+    version ||= current_api_version.to_s.gsub(".", "-")
+    @@specs[version] ||= Spec.load(spec_file(version), version)
   end
   
   def self.functional_test_location
@@ -13,7 +15,7 @@ module Tritium
   end
   
   def self.current_api_version
-    1
+    1.1
   end
   
   def self.supported_api_levels
@@ -22,7 +24,7 @@ module Tritium
   
   def self.test_api_levels
     if ENV["experimental"]
-      supported_api_levels + [current_api_version + 1]
+      supported_api_levels + [2]
     else
       supported_api_levels
     end
