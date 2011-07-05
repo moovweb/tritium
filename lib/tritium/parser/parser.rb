@@ -1,12 +1,14 @@
 require "logger"
 require_relative "tokenizer"
-require_relative "instruction"
+require_relative "instructions"
 require_relative "macro_expander"
 
 module Tritium
   module Parser
     class Parser
       require_relative 'parser_errors'
+      include Instructions
+
       attr :filename
       attr :path
       attr :macro_calls

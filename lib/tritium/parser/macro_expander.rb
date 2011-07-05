@@ -50,7 +50,7 @@ module Tritium
           expansion_site.statements += expansion.statements
 
           last_statement = expansion_site.statements.last
-          if last_statement.is_a?(InvocationWithBlock)
+          if last_statement.is_a?(Instructions::InvocationWithBlock)
             last_statement.statements += block
           end
         end
