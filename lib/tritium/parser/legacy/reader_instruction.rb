@@ -62,10 +62,6 @@ module Tritium
         child = ReaderInstruction.new(name, options.merge(:root => self.root, :parent => self))
         children << child
         child
-      rescue StandardError => e
-        puts "SCOPE SPEC IS = #{scope.to_s}"
-        puts e.message
-        puts e.backtrace.join("\n!!!")
       end
       
       def root?
