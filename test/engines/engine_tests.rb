@@ -8,6 +8,8 @@
 
 ENV["TEST"] = "true"
 
+require_relative '../../lib/tritium/config'
+
 require 'minitest/unit'
 require 'minitest/mock'
 require 'yaml'
@@ -15,7 +17,9 @@ require 'logger'
 
 module  EngineTests
   def self.functional_dirs
-    Dir.glob(File.join(File.dirname(__FILE__), "../functional/*"))
+    Tritium.test_api_levels.collect do |ver|
+      File.join(File.dirname(__FILE__), "../functional/v#{ver}")
+    end
   end
 
   include Tritium::Engines
@@ -50,9 +54,10 @@ module  EngineTests
     engine = engine_class.new("@import #{file}", :path => EngineTests.functional_dirs.first + "/scripts")
     assert engine.processed_script.include?("select")
   end
-
-  self.functional_dirs.each do |version_dir|
+  
+  def self.test_version_folder(version_dir)
     version = File.basename(version_dir)
+     puts "Testing scripts with version #{version}"
     Dir[version_dir + "/scripts/*"].each do |script_file_name|
       test_name = File.basename(script_file_name, ".ts")
       if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
@@ -60,6 +65,9 @@ module  EngineTests
         eval "def test_#{version}_#{test_name}_script; run_test '#{version_dir}', '#{test_name}'; end"
       end
     end
+  end
+  self.functional_dirs.each do |version_dir|
+    test_version_folder(version_dir)
   end
 
   def run_test(base_path, test_name)    
