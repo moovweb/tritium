@@ -36,4 +36,7 @@ doc() {
       @import ../scripts/import-3.ts
     }
   }
+  $("//p[1]") {
+    html(read("paragraph.html"))
+  }
 }
