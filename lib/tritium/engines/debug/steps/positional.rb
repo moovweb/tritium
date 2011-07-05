@@ -2,11 +2,12 @@ class Tritium::Engines::Debug
   class Step::Node
     
     def insert_tag(tag_name)
-      insert("<#{tag_name} />")
+      inject("<#{tag_name} />")
     end
     
-    def insert(html)
+    def inject(html)
       execute_children_on(position_node(node, html).first)
     end
+    alias insert inject
   end
 end
