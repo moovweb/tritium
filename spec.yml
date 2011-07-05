@@ -331,6 +331,9 @@ Text:
   html:
     doc: Parses the document as HTML and passes you back an XMLNode scope
     opens: XMLNodeScope
+  html_fragment:
+    doc: Parses the document as HTML and passes you back an XMLNode scope
+    opens: XMLNodeScope
   prepend:
     doc: Prepend the string to the front of the text area
     arguments: 
