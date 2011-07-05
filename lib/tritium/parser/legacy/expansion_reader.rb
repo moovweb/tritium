@@ -225,6 +225,11 @@ module Tritium::Parser
       end
     end
     
+    %w(top bottom before after).each do |position|
+      %w(insert inject).each do |method|
+        eval("def #{method}_#{position}(*args, &block); var('position', #{position.inspect}); insert(*args, &block); end")
+      end
+    end
     
     def add_class(class_name, &block)
       cmd("attribute", "class") {

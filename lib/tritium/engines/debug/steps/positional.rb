@@ -8,6 +8,13 @@ class Tritium::Engines::Debug
     def inject(html)
       execute_children_on(position_node(node, html).first)
     end
-    alias insert inject
+    
+    def insert(*args)
+      if args.size > 1
+        insert_tag(*args)
+      else
+        inject(*args)
+      end
+    end
   end
 end
