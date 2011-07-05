@@ -1,0 +1,329 @@
+Debug: &debug
+  log:
+    opens: Text
+    doc: Writes out a string to the console and debug log
+    arguments:
+      - 
+        name: Log message
+        doc: Debug Line! Just type something!
+  debug:
+    doc: Write down everything! This request will be logged if you call this
+    hide: true
+    arguments:
+      -
+        name: Debug ID
+        doc: Whatever ID you give it, that will be how the project is written down in the debug database!
+
+Base: &base
+  <<: *debug
+  var:
+    opens: Text
+    alias: $
+    returns: true
+    arguments:
+      -
+        name: Name
+        doc: The name of the var. Something like $name or var('name')
+      -
+        name: Value
+        doc: The value you want to set the var to. Same as var('name') { set('value') }
+        expansion: true
+  match:
+    doc: 
+  not_matcher:
+    doc: Used with match($var, not('hi'))
+    hide: true
+  with:
+    doc: Used as a child of match("something")
+    arguments:
+      -
+        name: Regex
+        doc: The regular expression to match with
+  else_do:
+    doc: Else command for match()
+    hide: true
+  asset:
+    opens: Text
+    doc: Use this to call any files kept in the project's asset folder.
+    returns: true
+    arguments:
+      -
+        name: Filename
+        doc: The name of the file (and maybe its subfolder). For instance, "my.css"
+      -
+        name: Asset Type
+        doc: The asset type. This is usually something like "stylesheet", "javascript", or "image"
+  script:
+    opens: Text
+    doc: DO NOT USE. Wraps the entire script virtually!
+  fetch:
+    opens: Text
+    returns: true
+    doc: This is how you select an element to pass it to a function.
+    arguments:
+      -
+        name: Selector
+        doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
+  concat:
+    opens: Text
+    returns: true
+    doc: A function for concatenating strings
+    arguments:
+      -
+        name: Strings
+        type: Array
+        doc: zero or more strings to concatenate
+  export:
+    opens: Text
+    doc: This is a the way that we have Tritium communicate variables back to its execution environment. That sounds complicated, but in most uses of Tritium, it would be something like export("Content-Type", "application/js") to tell the app to change the content-type. Look at the reference for your server for more information on what you can export.
+    arguments:
+      -
+        name: Key name
+        type: String
+      -
+        name: Value
+        type: String
+  dump:
+    returns: true
+    doc: This is a debug-feature. Please don't use this in production. It will return whatever the current object is in a stringified form.
+Node:
+  <<: *base
+  select: 
+    doc: Search the tree and select all matching nodes
+    alias: $()
+    arguments:
+      - 
+        name: Selector
+        doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
+        
+  html:
+    opens: Text
+    doc: Opens up the entire innerHTML to text modification. Any html you insert WILL get interpreted as actual tags.
+    arguments:
+      -
+        name: HTML
+        doc: You can optionally just pass in HTML to set the innerHTML. Remember, this is the same as html { set('value') } and will clobber the internals
+        
+        expansion: true
+  text:
+    opens: Text
+    doc: Opens up the contents to text modification. All HTML will get escaped. Use html() if you want to insert/modify tags.
+    arguments:
+      -
+        name: Contents
+        doc: You can optionally just pass in contents to set the contents. Remember, this is the same as text { set('value') } and will clobber whatever was there before.
+        
+        expansion: true
+  attribute:
+    opens: Attribute
+    doc: Creates or opens the attribute named
+    arguments:
+      -
+        name: Name
+        doc: The name of the attribute you are opening
+      -
+        name: Value
+        doc: You can set the attribute value here if you want. Very optional!
+        default: ""
+        expansion: true
+        
+  move_here: 
+    doc: Move the indicated node to the current node at the specified position
+    arguments:
+      -
+        name: Selector
+        doc: The node we want to move here
+      -
+        name: Position
+        doc: Can be "bottom", "top", "after", or "before"
+        default: "bottom"
+  move_to: 
+    doc: Move the current node to some other location as indicated by the first argument. Yields to the node represented by the selector! (Not the node you are on!)
+    arguments:
+      -
+        name: Selector
+        doc: Where we are moving the node to
+      -
+        name: Position
+        doc: Can be "bottom", "top", "after", or "before"
+        default: "bottom"
+  copy_here:
+    doc: Copy the indicated node(set) to the current Node, with the indicated position.
+    arguments:
+      -
+        name: Selector
+        doc: The node we are copying
+      -
+        name: Position
+        doc: Can be "bottom", "top", "after", or "before"
+        default: "bottom"
+  copy_to:
+    doc: Copy the current node to the indicated selector, at the indicated position
+    arguments:
+      -
+        name: Selector
+        doc: The node we are copying ourselves to
+      -
+        name: Position
+        doc: Can be "bottom", "top", "after", or "before"
+        default: "bottom"
+  name:
+    opens: Text
+    doc: Rename the currently select Node's name. Aka, change a "div" to a "span"
+    arguments:
+      - 
+        name: Name
+        doc: You can just yield to the block if you want to dynamically set the name. Otherwise, just pass it as the argument
+        expansion: true
+  add_class:
+    opens: Attribute
+    doc: Appends the class you specify to the currently selected element. Its the same thing as attribute("class") { append(" whatever") } }.
+    arguments:
+      -
+        name: Class Name
+        doc: The name of the class you want to append
+        expansion: true
+  remove:
+    doc: Delete the current node
+  wrap:
+    doc: Wrap the currently selected node with a tag and then yield to that new wrapper. Obviously, the contents is the current node.
+    arguments:
+      -
+        name: Tag Name
+      -
+        name: Attributes
+        type: Hash
+        doc: The tag's attributes
+  inner_wrap:
+    doc: Wraps the contents of the currently selected node with a tag and then yield to that new wrapper.
+    arguments:
+      -
+        name: Tag Name
+      -
+        name: Attributes
+        type: Hash
+        doc: The tag's attributes. CAN NOT BE DYAMIC. That means no fetch() or anything like that. If you need to use that, open the yielding block and use attribute()
+  wrap_text_children:
+    doc: Wraps each text child inside the specified tag with the supplied attributes. If a block is supplied, it is run within each of the wrapped children.
+    arguments:
+      -
+        name: Tag Name
+      -
+        name: Attributes
+        type: Hash
+        doc: The tag's attributes.
+  position:
+    opens: Positional
+    hide: true
+    doc: DO NOT USE! Low-level way to open a positional block. Doesn't actually set the var('position'). Use the bottom, top, after, and before methods!
+  bottom:
+    opens: Positional
+  top:
+    opens: Positional
+  after:
+    opens: Positional
+  before:
+    opens: Positional
+
+
+
+Positional:
+  <<: *base
+  insert_tag:
+    opens: Node
+    doc: Create a new HTML tag. Must be inside a Positional block
+    arguments:
+      - 
+        name: Tag Name
+        default: "div"
+        doc: The type of HTML node you want, aka "div" or "span"
+      -
+        name: Contents
+        default: ""
+        doc: Some text representing the innerHTML of the tag
+        expansion: true
+      -
+        name: Attributes
+        type: Hash
+        doc: The tag's attributes
+        expansion: true
+  insert:
+    opens: Node
+    doc: Inject some plain HTML into the document at the prescribed location
+    arguments:
+      -
+        name: HTML
+
+
+Attribute:
+  <<: *base
+  remove:
+    doc: Delete the current attribute
+  value:
+    opens: Text
+    returns: true
+    doc: Allow us to edit the value (key="value") part of the attribute
+    arguments:
+      -
+        name: Value
+        doc: You can instantly pass in a variable to set the value of the attribute
+        expansion: true
+  name:
+    opens: Text
+    returns: true
+    doc: Allow us to edit the key (key="value") part of the attribute
+    arguments:
+      -
+        name: Name
+        doc: You can instantly pass in a variable to set the name of the attribute
+        expansion: true
+
+Text:
+  <<: *base
+  rewrite:
+    doc: Filters the current text string through the named rewriter.
+    returns: true
+    arguments:
+      -
+        name: Key for the rewriter
+        default: link
+        require: true
+  set:
+    doc: Replace the entire current text with what you pass in
+    arguments:
+      -
+        name: Value
+        doc: The string you want to replace the whole thing with!
+        
+  replace:
+    doc: Replace all instances of the first argument with the second argument. This yields to a Text scope that allows you to set the Replacement string. Very powerful stuff. Look at the examples.
+    opens: Text
+    arguments:
+      -
+        name: Regex
+      -
+        name: Replacement String
+        doc: Should be in the format of "\\1.name\\2" where \\1 and \\2 are the groups from the Regex.
+        expansion: true
+  doc:
+    doc: Parses the HTML/XML/etc and passes you back a Node scope
+    opens: Node
+    arguments:
+      -
+        name: Document Type
+        doc: "Can be: xml, html, xhtml"
+        
+  prepend:
+    doc: Prepend the string to the front of the text area
+    arguments: 
+      -
+        name: Text to prepend
+        
+  append:
+    doc: Append the string to the front of the text area
+    arguments: 
+      -
+        name: Text to append
+        
+  remove:
+    doc: Set the whole thing to ""
