@@ -4,6 +4,7 @@ module Tritium
       attr :name
       attr :parent
       attr :children
+      attr :api_version
       
       # OVERRIDE
       def self.child_klass
@@ -24,6 +25,7 @@ module Tritium
 
       def initialize(name, attributes, parent)
         @name, attributes = name, attributes
+        @api_version = parent.api_version
         self.class.defaults.each do |name, value|
           name = name.to_s
           instance_variable_set("@#{name}", attributes.delete(name) || value)

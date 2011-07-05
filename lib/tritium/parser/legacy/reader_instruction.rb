@@ -57,7 +57,7 @@ module Tritium
 
       def add(name, options = {})
         if scope_spec[name].nil?
-          raise Invalid.new(self), "Line #{@line_number} in #{@script_name}\nNo such method #{name.inspect} allowed here!\nOnly allow: #{scope_spec.keys.join(", ")}\n#{self.line}"
+          raise Invalid.new(self), "Line #{@line_number} in #{@script_name}\nNo such method #{name.inspect} allowed here!\nAPI Version: #{scope_spec.api_version}\nOnly allow: #{scope_spec.keys.join(", ")}\n#{self.line}"
         end
         child = ReaderInstruction.new(name, options.merge(:root => self.root, :parent => self))
         children << child

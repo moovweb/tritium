@@ -6,16 +6,18 @@ module Tritium
     require_relative 'scope'
 
     attr :scopes
+    attr :api_version
     
-    def initialize(data)
+    def initialize(data, version)
+      @api_version = version
       @scopes = {}
       data.each do |scope_name, scope_data|
         @scopes[scope_name] = Scope.new(scope_name, scope_data, self)
       end
     end
     
-    def self.load(spec_file)
-      Spec.new(YAML::load(spec_file))
+    def self.load(spec_file, version)
+      Spec.new(YAML::load(spec_file), version)
     end
     
     def [](scope_name)
