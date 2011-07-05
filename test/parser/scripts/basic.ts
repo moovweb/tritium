@@ -9,4 +9,7 @@ doc("html") {
       replace(5, index: 4);
     }
   }
+  $("div[@class='something']") {
+    html(read("blah.html"))
+  }
 }

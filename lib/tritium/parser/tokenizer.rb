@@ -123,6 +123,18 @@ module Tritium
             else
               return munch_error!("unterminated string or regexp #{@line}")
             end
+          when m = pop_match!(/^read\s*\(/m)  # More brittle than I like
+            skip_whitespace_and_comments!
+            source = pop_match!(@@string_matchers[@line[0]])
+            skip_whitespace_and_comments!
+            rparen = pop_match!(/\)/)
+            if source and
+               (source = eval source).is_a? String and
+               rparen then
+              return token(:READ, source)
+            else
+              return munch_error!("malformed read")
+            end
           when m = pop_match!(/^\$\w+/)
             return token(:VAR, m[1, m.length].intern)
           when m = pop_match!(/^[a-zA-Z_:][-\w:.]*:/)
