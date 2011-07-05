@@ -119,5 +119,7 @@ class Tritium::Engines::Debug
     def position
       execute_children_on(@object)
     end
+
   end
+  class Step::XMLNode < Step::Node; end
 end

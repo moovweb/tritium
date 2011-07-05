@@ -19,4 +19,5 @@ module Tritium::Engines::Reference::Scope
     include NodeModules::ActionMethods
     include NodeModules::PositioningMethods
   end
+  class XMLNode < Node; end
 end

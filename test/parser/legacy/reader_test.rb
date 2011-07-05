@@ -38,7 +38,7 @@ class ReaderTest < MiniTest::Unit::TestCase
     
     select = output.children.first
     
-    assert_equal "Node", select.scope
+    assert_equal "XMLNode", select.scope
     assert_equal 2, select.children.size
     assert_equal 1, select.args.size
     assert_equal './shit', select.args.first
@@ -61,7 +61,7 @@ class ReaderTest < MiniTest::Unit::TestCase
     assert_equal [], remove.args
     assert_equal [], remove.children
     assert_equal remove.root, root
-    assert_equal "Node", remove.scope
+    assert_equal "XMLNode", remove.scope
   end
   
   def test_debug_lines

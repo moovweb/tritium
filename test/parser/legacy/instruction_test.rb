@@ -17,7 +17,7 @@ class ReaderInstructionTest < MiniTest::Unit::TestCase
 
     assert_equal nil, root.parent
     assert_equal "Text", root.opens
-    assert_equal "Node", doc.opens
+    assert_equal "XMLNode", doc.opens
     assert_equal 1, doc.children.size
     assert_equal root, doc.parent
     assert_equal doc, child.parent
@@ -29,7 +29,7 @@ class ReaderInstructionTest < MiniTest::Unit::TestCase
     assert_equal root, grand_child.root
     
     # If an instruction has no 'opens' specified, then it inherits from its parent
-    assert_equal "Node", node_matcher.opens
+    assert_equal "XMLNode", node_matcher.opens
     assert_equal "Attribute", grand_child.opens
     assert_equal "Attribute", attribute_matcher.opens
   end

@@ -1,5 +1,5 @@
 class Tritium::Engines::Debug
-  class Step::Positional < Step::Node
+  class Step::Node
     
     def insert_tag(tag_name)
       insert("<#{tag_name} />")
