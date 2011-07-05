@@ -9,7 +9,7 @@ module Tritium
         def initialize(filename, line_num)
           @filename, @line_num = filename, line_num
         end
-      
+
         def ruby_debug_line(depth = 0)
           return ""
           ["#{@@tab * depth}#[",

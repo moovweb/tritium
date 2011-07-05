@@ -14,7 +14,10 @@ require 'yaml'
 require 'logger'
 
 module  EngineTests
-  FUNCTIONAL_DIR = File.join(File.dirname(__FILE__), "../functional")
+  def self.functional_dirs
+    Dir.glob(File.join(File.dirname(__FILE__), "../functional/*"))
+  end
+
   include Tritium::Engines
   
   def engine_class
@@ -44,21 +47,23 @@ module  EngineTests
   end
   
   def import(file)
-    engine = engine_class.new("@import #{file}", :path => FUNCTIONAL_DIR + "/scripts")
+    engine = engine_class.new("@import #{file}", :path => EngineTests.functional_dirs.first + "/scripts")
     assert engine.processed_script.include?("select")
   end
 
-  Dir[FUNCTIONAL_DIR + "/scripts/*"].each do |script_file_name|
-    test_name = File.basename(script_file_name, ".ts")
-    if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
-      # Writes a method that simply calls run_file with its name 
-      eval "def test_#{test_name}_script; run_test '#{test_name}'; end"
+  self.functional_dirs.each do |version_dir|
+    version = File.basename(version_dir)
+    Dir[version_dir + "/scripts/*"].each do |script_file_name|
+      test_name = File.basename(script_file_name, ".ts")
+      if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
+        # Writes a method that simply calls run_file with its name 
+        eval "def test_#{version}_#{test_name}_script; run_test '#{version_dir}', '#{test_name}'; end"
+      end
     end
   end
 
-  def run_test(test_name)    
-    base_path = FUNCTIONAL_DIR
-    input_file_name = Dir[FUNCTIONAL_DIR + "/input/#{test_name}*"].last
+  def run_test(base_path, test_name)    
+    input_file_name = Dir[base_path + "/input/#{test_name}*"].last
     ts_script = "@import #{test_name}.ts"
 
     log = Logger.new(STDOUT)
@@ -120,7 +125,7 @@ module  EngineTests
     script = "export('Content-Type', 'html/js'); export('cookie', 'a'); export('cookie', 'b')"
     log = Logger.new(STDOUT)
     log.level = Logger::ERROR
-    tritium = engine_class.new(script, :path => FUNCTIONAL_DIR + "/scripts", :script_name => "export_function", :logger => log)
+    tritium = engine_class.new(script, :path => EngineTests.functional_dirs.last + "/scripts", :script_name => "export_function", :logger => log)
     result, export_vars = tritium.run("")
     assert_equal [['Content-Type', 'html/js'], ['cookie', 'a'], ['cookie', 'b']], export_vars
   end
