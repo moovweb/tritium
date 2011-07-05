@@ -160,7 +160,7 @@ module Tritium
         # parse the head of the argument list
         kwd = pop!.value if peek.lexeme == :KWD
         case peek.lexeme
-        when :STRING, :REGEXP, :VAR, :ID
+        when :STRING, :REGEXP, :VAR, :ID, :READ
           arg = term
         else
           raise_error("invalid argument")
@@ -177,7 +177,7 @@ module Tritium
           pop!
           kwd = pop!.value if peek.lexeme == :KWD
           case peek.lexeme
-          when :STRING, :REGEXP, :VAR, :ID
+          when :STRING, :REGEXP, :VAR, :ID, :READ
             arg = term
           else
             raise_error("invalid argument")
@@ -202,6 +202,10 @@ module Tritium
             peek.lexeme != :LPAREN
           args = arguments
           return cmd(Invocation, func_name, args[:pos], args[:kwd])
+        when :READ
+          # TO DO: decide on a folder for text assets
+          path = "test/parser/scripts"
+          return cmd(Literal, File.read(File.join(path, @token.value)))
         else
           raise_error("invalid term")
           return 
@@ -211,10 +215,10 @@ module Tritium
       def block
         stmts = []
         pop! # pop the lbrace
-        while not(peek.lexeme == :RBRACE) do
+        while not(peek.lexeme == :RBRACE or peek.lexeme == :EOF) do
           stmts << statement
         end
-        raise_error("unterminated block") if peek.lexeme != :RBRACE
+        raise_error("unterminated block") if peek.lexeme == :EOF
         pop! # pop the rbrace
         return stmts
       end

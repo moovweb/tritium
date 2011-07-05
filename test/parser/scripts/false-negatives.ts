@@ -37,7 +37,6 @@ doc() {
     }
   }
   $("//p[1]") {
-    html(read   ( #[blah]# "paragraph.html" #[bloo]#
-    ))
+    html(read("paragraph.html"))
   }
 }
