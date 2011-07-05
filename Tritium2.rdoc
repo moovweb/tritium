@@ -7,8 +7,9 @@ inject_bottom()
 insert() => inject()
 insert_tag() => insert()
 
-
-
 html() becomes inner_xml()
+
+doc('html') #=> html() { ... }
+doc('xml')  #=> xml()  { ... }
 
 $("./html()") no longer works at all
