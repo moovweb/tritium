@@ -1,0 +1,30 @@
+Tritium is a magical language that functions as a document modifying language.
+It's javascript-like (except, without all that function() noise!) and simple to
+learn.
+
+Currently, it focuses on modifying XML documents only (HTML and XHTML count too). 
+
+Check out the examples in /test/functional to get started... but basically.
+
+  <html>
+    <body>
+      <div id="awesome" />
+    </body>
+  </html>
+  
+If you pass that in as an input to the following script.
+
+  $("/html/body/div[@id='awesome']") {
+    attribute("class", "even_awesomer!")
+    wrap("div", class: "wrapper")
+  }
+
+You'd get back...
+
+  <html>
+    <body>
+      <div class="wrapper">
+        <div id="awesome" class="even_awesomer!"/>
+      </div>
+    </body>
+  </html>
