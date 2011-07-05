@@ -10,3 +10,5 @@ insert_tag() => insert()
 
 
 html() becomes inner_xml()
+
+$("./html()") no longer works at all

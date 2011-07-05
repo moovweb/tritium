@@ -7,9 +7,11 @@ doc("html") {
         }
       }
 
-      $("./div[@id='search_results']/html()"){
-        prepend("<div>")
-        append("</div>")
+      $("./div[@id='search_results']") {
+        html() {
+          prepend("<div>")
+          append("</div>")
+        }
       }
     }
   }

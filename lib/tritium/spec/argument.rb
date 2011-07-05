@@ -5,9 +5,9 @@ module Tritium
     class Argument < Base
 
       def self.defaults
-        {:arguments => {},
-         :hide => false,
+        {:hide => false,
          :returns => true,
+         :default => nil,
          :deprecated => false, #string otherwise
          :alias => nil,        #string otherwise
          :doc => "",

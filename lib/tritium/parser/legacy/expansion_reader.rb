@@ -7,7 +7,7 @@ module Tritium::Parser
     def set_position(set_to, &block)
       # Set the position value the standard way and move on
       eval("var('position', #{set_to.inspect})")
-
+      
       cmd('position', &block)
     end
     def bottom(&block); set_position("bottom", &block); end
@@ -47,10 +47,10 @@ module Tritium::Parser
       elsif htm = selector[html_rgx] then
         path = selector.sub(html_rgx, "")
         if path.empty? or path == "./" then
-          html(&block)
+          inner_xml(&block)
         else
           cmd("select", path[0..-2]) {
-            html(&block)
+            inner_xml(&block)
           }
         end
       else
@@ -85,8 +85,8 @@ module Tritium::Parser
     
     def var(name, set_to = nil, &block)
       if set_to
-        cmd("var", name) do |this|
-          this.cmd('set', set_to)
+        cmd("var", name) do
+          cmd('set', set_to)
           block.call if block
         end
       else
@@ -120,10 +120,15 @@ module Tritium::Parser
     end
     
     def html(value = nil, &block)
-      cmd("html") {
-        set(value) if value
+      if @stack.size > 1
+        cmd("inner_xml") {
+          set(value) if value
+          block.call if block
+        }
+      else
+        cmd("html")
         block.call if block
-      }
+      end
     end
     
     def text(value = nil, &block)
@@ -141,7 +146,7 @@ module Tritium::Parser
       
       cmd("insert_tag", tag_name) do
         if contents
-          html do
+          inner_xml do
             set(contents)
           end
         end
@@ -178,7 +183,7 @@ module Tritium::Parser
         
         "#{k.to_s}=#{v.to_s.inspect}"
       end
-      html() {
+      inner_xml() {
         prepend("<#{name} #{attribute_list.join(' ')}>")
         append("</#{name}>")
       }
