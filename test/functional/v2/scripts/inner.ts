@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   select(".//*[@id='a']") {
     html() {
       set("<div id='b'>hello, world!</div>")

@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   select(".//div[@id='a']") {
     select("./div[@id='aa']") {
       attribute("width") {

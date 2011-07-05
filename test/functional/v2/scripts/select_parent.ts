@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   $(".//*[@id='b']") {
     $("..") {
       attribute("parent", "true")

@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   $(".//*[@id='a']") {
     html($variable)
   }

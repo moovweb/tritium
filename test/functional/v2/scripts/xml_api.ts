@@ -1,11 +1,11 @@
-doc("html") {
+html() {
   $("html") {
     $(".//div[@id='header']") {
       var("name", fetch("div[@class = 'name']/text()"))
       var("address", fetch("div[@class = 'address']"))
     }
     $(".//div[@class='shopping_cart']") {
-      html() {
+      inner_xml() {
         replace(" items", "")
       }
       var("cart_items", fetch("./text()"))
@@ -13,21 +13,21 @@ doc("html") {
   }
 }
 set("<cache/>")
-doc("xml") {
+xml() {
   $("cache") {
     bottom() {
-      insert_tag("item", key: "name") {
-        html() {
+      insert("item", key: "name") {
+        inner_xml() {
           set($name)
         }
       }
-      insert_tag("item", key: "cart_items") {
-        html() {
+      insert("item", key: "cart_items") {
+        inner_xml() {
           set($cart_items)
         }
       }
-      insert_tag("item", key: "address_html") {
-        html() {
+      insert("item", key: "address_html") {
+        inner_xml() {
           set($address)
           prepend("<![CDATA[")
           append("]]>")

@@ -1,4 +1,4 @@
-doc("html") {
+html() {
   $("html") {
     $("body") {
       $("./div[@id='search_results']"){

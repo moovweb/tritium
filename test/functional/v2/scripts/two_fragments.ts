@@ -1,4 +1,4 @@
-doc("html_fragment") {
+html_fragment() {
   select("./div[@id='frag1']/span") {
     attribute("found", "true")
   }

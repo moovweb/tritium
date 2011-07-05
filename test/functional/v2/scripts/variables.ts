@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   var("first", "worked")
   var("second") {
     set("worked")

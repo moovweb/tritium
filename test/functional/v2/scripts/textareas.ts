@@ -6,7 +6,7 @@ replace(/<textarea([^>]*)>(.*)<\/textarea>/im) {
   set("<textarea\\1>\\2</textarea>")
 }
 
-doc("html_fragment") {
+html_fragment() {
   select("./textarea") {
     attribute("found", "true")
   }

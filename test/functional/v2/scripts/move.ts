@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   select(".//div[@id='b']") {
     select(".//div[@id='ac']") {
       move_to("//div[@id='a']", "after") {

@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   match($url, /monk/) {
     match($url, not('honkey')) {
       match($path, "roduck") {

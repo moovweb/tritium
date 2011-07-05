@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   select("./div") {
     attribute("newlines", "weird")
   }

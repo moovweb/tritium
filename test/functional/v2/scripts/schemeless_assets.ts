@@ -1,6 +1,6 @@
-doc("html_fragment") {
+html_fragment() {
   top() {
-    insert_tag("link", src: asset("myfile.css", "stylesheet"))
-    insert_tag("script", src: asset("jquery.js", "js"))
+    insert("link", src: asset("myfile.css", "stylesheet"))
+    insert("script", src: asset("jquery.js", "js"))
   }
 }

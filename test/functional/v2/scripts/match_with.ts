@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   $("/main/student") {
     match(fetch("@name")) {
       with("Hampton") {

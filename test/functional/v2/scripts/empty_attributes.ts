@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   $(".//div") {
     attribute("id") {
       value() {

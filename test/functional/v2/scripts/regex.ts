@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   select(".//*[@id='a']") {
     select(".//*[@id='line1']") {
       html() {

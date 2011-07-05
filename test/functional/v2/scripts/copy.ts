@@ -1,4 +1,4 @@
-doc("xml") {
+xml() {
   $("//person[1]") {
     copy_to("/people", "bottom") {
       attribute("copy", "true")

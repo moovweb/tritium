@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   # This test has a 'row' with an anchor tag in it
   # The desired outcome is that the href of the anchor tag
   # becomes the onclick of the row tag

@@ -2,7 +2,7 @@
 replace(/<!--.*-->/im, '')
 
 # At this point, the doc shouln't have any of the <html> comment tag stuff.
-doc("html_fragment") {
+html_fragment() {
   select("./div") {
     attribute("sweet_comment", "true")
   }

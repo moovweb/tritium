@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   select(".//*[@id='bagel']") {
     select(".//*[@id='tomato']") {
       name("lettuce") {

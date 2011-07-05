@@ -1,7 +1,7 @@
-doc("xml") {
+xml()  {
   $("/move") {
     top() {
-      insert_tag("wrap") {
+      insert("wrap") {
         move_here("../div")
       }
     }

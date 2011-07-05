@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   $(".//person") {
     $("./name") {
       name("first")

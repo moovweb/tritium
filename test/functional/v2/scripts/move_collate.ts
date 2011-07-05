@@ -1,4 +1,4 @@
-doc("xml") {
+xml()  {
   # This test should move all of the 'fruits' divs above all of the 'puns' divs.
   # It should do so within the context of a row
   select("//*[@id='a']") {
