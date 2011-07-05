@@ -1,9 +1,9 @@
 require 'minitest/autorun'
-require_relative '../../lib/tritium/spec/spec'
+require_relative '../../lib/tritium/config'
 
 class SpecTest < MiniTest::Unit::TestCase
   def setup
-    @spec = Tritium.spec
+    @spec = Tritium.spec("1-1")
   end
 
   def test_scope_loaded
@@ -43,5 +43,10 @@ class SpecTest < MiniTest::Unit::TestCase
     scope = @spec["Node"]
     bottom = scope["bottom"]
     assert bottom.deprecated.is_a?(String)
+  end
+  
+  def test_positional
+    scope = @spec["Node"]
+    assert scope["insert_top"]
   end
 end

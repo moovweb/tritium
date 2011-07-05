@@ -198,11 +198,13 @@ Node:
     deprecated: "Please use the _before prefix on the child methods"
   inject:
     doc: Inject some plain data into the document at the prescribed location
+    positional: true
     arguments:
       -
         name: HTML
   insert:
     doc: Create a new node
+    positional: true
     arguments:
       - 
         name: Tag Name

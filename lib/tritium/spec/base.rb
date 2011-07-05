@@ -26,6 +26,14 @@ module Tritium
       def initialize(name, attributes, parent)
         @name, attributes = name, attributes
         @api_version = parent.api_version
+        if attributes["positional"]
+          child_attributes = Marshal::load(Marshal.dump(attributes))
+          child_attributes.delete("positional")
+          %w(top bottom after before).each do |position|
+            name = "#{name}_#{position}"
+            parent.children[name] = self.class.new(name, child_attributes, parent)
+          end
+        end
         self.class.defaults.each do |name, value|
           name = name.to_s
           instance_variable_set("@#{name}", attributes.delete(name) || value)
