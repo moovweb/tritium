@@ -1,5 +1,4 @@
 require_relative 'engine'
-require_relative '../../parser/instruction'
 
 module Tritium::Engines
   class Debug::Step

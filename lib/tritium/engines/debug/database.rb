@@ -1,6 +1,5 @@
 require 'json'
 require 'sequel'
-require_relative '../../parser/instruction'
 
 module Tritium
   module Engines
