@@ -1,8 +1,8 @@
 require 'nokogiri'
 require 'logger'
-require_relative '../parser/reader'
-require_relative '../parser/expansion_reader'
-require_relative '../parser/preprocess'
+require_relative '../parser/legacy/reader'
+require_relative '../parser/legacy/expansion_reader'
+require_relative '../parser/legacy/preprocess'
 
 class Nokogiri::HTML::DocumentFragment
   alias :to_html_fragment :to_html
