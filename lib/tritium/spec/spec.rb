@@ -1,5 +1,4 @@
 require 'yaml'
-require_relative '../config'
 
 module Tritium
   class Spec

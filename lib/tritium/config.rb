@@ -1,5 +1,5 @@
 module Tritium
-  
+  require_relative 'spec/spec'
   def self.spec_file(version)
     File.read(File.dirname(__FILE__) + "/../../spec.#{version}.yml")
   end
