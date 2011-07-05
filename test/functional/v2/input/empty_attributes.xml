@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<attributes>
+  <div/>
+  <script src="remove_me"/>
+  <a href="">refresh this page</a>
+  <!-- The span's empty attribute hasn't been touched so it stays -->
+  <span class=""/>
+</attributes>

@@ -1,0 +1,5 @@
+<body>
+  <div>Hello<div>my</div>name is<span>Mr.</span>Aaron</div>
+  <div><span>1</span>, <span>2</span>, <span>3</span></div>
+  <div>Chunk 1<div>before whitespace</div>                 <div>after whitespace</div>Chunk 2</div>
+</body>
