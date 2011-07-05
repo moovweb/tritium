@@ -1,5 +1,5 @@
 require 'yaml'
-require_relative '../config'
+require_relative '../../config'
 YAML::ENGINE.yamler= 'syck'
 
 module Tritium
