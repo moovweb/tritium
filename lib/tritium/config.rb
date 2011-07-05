@@ -1,7 +1,7 @@
 module Tritium
   
   def self.spec_file
-    File.read(File.dirname(__FILE__) + "/../../spec.yml")
+    File.read(File.dirname(__FILE__) + "/../../spec.1-1.yml")
   end
 
   def self.spec
