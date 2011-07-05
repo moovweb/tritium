@@ -14,8 +14,8 @@ Debug: &debug
         name: Debug ID
         doc: Whatever ID you give it, that will be how the project is written down in the debug database!
 
-Base: &base
-  <<: *debug
+Base:
+  include: Debug
   var:
     opens: Text
     alias: $
@@ -86,8 +86,8 @@ Base: &base
   dump:
     returns: true
     doc: This is a debug-feature. Please don't use this in production. It will return whatever the current object is in a stringified form.
-Node: &node
-  <<: *base
+Node:
+  inherit: Base
   select: 
     doc: Search the tree and select all matching nodes
     alias: $()
@@ -219,7 +219,7 @@ Node: &node
         doc: The tag's attributes
         expansion: true
 XMLNode:
-  <<: *node
+  inherit: Node
   html:
     opens: Text
     doc: Opens up the entire innerHTML to text modification. Any html you insert WILL get interpreted as actual tags.
@@ -265,7 +265,7 @@ XMLNode:
         doc: The name of the class you want to append
         expansion: true
 Attribute:
-  <<: *base
+  inherit: Base
   remove:
     doc: Delete the current attribute
   value:
@@ -288,7 +288,7 @@ Attribute:
         expansion: true
 
 Text:
-  <<: *base
+  inherit: Base
   rewrite:
     doc: Filters the current text string through the named rewriter.
     returns: true
@@ -336,12 +336,10 @@ Text:
     arguments: 
       -
         name: Text to prepend
-        
   append:
     doc: Append the string to the front of the text area
     arguments: 
       -
         name: Text to append
-        
   remove:
     doc: Set the whole thing to ""
