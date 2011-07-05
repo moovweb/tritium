@@ -8,6 +8,5 @@ class SpecTest < MiniTest::Unit::TestCase
 
   def test_load
     @spec.scopes
-    puts "HI"
   end
 end
