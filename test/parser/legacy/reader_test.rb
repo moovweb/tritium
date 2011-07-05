@@ -2,8 +2,8 @@
 
 require 'minitest/autorun'
 require 'yaml'
-require_relative '../../lib/tritium/parser/legacy/reader'
-require_relative '../../lib/tritium/parser/legacy/preprocess'
+require_relative '../../../lib/tritium/parser/legacy/reader'
+require_relative '../../../lib/tritium/parser/legacy/preprocess'
 
 class ReaderTest < MiniTest::Unit::TestCase
   include Tritium::Parser
@@ -100,7 +100,7 @@ class ReaderTest < MiniTest::Unit::TestCase
   end
   
   def test_repeated_match_failure
-    script = Preprocess.run(File.read(File.join(File.dirname(__FILE__), "../functional/scripts/variables.ts")), "", "main.ts")
+    script = Preprocess.run(File.read(File.join(File.dirname(__FILE__), "../../functional/scripts/variables.ts")), "", "main.ts")
     output = @reader.read("#{script}").children.first
     match = output.children.last
     assert_equal "match($first, \"worked\") {", match.line.strip
@@ -113,7 +113,7 @@ class ReaderTest < MiniTest::Unit::TestCase
   end
   
   def preprocess(line)
-    Preprocess.run(line, File.join(File.dirname(__FILE__), "../functional"), "main.ts")
+    Preprocess.run(line, File.join(File.dirname(__FILE__), "../../functional"), "main.ts")
   end
   
 end
