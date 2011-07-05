@@ -54,7 +54,7 @@ class ExpansionReaderTest < MiniTest::Unit::TestCase
   end
   
   def test_non_returning_arg
-    output = read('text(top)')
+    output = read('text(select("html"))')
     assert(false)
   rescue ReaderInstruction::Invalid
     assert(true)

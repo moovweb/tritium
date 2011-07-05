@@ -22,7 +22,7 @@ module Tritium
         ReaderInstruction.new("script", :scope => "Text")
       end
 
-      def scope_spec; @scope_spec ||= Tritium.spec[scope]; end
+      def scope_spec; @scope_spec ||= Tritium.spec[scope.to_s]; end
       def information; @information ||= parent.scope_spec[@name]; end
       def opens; information['opens'] || parent.opens; end;
 
@@ -32,7 +32,7 @@ module Tritium
         @args   =[options[:args]   || options["args"]  || []].flatten
         @root   = options[:root]   || options["root"]  || self
         @parent = options[:parent] || options["parent"]
-        @scope  = options[:scope]  || options["scope"] || information["opens"] || @parent.scope
+        @scope  = options[:scope]  || options["scope"] || information.opens || @parent.scope
         
         if @parent
           @iid = @parent.iid + "_#{@parent.children.size}"
