@@ -25,7 +25,7 @@ module Tritium
       #
       # ONLY accepts a pre-processed Tritium script
       def read(script_string)
-        @root_instruction = ReaderInstruction.root
+        @root_instruction = ReaderInstruction.root(@logger)
         @stack = [@root_instruction]
 
         begin

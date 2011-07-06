@@ -2,9 +2,11 @@ module Tritium
   module Parser
     module Instructions
       class Invocation < Base
+        attr :statements
         def initialize(filename, line_num,
                        name = nil, pos_args = [], kwd_args = {})
           super(filename, line_num)
+          @statements = []
           @name, @pos_args, @kwd_args = name.intern, pos_args, kwd_args
         end
       
@@ -17,7 +19,6 @@ module Tritium
           result << ")"
           return result
         end
-      
       end
     
       class InvocationWithBlock < Invocation

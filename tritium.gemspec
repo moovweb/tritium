@@ -29,5 +29,6 @@ Gem::Specification.new do |s|
   s.add_dependency('tidy_ffi')
   s.add_dependency('sequel')
   s.add_dependency('bundler')
+  s.add_dependency('rainbow')
   s.add_development_dependency('moov_build_tasks', ['~> 0.2.24'])
 end

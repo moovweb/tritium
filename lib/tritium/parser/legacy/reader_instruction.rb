@@ -1,6 +1,7 @@
 require 'yaml'
 require_relative '../../config'
 YAML::ENGINE.yamler= 'syck'
+require 'rainbow'
 
 module Tritium
   module Parser
@@ -16,10 +17,11 @@ module Tritium
       attr :script_name
       attr :line
       attr :processed_line
+      attr :logger
       attr :iid
       
-      def self.root
-        ReaderInstruction.new("script", :scope => "Text")
+      def self.root(logger = Logger.new(STDOUT))
+        ReaderInstruction.new("script", :scope => "Text", :logger => logger)
       end
 
       def scope_spec; @scope_spec ||= Tritium.spec[scope.to_s]; end
@@ -32,6 +34,7 @@ module Tritium
         @args   =[options[:args]   || options["args"]  || []].flatten
         @root   = options[:root]   || options["root"]  || self
         @parent = options[:parent] || options["parent"]
+        @logger = options[:logger] || options["logger"] || @parent.logger || Logger.new(STDOUT)
         @scope  = options[:scope]  || options["scope"] || information.opens || @parent.scope
         
         if @parent
@@ -58,6 +61,13 @@ module Tritium
       def add(name, options = {})
         if scope_spec[name.to_s].nil?
           raise Invalid.new(self), "Line #{@line_number} in #{@script_name}\nNo such method #{name.inspect} allowed here!\nAPI Version: #{scope_spec.api_version}\nOnly allow: #{scope_spec.keys.join(", ")}\n#{self.line}"
+        end
+        if scope_spec[name.to_s].deprecated && !ENV["TEST"]
+          logger.warn "DEPRECATION WARNING:".color(:red)
+          logger.warn "#{name.to_s.color(:blue)}() is deprecated"
+          logger.warn scope_spec[name.to_s].deprecated
+          logger.warn "Line #{@line_number} in #{@script_name}"
+          logger.warn "----------------------"
         end
         child = ReaderInstruction.new(name, options.merge(:root => self.root, :parent => self))
         children << child

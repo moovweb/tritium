@@ -19,6 +19,9 @@ module Tritium
       Spec.new(YAML::load(spec_file), version)
     end
     
+    def verify(instructions)
+    end
+    
     def [](scope_name)
       @scopes[scope_name]
     end
