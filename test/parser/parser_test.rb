@@ -24,6 +24,22 @@ class ParserTest < MiniTest::Unit::TestCase
   end
   
   # ============== TESTS!!!!!!!!! ====================
+  
+  def self.test_version_folder(version_dir)
+    version = File.basename(version_dir)
+     puts "Testing scripts with version #{version}"
+    Dir[version_dir + "/scripts/*"].each do |script_file_name|
+      test_name = File.basename(script_file_name, ".ts")
+      if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
+        # Writes a method that simply calls run_file with its name 
+        eval "def test_#{version}_#{test_name}_script; run_test '#{version_dir}', '#{test_name}'; end"
+      end
+    end
+  end
+
+  [2].each do |ver|
+    test_version_folder(File.join(File.dirname(__FILE__), "../functional/v#{ver}"))
+  end
 
   def test_parser
     script_string, parser, output = build_parser("false-negatives.ts")
