@@ -1,7 +1,7 @@
 class Tritium::Engines::Debug
   class Step::Node
     
-    def insert_tag(tag_name)
+    def insert_tag(tag_name, attributes = {})
       inject("<#{tag_name} />")
     end
     

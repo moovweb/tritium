@@ -159,6 +159,14 @@ module Tritium::Parser
       end
     end
     
+    def insert(*args, &block)
+      if args.size == 1 && args.first.include?("<")
+        inject(*args, &block)
+      else
+        insert_tag(*args, &block)
+      end
+    end
+    
     def wrap(name, attributes = {}, &block)
       before {
         insert_tag(name, attributes)
@@ -229,6 +237,7 @@ module Tritium::Parser
       %w(insert inject).each do |method|
         eval("def #{method}_#{position}(*args, &block); var('position', #{position.inspect}); insert(*args, &block); end")
       end
+      #eval("def insert_#{position}(*args, &block); insert_tag_#{position}(*args, &block); end")
     end
     
     def add_class(class_name, &block)
