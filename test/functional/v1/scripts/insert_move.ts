@@ -3,7 +3,8 @@ doc("xml") {
   # Even though this is not something that you should ever do: put it in the right place to begin with!
   $("//div[@id='paradise']") {
     bottom() {
-      insert("<div class='criminal'>;(</div>") {
+      var("hi", "<div class='criminal'>;(</div>")
+      insert($hi) {
         move_to("//div[@id='jail']", "bottom")
       }
     }
