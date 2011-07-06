@@ -109,10 +109,10 @@ module Tritium
       end
 
       def reference
-        var_name, value = pop!.value, nil
+        var_name, value = cmd(Literal, pop!.value.to_s), nil
         case peek.lexeme
         when :EQUAL
-          pop!
+          pop!  # pop the equal sign
           case peek.lexeme
           when :STRING, :REGEXP, :VAR, :ID
             value = term
@@ -120,7 +120,38 @@ module Tritium
             raise_error("assigned value is not a valid term")
           end
         end
-        return cmd(value ? Assignment : Reference, var_name, *value)
+        stmts = peek.lexeme == :LBRACE ? block : nil
+        #print "VALUE IS #{value}"
+        #print "****************"
+        if value
+          args = { pos: [ var_name, value ] }
+        else
+          args = { pos: [ var_name ] }
+        end
+        signature = [:var, args[:pos].length]
+        if @expander.is_macro?(signature)
+          #print "EXPANDING MACRO"
+          stub = cmd(ExpansionInlineBlock)
+          macro_call = {
+            signature: signature,
+            pos_args: args[:pos],
+            kwd_args: args[:kwd],
+            block:    stmts,
+            parser:   self,
+            expansion_site: stub
+          }
+          @macro_calls << macro_call
+
+          @expander.expand(macro_call)
+
+          return stub
+        else
+          if stmts
+            return cmd(InvocationWithBlock, "var", [var_name], stmts)
+          else
+            return cmd(Invocation, "var", [var_name])
+          end
+        end
       end
 
       def invocation
@@ -128,7 +159,7 @@ module Tritium
         raise_error("function call is missing a valid argument list") if
           peek.lexeme != :LPAREN
         args = arguments
-        stmts = peek.lexeme == :LBRACE ? block() : nil
+        stmts = peek.lexeme == :LBRACE ? block : nil
         signature = [func_name, args[:pos].length]
         if @expander.is_macro?(signature)
           stub = cmd(ExpansionInlineBlock)
