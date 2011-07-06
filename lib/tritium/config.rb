@@ -1,5 +1,7 @@
+require_relative 'spec/spec'
+
 module Tritium
-  require_relative 'spec/spec'
+
   def self.spec_file(version)
     File.read(File.dirname(__FILE__) + "/../../spec.#{version}.yml")
   end
@@ -7,7 +9,7 @@ module Tritium
   def self.spec(version = nil)
     @@specs ||= {}
     version ||= current_api_version.to_s.gsub(".", "-")
-    @@specs[version] ||= Spec.load(spec_file(version), version)
+    @@specs[version] ||= Tritium::Spec.load(spec_file(version), version)
   end
   
   def self.functional_test_location
