@@ -208,7 +208,7 @@ module Tritium::Engines
     
     private
      def position_node(target, node, position = nil)
-       case (position || @env["position"])
+       case (position || @env["position"] || "bottom")
        when "bottom"
          target.add_child(node)
        when "top"

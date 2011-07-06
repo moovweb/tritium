@@ -160,10 +160,10 @@ module Tritium::Parser
     end
     
     def insert(*args, &block)
-      if args.size == 1 && args.first.include?("<")
-        inject(*args, &block)
-      else
+      if args.size > 1 || !args.first.include?("<")
         insert_tag(*args, &block)
+      else
+        inject(*args, &block)
       end
     end
     

@@ -18,7 +18,7 @@ class ExpansionReaderTest < MiniTest::Unit::TestCase
     assert_equal 'position', output.children.first.args.first
     assert_equal 'position', output.children[1].name
     position_block =  output.children[1]
-    assert_equal 'insert', position_block.children.first.name
+    assert_equal 'insert_tag', position_block.children.first.name
     
     expected_expansion = read("var('position') { set('bottom') }; position { insert('hi') };")
     assert_equal expected_expansion.to_script, output.to_script
