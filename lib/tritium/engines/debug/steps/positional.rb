@@ -7,6 +7,8 @@ class Tritium::Engines::Debug
     
     def inject(html)
       execute_children_on(position_node(node, html).first)
+    rescue
+      puts html.inspect
     end
     
     def insert(*args)
