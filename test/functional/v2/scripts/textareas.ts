@@ -1,4 +1,4 @@
-replace(/<textarea([^>]*)>(.*)<\/textarea>/im) {
+replace(/<textarea([^>]*)>(.*)<\/textarea>/) {
   $2 {
     replace(/</, "&lt;")
     replace(/>/, "&gt;")

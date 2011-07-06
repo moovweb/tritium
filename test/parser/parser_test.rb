@@ -38,7 +38,7 @@ class ParserTest < MiniTest::Unit::TestCase
   end
 
   [2].each do |ver|
-    test_version_folder(File.join(File.dirname(__FILE__), "../functional/v#{ver}")) if ENV["EXPERIMENTAL"]
+    test_version_folder(File.join(File.dirname(__FILE__), "../functional/v#{ver}")) if ENV["experimental"]
   end
   
   def run_test(version_dir, test_name)
