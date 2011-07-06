@@ -16,7 +16,7 @@ class Tritium::Engines::Debug
     end
     
     def insert(*args)
-      if args.size > 1 || !args.first.include?("<")
+      if args.size > 1 || (args.first.is_a?(String) && args.first.include?("<"))
         insert_tag(*args)
       else
         inject(*args)

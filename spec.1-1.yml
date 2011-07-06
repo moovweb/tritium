@@ -187,7 +187,7 @@ Node:
   position:
     hide: true
     doc: DO NOT USE! Low-level way to open a positional block. Doesn't actually set the var('position'). Use the bottom, top, after, and before methods!
-    deprecated: You should have never have used this!
+    deprecated: Look for a top(), bottom(), etc. Replace with insert_top, insert_bottom, etc.
   bottom:
     deprecated: "Please use the _bottom prefix on the child methods"
   top:
