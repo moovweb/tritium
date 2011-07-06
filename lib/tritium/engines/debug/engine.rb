@@ -12,7 +12,7 @@ module Tritium
         super
         
         if ENV["TEST"].nil?
-          @tmp_dir = options[:debug_log_foler] || File.join(@script_path, "../tmp")
+          @tmp_dir = options[:debug_log_folder] || File.join(@script_path, "../tmp")
           Dir.mkdir(@tmp_dir) unless File.directory?(@tmp_dir)
           
           # Dump the compiled script to the /tmp folder as script.ts
