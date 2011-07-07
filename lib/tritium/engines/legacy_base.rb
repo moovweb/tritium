@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'logger'
+require_relative 'base'
 require_relative '../parser/legacy/reader'
 require_relative '../parser/legacy/expansion_reader'
 require_relative '../parser/legacy/preprocess'
@@ -9,23 +10,10 @@ class Nokogiri::HTML::DocumentFragment
 end
 module Tritium
   module Engines
-    
-    def self.xml_parsers
-      {"xml" =>  Nokogiri::XML, "html" =>  Nokogiri::HTML, "xhtml" => Nokogiri::XML, "html_fragment" => Nokogiri::HTML::DocumentFragment}
-    end
-
-    class LegacyBase
+    class LegacyBase < Base
       
-      attr :root_instruction
-
-      def initialize(script_string, options = {})
-        xml_parser_name = options["parse_as"] || options[:parse_as]
-        @script_path = options["path"] || options[:path] || File.dirname(__FILE__)
-        @script_string = script_string
-        @xml_parser = xml_parser_name || "xml"
-        @logger = options[:logger] || options["logger"] || Logger.new(STDOUT)
-        @script_name = options[:script_name] || options["script_name"] || "MAIN"
-        @root_instruction = reader_klass.new(@logger)._read(processed_script, @script_path)
+      def parse!
+        reader_klass.new(@logger)._read(processed_script, @script_path)
       end
       
       def reader_klass
