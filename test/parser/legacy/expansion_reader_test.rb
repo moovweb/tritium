@@ -68,6 +68,6 @@ class ExpansionReaderTest < MiniTest::Unit::TestCase
   end
   
   def read(input)
-    @reader.read("doc { #{input} }").children.first
+    @reader._read("doc { #{input} }").children.first
   end
 end

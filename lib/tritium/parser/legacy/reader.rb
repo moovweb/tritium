@@ -24,7 +24,7 @@ module Tritium
       # the fully built parse tree.
       #
       # ONLY accepts a pre-processed Tritium script
-      def read(script_string)
+      def _read(script_string)
         @root_instruction = ReaderInstruction.root(@logger)
         @stack = [@root_instruction]
 

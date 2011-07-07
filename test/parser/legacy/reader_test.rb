@@ -13,13 +13,13 @@ class ReaderTest < MiniTest::Unit::TestCase
   end
   
   def test_blank_script
-    output = @reader.read("")
+    output = @reader._read("")
     assert_equal 0, output.children.size
     assert_equal nil, output.parent
   end
   
   def test_single_instruction
-    root = @reader.read("doc { select('hi') }")
+    root = @reader._read("doc { select('hi') }")
     output = root.children.first
 
     assert_equal 1, output.children.size
@@ -30,7 +30,7 @@ class ReaderTest < MiniTest::Unit::TestCase
   end
   
   def test_one_scope
-    root = @reader.read("doc { select('./shit') { html('hello') { remove }; remove } }")
+    root = @reader._read("doc { select('./shit') { html('hello') { remove }; remove } }")
     output = root.children.first
     
     assert_equal 1, output.children.size
@@ -66,7 +66,7 @@ class ReaderTest < MiniTest::Unit::TestCase
   
   def test_debug_lines
     script = preprocess("\n\ndoc('html') { \n$('./shit') { \nhtml($hi)\n } }")
-    output = @reader.read(script)
+    output = @reader._read(script)
     doc = output.children.first
     select = doc.children.first
     assert_equal 4, select.line_number
@@ -83,7 +83,7 @@ class ReaderTest < MiniTest::Unit::TestCase
   
   def test_match_debug
     script = preprocess("match($first, /o/)")
-    output = @reader.read(script)
+    output = @reader._read(script)
     match = output.children.first
     assert_equal "match(var('first'), /o/)", match.processed_line.strip
   end
@@ -101,14 +101,14 @@ class ReaderTest < MiniTest::Unit::TestCase
   
   def test_repeated_match_failure
     script = Preprocess.run(File.read(File.join(File.dirname(__FILE__), "../../functional/v1/scripts/variables.ts")), "", "main.ts")
-    output = @reader.read("#{script}").children.first
+    output = @reader._read("#{script}").children.first
     match = output.children.last
     assert_equal "match($first, \"worked\") {", match.line.strip
     assert_equal "match(var('first'), \"worked\") {", match.processed_line.strip
   end
   
   def test_to_script_args
-    root = @reader.read("doc('html') { select(fetch('a')) }")
+    root = @reader._read("doc('html') { select(fetch('a')) }")
     assert_equal "script() {  \n  doc(\"html\") {  \n    select(fetch(\"a\"))\n  }\n}\n", root.to_script
   end
   
