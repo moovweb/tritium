@@ -2,8 +2,8 @@ require 'yajl'
 
 module Tritium
   module Engines
-    require_relative '../base'
-    class Debug < Engines::Base
+    require_relative '../legacy_base'
+    class Debug < Engines::LegacyBase
       require_relative 'database'
       require_relative 'step'
       attr :root_step

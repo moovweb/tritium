@@ -1,8 +1,8 @@
-require_relative "../base"
+require_relative "../legacy_base"
 
 module Tritium
   module Engines
-    class Reference < Base
+    class Reference < LegacyBase
       require_relative 'scope'
       
       def run(doc, options = {})
