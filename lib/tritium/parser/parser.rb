@@ -21,7 +21,6 @@ module Tritium
         @filename    = options[:filename]    || "MAIN"
         @path        = options[:path]        || File.dirname(__FILE__)
         @asset_path  = options[:asset_path]
-        @macro_calls = options[:macro_calls] || []
         @imports     = options[:imports]     || []
         @logger      = options[:logger]      || Logger.new(STDOUT)
         @expander    = options[:expander]    || MacroExpander.new
@@ -122,8 +121,6 @@ module Tritium
           end
         end
         stmts = peek.lexeme == :LBRACE ? block : nil
-        #print "VALUE IS #{value}"
-        #print "****************"
         if value
           args = { pos: [ var_name, value ] }
         else
@@ -131,7 +128,6 @@ module Tritium
         end
         signature = [:var, args[:pos].length]
         if @expander.is_macro?(signature)
-          #print "EXPANDING MACRO"
           stub = cmd(ExpansionInlineBlock)
           macro_call = {
             signature: signature,
@@ -141,16 +137,13 @@ module Tritium
             parser:   self,
             expansion_site: stub
           }
-          @macro_calls << macro_call
-
           @expander.expand(macro_call)
-
           return stub
         else
           if stmts
-            return cmd(InvocationWithBlock, "var", [var_name], stmts)
+            return cmd(InvocationWithBlock, "var", [var_name], {}, stmts)
           else
-            return cmd(Invocation, "var", [var_name])
+            return cmd(Invocation, "var", [var_name], {})
           end
         end
       end
@@ -170,10 +163,7 @@ module Tritium
                          block:    stmts,
                          parser:   self,
                          expansion_site: stub}
-          @macro_calls << macro_call
-          
           @expander.expand(macro_call)
-
           return stub
         else
           stmts = stmts ? [stmts] : []
