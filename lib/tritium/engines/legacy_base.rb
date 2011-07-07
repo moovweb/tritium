@@ -20,10 +20,6 @@ module Tritium
         Tritium::Parser::ExpansionReader
       end
       
-      def check_syntax
-        Parser::Parser.new(@script_string, filename: @script_name, path: @script_path).parse
-      end
-      
       def processed_script
         #parsed_output = Parser::Parser.new(@script_string, filename: @script_name, path: @script_path).parse.to_s
         #puts parsed_output
