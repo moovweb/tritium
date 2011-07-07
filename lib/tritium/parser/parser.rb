@@ -20,7 +20,6 @@ module Tritium
       def initialize(script_string, options = {})
         @filename    = options[:filename]    || "MAIN"
         @path        = options[:path]        || File.dirname(__FILE__)
-        @asset_path  = options[:asset_path]
         @imports     = options[:imports]     || []
         @logger      = options[:logger]      || Logger.new(STDOUT)
         @expander    = options[:expander]    || MacroExpander.new
@@ -227,9 +226,8 @@ module Tritium
           args = arguments
           return cmd(Invocation, func_name, args[:pos], args[:kwd])
         when :READ
-          # TO DO: decide on a folder for text assets
-          path = @asset_path || "test/parser/scripts"
-          return cmd(Literal, File.read(File.join(path, @token.value)))
+          # Read local to the script file
+          return cmd(Literal, File.read(File.join(@path, @token.value)))
         else
           raise_error("invalid term")
           return 
