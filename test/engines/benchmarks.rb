@@ -1,7 +1,7 @@
 ENV["TEST"] = "true"
 
-require_relative '../../lib/tritium/engines/debug/engine'
-require_relative '../../lib/tritium/engines/reference/engine'
+require_relative '../../lib/tritium/engines/legacy/debug/engine'
+require_relative '../../lib/tritium/engines/legacy/reference/engine'
 
 include Tritium::Engines
 

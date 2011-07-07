@@ -1,4 +1,4 @@
-require_relative '../../extensions/regexp'
+require_relative '../../../extensions/regexp'
 
 module Tritium
   module Engines
