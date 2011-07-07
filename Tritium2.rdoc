@@ -1,11 +1,17 @@
 Positionals are now gone. bottom() is gone
 
-move_to_bottom()
-insert_bottom()
-inject_bottom()
-
 insert() => inject()
 insert_tag() => insert()
+
+So, now its insert("tag") and inject("<tag />")
+
+No more bottom(), top(), above(), below() (or whatever they were)
+
+  move_to("here", "bottom") # Same as always
+  insert_bottom()
+  inject_bottom()
+
+
 
 html() becomes inner_xml()
 
