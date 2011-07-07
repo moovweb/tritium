@@ -42,6 +42,12 @@ Base:
   else_do:
     doc: Else command for match()
     hide: true
+  read:
+    doc: Use this to read in a file at *compile* time. Nothing dynamic allowed.
+    arguments:
+      -
+        name: Filename
+        doc: The location of the file. This should be relative to the script. Please report if it is NOT!
   asset:
     opens: Text
     doc: Use this to call any files kept in the project's asset folder.
