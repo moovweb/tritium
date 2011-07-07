@@ -167,6 +167,10 @@ module Tritium::Parser
       end
     end
     
+    def read(filename)
+      File.read(File.join(@path, filename))
+    end
+    
     def wrap(name, attributes = {}, &block)
       before {
         insert_tag(name, attributes)
