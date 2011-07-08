@@ -47,6 +47,6 @@ class SpecTest < MiniTest::Unit::TestCase
   
   def test_positional
     scope = @spec["Node"]
-    assert scope["insert_top"]
+    assert scope["insert_after"]
   end
 end
