@@ -13,6 +13,25 @@ module Tritium
          :doc => "",
          :positional => false }
       end
+      
+      def expansion?
+        self['expansion']
+      end
+
+      def optional?
+        expansion? || self['optional']
+      end
+
+      def formatted_name
+        result = @name.downcase.gsub(" ", "_")
+        if optional?
+          result = "<em>#{result}</em>"
+        end
+        if @data['default']
+          result += " = #{@data['default'].inspect}"
+        end
+        result
+      end
     end
   end
 end

@@ -22,6 +22,26 @@ module Tritium
         super
         load_children!(self.arguments)
       end
+      
+      def name
+        result =  "#{@name}(#{arg_list})"
+        if self["alias"]
+          result = "#{self['alias']} or " + result
+        end
+        result
+      end
+
+      def arg_list
+        (args.collect &:formatted_name ).join(", ")
+      end
+      
+      def args
+        @arguments
+      end
+
+      def visible?
+        !@hide
+      end
     end
   end
 end
