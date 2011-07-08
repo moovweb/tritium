@@ -32,7 +32,7 @@ module Tritium
       end
 
       def arg_list
-        (args.collect &:formatted_name ).join(", ")
+        (args.values.collect &:formatted_name ).join(", ")
       end
       
       def args
