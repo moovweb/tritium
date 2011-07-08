@@ -27,11 +27,12 @@ module Tritium
         @name, attributes = name, attributes
         @api_version = parent.api_version
         if attributes["positional"]
-          child_attributes = Marshal::load(Marshal.dump(attributes))
-          child_attributes.delete("positional")
+
           %w(top bottom after before).each do |position|
+            child_attributes = Marshal::load(Marshal.dump(attributes))
+            child_attributes.delete("positional")
             positional_name = "#{name}_#{position}"
-            parent.children[positional_name] = self.class.new(positional_name, child_attributes.clone, parent)
+            parent.children[positional_name] = self.class.new(positional_name, child_attributes, parent)
           end
         end
         self.class.defaults.each do |name, value|
