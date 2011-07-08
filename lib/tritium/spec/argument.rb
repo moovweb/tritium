@@ -11,15 +11,17 @@ module Tritium
          :deprecated => false, #string otherwise
          :alias => nil,        #string otherwise
          :doc => "",
+         :expansion => false,
+         :optional => false,
          :positional => false }
       end
       
       def expansion?
-        self['expansion']
+        !!@expansion
       end
 
       def optional?
-        expansion? || self['optional']
+        expansion? || !!@optional
       end
 
       def formatted_name
