@@ -101,7 +101,8 @@ module Tritium::Engines
         if arg.name == "var"
           arg = @env[arg.args.first]
         else
-          arg = scope.send(arg.name, *arg.args).to_s
+          args = arg.args.collect {|a| resolve_arg(a) }
+          arg = scope.send(arg.name, *args).to_s
         end
       end
       arg
