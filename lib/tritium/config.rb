@@ -21,14 +21,14 @@ module Tritium
   end
   
   def self.supported_api_levels
-    [1]
+    [1, 2]
   end
   
   def self.test_api_levels
-    if ENV["experimental"]
-      supported_api_levels + [2]
-    else
+    #if ENV["experimental"]
+    #  supported_api_levels + [2]
+    #else
       supported_api_levels
-    end
+    #end
   end
 end
