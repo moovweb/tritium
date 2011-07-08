@@ -30,8 +30,8 @@ module Tritium
           child_attributes = Marshal::load(Marshal.dump(attributes))
           child_attributes.delete("positional")
           %w(top bottom after before).each do |position|
-            name = "#{name}_#{position}"
-            parent.children[name] = self.class.new(name, child_attributes, parent)
+            positional_name = "#{name}_#{position}"
+            parent.children[name] = self.class.new(positional_name, child_attributes, parent)
           end
         end
         self.class.defaults.each do |name, value|
