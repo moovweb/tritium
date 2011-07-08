@@ -123,7 +123,6 @@ Node:
         default: ""
         expansion: true
   move_here: 
-    positional: true
     doc: Move the indicated node to the current node at the specified position
     arguments:
       -
@@ -134,7 +133,6 @@ Node:
         doc: Can be "bottom", "top", "after", or "before"
         default: "bottom"
   move_to: 
-    positional: true
     doc: Move the current node to some other location as indicated by the first argument. Yields to the node represented by the selector! (Not the node you are on!)
     arguments:
       -
@@ -145,7 +143,6 @@ Node:
         doc: Can be "bottom", "top", "after", or "before"
         default: "bottom"
   copy_here:
-    positional: true
     doc: Copy the indicated node(set) to the current Node, with the indicated position.
     arguments:
       -
@@ -156,7 +153,6 @@ Node:
         doc: Can be "bottom", "top", "after", or "before"
         default: "bottom"
   copy_to:
-    positional: true
     doc: Copy the current node to the indicated selector, at the indicated position
     arguments:
       -
