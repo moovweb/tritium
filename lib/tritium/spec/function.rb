@@ -32,7 +32,7 @@ module Tritium
       end
 
       def arg_list
-        (args.values.collect &:formatted_name ).join(", ")
+        (@arguments.values.collect &:formatted_name ).join(", ")
       end
 
       def visible?
