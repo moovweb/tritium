@@ -29,7 +29,7 @@ module Tritium
         if optional?
           result = "<em>#{result}</em>"
         end
-        if @data['default']
+        if @default
           result += " = #{@default.inspect}"
         end
         result
