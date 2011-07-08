@@ -102,6 +102,11 @@ class Tritium::Engines::Debug
       @object.name = execute_children_on(@object.name)
     end
     
+    def cdata(data)
+      data = resolve_arg(data)
+      node.document.create_cdata(data)
+    end
+    
     # Simply opens a Positional block
     # We don't have to do anything, because this engine works with the ExpansionReader
     # which has turned

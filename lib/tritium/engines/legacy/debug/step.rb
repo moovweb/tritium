@@ -102,7 +102,7 @@ module Tritium::Engines
           arg = @env[arg.args.first]
         else
           args = arg.args.collect {|a| resolve_arg(a) }
-          arg = scope.send(arg.name, *args).to_s
+          arg = scope.send(arg.name, *args)
         end
       end
       arg
@@ -209,9 +209,11 @@ module Tritium::Engines
     
     private
      def position_node(target, node, position = nil)
+       if node.is_a?(String)
+         node = target.document.fragment(node)
+       end
+       
        case (position || @env["position"] || "bottom")
-       when "bottom"
-         target.add_child(node)
        when "top"
          if target.children.size > 0
            target.children.first.add_previous_sibling(node)
@@ -222,6 +224,8 @@ module Tritium::Engines
          target.add_next_sibling(node)
        when "before", "above"
          target.add_previous_sibling(node)
+       else
+         target.add_child(node)
        end
      end
   end

@@ -6,6 +6,10 @@ class Tritium::Engines::Debug
     end
     
     def inject(html)
+      html = resolve_arg(html)
+      if html.is_a?(Node)
+        puts html.inspect
+      end
       nodes = position_node(node, html)
       #puts nodes.inspect
       if nodes

@@ -121,11 +121,11 @@ module  EngineTests
           end
         end
         
-        File.open(expected_output_file_path, "w+") do |f|
-          f.write(result)
-        end
+        #File.open(expected_output_file_path, "w+") do |f|
+        #  f.write(result)
+        #end
         
-        #assert_equal expected_output, result
+        assert_equal expected_output, result
       rescue SyntaxError => e
         puts tritium.to_script
         raise e

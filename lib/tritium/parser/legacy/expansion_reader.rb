@@ -168,7 +168,7 @@ module Tritium::Parser
     end
     
     def read(filename)
-      File.read(File.join(@path, filename))
+      File.read(File.join(@path, filename)).to_s
     end
     
     def wrap(name, attributes = {}, &block)
@@ -262,6 +262,13 @@ module Tritium::Parser
         end
       else
         cmd("name", &block)
+      end
+    end
+    
+    def insert_javascript(script, &block)
+      insert_tag("script", type: "text/javascript") do
+        cmd("inject", cdata(concat("//<![CDATA[\\n", script, "\\n//]]>")))
+        block.call if block
       end
     end
   end

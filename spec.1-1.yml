@@ -275,6 +275,20 @@ XMLNode:
         name: Class Name
         doc: The name of the class you want to append
         expansion: true
+  cdata:
+    doc: A helper method for building a CDATA node
+    returns: true
+    arguments:
+      -
+        name: Contents
+        doc: Whatever should go inside the CDATA.
+  insert_javascript:
+    opens: Node
+    doc: Allows you to easily and safely insert a <script> tag for javascript.
+    arguments:
+      -
+        name: Script
+        doc: The raw script you want to insert
 Attribute:
   inherit: Base
   remove:
