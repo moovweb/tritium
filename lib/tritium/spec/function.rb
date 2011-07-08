@@ -25,8 +25,8 @@ module Tritium
       
       def formatted_name
         result =  "#{@name}(#{arg_list})"
-        if self["alias"]
-          result = "#{self['alias']} or " + result
+        if @alias
+          result = "#{@alias} or " + result
         end
         result
       end

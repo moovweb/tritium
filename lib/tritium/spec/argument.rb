@@ -23,12 +23,12 @@ module Tritium
       end
 
       def formatted_name
-        result = @name.downcase.gsub(" ", "_")
+        result = (@name || "unnamed").downcase.gsub(" ", "_")
         if optional?
           result = "<em>#{result}</em>"
         end
         if @data['default']
-          result += " = #{@data['default'].inspect}"
+          result += " = #{@default.inspect}"
         end
         result
       end
