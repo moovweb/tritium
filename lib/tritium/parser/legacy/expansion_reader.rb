@@ -8,7 +8,7 @@ module Tritium::Parser
       # Set the position value the standard way and move on
       eval("var('position', #{set_to.inspect})")
       
-      cmd('position', &block)
+      block.call if block
     end
     def bottom(&block); set_position("bottom", &block); end
     def top(&block);    set_position("top",    &block); end
