@@ -230,8 +230,8 @@ XMLNode:
   inherit: Node
   html:
     opens: Text
-    deprecated: "Please use inner_xml()"
-  inner_xml:
+    deprecated: "Please use inner()"
+  inner:
     opens: Text
     doc: Opens up the entire innerHTML to text modification. Any html you insert WILL get interpreted as actual tags.
     arguments:

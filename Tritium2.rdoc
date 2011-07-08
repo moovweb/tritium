@@ -11,9 +11,7 @@ No more bottom(), top(), above(), below() (or whatever they were)
   insert_bottom()
   inject_bottom()
 
-
-
-html() becomes inner_xml()
+html() becomes inner()
 
 doc('html') #=> html() { ... }
 doc('xml')  #=> xml()  { ... }

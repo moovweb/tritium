@@ -47,10 +47,10 @@ module Tritium::Parser
       elsif htm = selector[html_rgx] then
         path = selector.sub(html_rgx, "")
         if path.empty? or path == "./" then
-          inner_xml(&block)
+          inner(&block)
         else
           cmd("select", path[0..-2]) {
-            inner_xml(&block)
+            inner(&block)
           }
         end
       else
@@ -121,7 +121,7 @@ module Tritium::Parser
     
     def html(value = nil, &block)
       if value || @stack.size > 1
-        cmd("inner_xml") {
+        cmd("inner") {
           set(value) if value
           block.call if block
         }
@@ -145,7 +145,7 @@ module Tritium::Parser
       
       cmd("insert_tag", tag_name) do
         if contents
-          inner_xml do
+          inner do
             set(contents)
           end
         end
@@ -194,7 +194,7 @@ module Tritium::Parser
         
         "#{k.to_s}=#{v.to_s.inspect}"
       end
-      inner_xml() {
+      inner() {
         prepend("<#{name} #{attribute_list.join(' ')}>")
         append("</#{name}>")
       }

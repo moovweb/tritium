@@ -21,11 +21,11 @@ class Tritium::Engines::Debug
       object.remove
     end
     
-    def inner_xml
+    def inner
       debug_log("Opening the raw text HTML of #{@object.path}")
       @object.inner_html = execute_children_on(@object.inner_html)
     end
-    alias html inner_xml
+    alias html inner
     
     def text
       @object.content = execute_children_on(@object.content)
