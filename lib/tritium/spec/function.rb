@@ -23,7 +23,7 @@ module Tritium
         load_children!(self.arguments)
       end
       
-      def name
+      def formatted_name
         result =  "#{@name}(#{arg_list})"
         if self["alias"]
           result = "#{self['alias']} or " + result
@@ -33,10 +33,6 @@ module Tritium
 
       def arg_list
         (args.values.collect &:formatted_name ).join(", ")
-      end
-      
-      def args
-        @arguments
       end
 
       def visible?
