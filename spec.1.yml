@@ -98,6 +98,7 @@ Node:
         
   html:
     opens: Text
+    deprecated: Please use inner() now
     doc: Opens up the entire innerHTML to text modification. Any html you insert WILL get interpreted as actual tags.
     arguments:
       -
