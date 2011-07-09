@@ -10,17 +10,14 @@ module Tritium
       
       def initialize(script_string, options = {})
         super
-        
         if ENV["TEST"].nil?
-          @tmp_dir = options[:debug_log_folder] || File.join(@script_path, "../tmp")
+          @tmp_dir = configure_debug_log_folder() || File.join(@script_path, "../tmp")
           Dir.mkdir(@tmp_dir) unless File.directory?(@tmp_dir)
           
           # Dump the compiled script to the /tmp folder as script.ts
           script_file = File.join(@tmp_dir, "script.ts")
           File.open(script_file, "w+") { |f| f.write(@root_instruction.to_script) }
-        end
 
-        if options[:tritium_debug_to_db]
           debug_file = File.join(@tmp_dir, "debug.sqlite")
           @db = Database.new(debug_file, @root_instruction)
         else
@@ -72,6 +69,34 @@ module Tritium
         end
       end
 
+      def configure_debug_log_folder
+        debug_config_fname = File.join(@script_path, "../config/debug.yml")
+        return nil unless File.exist?(debug_config_fname)
+
+        debug_config = YAML::load(File.read(debug_config_fname))
+        run_mode = ENV["RUN_MODE"] || "debug"
+        return nil if debug_config[run_mode].nil?
+
+        debug_log_folder = debug_config[run_mode][:debug_log_folder]
+
+        return nil if debug_log_folder.nil?
+            
+        FileUtils.mkdir_p(debug_log_folder) unless File.exist?(debug_log_folder)
+        timestamp = Time.now.strftime("%m_%d_%Y")
+        debug_log_folder = File.join(debug_log_folder, timestamp)
+        FileUtils.mkdir_p(debug_log_folder) unless File.exist?(debug_log_folder)
+    
+        test_info = {}
+        test_info_fname = File.join(debug_log_folder, "test_info.yml")
+        if File.exist?(test_info_fname)
+          test_info = YAML::load(File.read(test_info_fname))
+        end
+        if test_info[:current_test].nil?
+          return debug_log_folder
+        else
+          return File.join(debug_log_folder, test_info[:current_test])
+        end
+      end
       
       def reader_klass
         Tritium::Parser::ExpansionReader
