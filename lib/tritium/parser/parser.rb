@@ -100,8 +100,10 @@ module Tritium
           return nil
         end
         parser = Parser.new(script_string,
-                            filename: import_name, path: @path,
-                            imports: @imports, macro_calls: @macro_calls,
+                            filename: import_name,
+                            path: File.join(@path, File.dirname(@filename)),
+                            imports: @imports,
+                            macro_calls: @macro_calls,
                             errors: @errors)
         @imports << { importer: @filename, importee: import_name }
         return parser.inline_block
