@@ -65,10 +65,7 @@ module Tritium
         
         def insert_instruction(instruction, parent_iid = nil)
           all_instructions = collect_instruction(instruction, parent_iid)
-          start_t = Time.now
           @db[:instructions].multi_insert(all_instructions)
-          end_t = Time.now
-          puts "takes #{end_t - start_t} to insert #{all_instructions.length}"
         end
 
         def collect_instruction(instruction, parent_iid = nil)
@@ -144,10 +141,7 @@ module Tritium
  
         def insert_step(step, group_id = 0, debug_session_id = nil, parent_sid = nil)
           all_steps = collect_step(step, group_id, debug_session_id, parent_sid)
-          start_t = Time.now
           @db[:steps].multi_insert(all_steps)
-          end_t = Time.now
-          puts "takes #{end_t - start_t} to insert #{all_steps.length}"
         end
       end
     end

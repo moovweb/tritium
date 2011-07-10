@@ -11,7 +11,6 @@ module Tritium
 
       attr :filename
       attr :path
-      attr :macro_calls
       attr :imports
       attr :logger
       attr :expander
@@ -24,6 +23,10 @@ module Tritium
         @logger      = options[:logger]      || Logger.new(STDOUT)
         @expander    = options[:expander]    || MacroExpander.new
         @errors      = options[:errors]      || ScriptErrors.new
+        
+        prefix, base = File.dirname(@filename), File.basename(@filename)
+        @path = File.join(@path, prefix)
+        @filename = base
         
         @tokens = Tokenizer.new(script_string, filename: @filename)
         @line_num = @tokens.peek.line_num
@@ -51,16 +54,20 @@ module Tritium
         unexpected = pop!
         case unexpected.lexeme
         when :ERROR
-          @errors << LexicalError.new(unexpected)
+          errobj = LexicalError.new(unexpected)
+          @errors << errobj
         else
-          @errors << SyntaxError.new(@filename, @line_num, message, unexpected)
+          errobj = SyntaxError.new(@filename, @line_num, message, unexpected)
+          @errors << errobj
         end
+        raise errobj
       end
 
       def parse
-        result = inline_block
-        if @errors.any?
-          raise @errors
+        begin
+          result = inline_block
+        rescue
+          raise @errors if @errors.any?
         end
         result
       end
@@ -73,7 +80,9 @@ module Tritium
           end
           return cmd(InlineBlock, stmts)
         rescue => err
-          @tokens.each { |token| puts token if token.lexeme == :ERROR }
+          @tokens.each do |token|
+            @errors << LexicalError.new(token) if token.lexeme == :ERROR
+          end
           raise err
         end
       end
@@ -100,8 +109,9 @@ module Tritium
           return nil
         end
         parser = Parser.new(script_string,
-                            filename: import_name, path: @path,
-                            imports: @imports, macro_calls: @macro_calls,
+                            filename: import_name,
+                            path: @path,
+                            imports: @imports,
                             errors: @errors)
         @imports << { importer: @filename, importee: import_name }
         return parser.inline_block
@@ -226,7 +236,7 @@ module Tritium
           args = arguments
           return cmd(Invocation, func_name, args[:pos], args[:kwd])
         when :READ
-          # Read local to the script file
+          # Read relative to the current script file
           return cmd(Literal, File.read(File.join(@path, @token.value)))
         else
           raise_error("invalid term")

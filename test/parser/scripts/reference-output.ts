@@ -43,11 +43,11 @@ doc() {
         }
       }
       copy_here(".//img[not(@alt)]")
-      # ENTERING FILE: ../scripts/import-3.ts
+      # ENTERING FILE: import-3.ts
       bottom() {
         insert_tag("p", "Getting tired of writing these.")
       }
-      # LEAVING FILE: ../scripts/import-3.ts
+      # LEAVING FILE: import-3.ts
     }
   }
   select("//p[1]") {
