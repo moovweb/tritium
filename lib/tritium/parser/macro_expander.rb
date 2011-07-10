@@ -39,7 +39,6 @@ module Tritium
         expansion_string = macro.expand(args)
 
         expansion = Parser.new(expansion_string,
-                               macro_calls: parser.macro_calls,
                                expander: self,
                                errors: parser.errors,
                                filename: parser.filename,

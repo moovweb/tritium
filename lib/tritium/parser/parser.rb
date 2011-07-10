@@ -11,7 +11,6 @@ module Tritium
 
       attr :filename
       attr :path
-      attr :macro_calls
       attr :imports
       attr :logger
       attr :expander
@@ -24,6 +23,10 @@ module Tritium
         @logger      = options[:logger]      || Logger.new(STDOUT)
         @expander    = options[:expander]    || MacroExpander.new
         @errors      = options[:errors]      || ScriptErrors.new
+        
+        prefix, base = File.dirname(@filename), File.basename(@filename)
+        @path = File.join(@path, prefix)
+        @filename = base
         
         @tokens = Tokenizer.new(script_string, filename: @filename)
         @line_num = @tokens.peek.line_num
@@ -101,9 +104,8 @@ module Tritium
         end
         parser = Parser.new(script_string,
                             filename: import_name,
-                            path: File.join(@path, File.dirname(@filename)),
+                            path: @path,
                             imports: @imports,
-                            macro_calls: @macro_calls,
                             errors: @errors)
         @imports << { importer: @filename, importee: import_name }
         return parser.inline_block
@@ -228,7 +230,7 @@ module Tritium
           args = arguments
           return cmd(Invocation, func_name, args[:pos], args[:kwd])
         when :READ
-          # Read local to the script file
+          # Read relative to the current script file
           return cmd(Literal, File.read(File.join(@path, @token.value)))
         else
           raise_error("invalid term")
