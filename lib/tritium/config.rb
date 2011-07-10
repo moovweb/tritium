@@ -13,7 +13,7 @@ module Tritium
   end
   
   def self.functional_test_location
-    File.dirname(__FILE__) + "/../test/functional"
+    File.dirname(__FILE__) + "/../test/functional/v2"
   end
   
   def self.current_api_version
