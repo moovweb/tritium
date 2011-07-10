@@ -54,17 +54,18 @@ module Tritium
         unexpected = pop!
         case unexpected.lexeme
         when :ERROR
-          @errors << LexicalError.new(unexpected)
+          errobj = LexicalError.new(unexpected)
+          @errors << errobj
         else
-          @errors << SyntaxError.new(@filename, @line_num, message, unexpected)
+          errobj = SyntaxError.new(@filename, @line_num, message, unexpected)
+          @errors << errobj
         end
+        raise errobj
       end
 
       def parse
         result = inline_block
-        if @errors.any?
-          raise @errors
-        end
+        raise @errors if @errors.any?
         result
       end
 
@@ -76,7 +77,7 @@ module Tritium
           end
           return cmd(InlineBlock, stmts)
         rescue => err
-          @tokens.each { |token| puts token if token.lexeme == :ERROR }
+          @tokens.each { |token| @errors << token if token.lexeme == :ERROR }
           raise err
         end
       end
