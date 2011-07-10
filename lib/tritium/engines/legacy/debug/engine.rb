@@ -60,12 +60,12 @@ module Tritium
           end
         end
         
-        selectors = selectors.sort_by { |s| s.debug[:search_time] }
+        selectors = selectors.sort_by { |s| s.debug[:search_time] * 1000 }
         selectors.reverse!
         @logger.info "Slowest Searches:"
 
         selectors[0..8].each_with_index do |step, index|
-          @logger.info "##{index + 1} #{(step.debug[:search_time] * 1000).to_i}ms - #{step.instruction.args.first.inspect} in #{step.instruction.location}"
+          @logger.info "##{index + 1} #{(step.debug[:search_time] * 1000 * 1000).to_i}µs - #{step.instruction.args.first.inspect} in #{step.instruction.location}"
         end
       end
 
