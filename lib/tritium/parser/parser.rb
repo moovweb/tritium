@@ -64,8 +64,11 @@ module Tritium
       end
 
       def parse
-        result = inline_block
-        raise @errors if @errors.any?
+        begin
+          result = inline_block
+        rescue
+          raise @errors if @errors.any?
+        end
         result
       end
 
@@ -77,7 +80,9 @@ module Tritium
           end
           return cmd(InlineBlock, stmts)
         rescue => err
-          @tokens.each { |token| @errors << token if token.lexeme == :ERROR }
+          @tokens.each do |token|
+            @errors << LexicalError.new(token) if token.lexeme == :ERROR
+          end
           raise err
         end
       end
