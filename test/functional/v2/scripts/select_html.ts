@@ -1,7 +1,10 @@
-doc() {
-  $("body") {
-    $("p/html()") {
-      append(" Leung")
+var("hi", "true")
+match($hi, "true") {
+  xhtml() {
+    $("body") {
+      $("p/html()") {
+        append(" Leung")
+      }
     }
   }
 }

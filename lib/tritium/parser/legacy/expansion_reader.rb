@@ -120,13 +120,13 @@ module Tritium::Parser
     end
     
     def html(value = nil, &block)
-      if value || @stack.size > 1
+      if @stack.last.opens == "Text"
+        cmd("html", &block)
+      else
         cmd("inner") {
           set(value) if value
           block.call if block
         }
-      else
-        cmd("html", &block)
       end
     end
     
