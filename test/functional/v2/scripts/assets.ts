@@ -1,5 +1,5 @@
 html_fragment() {
-  var("stylesheet", "myfile.css")
+  $stylesheet = "myfile.css"
   var("undefined")
   log(asset($stylesheet, "stylesheet"))
   insert_top("link", src: asset($stylesheet, "stylesheet"))
