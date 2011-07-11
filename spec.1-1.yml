@@ -110,6 +110,11 @@ Node:
         doc: You can optionally just pass in contents to set the contents. Remember, this is the same as text { set('value') } and will clobber whatever was there before.
         
         expansion: true
+  attributes:
+    doc: Allows you to do a mass setting of attributes on a node.
+    arguments:
+      -
+        name: List of attributes
   attribute:
     opens: Attribute
     doc: Creates or opens the attribute named
