@@ -1,7 +1,7 @@
 xml()  {
   $("box") {
     $(".//present") {
-      inner_wrap("pretty_paper", class: "red shiny")
+      inner_wrap("pretty_paper", cla-ss: "red shiny")
     }
   }
 }
