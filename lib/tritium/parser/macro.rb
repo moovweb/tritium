@@ -63,6 +63,7 @@ module Tritium
         # Build a new Macro object and pass in the block to convert the macro
         # file into a proper Proc for the expansion.
         Macro.new(name, arg_length) do |args|
+          macro_text_here = macro_text.clone
           # Go through each passed in arg and replace it in the macro file. 
           arg_length.times do |index|
             # We are using index instead of each on the args, because
@@ -80,14 +81,14 @@ module Tritium
 
             # If you want a non-inspected value, then use #{@1} (or whatever number matches)
             begin
-              macro_text = macro_text.gsub("\#{@#{num}}", unquoted)
+              macro_text_here = macro_text_here.gsub("\#{@#{num}}", unquoted)
             rescue
-              puts macro_text.inspect
+              puts macro_text_here.inspect
             end
             # If you want the inspected value, use @1
-            macro_text = macro_text.gsub("@#{num}", value.inspect)
+            macro_text_here = macro_text_here.gsub("@#{num}", value.inspect)
           end
-          macro_text
+          macro_text_here
         end
       end
     
