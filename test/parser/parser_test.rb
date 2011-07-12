@@ -28,7 +28,7 @@ class ParserTest < MiniTest::Unit::TestCase
   def self.test_version_folder(version_dir)
     version = File.basename(version_dir)
      puts "Testing parser against version #{version}"
-    Dir[version_dir + "/scripts/*"].each do |script_file_name|
+    Dir[version_dir + "/scripts/*.ts"].each do |script_file_name|
       test_name = File.basename(script_file_name, ".ts")
       if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
         # Writes a method that simply calls run_file with its name 
