@@ -1,6 +1,7 @@
 
 
 require 'minitest/autorun'
+require_relative '../../lib/tritium'
 require_relative '../../lib/tritium/parser/tokenizer'
 
 class TokenizerTest < MiniTest::Unit::TestCase
@@ -28,7 +29,7 @@ class TokenizerTest < MiniTest::Unit::TestCase
     # tokens.each { |token| puts token }
   end
   
-  Dir.glob(File.join(File.dirname(__FILE__), "../functional/v2/scripts/*.ts")).each do |script_file|
+  Dir.glob(File.join(Tritium.functional_test_location + "/scripts/*.ts")).each do |script_file|
     name = script_file.split("/").last.split(".").first
     eval "def test_tokenizing_#{name}_script; run_script_tests('#{script_file}'); end"
   end
