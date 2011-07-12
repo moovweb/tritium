@@ -58,6 +58,17 @@ class ParserTest < MiniTest::Unit::TestCase
     assert_equal read_script("var_output.ts"), output.to_s
   end
   
+  def test_stop_second_parse_call
+    script_string, parser, output = build_parser("basic.ts")
+    
+    begin
+      parser.parse
+      assert false, "Can't call Parser#parse twice. Should have thrown error"
+    rescue Exception
+      assert true
+    end
+  end
+  
   def test_add_class_expansion
     script_string, parser, output = build_parser("add_class.ts")
     assert_equal read_script("add_class_output.ts"), output.to_s

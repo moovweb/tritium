@@ -64,12 +64,15 @@ module Tritium
       end
 
       def parse
+        if @result
+          throw "Can only call parse once"
+        end
         begin
-          result = inline_block
+          @result = inline_block
         rescue
           raise @errors if @errors.any?
         end
-        result
+        @result
       end
 
       def inline_block
