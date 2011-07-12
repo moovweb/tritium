@@ -63,8 +63,16 @@ module Tritium
       def skip_multicomment!
         pop_match!(/^#\[/)
         depth = 1
+        start_line = @line_num
         while depth > 0 and @line do
           skip_whitespace!
+          if @line.nil?
+            require_relative 'parser_errors'
+            raise Tritium::Parser::Parser::SyntaxError.new(@filename, 
+                                  start_line,
+                                  "You opened a multi-line comment with #[ begin on #{start_line} and then it never ended. Must end multi-line comments with ]#",
+                                  "#[")
+          end
           case
           when pop_match!(/^#\[/)
             depth += 1

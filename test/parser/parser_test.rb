@@ -57,6 +57,15 @@ class ParserTest < MiniTest::Unit::TestCase
     assert_equal read_script("var_output.ts"), output.to_s
   end
   
+  def test_multiline_comment_unclosed
+    begin
+      script_string, parser, output = build_parser("unclosed_comment.ts")
+      assert false, "Should throw error on unclosed comment"
+    rescue Tritium::Parser::Parser::SyntaxError
+      assert true
+    end
+  end
+  
   def test_stop_second_parse_call
     script_string, parser, output = build_parser("basic.ts")
     
