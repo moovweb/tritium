@@ -1,8 +1,8 @@
-#[ Test file. Contains things which should pass, but
+/* Test file. Contains things which should pass, but
    will choke the old parser.
-   #[ These comments nest properly, ]#
-   #[ by the way. ]#
- ]#
+   /* These comments nest properly, */
+   /* by the way. */
+ */
 
 $x = whatever()
 
@@ -11,7 +11,7 @@ doc() {
 
     # Space between function name and arglist
     $ ("body") {
-      @import #[ Intra-line comment! ]# import-1.ts
+      @import /* Intra-line comment! */ import-1.ts
 
       # Adjacent string concatenation and multi-line arglists
       move_here("some/long/path/to/something"

@@ -29,6 +29,10 @@ module Tritium
         "'" => /^'(\\.|[^'\\])*'/,
         '/' => /^\/(\\.|[^\/\\])*\/[imxouesn]*/
       }
+      @@multiline = {
+        :open  => /^\/\*/,
+        :close => /^\*\//
+      }
       
       attr :lines
 
@@ -61,7 +65,7 @@ module Tritium
       private :pop_match!
 
       def skip_multicomment!
-        pop_match!(/^#\[/)
+        pop_match!(@@multiline[:open])
         depth = 1
         start_line = @line_num
         while depth > 0 and @line do
@@ -70,13 +74,13 @@ module Tritium
             require_relative 'parser_errors'
             raise Tritium::Parser::Parser::SyntaxError.new(@filename, 
                                   start_line,
-                                  "You opened a multi-line comment with #[ begin on #{start_line} and then it never ended. Must end multi-line comments with ]#",
-                                  "#[")
+                                  "You opened a multi-line comment with /* begin on #{start_line} and then it never ended. Must end multi-line comments with */",
+                                  "*/")
           end
           case
-          when pop_match!(/^#\[/)
+          when pop_match!(@@multiline[:open])
             depth += 1
-          when pop_match!(/^\]#/)
+          when pop_match!(@@multiline[:close])
             depth -= 1
           else
             pop_match!(/^./)
@@ -89,7 +93,7 @@ module Tritium
       def skip_whitespace_and_comments!
         while skip_whitespace! and @line do
           case
-          when @line[/^#\[/]
+          when @line[@@multiline[:open]]
             skip_multicomment!
             next
           when @line[/^#/]

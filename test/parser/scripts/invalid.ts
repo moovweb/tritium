@@ -1,6 +1,6 @@
 test&&&
 
-#[ An improperly nested comment ]# ]#
+/* An improperly nested comment */ */
 
 ^*!foo = 'bar'
 

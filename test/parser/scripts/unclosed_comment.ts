@@ -1,3 +1,3 @@
-#[
+/*
 
 IT NEVER ENDS
