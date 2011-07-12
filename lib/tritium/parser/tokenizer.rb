@@ -29,6 +29,8 @@ module Tritium
         "'" => /^'(\\.|[^'\\])*'/,
         '/' => /^\/(\\.|[^\/\\])*\/[imxouesn]*/
       }
+      
+      attr :lines
 
       def initialize(script_string, options = {})
         @filename = options[:filename] || "MAIN"
