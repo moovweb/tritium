@@ -83,7 +83,13 @@ module Tritium
         end
         begin
           @result = inline_block
-        rescue
+        rescue ScriptErrors
+          # dont' do anything
+        rescue ParserError => e
+          # If its some other error, then add it to e
+          @errors << e
+        rescue StandardError => e
+          raise e
         end
         raise @errors if @errors.any?
         @result
