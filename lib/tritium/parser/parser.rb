@@ -15,6 +15,8 @@ module Tritium
       attr :logger
       attr :expander
       attr :errors
+      attr :tokens
+      attr :script_string
       
       def initialize(script_string, options = {})
         @filename    = options[:filename]    || "MAIN"
@@ -28,7 +30,13 @@ module Tritium
         @path = File.join(@path, prefix)
         @filename = base
         
-        @tokens = Tokenizer.new(script_string, filename: @filename)
+        if script_string.nil?
+          script_string = File.read(File.join(@path, @filename))
+        end
+        
+        @script_string = script_string.clone
+        
+        @tokens = Tokenizer.new(@script_string, filename: @filename)
         @line_num = @tokens.peek.line_num
       end
 
