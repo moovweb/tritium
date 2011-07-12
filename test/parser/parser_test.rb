@@ -42,8 +42,7 @@ class ParserTest < MiniTest::Unit::TestCase
   end
   
   def run_test(version_dir, test_name)
-    script_string = File.read(File.join(version_dir, "scripts", test_name + ".ts"))
-    parser = Parser.new(script_string, filename: test_name, path: File.join(version_dir, "scripts"))
+    parser = Parser.new(filename: test_name + ".ts", path: File.join(version_dir, "scripts"))
     parser.parse
     assert true # If we didn't error, its a positive assertion
   end
