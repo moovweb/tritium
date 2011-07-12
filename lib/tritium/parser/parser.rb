@@ -19,6 +19,11 @@ module Tritium
       attr :script_string
       
       def initialize(script_string, options = {})
+        if script_string.is_a?(Hash)
+          options = script_string
+          script_string = nil
+        end
+        
         @filename    = options[:filename]    || "MAIN"
         @path        = options[:path]        || File.dirname(__FILE__)
         @imports     = options[:imports]     || []
