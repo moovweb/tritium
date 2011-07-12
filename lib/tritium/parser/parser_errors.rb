@@ -7,7 +7,10 @@ module Tritium
         end
         
         def messages
-          @errors.collect &:message
+          @errors.collect do |e|
+            backtrace = e.backtrace.join("\n")
+            "#{e.message}\n#{backtrace}"
+          end
         end
           
         def message
