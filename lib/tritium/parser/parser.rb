@@ -119,17 +119,19 @@ module Tritium
       
       def import
         import_name = pop!.value
+        parser = nil
         begin
           script_string = File.read(File.join(@path, import_name))
+          parser = Parser.new(script_string,
+                              filename: import_name,
+                              path: @path,
+                              imports: @imports,
+                              errors: @errors)
         rescue Exception => e
           @errors << e
           return nil
         end
-        parser = Parser.new(script_string,
-                            filename: import_name,
-                            path: @path,
-                            imports: @imports,
-                            errors: @errors)
+
         @imports << { importer: @filename, importee: import_name }
         return parser.inline_block
       end
