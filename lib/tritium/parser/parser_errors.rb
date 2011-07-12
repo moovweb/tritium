@@ -1,14 +1,20 @@
 module Tritium
   module Parser
     class Parser
-      class ScriptErrors < StandardError
+      class ParserError < StandardError; end
+
+      class ScriptErrors < ParserError
         def initialize
           @errors = []
         end
         
         def messages
           @errors.collect do |e|
-            backtrace = e.backtrace.join("\n")
+            if e.class.ancestors.include?(ParserError)
+              backtrace = ""
+            else
+              backtrace = e.backtrace.join("\n")
+            end
             "#{e.message}\n#{backtrace}"
           end
         end
@@ -27,7 +33,7 @@ module Tritium
         end
       end
       
-      class LexicalError < StandardError
+      class LexicalError < ParserError
         def initialize(error_token)
           @error_token = error_token
         end
@@ -37,7 +43,7 @@ module Tritium
         end
       end
 
-      class SyntaxError < StandardError
+      class SyntaxError < ParserError
         attr_reader :filename, :line_num, :message, :value
 
         def initialize(filename, line_num, message, value)
