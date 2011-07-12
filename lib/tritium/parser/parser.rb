@@ -79,8 +79,8 @@ module Tritium
         begin
           @result = inline_block
         rescue
-          raise @errors if @errors.any?
         end
+        raise @errors if @errors.any?
         @result
       end
 
