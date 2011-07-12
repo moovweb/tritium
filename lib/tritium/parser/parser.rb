@@ -27,6 +27,7 @@ module Tritium
         @errors      = options[:errors]      || ScriptErrors.new
         
         prefix, base = File.dirname(@filename), File.basename(@filename)
+        prefix = "" if prefix == "."
         @path = File.join(@path, prefix)
         @filename = base
         
