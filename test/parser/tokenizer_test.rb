@@ -28,7 +28,7 @@ class TokenizerTest < MiniTest::Unit::TestCase
     # tokens.each { |token| puts token }
   end
   
-  Dir.glob(File.join(File.dirname(__FILE__), "../functional/scripts/*.ts")).each do |script_file|
+  Dir.glob(File.join(File.dirname(__FILE__), "../functional/v2/scripts/*.ts")).each do |script_file|
     name = script_file.split("/").last.split(".").first
     eval "def test_tokenizing_#{name}_script; run_script_tests('#{script_file}'); end"
   end
