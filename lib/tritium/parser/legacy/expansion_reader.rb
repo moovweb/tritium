@@ -83,6 +83,12 @@ module Tritium::Parser
       end
     end
     
+    def attributes(options = {})
+      options.each do |key, value|
+        attribute(key.to_s, value)
+      end
+    end
+    
     def var(name, set_to = nil, &block)
       if set_to
         add_cmd("var", name) do
