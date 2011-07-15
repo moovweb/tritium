@@ -1,4 +1,4 @@
-class Regexp
+module Matcher
   attr :opposite, true
   
   def match?(value)
@@ -16,4 +16,11 @@ class Regexp
       self.inspect
     end
   end
+end
+
+class Regexp
+  include Matcher
+end
+class String
+  include Matcher
 end

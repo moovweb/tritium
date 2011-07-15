@@ -1,5 +1,5 @@
 require_relative 'reader'
-require_relative '../../extensions/regexp'
+require_relative '../../extensions/matcher'
 
 module Tritium::Parser
   class ExpansionReader < Reader
