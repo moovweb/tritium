@@ -95,9 +95,9 @@ module Tritium::Parser
     end
     
     def not_matcher(matcher)
-      r = Regexp.new(matcher)
-      r.opposite = true
-      return r
+      matcher = "#{matcher}" unless matcher.is_a?(Regexp) || matcher.is_a?(String)
+      matcher.opposite = true
+      return matcher
     end
     
     def match(what, one_matcher = nil, &block)
@@ -111,12 +111,12 @@ module Tritium::Parser
     end
     
     def with(matcher, &block)
-      matcher = Regexp.new(matcher) unless matcher.is_a?(Regexp)
+      matcher = "#{matcher}" unless matcher.is_a?(Regexp) || matcher.is_a?(String)
       add_cmd("with", matcher, &block)
     end
     
     def else_do(&block)
-      with(".*", &block)
+      with(/.*/, &block)
     end
     
     def html(value = nil, &block)
@@ -213,7 +213,7 @@ module Tritium::Parser
         # If we don't start with http, then add on the asset host
         # Really though, this should be done by the server before we ever get here
         match(var(type.to_s + "_asset_location")) {
-          with(not_matcher("(http:|)\/\/")) {
+          with(not_matcher(/(http:|)\/\//)) {
             prepend(var("asset_host"))
           }
         }

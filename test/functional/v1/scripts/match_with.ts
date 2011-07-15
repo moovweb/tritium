@@ -7,7 +7,7 @@ doc("xml") {
       with("Michael") {
         attribute("sexy", "true")
       }
-      with(not("r")) {
+      with(not(/r/)) {
         attribute("has_no", "r")
       }
       else() {
