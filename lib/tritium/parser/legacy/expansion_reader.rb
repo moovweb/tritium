@@ -1,5 +1,5 @@
 require_relative 'reader'
-require_relative '../../extensions/regexp'
+require_relative '../../extensions/matcher'
 
 module Tritium::Parser
   class ExpansionReader < Reader
@@ -31,7 +31,7 @@ module Tritium::Parser
         if path.empty? or path == "./" then
           attribute(attr[1..-1], &block)
         else
-          cmd("select", path[0..-2]) {
+          add_cmd("select", path[0..-2]) {
             attribute(attr[1..-1], &block)
           }
         end
@@ -40,7 +40,7 @@ module Tritium::Parser
         if path.empty? or path == "./" then
           text(&block)
         else
-          cmd("select", path[0..-2]) {
+          add_cmd("select", path[0..-2]) {
             text(&block)
           }
         end
@@ -49,23 +49,23 @@ module Tritium::Parser
         if path.empty? or path == "./" then
           inner(&block)
         else
-          cmd("select", path[0..-2]) {
+          add_cmd("select", path[0..-2]) {
             inner(&block)
           }
         end
       else
-        cmd("select", selector, &block)
+        add_cmd("select", selector, &block)
       end
     end
     
     def value(set_value = nil, &block)
       if set_value
-         cmd('value', &(Proc.new { |this|
+         add_cmd('value', &(Proc.new { |this|
            set(set_value)
            block.call(this) if block
          }))
       else
-        cmd('value', &block)
+        add_cmd('value', &block)
       end
     end
     
@@ -74,34 +74,34 @@ module Tritium::Parser
         if !set_value.is_a?(ReaderInstruction)
           set_value = set_value.to_s
         end
-        cmd('attribute', name) do
+        add_cmd('attribute', name) do
           value(set_value)
           block.call(this) if block
         end
       else
-        cmd('attribute', *[name], &block)
+        add_cmd('attribute', *[name], &block)
       end
     end
     
     def var(name, set_to = nil, &block)
       if set_to
-        cmd("var", name) do
-          cmd('set', set_to)
+        add_cmd("var", name) do
+          add_cmd('set', set_to)
           block.call if block
         end
       else
-        cmd("var", name, &block)
+        add_cmd("var", name, &block)
       end
     end
     
     def not_matcher(matcher)
-      r = Regexp.new(matcher)
-      r.opposite = true
-      return r
+      matcher = "#{matcher}" unless matcher.is_a?(Regexp) || matcher.is_a?(String)
+      matcher.opposite = true
+      return matcher
     end
     
     def match(what, one_matcher = nil, &block)
-      @last_matcher = cmd("match", what) do
+      @last_matcher = add_cmd("match", what) do
         if one_matcher
           with(one_matcher, &block)
         else
@@ -111,19 +111,19 @@ module Tritium::Parser
     end
     
     def with(matcher, &block)
-      matcher = Regexp.new(matcher) unless matcher.is_a?(Regexp)
-      cmd("with", matcher, &block)
+      matcher = "#{matcher}" unless matcher.is_a?(Regexp) || matcher.is_a?(String)
+      add_cmd("with", matcher, &block)
     end
     
     def else_do(&block)
-      with(".*", &block)
+      with(/.*/, &block)
     end
     
     def html(value = nil, &block)
       if @stack.last.opens == "Text"
-        cmd("html", &block)
+        add_cmd("html", &block)
       else
-        cmd("inner") {
+        add_cmd("inner") {
           set(value) if value
           block.call if block
         }
@@ -131,7 +131,7 @@ module Tritium::Parser
     end
     
     def text(value = nil, &block)
-      cmd("text") {
+      add_cmd("text") {
         set(value) if value
         block.call if block
       }
@@ -143,7 +143,7 @@ module Tritium::Parser
         contents = nil
       end
       
-      cmd("insert_tag", tag_name) do
+      add_cmd("insert_tag", tag_name) do
         if contents
           inner do
             set(contents)
@@ -213,7 +213,7 @@ module Tritium::Parser
         # If we don't start with http, then add on the asset host
         # Really though, this should be done by the server before we ever get here
         match(var(type.to_s + "_asset_location")) {
-          with(not_matcher("(http:|)\/\/")) {
+          with(not_matcher(/(http:|)\/\//)) {
             prepend(var("asset_host"))
           }
         }
@@ -229,7 +229,7 @@ module Tritium::Parser
     end
     
     def replace(matcher, value = nil, &block)
-      cmd("replace", Regexp.new(matcher)) do
+      add_cmd("replace", Regexp.new(matcher)) do
         if value
           set(value)
         end
@@ -245,7 +245,7 @@ module Tritium::Parser
     end
     
     def add_class(class_name, &block)
-      cmd("attribute", "class") {
+      add_cmd("attribute", "class") {
         value() {
           append(" ")
           append(class_name)
@@ -256,18 +256,18 @@ module Tritium::Parser
 
     def name(set_name = nil, &block)
       if set_name
-        cmd("name") do 
+        add_cmd("name") do 
           set(set_name)
           block.call if block
         end
       else
-        cmd("name", &block)
+        add_cmd("name", &block)
       end
     end
     
     def insert_javascript(script, &block)
       insert_tag("script", type: "text/javascript") do
-        cmd("inject", cdata(concat("//<![CDATA[\n", script, "\\n//]]>")))
+        add_cmd("inject", cdata(concat("//<![CDATA[\n", script, "\\n//]]>")))
         block.call if block
       end
     end

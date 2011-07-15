@@ -28,7 +28,7 @@ class ParserTest < MiniTest::Unit::TestCase
   def self.test_version_folder(version_dir)
     version = File.basename(version_dir)
      puts "Testing parser against version #{version}"
-    Dir[version_dir + "/scripts/*"].each do |script_file_name|
+    Dir[version_dir + "/scripts/*.ts"].each do |script_file_name|
       test_name = File.basename(script_file_name, ".ts")
       if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
         # Writes a method that simply calls run_file with its name 
@@ -42,8 +42,7 @@ class ParserTest < MiniTest::Unit::TestCase
   end
   
   def run_test(version_dir, test_name)
-    script_string = File.read(File.join(version_dir, "scripts", test_name + ".ts"))
-    parser = Parser.new(script_string, filename: test_name, path: File.join(version_dir, "scripts"))
+    parser = Parser.new(filename: test_name + ".ts", path: File.join(version_dir, "scripts"))
     parser.parse
     assert true # If we didn't error, its a positive assertion
   end
@@ -56,6 +55,26 @@ class ParserTest < MiniTest::Unit::TestCase
   def test_var_expansion
     script_string, parser, output = build_parser("var.ts")
     assert_equal read_script("var_output.ts"), output.to_s
+  end
+  
+  def test_multiline_comment_unclosed
+    begin
+      script_string, parser, output = build_parser("unclosed_comment.ts")
+      assert false, "Should throw error on unclosed comment"
+    rescue Tritium::Parser::Parser::SyntaxError
+      assert true
+    end
+  end
+  
+  def test_stop_second_parse_call
+    script_string, parser, output = build_parser("basic.ts")
+    
+    begin
+      parser.parse
+      assert false, "Can't call Parser#parse twice. Should have thrown error"
+    rescue Exception
+      assert true
+    end
   end
   
   def test_add_class_expansion

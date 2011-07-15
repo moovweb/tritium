@@ -17,10 +17,18 @@ module Tritium
       
       def initialize(script_string, options = {})
         @script_string = script_string
+      
         @script_path   = options[:path]        || options["path"]        || ""
         @xml_parser    = options[:parse_as]    || options["parse_as"]    || "xml"
         @logger        = options[:logger]      || options["logger"]      || Logger.new(STDOUT)
         @script_name   = options[:script_name] || options["script_name"] || "MAIN"
+        
+        # Load the script if we don't have it loaded already
+        if @script_string.nil?
+          @script_string = File.read(File.join(@script_path, @script_name))
+        end
+        
+        @script_path = File.expand_path(@script_path)
         
         @root_instruction = parse!
       end

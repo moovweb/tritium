@@ -1,5 +1,5 @@
 xml()  {
-  var("first", "worked")
+  $first = "worked"
   var("second") {
     set("worked")
   }

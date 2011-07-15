@@ -62,7 +62,7 @@ module Tritium
         if scope_spec[name.to_s].nil?
           raise Invalid.new(self), "Line #{@line_number} in #{@script_name}\nNo such method #{name.inspect} allowed here!\nAPI Version: #{scope_spec.api_version}\nOnly allow: #{scope_spec.keys.join(", ")}\n#{self.line}"
         end
-        if ENV["DEPRECATIONS"] && scope_spec[name.to_s].deprecated && !ENV["TEST"]
+        if scope_spec[name.to_s].deprecated && !ENV["TEST"] && (name.to_s != "insert_tag")
           logger.warn "DEPRECATION WARNING:".color(:red)
           logger.warn "#{name.to_s.color(:blue)}() is deprecated"
           logger.warn scope_spec[name.to_s].deprecated

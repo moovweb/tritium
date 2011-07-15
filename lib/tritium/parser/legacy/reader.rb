@@ -51,10 +51,10 @@ module Tritium
       # and take note of the stack with each block that
       # gets called.
       def method_missing(name, *args, &block)
-        cmd(name, *args, &block)
+        add_cmd(name, *args, &block)
       end
     
-      def cmd(name, *args, &block)
+      def add_cmd(name, *args, &block)
         args.each do |arg|
           if arg.is_a?(ReaderInstruction) && !arg.information["returns"]
             raise ReaderInstruction::Invalid.new(arg)
@@ -73,11 +73,11 @@ module Tritium
     
       # For some reasons, select is defined on Object. Bastards.
       def select(*args, &block)
-        cmd('select', *args, &block)
+        add_cmd('select', *args, &block)
       end
       # For some reasons, remove is defined on Rake Object. Bastards.
       def remove(*args, &block)
-        cmd('remove', *args, &block)
+        add_cmd('remove', *args, &block)
       end
     end
   end

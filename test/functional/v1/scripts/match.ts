@@ -5,9 +5,9 @@ doc("xml") {
         $("/")
       }
       match($path, not("roduck")) {
-        match($path, not("product/index.ognc")) {
+        match($path, not(/product\/index.ognc/)) {
         } 
-        match($path, "product/index.ognc") {
+        match($path, /product\/index.ognc/) {
           select(".//*[@id='ac']") {
             remove()
           }

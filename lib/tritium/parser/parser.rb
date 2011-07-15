@@ -15,8 +15,15 @@ module Tritium
       attr :logger
       attr :expander
       attr :errors
+      attr :tokens
+      attr :script_string
       
       def initialize(script_string, options = {})
+        if script_string.is_a?(Hash)
+          options = script_string
+          script_string = nil
+        end
+        
         @filename    = options[:filename]    || "MAIN"
         @path        = options[:path]        || File.dirname(__FILE__)
         @imports     = options[:imports]     || []
@@ -25,10 +32,17 @@ module Tritium
         @errors      = options[:errors]      || ScriptErrors.new
         
         prefix, base = File.dirname(@filename), File.basename(@filename)
+        prefix = "" if prefix == "."
         @path = File.join(@path, prefix)
         @filename = base
         
-        @tokens = Tokenizer.new(script_string, filename: @filename)
+        if script_string.nil?
+          script_string = File.read(File.join(@path, @filename))
+        end
+        
+        @script_string = script_string.clone
+        
+        @tokens = Tokenizer.new(@script_string, filename: @filename)
         @line_num = @tokens.peek.line_num
       end
 
@@ -64,12 +78,21 @@ module Tritium
       end
 
       def parse
-        begin
-          result = inline_block
-        rescue
-          raise @errors if @errors.any?
+        if @result
+          throw "Can only call parse once"
         end
-        result
+        begin
+          @result = inline_block
+        rescue ScriptErrors
+          # dont' do anything
+        rescue ParserError => e
+          # If its some other error, then add it to e
+          @errors << e
+        rescue StandardError => e
+          raise e
+        end
+        raise @errors if @errors.any?
+        @result
       end
 
       def inline_block
@@ -102,17 +125,19 @@ module Tritium
       
       def import
         import_name = pop!.value
+        parser = nil
         begin
           script_string = File.read(File.join(@path, import_name))
+          parser = Parser.new(script_string,
+                              filename: import_name,
+                              path: @path,
+                              imports: @imports,
+                              errors: @errors)
         rescue Exception => e
           @errors << e
           return nil
         end
-        parser = Parser.new(script_string,
-                            filename: import_name,
-                            path: @path,
-                            imports: @imports,
-                            errors: @errors)
+
         @imports << { importer: @filename, importee: import_name }
         return parser.inline_block
       end

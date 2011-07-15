@@ -28,7 +28,8 @@ module Tritium
             puts script_to_run
           end
         #end
-        processed = Parser::Preprocess.run(script_to_run, @script_path, @script_name)
+        #processed = Parser::Preprocess.run(script_to_run, @script_path, @script_name)
+        script_to_run
       end
       
       def to_script
