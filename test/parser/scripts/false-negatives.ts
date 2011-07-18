@@ -6,7 +6,7 @@
 
 $x = whatever()
 
-doc() {
+xhtml() {
   $("html") {
 
     # Space between function name and arglist

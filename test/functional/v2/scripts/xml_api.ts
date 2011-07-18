@@ -20,11 +20,7 @@ xml() {
         set($name)
       }
     }
-    insert("item", key: "cart_items") {
-      inner() {
-        set($cart_items)
-      }
-    }
+    insert("item", $cart_items, key: "cart_items") 
     insert("item", key: "address_html") {
       inner() {
         set($address)
