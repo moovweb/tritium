@@ -11,10 +11,6 @@ class ExpansionReaderTest < MiniTest::Unit::TestCase
   def setup
     @reader = ExpansionReader.new(Logger.new(nil))
   end
-  
-  def test_html_expansion
-    match_expansions("html('inner')", "html() { set('inner'); }")
-  end
 
   def test_non_returning_arg
     output = read('text(select("html"))')

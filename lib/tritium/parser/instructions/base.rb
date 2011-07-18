@@ -12,13 +12,12 @@ module Tritium
 
         def ruby_debug_line(depth = 0)
           return ""
-          ["#{@@tab * depth}#[",
+          ["#/*",
             "@_line_number = #{@line_num.inspect}",
             "@_script = #{@filename.inspect}",
             "@_line = ''",
-            "#]#\n"].join("\n#{@@tab * depth}")
+            "#*/"].join("\n#{@@tab * depth}")
         end
-
         alias unquote to_s
       end
     end

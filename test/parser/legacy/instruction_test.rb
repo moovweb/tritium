@@ -9,7 +9,7 @@ class ReaderInstructionTest < MiniTest::Unit::TestCase
   
   def test_parent
     root = ReaderInstruction.root
-    doc = root.add("doc", :args => ["html"])
+    doc = root.add("html")
     child = doc.add("select", :args => ["body"])
     grand_child = child.add("attribute", :args => "xml:lang")
     node_matcher = child.add("match", :args => ["hello", "h"])
