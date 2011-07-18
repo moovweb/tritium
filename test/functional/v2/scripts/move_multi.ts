@@ -1,9 +1,7 @@
 xml()  {
   $("/move") {
-    top() {
-      insert("wrap") {
-        move_here("../div")
-      }
+    insert_top("wrap") {
+      move_here("../div")
     }
   }
 }
