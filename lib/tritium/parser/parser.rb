@@ -262,6 +262,9 @@ module Tritium
           return cmd(Invocation, func_name, args[:pos], args[:kwd])
         when :READ
           # Read relative to the current script file
+          puts "Reading #{File.join(@path, @token.value)}"
+          puts "File path is #{@path.inspect}"
+          puts "Token value is #{@token.value}"
           return cmd(Literal, File.read(File.join(@path, @token.value)))
         else
           raise_error("invalid term")
