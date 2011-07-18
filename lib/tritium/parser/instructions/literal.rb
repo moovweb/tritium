@@ -2,6 +2,7 @@ module Tritium
   module Parser
     module Instructions
       class Literal < Instruction
+        attr :value
         def initialize(filename, line_num, value)
           super(filename, line_num)
           @value = value
