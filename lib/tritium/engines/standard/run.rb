@@ -18,17 +18,12 @@ module Tritium
             if ctx.is_a?(String)
               ctx = text_invocation(ins, ctx, pos_args, kwd_args)
             end
-          end
-          
-          if ins.is_a?(Literal)
+          elsif ins.is_a?(InlineBlock)
+            ctx = run_children(ins, ctx)
+          elsif ins.is_a?(Literal)
             ctx = ins.value
           end
-          # we are a block of somesort!
-          if ins.respond_to?("statements")
-            ins.statements.each do |statement|
-              ctx = process(statement, ctx)
-            end
-          end
+
           return ctx
         end
         
@@ -51,10 +46,24 @@ module Tritium
           [pos_args, kwd_args]
         end
         
+        def run_children(ins, ctx)
+          # we are a block of somesort!
+          if ins.respond_to?("statements")
+            ins.statements.each do |statement|
+              ctx = process(statement, ctx)
+            end
+          end
+          return ctx
+        end
+        
         def text_invocation(ins, ctx, args, kwds)
           case ins.name
           when :set
             return args.first
+          when :html, :xml, :xhtml
+            doc = Tritium::Engines.xml_parsers[ins.name.to_s].parse(ctx)
+            doc = run_children(ins, doc)
+            return doc.send("to_#{ins.name}")
           end
         end
       end

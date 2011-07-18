@@ -18,4 +18,11 @@ class StandardEngineTest < MiniTest::Unit::TestCase
     result = engine.run("world")
     assert_equal "hi", result
   end
+  
+  def test_html_parsing
+    engine = Standard.new("html()")
+    result = engine.run("")
+    expected = "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">\n\n"
+    assert_equal expected, result
+  end
 end
