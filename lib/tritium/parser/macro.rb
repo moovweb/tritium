@@ -83,6 +83,7 @@ module Tritium
             begin
               macro_text_here = macro_text_here.gsub("\#{@#{num}}", unquoted)
             rescue
+              puts "Error with macro"
               puts macro_text_here.inspect
             end
             # If you want the inspected value, use @1
