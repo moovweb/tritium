@@ -166,7 +166,7 @@ module Tritium::Parser
     end
     
     def inject(content, &block)
-      inject_at("bottom", content)
+      inject_at("bottom", content, &block)
     end
     
     def read(filename)
