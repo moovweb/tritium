@@ -1,0 +1,3 @@
+insert("script", type: "text/javascript") {
+  add_cmd("inject_at", "bottom", cdata(concat("//<![CDATA[\n", @1, "\\n//]]>")))
+}

@@ -250,12 +250,5 @@ module Tritium::Parser
         add_cmd("name", &block)
       end
     end
-    
-    def insert_javascript(script, &block)
-      insert("script", type: "text/javascript") do
-        add_cmd("inject_at", "bottom", cdata(concat("//<![CDATA[\n", script, "\\n//]]>")))
-        block.call if block
-      end
-    end
   end
 end
