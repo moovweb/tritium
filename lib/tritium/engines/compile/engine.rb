@@ -2,7 +2,7 @@
 
 module Tritium
   module Engines
-    class Standard < Base
+    class Compile < Base
       
       def initialize(script_string, options = {})
         super
