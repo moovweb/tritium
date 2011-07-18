@@ -1,3 +1,6 @@
+require_relative "../extensions/array"
+require_relative "../extensions/hash"
+
 module Tritium
   module Parser
     class Macro
@@ -44,8 +47,29 @@ module Tritium
         end
       end
       
+      def self.load_positionals
+        require_relative '../config'
+        macros = []
+        Tritium.spec.scopes.each do |scope_name, scope|
+          scope.functions.each do |function_name, function|
+            if function.positional
+              %w(top bottom after before).each do |pos|
+                macro_name = function_name + "_" + pos
+                (1..4).each do |arg_length|
+                  macros << Macro.new(macro_name, arg_length) do |args|
+                    "#{function_name}_at(#{pos.inspect}, #{args.to_tritium}) {\n}"
+                  end
+                end
+              end
+            end
+          end
+        end
+        macros
+      end
+      
       def self.load_defaults
-        load(*Dir.glob(File.join(Macro.location, "/*")))
+        list = load(*Dir.glob(File.join(Macro.location, "/*")))
+        list + load_positionals
       end
     
       def self.load_file(filename)
