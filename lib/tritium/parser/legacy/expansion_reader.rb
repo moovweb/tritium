@@ -4,17 +4,6 @@ require_relative '../../extensions/matcher'
 module Tritium::Parser
   class ExpansionReader < Reader
     
-    def set_position(set_to, &block)
-      # Set the position value the standard way and move on
-      eval("var('position', #{set_to.inspect})")
-      
-      block.call if block
-    end
-    def bottom(&block); set_position("bottom", &block); end
-    def top(&block);    set_position("top",    &block); end
-    def after(&block);  set_position("after",  &block); end
-    def before(&block); set_position("before", &block); end
-    
     # If we are passed an ./@attribute selector, then automatically
     # open the attribute block
     # If we are passed a text() selector, then automatically open html()
