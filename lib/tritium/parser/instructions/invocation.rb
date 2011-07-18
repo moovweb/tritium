@@ -1,8 +1,11 @@
 module Tritium
   module Parser
     module Instructions
-      class Invocation < Base
+      class Invocation < Instruction
         attr :statements
+        attr :kwd_args
+        attr :pos_args
+        attr :name
         def initialize(filename, line_num,
                        name = nil, pos_args = [], kwd_args = {})
           super(filename, line_num)

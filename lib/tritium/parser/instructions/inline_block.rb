@@ -1,7 +1,7 @@
 module Tritium
   module Parser
     module Instructions
-      class InlineBlock < Base
+      class InlineBlock < Instruction
         attr :statements, true
         def initialize(filename, line_num, statements = [])
           @filename, @line_num, @statements = filename, line_num, statements

@@ -1,7 +1,7 @@
 module Tritium
   module Parser
     module Instructions
-      class Base
+      class Instruction
         @@tab = "  "
 
         attr :filename
