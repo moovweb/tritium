@@ -1,6 +1,6 @@
 $hello = "hi"
 
-doc("html") {
+html() {
   $('"redirect_\'url":"([^"]*)"') {
     attribute("yo()){}") {
       set($hello);
