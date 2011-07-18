@@ -1,4 +1,4 @@
-doc() {
+xhtml() {
   $("body") {
     $("p/text()") {
       append(" Leung")

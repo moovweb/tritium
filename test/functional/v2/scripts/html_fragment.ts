@@ -1,4 +1,4 @@
-doc("html_fragment") {
+html_fragment() {
   $(".//div") {
     add_class("mw_testing")
   }
