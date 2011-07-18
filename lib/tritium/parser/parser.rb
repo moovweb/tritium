@@ -161,6 +161,10 @@ module Tritium
           args = { pos: [ var_name ] }
         end
         signature = [:var, args[:pos].length]
+        # If you have any number of keyword arguments, it only counts as one arg
+        if args[:kwd] && args[:kwd].any?
+          signature[1] += 1
+        end
         if @expander.is_macro?(signature)
           stub = cmd(ExpansionInlineBlock)
           macro_call = {
