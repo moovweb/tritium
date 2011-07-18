@@ -21,6 +21,10 @@ module Tritium
         def to_s(depth)
           return (@statements.collect { |s| s.to_s(depth) }).join("\n")
         end
+        
+        def add_statements(instructions)
+          @statements.last.add_statements(instructions)
+        end
       end
     end
   end

@@ -12,6 +12,10 @@ module Tritium
           @statements = []
           @name, @pos_args, @kwd_args = name.intern, pos_args, kwd_args
         end
+        
+        def add_statements(instructions)
+          @statements += instructions
+        end
       
         def to_s(depth = 0)
           name = @name.to_s.gsub(/\$/, "select")

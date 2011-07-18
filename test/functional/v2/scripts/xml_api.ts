@@ -1,8 +1,8 @@
 html() {
   $("html") {
     $(".//div[@id='header']") {
-      var("name", fetch("div[@class = 'name']/text()"))
-      var("address", fetch("div[@class = 'address']"))
+      var("name", fetch("./div[@class = 'name']/text()"))
+      var("address", fetch("./div[@class = 'address']"))
     }
     $(".//div[@class='shopping_cart']") {
       inner() {

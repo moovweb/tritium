@@ -28,33 +28,6 @@ module  EngineTests
     throw "Must override"
   end
   
-  def test_log
-    @logger = MiniTest::Mock.new
-    @logger.expect("info", nil, ['hi mom!'])
-    engine = engine_class.new("log('hi') { append(' mom!') }", :logger => @logger)
-    engine.run("")
-    @logger.verify
-  end
-  
-  def test_log_dump
-    @logger = MiniTest::Mock.new
-    @logger.expect("info", nil, ['<a>hi mom!</a>'])
-    engine = engine_class.new("html() { $('//a') { dump() } }", :logger => @logger)
-    engine.run("<html><body><a>hi mom!</a></body></html>")
-    @logger.verify
-  end
-
-  def test_import
-    import("move.ts")
-    import(" move.ts ")
-    import("move.ts\t")
-  end
-  
-  def import(file)
-    engine = engine_class.new("@import #{file}", :path => EngineTests.functional_dirs.first + "/scripts")
-    assert engine.processed_script.include?("select")
-  end
-  
   def self.test_version_folder(version_dir)
     version = File.basename(version_dir)
      puts "Testing legacy engines against version #{version}"
@@ -133,12 +106,30 @@ module  EngineTests
     end
   end
   
-  def test_export_function
-    script = "export('Content-Type', 'html/js'); export('cookie', 'a'); export('cookie', 'b')"
-    log = Logger.new(STDOUT)
-    log.level = Logger::ERROR
-    tritium = engine_class.new(script, :path => EngineTests.functional_dirs.last + "/scripts", :script_name => "export_function", :logger => log)
-    result, export_vars = tritium.run("")
-    assert_equal [['Content-Type', 'html/js'], ['cookie', 'a'], ['cookie', 'b']], export_vars
+  if ENV["SCRIPT"].nil?
+    def test_log
+      @logger = MiniTest::Mock.new
+      @logger.expect("info", nil, ['hi mom!'])
+      engine = engine_class.new("log('hi') { append(' mom!') }", :logger => @logger)
+      engine.run("")
+      @logger.verify
+    end
+  
+    def test_log_dump
+      @logger = MiniTest::Mock.new
+      @logger.expect("info", nil, ['<a>hi mom!</a>'])
+      engine = engine_class.new("html() { $('//a') { dump() } }", :logger => @logger)
+      engine.run("<html><body><a>hi mom!</a></body></html>")
+      @logger.verify
+    end
+  
+    def test_export_function
+      script = "export('Content-Type', 'html/js'); export('cookie', 'a'); export('cookie', 'b')"
+      log = Logger.new(nil)
+      log.level = Logger::ERROR
+      tritium = engine_class.new(script, :path => EngineTests.functional_dirs.last + "/scripts", :script_name => "export_function", :logger => log)
+      result, export_vars = tritium.run("")
+      assert_equal [['Content-Type', 'html/js'], ['cookie', 'a'], ['cookie', 'b']], export_vars
+    end
   end
 end

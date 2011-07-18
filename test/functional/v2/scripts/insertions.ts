@@ -1,5 +1,5 @@
 xml()  {
-  select('root') {
+  $('root') {
     insert("middle", index: 2)
 
     insert("bottom", "hello", index: 3) {
