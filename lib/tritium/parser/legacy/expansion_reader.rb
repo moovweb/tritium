@@ -115,43 +115,7 @@ module Tritium::Parser
     def inject(content, &block)
       inject_at("bottom", content, &block)
     end
-    
-    def read(filename)
-      File.read(File.join(@path, filename)).to_s
-    end
-    
-    def wrap(name, attributes = {}, &block)
-      insert_at("before", name, attributes)
-      
-      move_to("preceding-sibling::#{name}[1]", "top") do
-        block.call if block
-      end
-    end
-    
-    def inner_wrap(name, attributes = {}, &block)
-      if name.is_a?(ReaderInstruction)
-        throw "Cannot use dynamic tag names with inner_wrap(). See documentation for details."
-      end
 
-      attribute_list = attributes.collect do |k, v|
-        # We are statically building the tag that we will wrap the contents with, therefore we can't support
-        # dynamic attributes or tag names
-        if k.is_a?(ReaderInstruction) || v.is_a?(ReaderInstruction)
-          throw "Cannot use dynamic attributes with inner_wrap(). See documentation for details."
-        end
-        
-        "#{k.to_s}=#{v.to_s.inspect}"
-      end
-      inner() {
-        prepend("<#{name} #{attribute_list.join(' ')}>")
-        append("</#{name}>")
-      }
-      if block
-        select("./*[1]") {
-          block.call
-        }
-      end
-    end
     
     def asset(name, type, &block)
       var("tmp") {
