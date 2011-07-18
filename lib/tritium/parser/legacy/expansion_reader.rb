@@ -47,17 +47,6 @@ module Tritium::Parser
       end
     end
     
-    def value(set_value = nil, &block)
-      if set_value
-         add_cmd('value', &(Proc.new { |this|
-           set(set_value)
-           block.call(this) if block
-         }))
-      else
-        add_cmd('value', &block)
-      end
-    end
-    
     def var(name, set_to = nil, &block)
       if set_to
         add_cmd("var", name) do
@@ -75,6 +64,7 @@ module Tritium::Parser
       return matcher
     end
     
+    # Since its the inner-block that gets children added to it... this wont work in macros
     def match(what, one_matcher = nil, &block)
       @last_matcher = add_cmd("match", what) do
         if one_matcher
@@ -85,13 +75,7 @@ module Tritium::Parser
       end
     end
     
-    def text(value = nil, &block)
-      add_cmd("text") {
-        set(value) if value
-        block.call if block
-      }
-    end
-    
+    # Since htis is inline aka me(src: asset()) the old fella's dont like the expanded version
     def asset(name, type, &block)
       var("tmp") {
         set(name)
