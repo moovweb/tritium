@@ -34,6 +34,14 @@ module Tritium
             positional_name = "#{name}_#{position}"
             parent.children[positional_name] = self.class.new(positional_name, child_attributes, parent)
           end
+          
+          
+          # Define insert_at/inject_at-like methods
+          at_name = "#{name}_at"
+          at_attributes = Marshal::load(Marshal.dump(attributes))
+          at_attributes.delete("positional")
+          at_attributes["arguments"] = [{"name" => "Position", "doc" => "top/bottom/etc"}] + at_attributes["arguments"]
+          parent.children[at_name] = self.class.new(at_name, at_attributes, parent)
         end
         self.class.defaults.each do |name, value|
           name = name.to_s
