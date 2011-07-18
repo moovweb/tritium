@@ -58,26 +58,6 @@ module Tritium::Parser
       end
     end
     
-    def attribute(name, set_value = nil, &block)
-      if set_value
-        if !set_value.is_a?(ReaderInstruction)
-          set_value = set_value.to_s
-        end
-        add_cmd('attribute', name) do
-          value(set_value)
-          block.call(this) if block
-        end
-      else
-        add_cmd('attribute', *[name], &block)
-      end
-    end
-    
-    def attributes(options = {})
-      options.each do |key, value|
-        attribute(key.to_s, value)
-      end
-    end
-    
     def var(name, set_to = nil, &block)
       if set_to
         add_cmd("var", name) do
@@ -132,39 +112,6 @@ module Tritium::Parser
       }
     end
     
-    %w(top bottom before after).each do |position|
-      %w(insert inject).each do |method|
-        eval("def #{method}_#{position}(*args, &block); #{method}_at(#{position.inspect}, *args, &block); end")
-      end
-      #eval("def insert_#{position}(*args, &block); insert_tag_#{position}(*args, &block); end")
-    end
-    
-    def insert_at(position, tag_name, contents = nil, attributes = {}, &block)
-      if contents.is_a? Hash
-        attributes = contents
-        contents = nil
-      end
-      
-      add_cmd("insert_at", position, tag_name) do
-        if contents
-          inner do
-            set(contents)
-          end
-        end
-        attributes.each do |name, val|
-          if name.is_a? Symbol
-            name = name.to_s
-          end
-          attribute(name, val)
-        end
-        block.call if block
-      end
-    end
-    
-    def insert(*args, &block)
-      insert_at("bottom", *args, &block)
-    end
-    
     def inject(content, &block)
       inject_at("bottom", content, &block)
     end
@@ -174,7 +121,7 @@ module Tritium::Parser
     end
     
     def wrap(name, attributes = {}, &block)
-      insert_before(name, attributes)
+      insert_at("before", name, attributes)
       
       move_to("preceding-sibling::#{name}[1]", "top") do
         block.call if block
@@ -237,17 +184,6 @@ module Tritium::Parser
           set(value)
         end
         block.call if block
-      end
-    end
-
-    def name(set_name = nil, &block)
-      if set_name
-        add_cmd("name") do 
-          set(set_name)
-          block.call if block
-        end
-      else
-        add_cmd("name", &block)
       end
     end
   end
