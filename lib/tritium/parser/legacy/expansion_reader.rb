@@ -132,13 +132,20 @@ module Tritium::Parser
       }
     end
     
-    def insert_tag(tag_name, contents = nil, attributes = {}, &block)
+    %w(top bottom before after).each do |position|
+      %w(insert inject).each do |method|
+        eval("def #{method}_#{position}(*args, &block); #{method}_at(#{position.inspect}, *args, &block); end")
+      end
+      #eval("def insert_#{position}(*args, &block); insert_tag_#{position}(*args, &block); end")
+    end
+    
+    def insert_at(position, tag_name, contents = nil, attributes = {}, &block)
       if contents.is_a? Hash
         attributes = contents
         contents = nil
       end
       
-      add_cmd("insert_tag", tag_name) do
+      add_cmd("insert_at", position, tag_name) do
         if contents
           inner do
             set(contents)
@@ -155,11 +162,11 @@ module Tritium::Parser
     end
     
     def insert(*args, &block)
-      if args.size > 1 || (args.first.is_a?(String) && !args.first.include?("<"))
-        insert_tag(*args, &block)
-      else
-        inject(*args, &block)
-      end
+      insert_at("bottom", *args, &block)
+    end
+    
+    def inject(content, &block)
+      inject_at("bottom", content)
     end
     
     def read(filename)
@@ -167,9 +174,8 @@ module Tritium::Parser
     end
     
     def wrap(name, attributes = {}, &block)
-      before {
-        insert_tag(name, attributes)
-      }
+      insert_before(name, attributes)
+      
       move_to("preceding-sibling::#{name}[1]", "top") do
         block.call if block
       end
@@ -217,10 +223,12 @@ module Tritium::Parser
     end
     
     def debug(name = "untitled", &block)
-      var("debug_depth", @stack.size + 1)
-      var("debug", name)
+      var("debug_depth") {
+        set(@stack.size + 1)
+      }
+      var("debug"){ set(name) }
       block.call if block
-      var("debug", "")
+      var("debug") { set("") }
     end
     
     def replace(matcher, value = nil, &block)
@@ -230,13 +238,6 @@ module Tritium::Parser
         end
         block.call if block
       end
-    end
-    
-    %w(top bottom before after).each do |position|
-      %w(insert inject).each do |method|
-        eval("def #{method}_#{position}(*args, &block); var('position', #{position.inspect}); insert(*args, &block); end")
-      end
-      #eval("def insert_#{position}(*args, &block); insert_tag_#{position}(*args, &block); end")
     end
 
     def name(set_name = nil, &block)
@@ -251,8 +252,8 @@ module Tritium::Parser
     end
     
     def insert_javascript(script, &block)
-      insert_tag("script", type: "text/javascript") do
-        add_cmd("inject", cdata(concat("//<![CDATA[\n", script, "\\n//]]>")))
+      insert("script", type: "text/javascript") do
+        add_cmd("inject_at", "bottom", cdata(concat("//<![CDATA[\n", script, "\\n//]]>")))
         block.call if block
       end
     end
