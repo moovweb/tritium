@@ -17,7 +17,7 @@ module Tritium
   end
   
   def self.current_api_version
-    1.1
+    2
   end
   
   def self.supported_api_levels

@@ -1,4 +1,4 @@
-Debug:
+Debug: &debug
   log:
     opens: Text
     doc: Writes out a string to the console and debug log
@@ -59,6 +59,9 @@ Base:
       -
         name: Asset Type
         doc: The asset type. This is usually something like "stylesheet", "javascript", or "image"
+  script:
+    opens: Text
+    doc: DO NOT USE. Wraps the entire script virtually!
   fetch:
     opens: Text
     returns: true
@@ -107,6 +110,11 @@ Node:
         doc: You can optionally just pass in contents to set the contents. Remember, this is the same as text { set('value') } and will clobber whatever was there before.
         
         expansion: true
+  attributes:
+    doc: Allows you to do a mass setting of attributes on a node.
+    arguments:
+      -
+        name: List of attributes
   attribute:
     opens: Attribute
     doc: Creates or opens the attribute named
@@ -183,6 +191,18 @@ Node:
         name: Attributes
         type: Hash
         doc: The tag's attributes. CAN NOT BE DYAMIC. That means no fetch() or anything like that. If you need to use that, open the yielding block and use attribute()
+  position:
+    hide: true
+    doc: DO NOT USE! Low-level way to open a positional block. Doesn't actually set the var('position'). Use the bottom, top, after, and before methods!
+    deprecated: Look for a top(), bottom(), etc. Replace with insert_top, insert_bottom, etc.
+  bottom:
+    deprecated: "Please use the _bottom prefix on the child methods"
+  top:
+    deprecated: "Please use the _top prefix on the child methods"
+  after:
+    deprecated: "Please use the _after prefix on the child methods"
+  before:
+    deprecated: "Please use the _before prefix on the child methods"
   inject:
     doc: Inject some plain data into the document at the prescribed location
     positional: true
@@ -211,6 +231,16 @@ XMLNode:
   inherit: Node
   html:
     opens: Text
+    deprecated: "Please use inner()"
+  cdata:
+    doc: A helper method for building a CDATA node
+    returns: true
+    arguments:
+      -
+        name: Contents
+        doc: Whatever should go inside the CDATA.
+  inner:
+    opens: Text
     doc: Opens up the entire innerHTML to text modification. Any html you insert WILL get interpreted as actual tags.
     arguments:
       -
@@ -227,6 +257,24 @@ XMLNode:
         name: Attributes
         type: Hash
         doc: The tag's attributes.
+  insert_tag:
+    doc: Create a new HTML tag. Must be inside a Positional block
+    deprecated: Please use insert() instead
+    arguments:
+      - 
+        name: Tag Name
+        default: "div"
+        doc: The type of HTML node you want, aka "div" or "span"
+      -
+        name: Contents
+        default: ""
+        doc: Some text representing the innerHTML of the tag
+        expansion: true
+      -
+        name: Attributes
+        type: Hash
+        doc: The tag's attributes
+        expansion: true
   add_class:
     opens: Attribute
     doc: Appends the class you specify to the currently selected element. Its the same thing as attribute("class") { append(" whatever") } }.
@@ -235,13 +283,6 @@ XMLNode:
         name: Class Name
         doc: The name of the class you want to append
         expansion: true
-  cdata:
-    doc: A helper method for building a CDATA node
-    returns: true
-    arguments:
-      -
-        name: Contents
-        doc: Whatever should go inside the CDATA.
   insert_javascript:
     opens: Node
     doc: Allows you to easily and safely insert a <script> tag for javascript.
