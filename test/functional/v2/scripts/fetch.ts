@@ -13,7 +13,7 @@ xml()  {
         }
       }
       select(".//a") {
-        html(fetch("@href"))
+        inner(fetch("@href"))
         attribute("href") {
           remove()
         }

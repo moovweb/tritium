@@ -67,7 +67,9 @@ xhtml() {
     }
   }
   select("//p[1]") {
-    html("<p>\n  <strong>Last Night I Had a Banquet</strong>\n  That's right, I went to Safeway and got a large supreme frozen pizza. Cooked it in the oven for about 13 minutes, and then I ate it. A VERITABLE BANQUET.\n</p>")
+    inner() {
+      set("<p>\n  <strong>Last Night I Had a Banquet</strong>\n  That's right, I went to Safeway and got a large supreme frozen pizza. Cooked it in the oven for about 13 minutes, and then I ate it. A VERITABLE BANQUET.\n</p>")
+    }
   }
 }
 # LEAVING FILE: false-negatives.ts

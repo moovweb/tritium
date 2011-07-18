@@ -7,6 +7,8 @@ attribute("class") {
     append(" ")
     append(var("hi"))
   }
-  replace("h", "H")
+  replace("h") {
+    set("H")
+  }
 }
 # LEAVING FILE: add_class.ts

@@ -305,7 +305,7 @@ Text:
         name: Regex
       -
         name: Replacement String
-        doc: Should be in the format of "\\1.name\\2" where \\1 and \\2 are the groups from the Regex.
+        doc: Should be in the format of "$1.name$2" where $1 and $2 are the groups from the Regex.
         expansion: true
   xml:
     doc: Parses the document as XML and passes you back an XMLNode scope

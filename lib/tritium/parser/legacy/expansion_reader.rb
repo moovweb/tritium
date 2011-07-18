@@ -85,37 +85,12 @@ module Tritium::Parser
       end
     end
     
-    def with(matcher, &block)
-      matcher = "#{matcher}" unless matcher.is_a?(Regexp) || matcher.is_a?(String)
-      add_cmd("with", matcher, &block)
-    end
-    
-    def else_do(&block)
-      with(/.*/, &block)
-    end
-    
-    def html(value = nil, &block)
-      if @stack.last.opens == "Text"
-        add_cmd("html", &block)
-      else
-        add_cmd("inner") {
-          set(value) if value
-          block.call if block
-        }
-      end
-    end
-    
     def text(value = nil, &block)
       add_cmd("text") {
         set(value) if value
         block.call if block
       }
     end
-    
-    def inject(content, &block)
-      inject_at("bottom", content, &block)
-    end
-
     
     def asset(name, type, &block)
       var("tmp") {
@@ -140,15 +115,6 @@ module Tritium::Parser
       var("debug"){ set(name) }
       block.call if block
       var("debug") { set("") }
-    end
-    
-    def replace(matcher, value = nil, &block)
-      add_cmd("replace", Regexp.new(matcher)) do
-        if value
-          set(value)
-        end
-        block.call if block
-      end
     end
   end
 end

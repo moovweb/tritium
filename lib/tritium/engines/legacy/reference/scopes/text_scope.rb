@@ -15,7 +15,7 @@ module Tritium::Engines::Reference::Scope
       @text = text
     end
 
-    def replace(matcher, replacement = "", &block)
+    def replace(matcher, &block)
       if matcher.is_a? String
         matcher = Regexp.new(matcher)
       end
@@ -24,11 +24,10 @@ module Tritium::Engines::Reference::Scope
         $~.captures.each_with_index do |arg, index|
           var("#{index + 1}", arg)
         end
-        replace = replacement
-        (replace = open_text_scope_with(replace, &block)) if block
+        (replace = open_text_scope_with("", &block)) if block
         
         # Find all instances of "\\1" and similar, and replace them with var('1') (and similar, obvs)
-        replace.gsub(/\\([\d])/) do |var_match|
+        replace.gsub(/\$([\d])/) do |var_match|
           var($1)
         end
       end 

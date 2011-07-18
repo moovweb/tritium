@@ -1,11 +1,11 @@
 xml()  {
   select(".//*[@id='a']") {
-    html() {
+    inner() {
       set("<div id='b'>hello, world!</div>")
       replace("div", "span")
     }
     select("./span") {
-      html("goodbye, world!")
+      inner("goodbye, world!")
     }
   }
 }

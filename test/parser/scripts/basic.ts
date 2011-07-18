@@ -10,6 +10,6 @@ html() {
     }
   }
   $("div[@class='something']") {
-    html(read("paragraph.html"))
+    inner(read("paragraph.html"))
   }
 }

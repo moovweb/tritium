@@ -1,7 +1,7 @@
 xml() {
   debug("me") {
     $("//a") {
-      html("Ran")
+      inner("Ran")
     }
   }
 }

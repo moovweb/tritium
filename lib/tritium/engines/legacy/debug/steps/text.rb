@@ -6,12 +6,12 @@ class Tritium::Engines::Debug
     end
 
     def replace(matcher)
-      @object.gsub!(matcher) do |match|
+      @object.gsub!(Regexp.new(matcher)) do |match|
         $~.captures.each_with_index do |arg, index|
           @env["#{index + 1}"] = arg
         end
         replacement = execute_children_on(match)
-        replacement.gsub(/\\([\d])/) do
+        replacement.gsub(/\$([\d])/) do
           @env[$1]
         end
       end

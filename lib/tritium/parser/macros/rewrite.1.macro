@@ -1,0 +1,1 @@
+replace($rewrite_#{@1}_matcher, $rewrite_#{@1}_replacement)
