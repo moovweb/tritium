@@ -249,16 +249,6 @@ module Tritium::Parser
       end
       #eval("def insert_#{position}(*args, &block); insert_tag_#{position}(*args, &block); end")
     end
-    
-    def add_class(class_name, &block)
-      add_cmd("attribute", "class") {
-        value() {
-          append(" ")
-          append(class_name)
-        }
-        block.call if block
-      }
-    end
 
     def name(set_name = nil, &block)
       if set_name
