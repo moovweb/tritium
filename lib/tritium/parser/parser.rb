@@ -162,9 +162,6 @@ module Tritium
         end
         signature = [:var, args[:pos].length]
         # If you have any number of keyword arguments, it only counts as one arg
-        if args[:kwd] && args[:kwd].any?
-          signature[1] += 1
-        end
         if @expander.is_macro?(signature)
           stub = cmd(ExpansionInlineBlock)
           macro_call = {
@@ -193,6 +190,10 @@ module Tritium
         args = arguments
         stmts = peek.lexeme == :LBRACE ? block : nil
         signature = [func_name, args[:pos].length]
+        # keywords are args too!
+        if args[:kwd].any?
+          signature[1] += 1
+        end
         if @expander.is_macro?(signature)
           stub = cmd(ExpansionInlineBlock)
           macro_call = { signature: signature,
