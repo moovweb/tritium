@@ -75,6 +75,7 @@ module Tritium
 
             if value.is_a?(Hash)
               value = (value.collect {|k,v| "#{k}: #{v.inspect}"}).join(", ")
+              inspected = value
             end
             
             unquoted = (value.respond_to?(:unquote) ? value.unquote : value.to_s)
@@ -87,7 +88,7 @@ module Tritium
               puts macro_text_here.inspect
             end
             # If you want the inspected value, use @1
-            macro_text_here = macro_text_here.gsub("@#{num}", value.inspect)
+            macro_text_here = macro_text_here.gsub("@#{num}", inspected || value.inspect)
           end
           macro_text_here
         end
