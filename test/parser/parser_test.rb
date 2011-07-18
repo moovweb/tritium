@@ -82,6 +82,11 @@ class ParserTest < MiniTest::Unit::TestCase
     assert_equal read_script("add_class_output.ts"), output.to_s
   end
   
+  def test_insert_positionals
+    script_string, parser, output = build_parser("insert.ts")
+    assert true # no errors
+  end
+  
   def test_error_handling
     build_parser("invalid.ts")
     assert false, "Should have failed"
