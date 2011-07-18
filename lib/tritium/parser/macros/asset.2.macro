@@ -1,0 +1,12 @@
+var("tmp") {
+  set(@1)
+  prepend($@2_asset_location)
+
+  # If we don't start with http, then add on the asset host
+  # Really though, this should be done by the server before we ever get here
+  match($@2_asset_location) {
+    with(not_matcher(/(http:|)\/\//)) {
+      prepend($asset_host))
+    }
+  }
+}
