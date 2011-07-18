@@ -16,19 +16,6 @@ class ExpansionReaderTest < MiniTest::Unit::TestCase
     match_expansions("html('inner')", "html() { set('inner'); }")
   end
 
-  def test_attribute_value_setter
-    output = read("attribute('href', '.')")
-    unexpected_output = read("attribute('href', 'a')")
-    expected_output = read("attribute('href') { value { set('.') } }")
-    assert_equal expected_output.to_script, output.to_script
-    assert unexpected_output.to_script != output.to_script
-    assert_equal expected_output.to_script, output.to_script
-  end
-  
-  def test_name_setter
-    match_expansions("name { set('div') }", "name('div')")
-  end
-
   def test_non_returning_arg
     output = read('text(select("html"))')
     assert(false)
