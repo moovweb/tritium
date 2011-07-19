@@ -1,12 +1,20 @@
 
 # set("hi")
 require_relative 'context'
+require_relative 'scopes/text'
+require_relative 'scopes/base'
+require_relative 'scopes/node'
+require_relative 'scopes/attribute'
 
 module Tritium
   module Engines
     class Standard < Base
       class Run
         include Tritium::Parser::Instructions
+        include BaseFunctions
+        include TextFunctions
+        include NodeFunctions
+        include AttributeFunctions
 
         def initialize(options = {})
           @env = options["env"] || options[:env] || {}
@@ -53,30 +61,6 @@ module Tritium
             ins.statements.each do |statement|
               process(statement, ctx)
             end
-          end
-        end
-        
-        def base_invocation(ins, args, kwds)
-          case ins.name
-          when :var
-            
-          end
-        end
-        
-        def text_invocation(ins, ctx, args, kwds)
-          case ins.name
-          when :set
-            ctx.set(args.first)
-          when :html, :xml, :xhtml, :html_fragment
-            doc = Context[ins, Tritium::Engines.xml_parsers[ins.name.to_s].parse(ctx.value)]
-            run_children(ins, doc)
-            ctx.set(doc.value.send("to_#{ins.name}"))
-          when :prepend
-            ctx.set(args.first + ctx.value)
-          when :append
-            ctx.set(ctx.value + args.first)
-          else
-            throw "Unknown method #{ins.name} in Text scope"
           end
         end
       end
