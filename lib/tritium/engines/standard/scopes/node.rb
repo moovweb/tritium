@@ -2,10 +2,10 @@ module Tritium
   module Engines
     class Standard < Base
       module NodeFunctions
-        def node_invocation(ins, ctx, pos_args, kwd_args)
+        def node_invocation(ins, ctx, args, kwd_args)
           case ins.name
           when :select
-            nodeset = ctx.value.xpath(pos_args.first)
+            nodeset = ctx.value.xpath(args.first)
             nodeset.each do |node|
               doc = Context[ins, node]
               run_children(ins, doc)
@@ -25,7 +25,7 @@ module Tritium
             run_children(ins, name)
             ctx.value.name = name.value
           when :attribute
-            name = pos_args.first
+            name = args.first
             xml_attribute = ctx.value.attribute(name)
             if xml_attribute.nil?
               ctx.value[name] = ""
@@ -33,8 +33,36 @@ module Tritium
             end
             attribute = Context[ins, xml_attribute]
             run_children(ins, attribute)
+          when :insert_at
+            position, node_name = args
+            node = Nokogiri::XML::Node.new(node_name, ctx.value.document)
+            position_node(ctx.value, node, position)
+          when :inject_at
+            position, content = args
+            position_node(ctx.value, content, position)
           else
             throw "Method #{ins.name} not implemented in Node scope"
+          end
+        end
+        
+        def position_node(target, node, position)
+          if node.is_a?(String)
+            node = target.document.fragment(node)
+          end
+
+          case position
+          when "top"
+            if target.children.size > 0
+              target.children.first.add_previous_sibling(node)
+            else
+              target.add_child(node)
+            end
+          when "after"
+            target.add_next_sibling(node)
+          when "before"
+            target.add_previous_sibling(node)
+          else
+            target.add_child(node)
           end
         end
       end
