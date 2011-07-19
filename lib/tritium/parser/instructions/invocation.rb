@@ -1,23 +1,19 @@
 module Tritium
   module Parser
     module Instructions
-      class Invocation < Instruction
-        attr :statements
+      require_relative "block"
+
+      class Invocation < Block
         attr :kwd_args
         attr :pos_args
         attr :name
         def initialize(filename, line_num,
-                       name = nil, pos_args = [], kwd_args = {})
-          super(filename, line_num)
-          @statements = []
+                       name = nil, pos_args = [], kwd_args = {}, statements = [])
+          super(filename, line_num, statements)
           @name, @pos_args, @kwd_args = name.intern, pos_args, kwd_args
         end
-        
-        def add_statements(instructions)
-          @statements += instructions
-        end
-      
-        def to_s(depth = 0)
+
+        def function_stub(depth = 0)
           name = @name.to_s.gsub(/\$/, "select")
           if name == "else" 
             name = "else_do"
@@ -32,23 +28,16 @@ module Tritium
           result << ")"
           return result
         end
-      end
-    
-      class InvocationWithBlock < Invocation
-        attr :statements, true
-        def initialize(filename, line_num,
-                       name = nil, pos_args = [], kwd_args = {}, statements = [])
-          super(filename, line_num, name, pos_args, kwd_args)
-          @statements = statements
-        end
-      
+        
         def to_s(depth = 0)
-          result = super(depth)
-          result << " {\n"
-          depth += 1
-          @statements.each { |stm| result << stm.to_s(depth) << "\n" }
-          depth -= 1
-          result << "#{@@tab * depth}}"
+          result = function_stub(depth)
+          if @statements.any?
+            result << " {\n"
+            depth += 1
+            @statements.each { |stm| result << stm.to_s(depth) << "\n" }
+            depth -= 1
+            result << "#{@@tab * depth}}"
+          end
           return result
         end
       end

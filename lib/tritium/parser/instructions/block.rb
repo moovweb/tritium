@@ -1,16 +1,34 @@
 module Tritium
   module Parser
     module Instructions
-      class InlineBlock < Instruction
+      class Block < Instruction
         attr :statements, true
         def initialize(filename, line_num, statements = [])
           @filename, @line_num, @statements = filename, line_num, statements
         end
       
         def to_s(depth = 0)
+          (@statements.collect { |stmt| stmt.to_s(depth) }).join("\n")
+        end
+        
+        def add_statements(instructions)
+          @statements += instructions
+          set_parents!
+        end
+        
+        def set_parents!
+          @statements.each do |statement|
+            statement.parent = self
+          end
+        end
+      end
+      
+      # Class used as an invisible container
+      class InlineBlock < Block
+        def to_s(depth = 0)
           result = "#{@@tab * depth}# ENTERING FILE: #{@filename}\n"
-          @statements.each { |stmt| result << stmt.to_s(depth) << "\n" }
-          result << "#{@@tab * depth}# LEAVING FILE: #{@filename}"
+          result << super
+          result << "\n#{@@tab * depth}# LEAVING FILE: #{@filename}"
           return result
         end
       end
@@ -24,6 +42,7 @@ module Tritium
         
         def add_statements(instructions)
           @statements.last.add_statements(instructions)
+          set_parents!
         end
       end
     end
