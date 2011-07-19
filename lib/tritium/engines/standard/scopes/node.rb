@@ -37,9 +37,12 @@ module Tritium
             position, node_name = args
             node = Nokogiri::XML::Node.new(node_name, ctx.value.document)
             position_node(ctx.value, node, position)
+            run_children(ins, Context[ins, node])
           when :inject_at
             position, content = args
-            position_node(ctx.value, content, position)
+            nodes = position_node(ctx.value, content, position)
+            node = nodes.children.last
+            run_children(ins, Context[ins, node])
           else
             throw "Method #{ins.name} not implemented in Node scope"
           end
@@ -64,6 +67,8 @@ module Tritium
           else
             target.add_child(node)
           end
+          
+          return node
         end
       end
     end
