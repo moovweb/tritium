@@ -23,6 +23,8 @@ module Tritium
               run_children(ins, ctx)
               return false # signal to stop!
             end
+          when :dump
+            return ctx.value.to_s
           else
             throw "Method #{ins.name} not implemented in Base scope"
           end
