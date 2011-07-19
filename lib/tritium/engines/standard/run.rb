@@ -17,7 +17,8 @@ module Tritium
         include NodeFunctions
         include AttributeFunctions
 
-        def initialize(options = {})
+        def initialize(logger, options = {})
+          @logger = logger
           @env = options["env"] || options[:env] || {}
           @matchers = []
           @export_vars = {}
