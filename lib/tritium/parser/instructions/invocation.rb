@@ -11,6 +11,24 @@ module Tritium
                        name = nil, pos_args = [], kwd_args = {}, statements = [])
           super(filename, line_num, statements)
           @name, @pos_args, @kwd_args = name.intern, pos_args, kwd_args
+          set_arg_parents!
+        end
+        
+        def args
+          @pos_args + [@kwd_args]
+        end
+        
+        def set_arg_parents!
+          @pos_args.each do |arg|
+            if arg.is_a?(Instruction)
+              arg.parent = self
+            end
+          end
+          @kwd_args.each do |key, value|
+            if value.is_a?(Instruction)
+              value.parent = self
+            end
+          end
         end
         
         def spec
