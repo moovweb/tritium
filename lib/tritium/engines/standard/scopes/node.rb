@@ -14,6 +14,10 @@ module Tritium
             inner = Context[ins, ctx.value.inner_html]
             run_children(ins, inner)
             ctx.value.inner_html = inner.value
+          when :fetch
+            fetch_ctx = Context[ins, ctx.value.search(selector).first.to_s]
+            run_children(ins, fetch_ctx)
+            return fetch_ctx.value
           when :text
             text = Context[ins, ctx.value.text]
             run_children(ins, text)
