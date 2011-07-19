@@ -20,9 +20,9 @@ module Tritium
             run_children(ins, fetch_ctx)
             return fetch_ctx.value
           when :text
-            text = Context[ins, ctx.value.text]
+            text = Context[ins, ctx.value.content]
             run_children(ins, text)
-            ctx.value.text = text.value
+            ctx.value.content = text.value
           when :remove
             ctx.value.remove()
           when :name
