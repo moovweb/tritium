@@ -22,9 +22,11 @@ module Tritium
           @env = options["env"] || options[:env] || {}
           @matchers = []
           @export_vars = {}
+          @stack = []
         end
         
         def process(ins, ctx)
+          @stack.push ctx
           if ins.is_a?(Invocation)
             # Collect and evaluate the pos_args
             pos_args, kwd_args = process_args(ins, ctx)
@@ -43,6 +45,8 @@ module Tritium
           elsif ins.is_a?(Literal)
             ins.value
           end
+        ensure
+          @stack.pop
         end
         
         def process_args(ins, ctx)
