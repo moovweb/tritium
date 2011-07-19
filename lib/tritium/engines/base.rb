@@ -37,6 +37,10 @@ module Tritium
         build_parser.parse
       end
       
+      def to_script
+        @root_instruction.to_s
+      end
+      
       def build_parser
         Tritium::Parser::Parser.new(@script_string, 
                                     :path     => @script_path, 
