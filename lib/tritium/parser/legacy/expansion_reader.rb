@@ -267,5 +267,16 @@ module Tritium::Parser
         block.call if block
       end
     end
+    
+    def inner(text = nil, &block)
+      if text
+        add_cmd("inner") do
+          set(text)
+          block.call if block
+        end
+      else
+        add_cmd("inner", &block)
+      end
+    end
   end
 end
