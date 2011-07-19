@@ -61,10 +61,8 @@ module Tritium
         
         def run_children(ins, ctx)
           # we are a block of somesort!
-          if ins.respond_to?("statements")
-            ins.statements.each do |statement|
-              process(statement, ctx)
-            end
+          ins.statements.each do |statement|
+            process(statement, ctx)
           end
         end
       end
