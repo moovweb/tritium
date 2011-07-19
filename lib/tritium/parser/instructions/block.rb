@@ -46,8 +46,12 @@ module Tritium
         end
         
         def add_statements(instructions)
-          @statements.last.add_statements(instructions)
-          set_parents!
+          if @statements.last
+            @statements.last.add_statements(instructions)
+            set_parents!
+          else
+            super
+          end
         end
       end
     end

@@ -26,7 +26,7 @@ module Tritium
         end
         
         def opens
-          spec.opens
+          spec.opens || scope
         end
 
         def function_stub(depth = 0)

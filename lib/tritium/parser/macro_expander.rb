@@ -54,7 +54,7 @@ module Tritium
         end
 
         if expansion
-          expansion_site.statements += expansion.statements
+          expansion_site.add_statements(expansion.statements)
 
           last_statement = expansion_site.statements.last
           if last_statement.respond_to?("statements")
