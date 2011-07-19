@@ -5,7 +5,7 @@ xml()  {
   select(".//*[@id='rows']") {
     select("./*[@class='row']") {
       # Move the anchor href up to an onclick
-      attribute("onclick", fetch("a/@href"))
+      attribute("onclick", fetch(".//a/@href"))
       attribute("onclick") {
         value() {
           prepend("window.location = '")
