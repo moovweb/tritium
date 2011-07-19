@@ -14,7 +14,11 @@ module Tritium
         end
         
         def spec
-          scope[@name.to_s]
+          spec = scope[@name.to_s]
+          if spec.nil?
+            throw "Invalid #{@name.to_s} in #{scope.name} scope"
+          end
+          spec
         end
         
         def base?
