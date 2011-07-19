@@ -1,5 +1,6 @@
 
 # set("hi")
+require_relative 'context'
 
 module Tritium
   module Engines
@@ -15,16 +16,16 @@ module Tritium
           if ins.is_a?(Invocation)
             # Collect and evaluate the pos_args
             pos_args, kwd_args = process_args(ins, ctx)
-            if ctx.is_a?(String)
-              ctx = text_invocation(ins, ctx, pos_args, kwd_args)
+            if ins.base?
+              base_invocation(ins, pos_args, kwd_args)
+            elsif ctx.type == "Text"
+              text_invocation(ins, ctx, pos_args, kwd_args)
             end
           elsif ins.is_a?(InlineBlock)
-            ctx = run_children(ins, ctx)
+            run_children(ins, ctx)
           elsif ins.is_a?(Literal)
-            ctx = ins.value
+            ins.value
           end
-
-          return ctx
         end
         
         def process_args(ins, ctx)
@@ -50,24 +51,30 @@ module Tritium
           # we are a block of somesort!
           if ins.respond_to?("statements")
             ins.statements.each do |statement|
-              ctx = process(statement, ctx)
+              process(statement, ctx)
             end
           end
-          return ctx
+        end
+        
+        def base_invocation(ins, args, kwds)
+          case ins.name
+          when :var
+            
+          end
         end
         
         def text_invocation(ins, ctx, args, kwds)
           case ins.name
           when :set
-            return args.first
+            ctx.set(args.first)
           when :html, :xml, :xhtml, :html_fragment
-            doc = Tritium::Engines.xml_parsers[ins.name.to_s].parse(ctx)
-            doc = run_children(ins, doc)
-            return doc.send("to_#{ins.name}")
+            doc = Context[ins, Tritium::Engines.xml_parsers[ins.name.to_s].parse(ctx.value)]
+            run_children(ins, doc)
+            ctx.set(doc.value.send("to_#{ins.name}"))
           when :prepend
-            return args.first + ctx
+            ctx.set(args.first + ctx.value)
           when :append
-            return ctx + args.first
+            ctx.set(ctx.value + args.first)
           else
             throw "Unknown method #{ins.name} in Text scope"
           end

@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'logger'
 require_relative '../base'
+require_relative 'context'
 require_relative 'run'
 
 module Tritium
@@ -9,7 +10,9 @@ module Tritium
       
       def run(input, options = {})
         run = Run.new(options)
-        run.process(@root_instruction, input)
+        ctx = Context[@root_instruction, input]
+        run.process(@root_instruction, ctx)
+        ctx.value
       end
     end
   end
