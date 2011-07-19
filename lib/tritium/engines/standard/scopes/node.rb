@@ -44,9 +44,11 @@ module Tritium
             run_children(ins, Context[ins, node])
           when :inject_at
             position, content = args
-            nodes = position_node(ctx.value, content, position)
-            node = nodes.children.last
-            run_children(ins, Context[ins, node])
+            result = position_node(ctx.value, content, position)
+            if result.respond_to?("first")
+              result = result.first
+            end
+            run_children(ins, Context[ins, result])
           when :move_to
             node = ctx.value.xpath(args.first).first
             return if node.nil?
@@ -63,9 +65,24 @@ module Tritium
             else
               move(ins, ctx, target.dup, ctx.value, args.last)
             end
+          when :wrap_text_children
+            tag_name = args.first
+            attributes = kwd_args
+            ctx.value.children.each do |child|
+              next if not child.text? or child.text.strip.empty?
+              wrapper = child.add_previous_sibling("<#{tag_name} />").first
+              attributes.each do |key, val|
+                key = key.to_s if key.is_a? Symbol
+                wrapper[key] = val
+              end
+              wrapper.add_child(child)
+              run_children(ins, Context[ins, child])
+            end
           else
             throw "Method #{ins.name} not implemented in Node scope"
           end
+        #rescue
+        # throw "Error with #{ins}"
         end
         
         def position_node(target, node, position)
@@ -87,8 +104,6 @@ module Tritium
           else
             target.add_child(node)
           end
-          
-          return node
         end
 
         def move(ins, ctx, what, to, position)

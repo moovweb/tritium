@@ -83,13 +83,13 @@ module  EngineTests
         result.strip!
         
         
-        if ENV['TEST_DEBUG']
+        if ENV['TEST_DEBUG'] || ENV["SCRIPT"]
           if expected_output != result
             puts "Expected:"
             puts expected_output
             puts "Result: "
             puts result
-            puts "Script: "
+            #puts "Script: "
             puts tritium.to_script
           end
         end

@@ -61,7 +61,7 @@ module Tritium
           kwd_args = {}
           ins.kwd_args.each do |key, value|
             if value.is_a?(Instruction)
-              value = process(arg, ctx)
+              value = process(value, ctx)
             end
             kwd_args[key] = value
           end

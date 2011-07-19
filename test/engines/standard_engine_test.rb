@@ -1,4 +1,4 @@
-ENV["SCRIPT"] = "xml_api"
+#ENV["SCRIPT"] = "fetch"
 
 require 'minitest/autorun'
 require_relative '../../lib/tritium/engines/standard/engine'
