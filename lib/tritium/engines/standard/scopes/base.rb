@@ -29,6 +29,20 @@ module Tritium
               run_children(ins, ctx)
               return false # signal to stop!
             end
+          when :fetch
+            # We need to find a parent who has a Node!
+            selector = args.first
+            
+            while !ctx.value.respond_to?("xpath") do
+              ctx = @stack[@stack.index(ctx) - 1]
+              if ctx.nil?
+                throw "Only use fetch nested inside of a Node scope"
+              end
+            end
+            node = ctx.value
+            fetch_ctx = Context[ins, node.xpath(selector.to_s).first.to_s]
+            run_children(ins, fetch_ctx)
+            return fetch_ctx.value
           when :export
             @export_vars << [args[0], args[1]]
           when :dump

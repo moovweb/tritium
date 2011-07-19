@@ -48,6 +48,15 @@ Base:
       -
         name: Filename
         doc: The location of the file. This should be relative to the script. Please report if it is NOT!
+  fetch:
+    opens: Text
+    returns: true
+    doc: This is how you select an element to pass it to a function.
+    arguments:
+      -
+        name: Selector
+        doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
+  
   asset:
     opens: Text
     doc: Use this to call any files kept in the project's asset folder.
@@ -91,14 +100,6 @@ Node:
     alias: $()
     arguments:
       - 
-        name: Selector
-        doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
-  fetch:
-    opens: Text
-    returns: true
-    doc: This is how you select an element to pass it to a function.
-    arguments:
-      -
         name: Selector
         doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
   text:
