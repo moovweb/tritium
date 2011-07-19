@@ -12,7 +12,7 @@ module Tritium
         run = Run.new(options)
         ctx = Context[@root_instruction, input]
         run.process(@root_instruction, ctx)
-        ctx.value
+        [ctx.value, run.export_vars]
       end
     end
   end

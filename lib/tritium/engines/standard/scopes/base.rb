@@ -27,6 +27,8 @@ module Tritium
               run_children(ins, ctx)
               return false # signal to stop!
             end
+          when :export
+            @export_vars << [args[0], args[1]]
           when :dump
             return ctx.value.to_s
           when :debug
