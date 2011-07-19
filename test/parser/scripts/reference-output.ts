@@ -21,8 +21,7 @@ xhtml() {
             }
           }
         }
-        move_to("preceding-sibling::div[1]", "top") {
-        }
+        move_to("preceding-sibling::div[1]", "top")
         # ENTERING FILE: import 2.ts
         move_here(".//div[@class='something']") {
           attribute("id") {
@@ -42,8 +41,7 @@ xhtml() {
               }
             }
           }
-          move_to("preceding-sibling::span[1]", "top") {
-          }
+          move_to("preceding-sibling::span[1]", "top")
         }
         # LEAVING FILE: import 2.ts
       }
