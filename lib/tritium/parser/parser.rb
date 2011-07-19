@@ -181,6 +181,9 @@ module Tritium
 
       def invocation
         func_name = pop!.value
+        if func_name == "$".intern
+          func_name = :select
+        end
         raise_error("function call is missing a valid argument list") if
           peek.lexeme != :LPAREN
         args = arguments
