@@ -10,6 +10,7 @@ module Tritium
   module Engines
     class Standard < Base
       class Run
+        attr :export_vars
         include Tritium::Parser::Instructions
         include BaseFunctions
         include TextFunctions
@@ -19,6 +20,7 @@ module Tritium
         def initialize(options = {})
           @env = options["env"] || options[:env] || {}
           @matchers = []
+          @export_vars = {}
         end
         
         def process(ins, ctx)
