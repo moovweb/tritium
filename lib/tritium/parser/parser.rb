@@ -175,7 +175,7 @@ module Tritium
           @expander.expand(macro_call)
           return stub
         else
-          return cmd(Invocation, "var", [var_name], {}, stmts)
+          return cmd(Reference, [var_name], {}, stmts)
         end
       end
 

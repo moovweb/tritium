@@ -75,6 +75,13 @@ module Tritium
           return result
         end
       end
+      
+      class Reference < Invocation; 
+        def initialize(filename, line_num,
+                       name = nil, pos_args = [], kwd_args = {}, statements = [])
+            super(filename, line_num, "var", pos_args, kwd_args, statements)
+        end
+      end
     end
   end
 end
