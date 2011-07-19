@@ -33,6 +33,10 @@ module Tritium
             end
             attribute = Context[ins, xml_attribute]
             run_children(ins, attribute)
+            xml_attribute = attribute.value
+            if xml_attribute.value.strip == ""
+              xml_attribute.remove
+            end
           when :insert_at
             position, node_name = args
             node = Nokogiri::XML::Node.new(node_name, ctx.value.document)
@@ -43,6 +47,22 @@ module Tritium
             nodes = position_node(ctx.value, content, position)
             node = nodes.children.last
             run_children(ins, Context[ins, node])
+          when :move_to
+            node = ctx.value.xpath(args.first).first
+            return if node.nil?
+            position_node(node, ctx.value, position)
+            run_children(ins, Context[ins, node])
+          when :move_here
+            move(ins, ctx, args.first, ctx.value, args.last)
+          when :copy_to
+            move(ins, ctx, ctx.value.dup, args.first, args.last)
+          when :copy_here
+            target = ctx.value.xpath(args.first).first
+            if target.nil?
+              @logger.debug("Copy failed with #{args.first}")
+            else
+              move(ins, ctx, target.dup, ctx.value, args.last)
+            end
           else
             throw "Method #{ins.name} not implemented in Node scope"
           end
@@ -69,6 +89,26 @@ module Tritium
           end
           
           return node
+        end
+
+        def move(ins, ctx, what, to, position)
+          if what.is_a?(String)
+            what = ctx.value.xpath(what)
+          end
+
+          if to.is_a?(String)
+            to = ctx.value.xpath(to)
+          end
+
+          to = [to].flatten
+          what = [what].flatten
+
+          to.each do |to_target|
+            what.each do |what_target|
+              node = position_node(to_target, what_target, position)
+              run_children(ins, Context[ins, node])
+            end
+          end
         end
       end
     end
