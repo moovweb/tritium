@@ -14,6 +14,17 @@ module Tritium
             ctx.set(args.first + ctx.value)
           when :append
             ctx.set(ctx.value + args.first)
+          when :replace
+            ctx.value.gsub!(Regexp.new(args.first)) do |match|
+              $~.captures.each_with_index do |arg, index|
+                @env["#{index + 1}"] = arg
+              end
+              match_ctx = Context[ins, match_ctx]
+              run_children(ins, match_ctx)
+              match_ctx.value.gsub(/\$([\d])/) do
+                @env[$1]
+              end
+            end
           else
             throw "Method #{ins.name} not implemented in Text scope"
           end
