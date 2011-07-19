@@ -4,7 +4,7 @@ xml()  {
       insert("middle", index: 2)
 
       insert("bottom", "hello", index: 3) {
-        html() {
+        inner() {
           replace(/llo/, "llo, world!")
         }
       }
