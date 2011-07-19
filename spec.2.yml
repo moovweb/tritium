@@ -329,5 +329,5 @@ Text:
     arguments: 
       -
         name: Text to append
-  remove:
+  clear:
     doc: Set the whole thing to ""
