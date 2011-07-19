@@ -27,6 +27,10 @@ module Tritium
           #puts "including from #{@include}"
           include_functions_from(parent, @include)
         end
+        
+        @functions.each do |name, func|
+          func.scopes << name
+        end
       end
       
       def [](function_name)

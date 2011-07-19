@@ -1,5 +1,6 @@
 require 'minitest/autorun'
 require_relative '../../lib/tritium/parser/parser'
+ENV["TEST"] = "true"
 
 class ParserTest < MiniTest::Unit::TestCase
   include Tritium::Parser
@@ -93,5 +94,19 @@ class ParserTest < MiniTest::Unit::TestCase
   rescue Exception => e
     assert e.any?
     assert e.size > 2
+  end
+  
+  def test_scopes
+    script_string, parser, root = build_parser("add_class.ts")
+    assert_equal "Text", root.scope.name
+    var = root.statements.first
+    assert_equal root.scope, var.scope
+    assert_equal "Text", var.opens.name
+    html = root.statements.last
+    assert_equal root.scope, html.scope
+    assert_equal "XMLNode", html.opens.name
+    child = html.statements.first
+    assert_equal html, child.parent
+    assert_equal "XMLNode", child.scope.name
   end
 end

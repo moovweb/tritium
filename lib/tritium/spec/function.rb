@@ -12,7 +12,8 @@ module Tritium
          :alias => nil,        #string otherwise
          :doc => "",
          :positional => false,
-         :opens => nil }
+         :opens => nil,
+         :scopes => [] }
       end
       setup_defaults!
       
@@ -37,6 +38,10 @@ module Tritium
 
       def arg_list
         (@arguments.values.collect &:formatted_name ).join(", ")
+      end
+      
+      def base?
+        @scopes.include?("Base")
       end
 
       def visible?
