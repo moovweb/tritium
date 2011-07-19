@@ -62,14 +62,6 @@ Base:
   script:
     opens: Text
     doc: DO NOT USE. Wraps the entire script virtually!
-  fetch:
-    opens: Text
-    returns: true
-    doc: This is how you select an element to pass it to a function.
-    arguments:
-      -
-        name: Selector
-        doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
   concat:
     opens: Text
     returns: true
@@ -99,6 +91,14 @@ Node:
     alias: $()
     arguments:
       - 
+        name: Selector
+        doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
+  fetch:
+    opens: Text
+    returns: true
+    doc: This is how you select an element to pass it to a function.
+    arguments:
+      -
         name: Selector
         doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
   text:
