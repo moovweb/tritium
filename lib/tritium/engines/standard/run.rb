@@ -21,7 +21,7 @@ module Tritium
           @logger = logger
           @env = options["env"] || options[:env] || {}
           @matchers = []
-          @export_vars = {}
+          @export_vars = []
           @stack = []
         end
         
