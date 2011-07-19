@@ -12,6 +12,8 @@ module Tritium
             val = Context[ins, ctx.value.name]
             run_children(ins, val)
             ctx.value.name = val.value
+          when :remove
+            ctx.value.remove
           else
             throw "Method #{ins.name} not implemented in Attribute scope"
           end
