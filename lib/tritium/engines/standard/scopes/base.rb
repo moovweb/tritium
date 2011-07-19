@@ -40,7 +40,7 @@ module Tritium
               end
             end
             node = ctx.value
-            puts node.inspect
+  
             result = node.xpath(selector.to_s).first
             if result.is_a?(Nokogiri::XML::Attr)
               result = result.value
