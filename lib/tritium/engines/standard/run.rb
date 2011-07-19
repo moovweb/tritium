@@ -60,10 +60,12 @@ module Tritium
           case ins.name
           when :set
             return args.first
-          when :html, :xml, :xhtml
+          when :html, :xml, :xhtml, :html_fragment
             doc = Tritium::Engines.xml_parsers[ins.name.to_s].parse(ctx)
             doc = run_children(ins, doc)
             return doc.send("to_#{ins.name}")
+          else
+            throw "Unknown method #{ins.name} in Text scope"
           end
         end
       end
