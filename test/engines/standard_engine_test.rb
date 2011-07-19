@@ -1,4 +1,4 @@
-ENV["SCRIPT"] = "inner_wrap"
+#ENV["SCRIPT"] = "inner_wrap"
 
 require 'minitest/autorun'
 require_relative '../../lib/tritium/engines/standard/engine'
