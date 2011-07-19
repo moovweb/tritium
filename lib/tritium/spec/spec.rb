@@ -27,7 +27,14 @@ module Tritium
     end
     
     def [](scope_name)
-      @scopes[scope_name]
+      if scope_name.is_a?(Scope)
+        return scope_name
+      end
+      scope = @scopes[scope_name]
+      if scope.nil?
+        throw "Invalid scope #{scope_name.inspect}"
+      end
+      scope
     end
   end
 end

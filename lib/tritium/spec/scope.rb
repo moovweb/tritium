@@ -33,8 +33,8 @@ module Tritium
         end
       end
       
-      def [](function_name)
-        functions[function_name]
+      def [](func_name)
+        @functions[func_name]
       end
       
       def include_functions_from(parent, scope_name)

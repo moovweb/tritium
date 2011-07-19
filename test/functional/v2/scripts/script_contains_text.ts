@@ -1,5 +1,7 @@
 html() {
-  $("//script[contains(text(), 'aQueryString')]/text()") {
-    replace("iParam", "mParam")
+  $("//script[contains(text(), 'aQueryString')]") {
+    text() {
+      replace("iParam", "mParam")
+    }
   }
 }

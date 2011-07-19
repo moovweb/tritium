@@ -38,7 +38,7 @@ class ReaderTest < MiniTest::Unit::TestCase
     
     select = output.children.first
     
-    assert_equal "XMLNode", select.scope
+    assert_equal "XMLNode", select.scope.name
     assert_equal 2, select.children.size
     assert_equal 1, select.args.size
     assert_equal './shit', select.args.first
@@ -48,7 +48,7 @@ class ReaderTest < MiniTest::Unit::TestCase
     assert_equal 1, html.children.size
     assert_equal 'inner', html.name
     assert_equal ['hello'], html.args
-    assert_equal "Text", html.scope
+    assert_equal "Text", html.scope.name
     
     # Remove should inherit the parent's scope
     html_remove = html.children.last
@@ -61,7 +61,7 @@ class ReaderTest < MiniTest::Unit::TestCase
     assert_equal [], remove.args
     assert_equal [], remove.children
     assert_equal remove.root, root
-    assert_equal "XMLNode", remove.scope
+    assert_equal "XMLNode", remove.scope.name
   end
   
   def test_debug_lines

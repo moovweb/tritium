@@ -56,12 +56,13 @@ module Tritium
     
       def add_cmd(name, *args, &block)
         args.each do |arg|
-          if arg.is_a?(ReaderInstruction) && !arg.information["returns"]
+          if arg.is_a?(ReaderInstruction) && (arg.information.nil? || !arg.information["returns"])
             raise ReaderInstruction::Invalid.new(arg)
           end
         end
+        name = name.to_s
         
-        ins = @stack.last.add(name.to_s, :args => args, :processed_line => @_processed_line, :line => @_line, :line_number => @_line_number, :script_name => @_script)
+        ins = @stack.last.add(name, :args => args, :processed_line => @_processed_line, :line => @_line, :line_number => @_line_number, :script_name => @_script)
 
         if block
           @stack.push(ins)

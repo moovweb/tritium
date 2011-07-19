@@ -1,3 +1,4 @@
+#ENV["SCRIPT"] = "prepend"
 
 require 'minitest/autorun'
 require_relative '../../lib/tritium/engines/standard/engine'
@@ -5,7 +6,7 @@ require_relative 'engine_tests'
 
 class StandardEngineTest < MiniTest::Unit::TestCase
   include Tritium::Engines
-  include EngineTests
+  #include EngineTests
   
   def engine_class
     Standard

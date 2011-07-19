@@ -33,7 +33,11 @@ module Tritium
       end
       
       def opens
-        Tritium.spec[@opens]
+        if @opens
+          Tritium.spec[@opens] 
+        else
+          nil
+        end
       end
 
       def arg_list
