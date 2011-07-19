@@ -106,10 +106,15 @@ class ParserTest < MiniTest::Unit::TestCase
     html = root.statements.last
     assert_equal root.scope, html.scope
     assert_equal "XMLNode", html.opens.name
-    child = html.statements.first
-    assert_equal html, child.parent
     assert !html.base?, "html() is NOT a Base method"
     assert var.base?, "var() should be a base method #{var.class} #{var.spec.scopes.inspect}"
-    assert_equal "XMLNode", child.scope.name
+    
+    select = html.statements.first
+    assert_equal html, select.parent
+    assert_equal "XMLNode", select.scope.name
+    assert_equal "XMLNode", select.opens.name
+    
+    attribute = select.statements.first
+    assert_equal "XMLNode", attribute.scope.name
   end
 end
