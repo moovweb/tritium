@@ -33,6 +33,10 @@ module Tritium
             value = ctx.value.to_s
             @logger.info(value)
             return value
+          when :log
+            text = Context[ins, args.join(" ")]
+            run_children(ins, text)
+            @logger.info(text.value)
           when :debug
             # Ignore this
             run_children(ins, ctx)
