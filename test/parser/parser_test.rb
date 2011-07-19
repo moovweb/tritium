@@ -114,7 +114,10 @@ class ParserTest < MiniTest::Unit::TestCase
     assert_equal "XMLNode", select.scope.name
     assert_equal "XMLNode", select.opens.name
     
-    attribute = select.statements.first
-    assert_equal "XMLNode", attribute.scope.name
+    expansion_attribute = select.statements.first
+    assert_equal "XMLNode", expansion_attribute.scope.name
+    attribute = expansion_attribute.statements.first
+    
+    assert_equal attribute, attribute.args.first.parent
   end
 end
