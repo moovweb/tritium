@@ -69,9 +69,5 @@ module Tritium::Engines::Reference::Scope
     def prepend(text)
       @text.insert(0,text)
     end
-
-    def rewrite(what)
-      replace(env["rewrite_#{what}_matcher"], env["rewrite_#{what}_replacement"])
-    end
   end
 end
