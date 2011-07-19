@@ -28,7 +28,7 @@ module Tritium
               base_invocation(ins, pos_args, kwd_args)
             elsif ctx.type == "Text"
               text_invocation(ins, ctx, pos_args, kwd_args)
-            elsif ctx.type == "Node"
+            elsif ctx.type == "Node" || ctx.type == "XMLNode"
               node_invocation(ins, ctx, pos_args, kwd_args)
             elsif ctx.type == "Attribute"
               attribute_invocation(ins, ctx, pos_args, kwd_args)
