@@ -15,7 +15,7 @@ module Tritium
           when :append
             ctx.set(ctx.value + args.first)
           else
-            throw "Unknown method #{ins.name} in Text scope"
+            throw "Method #{ins.name} not implemented in Text scope"
           end
         end
       end

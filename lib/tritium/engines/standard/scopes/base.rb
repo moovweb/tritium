@@ -5,7 +5,8 @@ module Tritium
         def base_invocation(ins, args, kwds)
           case ins.name
           when :var
-            
+          else
+            throw "Method #{ins.name} not implemented in Base scope"
           end
         end
       end

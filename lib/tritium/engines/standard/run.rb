@@ -28,6 +28,10 @@ module Tritium
               base_invocation(ins, pos_args, kwd_args)
             elsif ctx.type == "Text"
               text_invocation(ins, ctx, pos_args, kwd_args)
+            elsif ctx.type == "Node"
+              node_invocation(ins, ctx, pos_args, kwd_args)
+            elsif ctx.type == "Attribute"
+              attribute_invocation(ins, ctx, pos_args, kwd_args)
             end
           elsif ins.is_a?(InlineBlock)
             run_children(ins, ctx)
