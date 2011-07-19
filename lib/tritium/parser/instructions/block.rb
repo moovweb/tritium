@@ -5,6 +5,7 @@ module Tritium
         attr :statements, true
         def initialize(filename, line_num, statements = [])
           @filename, @line_num, @statements = filename, line_num, statements
+          set_parents!
         end
       
         def to_s(depth = 0)
