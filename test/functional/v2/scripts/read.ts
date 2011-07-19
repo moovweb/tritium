@@ -1,3 +1,1 @@
-xml() {
-  inject(read("../fragments/read.xml"))
-}
+@import subfolder/read_from_subfolder.ts
