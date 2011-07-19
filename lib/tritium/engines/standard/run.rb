@@ -64,6 +64,10 @@ module Tritium
             doc = Tritium::Engines.xml_parsers[ins.name.to_s].parse(ctx)
             doc = run_children(ins, doc)
             return doc.send("to_#{ins.name}")
+          when :prepend
+            return args.first + ctx
+          when :append
+            return ctx + args.first
           else
             throw "Unknown method #{ins.name} in Text scope"
           end
