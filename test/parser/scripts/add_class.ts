@@ -1,4 +1,8 @@
 $hi = "hello"
-add_class($hi) {
-  replace("h", "H")
+html() {
+  $("/*") {
+    add_class($hi) {
+      replace("h", "H")
+    }
+  }
 }
