@@ -30,6 +30,10 @@ module Tritium
         end
         result
       end
+      
+      def opens
+        Tritium.spec[@opens]
+      end
 
       def arg_list
         (@arguments.values.collect &:formatted_name ).join(", ")

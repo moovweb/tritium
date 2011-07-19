@@ -10,6 +10,18 @@ module Tritium
         def initialize(filename, line_num)
           @filename, @line_num = filename, line_num
         end
+        
+        def scope
+          if @parent
+            @parent.opens
+          else
+            Tritium.spec.default_scope
+          end
+        end
+        
+        def opens
+          scope
+        end
 
         def ruby_debug_line(depth = 0)
           return ""

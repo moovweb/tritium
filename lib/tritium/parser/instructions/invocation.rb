@@ -12,6 +12,14 @@ module Tritium
           super(filename, line_num, statements)
           @name, @pos_args, @kwd_args = name.intern, pos_args, kwd_args
         end
+        
+        def spec
+          scope[@name.to_s]
+        end
+        
+        def opens
+          spec.opens
+        end
 
         def function_stub(depth = 0)
           name = @name.to_s.gsub(/\$/, "select")

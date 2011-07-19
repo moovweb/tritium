@@ -15,6 +15,10 @@ module Tritium
       end
     end
     
+    def default_scope
+      self["Text"]
+    end
+    
     def self.load(spec_file, version)
       Spec.new(YAML::load(spec_file), version)
     end

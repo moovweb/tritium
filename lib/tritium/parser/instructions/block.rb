@@ -16,6 +16,10 @@ module Tritium
           set_parents!
         end
         
+        def opens
+          scope
+        end
+        
         def set_parents!
           @statements.each do |statement|
             statement.parent = self
@@ -36,7 +40,7 @@ module Tritium
       # This class is ONLY used to indicate that the inline block used was
       # an expansion block. Walk over this and ignore it.
       class ExpansionInlineBlock < InlineBlock
-        def to_s(depth)
+        def to_s(depth = 0)
           return (@statements.collect { |s| s.to_s(depth) }).join("\n")
         end
         
