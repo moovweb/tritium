@@ -33,14 +33,19 @@ module Tritium
             # We need to find a parent who has a Node!
             selector = args.first
             
-            while !ctx.value.respond_to?("xpath") do
+            while !ctx.value.respond_to?("xpath") || ctx.value.is_a?(Nokogiri::XML::Attr) do
               ctx = @stack[@stack.index(ctx) - 1]
               if ctx.nil?
                 throw "Only use fetch nested inside of a Node scope"
               end
             end
             node = ctx.value
-            fetch_ctx = Context[ins, node.xpath(selector.to_s).first.to_s]
+            puts node.inspect
+            result = node.xpath(selector.to_s).first
+            if result.is_a?(Nokogiri::XML::Attr)
+              result = result.value
+            end
+            fetch_ctx = Context[ins, result.to_s]
             run_children(ins, fetch_ctx)
             return fetch_ctx.value
           when :export
