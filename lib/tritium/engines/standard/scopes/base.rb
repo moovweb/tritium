@@ -6,7 +6,11 @@ module Tritium
         def base_invocation(ins, ctx, args, kwds)
           case ins.name
           when :var
-            @env[args.first]
+            value = @env[args.first] || ""
+            value_ctx = Context[ins, value]
+            run_children(ins, value_ctx)
+            @env[args.first] = value_ctx.value
+            return value_ctx.value
           when :match
             @matchers.push(args.first)
             run_children(ins, ctx)
