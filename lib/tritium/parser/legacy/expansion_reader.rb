@@ -4,49 +4,6 @@ require_relative '../../extensions/matcher'
 module Tritium::Parser
   class ExpansionReader < Reader
     
-    # If we are passed an ./@attribute selector, then automatically
-    # open the attribute block
-    # If we are passed a text() selector, then automatically open html()
-    def select(selector, &block)
-      # not truly comprehensive, but good enough
-      attr_rgx = /@[a-zA-Z_:][-\w:.]*\z/
-      text_rgx = /text\s*\(\s*\)\z/
-      html_rgx = /html\s*\(\s*\)\z/
-
-      # This will behave badly if @attr, text(), or html() is preceded by '//'
-      # But who's gonna' do that?
-      if attr = selector[attr_rgx] then
-        path = selector.sub(attr_rgx, "")
-        if path.empty? or path == "./" then
-          attribute(attr[1..-1], &block)
-        else
-          add_cmd("select", path[0..-2]) {
-            attribute(attr[1..-1], &block)
-          }
-        end
-      elsif txt = selector[text_rgx] then
-        path = selector.sub(text_rgx, "")
-        if path.empty? or path == "./" then
-          text(&block)
-        else
-          add_cmd("select", path[0..-2]) {
-            text(&block)
-          }
-        end
-      elsif htm = selector[html_rgx] then
-        path = selector.sub(html_rgx, "")
-        if path.empty? or path == "./" then
-          inner(&block)
-        else
-          add_cmd("select", path[0..-2]) {
-            inner(&block)
-          }
-        end
-      else
-        add_cmd("select", selector, &block)
-      end
-    end
-    
     def var(name, set_to = nil, &block)
       if set_to
         add_cmd("var", name) do
