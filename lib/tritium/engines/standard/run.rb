@@ -18,6 +18,7 @@ module Tritium
 
         def initialize(options = {})
           @env = options["env"] || options[:env] || {}
+          @matchers = []
         end
         
         def process(ins, ctx)
@@ -26,7 +27,7 @@ module Tritium
             pos_args, kwd_args = process_args(ins, ctx)
             #puts ctx.type.inspect
             if ins.base?
-              base_invocation(ins, pos_args, kwd_args)
+              base_invocation(ins, ctx, pos_args, kwd_args)
             elsif ctx.type == "Text"
               text_invocation(ins, ctx, pos_args, kwd_args)
             elsif ctx.type == "Node" || ctx.type == "XMLNode"
@@ -63,7 +64,10 @@ module Tritium
         def run_children(ins, ctx)
           # we are a block of somesort!
           ins.statements.each do |statement|
-            process(statement, ctx)
+            result = process(statement, ctx)
+            if result == false
+              return
+            end
           end
         end
       end

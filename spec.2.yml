@@ -30,7 +30,7 @@ Base:
         expansion: true
   match:
     doc: 
-  not_matcher:
+  not:
     doc: Used with match($var, not('hi'))
     hide: true
   with:
