@@ -28,7 +28,7 @@ module Tritium
           include_functions_from(parent, @include)
         end
         
-        @functions.each do |name, func|
+        @functions.each do |fname, func|
           func.scopes << name
         end
       end

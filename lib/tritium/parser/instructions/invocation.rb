@@ -17,6 +17,10 @@ module Tritium
           scope[@name.to_s]
         end
         
+        def base?
+          spec.base?
+        end
+        
         def opens
           spec.opens
         end
