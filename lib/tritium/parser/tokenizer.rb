@@ -83,6 +83,7 @@ module Tritium
           when pop_match!(@@multiline[:close])
             depth -= 1
           else
+            @line[/^("|'|\/)/] and pop_match!(@@string_matchers[@line[0]]) or
             pop_match!(/^./)
           end
           next
@@ -96,7 +97,7 @@ module Tritium
           when @line[@@multiline[:open]]
             skip_multicomment!
             next
-          when @line[/^#/]
+          when @line[/^(#|\/\/)/]
             next_line!
             next
           else break
@@ -124,7 +125,7 @@ module Tritium
       def munch!
         while skip_whitespace_and_comments! and @line do
           case
-          when @line[/^\]#/]
+          when @line[@@multiline[:close]]
             return munch_error!("unmatched comment terminator")
           when m = pop_match!(/^(=|,|\(|\)|\{|\})/)
             return token(@@symbols[m])
