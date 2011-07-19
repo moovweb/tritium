@@ -175,11 +175,7 @@ module Tritium
           @expander.expand(macro_call)
           return stub
         else
-          if stmts
-            return cmd(InvocationWithBlock, "var", [var_name], {}, stmts)
-          else
-            return cmd(Invocation, "var", [var_name], {})
-          end
+          return cmd(Invocation, "var", [var_name], {}, stmts)
         end
       end
 
@@ -206,8 +202,7 @@ module Tritium
           return stub
         else
           stmts = stmts ? [stmts] : []
-          return cmd(stmts.empty? ? Invocation : InvocationWithBlock,
-                     func_name, args[:pos], args[:kwd], *stmts)
+          return cmd(Invocation, func_name, args[:pos], args[:kwd], *stmts)
         end
       end
 
