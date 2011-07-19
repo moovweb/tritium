@@ -24,7 +24,7 @@ module Tritium
           if ins.is_a?(Invocation)
             # Collect and evaluate the pos_args
             pos_args, kwd_args = process_args(ins, ctx)
-            puts ctx.type.inspect
+            #puts ctx.type.inspect
             if ins.base?
               base_invocation(ins, pos_args, kwd_args)
             elsif ctx.type == "Text"
