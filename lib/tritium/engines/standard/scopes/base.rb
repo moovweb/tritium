@@ -30,7 +30,9 @@ module Tritium
           when :export
             @export_vars << [args[0], args[1]]
           when :dump
-            return ctx.value.to_s
+            value = ctx.value.to_s
+            @logger.info(value)
+            return value
           when :debug
             # Ignore this
             run_children(ins, ctx)
