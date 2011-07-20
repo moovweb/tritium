@@ -1,20 +1,16 @@
 xml()  {
-  select('root') {
-    bottom() {
-      insert("middle", index: 2)
+  $('root') {
+    insert("middle", index: 2)
 
-      insert("bottom", "hello", index: 3) {
-        inner() {
-          replace(/llo/, "llo, world!")
-        }
+    insert("bottom", "hello", index: 3) {
+      inner() {
+        replace(/llo/, "llo, world!")
       }
     }
 
-    top() {
-      insert("top") {
-        attribute("index", 1)
-      }
-      inject("<!-- Comment at the top -->")
+    insert_top("top") {
+      attribute("index", 1)
     }
+    inject_top("<!-- Comment at the top -->")
   }
 }

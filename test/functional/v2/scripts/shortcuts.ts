@@ -1,5 +1,5 @@
 xml()  {
   $(".//*[@id='a']") {
-    html($variable)
+    inner($variable)
   }
 }

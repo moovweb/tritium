@@ -1,4 +1,4 @@
-doc() {
+xhtml() {
   $("body") {
     $("div[1]") {
       wrap_text_children("p")

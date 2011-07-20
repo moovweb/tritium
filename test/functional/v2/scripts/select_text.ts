@@ -1,7 +1,9 @@
-doc() {
+xhtml() {
   $("body") {
-    $("p/text()") {
-      append(" Leung")
+    $("p") {
+      text() {
+        append(" Leung")
+      }
     }
   }
 }
