@@ -27,7 +27,7 @@ module Tritium::Engines::Reference::Scope
         (replace = open_text_scope_with("", &block)) if block
         
         # Find all instances of "\\1" and similar, and replace them with var('1') (and similar, obvs)
-        replace.gsub(/\$([\d])/) do |var_match|
+        replace.gsub(/[\\\$]([\d])/) do |var_match|
           var($1)
         end
       end 

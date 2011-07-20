@@ -11,7 +11,7 @@ class Tritium::Engines::Debug
           @env["#{index + 1}"] = arg
         end
         replacement = execute_children_on(match)
-        replacement.gsub(/\$([\d])/) do
+        replacement.gsub(/[\\\$]([\d])/) do
           @env[$1]
         end
       end
@@ -54,7 +54,8 @@ class Tritium::Engines::Debug
     end
 
     def rewrite(what)
-      @object.gsub!(Regexp.new(@env["rewrite_#{what}_matcher"]),  @env["rewrite_#{what}_replacement"])
+      replacement =  @env["rewrite_#{what}_replacement"].gsub(/\$([\d]+)/, "\\\\1")
+      @object.gsub!(Regexp.new(@env["rewrite_#{what}_matcher"]), replacement)
     end
   end
 end
