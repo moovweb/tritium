@@ -40,11 +40,11 @@ module Tritium
         end
         
         def base?
-          spec.base?
+          @base ||= spec.base?
         end
         
         def opens
-          spec.opens || scope
+          @opens ||= spec.opens || scope
         end
 
         def function_stub(depth = 0)
