@@ -57,6 +57,13 @@ module Tritium
             fetch_ctx = Context[ins, result.to_s]
             run_children(ins, fetch_ctx)
             return fetch_ctx.value
+          when :asset
+            file_name, type = args
+            if (@env["#{type}_asset_location"][0..6] == "http://") || (@env["#{type}_asset_location"][0..1] == "//")
+              return File.join(@env["#{type}_asset_location"].clone, file_name)
+            else
+              return File.join(@env["asset_host"].clone, @env["#{type}_asset_location"].clone, file_name)
+            end
           when :export
             @export_vars << [args[0], args[1]]
           when :dump
