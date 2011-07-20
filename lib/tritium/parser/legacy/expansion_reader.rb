@@ -54,8 +54,16 @@ module Tritium::Parser
           }
         end
       else
+        did_good = true
         add_cmd("select", selector, &block)
       end
+      if did_good.nil?
+        throw("Whoa there nelly. Looks like you are using a variable-scoped select! #{selector}")
+      end
+    end
+    
+    def clear()
+      remove()
     end
     
     def value(set_value = nil, &block)

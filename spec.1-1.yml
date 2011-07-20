@@ -372,3 +372,6 @@ Text:
         name: Text to append
   remove:
     doc: Set the whole thing to ""
+    deprecated: Please use clear()
+  clear:
+    doc: Set the whole thing to ""
