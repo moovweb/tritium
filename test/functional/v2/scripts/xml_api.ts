@@ -1,8 +1,8 @@
 html() {
   $("html") {
     $(".//div[@id='header']") {
-      var("name", fetch("div[@class = 'name']/text()"))
-      var("address", fetch("div[@class = 'address']"))
+      var("name", fetch("./div[@class = 'name']/text()"))
+      var("address", fetch("./div[@class = 'address']"))
     }
     $(".//div[@class='shopping_cart']") {
       inner() {
@@ -20,11 +20,7 @@ xml() {
         set($name)
       }
     }
-    insert("item", key: "cart_items") {
-      inner() {
-        set($cart_items)
-      }
-    }
+    insert("item", $cart_items, key: "cart_items") 
     insert("item", key: "address_html") {
       inner() {
         set($address)

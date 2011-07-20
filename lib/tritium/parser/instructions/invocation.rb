@@ -1,19 +1,53 @@
 module Tritium
   module Parser
     module Instructions
-      class Invocation < Instruction
-        attr :statements
+      require_relative "block"
+
+      class Invocation < Block
         attr :kwd_args
         attr :pos_args
         attr :name
         def initialize(filename, line_num,
-                       name = nil, pos_args = [], kwd_args = {})
-          super(filename, line_num)
-          @statements = []
+                       name = nil, pos_args = [], kwd_args = {}, statements = [])
+          super(filename, line_num, statements)
           @name, @pos_args, @kwd_args = name.intern, pos_args, kwd_args
+          set_arg_parents!
         end
-      
-        def to_s(depth = 0)
+        
+        def args
+          @pos_args + [@kwd_args]
+        end
+        
+        def set_arg_parents!
+          @pos_args.each do |arg|
+            if arg.is_a?(Instruction)
+              arg.parent = self
+            end
+          end
+          @kwd_args.each do |key, value|
+            if value.is_a?(Instruction)
+              value.parent = self
+            end
+          end
+        end
+        
+        def spec
+          spec = scope[@name.to_s]
+          if spec.nil?
+            throw "Invalid #{@name.to_s} in #{scope.name} scope"
+          end
+          spec
+        end
+        
+        def base?
+          @base ||= spec.base?
+        end
+        
+        def opens
+          @opens ||= spec.opens || scope
+        end
+
+        def stub(depth = 0)
           name = @name.to_s.gsub(/\$/, "select")
           if name == "else" 
             name = "else_do"
@@ -28,23 +62,16 @@ module Tritium
           result << ")"
           return result
         end
-      end
-    
-      class InvocationWithBlock < Invocation
-        attr :statements, true
-        def initialize(filename, line_num,
-                       name = nil, pos_args = [], kwd_args = {}, statements = [])
-          super(filename, line_num, name, pos_args, kwd_args)
-          @statements = statements
-        end
-      
+        
         def to_s(depth = 0)
-          result = super(depth)
-          result << " {\n"
-          depth += 1
-          @statements.each { |stm| result << stm.to_s(depth) << "\n" }
-          depth -= 1
-          result << "#{@@tab * depth}}"
+          result = stub(depth)
+          if @statements.any?
+            result << " {\n"
+            depth += 1
+            @statements.each { |stm| result << stm.to_s(depth) << "\n" }
+            depth -= 1
+            result << "#{@@tab * depth}}"
+          end
           return result
         end
       end

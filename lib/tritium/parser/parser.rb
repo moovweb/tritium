@@ -161,6 +161,7 @@ module Tritium
           args = { pos: [ var_name ] }
         end
         signature = [:var, args[:pos].length]
+        # If you have any number of keyword arguments, it only counts as one arg
         if @expander.is_macro?(signature)
           stub = cmd(ExpansionInlineBlock)
           macro_call = {
@@ -174,21 +175,24 @@ module Tritium
           @expander.expand(macro_call)
           return stub
         else
-          if stmts
-            return cmd(InvocationWithBlock, "var", [var_name], {}, stmts)
-          else
-            return cmd(Invocation, "var", [var_name], {})
-          end
+          return cmd(Invocation, "var", [var_name], {}, stmts)
         end
       end
 
       def invocation
         func_name = pop!.value
+        if func_name == "$".intern
+          func_name = :select
+        end
         raise_error("function call is missing a valid argument list") if
           peek.lexeme != :LPAREN
         args = arguments
         stmts = peek.lexeme == :LBRACE ? block : nil
         signature = [func_name, args[:pos].length]
+        # keywords are args too!
+        if args[:kwd].any?
+          signature[1] += 1
+        end
         if @expander.is_macro?(signature)
           stub = cmd(ExpansionInlineBlock)
           macro_call = { signature: signature,
@@ -201,8 +205,7 @@ module Tritium
           return stub
         else
           stmts = stmts ? [stmts] : []
-          return cmd(stmts.empty? ? Invocation : InvocationWithBlock,
-                     func_name, args[:pos], args[:kwd], *stmts)
+          return cmd(Invocation, func_name, args[:pos], args[:kwd], *stmts)
         end
       end
 

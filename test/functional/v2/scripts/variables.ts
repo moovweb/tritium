@@ -36,7 +36,7 @@ xml()  {
         match($fourth, "worked") {
           match($fifth, "worked") {
             select("//*") {
-              html() {
+              inner() {
                 set("Worked!")
               }
             }

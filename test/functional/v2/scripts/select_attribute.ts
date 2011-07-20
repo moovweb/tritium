@@ -1,8 +1,10 @@
-doc() {
+xhtml() {
   $("body") {
-    $("div/@data-ur-id") {
-      value() {
-        append("blabble")
+    $("div") {
+      attribute("data-ur-id") {
+        value() {
+          append("blabble")
+        }
       }
     }
   }

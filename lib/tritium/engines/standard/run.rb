@@ -1,30 +1,54 @@
 
 # set("hi")
+require_relative 'context'
+require_relative 'scopes/text'
+require_relative 'scopes/base'
+require_relative 'scopes/node'
+require_relative 'scopes/attribute'
 
 module Tritium
   module Engines
     class Standard < Base
       class Run
+        attr :export_vars
         include Tritium::Parser::Instructions
+        include BaseFunctions
+        include TextFunctions
+        include NodeFunctions
+        include AttributeFunctions
 
-        def initialize(options = {})
+        def initialize(logger, options = {})
+          @logger = logger
           @env = options["env"] || options[:env] || {}
+          @matchers = []
+          @export_vars = []
+          @stack = []
         end
         
         def process(ins, ctx)
-          if ins.is_a?(Invocation)
+          @stack.push ctx
+          if ins.is_a?(Tritium::Parser::Instructions::Invocation)
             # Collect and evaluate the pos_args
             pos_args, kwd_args = process_args(ins, ctx)
-            if ctx.is_a?(String)
-              ctx = text_invocation(ins, ctx, pos_args, kwd_args)
+            #puts ctx.type.inspect
+            if ins.base?
+              base_invocation(ins, ctx, pos_args, kwd_args)
+            elsif ctx.type == "Text"
+              text_invocation(ins, ctx, pos_args, kwd_args)
+            elsif ctx.type == "Node" || ctx.type == "XMLNode"
+              node_invocation(ins, ctx, pos_args, kwd_args)
+            elsif ctx.type == "Attribute"
+              attribute_invocation(ins, ctx, pos_args, kwd_args)
             end
-          elsif ins.is_a?(InlineBlock)
-            ctx = run_children(ins, ctx)
-          elsif ins.is_a?(Literal)
-            ctx = ins.value
+          elsif ins.is_a?(Tritium::Parser::Instructions::InlineBlock)
+            run_children(ins, ctx)
+          elsif ins.is_a?(Tritium::Parser::Instructions::Literal)
+            ins.value
+          elsif ins.is_a?(Tritium::Parser::Instructions::Reference)
+            @env[ins.name.to_s]
           end
-
-          return ctx
+        ensure
+          @stack.pop
         end
         
         def process_args(ins, ctx)
@@ -39,7 +63,7 @@ module Tritium
           kwd_args = {}
           ins.kwd_args.each do |key, value|
             if value.is_a?(Instruction)
-              value = process(arg, ctx)
+              value = process(value, ctx)
             end
             kwd_args[key] = value
           end
@@ -48,22 +72,11 @@ module Tritium
         
         def run_children(ins, ctx)
           # we are a block of somesort!
-          if ins.respond_to?("statements")
-            ins.statements.each do |statement|
-              ctx = process(statement, ctx)
+          ins.statements.each do |statement|
+            result = process(statement, ctx)
+            if result == false
+              return
             end
-          end
-          return ctx
-        end
-        
-        def text_invocation(ins, ctx, args, kwds)
-          case ins.name
-          when :set
-            return args.first
-          when :html, :xml, :xhtml
-            doc = Tritium::Engines.xml_parsers[ins.name.to_s].parse(ctx)
-            doc = run_children(ins, doc)
-            return doc.send("to_#{ins.name}")
           end
         end
       end

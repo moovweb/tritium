@@ -1,5 +1,6 @@
 require 'minitest/autorun'
 require_relative '../../lib/tritium/parser/parser'
+ENV["TEST"] = "true"
 
 class ParserTest < MiniTest::Unit::TestCase
   include Tritium::Parser
@@ -82,11 +83,41 @@ class ParserTest < MiniTest::Unit::TestCase
     assert_equal read_script("add_class_output.ts"), output.to_s
   end
   
+  def test_insert_positionals
+    script_string, parser, output = build_parser("insert.ts")
+    assert true # no errors
+  end
+  
   def test_error_handling
     build_parser("invalid.ts")
     assert false, "Should have failed"
   rescue Exception => e
     assert e.any?
     assert e.size > 2
+  end
+  
+  def test_scopes
+    script_string, parser, root = build_parser("add_class.ts")
+    assert_equal "Text", root.scope.name
+    expansion = root.statements.first
+    var = expansion.statements.first
+    assert_equal root.scope, var.scope
+    assert_equal "Text", var.opens.name
+    html = root.statements.last
+    assert_equal root.scope, html.scope
+    assert_equal "XMLNode", html.opens.name
+    assert !html.base?, "html() is NOT a Base method"
+    assert var.base?, "var() should be a base method #{var.class} #{var.spec.scopes.inspect}"
+    
+    select = html.statements.first
+    assert_equal html, select.parent
+    assert_equal "XMLNode", select.scope.name
+    assert_equal "XMLNode", select.opens.name
+    
+    expansion_attribute = select.statements.first
+    assert_equal "XMLNode", expansion_attribute.scope.name
+    attribute = expansion_attribute.statements.first
+    
+    assert_equal attribute, attribute.args.first.parent
   end
 end

@@ -6,7 +6,7 @@
 
 $x = whatever()
 
-doc() {
+xhtml() {
   $("html") {
 
     # Space between function name and arglist
@@ -37,6 +37,6 @@ doc() {
     }
   }
   $("//p[1]") {
-    html(read("paragraph.html"))
+    inner(read("paragraph.html"))
   }
 }

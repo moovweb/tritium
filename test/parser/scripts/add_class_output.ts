@@ -2,11 +2,17 @@
 var("hi") {
   set("hello")
 }
-attribute("class") {
-  value() {
-    append(" ")
-    append(var("hi"))
+html() {
+  select("/*") {
+    attribute("class") {
+      value() {
+        append(" ")
+        append(var("hi"))
+      }
+      replace("h") {
+        set("H")
+      }
+    }
   }
-  replace("h", "H")
 }
 # LEAVING FILE: add_class.ts

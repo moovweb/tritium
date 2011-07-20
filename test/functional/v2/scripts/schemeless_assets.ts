@@ -1,6 +1,4 @@
 html_fragment() {
-  top() {
-    insert("link", src: asset("myfile.css", "stylesheet"))
-    insert("script", src: asset("jquery.js", "js"))
-  }
+  insert_top("link", src: asset("myfile.css", "stylesheet"))
+  insert_top("script", src: asset("jquery.js", "js"))
 }

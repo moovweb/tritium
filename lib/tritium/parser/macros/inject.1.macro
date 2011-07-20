@@ -1,0 +1,2 @@
+inject_at("bottom", @1) {
+}

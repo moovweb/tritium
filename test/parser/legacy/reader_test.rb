@@ -19,7 +19,7 @@ class ReaderTest < MiniTest::Unit::TestCase
   end
   
   def test_single_instruction
-    root = @reader._read("doc { select('hi') }")
+    root = @reader._read("html() { select('hi') }")
     output = root.children.first
 
     assert_equal 1, output.children.size
@@ -30,7 +30,7 @@ class ReaderTest < MiniTest::Unit::TestCase
   end
   
   def test_one_scope
-    root = @reader._read("doc { select('./shit') { html('hello') { remove }; remove } }")
+    root = @reader._read("html() { select('./shit') { inner('hello') { clear() }; remove() } }")
     output = root.children.first
     
     assert_equal 1, output.children.size
@@ -38,7 +38,7 @@ class ReaderTest < MiniTest::Unit::TestCase
     
     select = output.children.first
     
-    assert_equal "XMLNode", select.scope
+    assert_equal "XMLNode", select.scope.name
     assert_equal 2, select.children.size
     assert_equal 1, select.args.size
     assert_equal './shit', select.args.first
@@ -46,14 +46,14 @@ class ReaderTest < MiniTest::Unit::TestCase
     html = select.children.first
     
     assert_equal 1, html.children.size
-    assert_equal 'html', html.name
+    assert_equal 'inner', html.name
     assert_equal ['hello'], html.args
-    assert_equal "Text", html.scope
+    assert_equal "Text", html.scope.name
     
     # Remove should inherit the parent's scope
     html_remove = html.children.last
     assert_equal html.scope, html_remove.scope
-    assert_equal 'remove', html_remove.name
+    assert_equal 'clear', html_remove.name
     
     remove = select.children.last
     
@@ -61,35 +61,28 @@ class ReaderTest < MiniTest::Unit::TestCase
     assert_equal [], remove.args
     assert_equal [], remove.children
     assert_equal remove.root, root
-    assert_equal "XMLNode", remove.scope
+    assert_equal "XMLNode", remove.scope.name
   end
   
   def test_debug_lines
-    script = preprocess("\n\ndoc('html') { \n$('./shit') { \nhtml($hi)\n } }")
+    script = preprocess("\n\nhtml() { \n$('./shit') { \inner($hi)\n } }")
     output = @reader._read(script)
     doc = output.children.first
     select = doc.children.first
-    assert_equal 4, select.line_number
-    assert_equal "main.ts", select.script_name
+    #assert_equal 4, select.line_number
+    #assert_equal "main.ts", select.script_name
     assert_equal "select", select.name
-    assert_equal "$('./shit') {", select.line.strip
-    assert_equal "select('./shit') {", select.processed_line.strip
+    #assert_equal "$('./shit') {", select.line.strip
+    #assert_equal "select('./shit') {", select.processed_line.strip
     
     html = select.children.last
-    assert_equal 'html', html.name
-    assert_equal "html($hi)", html.line.strip
-    assert_equal "html(var('hi'))", html.processed_line.strip
-  end
-  
-  def test_match_debug
-    script = preprocess("match($first, /o/)")
-    output = @reader._read(script)
-    match = output.children.first
-    assert_equal "match(var('first'), /o/)", match.processed_line.strip
+    assert_equal 'inner', html.name
+    #assert_equal "inner($hi)", html.line.strip
+    #assert_equal "inner(var('hi'))", html.processed_line.strip
   end
   
   def test_import_folders
-    script = preprocess("\n\ndoc('html') { \n$('./shit') { \n@import scripts/import.ts } }")
+    script = preprocess("\n\nhtml() { \n$('./shit') { \n@import scripts/import.ts } }")
     assert script.include?("move_to")
   end
   
@@ -99,21 +92,14 @@ class ReaderTest < MiniTest::Unit::TestCase
     eval(script)
   end
   
-  def test_repeated_match_failure
-    script = Preprocess.run(File.read(File.join(File.dirname(__FILE__), "../../functional/v1/scripts/variables.ts")), "", "main.ts")
-    output = @reader._read("#{script}").children.first
-    match = output.children.last
-    assert_equal "match($first, \"worked\") {", match.line.strip
-    assert_equal "match(var('first'), \"worked\") {", match.processed_line.strip
-  end
   
   def test_to_script_args
-    root = @reader._read("doc('html') { select(fetch('a')) }")
-    assert_equal "script() {  \n  doc(\"html\") {  \n    select(fetch(\"a\"))\n  }\n}\n", root.to_script
+    root = @reader._read("html() { select(fetch('a')) }")
+    assert_equal "script() {  \n  html() {  \n    select(fetch(\"a\"))\n  }\n}\n", root.to_script
   end
   
   def preprocess(line)
-    Preprocess.run(line, File.join(File.dirname(__FILE__), "../../functional/v1"), "main.ts")
+    Parser.new(line, :path => File.join(File.dirname(__FILE__), "../../functional/v2"), :filename => "main.ts").parse.to_s
   end
   
 end

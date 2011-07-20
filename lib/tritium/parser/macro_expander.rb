@@ -4,6 +4,8 @@ require_relative "macro"
 module Tritium
   module Parser
     class MacroExpander
+      attr :macros
+
       def initialize
         @macros = {}
         load_macros!
@@ -38,19 +40,25 @@ module Tritium
         macro = lookup_macro(signature)
         expansion_string = macro.expand(args)
 
-        expansion = Parser.new(expansion_string,
-                               expander: self,
-                               errors: parser.errors,
-                               filename: parser.filename,
-                               path: parser.path,
-                               logger: parser.logger).parse
+        begin
+          expansion = Parser.new(expansion_string,
+                                 expander: self,
+                                 errors: parser.errors,
+                                 filename: parser.filename,
+                                 path: parser.path,
+                                 logger: parser.logger).parse
+        rescue StandardError => e
+          puts "Issue expanding"
+          puts expansion_string
+          raise e
+        end
 
         if expansion
-          expansion_site.statements += expansion.statements
+          expansion_site.add_statements(expansion.statements)
 
           last_statement = expansion_site.statements.last
-          if last_statement.is_a?(Instructions::InvocationWithBlock)
-            last_statement.statements += block
+          if last_statement.respond_to?("statements")
+            last_statement.add_statements(block)
           end
         end
       end

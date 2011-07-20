@@ -1,4 +1,4 @@
-Debug:
+Debug: &debug
   log:
     opens: Text
     doc: Writes out a string to the console and debug log
@@ -30,7 +30,7 @@ Base:
         expansion: true
   match:
     doc: 
-  not_matcher:
+  not:
     doc: Used with match($var, not('hi'))
     hide: true
   with:
@@ -48,6 +48,15 @@ Base:
       -
         name: Filename
         doc: The location of the file. This should be relative to the script. Please report if it is NOT!
+  fetch:
+    opens: Text
+    returns: true
+    doc: This is how you select an element to pass it to a function.
+    arguments:
+      -
+        name: Selector
+        doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
+  
   asset:
     opens: Text
     doc: Use this to call any files kept in the project's asset folder.
@@ -59,14 +68,9 @@ Base:
       -
         name: Asset Type
         doc: The asset type. This is usually something like "stylesheet", "javascript", or "image"
-  fetch:
+  script:
     opens: Text
-    returns: true
-    doc: This is how you select an element to pass it to a function.
-    arguments:
-      -
-        name: Selector
-        doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
+    doc: DO NOT USE. Wraps the entire script virtually!
   concat:
     opens: Text
     returns: true
@@ -107,6 +111,11 @@ Node:
         doc: You can optionally just pass in contents to set the contents. Remember, this is the same as text { set('value') } and will clobber whatever was there before.
         
         expansion: true
+  attributes:
+    doc: Allows you to do a mass setting of attributes on a node.
+    arguments:
+      -
+        name: List of attributes
   attribute:
     opens: Attribute
     doc: Creates or opens the attribute named
@@ -209,7 +218,14 @@ Node:
         expansion: true
 XMLNode:
   inherit: Node
-  html:
+  cdata:
+    doc: A helper method for building a CDATA node
+    returns: true
+    arguments:
+      -
+        name: Contents
+        doc: Whatever should go inside the CDATA.
+  inner:
     opens: Text
     doc: Opens up the entire innerHTML to text modification. Any html you insert WILL get interpreted as actual tags.
     arguments:
@@ -235,13 +251,6 @@ XMLNode:
         name: Class Name
         doc: The name of the class you want to append
         expansion: true
-  cdata:
-    doc: A helper method for building a CDATA node
-    returns: true
-    arguments:
-      -
-        name: Contents
-        doc: Whatever should go inside the CDATA.
   insert_javascript:
     opens: Node
     doc: Allows you to easily and safely insert a <script> tag for javascript.
@@ -297,7 +306,7 @@ Text:
         name: Regex
       -
         name: Replacement String
-        doc: Should be in the format of "\\1.name\\2" where \\1 and \\2 are the groups from the Regex.
+        doc: Should be in the format of "$1.name$2" where $1 and $2 are the groups from the Regex.
         expansion: true
   xml:
     doc: Parses the document as XML and passes you back an XMLNode scope
@@ -321,5 +330,5 @@ Text:
     arguments: 
       -
         name: Text to append
-  remove:
+  clear:
     doc: Set the whole thing to ""

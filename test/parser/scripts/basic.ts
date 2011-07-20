@@ -1,6 +1,6 @@
 $hello = "hi"
 
-doc("html") {
+html() {
   $('"redirect_\'url":"([^"]*)"') {
     attribute("yo()){}") {
       set($hello);
@@ -10,6 +10,6 @@ doc("html") {
     }
   }
   $("div[@class='something']") {
-    html(read("paragraph.html"))
+    inner(read("paragraph.html"))
   }
 }

@@ -1,18 +1,17 @@
 ENV["TEST"] = "true"
 
-require_relative '../../lib/tritium/engines/legacy/debug/engine'
-require_relative '../../lib/tritium/engines/legacy/reference/engine'
+require_relative '../../lib/tritium'
 
 include Tritium::Engines
 
-base_path = File.join(File.dirname(__FILE__), "../functional")
+base_path = Tritium.functional_test_location
 
 log = Logger.new(STDOUT)
 log.level = Logger::ERROR
 
 totals = {}
 
-Dir[base_path + "/scripts/*"].each do |script_file_name|
+Dir[base_path + "/scripts/*.ts"].each do |script_file_name|
   test_name = File.basename(script_file_name, ".ts")
   
   input_file_name = Dir[base_path + "/input/#{test_name}*"].last
@@ -41,7 +40,7 @@ Dir[base_path + "/scripts/*"].each do |script_file_name|
     totals[engine_class] ||= 0
 
     start = Time.now
-    20.times do 
+    50.times do 
       env_copy = env.dup
       # Run the input through the tritium script.
       result, export_vars = tritium.run(input, :env => env_copy)
@@ -49,7 +48,7 @@ Dir[base_path + "/scripts/*"].each do |script_file_name|
     took = Time.now - start
     totals[engine_class] += took
     result = "(#{engine_class.to_s.split("::").last} #{took})"
-    print("#{result}#{' ' * (20 - result.size)}")
+    print("#{result}#{' ' * (30 - result.size)}")
   end
   print("\n")
 end

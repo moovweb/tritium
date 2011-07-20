@@ -1,7 +1,7 @@
 
 
 require 'yaml'
-require 'minitest/unit'
+require 'minitest/autorun'
 require_relative '../../lib/tritium/engines/legacy/reference/engine'
 require_relative 'engine_tests'
 

@@ -1,6 +1,6 @@
 
 require 'yaml'
-require 'minitest/unit'
+require 'minitest/autorun'
 require_relative '../../lib/tritium/engines/legacy/debug/engine'
 require_relative 'engine_tests'
 
@@ -15,7 +15,7 @@ class DebugEngineTest < MiniTest::Unit::TestCase
   def test_debug
     log = Logger.new(STDOUT)
     log.level = Logger::ERROR
-    engine = engine_class.new("doc('xml') { $('.//body') {\n  select('.//a') { remove() } \n}\n}", :path => "/scripts", :logger => log)
+    engine = engine_class.new("xml() { $('.//body') {\n  $('.//a') { remove() } \n}\n}", :path => "/scripts", :logger => log)
     result, export_vars = engine.run("<body><div><a></a></div></body>")
     doc = Nokogiri::XML.parse(result)
     

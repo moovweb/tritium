@@ -338,7 +338,7 @@ Text:
         name: Regex
       -
         name: Replacement String
-        doc: Should be in the format of "\\1.name\\2" where \\1 and \\2 are the groups from the Regex.
+        doc: Should be in the format of "$1.name$2" where $1 and $2 are the groups from the Regex.
         expansion: true
   doc:
     doc: Parses the HTML/XML/etc and passes you back a Node scope

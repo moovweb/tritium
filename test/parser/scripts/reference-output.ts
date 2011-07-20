@@ -2,7 +2,7 @@
 var("x") {
   set(whatever())
 }
-doc() {
+xhtml() {
   select("html") {
     select("body") {
       # ENTERING FILE: import-1.ts
@@ -14,7 +14,14 @@ doc() {
       log("blah")
       # LEAVING FILE: import-1.ts
       move_here("some/long/path/to/something/split/across/multiple/lines/and/concatenated", "top") {
-        wrap("div", :"data-ur-bleeble:blabble" => "bork")
+        insert_at("before", "div") {
+          attribute("data-ur-bleeble:blabble") {
+            value() {
+              set("bork")
+            }
+          }
+        }
+        move_to("preceding-sibling::div[1]", "top")
         # ENTERING FILE: import 2.ts
         move_here(".//div[@class='something']") {
           attribute("id") {
@@ -27,7 +34,14 @@ doc() {
             remove()
           }
           # LEAVING FILE: nested-import.ts
-          wrap("span", :id => "algol-span")
+          insert_at("before", "span") {
+            attribute("id") {
+              value() {
+                set("algol-span")
+              }
+            }
+          }
+          move_to("preceding-sibling::span[1]", "top")
         }
         # LEAVING FILE: import 2.ts
       }
@@ -51,7 +65,9 @@ doc() {
     }
   }
   select("//p[1]") {
-    html("<p>\n  <strong>Last Night I Had a Banquet</strong>\n  That's right, I went to Safeway and got a large supreme frozen pizza. Cooked it in the oven for about 13 minutes, and then I ate it. A VERITABLE BANQUET.\n</p>")
+    inner() {
+      set("<p>\n  <strong>Last Night I Had a Banquet</strong>\n  That's right, I went to Safeway and got a large supreme frozen pizza. Cooked it in the oven for about 13 minutes, and then I ate it. A VERITABLE BANQUET.\n</p>")
+    }
   }
 }
 # LEAVING FILE: false-negatives.ts

@@ -24,7 +24,7 @@ module Tritium
         ReaderInstruction.new("script", :scope => "Text", :logger => logger)
       end
 
-      def scope_spec; @scope_spec ||= Tritium.spec[scope.to_s]; end
+      def scope_spec; @scope_spec ||= Tritium.spec[scope]; end
       def information; @information ||= parent.scope_spec[@name]; end
       def opens; information['opens'] || parent.opens; end;
 
