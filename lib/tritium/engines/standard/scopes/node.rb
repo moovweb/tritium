@@ -78,6 +78,8 @@ module Tritium
               wrapper.add_child(child)
               run_children(ins, Context[ins, child])
             end
+          when :cdata
+            ctx.value.document.create_cdata(args.first)
           else
             throw "Method #{ins.name} not implemented in Node scope"
           end
