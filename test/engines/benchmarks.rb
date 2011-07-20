@@ -11,7 +11,7 @@ log.level = Logger::ERROR
 
 totals = {}
 
-Dir[base_path + "/scripts/*"].each do |script_file_name|
+Dir[base_path + "/scripts/*.ts"].each do |script_file_name|
   test_name = File.basename(script_file_name, ".ts")
   
   input_file_name = Dir[base_path + "/input/#{test_name}*"].last
