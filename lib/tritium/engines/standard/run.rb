@@ -44,6 +44,8 @@ module Tritium
             run_children(ins, ctx)
           elsif ins.is_a?(Literal)
             ins.value
+          elsif ins.is_a?(Reference)
+            @env[ins.name.to_s]
           end
         ensure
           @stack.pop
