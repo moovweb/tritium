@@ -13,12 +13,12 @@ xml()  {
     }
     select(".//*[@id='line3']") {
       inner() {
-        replace(/(Mary)/, "'$1'")
+        replace(/(Mary)/, "'\\1'")
       }
     }
     select(".//*[@id='line4']") {
       inner() {
-        replace(/([^\s\.]+)(\s)/, "$1y$2")
+        replace(/([^\s\.]+)(\s)/, "\\1y$\\2")
       }
     }
   }

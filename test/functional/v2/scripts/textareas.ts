@@ -3,7 +3,7 @@ replace(/<textarea([^>]*)>(.*)<\/textarea>/m) {
     replace(/</, "&lt;")
     replace(/>/, "&gt;")
   }
-  set("<textarea$1>$2</textarea>")
+  set("<textarea\\1>\\2</textarea>")
 }
 
 html_fragment() {
