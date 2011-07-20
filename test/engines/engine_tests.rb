@@ -28,7 +28,7 @@ module  EngineTests
     throw "Must override"
   end
   
-  def self.test_version_folder(version_dir)
+  def self.version_folder_test(version_dir)
     version = File.basename(version_dir)
     puts "Testing legacy engines against version #{version}"
     Dir[version_dir + "/scripts/*.ts"].each do |script_file_name|
@@ -40,17 +40,16 @@ module  EngineTests
     end
   end
   self.functional_dirs.each do |version_dir|
-    test_version_folder(version_dir)
+    version_folder_test(version_dir)
   end
 
   def run_test(base_path, test_name)    
     input_file_name = Dir[base_path + "/input/#{test_name}*"].last
-    ts_script = "@import #{test_name}.ts"
 
     log = Logger.new(STDOUT)
     log.level = Logger::ERROR
     
-    tritium = engine_class.new(ts_script, :path => base_path + "/scripts", :script_name => test_name, :logger => log)
+    tritium = engine_class.new(:path => base_path + "/scripts", :script_name => test_name + ".ts", :logger => log)
     
     env_file = base_path + "/vars/#{test_name}.yml"
     env = {}

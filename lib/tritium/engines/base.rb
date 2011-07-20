@@ -16,7 +16,11 @@ module Tritium
       attr :root_instruction
       
       def initialize(script_string, options = {})
-        @script_string = script_string
+        if script_string.is_a?(Hash)
+          options = script_string
+        else
+          @script_string = script_string
+        end
       
         @script_path   = options[:path]        || options["path"]        || ""
         @xml_parser    = options[:parse_as]    || options["parse_as"]    || "xml"
