@@ -52,7 +52,7 @@ module Tritium
           when :move_to
             node = ctx.value.xpath(args.first).first
             return if node.nil?
-            position_node(node, ctx.value, position)
+            position_node(node, ctx.value, args.last)
             run_children(ins, Context[ins, node])
           when :move_here
             move(ins, ctx, args.first, ctx.value, args.last)
@@ -88,20 +88,21 @@ module Tritium
         end
         
         def position_node(target, node, position)
+          position = position.intern
           if node.is_a?(String)
             node = target.document.fragment(node)
           end
 
           case position
-          when "top"
+          when :top
             if target.children.size > 0
               target.children.first.add_previous_sibling(node)
             else
               target.add_child(node)
             end
-          when "after"
+          when :after
             target.add_next_sibling(node)
-          when "before"
+          when :before
             target.add_previous_sibling(node)
           else
             target.add_child(node)
