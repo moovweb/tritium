@@ -47,7 +47,7 @@ module Tritium
           @opens ||= spec.opens || scope
         end
 
-        def function_stub(depth = 0)
+        def stub(depth = 0)
           name = @name.to_s.gsub(/\$/, "select")
           if name == "else" 
             name = "else_do"
@@ -64,7 +64,7 @@ module Tritium
         end
         
         def to_s(depth = 0)
-          result = function_stub(depth)
+          result = stub(depth)
           if @statements.any?
             result << " {\n"
             depth += 1
