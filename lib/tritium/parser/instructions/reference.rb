@@ -2,6 +2,7 @@ module Tritium
   module Parser
     module Instructions
       class Reference < Instruction
+        attr :name
         def initialize(filename, line_num, name)
           super(filename, line_num)
           @name = name.intern
