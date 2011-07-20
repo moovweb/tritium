@@ -5,7 +5,7 @@ module Tritium
         def text_invocation(ins, ctx, args, kwds)
           case ins.name
           when :set
-            ctx.set(args.first)
+            ctx.set(args.first.dup)
           when :html, :xml, :xhtml, :html_fragment
             doc = Context[ins, Tritium::Engines.xml_parsers[ins.name.to_s].parse(ctx.value)]
             run_children(ins, doc)
