@@ -30,7 +30,7 @@ class ReaderTest < MiniTest::Unit::TestCase
   end
   
   def test_one_scope
-    root = @reader._read("html() { select('./shit') { inner('hello') { remove }; remove } }")
+    root = @reader._read("html() { select('./shit') { inner('hello') { clear() }; remove() } }")
     output = root.children.first
     
     assert_equal 1, output.children.size
@@ -53,7 +53,7 @@ class ReaderTest < MiniTest::Unit::TestCase
     # Remove should inherit the parent's scope
     html_remove = html.children.last
     assert_equal html.scope, html_remove.scope
-    assert_equal 'remove', html_remove.name
+    assert_equal 'clear', html_remove.name
     
     remove = select.children.last
     
