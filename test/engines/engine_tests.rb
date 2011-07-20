@@ -30,7 +30,7 @@ module  EngineTests
   
   def self.test_version_folder(version_dir)
     version = File.basename(version_dir)
-     puts "Testing legacy engines against version #{version}"
+    puts "Testing legacy engines against version #{version}"
     Dir[version_dir + "/scripts/*.ts"].each do |script_file_name|
       test_name = File.basename(script_file_name, ".ts")
       if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
