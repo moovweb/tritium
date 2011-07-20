@@ -85,6 +85,8 @@ module  EngineTests
         
         if ENV['TEST_DEBUG'] || ENV["SCRIPT"]
           if expected_output != result
+            puts "Input:"
+            puts input
             puts "Expected:"
             puts expected_output
             puts "Result: "
