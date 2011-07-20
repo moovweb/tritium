@@ -74,7 +74,7 @@ module  EngineTests
       expected_output = open(expected_output_file_path).read.strip
     end
     
-    2.times do 
+    2.times do |time|
       env_copy = env.dup
 
       # Run the input through the tritium script.
@@ -94,15 +94,19 @@ module  EngineTests
             #puts "Script: "
             puts tritium.to_script
           end
+          
+          if time > 0
+            puts "ERROR ON SECOND RUN ONLY! #{time}"
+            puts tritium.to_script
+          end
         end
-        
-        #File.open(expected_output_file_path, "w+") do |f|
-        #  f.write(result)
-        #end
         
         assert_equal expected_output, result
       rescue SyntaxError => e
         puts tritium.to_script
+        raise e
+      rescue StandardError => e
+        puts env_copy.inspect
         raise e
       end
     end
