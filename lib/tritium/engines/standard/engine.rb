@@ -10,7 +10,7 @@ module Tritium
       
       def run(input, options = {})
         run = Run.new(@logger, options)
-        ctx = Context[@root_instruction, input]
+        ctx = Context[@root_instruction, input.dup]
         run.process(@root_instruction, ctx)
         [ctx.value, run.export_vars]
       end
