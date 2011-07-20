@@ -27,7 +27,7 @@ module Tritium
         
         def process(ins, ctx)
           @stack.push ctx
-          if ins.is_a?(Invocation)
+          if ins.is_a?(Tritium::Parser::Instructions::Invocation)
             # Collect and evaluate the pos_args
             pos_args, kwd_args = process_args(ins, ctx)
             #puts ctx.type.inspect
@@ -40,11 +40,11 @@ module Tritium
             elsif ctx.type == "Attribute"
               attribute_invocation(ins, ctx, pos_args, kwd_args)
             end
-          elsif ins.is_a?(InlineBlock)
+          elsif ins.is_a?(Tritium::Parser::Instructions::InlineBlock)
             run_children(ins, ctx)
-          elsif ins.is_a?(Literal)
+          elsif ins.is_a?(Tritium::Parser::Instructions::Literal)
             ins.value
-          elsif ins.is_a?(Reference)
+          elsif ins.is_a?(Tritium::Parser::Instructions::Reference)
             @env[ins.name.to_s]
           end
         ensure
