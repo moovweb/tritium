@@ -34,7 +34,7 @@ Dir[base_path + "/scripts/*.ts"].each do |script_file_name|
   
   print "#{test_name}:#{' ' * (25 - test_name.size)}"
 
-  [Debug, Reference].each do |engine_class|
+  [Debug, Reference, Standard].each do |engine_class|
     tritium = engine_class.new(ts_script, :path => base_path + "/scripts", :script_name => test_name, :logger => log)
 
     totals[engine_class] ||= 0
