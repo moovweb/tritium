@@ -5,5 +5,9 @@ html() {
   $("/html/body") {
     # Append a class to the body tag
     add_class("monkey")
+    
+    # Sometimes empty blocks break stuff
+    $(".") {
+    }
   }
 }
