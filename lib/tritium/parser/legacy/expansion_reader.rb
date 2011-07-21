@@ -62,7 +62,8 @@ module Tritium::Parser
       end
     end
     
-    def warning(message)
+    def warning(message, give_location = false)
+      message += "--- this is located as a child of #{@stack.last.stub}" if give_location
       @logger.error("Warning!".color(:red) + ": " + message)
     end
     
@@ -141,7 +142,7 @@ module Tritium::Parser
       if @stack.last.opens == "Text"
         add_cmd("html", &block)
       else
-        warning("Do not use html() where you mean inner(). This will break soon! --- this is located as a child of #{@stack.last.stub}")
+        warning("Do not use html() where you mean inner(). This will break soon!", true)
         add_cmd("inner") {
           set(value) if value
           block.call if block
@@ -182,6 +183,7 @@ module Tritium::Parser
       if args.size > 1 || (args.first.is_a?(String) && !args.first.include?("<"))
         insert_tag(*args, &block)
       else
+        warning("You are using an insert() where you should use an inject()", true)
         inject(*args, &block)
       end
     end
