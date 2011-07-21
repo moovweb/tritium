@@ -58,8 +58,12 @@ module Tritium::Parser
         add_cmd("select", selector, &block)
       end
       if did_good.nil?
-        throw("Whoa there nelly. Looks like you are using a variable-scoped select! #{selector}")
+        warning "Whoa there nelly. Looks like you are using a variable-scoped select! #{selector.inspect}"
       end
+    end
+    
+    def warning(message)
+      @logger.error("Warning!".color(:red) + ": " + message)
     end
     
     def clear()
@@ -137,6 +141,7 @@ module Tritium::Parser
       if @stack.last.opens == "Text"
         add_cmd("html", &block)
       else
+        warning("Do not use html() where you mean inner(). This will break soon!")
         add_cmd("inner") {
           set(value) if value
           block.call if block
