@@ -223,6 +223,7 @@ module Tritium
         case peek.lexeme
         when :STRING, :REGEXP, :VAR, :ID, :READ
           arg = term
+          arg.is_arg = true
         else
           raise_error("invalid argument")
           return default_return
@@ -240,6 +241,7 @@ module Tritium
           case peek.lexeme
           when :STRING, :REGEXP, :VAR, :ID, :READ
             arg = term
+            arg.is_arg = true
           else
             raise_error("invalid argument")
             return default_return

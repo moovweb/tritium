@@ -6,6 +6,7 @@ module Tritium
 
         attr :filename
         attr :line_num
+        attr :is_arg, true
         attr :parent, true
         def initialize(filename, line_num)
           @filename, @line_num = filename, line_num
