@@ -141,7 +141,7 @@ module Tritium::Parser
       if @stack.last.opens == "Text"
         add_cmd("html", &block)
       else
-        warning("Do not use html() where you mean inner(). This will break soon!")
+        warning("Do not use html() where you mean inner(). This will break soon! --- this is located as a child of #{@stack.last.stub}")
         add_cmd("inner") {
           set(value) if value
           block.call if block
