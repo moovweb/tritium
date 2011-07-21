@@ -180,7 +180,7 @@ module Tritium::Parser
     end
     
     def insert(*args, &block)
-      if args.size > 1 || (args.first.is_a?(String) && !args.first.include?("<"))
+      if args.size > 1 || (args.first.is_a?(String) && !args.first.include?("<") && !args.first.include?(" "))
         insert_tag(*args, &block)
       else
         warning("You are using an insert() where you should use an inject()", true)
@@ -260,7 +260,7 @@ module Tritium::Parser
     
     %w(top bottom before after).each do |position|
       %w(insert inject).each do |method|
-        eval("def #{method}_#{position}(*args, &block); var('position', #{position.inspect}); insert(*args, &block); end")
+        eval("def #{method}_#{position}(*args, &block); var('position', #{position.inspect}); #{method}(*args, &block); end")
       end
       #eval("def insert_#{position}(*args, &block); insert_tag_#{position}(*args, &block); end")
     end
