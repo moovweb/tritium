@@ -21,7 +21,7 @@ module Tritium
               end
               match_ctx = Context[ins, match_ctx]
               run_children(ins, match_ctx)
-              match_ctx.value.gsub(/\$([\d])/) do
+              match_ctx.value.gsub(/[\$\\]([\d])/) do
                 @env[$1]
               end
             end
