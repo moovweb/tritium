@@ -1,6 +1,0 @@
-<% if children.any? %>
-stack << env[<%= arg[0] %>]
-<%= run_children %>
-env[<%= arg[0] %>] = stack.pop
-<% end %>
-<%= id %> = env[<%= arg[0] %>]
