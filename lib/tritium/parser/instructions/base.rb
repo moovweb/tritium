@@ -23,6 +23,10 @@ module Tritium
         def opens
           scope
         end
+        
+        def to_tritium
+          to_s
+        end
 
         def ruby_debug_line(depth = 0)
           return ""
