@@ -34,7 +34,7 @@ module Tritium
             attribute = Context[ins, xml_attribute]
             run_children(ins, attribute)
             xml_attribute = attribute.value
-            if xml_attribute.value.strip == ""
+            if xml_attribute.value == ""
               xml_attribute.remove
             end
           when :insert_at
