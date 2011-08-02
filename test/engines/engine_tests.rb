@@ -48,6 +48,16 @@ module  EngineTests
     return @files[path] if @files[path] 
     @files[path] = open(path).read
   end
+  
+  def fetch_env(path)
+    @envs ||= {}
+    return @envs[path] if @envs[path]
+    if File.exists?(path)
+      @envs[path] = YAML::load(read_file(path))
+    else
+      @envs[path] = {}
+    end
+  end
 
   def run_test(base_path, test_name)    
     input_file_name = Dir[base_path + "/input/#{test_name}*"].last
@@ -57,13 +67,7 @@ module  EngineTests
     
     tritium = engine_class.new(:path => base_path + "/scripts", :script_name => test_name + ".ts", :logger => log)
     
-    env_file = base_path + "/vars/#{test_name}.yml"
-    env = {}
-    
-    # If we have an var file, then set it up
-    if File.exists?(env_file)
-      env = YAML::load(read_file(env_file))
-    end
+    env = fetch_env(base_path + "/vars/#{test_name}.yml")
     
     # Load up the expected input data (if any)
     input_file_path = Dir[base_path + "/input/#{test_name}.*"].first
