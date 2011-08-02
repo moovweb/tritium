@@ -42,6 +42,12 @@ module  EngineTests
   self.functional_dirs.each do |version_dir|
     version_folder_test(version_dir)
   end
+  
+  def read_file(path)
+    @files ||= {}
+    return @files[path] if @files[path] 
+    @files[path] = open(path).read
+  end
 
   def run_test(base_path, test_name)    
     input_file_name = Dir[base_path + "/input/#{test_name}*"].last
@@ -56,21 +62,21 @@ module  EngineTests
     
     # If we have an var file, then set it up
     if File.exists?(env_file)
-      env = YAML::load(File.read(env_file))
+      env = YAML::load(read_file(env_file))
     end
     
     # Load up the expected input data (if any)
     input_file_path = Dir[base_path + "/input/#{test_name}.*"].first
     input = ""
     if input_file_path
-      input = open(input_file_path).read
+      input = read_file(input_file_path)
     end
     
     # Load up our expected output (if any)
     expected_output = ""
     expected_output_file_path = Dir[base_path + "/output/#{test_name}.*"].first
     if expected_output_file_path
-      expected_output = open(expected_output_file_path).read.strip
+      expected_output = read_file(expected_output_file_path).strip
     end
     
     2.times do |time|
