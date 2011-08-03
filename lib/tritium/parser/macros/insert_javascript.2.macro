@@ -1,0 +1,3 @@
+insert_javascript(@1) {
+  attributes(@2)
+}
