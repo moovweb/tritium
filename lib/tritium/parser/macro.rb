@@ -100,6 +100,11 @@ module Tritium
             if value.is_a?(Hash)
               value = (value.collect {|k,v| "#{k}: #{v.inspect}"}).join(", ")
               inspected = value
+            elsif value.is_a?(Tritium::Parser::Parser::Literal)
+              inspected = value.value_string
+              #puts "!!!" + inspected
+              inspected = inspected.gsub('\\') { '\\\\' }
+              #puts "~~~" + inspected
             end
             
             unquoted = (value.respond_to?(:unquote) ? value.unquote : value.to_s)

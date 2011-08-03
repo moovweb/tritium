@@ -273,7 +273,8 @@ module Tritium
             puts "File path is #{@path.inspect}"
             puts "Token value is #{@token.value}"
           end
-          return cmd(Literal, File.read(file_to_read).inspect[1..-2].gsub("\\", "\\\\"))
+          val = open(file_to_read).read
+          return cmd(Literal, val)
         else
           raise_error("invalid term")
           return 

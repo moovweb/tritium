@@ -1,3 +1,1 @@
-xml() {
-  inject(read("../../fragments/read.xml"))
-}
+set(read("../../fragments/read.xml"))
