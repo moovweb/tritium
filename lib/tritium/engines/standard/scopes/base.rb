@@ -38,6 +38,14 @@ module Tritium
               run_children(ins, ctx)
               return false # signal to stop!
             end
+          when :index
+            begin
+              ctx = @stack[@stack.index(ctx) - 1]
+              if ctx.nil?
+                throw "Only use index nested inside of a Select"
+              end
+            end while (ctx.index == nil)
+            return ctx.index.to_s
           when :fetch
             # We need to find a parent who has a Node!
             selector = args.first
