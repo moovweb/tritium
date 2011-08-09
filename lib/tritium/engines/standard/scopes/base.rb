@@ -39,9 +39,10 @@ module Tritium
               return false # signal to stop!
             end
           when :index
+            ctxorgin = ctx
             begin
               ctx = @stack[@stack.index(ctx) - 1]
-              if ctx.nil?
+              if ctx.nil? or ctx == ctxorgin
                 throw "Only use index nested inside of a Select"
               end
             end while (ctx.index == nil)
@@ -49,10 +50,10 @@ module Tritium
           when :fetch
             # We need to find a parent who has a Node!
             selector = args.first
-            
+            ctxorgin = ctx
             while !ctx.value.respond_to?("xpath") || ctx.value.is_a?(Nokogiri::XML::Attr) do
               ctx = @stack[@stack.index(ctx) - 1]
-              if ctx.nil?
+              if ctx.nil? or ctx == ctxorgin
                 throw "Only use fetch nested inside of a Node scope"
               end
             end
