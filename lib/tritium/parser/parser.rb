@@ -268,11 +268,6 @@ module Tritium
         when :READ
           # Read relative to the current script file
           file_to_read = File.join(@path, @token.value)
-          unless ENV["TEST"]
-            puts "Reading #{file_to_read}"
-            puts "File path is #{@path.inspect}"
-            puts "Token value is #{@token.value}"
-          end
           val = open(file_to_read).read
           return cmd(Literal, val)
         else
