@@ -47,7 +47,7 @@ module Tritium
                 return "0"
               end
             end
-            return fetch_ctx.index.to_s
+            return index_ctx.index.to_s
           when :fetch
             # We need to find a parent who has a Node!
             selector = args.first
