@@ -39,25 +39,28 @@ module Tritium
               return false # signal to stop!
             end
           when :index
-            ctxorgin = ctx
-            begin
-              ctx = @stack[@stack.index(ctx) - 1]
-              if ctx.nil? or ctx == ctxorgin
-                throw "Only use index nested inside of a Select"
+            index_ctx = ctx
+            while index_ctx.index == nil
+              index_ctx = @stack[@stack.index(index_ctx) - 1]
+              if index_ctx.nil? || index_ctx == ctx
+                warn(ins, "Only use index nested inside of a Select")
+                return "0"
               end
-            end while (ctx.index == nil)
-            return ctx.index.to_s
+            end
+            return fetch_ctx.index.to_s
           when :fetch
             # We need to find a parent who has a Node!
             selector = args.first
-            ctxorgin = ctx
-            while !ctx.value.respond_to?("xpath") || ctx.value.is_a?(Nokogiri::XML::Attr) do
-              ctx = @stack[@stack.index(ctx) - 1]
-              if ctx.nil? or ctx == ctxorgin
-                throw "Only use fetch nested inside of a Node scope"
+            node_ctx = ctx
+            while !node_ctx.value.respond_to?("xpath") || node_ctx.value.is_a?(Nokogiri::XML::Attr) do
+              node_ctx = @stack[@stack.index(node_ctx) - 1]
+              if node_ctx.nil? || ctx == node_ctx
+                # If we don't have a decent context... then just return ""
+                warn(ins, "A fetch was run without being inside of a NodeScope.")
+                return ""
               end
             end
-            node = ctx.value
+            node = node_ctx.value
   
             result = node.xpath(selector.to_s).first
             if result.is_a?(Nokogiri::XML::Attr)
@@ -70,7 +73,7 @@ module Tritium
             file_name, type = args
             location = @env["#{type}_asset_location"]
             if location.nil?
-              @logger.warn("No env variable #{type}_asset_location found!")
+              warn(ins, "No env variable #{type}_asset_location found!")
             elsif (location[0..6] == "http://") || (location[0..1] == "//")
               return File.join(location.clone, file_name)
             else
