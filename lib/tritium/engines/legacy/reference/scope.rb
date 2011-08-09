@@ -6,6 +6,7 @@ module Tritium
       class Base
         attr :logger, true
         attr :export_vars, true
+        attr :index, true
 
         def initialize(thing, root, parent)
           @object ||= thing
@@ -106,6 +107,16 @@ module Tritium
             @object.search(selector).first.to_s
           elsif !@parent.nil?
             @parent.fetch(selector)
+          else
+            ""
+          end
+        end
+        
+        def index
+          if @index
+            return @index.to_s
+          elsif !@parent.nil?
+            @parent.index
           else
             ""
           end
