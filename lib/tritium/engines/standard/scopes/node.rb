@@ -6,7 +6,8 @@ module Tritium
           case ins.name
           when :select
             nodeset = ctx.value.xpath(args.first)
-            nodeset.each do |node|
+            nodeset.each_with_index do |node,index|
+              ctx.index = index + 1
               doc = Context[ins, node]
               run_children(ins, doc)
             end

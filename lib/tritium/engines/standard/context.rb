@@ -2,6 +2,7 @@ module Tritium
   module Engines
     class Standard < Base
       class Context
+        attr :index, true
         attr :value, true
         attr :type, true
         
@@ -9,6 +10,7 @@ module Tritium
           ctx = Context.new
           ctx.value = value
           ctx.type = ins.opens.name
+          ctx.index = nil
           ctx
         end
         

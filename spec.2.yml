@@ -28,6 +28,8 @@ Base:
         name: Value
         doc: The value you want to set the var to. Same as var('name') { set('value') }
         expansion: true
+  index:
+    returns: true
   match:
     doc: 
   not:
