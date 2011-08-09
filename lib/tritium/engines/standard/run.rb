@@ -51,6 +51,10 @@ module Tritium
           @stack.pop
         end
         
+        def warn(ins, message)
+          @logger.warn("Warning from #{ins.debug_info}: #{message}")
+        end
+        
         def process_args(ins, ctx)
           pos_args = ins.pos_args.collect do |arg|
             if arg.is_a?(Instruction)
