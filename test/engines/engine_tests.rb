@@ -115,7 +115,7 @@ module  EngineTests
         puts tritium.to_script
         raise e
       rescue StandardError => e
-        puts env_copy.inspect
+        #puts env_copy.inspect
         raise e
       end
     end

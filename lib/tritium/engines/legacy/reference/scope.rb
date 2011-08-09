@@ -100,12 +100,14 @@ module Tritium
         #   }
         # }
         #
-        # @return [Array] An array of elements represented as strings
+        # @return [String] The first matching element as a string
         def fetch(selector)
           if @object.class == Nokogiri::XML::Element
             @object.search(selector).first.to_s
-          else
+          elsif !@parent.nil?
             @parent.fetch(selector)
+          else
+            ""
           end
         end
         

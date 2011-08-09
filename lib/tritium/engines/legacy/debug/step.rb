@@ -172,6 +172,7 @@ module Tritium::Engines
     end
     
     def fetch(selector)
+      return "" if node.nil?
       result = node.search(selector).first
       if result.is_a?(Nokogiri::XML::Attr)
         result = result.value
@@ -189,8 +190,10 @@ module Tritium::Engines
     def node
       if self.is_a?(Node)
         return @object
-      else
+      elsif @parent
         @parent.node
+      else
+        nil
       end
     end
     
