@@ -1,4 +1,4 @@
-replace('"redirect_url":"([^"]*)"') {
+replace(/"redirect_url":"([^"]*)"/) {
   $1 {
     rewrite('link')
   }
