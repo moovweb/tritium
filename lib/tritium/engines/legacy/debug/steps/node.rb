@@ -12,6 +12,7 @@ class Tritium::Engines::Debug
       search(selector).each_with_index do |child_node, index|
         debug_log("Match ##{index + 1} at #{child_node.path}")
         @name = child_node.path
+        $debug_index = index + 1
         execute_children_on(child_node)
       end
     end

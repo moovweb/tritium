@@ -142,6 +142,10 @@ module Tritium::Engines
       end
     end
     
+    def index
+      return $debug_index.to_s
+    end
+    
    # Actual Tritium methods
    
     def script
