@@ -14,6 +14,8 @@ module Tritium
             ctx.set(args.first + ctx.value)
           when :append
             ctx.set(ctx.value + args.first)
+          when :text
+            return ctx.value
           when :replace
             ctx.value.gsub!(args.first) do |match|
               $~.captures.each_with_index do |arg, index|

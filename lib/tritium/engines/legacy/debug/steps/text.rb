@@ -1,5 +1,9 @@
 class Tritium::Engines::Debug
   class Step::Text < Step
+    
+    def text
+      @object.dup
+    end
 
     def set(text)
       @object = text.to_s.dup

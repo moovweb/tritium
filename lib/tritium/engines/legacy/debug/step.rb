@@ -210,6 +210,10 @@ module Tritium::Engines
       strings.join("")
     end
     
+    def regex(string)
+      Regexp.new(string)
+    end
+    
     private
      def position_node(target, node, position = nil)
        if node.is_a?(String)

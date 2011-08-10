@@ -57,6 +57,10 @@ module Tritium
             end
           end
         end
+        
+        def regex(string)
+          Regexp.new(string)
+        end
   
         def asset(file_name, type = nil)
           if (@env["#{type}_asset_location"][0..6] == "http://") || (@env["#{type}_asset_location"][0..1] == "//")

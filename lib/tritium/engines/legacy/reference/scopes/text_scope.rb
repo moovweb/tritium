@@ -65,6 +65,10 @@ module Tritium::Engines::Reference::Scope
     def append(text)
       @text << text
     end
+    
+    def text()
+      @text
+    end
 
     def prepend(text)
       @text.insert(0,text)
