@@ -12,7 +12,7 @@ module Tritium
             @env[args.first] = value_ctx.value
             return value_ctx.value
           when :regex
-            return Regexp.new(ctx.value)
+            return Regexp.new(args.first)
           when :concat
             return args.join("")
           when :match

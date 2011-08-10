@@ -16,10 +16,6 @@ module Tritium::Engines::Reference::Scope
     end
 
     def replace(matcher, &block)
-      if matcher.is_a? String
-        matcher = Regexp.new(matcher)
-      end
-
       @text.gsub!(matcher) do |match|
         $~.captures.each_with_index do |arg, index|
           var("#{index + 1}", arg)
