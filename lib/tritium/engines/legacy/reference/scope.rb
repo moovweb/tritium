@@ -118,7 +118,7 @@ module Tritium
           elsif !@parent.nil?
             @parent.index
           else
-            ""
+            "0"
           end
         end
         
