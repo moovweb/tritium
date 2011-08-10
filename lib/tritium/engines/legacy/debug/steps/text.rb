@@ -35,12 +35,15 @@ class Tritium::Engines::Debug
     def xml
       doc "xml"
     end
+
     def xhtml
       doc "xhtml"
     end
+
     def html_fragment
       doc "html_fragment"
     end
+
     def html
       doc "html"
     end
