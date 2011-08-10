@@ -17,7 +17,6 @@ module Tritium
             if args.size == 2
               matcher = args.first
               with = args.last
-              with = Regexp.new(with) unless with.is_a?(Regexp)
               if with.match?(matcher)
                 run_children(ins, ctx)
               end

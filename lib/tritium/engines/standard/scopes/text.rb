@@ -15,7 +15,7 @@ module Tritium
           when :append
             ctx.set(ctx.value + args.first)
           when :replace
-            ctx.value.gsub!(Regexp.new(args.first)) do |match|
+            ctx.value.gsub!(args.first) do |match|
               $~.captures.each_with_index do |arg, index|
                 @env["#{index + 1}"] = arg
               end
