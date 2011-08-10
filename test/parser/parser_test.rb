@@ -96,6 +96,13 @@ class ParserTest < MiniTest::Unit::TestCase
     assert e.size > 2
   end
   
+  def test_ids
+    script_string, parser, root = build_parser("add_class.ts")
+    assert_equal root.id, "0"
+    assert_equal root.statements.first.id, "0_0"
+    assert_equal root.statements.last.id, "0_1"
+  end
+  
   def test_scopes
     script_string, parser, root = build_parser("add_class.ts")
     assert_equal "Text", root.scope.name

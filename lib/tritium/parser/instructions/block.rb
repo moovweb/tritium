@@ -5,6 +5,7 @@ module Tritium
         attr :statements, true
         def initialize(filename, line_num, statements = [])
           @filename, @line_num, @statements = filename, line_num, statements
+          @id = "0"
           set_parents!
         end
       
@@ -22,8 +23,9 @@ module Tritium
         end
         
         def set_parents!
-          @statements.each do |statement|
+          @statements.each_with_index do |statement, index|
             statement.parent = self
+            statement.id = self.id + "_#{index}"
           end
         end
       end

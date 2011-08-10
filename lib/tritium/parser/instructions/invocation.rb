@@ -14,6 +14,10 @@ module Tritium
           process_args!
         end
         
+        def signature
+          @signature ||= [@name, args.size]
+        end
+        
         def args
           @pos_args + [@kwd_args]
         end
