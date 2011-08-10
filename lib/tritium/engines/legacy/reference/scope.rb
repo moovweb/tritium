@@ -37,9 +37,8 @@ module Tritium
         end
         
         def not_matcher(matcher)
-          r = Regexp.new(matcher)
-          r.opposite = true
-          return r
+          matcher.opposite = true
+          return matcher
         end
 
         def match(value, &block)
