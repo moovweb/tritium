@@ -19,7 +19,11 @@ module Tritium
         end
         
         def args
-          @pos_args + [@kwd_args]
+          if @kwd_args.any?
+            @pos_args + [@kwd_args]
+          else
+            @pos_args
+          end
         end
         
         def process_args!
