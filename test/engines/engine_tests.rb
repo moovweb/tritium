@@ -139,9 +139,19 @@ module  EngineTests
     end
     
     def test_time
-      engine = engine_class.new("set(time())")
+      @logger = MiniTest::Mock.new
+      engine = engine_class.new("set(time())", :logger => @logger)
       result, env = engine.run("")
       assert result.to_f > 0.0
+    end
+    
+    def test_bm
+      @logger =  MiniTest::Mock.new
+      @logger.expect("info", nil, ['<a>hi mom!</a>'])
+      engine = engine_class.new("log(time())", :logger => @logger)
+      engine.run("")
+      result = @logger.instance_eval("@actual_calls")["info"].first[:args].first
+      assert result.to_f > 0.0, "Should be a float of some sort"
     end
   
     def test_export_function
