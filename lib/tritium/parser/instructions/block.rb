@@ -18,6 +18,15 @@ module Tritium
           set_parents!
         end
         
+        def each(&block)
+          @statements.each do |statement|
+            block.call(statement)
+            if statement.respond_to?("each")
+              statement.each(&block)
+            end
+          end
+        end
+        
         def opens
           scope
         end

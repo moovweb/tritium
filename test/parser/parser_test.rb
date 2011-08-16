@@ -127,4 +127,13 @@ class ParserTest < MiniTest::Unit::TestCase
     
     assert_equal attribute, attribute.args.first.parent
   end
+  
+  def test_each
+    script_string, parser, root = build_parser("add_class.ts")
+    count = 0
+    root.each do |s|
+      count += 1
+    end
+    assert_equal count, 12
+  end
 end
