@@ -28,6 +28,15 @@ Base:
         name: Value
         doc: The value you want to set the var to. Same as var('name') { set('value') }
         expansion: true
+  time:
+    returns: true
+    doc: If given a block, it returns the time-to-execute in seconds as a string
+  bm:
+    doc: Prints out the time a block took to run to the log
+    arguments:
+      -
+        name: Name
+        doc: The name of the thing you are benchmarking
   index:
     returns: true
   match:

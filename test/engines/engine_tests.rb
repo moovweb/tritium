@@ -137,6 +137,12 @@ module  EngineTests
       engine.run("<html><body><a>hi mom!</a></body></html>")
       @logger.verify
     end
+    
+    def test_time
+      engine = engine_class.new("set(time())")
+      result, env = engine.run("")
+      assert result.to_f > 0.0
+    end
   
     def test_export_function
       script = "export('Content-Type', 'html/js'); export('cookie', 'a'); export('cookie', 'b')"

@@ -78,6 +78,12 @@ module Tritium
           self.instance_eval(&block)
         end
         
+        def time(&block)
+          start = Time.now
+          self.instance_eval(&block) if block
+          return ((Time.now - start).to_f * 10000).to_s
+        end
+        
         def log(message, &block)
           if block
             message = open_text_scope_with(message, &block)

@@ -102,7 +102,7 @@ module Tritium::Engines
           arg = @env[arg.args.first]
         else
           args = arg.args.collect {|a| resolve_arg(a) }
-          arg = scope.send(arg.name, *args)
+          arg = execute_instruction(arg, @object).return
         end
       end
       arg
@@ -181,11 +181,17 @@ module Tritium::Engines
       if result.is_a?(Nokogiri::XML::Attr)
         result = result.value
       end
-      result
+      return result
     end
     
     def export(key, value)
       @export_vars << [key, value]
+    end
+    
+    def time
+      start_time = Time.now
+      @object = execute_children_on(object)
+      return ((Time.now - start_time).to_f * 10000).to_s
     end
     
     # If I'm a NodeStep, this should return @object

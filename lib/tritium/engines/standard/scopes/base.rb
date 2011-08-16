@@ -39,6 +39,10 @@ module Tritium
               run_children(ins, ctx)
               return false # signal to stop!
             end
+          when :time
+            start = Time.now
+            run_children(ins, ctx)
+            return ((Time.now - start).to_f * 100000).to_s
           when :index
             index_ctx = ctx
             while index_ctx.index == nil

@@ -29,7 +29,6 @@ module Tritium
         def process_args!
           @pos_args.each do |arg|
             if arg.is_a?(Instruction)
-              
               arg.parent = self
               arg.is_arg = true
             end
