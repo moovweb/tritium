@@ -1,4 +1,5 @@
 insert_at("before", @1, @2)
 
 move_to("preceding-sibling::#{@1}[1]", "top") {
+  yield()
 }

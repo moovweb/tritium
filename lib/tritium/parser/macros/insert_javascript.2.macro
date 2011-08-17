@@ -1,0 +1,4 @@
+insert_javascript(@1) {
+  attributes(@2)
+  yield()
+}

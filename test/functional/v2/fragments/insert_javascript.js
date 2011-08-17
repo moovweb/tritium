@@ -3,7 +3,8 @@ function loadTemplate(templateData) {
 
     // Load the template HTML
     var div = document.createElement("div");
-    div.innerHTML = templateData;
+    /(\/$)|(\/template\.do)/
+    "\n"
 
     while (document.body.children[0]) {
         document.body.removeChild(document.body.children[0]);

@@ -1,9 +1,0 @@
-<% cond = "if" %>
-<% cond = "unless" if arg[0].opposite %>
-<% if arg[0].is_a?(Regexp) %>
-<%= cond %> <%= arg[0] %> =~ <%= parent_id %>
-<% else %>
-<%= cond %> <%= arg[0] %> == <%= parent_id %>
-<% end %>
-  <%= run_children %>
-end

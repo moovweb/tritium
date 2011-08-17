@@ -10,7 +10,7 @@ class MacroTest < MiniTest::Unit::TestCase
   
   def test_positionals
     macro = @expander.macros[[:insert_top, 1]]
-    assert_equal %|insert_at("top", "hi") {\n}|, macro.expand("hi")
+    assert_equal %|insert_at("top", "hi") {\n  yield()\n}|, macro.expand("hi")
   end
   
   def test_is_macro?

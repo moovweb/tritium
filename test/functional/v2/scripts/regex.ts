@@ -3,6 +3,7 @@ xml()  {
     select(".//*[@id='line1']") {
       inner() {
         replace("lamb.", "baby antelope.")
+        replace(".", "!")
       }
     }
     select(".//*[@id='line2']") {
@@ -18,7 +19,7 @@ xml()  {
     }
     select(".//*[@id='line4']") {
       inner() {
-        replace(/([^\s\.]+)(\s)/, "$1y$2")
+        replace(/([^\s\.]+)(\s)/, "\\1y$2")
       }
     }
   }

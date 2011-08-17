@@ -1,11 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
-<html><script type="text/javascript">//<![CDATA[
+<html><script type="text/javascript" id="hi">//<![CDATA[
 // Replaces the current document with a template
 function loadTemplate(templateData) {
 
     // Load the template HTML
     var div = document.createElement("div");
-    div.innerHTML = templateData;
+    /(\/$)|(\/template\.do)/
+    "\n"
 
     while (document.body.children[0]) {
         document.body.removeChild(document.body.children[0]);
@@ -18,4 +19,5 @@ function loadTemplate(templateData) {
     for (var i = 0; i < len; i++) {
         addTag("script", scripts[i].innerHTML);
     }
-};\n//]]></script></html>
+};
+//]]></script></html>

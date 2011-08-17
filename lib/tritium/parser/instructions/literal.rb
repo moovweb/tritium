@@ -7,9 +7,13 @@ module Tritium
           super(filename, line_num)
           @value = value
         end
+        
+        def value_string
+          @value.inspect
+        end
       
         def to_s(depth = 0)
-          "#{@@tab * depth}#{@value.inspect}"
+          "#{@@tab * depth}#{value_string}"
         end
       
         def unquote

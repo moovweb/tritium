@@ -25,6 +25,7 @@ class Regexp
     self =~ v
   end
 end
+
 class String
   include Matcher
   

@@ -1,2 +1,3 @@
 insert_at("bottom", @1) {
+  yield()
 }

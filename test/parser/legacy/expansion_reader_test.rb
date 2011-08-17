@@ -18,7 +18,7 @@ class ExpansionReaderTest < MiniTest::Unit::TestCase
   rescue ReaderInstruction::Invalid
     assert(true)
   end
-  
+
  private
   def match_expansions(expected, input)
     output = read(input)

@@ -96,6 +96,13 @@ class ParserTest < MiniTest::Unit::TestCase
     assert e.size > 2
   end
   
+  def test_ids
+    script_string, parser, root = build_parser("add_class.ts")
+    assert_equal root.id, "0"
+    assert_equal root.statements.first.id, "0_0"
+    assert_equal root.statements.last.id, "0_1"
+  end
+  
   def test_scopes
     script_string, parser, root = build_parser("add_class.ts")
     assert_equal "Text", root.scope.name
@@ -119,5 +126,14 @@ class ParserTest < MiniTest::Unit::TestCase
     attribute = expansion_attribute.statements.first
     
     assert_equal attribute, attribute.args.first.parent
+  end
+  
+  def test_each
+    script_string, parser, root = build_parser("add_class.ts")
+    count = 0
+    root.each do |s|
+      count += 1
+    end
+    assert_equal 22, count
   end
 end

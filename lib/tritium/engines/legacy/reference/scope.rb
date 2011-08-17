@@ -6,6 +6,7 @@ module Tritium
       class Base
         attr :logger, true
         attr :export_vars, true
+        attr :index, true
 
         def initialize(thing, root, parent)
           @object ||= thing
@@ -36,9 +37,8 @@ module Tritium
         end
         
         def not_matcher(matcher)
-          r = Regexp.new(matcher)
-          r.opposite = true
-          return r
+          matcher.opposite = true
+          return matcher
         end
 
         def match(value, &block)
@@ -57,6 +57,10 @@ module Tritium
             end
           end
         end
+        
+        def regex(string)
+          Regexp.new(string)
+        end
   
         def asset(file_name, type = nil)
           if (@env["#{type}_asset_location"][0..6] == "http://") || (@env["#{type}_asset_location"][0..1] == "//")
@@ -72,6 +76,12 @@ module Tritium
 
         def debug(arg = nil, &block)
           self.instance_eval(&block)
+        end
+        
+        def time(&block)
+          start = Time.now
+          self.instance_eval(&block) if block
+          return ((Time.now - start).to_f * 10000).to_s
         end
         
         def log(message, &block)
@@ -100,12 +110,24 @@ module Tritium
         #   }
         # }
         #
-        # @return [Array] An array of elements represented as strings
+        # @return [String] The first matching element as a string
         def fetch(selector)
           if @object.class == Nokogiri::XML::Element
             @object.search(selector).first.to_s
-          else
+          elsif !@parent.nil?
             @parent.fetch(selector)
+          else
+            ""
+          end
+        end
+        
+        def index
+          if @index
+            return @index.to_s
+          elsif !@parent.nil?
+            @parent.index
+          else
+            "0"
           end
         end
         

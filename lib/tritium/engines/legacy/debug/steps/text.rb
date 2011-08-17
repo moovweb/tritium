@@ -1,17 +1,21 @@
 class Tritium::Engines::Debug
   class Step::Text < Step
+    
+    def text
+      @object.dup
+    end
 
     def set(text)
       @object = text.to_s.dup
     end
 
     def replace(matcher)
-      @object.gsub!(Regexp.new(matcher)) do |match|
+      @object.gsub!(matcher) do |match|
         $~.captures.each_with_index do |arg, index|
           @env["#{index + 1}"] = arg
         end
         replacement = execute_children_on(match)
-        replacement.gsub(/\$([\d])/) do
+        replacement.gsub(/[\\\$]([\d])/) do
           @env[$1]
         end
       end
@@ -35,12 +39,15 @@ class Tritium::Engines::Debug
     def xml
       doc "xml"
     end
+
     def xhtml
       doc "xhtml"
     end
+
     def html_fragment
       doc "html_fragment"
     end
+
     def html
       doc "html"
     end
@@ -54,7 +61,8 @@ class Tritium::Engines::Debug
     end
 
     def rewrite(what)
-      @object.gsub!(Regexp.new(@env["rewrite_#{what}_matcher"]),  @env["rewrite_#{what}_replacement"])
+      replacement =  @env["rewrite_#{what}_replacement"].gsub(/\$([\d]+)/, "\\\\1")
+      @object.gsub!(Regexp.new(@env["rewrite_#{what}_matcher"]), replacement)
     end
   end
 end

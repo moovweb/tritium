@@ -1,5 +1,5 @@
 xml() {
   $("./root") {
-    attributes(http-equiv: "hi", superdude: "you")
+    attributes(http-equiv: "hi", superdude: "you", keep_spaces: " ")
   }
 }

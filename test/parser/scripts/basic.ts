@@ -6,7 +6,7 @@ html() {
       set($hello);
       insert("</div>")
       insert(";")
-      replace(5, index: 4);
+      replace(5, "4");
     }
   }
   $("div[@class='something']") {

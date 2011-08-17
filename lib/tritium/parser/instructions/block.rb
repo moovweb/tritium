@@ -5,8 +5,10 @@ module Tritium
         attr :statements, true
         def initialize(filename, line_num, statements = [])
           @filename, @line_num, @statements = filename, line_num, statements
+          @id = "0"
           set_parents!
         end
+        
       
         def to_s(depth = 0)
           (@statements.collect { |stmt| stmt.to_s(depth) }).join("\n")
@@ -17,13 +19,23 @@ module Tritium
           set_parents!
         end
         
+        def each(&block)
+          @statements.each do |statement|
+            block.call(statement)
+            if statement.respond_to?("each")
+              statement.each(&block)
+            end
+          end
+        end
+        
         def opens
           scope
         end
         
         def set_parents!
-          @statements.each do |statement|
+          @statements.each_with_index do |statement, index|
             statement.parent = self
+            statement.id = self.id + "_#{index}"
           end
         end
       end

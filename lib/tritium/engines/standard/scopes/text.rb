@@ -14,15 +14,25 @@ module Tritium
             ctx.set(args.first + ctx.value)
           when :append
             ctx.set(ctx.value + args.first)
+          when :text
+            return ctx.value
           when :replace
-            ctx.value.gsub!(Regexp.new(args.first)) do |match|
-              $~.captures.each_with_index do |arg, index|
-                @env["#{index + 1}"] = arg
+            if args.first.is_a?(Regexp)
+              ctx.value.gsub!(args.first) do |match|
+                $~.captures.each_with_index do |arg, index|
+                  @env["#{index + 1}"] = arg
+                end
+                match_ctx = Context[ins, match]
+                run_children(ins, match_ctx)
+                match_ctx.value.gsub(/[\$\\]([\d])/) do
+                  @env[$1]
+                end
               end
-              match_ctx = Context[ins, match_ctx]
-              run_children(ins, match_ctx)
-              match_ctx.value.gsub(/\$([\d])/) do
-                @env[$1]
+            else
+              ctx.value.gsub!(args.first) do |match|
+                match_ctx = Context[ins, match]
+                run_children(ins, match_ctx)
+                match_ctx.value
               end
             end
           else

@@ -57,7 +57,7 @@ module Tritium
                 macro_name = function_name + "_" + pos
                 (1..4).each do |arg_length|
                   macros << Macro.new(macro_name, arg_length) do |args|
-                    "#{function_name}_at(#{pos.inspect}, #{args.to_tritium}) {\n}"
+                    "#{function_name}_at(#{pos.inspect}, #{args.to_tritium}) {\n  yield()\n}"
                   end
                 end
               end
@@ -100,6 +100,11 @@ module Tritium
             if value.is_a?(Hash)
               value = (value.collect {|k,v| "#{k}: #{v.inspect}"}).join(", ")
               inspected = value
+            elsif value.is_a?(Tritium::Parser::Parser::Literal)
+              inspected = value.value_string
+              #puts "!!!" + inspected
+              inspected = inspected.gsub('\\') { '\\\\' }
+              #puts "~~~" + inspected
             end
             
             unquoted = (value.respond_to?(:unquote) ? value.unquote : value.to_s)

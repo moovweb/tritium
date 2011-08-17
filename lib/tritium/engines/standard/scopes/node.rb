@@ -6,7 +6,8 @@ module Tritium
           case ins.name
           when :select
             nodeset = ctx.value.xpath(args.first)
-            nodeset.each do |node|
+            nodeset.each_with_index do |node,index|
+              ctx.index = index + 1
               doc = Context[ins, node]
               run_children(ins, doc)
             end
@@ -34,7 +35,7 @@ module Tritium
             attribute = Context[ins, xml_attribute]
             run_children(ins, attribute)
             xml_attribute = attribute.value
-            if xml_attribute.value.strip == ""
+            if xml_attribute.value == ""
               xml_attribute.remove
             end
           when :insert_at

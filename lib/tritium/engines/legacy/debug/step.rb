@@ -102,7 +102,7 @@ module Tritium::Engines
           arg = @env[arg.args.first]
         else
           args = arg.args.collect {|a| resolve_arg(a) }
-          arg = scope.send(arg.name, *args)
+          arg = execute_instruction(arg, @object).return
         end
       end
       arg
@@ -142,6 +142,10 @@ module Tritium::Engines
       end
     end
     
+    def index
+      return $debug_index.to_s
+    end
+    
    # Actual Tritium methods
    
     def script
@@ -172,15 +176,22 @@ module Tritium::Engines
     end
     
     def fetch(selector)
+      return "" if node.nil?
       result = node.search(selector).first
       if result.is_a?(Nokogiri::XML::Attr)
         result = result.value
       end
-      result
+      return result
     end
     
     def export(key, value)
       @export_vars << [key, value]
+    end
+    
+    def time
+      start_time = Time.now
+      @object = execute_children_on(object)
+      return ((Time.now - start_time).to_f * 10000).to_s
     end
     
     # If I'm a NodeStep, this should return @object
@@ -189,8 +200,10 @@ module Tritium::Engines
     def node
       if self.is_a?(Node)
         return @object
-      else
+      elsif @parent
         @parent.node
+      else
+        nil
       end
     end
     
@@ -205,6 +218,10 @@ module Tritium::Engines
     
     def concat(*strings)
       strings.join("")
+    end
+    
+    def regex(string)
+      Regexp.new(string)
     end
     
     private

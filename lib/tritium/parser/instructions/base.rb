@@ -6,7 +6,10 @@ module Tritium
 
         attr :filename
         attr :line_num
+        attr :is_arg, true
         attr :parent, true
+        attr :id, true
+
         def initialize(filename, line_num)
           @filename, @line_num = filename, line_num
         end
@@ -21,6 +24,22 @@ module Tritium
         
         def opens
           scope
+        end
+        
+        def delete
+          @parent.statements.delete(self)
+        end
+        
+        def to_tritium
+          to_s
+        end
+        
+        def to_script
+          to_s
+        end
+        
+        def debug_info
+          "Line #{@line_num} in #{@filename}"
         end
 
         def ruby_debug_line(depth = 0)

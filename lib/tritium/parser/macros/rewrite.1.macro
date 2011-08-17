@@ -1,1 +1,3 @@
-replace($rewrite_#{@1}_matcher, $rewrite_#{@1}_replacement)
+replace(regex($rewrite_#{@1}_matcher), $rewrite_#{@1}_replacement) {
+  yield()
+}

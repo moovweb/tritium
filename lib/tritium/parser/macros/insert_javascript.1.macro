@@ -1,3 +1,4 @@
 insert_at("bottom", "script", type: "text/javascript") {
-  inject_at("bottom", cdata(concat("//<![CDATA[\n", @1, "\\n//]]>")))
+  inject_at("bottom", cdata(concat("//<![CDATA[\n", @1, "\n//]]>")))
+  yield()
 }

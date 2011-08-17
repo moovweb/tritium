@@ -223,6 +223,7 @@ module Tritium
         case peek.lexeme
         when :STRING, :REGEXP, :VAR, :ID, :READ
           arg = term
+          arg.is_arg = true
         else
           raise_error("invalid argument")
           return default_return
@@ -240,6 +241,7 @@ module Tritium
           case peek.lexeme
           when :STRING, :REGEXP, :VAR, :ID, :READ
             arg = term
+            arg.is_arg = true
           else
             raise_error("invalid argument")
             return default_return
@@ -270,12 +272,8 @@ module Tritium
           pop!
           # Read relative to the current script file
           file_to_read = File.join(@path, @token.value)
-          unless ENV["TEST"]
-            puts "Reading #{file_to_read}"
-            puts "File path is #{@path.inspect}"
-            puts "Token value is #{@token.value}"
-          end
-          return cmd(Literal, File.read(file_to_read))
+          val = open(file_to_read).read
+          return cmd(Literal, val)
         else
           pop!
           raise_error("invalid term")

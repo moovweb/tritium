@@ -55,10 +55,20 @@ module Tritium
 
         if expansion
           expansion_site.add_statements(expansion.statements)
-
-          last_statement = expansion_site.statements.last
-          if last_statement.respond_to?("statements")
-            last_statement.add_statements(block)
+        
+          # This is where we find the yield() call and put the block that the macro call had
+          # into its rightful place.
+          found = false
+          expansion.each do |statement|
+            if statement.respond_to?("name") && statement.name == :yield
+              # this is a yield statement
+              statement.parent.add_statements(block)
+              statement.delete
+              found = true
+            end
+          end
+          if found == false
+            throw "Must yield to something! (error with #{signature}. Script: #{expansion_string})"
           end
         end
       end

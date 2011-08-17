@@ -1,0 +1,4 @@
+$time = time() { 
+  yield()
+}
+log(concat(@1, ":", $time))

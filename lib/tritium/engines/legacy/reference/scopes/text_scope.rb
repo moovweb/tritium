@@ -16,10 +16,6 @@ module Tritium::Engines::Reference::Scope
     end
 
     def replace(matcher, &block)
-      if matcher.is_a? String
-        matcher = Regexp.new(matcher)
-      end
-
       @text.gsub!(matcher) do |match|
         $~.captures.each_with_index do |arg, index|
           var("#{index + 1}", arg)
@@ -27,7 +23,7 @@ module Tritium::Engines::Reference::Scope
         (replace = open_text_scope_with("", &block)) if block
         
         # Find all instances of "\\1" and similar, and replace them with var('1') (and similar, obvs)
-        replace.gsub(/\$([\d])/) do |var_match|
+        replace.gsub(/[\\\$]([\d])/) do |var_match|
           var($1)
         end
       end 
@@ -64,6 +60,10 @@ module Tritium::Engines::Reference::Scope
   
     def append(text)
       @text << text
+    end
+    
+    def text()
+      @text
     end
 
     def prepend(text)
