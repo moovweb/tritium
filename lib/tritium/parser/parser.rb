@@ -252,18 +252,22 @@ module Tritium
       end
 
       def term
-        case pop!.lexeme
+        case peek.lexeme
         when :STRING, :REGEXP
+          pop!
           return cmd(Literal, @token.value)
         when :VAR
+          pop!
           return cmd(Reference, @token.value)
         when :ID
-          func_name = @token.value
-          raise_error("function call is missing a valid argument list") if
-            peek.lexeme != :LPAREN
-          args = arguments
-          return cmd(Invocation, func_name, args[:pos], args[:kwd])
+          # func_name = @token.value
+          # raise_error("function call is missing a valid argument list") if
+          #   peek.lexeme != :LPAREN
+          # args = arguments
+          # return cmd(Invocation, func_name, args[:pos], args[:kwd])
+          return invocation
         when :READ
+          pop!
           # Read relative to the current script file
           file_to_read = File.join(@path, @token.value)
           unless ENV["TEST"]
@@ -273,6 +277,7 @@ module Tritium
           end
           return cmd(Literal, File.read(file_to_read))
         else
+          pop!
           raise_error("invalid term")
           return 
         end
