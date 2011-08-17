@@ -8,6 +8,7 @@ module Tritium
           @id = "0"
           set_parents!
         end
+        
       
         def to_s(depth = 0)
           (@statements.collect { |stmt| stmt.to_s(depth) }).join("\n")

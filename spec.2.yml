@@ -112,6 +112,10 @@ Base:
   dump:
     returns: true
     doc: This is a debug-feature. Please don't use this in production. It will return whatever the current object is in a stringified form.
+  yield:
+    returns: false
+    hide: true
+    doc: Used in macro's to indicate where the block should execute
 Node:
   inherit: Base
   select: 

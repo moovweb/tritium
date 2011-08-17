@@ -26,6 +26,16 @@ module Tritium
           end
         end
         
+        def each(&block)
+          @pos_args.each do |pos_arg|
+            block.call(pos_arg)
+            if pos_arg.respond_to?("each")
+              pos_arg.each(&block)
+            end
+          end
+          super
+        end
+        
         def process_args!
           @pos_args.each do |arg|
             if arg.is_a?(Instruction)

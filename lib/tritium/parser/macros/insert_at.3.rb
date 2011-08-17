@@ -6,5 +6,6 @@
   else
     result << "  inner() { set(#{rest.to_tritium}) }\n"
   end
+  result << "    yield()\n"
   result << "}\n"
 end

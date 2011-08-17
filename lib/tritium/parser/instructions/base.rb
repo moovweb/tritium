@@ -26,7 +26,15 @@ module Tritium
           scope
         end
         
+        def delete
+          @parent.statements.delete(self)
+        end
+        
         def to_tritium
+          to_s
+        end
+        
+        def to_script
           to_s
         end
         

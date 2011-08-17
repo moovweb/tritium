@@ -139,20 +139,25 @@ module  EngineTests
     end
     
     def test_time
-      @logger = MiniTest::Mock.new
-      engine = engine_class.new("set(time())", :logger => @logger)
+      logger = log = Logger.new(nil)
+      engine = engine_class.new("set(time())", :logger => logger)
       result, env = engine.run("")
       assert result.to_f > 0.0
     end
     
-    def test_bm
-      @logger =  MiniTest::Mock.new
-      @logger.expect("info", nil, ['<a>hi mom!</a>'])
-      engine = engine_class.new("log(time())", :logger => @logger)
-      engine.run("")
-      result = @logger.instance_eval("@actual_calls")["info"].first[:args].first
-      assert result.to_f > 0.0, "Should be a float of some sort"
-    end
+    #def test_bm
+    #  @logger =  MiniTest::Mock.new
+    #  @logger.expect("info", nil, ['<a>hi mom!</a>'])
+    #  engine = engine_class.new("bm('bench') { set('doc') }", :logger => @logger)
+    #  puts engine.root_instruction.to_script
+    #  result, env = engine.run("")
+    #  assert_equal 'doc', result
+    #  log = @logger.instance_eval("@actual_calls")["info"].first[:args].first
+    #  
+    #  name, value = log.split(":")
+    #  assert_equal 'bench', name.strip
+    #  assert value.to_f > 0.0, "Should be a float of some sort"
+    #end
   
     def test_export_function
       script = "export('Content-Type', 'html/js'); export('cookie', 'a'); export('cookie', 'b')"

@@ -3,4 +3,5 @@ attribute("class") {
     append(" ")
     append(@1)
   }
+  yield()
 }
