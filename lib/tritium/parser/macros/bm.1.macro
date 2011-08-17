@@ -1,4 +1,3 @@
-$time = time() { 
+log(concat(@1, ": ", time() { 
   yield()
-}
-log(concat(@1, ":", $time))
+}, "µs"))
