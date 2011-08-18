@@ -276,6 +276,7 @@ XMLNode:
         expansion: true
   insert_javascript:
     opens: Node
+    positional: true
     doc: Allows you to easily and safely insert a <script> tag for javascript.
     arguments:
       -
