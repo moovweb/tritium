@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'logger'
 require_relative '../parser/parser'
+require_relative '../extensions/string'
 
 class Nokogiri::HTML::DocumentFragment
   alias :to_html_fragment :to_html

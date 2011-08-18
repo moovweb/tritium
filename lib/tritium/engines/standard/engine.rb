@@ -9,6 +9,7 @@ module Tritium
     class Standard < Base
       
       def run(input, options = {})
+        input = input.fix_encoding
         run = Run.new(@logger, options)
         ctx = Context[@root_instruction, input.dup]
         run.process(@root_instruction, ctx)

@@ -9,7 +9,7 @@ module Tritium
         # Setup options
         env = options["env"] || options[:env] || {}
 
-        root_scope = Scope::Text.new(doc.dup)
+        root_scope = Scope::Text.new(doc.fix_encoding.dup)
         root_scope.logger = @logger
         root_scope.env.merge! env
         #puts @root_instruction.to_debug_script

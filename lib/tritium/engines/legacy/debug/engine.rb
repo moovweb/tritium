@@ -38,7 +38,7 @@ module Tritium
         @root_step.logger = @logger
         global_debug = {}
         export_vars = []
-        @root_step.execute(doc.dup, env, global_debug, export_vars)
+        @root_step.execute(doc.fix_encoding.dup, env, global_debug, export_vars)
 
         #return [@root_step.object, export_vars] if ENV["TEST"]
 
