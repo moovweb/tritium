@@ -82,7 +82,7 @@ module Tritium
       end
     
       def self.load_macro_file(filename, name, arg_length)
-        macro_text = File.open(filename).read
+        macro_text = File.read(filename)
 
         # Build a new Macro object and pass in the block to convert the macro
         # file into a proper Proc for the expansion.
@@ -124,7 +124,7 @@ module Tritium
       end
     
       def self.load_rb_macro_file(filename, name, arg_length)
-        macro_text = File.open(filename).read
+        macro_text = File.read(filename)
         expansion_block = eval(macro_text)
         Macro.new(name, arg_length, &expansion_block)
       end

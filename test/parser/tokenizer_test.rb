@@ -35,7 +35,7 @@ class TokenizerTest < MiniTest::Unit::TestCase
   end
   
   def run_script_tests(script_file)
-    script_string = File.open(script_file).read
+    script_string = File.read(script_file)
     tokenizer = Tokenizer.new(script_string, :filename => script_file)
     tokens = tokenizer.to_a
     tokens.each do |token|
