@@ -8,7 +8,7 @@ xml() {
       copy_here("../name", "top")
       copy_here("./number", "after")
       copy_here("./nonexistent")
-      copy_here("//email")
+      copy_here("./../email")
     }
   }
 }

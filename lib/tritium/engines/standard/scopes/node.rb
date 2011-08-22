@@ -60,10 +60,7 @@ module Tritium
           when :copy_to
             move(ins, ctx, ctx.value.dup, args.first, args.last)
           when :copy_here
-            target = ctx.value.xpath(args.first).first
-            if target.nil?
-              @logger.debug("Copy failed with #{args.first}")
-            else
+            ctx.value.xpath(args.first).each do |target|
               move(ins, ctx, target.dup, ctx.value, args.last)
             end
           when :wrap_text_children

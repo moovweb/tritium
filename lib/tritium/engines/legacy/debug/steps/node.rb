@@ -78,10 +78,7 @@ class Tritium::Engines::Debug
     end
     
     def copy_here(selector, position = "bottom")
-      target = search(selector).first
-      if target.nil?
-        log("copy_here(#{selector.inspect}) failed to copy.")
-      else
+      search(selector).each do |target|
         move(target.dup, @object, position)
       end
     end
