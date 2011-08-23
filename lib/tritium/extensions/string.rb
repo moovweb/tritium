@@ -1,14 +1,14 @@
 class String
 
   def fix_encoding
-    if self.encoding.to_s == "UTF-8"
-      if !self.valid_encoding?
-        return self.chars.map{|c| c.valid_encoding? ? c : '_?_'}.join
-      end
+    if self.valid_encoding?
+      self
     else
-      ic = Iconv.new('UTF-8', self.encoding.to_s + '//IGNORE')
-      return ic.conv(self + "    ")[0..-5]
+      #ic = Iconv.new('UTF-8', 'UTF-8//IGNORE')
+      #self.unpack('C*').pack('U*')
+      #ic.discard_ilseq = "?!?"
+      #ic.conv(self + "    ")[0..-4]
+      self.chars.map{|c| c.valid_encoding? ? c : '_?_'}.join
     end
-    self
   end
 end
