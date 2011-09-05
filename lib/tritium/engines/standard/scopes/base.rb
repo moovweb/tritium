@@ -16,17 +16,9 @@ module Tritium
           when :concat
             return args.join("")
           when :match
-            if args.size == 2
-              matcher = args.first
-              with = args.last
-              if with.match?(matcher)
-                run_children(ins, ctx)
-              end
-            else
-              @matchers.push(args.first)
-              run_children(ins, ctx)
-              @matchers.pop
-            end
+            @matchers.push(args.first)
+            run_children(ins, ctx)
+            @matchers.pop
           when :not
             regex = Regexp.new(args.first)
             regex.opposite = true
