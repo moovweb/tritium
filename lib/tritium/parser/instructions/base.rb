@@ -51,6 +51,8 @@ module Tritium
             "#*/"].join("\n#{@@tab * depth}")
         end
         alias unquote to_s
+        
+        alias is_arg? is_arg
       end
     end
   end
