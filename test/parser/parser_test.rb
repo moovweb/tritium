@@ -108,6 +108,8 @@ class ParserTest < MiniTest::Unit::TestCase
     assert_equal "Text", root.scope.name
     expansion = root.statements.first
     var = expansion.statements.first
+    literal = var.pos_args.first
+    assert_equal "hi", literal.value
     assert_equal root.scope, var.scope
     assert_equal "Text", var.opens.name
     html = root.statements.last
@@ -120,6 +122,8 @@ class ParserTest < MiniTest::Unit::TestCase
     assert_equal html, select.parent
     assert_equal "XMLNode", select.scope.name
     assert_equal "XMLNode", select.opens.name
+    var_arg = select.pos_args.first
+    assert var_arg.is_arg?
     
     expansion_attribute = select.statements.first
     assert_equal "XMLNode", expansion_attribute.scope.name
