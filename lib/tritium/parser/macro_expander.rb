@@ -42,6 +42,7 @@ module Tritium
 
         begin
           expansion = Parser.new(expansion_string,
+                                 is_expansion: true,
                                  expander: self,
                                  errors: parser.errors,
                                  filename: parser.filename,

@@ -24,12 +24,13 @@ module Tritium
           script_string = nil
         end
         
-        @filename    = options[:filename]    || "MAIN"
-        @path        = options[:path]        || File.dirname(__FILE__)
-        @imports     = options[:imports]     || []
-        @logger      = options[:logger]      || Logger.new(STDOUT)
-        @expander    = options[:expander]    || MacroExpander.new
-        @errors      = options[:errors]      || ScriptErrors.new
+        @filename     = options[:filename]     || "MAIN"
+        @path         = options[:path]         || File.dirname(__FILE__)
+        @imports      = options[:imports]      || []
+        @logger       = options[:logger]       || Logger.new(STDOUT)
+        @expander     = options[:expander]     || MacroExpander.new
+        @errors       = options[:errors]       || ScriptErrors.new
+        @is_expansion = options[:is_expansion] || false
         
         prefix, base = File.dirname(@filename), File.basename(@filename)
         prefix = "" if prefix == "."
