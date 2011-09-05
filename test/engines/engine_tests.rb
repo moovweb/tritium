@@ -153,7 +153,6 @@ module  EngineTests
       result, env = engine.run("")
       assert_equal 'doc', result
       log = @logger.instance_eval("@actual_calls")["info"].first[:args].first
-      puts log.inspect
       name, value = log.split(": ")
       assert_equal 'bench', name.strip
       assert value.to_f > 0.0, "Should be a float of some sort"
