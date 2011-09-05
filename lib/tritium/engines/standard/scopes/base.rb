@@ -34,7 +34,6 @@ module Tritium
           when :with
             matcher = @matchers.last
             with = args.first
-            with = Regexp.new(with) unless with.is_a?(Regexp)
             if with.match?(matcher)
               run_children(ins, ctx)
               return false # signal to stop!
