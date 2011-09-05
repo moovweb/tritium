@@ -117,7 +117,7 @@ module Tritium
               puts macro_text_here.inspect
             end
             # If you want the inspected value, use @1
-            macro_text_here = macro_text_here.gsub("@#{num}", inspected || value.inspect)
+            macro_text_here = macro_text_here.gsub("@#{num}", inspected || value.to_script)
           end
           macro_text_here
         end
