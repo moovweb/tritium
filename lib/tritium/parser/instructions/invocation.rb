@@ -11,7 +11,6 @@ module Tritium
                        name = nil, pos_args = [], kwd_args = {}, statements = [])
           super(filename, line_num, statements)
           @name, @pos_args, @kwd_args = name.intern, pos_args, kwd_args
-          process_args!
         end
         
         def signature
@@ -36,19 +35,23 @@ module Tritium
           super
         end
         
+        def post_process!
+          super
+          process_args!
+        end
+        
         def process_args!
-          @pos_args.each do |arg|
+          args = @pos_args + @kwd_args.keys + @kwd_args.values
+          args.collect do |arg|
             if arg.is_a?(Instruction)
               arg.parent = self
               arg.is_arg = true
+            else
+              return nil
             end
+            arg
           end
-          @kwd_args.each do |key, value|
-            if value.is_a?(Instruction)
-              value.parent = self
-              value.is_arg = true
-            end
-          end
+          assign_ids(args.compact)
         end
         
         def spec

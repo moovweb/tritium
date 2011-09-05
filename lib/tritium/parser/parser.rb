@@ -84,6 +84,7 @@ module Tritium
         end
         begin
           @result = inline_block
+          @result.post_process!# unless @is_expansion
         rescue ScriptErrors
           # dont' do anything
         rescue ParserError => e

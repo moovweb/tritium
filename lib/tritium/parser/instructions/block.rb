@@ -3,11 +3,9 @@ module Tritium
     module Instructions
       class Block < Instruction
         def initialize(filename, line_num, statements = [])
-          @filename, @line_num, @statements = filename, line_num, statements
-          @id = "0"
-          set_parents!
+          super(filename, line_num)
+          @statements = statements
         end
-        
       
         def to_s(depth = 0)
           (@statements.collect { |stmt| stmt.to_s(depth) }).join("\n")
@@ -15,7 +13,6 @@ module Tritium
         
         def add_statements(instructions)
           @statements += instructions
-          set_parents!
         end
         
         def each(&block)
@@ -29,13 +26,6 @@ module Tritium
         
         def opens
           scope
-        end
-        
-        def set_parents!
-          @statements.each_with_index do |statement, index|
-            statement.parent = self
-            statement.id = self.id + "_#{index}"
-          end
         end
       end
       
@@ -59,7 +49,6 @@ module Tritium
         def add_statements(instructions)
           if @statements.last
             @statements.last.add_statements(instructions)
-            set_parents!
           else
             super
           end

@@ -14,6 +14,24 @@ module Tritium
         def initialize(filename, line_num)
           @filename, @line_num = filename, line_num
           @statements = []
+          @id = "0"
+        end
+        
+        def post_process!
+          assign_ids(@statements)
+          @statements.each do |statement|
+            statement.parent = self
+          end
+        end
+        
+        def assign_ids(instructions)
+          instructions.each_with_index do |statement, index|
+            statement.id = self.id + "_#{index}"
+            if statement.is_arg?
+              statement.id += "arg"
+            end
+            statement.post_process!
+          end
         end
         
         def scope
