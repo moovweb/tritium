@@ -2,7 +2,6 @@ module Tritium
   module Parser
     module Instructions
       class Block < Instruction
-        attr :statements, true
         def initialize(filename, line_num, statements = [])
           @filename, @line_num, @statements = filename, line_num, statements
           @id = "0"

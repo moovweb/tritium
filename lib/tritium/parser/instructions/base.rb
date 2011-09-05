@@ -9,9 +9,11 @@ module Tritium
         attr :is_arg, true
         attr :parent, true
         attr :id, true
+        attr :statements, true
 
         def initialize(filename, line_num)
           @filename, @line_num = filename, line_num
+          @statements = []
         end
         
         def scope
