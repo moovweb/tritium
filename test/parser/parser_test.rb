@@ -106,13 +106,16 @@ class ParserTest < MiniTest::Unit::TestCase
   def test_scopes
     script_string, parser, root = build_parser("add_class.ts")
     assert_equal "Text", root.scope.name
+    assert_equal "0", root.id
     expansion = root.statements.first
     var = expansion.statements.first
+    assert_equal "0_0_0", var.id
     literal = var.pos_args.first
     assert_equal "hi", literal.value
     assert_equal root.scope, var.scope
     assert_equal "Text", var.opens.name
     html = root.statements.last
+    assert_equal "0_1", html.id
     assert_equal root.scope, html.scope
     assert_equal "XMLNode", html.opens.name
     assert !html.base?, "html() is NOT a Base method"
@@ -122,8 +125,10 @@ class ParserTest < MiniTest::Unit::TestCase
     assert_equal html, select.parent
     assert_equal "XMLNode", select.scope.name
     assert_equal "XMLNode", select.opens.name
+    assert_equal "0_1_0", select.id
     var_arg = select.pos_args.first
     assert var_arg.is_arg?
+    assert_equal "0_1_0_0arg", var_arg.id
     
     expansion_attribute = select.statements.first
     assert_equal "XMLNode", expansion_attribute.scope.name
