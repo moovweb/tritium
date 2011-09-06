@@ -125,6 +125,14 @@ module Tritium
           to_legacy_script(depth)
         end
       end
+      
+      class Reference < Invocation
+        def initialize(filename, line_num, var_name)
+          # Make sure we turn ourselves into a proper invocation
+          var_name_literal = Literal.new(filename, line_num, var_name)
+          super(filename, line_num, "var", [var_name_literal])
+        end
+      end
     end
   end
 end

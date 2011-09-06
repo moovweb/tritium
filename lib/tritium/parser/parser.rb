@@ -262,7 +262,7 @@ module Tritium
           return cmd(Literal, @token.value)
         when :VAR
           pop!
-          return cmd(Reference, @token.value)
+          return cmd(Reference, @token.value.to_s)
         when :ID
           # func_name = @token.value
           # raise_error("function call is missing a valid argument list") if
