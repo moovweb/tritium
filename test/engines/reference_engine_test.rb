@@ -3,10 +3,10 @@
 require 'yaml'
 require 'minitest/autorun'
 require_relative '../../lib/tritium/engines/legacy/reference/engine'
-require_relative 'engine_tests'
+require_relative '../../lib/tritium/engine_tests'
 
 class ReferenceEngineTest < MiniTest::Unit::TestCase
-  include EngineTests
+  include Tritium::EngineTests
   
   def engine_class
     Reference
