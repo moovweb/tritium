@@ -34,21 +34,27 @@ Dir[base_path + "/scripts/*.ts"].each do |script_file_name|
   
   print "#{test_name}:#{' ' * (25 - test_name.size)}"
 
-  [Debug, Reference, Standard].each do |engine_class|
-    tritium = engine_class.new(ts_script, :path => base_path + "/scripts", :script_name => test_name, :logger => log)
+  [Debug, Reference, Standard, Judy::Engine].each do |engine_class|
+    begin
+      tritium = engine_class.new(ts_script, :path => base_path + "/scripts", :script_name => test_name, :logger => log)
 
-    totals[engine_class] ||= 0
-
-    start = Time.now
-    50.times do 
-      env_copy = env.dup
-      # Run the input through the tritium script.
-      result, export_vars = tritium.run(input, :env => env_copy)
+      totals[engine_class] ||= 0
+      name = engine_class.to_s.split("::").last
+      start = Time.now
+      
+      50.times do 
+        env_copy = env.dup
+        # Run the input through the tritium script.
+        result, export_vars = tritium.run(input, :env => env_copy)
+      end
+      took = Time.now - start
+      totals[engine_class] += took
+      result = "(#{name} #{took})"
+      print("#{result}#{' ' * (30 - result.size)}")
+    rescue
+      print("(#{name} !)")
     end
-    took = Time.now - start
-    totals[engine_class] += took
-    result = "(#{engine_class.to_s.split("::").last} #{took})"
-    print("#{result}#{' ' * (30 - result.size)}")
+    
   end
   print("\n")
 end
