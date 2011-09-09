@@ -3,6 +3,7 @@ ENV["TEST"] = "true"
 require_relative '../../lib/tritium'
 
 include Tritium::Engines
+require_relative '../../../nagual/lib/judy'
 
 base_path = Tritium.functional_test_location
 
