@@ -28,3 +28,6 @@ You'd get back...
       </div>
     </body>
   </html>
+
+Engines! The Reference, Debug, and Standard engine are bundled for now.
+Other engines must be managed seperately.
