@@ -1,1 +1,3 @@
-move_here(@1, "bottom")
+move_here(@1, "bottom") {
+ yield()
+}

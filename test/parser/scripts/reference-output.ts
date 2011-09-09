@@ -23,7 +23,7 @@ xhtml() {
         }
         move_to("preceding-sibling::div[1]", "top")
         # ENTERING FILE: import 2.ts
-        move_here(".//div[@class='something']") {
+        move_here(".//div[@class='something']", "bottom") {
           attribute("id") {
             value() {
               set("algol")
@@ -56,7 +56,7 @@ xhtml() {
           append("something-else")
         }
       }
-      copy_here(".//img[not(@alt)]")
+      copy_here(".//img[not(@alt)]", "bottom")
       # ENTERING FILE: import-3.ts
       bottom() {
         insert_tag("p", "Getting tired of writing these.")
