@@ -1,5 +1,5 @@
 xml() {
-  debug("me") {
+  debug() {
     $("//a") {
       inner("Ran")
       wrap("span") {
