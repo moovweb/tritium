@@ -133,6 +133,17 @@ module Tritium
           super(filename, line_num, "var", [var_name_literal])
         end
       end
+      
+      class NestedInvocation < Invocation
+        def initialize(filename, line_num,
+                       name = nil, pos_args = [], kwd_args = {}, statements = [])
+          if pos_args.size > 2
+            arg_call = NestedInvocation.new(filename, line_num, name, pos_args[1..-1])
+            pos_args = [pos_args.first, arg_call]
+          end
+          super
+        end
+      end
     end
   end
 end

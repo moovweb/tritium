@@ -9,6 +9,7 @@ html() {
         append(" ")
         append(var("hi"))
       }
+      concat("h", concat("e", concat("l", concat("o", concat(" is ", var("hi"))))))
       replace("h") {
         set("H")
       }

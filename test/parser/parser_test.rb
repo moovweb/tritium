@@ -143,6 +143,6 @@ class ParserTest < MiniTest::Unit::TestCase
     root.each do |s|
       count += 1
     end
-    assert_equal 22, count
+    assert_equal 34, count
   end
 end

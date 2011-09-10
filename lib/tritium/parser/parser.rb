@@ -207,7 +207,11 @@ module Tritium
           return stub
         else
           stmts = stmts ? [stmts] : []
-          return cmd(Invocation, func_name, args[:pos], args[:kwd], *stmts)
+          instruction_klass = Invocation
+          if func_name == :concat
+            instruction_klass = NestedInvocation
+          end
+          return cmd(instruction_klass, func_name, args[:pos], args[:kwd], *stmts)
         end
       end
 
