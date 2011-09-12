@@ -15,6 +15,10 @@ module Tritium
     class Base
       attr :root_instruction
       
+      def self.name
+        to_s.split("::").last
+      end
+      
       def initialize(script_string, options = {})
         if script_string.is_a?(Hash)
           options = script_string

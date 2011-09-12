@@ -1,6 +1,7 @@
 ENV["TEST"] = "true"
 
 require_relative '../../lib/tritium'
+require 'rainbow'
 
 include Tritium::Engines
 require_relative '../../../nagual/lib/judy'
@@ -35,14 +36,15 @@ Dir[base_path + "/scripts/*.ts"].each do |script_file_name|
   
   print "#{test_name}:#{' ' * (25 - test_name.size)}"
 
+  results = {}
+  fastest_time = 10000000
+  fastest_engine = nil
   [Debug, Reference, Standard, Judy::Engine].each do |engine_class|
     begin
       tritium = engine_class.new(ts_script, :path => base_path + "/scripts", :script_name => test_name, :logger => log)
 
       totals[engine_class] ||= 0
-      name = engine_class.to_s.split("::").last
       start = Time.now
-      
       50.times do 
         env_copy = env.dup
         # Run the input through the tritium script.
@@ -50,12 +52,23 @@ Dir[base_path + "/scripts/*.ts"].each do |script_file_name|
       end
       took = Time.now - start
       totals[engine_class] += took
-      result = "(#{name} #{took})"
-      print("#{result}#{' ' * (30 - result.size)}")
+      results[engine_class] = took
+      if took < fastest_time
+        fastest_time = took
+        fastest_engine = engine_class
+      end
     rescue
       print("(#{name} !)")
     end
-    
+  end
+  results.each do |engine, took|
+    took_string = took.to_s[0..5]
+    result = "(#{engine.name} #{took_string})"
+    size = result.size
+    if engine == fastest_engine
+      result = result.inverse
+    end
+    print("#{result}#{' ' * (20 - size)}")
   end
   print("\n")
 end
