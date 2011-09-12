@@ -1,0 +1,9 @@
+status: 200
+path: /shop/womens?id=118&edge=hybrid
+asset_host: //d1topzp4nao5hp.cloudfront.net
+image_asset_location: /macys/0.1.204/images/banners/topcat_1_womens.jpg
+stylesheet_asset_location: /macys/0.1.204/stylesheets/.css/
+js_asset_location: /macys/0.1.204/javascript
+rewrite_link_replacement: \1m$prefix.\3macys.\5com
+rewrite_link_matcher: (^|\/\/|\"|\')(?!m$prefix\.)(www1?\.)?((reviews\-cdn\.|reviews\.|community\.)?[a-z0-9]*)macys\.(fds\.)?com
+rewrite_link_host: m(?<prefix>[a-z]*)\.[a-z0-9\-\.]*macys\.(fds\.)?com
