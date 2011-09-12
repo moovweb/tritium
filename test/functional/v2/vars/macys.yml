@@ -1,9 +1,39 @@
-status: 200
-path: /shop/womens?id=118&edge=hybrid
-asset_host: //d1topzp4nao5hp.cloudfront.net
-image_asset_location: /macys/0.1.204/images/banners/topcat_1_womens.jpg
-stylesheet_asset_location: /macys/0.1.204/stylesheets/.css/
-js_asset_location: /macys/0.1.204/javascript
-rewrite_link_replacement: \1m$prefix.\3macys.\5com
-rewrite_link_matcher: (^|\/\/|\"|\')(?!m$prefix\.)(www1?\.)?((reviews\-cdn\.|reviews\.|community\.)?[a-z0-9]*)macys\.(fds\.)?com
-rewrite_link_host: m(?<prefix>[a-z]*)\.[a-z0-9\-\.]*macys\.(fds\.)?com
+source_host: www1.macys.com
+rewrite_link_matcher: !ruby/regexp /(^|\/\/|\"|\')(?!mlocal\.)(www1?\.)?((reviews\-cdn\.|reviews\.|community\.)?[a-z0-9]*)macys\.(fds\.)?com/
+rewrite_link_matcher_str: (^|\/\/|\"|\')(?!mlocal\.)(www1?\.)?((reviews\-cdn\.|reviews\.|community\.)?[a-z0-9]*)macys\.(fds\.)?com
+rewrite_link_replacement: \1mlocal.\3macys.\5com
+rewrite_cookie_matcher: !ruby/regexp /\.?(www\.)?([a-z0-9\-\.]*macys\.(fds\.)?com)/
+rewrite_cookie_replacement: .\2
+rewrite_cookie_missing_replacement: 
+rewrite_incoming_json: "[{\"matcher\":\"^m[A-Za-z0-9\\\\-]*\\\\.([A-Za-z0-9\\\\-\\\\.]*(((reviews)|(community))(-cdn)?)(\\\\.macys)?\\\\.(fds\\\\.)?com)\",\"replacement\":\"\\\\1\"},{\"matcher\":\"^m[A-Za-z0-9\\\\-]*\\\\.([A-Za-z0-9\\\\-\\\\.]*macys\\\\.(fds\\\\.)?com)\",\"replacement\":\"www$secure.\\\\1\"},{\"matcher\":\"origin-m.macys.com\",\"replacement\":\"www$secure.macys.com\"},{\"matcher\":\"macys.moovweb.com\",\"replacement\":\"www$secure.macys.com\"},{\"matcher\":\"wwwtrue\\\\.\",\"replacement\":\"www.\"},{\"matcher\":\"wwwfalse\\\\.\",\"replacement\":\"www1.\"},{\"matcher\":\"^m[A-Za-z0-9\\\\-]*\\\\.([A-Za-z0-9\\\\-\\\\.]*macys\\\\.(fds\\\\.)?com)\",\"replacement\":\"\\\\1\"}]"
+secure: true
+host: mlocal.macys.com
+connection: close
+referer: http://mlocal.macys.com/
+user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_1) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.220 Safari/535.1
+accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+accept_encoding: gzip,deflate,sdch
+accept_language: en-US,en;q=0.8
+accept_charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
+cookie: CoreM_State=29~-1~-1~-1~-1~1~3~5~7~7~0~0~|~~|~~|~||||||; currency=GBP; macys_online=4224791723; shippingCountry=DE; macys_online_uid=4736214577; HISTORY_KEY=%2Findex.ognc%3Fintnl%3Dtrue; GCs=CartItem1_92_03_87_UserName1_92_4_02_3_87_BazaarVoiceId1_92_b5fd1a9f19bddb2f604b4a036ced351234373336323134353737; profile=FurnitureDeliveryZip1_92_4_02_3_87_ProfileZip1_92_4_02_3_87_FurnitureSampleZip1_92_4_02_3_87_InStoreZip1_92_4_02_3_87_FurnitureDeliveryZipOptOut1_92_false; SignedIn=0; PPP=24; BypassAkamai=false; SNSGCs=bypass_session_filter1_92_true; akaau=4S2+9ImYbKv3EQfNUJzw/r5TsU+a2rLfdnMrd0J4+L31b6FVwqFN5sA6a2JQ1uPV; FORWARDPAGE_KEY=http%3A//macys.com/; CMAVID=50011274187617288004181; stop_mobi=yes; SL=F; CoreAt=90067660=1|0|0|0|0|0|0|0|0|0|0|0|1|1315837910||&remove=1|0|0|0|0|0|0|0|0|0|0|0|0|0||&unique=1|0|0|0|0|0|0|0|0|0|0|0|0|0||&; cmRS=&t1=1315837886844&t2=1315837901228&t3=1315837910101&lti=1315837910093&ln=&hr=macys.com/shop/womens%3Fid%3D118&fti=&fn=keywordSearch%3A0%3B&ac=&fd=&uer=&fu=&pi=&ho=www3.macys.com/eluminate%3F&ci=90067660
+server: IBM_HTTP_Server
+dynatrace: PT=6296983;PA=1121888251;RS=MCOM-Faceted/20110912101034_0.session;PS=-944076114
+pragma: no-cache
+content_encoding: gzip
+content_type: text/html
+content_language: en-US
+content_length: "15129"
+cache_control: no-cache
+date: Mon, 12 Sep 2011 14:32:04 GMT
+vary: Accept-Encoding
+set_cookie: stop_mobi=yes; expires=Mon, 12-Sep-2011 15:02:04 GMT; path=/; domain=.macys.com
+device_stylesheet: devices/webkit.css
+stylesheet_asset_location: /stylesheets/.css/
+image_asset_location: /images/
+js_asset_location: /javascript/
+User-Agent-matched-default: "true"
+User-Agent-matched-webkit: "true"
+path: /shop/womens?id=118
+status: "200"
+asset_host: http://localhost:3003
+request_id: zc004
