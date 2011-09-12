@@ -124,7 +124,7 @@ module Tritium
       def test_log
         @logger = MiniTest::Mock.new
         @logger.expect("info", nil, ['hi mom!'])
-        engine = engine_class.new("log('hi') { append(' mom!') }", :logger => @logger)
+        engine = engine_class.new("log('h', 'i', ' ' ) { append('mom!') }", :logger => @logger)
         engine.run("")
         @logger.verify
       end

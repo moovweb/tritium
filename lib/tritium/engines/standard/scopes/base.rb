@@ -82,7 +82,7 @@ module Tritium
             @logger.info(value)
             return value
           when :log
-            text = Context[ins, args.join(" ")]
+            text = Context[ins, args.first]
             run_children(ins, text)
             @logger.info(text.value)
           when :debug

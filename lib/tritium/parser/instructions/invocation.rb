@@ -137,9 +137,12 @@ module Tritium
       class NestedInvocation < Invocation
         def initialize(filename, line_num,
                        name = nil, pos_args = [], kwd_args = {}, statements = [])
-          if pos_args.size > 2
+          if pos_args.size > 2 && name == :concat
             arg_call = NestedInvocation.new(filename, line_num, name, pos_args[1..-1])
             pos_args = [pos_args.first, arg_call]
+          elsif name != :concat && pos_args.size > 1
+            arg_call = NestedInvocation.new(filename, line_num, :concat, pos_args)
+            pos_args = [arg_call]
           end
           super
         end

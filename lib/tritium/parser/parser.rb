@@ -208,7 +208,7 @@ module Tritium
         else
           stmts = stmts ? [stmts] : []
           instruction_klass = Invocation
-          if func_name == :concat
+          if (func_name == :concat) || (func_name == :log)
             instruction_klass = NestedInvocation
           end
           return cmd(instruction_klass, func_name, args[:pos], args[:kwd], *stmts)
