@@ -6,9 +6,9 @@ require 'rainbow'
 include Tritium::Engines
 require_relative '../../../nagual/lib/judy'
 
-ENV["CSV"] = "true"
+#ENV["CSV"] = "true"
 
-base_path = Tritium.functional_test_location
+base_path = File.expand_path(File.join(File.dirname(__FILE__), "../functional/v2"))
 
 log = Logger.new(STDOUT)
 log.level = Logger::ERROR
@@ -22,9 +22,10 @@ engines.each do |engine_class|
 end
 print("\n")
 
-Dir[base_path + "/scripts/*.ts"].each do |script_file_name|
+search = File.join(base_path, "/scripts/m*")
+Dir[search].each do |script_file_name|
   test_name = File.basename(script_file_name, ".ts")
-  
+
   input_file_name = Dir[base_path + "/input/#{test_name}*"].last
   ts_script = "@import #{test_name}.ts"
   
@@ -58,7 +59,7 @@ Dir[base_path + "/scripts/*.ts"].each do |script_file_name|
 
       totals[engine_class] ||= 0
       start = Time.now
-      100.times do 
+      1.times do 
         env_copy = env.dup
         # Run the input through the tritium script.
         result, export_vars = tritium.run(input, :env => env_copy)
@@ -70,8 +71,8 @@ Dir[base_path + "/scripts/*.ts"].each do |script_file_name|
         fastest_time = took
         fastest_engine = engine_class
       end
-    rescue
-      print("(#{name} !)")
+    #rescue
+    #  print("(#{engine_class.name} !)")
     end
   end
   results.each do |engine, took|
