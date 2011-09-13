@@ -79,7 +79,6 @@ module Tritium
             @export_vars << [args[0], args[1]]
           when :dump
             value = ctx.value.to_s
-            @logger.info(value)
             return value
           when :log
             text = Context[ins, args.first]
