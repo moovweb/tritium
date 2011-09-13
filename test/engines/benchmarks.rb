@@ -15,14 +15,14 @@ log.level = Logger::ERROR
 
 totals = {}
 print("\nscript_name")
-engines = [Debug, Reference, Standard, Judy::Engine]
+engines = [Standard, Judy::Engine]
 engines.each do |engine_class|
   print(",")
   print(engine_class.name)
 end
 print("\n")
 
-search = File.join(base_path, "/scripts/m*")
+search = File.join(base_path, "/scripts/macy*")
 Dir[search].each do |script_file_name|
   test_name = File.basename(script_file_name, ".ts")
 
@@ -59,7 +59,7 @@ Dir[search].each do |script_file_name|
 
       totals[engine_class] ||= 0
       start = Time.now
-      1.times do 
+      50.times do 
         env_copy = env.dup
         # Run the input through the tritium script.
         result, export_vars = tritium.run(input, :env => env_copy)

@@ -94,7 +94,7 @@ module Tritium
           if ENV['TEST_DEBUG'] || ENV["SCRIPT"]
             if expected_output != result
               puts "Diff:"
-              diff_as_string(result, expected_output)
+              puts diff_as_string(result, expected_output)
               script = tritium.to_script
               if script.size < 2000
                 puts script
@@ -103,10 +103,10 @@ module Tritium
               end
             end
           
-            if time > 0
-              puts "ERROR ON SECOND RUN ONLY! #{time}"
-              puts tritium.to_script
-            end
+            #if time > 0
+            #  puts "ERROR ON SECOND RUN ONLY! #{time}"
+            #  puts tritium.to_script
+            #end
           end
         
           assert_equal expected_output, result
@@ -153,6 +153,14 @@ module Tritium
       end  
       #Handle the last remaining hunk
       output << oldhunk.diff(format) << "\n"
+    end
+    
+    def format
+      :unified
+    end
+
+    def context_lines
+      3
     end
     
   

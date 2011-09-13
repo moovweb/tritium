@@ -24,9 +24,9 @@ module Tritium
         script_to_run = @script_string.clone
         #if ENV["PARSER"]
           script_to_run = Parser::Parser.new(@script_string, filename: @script_name, path: @script_path).parse.to_s
-          if ENV["SCRIPT"]
-            puts script_to_run
-          end
+          #if ENV["SCRIPT"]
+          #  puts script_to_run
+          #end
         #end
         #processed = Parser::Preprocess.run(script_to_run, @script_path, @script_name)
         script_to_run
