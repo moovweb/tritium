@@ -50,27 +50,15 @@ module Tritium
           @parent.statements.delete(self)
         end
         
-        def to_tritium
-          to_s
+        def debug_info
+          "Line #{@line_num} in #{@filename}"
         end
         
         def to_script
           to_s
         end
-        
-        def debug_info
-          "Line #{@line_num} in #{@filename}"
-        end
 
-        def ruby_debug_line(depth = 0)
-          return ""
-          ["#/*",
-            "@_line_number = #{@line_num.inspect}",
-            "@_script = #{@filename.inspect}",
-            "@_line = ''",
-            "#*/"].join("\n#{@@tab * depth}")
-        end
-        alias unquote to_s
+        alias unquote to_script
         
         alias is_arg? is_arg
       end

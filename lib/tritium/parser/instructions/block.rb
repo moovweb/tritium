@@ -7,8 +7,8 @@ module Tritium
           @statements = statements
         end
       
-        def to_s(depth = 0)
-          (@statements.collect { |stmt| stmt.to_s(depth) }).join("\n")
+        def to_script(depth = 0)
+          (@statements.collect { |stmt| stmt.to_script(depth) }).join("\n")
         end
         
         def add_statements(instructions)
@@ -31,7 +31,7 @@ module Tritium
       
       # Class used as an invisible container
       class InlineBlock < Block
-        def to_s(depth = 0)
+        def to_script(depth = 0)
           result = "#{@@tab * depth}# ENTERING FILE: #{@filename}\n"
           result << super
           result << "\n#{@@tab * depth}# LEAVING FILE: #{@filename}"
@@ -42,8 +42,8 @@ module Tritium
       # This class is ONLY used to indicate that the inline block used was
       # an expansion block. Walk over this and ignore it.
       class ExpansionInlineBlock < InlineBlock
-        def to_s(depth = 0)
-          return (@statements.collect { |s| s.to_s(depth) }).join("\n")
+        def to_script(depth = 0)
+          return (@statements.collect { |s| s.to_script(depth) }).join("\n")
         end
         
         def add_statements(instructions)

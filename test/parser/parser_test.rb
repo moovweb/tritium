@@ -48,14 +48,14 @@ class ParserTest < MiniTest::Unit::TestCase
     assert true # If we didn't error, its a positive assertion
   end
 
-  def test_parser
+  def test_parser_with_false_negatives
     script_string, parser, output = build_parser("false-negatives.ts")
-    assert_equal read_script("reference-output.ts"), output.to_s
+    assert_equal read_script("reference-output.ts"), output.to_script
   end
   
   def test_var_expansion
     script_string, parser, output = build_parser("var.ts")
-    assert_equal read_script("var_output.ts"), output.to_s
+    assert_equal read_script("var_output.ts"), output.to_script
   end
   
   def test_multiline_comment_unclosed
@@ -80,7 +80,7 @@ class ParserTest < MiniTest::Unit::TestCase
   
   def test_add_class_expansion
     script_string, parser, output = build_parser("add_class.ts")
-    assert_equal read_script("add_class_output.ts"), output.to_s
+    assert_equal read_script("add_class_output.ts"), output.to_script
   end
   
   def test_insert_positionals

@@ -12,12 +12,12 @@ module Tritium
           @value.inspect
         end
       
-        def to_s(depth = 0)
+        def to_script(depth = 0)
           "#{@@tab * depth}#{value_string}"
         end
       
         def unquote
-          val = eval(self.to_s)
+          val = eval(self.to_script)
           Regexp === val ? val.inspect : val
         end
       end

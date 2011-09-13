@@ -1,8 +1,8 @@
 class Array
-  def to_tritium
+  def to_script
     self.collect do |item|
-      if item.respond_to?("to_tritium")
-        item.to_tritium
+      if item.respond_to?("to_script")
+        item.to_script
       else
         item.inspect
       end

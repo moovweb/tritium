@@ -70,49 +70,22 @@ module Tritium
           @opens ||= spec.opens || scope
         end
         
-        def legacy_stub(legacy = false, depth = 0)
-          if legacy
-            name = @name.to_s.gsub(/\$/, "select")
-            if name == "else" 
-              name = "else_do"
-            end
-            if name == "not"
-              name = "not_matcher"
-            end
-          else
-            name = @name.to_s
-          end
-
-          result = ruby_debug_line(depth) + "#{@@tab * depth}#{name}("
-          @pos_args.each { |arg| result << "#{arg}, " }
-          @kwd_args.each { |kwd, arg| result << "#{kwd.inspect} => #{arg}, " }
+        def stub(depth = 0)
+          result = "#{@@tab * depth}#{name}("
+          @pos_args.each { |arg| result << "#{arg.to_script}, " }
+          @kwd_args.each { |kwd, arg| result << "#{kwd.inspect} => #{arg.to_script}, " }
           result[-2,2] = "" if result.end_with? ", "
           result << ")"
           return result
         end
 
-        def stub(depth = 0)
-          legacy_stub(false, depth)
-        end
-        
-        def to_legacy_script(depth = 0)
-          result = legacy_stub(true, depth)
-          if @statements.any?
-            result << " {\n"
-            depth += 1
-            @statements.each { |stm| result << stm.to_s(depth) << "\n" }
-            depth -= 1
-            result << "#{@@tab * depth}}"
-          end
-          return result
-        end
         
         def to_script(depth = 0)
           result = stub(depth)
           if @statements.any?
             result << " {\n"
             depth += 1
-            @statements.each { |stm| result << stm.to_s(depth) << "\n" }
+            @statements.each { |stm| result << stm.to_script(depth) << "\n" }
             depth -= 1
             result << "#{@@tab * depth}}"
           end
@@ -120,10 +93,10 @@ module Tritium
         end
         
         #DEPRECATED
-        def to_s(depth = 0)
-          #WARN
-          to_legacy_script(depth)
-        end
+        #def to_s(depth = 0)
+        #  puts "AHH!"
+        #  to_script(depth)
+        #end
       end
       
       class Reference < Invocation

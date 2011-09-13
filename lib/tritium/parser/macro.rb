@@ -57,7 +57,7 @@ module Tritium
                 macro_name = function_name + "_" + pos
                 (1..4).each do |arg_length|
                   macros << Macro.new(macro_name, arg_length) do |args|
-                    "#{function_name}_at(#{pos.inspect}, #{args.to_tritium}) {\n  yield()\n}"
+                    "#{function_name}_at(#{pos.inspect}, #{args.to_script}) {\n  yield()\n}"
                   end
                 end
               end
@@ -98,7 +98,12 @@ module Tritium
             num = index + 1
 
             if value.is_a?(Hash)
-              value = (value.collect {|k,v| "#{k}: #{v.inspect}"}).join(", ")
+              value = (value.collect do |k,v|
+                if v.respond_to?(:to_script)
+                  v = v.to_script
+                end
+                "#{k}: #{v}"
+              end).join(", ")
               inspected = value
             elsif value.is_a?(Tritium::Parser::Parser::Literal)
               inspected = value.value_string
@@ -112,8 +117,11 @@ module Tritium
             # If you want a non-inspected value, then use #{@1} (or whatever number matches)
             begin
               macro_text_here = macro_text_here.gsub("\#{@#{num}}", unquoted)
-            rescue
+            rescue StandardError => e
+              puts e.inspect
               puts "Error with macro"
+              puts "name: #{name}"
+              puts "args: #{args.inspect}"
               puts macro_text_here.inspect
             end
             # If you want the inspected value, use @1
