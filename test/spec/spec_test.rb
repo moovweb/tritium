@@ -3,7 +3,7 @@ require_relative '../../lib/tritium/config'
 
 class SpecTest < MiniTest::Unit::TestCase
   def setup
-    @spec = Tritium.spec("1-1")
+    @spec = Tritium.spec("2")
   end
 
   def test_scope_loaded
@@ -37,12 +37,6 @@ class SpecTest < MiniTest::Unit::TestCase
     assert args.is_a?(Hash)
     assert_equal 3, args.size
     assert_equal false, insert.deprecated
-  end
-  
-  def test_deprecated
-    scope = @spec["Node"]
-    bottom = scope["bottom"]
-    assert bottom.deprecated.is_a?(String)
   end
   
   def test_positional
