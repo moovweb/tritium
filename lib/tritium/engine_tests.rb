@@ -17,7 +17,7 @@ module Tritium
   module EngineTests
     def self.functional_dirs
       Tritium.test_api_levels.collect do |ver|
-        File.join(File.dirname(__FILE__), "../../test/functional/v#{ver}")
+        File.join(File.dirname(__FILE__), "../../test/functional")
       end
     end
 
@@ -110,7 +110,7 @@ module Tritium
         
           assert_equal expected_output, result
         rescue SyntaxError => e
-          puts tritium.to_script
+          #puts tritium.to_script
           raise e
         rescue StandardError => e
           #puts env_copy.inspect
