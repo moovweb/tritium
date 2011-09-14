@@ -8,7 +8,7 @@ require_relative '../../../nagual/lib/judy'
 
 #ENV["CSV"] = "true"
 
-base_path = File.expand_path(File.join(File.dirname(__FILE__), "../functional/v2"))
+base_path = File.expand_path(File.join(File.dirname(__FILE__), "../functional"))
 
 log = Logger.new(STDOUT)
 log.level = Logger::ERROR
@@ -22,7 +22,7 @@ engines.each do |engine_class|
 end
 print("\n")
 
-search = File.join(base_path, "/scripts/macy*")
+search = File.join(base_path, "/scripts/*.ts")
 Dir[search].each do |script_file_name|
   test_name = File.basename(script_file_name, ".ts")
 

@@ -24,9 +24,7 @@ Gem::Specification.new do |s|
   s.test_files   = Dir['test/**/*']
   s.require_path = 'lib'
 
-  s.add_dependency('yajl-ruby')
   s.add_dependency('nokogiri')
-  s.add_dependency('sequel')
   s.add_dependency('bundler')
   s.add_dependency('diff-lcs', ['~> 1.1.2'])
   s.add_development_dependency('moov_build_tasks', ['~> 0.2.24'])
