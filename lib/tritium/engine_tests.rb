@@ -33,7 +33,7 @@ module Tritium
         test_name = File.basename(script_file_name, ".ts")
         if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
           # Writes a method that simply calls run_file with its name 
-          eval "def test_#{version}_#{test_name}_script; run_test '#{version_dir}', '#{test_name}'; end"
+          eval "def test_#{test_name}_script; run_test '#{version_dir}', '#{test_name}'; end"
         end
       end
     end
