@@ -5,6 +5,7 @@ require 'rainbow'
 
 include Tritium::Engines
 require_relative '../../../nagual/lib/judy'
+require_relative '../../../blitz/lib/blitz'
 
 #ENV["CSV"] = "true"
 
@@ -15,14 +16,14 @@ log.level = Logger::ERROR
 
 totals = {}
 print("\nscript_name")
-engines = [Standard, Judy::Engine]
+engines = [Standard, Judy::Engine, Blitz::Engine]
 engines.each do |engine_class|
   print(",")
   print(engine_class.name)
 end
 print("\n")
 
-search = File.join(base_path, "/scripts/*.ts")
+search = File.join(base_path, "/scripts/not_*.ts")
 Dir[search].each do |script_file_name|
   test_name = File.basename(script_file_name, ".ts")
 
