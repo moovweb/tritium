@@ -50,9 +50,6 @@ Base:
       -
         name: Regex
         doc: The regular expression to match with
-  else_do:
-    doc: Else command for match()
-    hide: true
   read:
     doc: Use this to read in a file at *compile* time. Nothing dynamic allowed.
     arguments:
