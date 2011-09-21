@@ -45,8 +45,8 @@ module Tritium
         build_parser.parse
       end
       
-      def to_script
-        @root_instruction.to_s
+      def to_script(depth = 0)
+        @root_instruction.to_script(depth)
       end
       
       def build_parser
