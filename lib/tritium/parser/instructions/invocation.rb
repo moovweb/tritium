@@ -37,6 +37,7 @@ module Tritium
         
         def post_process!
           super
+          with_not_fix!
           process_args!
         end
         
@@ -52,6 +53,16 @@ module Tritium
             arg
           end
           assign_ids(args.compact)
+        end
+        
+        def with_not_fix!
+          if @name == :with
+            arg = pos_args.first
+            if arg.is_a?(Invocation) && arg.name == :not
+              @name = :not
+              @pos_args[0] = pos_args.first.pos_args.first
+            end
+          end
         end
         
         def spec

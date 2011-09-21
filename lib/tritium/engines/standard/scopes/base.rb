@@ -19,10 +19,14 @@ module Tritium
             @matchers.push(args.first)
             run_children(ins, ctx)
             @matchers.pop
-          when :not
-            regex = Regexp.new(args.first)
-            regex.opposite = true
-            return regex
+          when :not, :with
+            matcher = @matchers.last
+            with = args.first
+            with.opposite = (ins.name == :not)
+            if with.match?(matcher)
+              run_children(ins, ctx)
+              return false # signal to stop!
+            end
           when :with
             matcher = @matchers.last
             with = args.first

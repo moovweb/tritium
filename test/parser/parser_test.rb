@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require_relative '../../lib/tritium/parser/parser'
+require_relative '../../lib/tritium'
 ENV["TEST"] = "true"
 
 class ParserTest < MiniTest::Unit::TestCase
