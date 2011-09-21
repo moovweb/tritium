@@ -60,16 +60,11 @@ module Tritium
             position_node(args[1], args[0], args[2] || "bottom")
           when :wrap_text_children
             tag_name = args.first
-            attributes = kwd_args
             ctx.value.children.each do |child|
               next if not child.text? or child.text.strip.empty?
               wrapper = child.add_previous_sibling("<#{tag_name} />").first
-              attributes.each do |key, val|
-                key = key.to_s if key.is_a? Symbol
-                wrapper[key] = val
-              end
               wrapper.add_child(child)
-              run_children(ins, Context[ins, child])
+              run_children(ins, Context[ins, wrapper])
             end
           when :cdata
             ctx.value.document.create_cdata(args.first)

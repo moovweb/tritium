@@ -8,6 +8,14 @@ module Tritium
           @value = value
         end
         
+        def literal?
+          true
+        end
+        
+        def regexp?
+          value.is_a?(Regexp)
+        end
+        
         def value_string
           @value.inspect
         end

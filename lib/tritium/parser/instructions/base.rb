@@ -54,6 +54,10 @@ module Tritium
           "Line #{@line_num} in #{@filename}"
         end
         
+        def literal?
+          false
+        end
+        
         def to_script
           to_s
         end
