@@ -7,9 +7,12 @@ module Tritium
           when :set
             ctx.set(args.first.dup)
           when :html, :xml, :xhtml, :html_fragment
-            doc = Context[ins, Tritium::Engines.xml_parsers[ins.name.to_s].parse(ctx.value)]
-            run_children(ins, doc)
-            ctx.set(doc.value.send("to_#{ins.name}"))
+            doc = Tritium::Engines.xml_parsers[ins.name.to_s].parse(ctx.value)
+            doc_ctx = Context[ins, doc]
+            @node_stack.push doc
+            run_children(ins, doc_ctx)
+            @node_stack.pop
+            ctx.set(doc_ctx.value.send("to_#{ins.name}"))
           when :prepend
             ctx.set(args.first + ctx.value)
           when :append

@@ -64,6 +64,15 @@ Base:
       -
         name: Selector
         doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
+  node:
+    opens: Node
+    returns: true
+    doc: This is how you access the node stack. The current node is node(1), and the parent node is node(2)
+    arguments:
+      -
+        name: Index
+        doc: The index of the node that you want
+        default: 1
   regex:
     opens: Text
     returns: true
@@ -181,6 +190,21 @@ Node:
         name: Position
         doc: Can be "bottom", "top", "after", or "before"
         default: "bottom"
+  move:
+    doc: Move the first node, to the second node.
+    arguments:
+      -
+        name: What
+        doc: The node() that we are copying
+      -
+        name: Where
+        doc: The node() that we are copying
+      -
+        name: Position
+        doc: Can be "bottom", "top", "after", or "before"
+        default: "bottom"
+  dup:
+    doc: Copies the node and yields to it
   copy_here:
     doc: Copy the indicated node(set) to the current Node, with the indicated position.
     arguments:

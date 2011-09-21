@@ -6,10 +6,12 @@ module Tritium
           case ins.name
           when :select
             nodeset = ctx.value.xpath(args.first)
-            nodeset.each_with_index do |node,index|
+            nodeset.each_with_index do |node, index|
               ctx.index = index + 1
+              @node_stack.push(node)
               doc = Context[ins, node]
               run_children(ins, doc)
+              @node_stack.pop
             end
           when :inner
             inner = Context[ins, ctx.value.inner_html]
@@ -41,8 +43,10 @@ module Tritium
           when :insert_at
             position, node_name = args
             node = Nokogiri::XML::Node.new(node_name, ctx.value.document)
+            @node_stack.push(node)
             position_node(ctx.value, node, position)
             run_children(ins, Context[ins, node])
+            @node_stack.pop
           when :inject_at
             position, content = args
             result = position_node(ctx.value, content, position)
@@ -58,13 +62,13 @@ module Tritium
                 run_children(ins, Context[ins, copied_node])
               end
             end
+          when :move
+            position_node(args[1], args[0], args[2])
           when :move_to
             node = ctx.value.xpath(args.first).first
             return if node.nil?
             position_node(node, ctx.value, args.last)
             run_children(ins, Context[ins, node])
-          when :move_here
-            move(ins, ctx, args.first, ctx.value, args.last)
           when :wrap_text_children
             tag_name = args.first
             attributes = kwd_args

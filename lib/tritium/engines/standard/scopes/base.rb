@@ -44,19 +44,15 @@ module Tritium
               end
             end
             return index_ctx.index.to_s
+          when :node
+            return @node_stack[@node_stack.size - args.first.to_i]
           when :fetch
             # We need to find a parent who has a Node!
             selector = args.first
-            node_ctx = ctx
-            while !node_ctx.value.respond_to?("xpath") || node_ctx.value.is_a?(Nokogiri::XML::Attr) do
-              node_ctx = @stack[@stack.index(node_ctx) - 1]
-              if node_ctx.nil? || ctx == node_ctx
-                # If we don't have a decent context... then just return ""
-                warn(ins, "A fetch was run without being inside of a NodeScope.")
-                return ""
-              end
+            node = @node_stack.last
+            if node.nil?
+              return ""
             end
-            node = node_ctx.value
   
             result = node.xpath(selector.to_s).first
             if result.is_a?(Nokogiri::XML::Attr)

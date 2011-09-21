@@ -23,6 +23,7 @@ module Tritium
           @matchers = []
           @export_vars = []
           @stack = []
+          @node_stack = []
         end
         
         def process(ins, ctx)

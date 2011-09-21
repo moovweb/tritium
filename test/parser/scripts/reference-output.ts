@@ -13,7 +13,8 @@ xhtml() {
       }
       log("blah")
       # LEAVING FILE: import-1.ts
-      move_here("some/long/path/to/something/split/across/multiple/lines/and/concatenated", "top") {
+      select("some/long/path/to/something/split/across/multiple/lines/and/concatenated") {
+        move(node("1"), node("2"), "top")
         insert_at("before", "div") {
           attribute("data-ur-bleeble:blabble") {
             value() {
@@ -23,14 +24,15 @@ xhtml() {
         }
         move_to("preceding-sibling::div[1]", "top")
         # ENTERING FILE: import 2.ts
-        move_here(".//div[@class='something']", "bottom") {
+        select(".//div[@class='something']") {
+          move(node("1"), node("2"), "bottom")
           attribute("id") {
             value() {
               set("algol")
             }
           }
           # ENTERING FILE: nested-import.ts
-          attribute("style") {
+        ribute("style") {
             remove()
           }
           # LEAVING FILE: nested-import.ts
