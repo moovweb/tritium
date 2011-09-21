@@ -22,7 +22,9 @@ xhtml() {
             }
           }
         }
-        move_to("preceding-sibling::div[1]", "top")
+        select("preceding-sibling::div[1]") {
+          move(node("2"), node("1"), "top")
+        }
         # ENTERING FILE: import 2.ts
         select(".//div[@class='something']") {
           move(node("1"), node("2"), "bottom")
@@ -32,7 +34,7 @@ xhtml() {
             }
           }
           # ENTERING FILE: nested-import.ts
-        ribute("style") {
+          attribute("style") {
             remove()
           }
           # LEAVING FILE: nested-import.ts
@@ -43,7 +45,9 @@ xhtml() {
               }
             }
           }
-          move_to("preceding-sibling::span[1]", "top")
+          select("preceding-sibling::span[1]") {
+            move(node("2"), node("1"), "top")
+          }
         }
         # LEAVING FILE: import 2.ts
       }
@@ -58,7 +62,11 @@ xhtml() {
           append("something-else")
         }
       }
-      copy(".//img[not(@alt)]", ".", "bottom")
+      select(".//img[not(@alt)]") {
+        dup() {
+          move(node("1"), node("3"), "bottom")
+        }
+      }
       # ENTERING FILE: import-3.ts
       bottom() {
         insert_tag("p", "Getting tired of writing these.")

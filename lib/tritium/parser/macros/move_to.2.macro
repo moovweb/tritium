@@ -1,0 +1,4 @@
+$(@1) {
+  move(node(2), node(1), @2)
+  yield()
+}

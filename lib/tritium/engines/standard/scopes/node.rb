@@ -53,22 +53,11 @@ module Tritium
             if result.respond_to?("first")
               result = result.first
             end
+            @node_stack.push(result)
             run_children(ins, Context[ins, result])
-          when :copy
-            ctx.value.xpath(args[0]).each do |what|
-              ctx.value.xpath(args[1]).each do |where|
-                copied_node = what.dup
-                position_node(where, copied_node, args[2])
-                run_children(ins, Context[ins, copied_node])
-              end
-            end
+            @node_stack.pop
           when :move
-            position_node(args[1], args[0], args[2])
-          when :move_to
-            node = ctx.value.xpath(args.first).first
-            return if node.nil?
-            position_node(node, ctx.value, args.last)
-            run_children(ins, Context[ins, node])
+            position_node(args[1], args[0], args[2] || "bottom")
           when :wrap_text_children
             tag_name = args.first
             attributes = kwd_args
@@ -84,6 +73,13 @@ module Tritium
             end
           when :cdata
             ctx.value.document.create_cdata(args.first)
+          when :dup
+            node = ctx.value.dup
+            ctx = Context[ins, node]
+            @node_stack.push(node)
+            run_children(ins, ctx)
+            @node_stack.pop
+            return ctx.value
           else
             throw "Method #{ins.name} not implemented in Node scope"
           end

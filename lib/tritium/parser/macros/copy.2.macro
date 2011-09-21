@@ -1,3 +1,0 @@
-copy(@1, @2, "bottom") {
-  yield()
-}
