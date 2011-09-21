@@ -171,6 +171,19 @@ Node:
         name: Position
         doc: Can be "bottom", "top", "after", or "before"
         default: "bottom"
+  copy:
+    doc: Copy the first argument, to the second argument. Copies as many as it matches on either side!
+    arguments:
+      -
+        name: What
+        doc: The XPath that we are copying
+      -
+        name: Where
+        doc: The XPath that we are copying
+      -
+        name: Position
+        doc: Can be "bottom", "top", "after", or "before"
+        default: "bottom"
   copy_here:
     doc: Copy the indicated node(set) to the current Node, with the indicated position.
     arguments:

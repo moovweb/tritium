@@ -6,9 +6,9 @@ xml() {
 
     $(".//address") {
       copy_here("../name", "top")
-      copy_here("./number", "after")
+      copy("./number", ".", "after")
       copy_here("./nonexistent")
-      copy_here("./../email")
+      copy("./../email", ".")
     }
   }
 }

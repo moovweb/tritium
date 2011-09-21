@@ -50,6 +50,12 @@ module Tritium
               result = result.first
             end
             run_children(ins, Context[ins, result])
+          when :copy
+            ctx.value.xpath(args[0]).each do |what|
+              ctx.value.xpath(args[1]).each do |where|
+                position_node(where, what.dup, args[2])
+              end
+            end
           when :move_to
             node = ctx.value.xpath(args.first).first
             return if node.nil?
