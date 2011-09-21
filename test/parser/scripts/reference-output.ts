@@ -56,7 +56,7 @@ xhtml() {
           append("something-else")
         }
       }
-      copy_here(".//img[not(@alt)]", "bottom")
+      copy(".//img[not(@alt)]", ".", "bottom")
       # ENTERING FILE: import-3.ts
       bottom() {
         insert_tag("p", "Getting tired of writing these.")

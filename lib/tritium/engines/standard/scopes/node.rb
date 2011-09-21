@@ -53,7 +53,9 @@ module Tritium
           when :copy
             ctx.value.xpath(args[0]).each do |what|
               ctx.value.xpath(args[1]).each do |where|
-                position_node(where, what.dup, args[2])
+                copied_node = what.dup
+                position_node(where, copied_node, args[2])
+                run_children(ins, Context[ins, copied_node])
               end
             end
           when :move_to
@@ -63,12 +65,6 @@ module Tritium
             run_children(ins, Context[ins, node])
           when :move_here
             move(ins, ctx, args.first, ctx.value, args.last)
-          when :copy_to
-            move(ins, ctx, ctx.value.dup, args.first, args.last)
-          when :copy_here
-            ctx.value.xpath(args.first).each do |target|
-              move(ins, ctx, target.dup, ctx.value, args.last)
-            end
           when :wrap_text_children
             tag_name = args.first
             attributes = kwd_args
