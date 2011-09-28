@@ -80,7 +80,7 @@ module Tritium
         end
         
         def debug_info
-          @name + " on " + super
+          "#{@name} on #{super}"
         end
         
         def base?

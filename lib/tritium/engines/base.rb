@@ -42,7 +42,11 @@ module Tritium
       end
       
       def parse!
-        build_parser.parse
+        root_instruction = build_parser.parse
+        root_instruction.each do |instruction|
+          instruction.valid?
+        end
+        root_instruction
       end
       
       def to_script(depth = 0)
