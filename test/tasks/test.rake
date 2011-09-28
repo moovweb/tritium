@@ -3,18 +3,15 @@ version = File.read("VERSION").strip
 
 require 'rake/gempackagetask'
 require 'rake/testtask'
- 
+
 desc 'Run all of the tests'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'test'
-  t.pattern = '**/test/**/*_test.rb'
-  t.verbose = true
-end
-
-desc 'Run standard tests'
-Rake::TestTask.new(:std) do |t|
-  t.libs << 'test'
-  t.pattern = '**/test/**/s*_test.rb'
+  if ENV["SCRIPT"]
+    t.pattern = '**/test/**/*engine_test.rb'
+  else
+    t.pattern = '**/test/**/*_test.rb'
+  end
   t.verbose = true
 end
 
