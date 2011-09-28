@@ -58,6 +58,10 @@ module Tritium
           false
         end
         
+        def valid?
+          true
+        end
+        
         def to_script
           to_s
         end

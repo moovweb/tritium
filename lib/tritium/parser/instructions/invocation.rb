@@ -73,6 +73,16 @@ module Tritium
           spec
         end
         
+        def valid?
+          unless spec.arg_size_range === self.args.size
+            raise "Wrong number of arguments in #{debug_info}"
+          end
+        end
+        
+        def debug_info
+          @name + " on " + super
+        end
+        
         def base?
           @base ||= spec.base?
         end
@@ -102,12 +112,6 @@ module Tritium
           end
           return result
         end
-        
-        #DEPRECATED
-        #def to_s(depth = 0)
-        #  puts "AHH!"
-        #  to_script(depth)
-        #end
       end
       
       class Reference < Invocation
