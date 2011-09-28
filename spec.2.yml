@@ -41,15 +41,27 @@ Base:
     returns: true
   match:
     doc: 
+    arguments:
+      -
+        name: Match Target
+        doc: What are we matching against? 
+      -
+        name: Regex or String
+        doc: If we are only matching against one value, you can pass it in here. This is the same as a single with()
+        optional: true
   not:
     doc: Used with match($var, not('hi'))
     hide: true
+    arguments:
+      -
+        name: Regex or String
+        doc: The regular expression or string to match with. Strings are perfect matches.
   with:
     doc: Used as a child of match("something")
     arguments:
       -
-        name: Regex
-        doc: The regular expression to match with
+        name: Regex or String
+        doc: The regular expression or string to match with. Strings are perfect matches.
   read:
     doc: Use this to read in a file at *compile* time. Nothing dynamic allowed.
     arguments:
@@ -239,6 +251,7 @@ Node:
       -
         name: Attributes
         type: Hash
+        optional: true
         doc: The tag's attributes
   inner_wrap:
     doc: Wraps the contents of the currently selected node with a tag and then yield to that new wrapper.
@@ -248,6 +261,7 @@ Node:
       -
         name: Attributes
         type: Hash
+        optional: true
         doc: The tag's attributes. CAN NOT BE DYAMIC. That means no fetch() or anything like that. If you need to use that, open the yielding block and use attribute()
   inject:
     doc: Inject some plain data into the document at the prescribed location
@@ -299,6 +313,7 @@ XMLNode:
       -
         name: Attributes
         type: Hash
+        optional: true
         doc: The tag's attributes.
   add_class:
     opens: Attribute
