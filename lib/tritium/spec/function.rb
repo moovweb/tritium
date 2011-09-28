@@ -44,6 +44,13 @@ module Tritium
         (@arguments.values.collect &:formatted_name ).join(", ")
       end
       
+      def arg_size_range
+        required = (self.arguments.select do |name, arg|
+          !arg.optional?
+        end).size
+        required..(self.arguments.size)
+      end
+      
       def base?
         @scopes.include?("Base")
       end

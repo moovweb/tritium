@@ -43,4 +43,17 @@ class SpecTest < MiniTest::Unit::TestCase
     scope = @spec["Node"]
     assert scope["insert_after"]
   end
+  
+  def test_arg_ranges
+    arg_range_assert "Node", "select", 1..1
+    arg_range_assert "Base", "concat", 2..2
+    arg_range_assert "Node", "attributes", 1..1
+    arg_range_assert "Node", "attribute", 1..2
+    arg_range_assert "Base", "fetch", 1..1
+  end
+  
+  def arg_range_assert(scope, function_name, range)
+    function = @spec[scope][function_name]
+    assert_equal function.arg_size_range, range, "Expected #{range} instead of #{function.arg_size_range} for #{scope}.#{function_name}"
+  end
 end

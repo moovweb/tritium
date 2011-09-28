@@ -23,9 +23,6 @@ module Tritium
       Spec.new(YAML::load(spec_file), version)
     end
     
-    def verify(instructions)
-    end
-    
     def [](scope_name)
       if scope_name.is_a?(Scope)
         return scope_name
