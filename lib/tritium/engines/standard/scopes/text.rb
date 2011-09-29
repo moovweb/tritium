@@ -6,7 +6,7 @@ module Tritium
           case ins.name
           when :set
             ctx.set(args.first.dup)
-          when :html, :xml, :xhtml, :html_fragment
+          when :html, :xml, :html_fragment
             doc = Tritium::Engines.xml_parsers[ins.name.to_s].parse(ctx.value)
             doc_ctx = Context[ins, doc]
             @node_stack.push doc

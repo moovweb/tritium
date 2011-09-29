@@ -1,5 +1,5 @@
-xhtml() {
-  $("body") {
+html() {
+  $("/html/body") {
     $("p") {
       text() {
         append(" Leung")

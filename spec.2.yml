@@ -388,9 +388,6 @@ Text:
   xml:
     doc: Parses the document as XML and passes you back an XMLNode scope
     opens: XMLNode
-  xhtml:
-    doc: Parses the document as XHTML and passes you back an XMLNode scope
-    opens: XMLNode
   html:
     doc: Parses the document as HTML and passes you back an XMLNode scope
     opens: XMLNode

@@ -9,7 +9,7 @@ module Tritium
   module Engines
     
     def self.xml_parsers
-      {"xml" =>  Nokogiri::XML, "html" =>  Nokogiri::HTML, "xhtml" => Nokogiri::XML, "html_fragment" => Nokogiri::HTML::DocumentFragment}
+      {"xml" =>  Nokogiri::XML, "html" =>  Nokogiri::HTML, "html_fragment" => Nokogiri::HTML::DocumentFragment}
     end
     
     class Base

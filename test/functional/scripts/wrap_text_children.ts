@@ -1,5 +1,5 @@
-xhtml() {
-  $("body") {
+html() {
+  $("/html/body") {
     $("div[1]") {
       wrap_text_children("p")
     }

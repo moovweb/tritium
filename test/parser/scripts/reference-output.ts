@@ -2,7 +2,7 @@
 var("x") {
   set(whatever())
 }
-xhtml() {
+html() {
   select("html") {
     select("body") {
       # ENTERING FILE: import-1.ts

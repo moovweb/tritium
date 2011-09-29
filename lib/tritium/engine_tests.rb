@@ -57,7 +57,7 @@ module Tritium
       end
     end
 
-    def run_test(base_path, test_name)    
+    def run_test(base_path, test_name)
       input_file_name = Dir[base_path + "/input/#{test_name}*"].last
 
       log = Logger.new(STDOUT)
@@ -101,11 +101,13 @@ module Tritium
                 puts "Result too big!"
               end
             end
-          
-            #if time > 0
-            #  puts "ERROR ON SECOND RUN ONLY! #{time}"
-            #  puts tritium.to_script
-            #end
+          elsif ENV['RUN'] == "perfect" && expected_output != result
+            # if we know that the output will differ... and we WANT that, then this will
+            # update the expected output
+            puts "Updating #{test_name}"
+            File.open(expected_output_file_path, "w+") do |f|
+              f.write(result)
+            end
           end
         
           assert_equal expected_output, result

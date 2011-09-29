@@ -1,5 +1,16 @@
-<body>
-  <div><p>Hello</p><div>my</div><p>name is</p><span>Mr.</span><p>Aaron</p></div>
-  <div><span>1</span><span class="separator"> | </span><span>2</span><span class="separator"> | </span><span>3</span></div>
-  <div><span>Chunk 1</span><div>before whitespace</div>                 <div>after whitespace</div><span>Chunk 2</span></div>
-</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+  <div>
+<p>Hello</p>
+<div>my</div>
+<p>name is</p>
+<span>Mr.</span><p>Aaron</p>
+</div>
+  <div>
+<span>1</span><span class="separator"> | </span><span>2</span><span class="separator"> | </span><span>3</span>
+</div>
+  <div>
+<span>Chunk 1</span><div>before whitespace</div>                 <div>after whitespace</div>
+<span>Chunk 2</span>
+</div>
+</body></html>

@@ -1,7 +1,7 @@
 var("hi", "true")
 match($hi, "true") {
-  xhtml() {
-    $("body") {
+  html() {
+    $("/html/body") {
       $("p") {
         inner() {
           append(" Leung")
