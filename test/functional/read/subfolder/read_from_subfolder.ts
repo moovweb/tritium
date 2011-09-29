@@ -1,1 +1,1 @@
-set(read("../../fragments/read.xml"))
+set(read("../read.xml"))

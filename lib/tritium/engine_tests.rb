@@ -15,30 +15,26 @@ require 'logger'
 
 module Tritium
   module EngineTests
-    def self.functional_dirs
-      Tritium.test_api_levels.collect do |ver|
-        File.join(File.dirname(__FILE__), "../../test/functional")
-      end
+    include Tritium::Engines
+
+    # We should break up the functional tests. This should return an hash of test sets
+    # Right now, we only have one, so we will just return that
+    def self.test_sets
+      {:base => File.absolute_path(File.join(File.dirname(__FILE__), "../../test/functiona*"))}
     end
 
-    include Tritium::Engines
-  
     def engine_class
       throw "Must override"
     end
-  
-    def self.version_folder_test(version_dir)
-      version = File.basename(version_dir)
-      Dir[version_dir + "/scripts/*.ts"].each do |script_file_name|
-        test_name = File.basename(script_file_name, ".ts")
+
+    self.test_sets.each do |set_name, tests_directory|
+      Dir[tests_directory + "/*"].each do |test_dir|
+        test_name = test_dir.split("/").last
         if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
           # Writes a method that simply calls run_file with its name 
-          eval "def test_#{test_name}_script; run_test '#{version_dir}', '#{test_name}'; end"
+          eval "def test_#{set_name}_#{test_name}_script; run_test('#{test_dir}'); end"
         end
       end
-    end
-    self.functional_dirs.each do |version_dir|
-      version_folder_test(version_dir)
     end
   
     def read_file(path)
@@ -57,18 +53,18 @@ module Tritium
       end
     end
 
-    def run_test(base_path, test_name)
-      input_file_name = Dir[base_path + "/input/#{test_name}*"].last
+    def run_test(test_path, test_name = test_path.split("/").last)
+      input_file_name = Dir[test_path + "/input.*"].last
 
       log = Logger.new(STDOUT)
       log.level = Logger::ERROR
     
-      tritium = engine_class.new(:path => base_path + "/scripts", :script_name => test_name + ".ts", :logger => log)
+      tritium = engine_class.new(:path => test_path, :script_name => "main.ts", :logger => log)
     
-      env = fetch_env(base_path + "/vars/#{test_name}.yml")
+      env = fetch_env(test_path + "/vars.yml")
     
       # Load up the expected input data (if any)
-      input_file_path = Dir[base_path + "/input/#{test_name}.*"].first
+      input_file_path = Dir[test_path + "/input.*"].first
       input = ""
       if input_file_path
         input = read_file(input_file_path)
@@ -76,7 +72,7 @@ module Tritium
     
       # Load up our expected output (if any)
       expected_output = ""
-      expected_output_file_path = Dir[base_path + "/output/#{test_name}.*"].first
+      expected_output_file_path = Dir[test_path + "/output.*"].first
       if expected_output_file_path
         expected_output = read_file(expected_output_file_path).strip
       end
@@ -206,7 +202,7 @@ module Tritium
         script = "export('Content-Type', 'html/js'); export('cookie', 'a'); export('cookie', 'b')"
         log = Logger.new(nil)
         log.level = Logger::ERROR
-        tritium = engine_class.new(script, :path => EngineTests.functional_dirs.last + "/scripts", :script_name => "export_function", :logger => log)
+        tritium = engine_class.new(script, :path => EngineTests.test_sets.values.last + "/scripts", :script_name => "export_function", :logger => log)
         result, export_vars = tritium.run("")
         assert_equal [['Content-Type', 'html/js'], ['cookie', 'a'], ['cookie', 'b']], export_vars
       end
