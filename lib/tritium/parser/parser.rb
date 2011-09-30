@@ -128,6 +128,9 @@ module Tritium
       def import
         import_name = pop!.value
         parser = nil
+        if !File.exists?(File.join(@path, import_name))
+          raise_error("missing import file (#{import_name})")
+        end
         begin
           script_string = File.read(File.join(@path, import_name))
           parser = Parser.new(script_string,
