@@ -130,6 +130,7 @@ module Tritium
         $import_cache.each do |cached_import|
           return cached_import if cached_import[:filename] == filename
         end
+        nil
       end
 
       def cache_valid?(filename)
