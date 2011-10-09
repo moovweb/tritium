@@ -18,11 +18,13 @@ class ParseTreeTests < MiniTest::Unit::TestCase
     end
     Dir.mkdir(tmp_dir)
     FileUtils.cp_r(File.join(input_dir, "input", "."), tmp_dir)
+    `sync`
   end
 
   def dirty_testbed(input_dir)
     tmp_dir = File.join(TEST_DIR, "tmp")
     FileUtils.cp_r(File.join(input_dir, "changes", "."), tmp_dir)
+    `sync`
   end
 
   def run_tritium
