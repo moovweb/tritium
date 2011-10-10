@@ -29,7 +29,7 @@ module Tritium
         @script_path   = options[:path]        || options["path"]        || ""
         @xml_parser    = options[:parse_as]    || options["parse_as"]    || "xml"
         @logger        = options[:logger]      || options["logger"]      || Logger.new(STDOUT)
-        @script_name   = options[:script_name] || options["script_name"] || "MAIN"
+        @script_name   = options[:script_name] || options["script_name"] || "main.ts"
         
         # Load the script if we don't have it loaded already
         if @script_string.nil?
