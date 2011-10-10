@@ -1,6 +1,10 @@
 ENV["TEST"] = "true"
 
+require 'bundler'
+Bundler.setup()
+
 require_relative '../../lib/tritium'
+require_relative '../../lib/tritium/engines/standard/engine'
 require 'rainbow'
 
 include Tritium::Engines
@@ -23,14 +27,11 @@ engines.each do |engine_class|
 end
 print("\n")
 
-search = File.join(base_path, "/scripts/not_*.ts")
-Dir[search].each do |script_file_name|
-  test_name = File.basename(script_file_name, ".ts")
-
-  input_file_name = Dir[base_path + "/input/#{test_name}*"].last
-  ts_script = "@import #{test_name}.ts"
+search = File.join(base_path, "/attribute*")
+Dir[search].each do |test_folder|
+  test_name = File.basename(test_folder)
   
-  env_file = base_path + "/vars/#{test_name}.yml"
+  env_file = test_folder + "/vars.yml"
   env = {}
   
   # If we have an var file, then set it up
@@ -39,10 +40,10 @@ Dir[search].each do |script_file_name|
   end
   
   # Load up the expected input data (if any)
-  input_file_path = Dir[base_path + "/input/#{test_name}*"].first
+  input_file_name = Dir[test_folder + "/input*"].last
   input = ""
-  if input_file_path
-    input = open(input_file_path).read
+  if File.exists?(input_file_name)
+    input = open(input_file_name).read
   end
   
   if ENV["CSV"]
@@ -56,7 +57,7 @@ Dir[search].each do |script_file_name|
   fastest_engine = nil
   engines.each do |engine_class|
     begin
-      tritium = engine_class.new(ts_script, :path => base_path + "/scripts", :script_name => test_name, :logger => log)
+      tritium = engine_class.new(:path => test_folder, :logger => log)
 
       totals[engine_class] ||= 0
       start = Time.now
@@ -64,6 +65,7 @@ Dir[search].each do |script_file_name|
         env_copy = env.dup
         # Run the input through the tritium script.
         result, export_vars = tritium.run(input, :env => env_copy)
+        #puts engine_class.name + result.inspect
       end
       took = Time.now - start
       totals[engine_class] += took
