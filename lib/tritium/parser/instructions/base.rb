@@ -25,7 +25,7 @@ module Tritium
         end
         
         def assign_ids(instructions)
-          instructions.each_with_index do |statement, index|
+          instructions.compact.each_with_index do |statement, index|
             statement.id = self.id + "_#{index}"
             if statement.is_arg?
               statement.id += "arg"
