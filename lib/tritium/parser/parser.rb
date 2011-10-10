@@ -5,10 +5,27 @@ require_relative "macro_expander"
 
 module Tritium
   module Parser
-    $import_cache = []
-    $dependancies = []
-
     class Parser
+      class << self
+        $import_cache = []
+        $dependancies = []
+
+        def print_dependancies(filename, level = 0)
+          puts("\n") if level == 0
+          puts("#{"  " * level}#{File.basename(filename)}")
+          $dependancies.each do |dep|
+            if dep[:importer] == filename
+              print_dependancies(dep[:importee], level + 1)
+            end
+          end
+        end
+
+        def clear_cache
+          $import_cache = []
+          $dependancies = []
+        end
+      end
+
       require_relative 'parser_errors'
       include Instructions
 
@@ -37,7 +54,6 @@ module Tritium
         prefix = "" if prefix == "."
         @path = File.join(@path, prefix)
         @filename = base
-        
         if script_string.nil?
           script_string = File.read(File.join(@path, @filename))
         end
@@ -175,7 +191,8 @@ module Tritium
           parser = Parser.new(script_string,
                               filename: import_name,
                               path:     @path,
-                              errors:   @errors)
+                              errors:   @errors,
+                              logger:   @logger)
         rescue Exception => e
           @errors << e
           return nil
@@ -185,6 +202,7 @@ module Tritium
         if cached_import
           cached_import[:script] = rendered_block
           cached_import[:stamp] = File.ctime(filename)
+          @logger.debug("Recompiled: #{import_name}")
         else
           $import_cache << { script:   rendered_block,
                              filename: filename,
