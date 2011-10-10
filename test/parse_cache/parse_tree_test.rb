@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require "tritium"
+require_relative '../../lib/tritium'
 
 class ParseTreeTests < MiniTest::Unit::TestCase
   TEST_DIR = File.dirname(__FILE__)
@@ -16,7 +16,6 @@ class ParseTreeTests < MiniTest::Unit::TestCase
     if Dir.exists?(tmp_dir)
       FileUtils.rm_rf(tmp_dir)
     end
-    Dir.mkdir(tmp_dir)
     FileUtils.cp_r(File.join(input_dir, "input", "."), tmp_dir)
     `sync`
   end
@@ -27,12 +26,14 @@ class ParseTreeTests < MiniTest::Unit::TestCase
     `sync`
   end
 
-  def run_tritium
+  def run_tritium(clear_cache=false)
+    Tritium::Parser::Parser.clear_cache if clear_cache
     script_file = File.join(TEST_DIR, "tmp", "main.ts")
     tritium = Tritium::Engines::Standard.new(File.read(script_file), 
                                       :filename => "script.ts",
                                       :script_name => "main.ts",
                                       :path => File.join(TEST_DIR, "tmp"))
+    Tritium::Parser::Parser.print_dependancies(script_file)
     tritium.to_script
   end
 
@@ -42,7 +43,7 @@ class ParseTreeTests < MiniTest::Unit::TestCase
     expected_after = File.read(File.join(input_dir, "output", "after.ts"))
     # Setup before case
     make_testbed input_dir
-    script_before = run_tritium
+    script_before = run_tritium(true)
     # Check result
     assert_equal expected_before, script_before, "Before check failed"
     # Setup after case
@@ -52,4 +53,3 @@ class ParseTreeTests < MiniTest::Unit::TestCase
     assert_equal expected_after, script_after, "After check failed"
   end
 end
-
