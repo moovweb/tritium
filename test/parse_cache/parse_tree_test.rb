@@ -27,13 +27,17 @@ class ParseTreeTests < MiniTest::Unit::TestCase
   end
 
   def run_tritium(clear_cache=false)
+    log = Logger.new(STDOUT)
+    log.level = Logger::ERROR
+
     Tritium::Parser::Parser.clear_cache if clear_cache
     script_file = File.join(TEST_DIR, "tmp", "main.ts")
     tritium = Tritium::Engines::Standard.new(File.read(script_file), 
                                       :filename => "script.ts",
                                       :script_name => "main.ts",
-                                      :path => File.join(TEST_DIR, "tmp"))
-    Tritium::Parser::Parser.print_dependancies(script_file)
+                                      :path => File.join(TEST_DIR, "tmp"),
+                                      :logger => log)
+    Tritium::Parser::Parser.print_dependancies(log, script_file)
     tritium.to_script
   end
 

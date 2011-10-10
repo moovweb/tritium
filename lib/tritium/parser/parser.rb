@@ -10,12 +10,12 @@ module Tritium
         $import_cache = []
         $dependancies = []
 
-        def print_dependancies(filename, level = 0)
-          puts("\n") if level == 0
-          puts("#{"  " * level}#{File.basename(filename)}")
+        def print_dependancies(log, filename, level = 0)
+          log.debug("\n") if level == 0
+          log.debug("#{"  " * level}#{File.basename(filename)}")
           $dependancies.each do |dep|
             if dep[:importer] == filename
-              print_dependancies(dep[:importee], level + 1)
+              print_dependancies(log, dep[:importee], level + 1)
             end
           end
         end
