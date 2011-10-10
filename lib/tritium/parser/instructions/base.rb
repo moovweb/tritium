@@ -58,6 +58,10 @@ module Tritium
           false
         end
         
+        def regexp?
+          false
+        end
+        
         def valid?
           true
         end

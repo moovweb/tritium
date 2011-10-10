@@ -87,6 +87,10 @@ module Tritium
           @base ||= spec.base?
         end
         
+        def regexp?
+          @name == :regex
+        end
+        
         def opens
           @opens ||= spec.opens || scope
         end
