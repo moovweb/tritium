@@ -1,0 +1,3 @@
+asset(concat("stylesheets/.css/", @1, ".css")) {
+  yield()
+}

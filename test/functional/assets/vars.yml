@@ -1,3 +1,3 @@
 stylesheet_asset_location: "/stylesheets/"
-js_asset_location: "http://cdn.fullservershit.com/js/"
+js_asset_location: "/javascript/"
 asset_host: "http://localhost:3001"

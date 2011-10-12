@@ -1,0 +1,3 @@
+concat($asset_host, @1) {
+  yield()
+}
