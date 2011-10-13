@@ -7,13 +7,13 @@ module Tritium
   module Parser
     class Parser
       class << self
-        $import_cache = []
-        $dependancies = []
+        @@import_cache = []
+        @@dependancies = []
 
         def print_dependancies(log, filename, level = 0)
           log.debug("\n") if level == 0
           log.debug("#{"  " * level}#{File.basename(filename)}")
-          $dependancies.each do |dep|
+          @@dependancies.each do |dep|
             if dep[:importer] == filename
               print_dependancies(log, dep[:importee], level + 1)
             end
@@ -21,8 +21,8 @@ module Tritium
         end
 
         def clear_cache
-          $import_cache = []
-          $dependancies = []
+          @@import_cache = []
+          @@dependancies = []
         end
       end
 
@@ -143,7 +143,7 @@ module Tritium
       end
       
       def get_cached_import(filename)
-        $import_cache.each do |cached_import|
+        @@import_cache.each do |cached_import|
           return cached_import if cached_import[:filename] == filename
         end
         nil
@@ -155,7 +155,7 @@ module Tritium
         if !cached_import
           cache_is_valid = false
         end
-        $dependancies.each do |dep|
+        @@dependancies.each do |dep|
           if dep[:importer] == filename
             if !cache_valid?(dep[:importee])
               cached_import[:stamp] = ""
@@ -175,8 +175,8 @@ module Tritium
         filename = File.join(@path, import_name)
         cached_import = get_cached_import(filename)
 
-        $dependancies << { importer: File.join(@path, @filename), importee: filename }
-        $dependancies.uniq!
+        @@dependancies << { importer: File.join(@path, @filename), importee: filename }
+        @@dependancies.uniq!
 
         if cached_import and cache_valid?(filename)
           return cached_import[:script]
@@ -204,7 +204,7 @@ module Tritium
           cached_import[:stamp] = File.ctime(filename)
           @logger.debug("Recompiled: #{import_name}")
         else
-          $import_cache << { script:   rendered_block,
+          @@import_cache << { script:   rendered_block,
                              filename: filename,
                              stamp:    File.ctime(filename) }
         end
