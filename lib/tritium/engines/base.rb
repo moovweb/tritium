@@ -37,8 +37,20 @@ module Tritium
         end
         
         @script_path = File.expand_path(@script_path)
-        
-        @root_instruction = parse!
+        @compiled_script = File.join(@script_path, "#{@script_name}.bin")
+
+        if !options[:compile] && File.exists?(@compiled_script)
+          @logger.info("Loading compiled script...")
+          @root_instruction = Marshal.load(File.read(@compiled_script))
+        else
+          @logger.info("Compiling script...")
+          @root_instruction = parse!
+        end
+
+        if options[:compile]
+          File.open(@compiled_script, 'w') {|f| f.write(Marshal.dump(@root_instruction)) }
+        end
+        @root_instruction
       end
       
       def parse!
