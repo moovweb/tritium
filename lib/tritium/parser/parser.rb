@@ -346,6 +346,8 @@ module Tritium
           # Read relative to the current script file
           file_to_read = File.join(@path, @token.value)
           val = open(file_to_read).read
+          #@@dependancies << { importer: File.join(@path, @filename), importee: File.join(@path, @token.value) }
+          #@@dependancies.uniq!
           return cmd(Literal, val)
         else
           pop!
