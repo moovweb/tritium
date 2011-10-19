@@ -1,7 +1,9 @@
 html() {
   $("/html/body") {
     $("div[1]") {
-      wrap_text_children("p")
+      wrap_text_children("p") {
+        wrap("span")
+      }
     }
 
     $("div[2]") {

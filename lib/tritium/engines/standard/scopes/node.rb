@@ -62,9 +62,8 @@ module Tritium
             tag_name = args.first
             ctx.value.children.each do |child|
               next if not child.text? or child.text.strip.empty?
-              wrapper = child.add_previous_sibling("<#{tag_name} />").first
-              wrapper.add_child(child)
-              run_children(ins, Context[ins, wrapper])
+              child = child.replace("<#{tag_name}>#{child.content}</#{tag_name}>").first
+              run_children(ins, Context[ins, child])
             end
           when :cdata
             ctx.value.document.create_cdata(args.first)
