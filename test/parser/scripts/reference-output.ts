@@ -21,8 +21,6 @@ html() {
               set("bork")
             }
           }
-        }
-        select("preceding-sibling::div[1]") {
           move(node("2"), node("1"), "top")
         }
         # ENTERING FILE: import 2.ts
@@ -44,8 +42,6 @@ html() {
                 set("algol-span")
               }
             }
-          }
-          select("preceding-sibling::span[1]") {
             move(node("2"), node("1"), "top")
           }
         }

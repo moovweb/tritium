@@ -1,5 +1,4 @@
-insert_at("before", @1, @2)
-
-move_to("preceding-sibling::#{@1}[1]", "top") {
+insert_at("before", @1, @2) {
+  move(node(2), node(1), "top")
   yield()
 }
