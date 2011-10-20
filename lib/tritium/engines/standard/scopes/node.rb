@@ -60,10 +60,11 @@ module Tritium
             position_node(args[1], args[0], args[2] || "bottom")
           when :wrap_text_children
             tag_name = args.first
-            ctx.value.children.each do |child|
-              next if not child.text? or child.text.strip.empty?
-              child = child.replace("<#{tag_name}>#{child.content}</#{tag_name}>").first
-              run_children(ins, Context[ins, child])
+            ctx.value.search("./text()").wrap("<#{tag_name} />").each do |child|
+              wrapper = child.parent
+              @node_stack.push(wrapper)
+              run_children(ins, Context[ins, wrapper])
+              @node_stack.pop
             end
           when :cdata
             ctx.value.document.create_cdata(args.first)
