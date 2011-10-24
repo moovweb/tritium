@@ -75,6 +75,10 @@ module Tritium
       def check_syntax
         build_parser.parse
       end
+      
+      # Closing callback if your engine needs to be notified when its done
+      def close
+      end
     end
   end
 end

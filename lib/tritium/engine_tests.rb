@@ -109,12 +109,15 @@ module Tritium
           assert_equal expected_output, result
         rescue SyntaxError => e
           #puts tritium.to_script
+          tritium.close
           raise e
         rescue StandardError => e
+          tritium.close
           #puts env_copy.inspect
           raise e
         end
       end
+      tritium.close
     end
     
     def diff_as_string(data_new, data_old)
