@@ -134,6 +134,20 @@ Base:
     returns: false
     hide: true
     doc: Used in macro's to indicate where the block should execute
+  upcase:
+    returns: true
+    doc: Returns the input argument in ALL CAPS
+    arguments:
+      -
+        name: Input String
+        type: String
+  downcase:
+    returns: true
+    doc: Returns the input argument in lower case
+    arguments:
+      -
+        name: Input String
+        type: String
 Node:
   inherit: Base
   select: 

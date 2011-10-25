@@ -84,6 +84,10 @@ module Tritium
             text = Context[ins, args.first]
             run_children(ins, text)
             @logger.info(text.value)
+          when :upcase
+            return args.first.upcase
+          when :downcase
+            return args.first.downcase
           when :debug
             # Ignore this
             run_children(ins, ctx)
