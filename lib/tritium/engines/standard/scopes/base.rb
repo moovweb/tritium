@@ -76,7 +76,10 @@ module Tritium
               return File.join(@env["asset_host"].clone, location.clone, file_name)
             end
           when :export
-            @export_vars << [args[0], args[1]]
+            value_ctx = Context[ins, ""]
+            run_children(ins, value_ctx)
+            @export_vars << [args[0], value_ctx.value]
+            return value_ctx.value
           when :dump
             value = ctx.value.to_s
             return value

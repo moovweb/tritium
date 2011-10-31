@@ -124,9 +124,6 @@ Base:
       -
         name: Key name
         type: String
-      -
-        name: Value
-        type: String
   dump:
     returns: true
     doc: This is a debug-feature. Please don't use this in production. It will return whatever the current object is in a stringified form.
