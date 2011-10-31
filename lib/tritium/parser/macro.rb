@@ -82,8 +82,10 @@ module Tritium
       end
     
       def self.load_macro_file(filename, name, arg_length)
-        macro_text = File.read(filename)
-
+        build_macro_from_string(File.read(filename), name, arg_length)
+      end
+      
+      def self.build_macro_from_string(macro_text, name, arg_length)
         # Build a new Macro object and pass in the block to convert the macro
         # file into a proper Proc for the expansion.
         Macro.new(name, arg_length) do |args|
