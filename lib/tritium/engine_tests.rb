@@ -85,7 +85,6 @@ module Tritium
           result, export_vars = tritium.run(input, :env => env_copy)
           result.strip!
         
-        
           if ENV['TEST_DEBUG'] || ENV["SCRIPT"]
             if expected_output != result
               puts "Diff:"
