@@ -6,4 +6,4 @@ TODO:
   * No more asset.2 (warnings gone!)
 
 DONE:
-  * export.2 is really export.1 { set(@2) } now. That means you can yield properly to export and set a dynamic value
+  * export.2 is now really export.1 { set(@2) } now. That means you can yield properly to export and set a dynamic value
