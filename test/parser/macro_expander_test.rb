@@ -34,6 +34,28 @@ class MacroTest < MiniTest::Unit::TestCase
     assert_equal true, concat_second.is_arg?
   end
   
+  def test_asset_macro_concat_bug
+    test_asset_macro = Macro.new("test_asset", 2) do |args|
+      file_name, type = args
+      location = "/stylesheets/.css/"
+      "asset(concat(#{location.inspect}, #{file_name.to_script})) { yield() }"
+    end
+    @expander.register_macro(test_asset_macro)
+    ins = parse_script("$stylesheet = \"myfile.css\"\nlog(asset($stylesheet, 'stylesheet'))")
+    log = ins.statements.last
+    assert_equal :log, log.name
+    
+    expansion = log.pos_args.first
+    assert_equal Instructions::ExpansionInlineBlock, expansion.class
+    
+    expansion_two = expansion.statements.first
+    assert_equal true, expansion_two.is_arg?
+    
+    concat = expansion_two.statements.first
+    assert_equal :concat, concat.name
+    assert_equal true, concat.is_arg?
+  end
+  
   def test_is_macro?
     assert  @expander.is_macro?([:var, 2])
     assert !@expander.is_macro?([:var, 1])

@@ -47,7 +47,11 @@ module Tritium
         end
         
         def post_process!
+          argify!
           super
+        end
+        
+        def argify!
           if self.is_arg?
             @statements.last.is_arg = true
           end
