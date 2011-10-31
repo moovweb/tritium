@@ -102,9 +102,6 @@ Base:
       -
         name: Filename
         doc: The name of the file (and maybe its subfolder). For instance, "my.css"
-      -
-        name: Asset Type
-        doc: The asset type. This is usually something like "stylesheet", "javascript", or "image"
   script:
     opens: Text
     doc: DO NOT USE. Wraps the entire script virtually!
