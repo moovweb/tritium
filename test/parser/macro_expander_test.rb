@@ -6,7 +6,7 @@ class MacroTest < MiniTest::Unit::TestCase
   
   def setup
     @expander = MacroExpander.new
-    test_returning_macro = Macro.build_macro_from_string("log('a')\nconcat('wor', 'ked') { yield() }", "test", 0)
+    test_returning_macro = Macro.build_macro_from_string("concat('wor', @1) { yield() }", "test", 1)
     @expander.register_macro(test_returning_macro)
   end
   
@@ -21,12 +21,17 @@ class MacroTest < MiniTest::Unit::TestCase
   end
   
   def test_arg_settings
-    ins = parse_script("set(test())")
-    set = ins.statements.first
-    macro = set.pos_args.first
-    log, concat = macro.statements
-    assert !log.is_arg?
-    assert concat.is_arg?
+    ins = parse_script("log(test(test('d')))")
+    log = ins.statements.first
+    assert_equal :log, log.name
+    first_macro = log.pos_args.first
+    assert_equal = Instructions::ExpansionInlineBlock, first_macro.class
+    concat_first = first_macro.statements.first
+    assert_equal true,  concat_first.is_arg?
+    
+    concat_second = concat_first.args.last
+    assert_equal Instructions::NestedInvocation, concat_first.class
+    assert_equal true, concat_second.is_arg?
   end
   
   def test_is_macro?
