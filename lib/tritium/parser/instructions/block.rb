@@ -46,6 +46,13 @@ module Tritium
           return (@statements.collect { |s| s.to_script(depth) }).join("\n")
         end
         
+        def post_process!
+          super
+          if self.is_arg?
+            @statements.last.is_arg = true
+          end
+        end
+        
         def add_statements(instructions)
           if @statements.last
             @statements.last.add_statements(instructions)
