@@ -182,7 +182,7 @@ module Tritium
     
       def test_time
         logger = log = Logger.new(nil)
-        engine = engine_class.new("set(time())", :logger => logger)
+        engine = engine_class.new("set(time() { replace(/a/, 'b') })", :logger => logger)
         result, env = engine.run("")
         assert result.to_f > 0.0
       end
