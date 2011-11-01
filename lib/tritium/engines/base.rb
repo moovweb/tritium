@@ -30,6 +30,7 @@ module Tritium
         @xml_parser    = options[:parse_as]    || options["parse_as"]    || "xml"
         @logger        = options[:logger]      || options["logger"]      || Logger.new(STDOUT)
         @script_name   = options[:script_name] || options["script_name"] || "main.ts"
+        @name          = @script_name.split(".").first
         
         # Load the script if we don't have it loaded already
         if @script_string.nil?
