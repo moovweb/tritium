@@ -39,7 +39,7 @@ html() {
     #Content::CSS::AddCSS
     #[["css_path", "http://dl.dropbox.com/u/6208053/macys/macys_home_bb.css"]]
     $('//html/head') {
-      insert_bottom("link", rel: "stylesheet", type: "text/css", href: asset("pages/macys_home_bb.css", "stylesheet"))
+      insert_bottom("link", rel: "stylesheet", type: "text/css", href: sass('pages/macys_home_bb.css'))
     }
 
     } # ending blackberry os 4.6-5.x block

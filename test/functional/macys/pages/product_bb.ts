@@ -4,7 +4,7 @@ html() {
   #Content::CSS::AddCSS
   #[["css_path", "http://dl.dropbox.com/u/6208053/macys_v2/macys_product_yupu.css"], ["encode_image_threshold", ""]]
   $('//html/head') {
-    insert_bottom("link", rel: "stylesheet", type: "text/css", href: asset("pages/macys_product_yupu.css", "stylesheet"))
+    insert_bottom("link", rel: "stylesheet", type: "text/css", href: sass('pages/macys_product_yupu.css'))
   }
   
   
@@ -672,7 +672,7 @@ html() {
       #[["javascript_path", "http://dl.dropbox.com/u/3940085/moovweb/clients/macys-contract/js/pdp_hero_widgets.js"], ["add_after", ""]]
       $("//html/head") {
         insert_bottom("script") {
-          attribute("src", asset('pdp_hero_widgets.js', 'js'))
+          attribute("src", asset('/javascript/pdp_hero_widgets.js'))
           attribute("language", "javascript")
         }
       }
@@ -1942,7 +1942,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[contains(concat(' ', @class, ' '), ' mvMasterItemImg ')]/*[contains(concat(' ', @class, ' '), ' swatchBoxContainer ')]/img[contains(@src, \"spacer.gif\")]") {
       #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/noColorSelected.gif")
-      attribute('src', asset('other/noColorSelected.gif', 'image'))
+      attribute('src', asset('images/other/noColorSelected.gif'))
     }
     
     
@@ -2848,7 +2848,7 @@ html() {
         #[["javascript_path", "http://dl.dropbox.com/u/6208053/macys_v2/yupuuranium-pretty.js"], ["add_after", ""]]
         $("//html/head") {
           insert_bottom("script") {
-            attribute("src", asset('uranium-pretty', 'js'))
+            attribute("src", asset('/javascript/uranium-pretty'))
             attribute("language", "javascript")
           }
         }
@@ -2958,7 +2958,7 @@ html() {
     #[["javascript_path", "http://dl.dropbox.com/u/6208053/macys_v2/swatchtest.js"], ["add_after", "#mvColorText"]]
     $("//*[@id = 'mvColorText']") {
       insert_after("script") {
-        attribute("src", asset('swatchtest.js', 'js'))
+        attribute("src", asset('/javascript/swatchtest.js'))
         attribute("language", "javascript")
       }
     }
@@ -2996,7 +2996,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@value = \"ADDTOBAG_BUTTON\"]") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/addToBagBtn.png")
-      attribute('src', asset('buttons/addToBag.png', 'image'))
+      attribute('src', asset('images/buttons/addToBag.png'))
     }
     
     
@@ -3006,7 +3006,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@id = \"ADDTOREGISTRY_BUTTON\"]") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/addToRegistryBtn.png")
-      attribute('src', asset('buttons/addToRegistry.png', 'image'))
+      attribute('src', asset('images/buttons/addToRegistry.png'))
     }
     
     
@@ -3016,7 +3016,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[contains(concat(' ', @class, ' '), ' sa-main ')]/img") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/findInStoreBtn.png")
-      attribute('src', asset('buttons/findInStore.png', 'image'))
+      attribute('src', asset('images/buttons/findInStore.png'))
     }
     
     
@@ -3026,7 +3026,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@value = \"UPDATEBAG_BUTTON\"]") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/updateBagBtn.png")
-      attribute('src', asset('buttons/updateBag.png', 'image'))
+      attribute('src', asset('images/buttons/updateBag.png'))
     }
     
     
@@ -3036,7 +3036,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@value = \"ADDANOTHERTOBAG_BUTTON\"]") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/addAnotherToShoppingBagBtn.png")
-      attribute('src', asset('buttons/addAnotherToShoppingBag.png', 'image'))
+      attribute('src', asset('images/buttons/addAnotherToShoppingBag.png'))
     }
     
     
@@ -3046,7 +3046,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[contains(concat(' ', @class, ' '), ' divCart_button ')]//*[@id = 'contineShopping']/img") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/continueShoppingBtn.png")
-      attribute('src', asset('buttons/continueShopping.png', 'image'))
+      attribute('src', asset('images/buttons/continueShopping.png'))
     }
     
     
@@ -3056,7 +3056,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[contains(concat(' ', @class, ' '), ' divCart_button ')]//a/img[@alt = \"CHECKOUT\"]") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/checkoutBtn.png")
-      attribute('src', asset('buttons/checkout.png', 'image'))
+      attribute('src', asset('images/buttons/checkout.png'))
     }
     
     
@@ -3098,7 +3098,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//img[@alt = \"click to call\"]") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/clickToCallBtn.png")
-      attribute('src', asset('buttons/clickToCall.png', 'image'))
+      attribute('src', asset('images/buttons/clickToCall.png'))
       }
       
       
@@ -3640,7 +3640,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//img[contains(@src, \"mymacys_csa.gif\")]") {
       #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/mymacys_csa.gif")
-      attribute('src', asset('other/mymacys_csa.gif', 'image'))
+      attribute('src', asset('images/other/mymacys_csa.gif'))
     }
     
     
@@ -3650,7 +3650,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//img[contains(@src, \"mymacys_sa.gif\")]") {
       #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/furnitureSample.gif")
-      attribute('src', asset('other/furnitureSample.gif', 'image'))
+      attribute('src', asset('images/other/furnitureSample.gif'))
     }
     
     
@@ -3720,14 +3720,14 @@ html() {
   #Content::Javascript::ReplaceMatchingScriptTag
   #[["src_match", "addToRegistry-min.js"], ["new_src", "http://dl.dropbox.com/u/9451381/moovweb/clients/macys/addToRegistry.js"]]
   $("(//script[contains(@src, 'addToRegistry-min.js')])[1]") {
-    attribute("src", asset('addToRegistry.js', 'js'))
+    attribute("src", asset('/javascript/addToRegistry.js'))
   }
   
   #
   #Content::Javascript::ReplaceMatchingScriptTag
   #[["src_match", "dynamic_dropdowns-min.js"], ["new_src", "http://dl.dropbox.com/u/9451381/moovweb/clients/macys/dynamic_dropdowns.js"]]
   $("(//script[contains(@src, 'dynamic_dropdowns-min.js')])[1]") {
-    attribute("src", asset('dynamic_dropdowns.js', 'js'))
+    attribute("src", asset('/javascript/dynamic_dropdowns.js'))
   }
   
   #Warranties

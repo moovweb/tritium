@@ -2284,7 +2284,7 @@ html() {
         $("(//*[@id = 'nav_title'])[1]") {
           #inject_after("<div class=\"mvBanner\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/topcat_1_womens.jpg\"></div>")
           insert_after("div", class: "mvBanner") {
-            insert("img", src: asset('banners/topcat_1_womens.jpg', 'image'))
+            insert("img", src: asset('images/banners/topcat_1_womens.jpg'))
           }
         }
         
@@ -2309,7 +2309,7 @@ html() {
         $("(//*[@id = 'nav_title'])[1]") {
           #inject_after("<div class=\"mvBanner\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/topcat_1_bedandbath.jpg\"></div>")
           insert_after("div", class: "mvBanner") {
-            insert("img", src: asset('banners/topcat_1_bedandbath.jpg', 'image'))
+            insert("img", src: asset('images/banners/topcat_1_bedandbath.jpg'))
           }
         }
         
@@ -2334,7 +2334,7 @@ html() {
         $("(//*[@id = 'nav_title'])[1]") {
           #inject_after("<div class=\"mvBanner\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/topcat_1_forthehome.jpg\"></div>")
           insert_after("div", class: "mvBanner") {
-            insert("img", src: asset('banners/topcat_1_forthehome.jpg', 'image'))
+            insert("img", src: asset('images/banners/topcat_1_forthehome.jpg'))
           }
         }
                 
@@ -2356,7 +2356,7 @@ html() {
         $("(//*[@id = 'nav_title'])[1]") {
           #inject_after("<div class=\"mvBanner\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/topcat_1_mens.jpg\"></div>")
           insert_after("div", class: "mvBanner") {
-            insert("img", src: asset('banners/topcat_1_mens.jpg', 'image'))
+            insert("img", src: asset('images/banners/topcat_1_mens.jpg'))
           }
         }
               
@@ -2379,7 +2379,7 @@ html() {
         $("(//*[@id = 'nav_title'])[1]") {
           #inject_after("<div class=\"mvBanner\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/topcat_1_kids.jpg\"></div>")
           insert_after("div", class: "mvBanner") {
-            insert("img", src: asset('banners/topcat_1_kids.jpg', 'image'))
+            insert("img", src: asset('images/banners/topcat_1_kids.jpg'))
           }
         }
         
@@ -2411,7 +2411,7 @@ html() {
         $("(//*[@id = 'nav_title'])[1]") {
           #inject_after("<div class=\"mvBanner\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/topcat_1_beauty.jpg\"></div>")
           insert_after("div", class: "mvBanner") {
-            insert("img", src: asset('banners/topcat_1_beauty.jpg', 'image'))
+            insert("img", src: asset('images/banners/topcat_1_beauty.jpg'))
           }
         }
         
@@ -2434,7 +2434,7 @@ html() {
         $("(//*[@id = 'nav_title'])[1]") {
           #inject_after("<div class=\"mvBanner\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/topcat_1_shoes.jpg\"></div>")
           insert_after("div", class: "mvBanner") {
-            insert("img", src: asset('banners/topcat_1_shoes.jpg', 'image'))
+            insert("img", src: asset('images/banners/topcat_1_shoes.jpg'))
           }
         }
         
@@ -2458,7 +2458,7 @@ html() {
         $("(//*[@id = 'nav_title'])[1]") {
           #inject_after("<div class=\"mvBanner\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/topcat_1_handbags.jpg\"></div>")
           insert_after("div", class: "mvBanner") {
-            insert("img", src: asset('banners/topcat_1_handbags.jpg', 'image'))
+            insert("img", src: asset('images/banners/topcat_1_handbags.jpg'))
           }
         }
         
@@ -2481,7 +2481,7 @@ html() {
         $("(//*[@id = 'nav_title'])[1]") {
           #inject_after("<div class=\"mvBanner\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/topcat_1_juniors.jpg\"></div>")
           insert_after("div", class: "mvBanner") {
-            insert("img", src: asset('banners/topcat_1_juniors.jpg', 'image'))
+            insert("img", src: asset('images/banners/topcat_1_juniors.jpg'))
           }
         }
         
@@ -2521,7 +2521,7 @@ html() {
         $("(//*[@id = 'nav_title'])[1]") {
           #inject_after("<div class=\"mvBanner\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/topcat_1_jewelryandwatches.jpg\"></div>")
           insert_after("div", class: "mvBanner") {
-            insert("img", src: asset('banners/topcat_1_jewelryandwatches.jpg', 'image'))
+            insert("img", src: asset('images/banners/topcat_1_jewelryandwatches.jpg'))
           }
         }
         
@@ -2545,7 +2545,7 @@ html() {
         $("(//*[@id = 'nav_title'])[1]") {
           #inject_after("<div class=\"mvBanner\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/topcat_1_sale.jpg\"></div>")
           insert_after("div", class: "mvBanner") {
-            insert("img", src: asset('banners/topcat_1_sale.jpg', 'image'))
+            insert("img", src: asset('images/banners/topcat_1_sale.jpg'))
           }
         }
         
@@ -2585,7 +2585,7 @@ html() {
         $("(//*[@id = 'nav_title'])[1]") {
           #inject_after("<div class=\"mvBanner\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/topcat_1_furniture.jpg\"></div>")
           insert_after("div", class: "mvBanner") {
-            insert("img", src: asset('banners/topcat_1_furniture.jpg', 'image'))
+            insert("img", src: asset('images/banners/topcat_1_furniture.jpg'))
           }
         }
         
@@ -2609,7 +2609,7 @@ html() {
         $("(//*[@id = 'nav_title'])[1]") {
           #inject_after("<div class=\"mvBanner\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/topcat_1_kitchen.jpg\"></div>")
           insert_after("div", class: "mvBanner") {
-            insert("img", src: asset('banners/topcat_1_kitchen.jpg', 'image'))
+            insert("img", src: asset('images/banners/topcat_1_kitchen.jpg'))
           }
         }
         

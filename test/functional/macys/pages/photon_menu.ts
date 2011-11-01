@@ -13,7 +13,7 @@ html() {
   #Content::CSS::AddCSS
   #[["css_path", "https://dl.dropbox.com/u/6208053/macys/photoon_menu.css"]]
   $('//html/head') {
-    insert_bottom("link", rel: "stylesheet", type: "text/css", href: asset("pages/photoon_menu.css", "stylesheet"))
+    insert_bottom("link", rel: "stylesheet", type: "text/css", href: sass("pages/photoon_menu.css"))
   }
   
   

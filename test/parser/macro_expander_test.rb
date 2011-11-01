@@ -41,7 +41,7 @@ class MacroTest < MiniTest::Unit::TestCase
       "asset(concat(#{location.inspect}, #{file_name.to_script})) { yield() }"
     end
     @expander.register_macro(test_asset_macro)
-    ins = parse_script("$stylesheet = \"myfile.css\"\nlog(asset($stylesheet, 'stylesheet'))")
+    ins = parse_script("$stylesheet = \"myfile.css\"\nlog(test_asset($stylesheet, 'stylesheet'))")
     log = ins.statements.last
     assert_equal :log, log.name
     

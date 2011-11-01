@@ -28,7 +28,7 @@ html(){
              $("div[@id='formButtonBgGrey']"){
                 $("input[@alt='Update Profile']") {
                   #attribute("src","http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/updateProfile.png")
-                  attribute('src', asset('other/updateProfile.png', 'image'))
+                  attribute('src', asset('images/other/updateProfile.png'))
                 }
               }
           }
@@ -53,7 +53,7 @@ html(){
                 add_class("mvPadding0510")
                 $("input[@alt='Create Profile']") {
                   #attribute("src","http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/createProfileBtn.png")
-                  attribute('src', asset('buttons/createProfile.png', 'image'))
+                  attribute('src', asset('images/buttons/createProfile.png'))
                 }
               }
           }

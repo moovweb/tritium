@@ -61,7 +61,7 @@ html() {
       $(".//form[@id ='signInVB']") {
         $("div[@id='signInSubmit']/input") {
           #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/signinBtn.png")
-          attribute('src', asset('buttons/signin.png', 'image'))
+          attribute('src', asset('images/buttons/signin.png'))
         }
         $("ul/li/label/..") {
           add_class("mvTextFieldWrapper")
@@ -79,11 +79,11 @@ html() {
         $("div[@class='guestSignInSubmit']") {
           $("input[@name='normalCheckout']") {
             #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/signinContinue.png")
-            attribute('src', asset('buttons/signinContinue.png', 'image'))
+            attribute('src', asset('images/buttons/signinContinue.png'))
           }
           $("input[@name='expressCheckout']") {
             #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/expressCheckout.png")
-            attribute('src', asset('buttons/expressCheckout.png', 'image'))
+            attribute('src', asset('images/buttons/expressCheckout.png'))
           }
         }
       }
@@ -99,7 +99,7 @@ html() {
       }
       $("div[@id='createProfileSubmit']/a/img") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/createBtn.png")           
-        attribute('src', asset('buttons/create.png', 'image'))
+        attribute('src', asset('images/buttons/create.png'))
       }
     }
   }
@@ -133,7 +133,7 @@ html() {
          }
          $(".//input[@id='forgotPwd']"){
            #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/submitBtn.png")
-           attribute('src', asset('buttons/submit.png', 'image'))
+           attribute('src', asset('images/buttons/submit.png'))
          }
          $(".//span[@class='small']") {
            name("div")
@@ -165,7 +165,7 @@ html() {
             $("div[@id='withoutProfileButton']") {
               $("input"){ 
                 #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/checkoutGuest.png")
-                attribute('src', asset('buttons/checkoutGuest.png', 'image'))
+                attribute('src', asset('images/buttons/checkoutGuest.png'))
               }
               add_class("mvShadowBottom")
             }      

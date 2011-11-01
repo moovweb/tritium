@@ -89,7 +89,7 @@ html() {
           }
           $("div[@id='formButtonBgGrey']/input") {
             #attribute("src","http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/saveCreditCardInfo.png")
-            attribute('src', asset('buttons/saveCreditCardInfo.png', 'image'))
+            attribute('src', asset('images/buttons/saveCreditCardInfo.png'))
           }
           $("input[@value='EDIT']"){
             $("./../div[@id='profileBorderShadow']/div[@id='profileListDisplay']"){
@@ -119,7 +119,7 @@ html() {
             }
             $("div[@id='formButtonBgGrey']/input"){
               #attribute("src","http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/saveAddressBtn.png")
-              attribute('src', asset('buttons/saveAddress.png', 'image'))
+              attribute('src', asset('images/buttons/saveAddress.png'))
             }
             $("input[@value='UPDATE']"){
               $("./../div[@id='profileBorderShadow']/div[@id='profileListDisplay']"){

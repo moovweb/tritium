@@ -22,7 +22,7 @@ html() {
   #Content::CSS::AddCSS
   #[["css_path", "http://dl.dropbox.com/u/6208053/macys_v2/macys_skavaHeader.css"], ["encode_image_threshold", ""]]
   $('//html/head') {
-    insert_bottom("link", rel: "stylesheet", type: "text/css", href: asset("pages/macys_skavaHeader.css", "stylesheet"))
+    insert_bottom("link", rel: "stylesheet", type: "text/css", href: sass("pages/macys_skavaHeader"))
   }
   
   
@@ -52,7 +52,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[contains(concat(' ', @class, ' '), ' mvLogo ')]") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/logo.png")
-      #attribute('src', asset('logo.png', 'image'))
+      #attribute('src', asset('images/logo.png'))
       name('div')
       attribute('src', '')
       add_class('sprite_me-logo')
@@ -108,7 +108,7 @@ html() {
         # NOTE: just sets the attribute - doesn't do anything special for files
         $("//input[@value = \"KEYWORD_GO_BUTTON\"]") {
           #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/go_btn.png")
-          #attribute('src', asset('buttons/go.png', 'image'))
+          #attribute('src', asset('images/buttons/go.png'))
           name('div')
           attribute('src', '')
           add_class('sprite_me-logo')

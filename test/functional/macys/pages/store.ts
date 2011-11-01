@@ -519,7 +519,7 @@ html() {
   # NOTE: just sets the attribute - doesn't do anything special for files
   $("//*[contains(concat(' ', @class, ' '), ' bg_quaternary ')]/input[@alt = \"Search\"]") {
     #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/registryBtns/searchBtn.png")
-    attribute('src', asset('buttons/registry/search.png', 'image'))
+    attribute('src', asset('images/buttons/registry/search.png'))
   }
   
   
@@ -880,7 +880,7 @@ html() {
     #[["javascript_path", "http://dl.dropbox.com/u/3940085/moovweb/clients/macys-contract/js/store-locator-form.js"], ["add_after", "body > script:last-of-type"]]
     $("//body/script[position() = last()]") {
       insert_after("script") {
-        attribute("src", asset('store-locator-form.js', 'js'))
+        attribute("src", asset('/javascript/store-locator-form.js'))
         attribute("language", "javascript")
       }
     }

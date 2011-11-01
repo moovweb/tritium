@@ -847,7 +847,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//*[@id = 'submitImg']") {
         #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/addToProfile_btn.gif")
-        attribute('src', asset('buttons/addToProfile.gif', 'image'))
+        attribute('src', asset('images/buttons/addToProfile.gif'))
       }
       
       

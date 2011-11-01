@@ -54,7 +54,7 @@ html() {
     #Content::CSS::AddCSS
     #[["css_path", "http://dl.dropbox.com/u/6208053/macys_v2/global.css"], ["encode_image_threshold", ""]]
     $('//html/head') {
-      insert_bottom("link", rel: "stylesheet", type: "text/css", href: asset("pages/global.css", "stylesheet"))
+      insert_bottom("link", rel: "stylesheet", type: "text/css", href: sass('pages/global.css'))
     }
     
     
@@ -62,7 +62,7 @@ html() {
     #Content::Javascript::ReplaceMatchingScriptTag
     #[["src_match", "addToBag-min.js"], ["new_src", "http://dl.dropbox.com/u/6208053/macys_v2/addToBag.js"]]
     $("(//script[contains(@src, 'addToBag-min.js')])[1]") {
-      attribute("src", asset('addToBag.js', 'js'))
+      attribute("src", asset('/javascript/addToBag.js'))
     }
     
     #
@@ -829,7 +829,7 @@ html() {
     #Content::Javascript::ReplaceMatchingScriptTag
     #[["src_match", "bvr-min.js"], ["new_src", "http://dl.dropbox.com/u/9451381/moovweb/clients/macys/bvr.js"]]
     $("(//script[contains(@src, 'bvr-min.js')])[1]") {
-      attribute("src", asset('bvr.js', 'js'))
+      attribute("src", asset('/javascript/bvr.js'))
     }
     
     #
@@ -846,7 +846,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[contains(concat(' ', @class, ' '), ' bagDivButton ')]//input[@id = 'checkout']") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/checkoutBtn.png")
-      attribute('src', asset('buttons/checkout.png', 'image'))
+      attribute('src', asset('images/buttons/checkout.png'))
     }
     
     
@@ -856,7 +856,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[contains(concat(' ', @class, ' '), ' bagDivButton ')]//input[@id = 'continueShopping']") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/continueShoppingBtn.png")
-      attribute('src', asset('buttons/continueShopping.png', 'image'))
+      attribute('src', asset('images/buttons/continueShopping.png'))
     }
     
     # end BasicGroup
@@ -1578,7 +1578,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[contains(concat(' ', @class, ' '), ' buttonSubmitBorders ')]") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macys/account_btns/SaveChangesBtn.png")
-      attribute('src', asset('buttons/SaveChanges.png', 'image'))
+      attribute('src', asset('images/buttons/SaveChanges.png'))
     }
     
     
@@ -1641,7 +1641,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@alt = \"ENROLL\"]") {
       #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/enrollBtn.png")
-      attribute('src', asset('buttons/enroll.png', 'image'))
+      attribute('src', asset('images/buttons/enroll.png'))
     }
     
     
@@ -2169,7 +2169,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[@id = 'bvrNoProductsPool']//img") {
       #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/registryBtns/bvr_no_products.gif")
-      attribute('src', asset('buttons/registry/bvr_no_products.gif', 'image'))
+      attribute('src', asset('images/buttons/registry/bvr_no_products.gif'))
     }
     
     
@@ -2195,7 +2195,7 @@ html() {
   # NOTE: just sets the attribute - doesn't do anything special for files
   $("//*[@id = 'closeBtn']") {
     #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macys/account_btns/close_btn.gif")
-    attribute('src', asset('buttons/close.gif', 'image'))
+    attribute('src', asset('images/buttons/close.gif'))
   }
   
   
@@ -2225,7 +2225,7 @@ html() {
   # NOTE: just sets the attribute - doesn't do anything special for files
   $("//img[@alt = \"my macys\"]") {
     #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/mymacys_csa.gif")
-    attribute('src', asset('other/mymacys_csa.gif', 'image'))
+    attribute('src', asset('images/other/mymacys_csa.gif'))
   }
   
   

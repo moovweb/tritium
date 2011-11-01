@@ -43,9 +43,9 @@ html() {
   }
   $("html") {
     $("head") {
-      insert_bottom("script", type: "text/javascript", src: asset("main.js", "js"))
-      insert_bottom("link", rel: "stylesheet", href: asset("main.css", "stylesheet"))
-      insert_bottom("script", type: "text/javascript", src: asset("node_added_rewriter.js", "js"))
+      insert_bottom("script", type: "text/javascript", src: asset(concat($js_asset_location, "main.js")))
+      insert_bottom("link", rel: "stylesheet", href: sass("main"))
+      insert_bottom("script", type: "text/javascript", src: asset(concat($js_asset_location, "node_added_rewriter.js")))
       
       # I would have liked to add the coremetrics bundles to the bottom of the body, 
       # however they are required to be in the head because there is inline JS that 
@@ -54,11 +54,11 @@ html() {
       match($cookie) {
         with (/ishop_app/) {
           log("Adding cm_app.js")
-          insert_bottom("script", type: "text/javascript", src: asset("cm_app.js", "js"))
-        }
-        else () {
-          log("Adding cm_mw.js")
-          insert_bottom("script", type: "text/javascript", src: asset("cm_mw.js", "js"))
+          insert_bottom("script", type: "text/javascript", src: asset(concat($js_asset_location, "cm_app.js")))
+        }                                                                                                   
+        else () {                                                                                           
+          log("Adding cm_mw.js")                                                                            
+          insert_bottom("script", type: "text/javascript", src: asset(concat($js_asset_location, "cm_mw.js")))
         }
       }
     }

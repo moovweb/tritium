@@ -191,7 +191,7 @@ html() {
       insert_bottom("link") {
         attribute("rel", "apple-touch-icon")
         #attribute("href", "https://moovweb-gage.s3.amazonaws.com/yupu/macys/webClip_icon.gif")
-        attribute('href', asset('icons/webClip_icon.gif', 'image'))
+        attribute('href', asset('images/icons/webClip_icon.gif'))
       }
     }
     
@@ -232,7 +232,7 @@ html() {
   #Content::CSS::AddCSS
   #[["css_path", "http://dl.dropbox.com/u/6208053/macys_v2/macys_base.css"], ["encode_image_threshold", ""]]
   # $('//html/head') {
-  #    insert_bottom("link", rel: "stylesheet", type: "text/css", href: asset("pages/macys_base.css", "stylesheet"))
+  #    insert_bottom("link", rel: "stylesheet", type: "text/css", href: sass('pages/macys_base.css'))
   #  }
   #  
   
@@ -338,7 +338,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//img[contains(@src, \"myDynamicPopupLogo.gif\")]") {
       #attribute("src","http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/mvDynamicPopupLogo.gif")
-      attribute('src', asset('icons/mvDynamicPopupLogo.gif', 'image'))
+      attribute('src', asset('images/icons/mvDynamicPopupLogo.gif'))
     }
     
     

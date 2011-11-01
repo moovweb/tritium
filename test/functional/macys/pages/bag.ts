@@ -828,7 +828,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[@id = 'applyButton']") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/applyBtn.png")
-      attribute('src', asset('buttons/apply.png', 'image'))
+      attribute('src', asset('images/buttons/apply.png'))
     }
     
     
@@ -838,7 +838,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@value = \"ADDTOBAG_BUTTON\"]") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/smallAddToBag.png")
-      attribute('src', asset('buttons/smallAddToBag.png', 'image'))
+      attribute('src', asset('images/buttons/smallAddToBag.png'))
     }
     
     
@@ -848,7 +848,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@value = \"CONTINUE_BUTTON\"]") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/continueShoppingBagBtn.png")
-      attribute('src', asset('buttons/continueShopping.png', 'image'))
+      attribute('src', asset('images/buttons/continueShopping.png'))
     }
     
     
@@ -858,7 +858,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@alt = \"ADD TO CURRENT BAG\"]") {
       #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/addToCurrentBagBtn.png")
-      attribute('src', asset('buttons/addToCurrentBag.png', 'image'))
+      attribute('src', asset('images/buttons/addToCurrentBag.png'))
     }
     
     
@@ -868,7 +868,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@value = \"CHECKOUT_BUTTON\"]") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/chectoutBagBtn.png")
-      attribute('src', asset('buttons/checkoutBag.png', 'image'))
+      attribute('src', asset('images/buttons/checkoutBag.png'))
     }
     
     
@@ -878,7 +878,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@alt = \"EXPRESS CHECKOUT\"]") {
       #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/expressCheckout.png")
-      attribute('src', asset('buttons/expressCheckout.png', 'image'))
+      attribute('src', asset('images/buttons/expressCheckout.png'))
     }
     
     

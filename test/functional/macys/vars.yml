@@ -28,12 +28,12 @@ date: Mon, 12 Sep 2011 14:32:04 GMT
 vary: Accept-Encoding
 set_cookie: stop_mobi=yes; expires=Mon, 12-Sep-2011 15:02:04 GMT; path=/; domain=.macys.com
 device_stylesheet: devices/webkit.css
-stylesheet_asset_location: /stylesheets/.css/
-image_asset_location: /images/
-js_asset_location: /javascript/
+stylesheet_asset_location: stylesheets/.css/
+image_asset_location: images/
+js_asset_location: javascript/
 User-Agent-matched-default: "true"
 User-Agent-matched-webkit: "true"
 path: /shop/womens?id=118
 status: "200"
-asset_host: http://localhost:3003
+asset_host: http://localhost:3003/
 request_id: zc004

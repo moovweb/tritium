@@ -54,7 +54,7 @@ html() {
   # NOTE: just sets the attribute - doesn't do anything special for files
   $("//input[@alt = \"Send\"]") {
     #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/sendBtn.png")
-    attribute('src', asset('buttons/send.png', 'image'))
+    attribute('src', asset('images/buttons/send.png'))
   }
   
   
@@ -64,7 +64,7 @@ html() {
   # NOTE: just sets the attribute - doesn't do anything special for files
   $("//img[@alt = \"Cancel\"]") {
     #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/cancelBtn.png")
-    attribute('src', asset('buttons/cancel.png', 'image'))
+    attribute('src', asset('images/buttons/cancel.png'))
   }
   
   

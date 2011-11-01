@@ -93,7 +93,7 @@ html() {
         $("//*[@id = 'createButton']") {
           #inner("<img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/registryBtns/regCreateBtn.png\" />")
           inner("")
-          insert("img", src: asset('buttons/registry/create.png', 'image'))
+          insert("img", src: asset('images/buttons/registry/create.png'))
         }
         
         
@@ -103,7 +103,7 @@ html() {
         # NOTE: just sets the attribute - doesn't do anything special for files
         $("//*[@id = 'createButton']") {
           #attribute("src","http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/registryBtns/regCreateBtn.png")
-          attribute('src', asset('buttons/registry/create.png', 'image'))
+          attribute('src', asset('images/buttons/registry/create.png'))
         }
         
         
@@ -155,7 +155,7 @@ html() {
         # NOTE: just sets the attribute - doesn't do anything special for files
         $("//*[@id = 'cc2']//*[@id = 'updateButton']") {
           #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/registryBtns/regSignin.png")
-          attribute('src', asset('buttons/registry/signin.png', 'image'))
+          attribute('src', asset('images/buttons/registry/signin.png'))
         }
         
         
@@ -197,7 +197,7 @@ html() {
         # NOTE: just sets the attribute - doesn't do anything special for files
         $("//*[@id = 'cc3']//*[@id = 'findButton']") {
           #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/registryBtns/regSubmitBtn.png")
-          attribute('src', asset('buttons/registry/submit.png', 'image'))
+          attribute('src', asset('images/buttons/registry/submit.png'))
         }
         
         
@@ -242,7 +242,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//*[@id = 'cc21']//img") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/registryBtns/regUpdateBtn.png")
-        attribute('src', asset('buttons/registry/update.png', 'image'))
+        attribute('src', asset('images/buttons/registry/update.png'))
       }
       
       
@@ -262,7 +262,7 @@ html() {
     $("(//*[@id = 'bd'])[1]") {
       #inject_before("<div class=\"mvRegistryHomeImg\"><img src=\"http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/banners/Registry_HP-2.jpg\"></div>")
       insert_before("div", class: "mvRegistryHomeImg") {
-        insert("img", src: asset('banners/Registry_HP-2.jpg', 'image'))
+        insert("img", src: asset('images/banners/Registry_HP-2.jpg'))
       }
     }
     
@@ -355,7 +355,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//*[@id = 'hasProfileSubmitImg']") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/createRegistryBtn.png")
-        attribute('src', asset('buttons/registry/createRegistryBtn.png', 'image'))
+        attribute('src', asset('images/buttons/registry/createRegistryBtn.png'))
       }
       
       
@@ -412,7 +412,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//*[@id = 'noProfileSubmitImg']") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/createRegistryBtn.png")
-        attribute('src', asset('buttons/registry/createRegistryBtn.png', 'image'))
+        attribute('src', asset('images/buttons/registry/createRegistryBtn.png'))
       }
       
       
@@ -548,7 +548,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//*[@id = 'submitImg']") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/registryBtns/register.png")
-        attribute('src', asset('buttons/registry/register.png', 'image'))
+        attribute('src', asset('images/buttons/registry/register.png'))
       }
       
       
@@ -697,7 +697,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//*[@id = 'submitImg']") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/registryBtns/regUpdateBtn.png")
-        attribute('src', asset('buttons/registry/update.png', 'image'))
+        attribute('src', asset('images/buttons/registry/update.png'))
       }
       
       
@@ -890,7 +890,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//img[@alt = \"Create\"]") {
       #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/createBtn.png")
-      attribute('src', asset('buttons/create.png', 'image'))
+      attribute('src', asset('images/buttons/create.png'))
     }
     
     
@@ -900,7 +900,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@alt = \"Sign In\"]") {
       #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/signinBtn.png")
-      attribute('src', asset('buttons/signin.png', 'image'))
+      attribute('src', asset('images/buttons/signin.png'))
     }
     
     
@@ -1139,7 +1139,7 @@ html() {
     #Content::Javascript::ReplaceMatchingScriptTag
     #[["src_match", "search-min.js"], ["new_src", "http://dl.dropbox.com/u/9451381/moovweb/clients/macys/search.js"]]
     $("(//script[contains(@src, 'search-min.js')])[1]") {
-      attribute("src", asset('search.js', 'js'))
+      attribute("src", asset('/javascript/search.js'))
     }
     
     #Revise search
@@ -1189,7 +1189,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//input[@alt = \"Search\"]") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/registryBtns/searchBtn.png")
-        attribute('src', asset('buttons/registry/search.png', 'image'))
+        attribute('src', asset('images/buttons/registry/search.png'))
       }
       
       
@@ -1241,7 +1241,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@alt = \"Access Registry\"]") {
       #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/registryBtns/accessRgegistryBtn.png")
-      attribute('src', asset('buttons/registry/accessRegistry.png', 'image'))
+      attribute('src', asset('images/buttons/registry/accessRegistry.png'))
     }
     
     
@@ -1296,7 +1296,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@alt = \"Continue\"]") {
       #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/continueBtn.png")
-      attribute('src', asset('buttons/continue.png', 'image'))
+      attribute('src', asset('images/buttons/continue.png'))
     }
     
     
@@ -1326,7 +1326,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//input[@alt = \"Close\"]") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macys/account_btns/close_btn.gif")
-      attribute('src', asset('buttons/close.gif', 'image'))
+      attribute('src', asset('images/buttons/close.gif'))
     }
     
     
@@ -1336,7 +1336,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[@id = 'whyAskingClose']//img") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macys/account_btns/close_btn.gif")
-      attribute('src', asset('buttons/close.gif', 'image'))
+      attribute('src', asset('images/buttons/close.gif'))
     }
     
     
@@ -1346,11 +1346,11 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[@id = 'viewOptionsClose']//img") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macys/account_btns/close_btn.gif")
-      attribute('src', asset('buttons/close.gif', 'image'))
+      attribute('src', asset('images/buttons/close.gif'))
     }
     $("//*[@id = 'whyAskingClose']//img") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macys/account_btns/close_btn.gif")
-      attribute('src', asset('buttons/close.gif', 'image'))
+      attribute('src', asset('images/buttons/close.gif'))
     }
     
     
@@ -1396,7 +1396,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[@id = 'forgotPswdSubmit']") {
       #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/submitBtn.png")
-      attribute('src', asset('buttons/submit.png', 'image'))
+      attribute('src', asset('images/buttons/submit.png'))
     }
     
     
@@ -1406,7 +1406,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[@id = 'errorClose']") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macys/account_btns/close_btn.gif")
-      attribute('src', asset('buttons/close.png', 'image'))
+      attribute('src', asset('images/buttons/close.png'))
     }
     
     
@@ -1424,7 +1424,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[@id = 'innerConfirmSent']//*[@id = 'sentSubmit' and @alt = \"Sign In Again\"]") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macys/account_btns/Sign-In-Again.png")
-      attribute('src', asset('buttons/Sign-In-Again.png', 'image'))
+      attribute('src', asset('images/buttons/Sign-In-Again.png'))
     }
     
     

@@ -1058,7 +1058,7 @@ html() {
     inject_top("<div data-ur-map-component='icon'></div>")
 
     $("./div[@data-ur-map-component='icon']"){
-      attribute("data-ur-url", asset("bigstar.png", "image") )
+      attribute("data-ur-url", asset("images/bigstar.png") )
       attribute("data-ur-width", "20")
       attribute("data-ur-height", "20")
     }

@@ -204,7 +204,7 @@ html() {
     #Content::CSS::AddCSS
     #[["css_path", "http://dl.dropbox.com/u/6208053/macys/macys_appreview.css"]]
     $('//html/head') {
-      insert_bottom("link", rel: "stylesheet", type: "text/css", href: asset("pages/macys_appreview.css", "stylesheet"))
+      insert_bottom("link", rel: "stylesheet", type: "text/css", href: sass("pages/macys_appreview"))
     }
     
     

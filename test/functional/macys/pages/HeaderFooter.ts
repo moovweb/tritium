@@ -92,7 +92,7 @@ html() {
         # NOTE: just sets the attribute - doesn't do anything special for files
         $("//input[@value = \"KEYWORD_GO_BUTTON\"]") {
           #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/go_btn.png")
-          #attribute('src', asset('buttons/go.png', 'image'))
+          #attribute('src', asset('images/buttons/go.png'))
           attribute('src', '')
         }
         
@@ -2447,7 +2447,7 @@ html() {
         # NOTE: just sets the attribute - doesn't do anything special for files
         $("//*[@id = 'facebookIconImage']") {
           #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/facebook_icon.png")
-          #attribute('src', asset('icons/facebook.png', 'image'))
+          #attribute('src', asset('images/icons/facebook.png'))
           name('div')
           attribute('src', '')
           add_class('sprite_me-facebook')
@@ -2460,7 +2460,7 @@ html() {
         # NOTE: just sets the attribute - doesn't do anything special for files
         $("//*[@id = 'twitterIconImage']") {
           #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/twitter_icon.png")
-          #attribute('src', asset('icons/twitter.png', 'image'))
+          #attribute('src', asset('images/icons/twitter.png'))
           name('div')
           attribute('src', '')
           add_class('sprite_me-twitter')
@@ -3350,7 +3350,7 @@ html() {
     # NOTE: just sets the attribute - doesn't do anything special for files
     $("//*[contains(concat(' ', @class, ' '), ' mvSpinnerPreload ')]") {
       #attribute("src", "https://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/4.gif")
-      attribute('src', asset('other/loading4.gif', 'image'))
+      attribute('src', asset('images/other/loading4.gif'))
     }
     
     

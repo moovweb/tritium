@@ -173,7 +173,7 @@ html() {
   $("//*[contains(concat(' ', @class, ' '), ' popupBranding ')]") {
     #inner("<img  src=\"https://moovweb-gage.s3.amazonaws.com/yupu/macys/macys_logo.png\" width=\"120px\" height=\"33px\" alt=\"Macy's\" title=\"Macy's\" border=\"0\" class=\"mvLogo\">")
     inner("")
-    #insert("img", src: asset('logo.png', 'image'), width: "120px", height: "33px", alt: "Macy's", title: "Macy's", border: "0", class: "mvLogo")
+    #insert("img", src: asset('images/logo.png'), width: "120px", height: "33px", alt: "Macy's", title: "Macy's", border: "0", class: "mvLogo")
     insert("div", alt: "Macy's", title: "Macy's", border: "0", class: "mvLogo sprite_me-logo")
   }
   

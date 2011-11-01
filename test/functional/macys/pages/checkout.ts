@@ -930,7 +930,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//img[@alt = \"Remove\"]") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/removeBtn.png")
-        attribute('src', asset('buttons/remove.png', 'image'))
+        attribute('src', asset('images/buttons/remove.png'))
       }
       
       
@@ -940,7 +940,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//img[contains(@onclick, \"showGiftCardNumber\")]") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/addAnother.png")
-        attribute('src', asset('buttons/addAnother.png', 'image'))
+        attribute('src', asset('images/buttons/addAnother.png'))
       }
       
       
@@ -2027,11 +2027,11 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//*[@id = 'bag_buttons']//img[@alt = \"CONTINUE\"]") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/continueCheckout2.png")
-        attribute('src', asset('buttons/continueCheckout2.png', 'image'))
+        attribute('src', asset('images/buttons/continueCheckout2.png'))
       }
       $("//*[@id = 'bag_buttons']//img[@alt = \"CONTINUE CHECKOUT\"]") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/continueCheckout2.png")
-        attribute('src', asset('buttons/continueCheckout2.png', 'image'))
+        attribute('src', asset('images/buttons/continueCheckout2.png'))
       }
       
       
@@ -2041,7 +2041,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//*[@id = 'bag_buttons']//img[@alt = \"SAVE & CONTINUE\"]") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/saveContiuneBtn.png")
-        attribute('src', asset('buttons/saveContinue.png', 'image'))
+        attribute('src', asset('images/buttons/saveContinue.png'))
       }
       
       
@@ -2051,7 +2051,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//*[@id = 'applyButton']") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/applyBtn.png")
-        attribute('src', asset('buttons/apply.png', 'image'))
+        attribute('src', asset('images/buttons/apply.png'))
       }
       
       
@@ -2061,7 +2061,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//img[@alt = \"Apply\"]") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/applyBtn.png")
-        attribute('src', asset('buttons/apply.png', 'image'))
+        attribute('src', asset('images/buttons/apply.png'))
       }
       
       
@@ -2071,7 +2071,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//img[@alt = \"PLACE ORDER\"]") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/placeOrderBtn.png")
-        attribute('src', asset('buttons/placeOrder.png', 'image'))
+        attribute('src', asset('images/buttons/placeOrder.png'))
       }
       
       
@@ -2081,7 +2081,7 @@ html() {
       # NOTE: just sets the attribute - doesn't do anything special for files
       $("//img[@alt = \"BACK ONE STEP\"]") {
         #attribute("src", "http://moovweb-gage.s3.amazonaws.com/yupu/macy2/macysBtns/onestepbackBtn2.png")
-        attribute('src', asset('buttons/onestepback2.png', 'image'))
+        attribute('src', asset('images/buttons/onestepback2.png'))
       }
       
       
@@ -2456,7 +2456,7 @@ html() {
             $("div/div"){
              
               $(".//input[@value='QUCIKREGISTER_BUTTON']"){
-                 attribute('src', asset('buttons/createProfile.png', 'image'))
+                 attribute('src', asset('images/buttons/createProfile.png'))
                  $(".."){ 
                    name("div")
                    add_class("mvPadding10")
