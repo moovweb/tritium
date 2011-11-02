@@ -35,5 +35,5 @@ User-Agent-matched-default: "true"
 User-Agent-matched-webkit: "true"
 path: /shop/womens?id=118
 status: "200"
-asset_host: http://localhost:3003
+asset_host: http://localhost:3003/
 request_id: zc004
