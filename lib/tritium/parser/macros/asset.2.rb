@@ -22,5 +22,6 @@
       output << "log('DEPRECATION WARNING: Please use asset(\"images/#{file_name.value}\") instead')" #unless ENV["TEST"]
     end
   end
-  "asset(concat(#{location.inspect}, #{file_name.to_script})) { #{output.join("\n")}\n yield() }"
+  puts output.join("\n")
+  "asset(concat(#{location.inspect}, #{file_name.to_script})) { yield() }"
 end
