@@ -204,7 +204,7 @@ module Tritium
         script = "export('Content-Type', 'html/js'); export('cookie', 'a'); export('cookie', 'b')"
         log = Logger.new(nil)
         log.level = Logger::ERROR
-        tritium = engine_class.new(script, :path => EngineTests.test_sets.values.last + "/scripts", :script_name => "export_function", :logger => log)
+        tritium = engine_class.new(script, :path => EngineTests.test_sets.values.last + "/scripts", :logger => log)
         result, export_vars = tritium.run("")
         assert_equal [['Content-Type', 'html/js'], ['cookie', 'a'], ['cookie', 'b']], export_vars
       end
