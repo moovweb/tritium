@@ -9,7 +9,7 @@ require 'rainbow'
 
 include Tritium::Engines
 require_relative '../../../nagual/lib/judy'
-require_relative '../../../blitz/lib/blitz'
+require_relative '../../../viper/lib/viper'
 
 #ENV["CSV"] = "true"
 
@@ -20,16 +20,16 @@ log.level = Logger::ERROR
 
 totals = {}
 print("\nscript_name")
-engines = [Standard, Judy::Engine, Blitz::Engine]
+engines = [Standard, Judy::Engine, Viper::Engine]
 engines.each do |engine_class|
   print(",")
   print(engine_class.name)
 end
 print("\n")
 
-search = File.join(base_path, "/fetch*")
+search = File.join(base_path, "/*")
 Dir[search].each do |test_folder|
-  puts test_folder.inspect
+  #puts test_folder.inspect
   test_name = File.basename(test_folder)
   
   env_file = test_folder + "/vars.yml"
