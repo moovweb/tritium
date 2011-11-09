@@ -298,7 +298,7 @@ Node:
 XMLNode:
   inherit: Node
   cdata:
-    doc: A helper method for building a CDATA node
+    doc: Replace's the node's contents with a CDATA block
     returns: true
     arguments:
       -

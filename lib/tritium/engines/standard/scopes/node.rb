@@ -67,7 +67,10 @@ module Tritium
               @node_stack.pop
             end
           when :cdata
-            ctx.value.document.create_cdata(args.first)
+            node = ctx.value
+            node.content = ""
+            cdata_node = node.document.create_cdata(args.first)
+            node.children.first.replace(cdata_node)
           when :dup
             node = ctx.value.dup
             ctx = Context[ins, node]
