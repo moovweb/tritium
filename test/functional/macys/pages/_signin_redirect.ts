@@ -5,7 +5,7 @@
 #[["regex", "<input.*?id=\"MACYS_secureHostName\".*?value=\".*?\\.(macys.com)\".*?>"]]
 replace(/<input.*?id=\"MACYS_secureHostName\".*?value=\".*?\.(macys.com)\".*?>/) {
   # check that there was a first capture
-  match(/./, $1) {
+  match($1, /./) {
     replace($1, $source_host)
   }
 }
@@ -16,7 +16,7 @@ replace(/<input.*?id=\"MACYS_secureHostName\".*?value=\".*?\.(macys.com)\".*?>/)
 #[["regex", "<input.*?id=\"MACYS_baseHostName\".*?value=\".*?\\.(macys.com)\".*?>"]]
 replace(/<input.*?id=\"MACYS_baseHostName\".*?value=\".*?\.(macys.com)\".*?>/) {
   # check that there was a first capture
-  match(/./, $1) {
+  match($1, /./) {
     replace($1, $source_host)
   }
 }
@@ -27,7 +27,7 @@ replace(/<input.*?id=\"MACYS_baseHostName\".*?value=\".*?\.(macys.com)\".*?>/) {
 #[["regex", "<input.*?id=\"MACYS_assetsHostName\".*?value=\".*?\\.(macys.com)\".*?>"]]
 replace(/<input.*?id=\"MACYS_assetsHostName\".*?value=\".*?\.(macys.com)\".*?>/) {
   # check that there was a first capture
-  match(/./, $1) {
+  match($1, /./) {
     replace($1, $source_host)
   }
 }
