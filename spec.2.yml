@@ -47,7 +47,7 @@ Base:
         doc: What are we matching against? 
       -
         name: Regex or String
-        doc: If we are only matching against one value, you can pass it in here. This is the same as a single with()
+        doc: If we are only matching against one string or regexp, you can pass it in here. This is the same as a single with()
         optional: true
   not:
     doc: Used with match($var, not('hi'))
