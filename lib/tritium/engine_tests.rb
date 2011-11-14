@@ -20,7 +20,8 @@ module Tritium
     # We should break up the functional tests. This should return an hash of test sets
     # Right now, we only have one, so we will just return that
     def self.test_sets
-      {:base => File.absolute_path(File.join(File.dirname(__FILE__), "../../test/functiona*"))}
+      {:functional => File.absolute_path(File.join(File.dirname(__FILE__), "../../test/functiona*")),
+       :irl => File.absolute_path(File.join(File.dirname(__FILE__), "../../test/irl"))}
     end
 
     def engine_class
@@ -28,11 +29,13 @@ module Tritium
     end
 
     self.test_sets.each do |set_name, tests_directory|
-      Dir[tests_directory + "/*"].each do |test_dir|
-        test_name = test_dir.split("/").last
-        if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
-          # Writes a method that simply calls run_file with its name 
-          eval "def test_#{set_name}_#{test_name}_script; run_test('#{test_dir}'); end"
+      if ENV["TESTSET"].nil? || set_name.to_s == ENV["TESTSET"]
+        Dir[tests_directory + "/*"].each do |test_dir|
+          test_name = test_dir.split("/").last
+          if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
+            # Writes a method that simply calls run_file with its name 
+            eval "def test_#{set_name}_#{test_name}_script; run_test('#{test_dir}'); end"
+          end
         end
       end
     end
