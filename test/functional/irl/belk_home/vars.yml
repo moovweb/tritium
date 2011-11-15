@@ -1,0 +1,44 @@
+--- 
+source_host: www.belk.com
+rewrite_link_matcher: !ruby/regexp /(^|\/\/|\"|\')(?!mlocal\.)(www\.)?([a-z0-9\-\.]*)(belk|belkinc)\.com/
+rewrite_link_matcher_str: (^|\/\/|\"|\')(?!mlocal\.)(www\.)?([a-z0-9\-\.]*)(belk|belkinc)\.com
+rewrite_link_replacement: \1mlocal.\3\4.com
+rewrite_cookie_matcher: !ruby/regexp /\.?(www\.)?([a-z0-9\-\.]*belk\.com)/
+rewrite_cookie_replacement: .\2
+rewrite_cookie_missing_replacement: 
+rewrite_incoming_json: "[{\"matcher\":\"m[a-z]*\\\\.belk\\\\.com\",\"replacement\":\"www.belk.com\"},{\"matcher\":\"m[a-z]*\\\\.([a-z\\\\.]*(belk|belkinc)\\\\.com)\",\"replacement\":\"\\\\1\"}]"
+secure: true
+host: mlocal.belk.com
+connection: close
+cache_control: no-store
+user_agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2
+accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+accept_encoding: gzip,deflate,sdch
+accept_language: en-US,en;q=0.8
+accept_charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
+cookie: CoreM_State=91~-1~-1~-1~-1~3~3~5~3~3~7~7~|~~|~~|~||||||
+server: Apache/2.2.3 (Red Hat)
+pragma: no-cache
+expires: "-1"
+x_wily_servlet: Clear appServerIp=74.213.129.192&agentName=bluemartini%2Fwebsite_cluster%2FWSPRD19F&servletName=__home&servletResponseTime=49&agentHost=belkecaprd07&agentProcess=WebLogic
+x_wily_info: Clear guid=A91840194AD581C04A358AF1229C9C58
+vary: Accept-Encoding
+content_encoding: gzip
+content_type: text/html;charset=ISO-8859-1
+content_length: "11065"
+date: Tue, 15 Nov 2011 21:18:18 GMT
+set_cookie: 
+- JSESSIONID=TCXhr1LBzYbT2p8Z7MGHQcrCYMp4MF0cNKrJ1jTSnSjzcV7fWnRm!-2095160356; path=/
+- showBrowserUpgradeModal=true
+- userNameCookie=null; HttpOnly
+device_stylesheet: webkit
+stylesheet_asset_location: /stylesheets/.css/
+image_asset_location: /images/
+js_asset_location: /javascript/
+User-Agent-matched-default: "true"
+User-Agent-matched-webkit: "true"
+path: /
+status: "200"
+asset_host: http://localhost:3003/
+
+request_id: xp001

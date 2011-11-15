@@ -1,0 +1,141 @@
+<!-- ++ Injecting header.html -->
+
+<div id="mw_header">
+  <div id="mw_header_float_placeholder">
+    <div id="mw_header_float">
+      <div id="mw_logo">
+        <a href="/asda-estore/home/homecontainer.jsp" class="icons-logo">HomePage</a>
+      </div>
+      
+      <div id="mw_nav_container">
+        <a href="/asda-estore/catalog/categorylistingpage.jsp" id="mw_search_icon" class="icons-search">
+          <label>Shop</label>
+        </a>
+        
+        <a href="/asda-estore/favourites/favouritelayout.jsp?maxItemsToBeShown=15" id="mw_favorites_icon" class="icons-favorite">
+          <label>Favourites</label>
+        </a>
+        
+        <div  class="icons-trolley mw_trolley_icon_wrap" >
+          <a href="/asda-estore/checkout/regularviewtrolleycontainer.jsp" id="mw_trolley_icon" data-ur-toggler-component="button" data-ur-id="trolleyToggler" data-ur-state="disabled">
+            <label>Trolley</label>
+          </a>
+        </div>
+      </div> <!-- Ending #mw_nav_container -->
+      
+    </div> <!-- Ending #mw_header_float -->
+  </div>
+
+  <div id="mw_spinner">
+    <div class="mw_bar1"></div>
+    <div class="mw_bar2"></div>
+    <div class="mw_bar3"></div>
+    <div class="mw_bar4"></div>
+    <div class="mw_bar5"></div>
+    <div class="mw_bar6"></div>
+    <div class="mw_bar7"></div>
+    <div class="mw_bar8"></div>
+    <div class="mw_bar9"></div>
+    <div class="mw_bar10"></div>
+    <div class="mw_bar11"></div>
+    <div class="mw_bar12"></div>
+  </div> <!-- Ending #mw_spinner2 -->
+  
+  <!-- ASDA's Search Form -->
+  <script type="text/javascript">
+  
+  
+  function validateInputv1(configId) {
+    var searchString = document.getElementById("searchinputv1").value;
+    document.getElementById("page_Config").value = configId;
+    var URL = window.parent.location.href;
+    var URLparam = 0;
+    var finalURL = "";
+    var URLArray = URL.split("?");
+    var count = 0;
+    finalURL = URLArray[0];
+    if (URLArray.length > 1 && URLArray[1].indexOf(".jsp") >= 0) {
+        finalURL = URLArray[0];
+    } else if (URLArray.length > 1) {
+        URLparam = URLArray[1].split("&");
+        for (var temp = 0; temp < URLparam.length; temp++) {
+            var containserror = URLparam[temp].indexOf("errorString");
+            var containsstring = URLparam[temp].indexOf("keySearchString");
+            var containsrequestid = URLparam[temp].indexOf("_requestid");
+            var errorpositionid = URLparam[temp].indexOf("errorPosition");
+            if ((containserror == -1) && (containsstring == -1) && (containsrequestid == -1) && (errorpositionid == -1)) {
+                if (count == 0) finalURL = finalURL + "?" + URLparam[temp];
+                else
+                finalURL = finalURL + "&" + URLparam[temp];
+                count++;
+            }
+        }
+    }
+    document.getElementById("errorURL").value = finalURL;
+    document.getElementById("errorPosition").value = "global";
+    document.globalform.submit();
+  }
+  
+  </script> 
+  
+  
+  <div id="mw_global_search">
+    <form target="_top" action="asda-estore/search/fragments/en_GB/globalsearchv1.jsp.globalform" onsubmit="javascript:validateInputv1('<%=pageConfig%>')" name="globalform" method="post">
+      <input value="ISO-8859-1" type="hidden" name="_dyncharset">
+      <input value="2760210729952076051" type="hidden" name="_dynSessConf">
+      <input type="hidden" id="headerVersion" name="headerVersion" value="v1">
+      
+      <div id="mw_mainsearch">
+      <!-- Couldn't find any purpose for this
+        <label for="searchinputv1" id="search" title="Search">
+          <span></span>
+        </label>
+      -->
+        <input placeholder="Search groceries: milk, bread, etc..." tabindex="2" maxlength="1000" type="text" name="searchinputv1" id="searchinputv1">
+        <input value=" " type="hidden" name="_D:searchinputv1">
+        
+        <button tabindex="3" id="searchbutton" name="searchButton" type="button" class="button width-em3" onclick="validateInputv1('null')">
+          <span class="wrapper">
+            <span class="lefttop">
+              <span class="righttop">
+                <span class="leftbottom">
+                  <span class="rightbottom">
+                    <span class="buttoncopy">GO</span>
+                  </span>
+                </span>
+              </span>
+            </span>
+          </span>
+        </button>
+        
+        <input value="" type="hidden" name="/atg/search/formhandlers/SearchValidateFormHandler.errorPosition" id="errorPosition">
+        <input value=" " type="hidden" name="_D:/atg/search/formhandlers/SearchValidateFormHandler.errorPosition">
+        <input value="" type="hidden" name="/atg/search/formhandlers/SearchValidateFormHandler.pageConfig" id="page_Config">
+        <input value=" " type="hidden" name="_D:/atg/search/formhandlers/SearchValidateFormHandler.pageConfig">
+        <input value="" type="hidden" name="/atg/search/formhandlers/SearchValidateFormHandler.errorURL" id="errorURL">
+        <input value=" " type="hidden" name="_D:/atg/search/formhandlers/SearchValidateFormHandler.errorURL">
+        <input value="/asda-estore/search/searchcontainer.jsp" type="hidden" name="/atg/search/formhandlers/SearchValidateFormHandler.successURL">
+        <input value=" " type="hidden" name="_D:/atg/search/formhandlers/SearchValidateFormHandler.successURL"><input value="DAS" type="hidden" style="display:none" name="validate" id="validate">
+        <input value=" " type="hidden" name="_D:validate">
+        <!-- <div class="dropbelow"></div> -->
+      </div> <!-- Ending  #mainsearch -->
+      
+      <input value="/asda-estore/search/fragments/en_GB/globalsearchv1.jsp.globalform" type="hidden" name="_DARGS">
+    </form>
+  </div> <!-- Ending #mw_global_search -->
+  <script type="text/javascript">
+    x$("#searchbutton").each( function(){ this.setAttribute("onclick", "null") });
+      x$("#searchbutton").on('click', function(){ 
+      var input_value = x$("#searchinputv1")[0].value
+      if ( input_value == "" ) {
+        alert("Please enter a keyword in order to search");
+      } else {
+       //x$("#searchbutton").each( function(){ this.setAttribute("onclick", "validateInputv1\('null'\)") });
+       return validateInputv1('null');
+      }
+    });
+  </script>
+</div> <!-- Ending #mw_header -->
+
+
+<!-- Ending ++ Injecting header.html -->
