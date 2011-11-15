@@ -28,8 +28,10 @@ module Tritium
       throw "Must override"
     end
 
+    test_set = ENV["TESTSET"] || "functional"
+
     self.test_sets.each do |set_name, tests_directory|
-      if ENV["TESTSET"].nil? || set_name.to_s == ENV["TESTSET"]
+      if set_name.to_s == test_set
         Dir[tests_directory + "/*"].each do |test_dir|
           test_name = test_dir.split("/").last
           if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
