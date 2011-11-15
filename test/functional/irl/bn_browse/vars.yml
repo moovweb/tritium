@@ -1,0 +1,43 @@
+--- 
+source_host: www.barenecessities.com
+rewrite_link_matcher: !ruby/regexp /(^|\/\/|\"|\')(?!mlocal\.)(www\.)?([a-z0-9\-\.]*)(barenecessities|bareweb)\.com/
+rewrite_link_matcher_str: (^|\/\/|\"|\')(?!mlocal\.)(www\.)?([a-z0-9\-\.]*)(barenecessities|bareweb)\.com
+rewrite_link_replacement: \1mlocal.\3\4.com
+rewrite_cookie_matcher: !ruby/regexp /\.?(www\.)?([a-z0-9\-\.]*(barenecessities|bareweb)\.com)/
+rewrite_cookie_replacement: .\2
+rewrite_cookie_missing_replacement: 
+rewrite_incoming_json: "[{\"matcher\":\"m[a-z]*\\\\.barenecessities\\\\.com\",\"replacement\":\"www.barenecessities.com\"},{\"matcher\":\"m[a-z]*\\\\.([a-z\\\\.]*(barenecessities|bareweb)\\\\.com)\",\"replacement\":\"\\\\1\"}]"
+secure: true
+host: mlocal.barenecessities.com
+connection: keep-alive
+user_agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2
+accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+referer: http://mlocal.barenecessities.com/
+accept_encoding: gzip,deflate,sdch
+accept_language: en-US,en;q=0.8
+accept_charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
+cookie: BareNecessities_Identity={2a483e97-197f-4806-9b2b-de734228da2e}; CookieExpiration=12/9/2011; CoreID6=51327548935013208628880&ci=90099444; __cmbDomTm=0; __cmbU=ABJeb18BKWeX3mnuxwfeFby7RpOzqbZjNi8fQFZ_YiZeKXbtQU27r2cYEW_LLYhTsC7aCzOuU97dZ0gI5k4CUBPlU4ceoMp9_Q; __cmbTpvTm=255; __cmbCk={"eid":"ABJeb1_GEclPrdJvVP8RnsH6vBewkN3CtiqQ2o_w3PubWQp1J2Pml7tDg0t8l6s6tCa0dx1iThIjw5SnbnP3lISrasovD9yczw","slt":1320862888394,"tp":1366085}; BNSegment=3; __cmbU=ABJeb1_omimelYUjS0gi1W3o5DHfqiJuGMT_lrl8fX1Hfrs396HNdlgDh2K-5nLvfMVTi1xAj_QC1YC89v6N96KIEryRuE7H6A; Commerce_TestPersistentCookie=TestCookie; __cmbDomTm=0; __cmbTpvTm=78; __cmbCk={"eid":"ABJeb1-0pM4dXkhAlMMJyWg0Q1t3rx0rYrEKP58gk-obk2-RFRllZvRdQR-tHvRfpUQVmDRU8MvtMaBk5rZt0wZ5gyhxlZ-Edg","slt":1321387862218,"tp":713}; Commerce_TestSessionCookie=TestCookie; ASP.NET_SessionId=tdha5j55y0gkdvil0bwsrp45; mr_referredVisitor=0; cmTPSet=Y; NSC_CbsfQspevdujpo_IUUQ-IUUQT_wjq=4453367a3660; CoreID6=51327548935013208628880&ci=90099444,90381171; 90381171_clogin=l=1321393306&v=1&e=1321395107254
+date: Tue, 15 Nov 2011 21:41:49 GMT
+server: Microsoft-IIS/6.0
+x_powered_by: ASP.NET
+p3p: policyref="www.barenecessities.com/w3c/p3p.xml", CP="ALL DSP COR TAli OUR IND STA"
+cache_control: 
+- no-cache
+- private
+x_aspnet_version: 2.0.50727
+commerce_server_software: Microsoft Commerce Server, Enterprise Edition
+content_type: text/html; charset=utf-8
+ntcoent_length: "238683"
+set_cookie: NSC_CbsfQspevdujpo_IUUQ-IUUQT_wjq=4453367a3660;expires=Tue, 15-Nov-11 23:19:33 GMT;path=/
+content_encoding: gzip
+device_stylesheet: devices/webkit
+stylesheet_asset_location: stylesheets/.css/
+image_asset_location: images/
+js_asset_location: javascript/
+User-Agent-matched-default: "true"
+User-Agent-matched-webkit: "true"
+path: /Bras_catalog_nxs,31.htm
+status: "200"
+asset_host: http://localhost:3003/
+
+request_id: yn004

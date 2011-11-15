@@ -1,0 +1,100 @@
+<div paraScroll="container" id="mw_splash" paraScrollName="mw_splash_images">
+	<div paraScroll="slider" id="mvImageViewPort">
+
+	  <div src="div" active="true"> <img src="http://www.bloomingdales.com/dyn_img/mobile/mobile_banners_august_week01_01.jpg" alt="UPWARD MOBILITY"> </div>
+	  
+  </div>
+	<script>    
+   
+    document.getElementById('mw_splash').addEventListener('preferences', function (){      
+      // set preferences for the carousel
+      var p = paraScroll.mw_splash_images.preferences;
+      console.log('the splash image carousel was initialized');
+      p.axis = 'x';
+      p.slideStyle = "step";
+      p.bias = 'left';
+      p.touch = true;
+    });
+    document.getElementById('mw_splash').addEventListener('carouselLoaded', function (){
+      // create dots for the carousel
+      var myCarousel = paraScroll.mw_splash_images;
+      var myPosition = myCarousel.activeElementPosition() + 1;
+      var imageArray = x$("#mvImageViewPort")[0].children.length;
+      	for(var i = 0; i < imageArray; i++){
+      		tempDivHolder = document.createElement("div");
+      		tempDivHolder.id = 'moovImageDot' + (i+1);
+      		x$('#mw_splash')[0].appendChild(tempDivHolder);
+      	}
+      	x$('#moovImageDot'+ myPosition )[0].className = "mvActiveDot";
+    });
+   document.getElementById('mw_splash').addEventListener('newActive', function (){
+     	// make new dot active
+     	var myCarousel = paraScroll.mw_splash_images;
+      var myPosition = myCarousel.activeElementPosition() + 1;
+      x$('.mvActiveDot').each(function (){this.className = "";});
+      x$('#moovImageDot'+ myPosition )[0].className = "mvActiveDot";
+   });
+
+	</script>
+</div>
+<a href="http://www.bloomingdales.com/shop/offers?mvOffers=true"><div id="mvSmallBanner">SEE ALL OUR CURRENT OFFERS</div></a>
+<script>
+// Load carousel items to correct location on correct page.
+ function mw_assets(myXML){
+   
+   if(myXML === undefined){
+     console.log("assets are broke")
+   }else{
+     var i;
+     var link;
+     var temp = "";
+     var s_response = myXML;
+     x$(".mw_images")[0].innerHTML = s_response;
+     var images = x$(".mw_images bloomingdales > hpimages > hpimage")[0].innerHTML;
+     x$("#mvImageViewPort")[0].innerHTML = images;
+
+     // this removes the image maps. they currently dont link to anything.
+     x$("div[parascroll='slider'] > map").each(function(){
+       this.parentElement.removeChild(this);
+     });
+     
+     x$("#mvImageViewPort")[0].children[0].setAttribute("active", "true")     
+     var banner = x$(".mw_images bloomingdales > hpimages > hpimage:nth-of-type(2) > img")[0].getAttribute("alt");
+     x$("#mvSmallBanner")[0].innerHTML = "<span>" + banner + "</span>";
+   }
+
+    //document.addEventListener('load', function (){
+    window.addEventListener('DOMContentLoaded', function(){
+
+      // auto scroll the carousl but only start onload
+      swipeIntervalId = setInterval(function (){
+        var myCarousel = paraScroll.mw_splash_images;
+        var imageArray = new Array();
+        var imageArray = x$("#mvImageViewPort")[0].children.length;
+        var myPosition = myCarousel.activeElementPosition();
+        
+        myPosition = myCarousel.activeElementPosition();
+        // if(imageArray){
+        //   //if ive been touched clear me
+        //   window.clearInterval(swipeIntervalId)
+        // }else
+         if(myPosition + 1 == imageArray){
+          console.log("the end")
+          //make the first active
+          window.clearInterval(swipeIntervalId);
+          myCarousel.activeUpdate(x$("#mvImageViewPort")[0].children[0]);
+          paraScroll.mw_splash_images.makeActive(x$("#mvImageViewPort")[0].children[0]);
+        }else{
+          paraScroll.mw_splash_images.next(1);
+        }
+        
+        // if touched remove setInterval
+        document.getElementById('mvImageViewPort').addEventListener('touchstart', function (){
+          window.clearInterval(swipeIntervalId);
+        });
+      },3500);
+      
+      PSInit()
+   });
+ }
+ </script>
