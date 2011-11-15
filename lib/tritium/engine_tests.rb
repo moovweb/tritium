@@ -20,18 +20,16 @@ module Tritium
     # We should break up the functional tests. This should return an hash of test sets
     # Right now, we only have one, so we will just return that
     def self.test_sets
-      {:functional => File.absolute_path(File.join(File.dirname(__FILE__), "../../test/functiona*")),
-       :irl => File.absolute_path(File.join(File.dirname(__FILE__), "../../test/irl"))}
+      {:base => File.absolute_path(File.join(File.dirname(__FILE__), "../../test/functional/base")),
+       :irl => File.absolute_path(File.join(File.dirname(__FILE__), "../../test/functional/irl"))}
     end
 
     def engine_class
       throw "Must override"
     end
 
-    test_set = ENV["TESTSET"] || "functional"
-
     self.test_sets.each do |set_name, tests_directory|
-      if set_name.to_s == test_set
+      if set_name.to_s == (ENV["TESTSET"] || "base")
         Dir[tests_directory + "/*"].each do |test_dir|
           test_name = test_dir.split("/").last
           if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
