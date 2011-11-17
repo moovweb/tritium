@@ -145,12 +145,18 @@ Base:
 Node:
   inherit: Base
   select: 
-    doc: Search the tree and select all matching nodes
+    doc: Search the tree and select all matching nodes (XPath)
     alias: $()
     arguments:
       - 
-        name: Selector
+        name: XPath Selector
         doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
+  css: 
+    doc: Search the tree and select all matching nodes (CSS)
+    arguments:
+      - 
+        name: CSS Selector
+        doc: A properly formatted CSS selector
   text:
     opens: Text
     doc: Opens up the contents to text modification. All XML will get escaped.

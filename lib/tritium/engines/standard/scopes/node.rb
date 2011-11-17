@@ -13,6 +13,15 @@ module Tritium
               run_children(ins, doc)
               @node_stack.pop
             end
+          when :css
+            nodeset = ctx.value.css(args.first)
+            nodeset.each_with_index do |node, index|
+              ctx.index = index + 1
+              @node_stack.push(node)
+              doc = Context[ins, node]
+              run_children(ins, doc)
+              @node_stack.pop
+            end
           when :inner
             inner = Context[ins, ctx.value.inner_html]
             run_children(ins, inner)
