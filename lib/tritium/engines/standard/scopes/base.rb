@@ -11,6 +11,12 @@ module Tritium
             run_children(ins, value_ctx)
             @env[args.first] = value_ctx.value
             return value_ctx.value
+          when :css
+            value = Nokogiri::CSS.xpath_for(args.first)[0]
+            value_ctx = Context[ins, value]
+            run_children(ins, value_ctx)
+            @env[args.first] = value_ctx.value
+            return value_ctx.value
           when :regex
             return Regexp.new(args.first)
           when :concat
