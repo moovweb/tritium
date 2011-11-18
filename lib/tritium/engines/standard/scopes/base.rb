@@ -56,6 +56,16 @@ module Tritium
             return index_ctx.index.to_s
           when :node
             return @node_stack[@node_stack.size - args.first.to_i]
+          when :path
+            # We need to find a parent who has a Node!
+            node = @node_stack.last
+            if node.nil?
+              return ""
+            end
+            result = node.path
+            fetch_ctx = Context[ins, result]
+            run_children(ins, fetch_ctx)
+            return fetch_ctx.value
           when :fetch
             # We need to find a parent who has a Node!
             selector = args.first

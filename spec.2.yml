@@ -148,6 +148,8 @@ Base:
       - 
         name: CSS Selector
         doc: A properly formatted CSS selector
+  path: 
+    doc: Gets the path of the current scope node
 Node:
   inherit: Base
   select: 
