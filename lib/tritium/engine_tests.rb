@@ -40,6 +40,7 @@ module Tritium
             eval "def test_#{set_name}_#{test_name}_script; run_test('#{test_dir}'); end"
           end
         end
+        puts "Testing Functional Set: #{set_name}"
       end
     end
   
