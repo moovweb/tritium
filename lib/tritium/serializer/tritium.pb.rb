@@ -9,6 +9,12 @@ class Transform
   class Script
     include Beefcake::Message
 
+    module Scope
+      TEXT_SCOPE = 0
+      NODE_SCOPE = 1
+      ATTRIBUTE_SCOPE = 2
+      XMLNODE_SCOPE = 3
+    end
 
     class Instruction
       include Beefcake::Message
@@ -74,6 +80,7 @@ class Transform
 
     optional :name, :string, 1, :default => "main"
     optional :root, Transform::Script::Instruction, 2
+    optional :scope, Transform::Script::Scope, 3
 
   end
 

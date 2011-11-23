@@ -33,6 +33,7 @@ module Tritium
         @expander     = options[:expander]     || MacroExpander.new
         @errors       = options[:errors]       || ScriptErrors.new
         @macros_disabled = options[:macros_disabled] || false
+        @starting_scope = options[:starting_scope] || "Text"
         @skip_imports = options[:skip_imports] || false 
         @is_expansion = options[:is_expansion] || false
         
@@ -88,6 +89,7 @@ module Tritium
         end
         begin
           @result = inline_block
+          @result.scope_name = @starting_scope
           @result.post_process!# unless @is_expansion
         rescue ScriptErrors
           # dont' do anything

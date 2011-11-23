@@ -6,6 +6,14 @@ message Transform {
 	message Script {
 		optional string name = 1 [default='main'];
 		optional Instruction root = 2;
+		optional Scope scope = 3;
+		
+		enum Scope {
+			TEXT_SCOPE = 0;
+			NODE_SCOPE = 1;
+			ATTRIBUTE_SCOPE = 2;
+			XMLNODE_SCOPE = 3;
+		}
 
 		message Instruction {
 			required Type type = 1;
@@ -19,13 +27,13 @@ message Transform {
 				STRING = 3;
 				REGEXP = 4;
 			}
-
 			repeated Instruction children = 4;
 			repeated Instruction arguments = 5;
 			// The name of the function we are executing
 			optional Function function = 6;
 			// Some Functions are positional and nature
 			optional Position position = 7;
+			
 
 			enum Function {
 				//BLOCK = 0;

@@ -68,14 +68,14 @@ module Tritium
         def spec
           spec = scope[@name.to_s]
           if spec.nil?
-            throw "Invalid #{@name.to_s} in #{scope.name} scope"
+            throw "#{@filename}:#{@line_num} Invalid #{@name.to_s} in #{scope.name} scope"
           end
           spec
         end
         
         def valid?
           unless spec.arg_size_range === self.args.size
-            raise "Wrong number of arguments in #{debug_info}"
+            raise "#{@filename}:#{@line_num} Wrong number of arguments in #{debug_info}"
           end
         end
         

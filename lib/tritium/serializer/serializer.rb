@@ -8,6 +8,7 @@ module Tritium
       @set = Transform.new(:scripts => [])
       @processed = []
       @imports = [main_file]
+      @import_scopes = ["Text"]
     end
     
     def encode
@@ -19,11 +20,14 @@ module Tritium
     end
 
     def process_file(ts_file)
+      scope_name = @import_scopes[@imports.index(ts_file)]
       filename = ts_file.split("/").last
       path = ts_file.split("/")[0..-2].join("/")
-      parser = Tritium::Parser::Parser.new(:filename => filename, :path => path, :skip_imports => true)
+      parser = Tritium::Parser::Parser.new(:filename => filename, :path => path, :skip_imports => true, :starting_scope => scope_name)
       root_instruction = parser.parse
       script = Transform::Script.new(:name => ts_file.dup.force_encoding("BINARY"), :root => convert_block(root_instruction))
+      scope_const_name = (root_instruction.scope.name.to_s.upcase + "_SCOPE").to_sym
+      script.scope = Transform::Script::Scope.const_get(scope_const_name)
       @set.scripts << script
       @processed << ts_file
       #puts "processed file #{ts_file}"
@@ -52,15 +56,15 @@ module Tritium
     end
     
     def convert_block(ins)
-      Transform::Script::Instruction.new(:type => Transform::Script::Instruction::Type::BLOCK,
+      obj = Transform::Script::Instruction.new(:type => Transform::Script::Instruction::Type::BLOCK,
                               :children => convert_instructions(ins.statements))
+      #set_scope(ins, obj)
+      obj
     end
     
     def convert_function_call(ins)
-      #func = Transform::Script::Instruction::FunctionCall.new
-      obj = Transform::Script::Instruction.new(
-                                    :type => Transform::Script::Instruction::Type::FUNCTION_CALL)
-                                    #:function_call => func)
+      obj = Transform::Script::Instruction.new(:type => Transform::Script::Instruction::Type::FUNCTION_CALL)
+
       func = obj
       const_name = ins.name.to_s.upcase.to_sym
       func.function = Transform::Script::Instruction::Function.const_get(const_name)
@@ -73,6 +77,7 @@ module Tritium
       else
         func.arguments = convert_instructions(ins.pos_args)
       end
+
       obj
     end
     
@@ -90,9 +95,11 @@ module Tritium
     def convert_import(ins)
       if !@imports.include?(ins.location)
         @imports << ins.location
+        @import_scopes << ins.scope.name
       end
-      Transform::Script::Instruction.new(:type => Transform::Script::Instruction::Type::IMPORT,
+      obj = Transform::Script::Instruction.new(:type => Transform::Script::Instruction::Type::IMPORT,
                               :import_index => @imports.index(ins.location))
+      
     end
   end
 end

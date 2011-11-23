@@ -10,6 +10,7 @@ module Tritium
         attr :parent, true
         attr :id, true
         attr :statements, true
+        attr :scope_name, true
 
         def initialize(filename, line_num)
           @filename, @line_num = filename, line_num
@@ -35,6 +36,7 @@ module Tritium
         end
         
         def scope
+          return Tritium.spec[@scope_name] if @scope_name
           if @parent
             @parent.opens
           else
