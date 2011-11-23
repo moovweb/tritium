@@ -9,7 +9,6 @@ module Tritium
       root = parser.parse
       script = Script.new(:root => convert_instruction(root))
       result = script.encode
-      puts result.to_s.size
       puts result.to_s.inspect
     end
     
@@ -18,7 +17,7 @@ module Tritium
       set_name(obj, ins)
       obj["type"] = instruction_type(ins)
       obj.children = ins.statements.collect { |c| convert_instruction(c) }
-      obj.arguments = ins.args.collect { |c| convert_instruction(c) } if ins.respond_to?("args")
+      obj.arguments = ins.pos_args.collect { |c| convert_instruction(c) } if ins.respond_to?("args")
       obj
     end
     
