@@ -6,12 +6,31 @@ require_relative "macro_expander"
 module Tritium
   module Parser
     class Parser
+      class << self
+        @@import_cache = []
+        @@dependancies = []
+
+        def print_dependancies(log, filename, level = 0)
+          log.debug("\n") if level == 0
+          log.debug("#{"  " * level}#{File.basename(filename)}")
+          @@dependancies.each do |dep|
+            if dep[:importer] == filename
+              print_dependancies(log, dep[:importee], level + 1)
+            end
+          end
+        end
+
+        def clear_cache
+          @@import_cache = []
+          @@dependancies = []
+        end
+      end
+
       require_relative 'parser_errors'
       include Instructions
 
       attr :filename
       attr :path
-      attr :imports
       attr :logger
       attr :expander
       attr :errors
@@ -27,7 +46,6 @@ module Tritium
         
         @filename     = options[:filename]     || "MAIN"
         @path         = options[:path]         || File.dirname(__FILE__)
-        @imports      = options[:imports]      || []
         @logger       = options[:logger]       || Logger.new(STDOUT)
         @expander     = options[:expander]     || MacroExpander.new
         @errors       = options[:errors]       || ScriptErrors.new
@@ -38,7 +56,6 @@ module Tritium
         prefix = "" if prefix == "."
         @path = File.join(@path, prefix)
         @filename = base
-        
         if script_string.nil?
           script_string = File.read(File.join(@path, @filename))
         end
@@ -127,26 +144,73 @@ module Tritium
         end
       end
       
+      def get_cached_import(filename)
+        @@import_cache.each do |cached_import|
+          return cached_import if cached_import[:filename] == filename
+        end
+        nil
+      end
+
+      def cache_valid?(filename)
+        cache_is_valid = true
+        cached_import = get_cached_import(filename)
+        if !cached_import
+          cache_is_valid = false
+        end
+        @@dependancies.each do |dep|
+          if dep[:importer] == filename
+            if !cache_valid?(dep[:importee])
+              cached_import[:stamp] = ""
+              cache_is_valid = false
+            end
+          end
+        end
+        if (File.ctime(filename) != cached_import[:stamp])
+          cached_import[:stamp] = ""
+          cache_is_valid = false
+        end
+        return cache_is_valid
+      end
+
       def import
         import_name = pop!.value
+        filename = File.join(@path, import_name)
+        cached_import = get_cached_import(filename)
+
+        @@dependancies << { importer: File.join(@path, @filename), importee: filename }
+        @@dependancies.uniq!
+
+        if cached_import and cache_valid?(filename)
+          return cached_import[:script]
+        end
+
         parser = nil
-        if !File.exists?(File.join(@path, import_name))
+        if !File.exists?(filename)
           raise_error("missing import file (#{import_name})")
         end
         begin
-          script_string = File.read(File.join(@path, import_name))
+          script_string = File.read(filename)
           parser = Parser.new(script_string,
                               filename: import_name,
-                              path: @path,
-                              imports: @imports,
-                              errors: @errors)
+                              path:     @path,
+                              errors:   @errors,
+                              logger:   @logger)
         rescue Exception => e
           @errors << e
           return nil
         end
 
-        @imports << { importer: @filename, importee: import_name }
-        return parser.inline_block
+        rendered_block = parser.inline_block
+        if cached_import
+          cached_import[:script] = rendered_block
+          cached_import[:stamp] = File.ctime(filename)
+          @logger.debug("Recompiled: #{import_name}")
+        else
+          @@import_cache << { script:   rendered_block,
+                             filename: filename,
+                             stamp:    File.ctime(filename) }
+        end
+        return rendered_block
       end
 
       def reference
@@ -284,6 +348,8 @@ module Tritium
           # Read relative to the current script file
           file_to_read = File.join(@path, @token.value)
           val = open(file_to_read).read
+          #@@dependancies << { importer: File.join(@path, @filename), importee: File.join(@path, @token.value) }
+          #@@dependancies.uniq!
           return cmd(Literal, val)
         else
           pop!
