@@ -19,7 +19,7 @@ Base:
   var:
     opens: Text
     alias: $
-    returns: true
+    returns: Text
     arguments:
       -
         name: Name
@@ -29,18 +29,21 @@ Base:
         doc: The value you want to set the var to. Same as var('name') { set('value') }
         expansion: true
   time:
-    returns: true
+    returns: Text
     doc: If given a block, it returns the time-to-execute in seconds as a string
   bm:
     doc: Prints out the time a block took to run to the log
+    returns: Text
     arguments:
       -
         name: Name
         doc: The name of the thing you are benchmarking
   index:
-    returns: true
+    returns: Text
   match:
-    doc: 
+    doc:
+    returns: Text
+    return_doc: Either "worked" or "failed" 
     arguments:
       -
         name: Match Target
@@ -52,25 +55,30 @@ Base:
   not:
     doc: Used with match($var, not('hi'))
     hide: true
+    returns: Text
+    return_doc: Either "worked" or "failed"
     arguments:
       -
         name: Regex or String
         doc: The regular expression or string to match with. Strings are perfect matches.
   with:
     doc: Used as a child of match("something")
+    returns: Text
+    return_doc: Either "worked" or "failed"
     arguments:
       -
         name: Regex or String
         doc: The regular expression or string to match with. Strings are perfect matches.
   read:
     doc: Use this to read in a file at *compile* time. Nothing dynamic allowed.
+    returns: Text
     arguments:
       -
         name: Filename
         doc: The location of the file. This should be relative to the script. Please report if it is NOT!
   fetch:
     opens: Text
-    returns: true
+    returns: Text
     doc: This is how you select an element to pass it to a function.
     arguments:
       -
@@ -78,7 +86,7 @@ Base:
         doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
   node:
     opens: Node
-    returns: true
+    returns: Node
     doc: This is how you access the node stack. The current node is node(1), and the parent node is node(2)
     arguments:
       -
@@ -315,7 +323,7 @@ XMLNode:
   inherit: Node
   cdata:
     doc: Replace's the node's contents with a CDATA block
-    returns: true
+    returns: Node
     arguments:
       -
         name: Contents
