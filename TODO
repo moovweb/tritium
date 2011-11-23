@@ -1,2 +1,7 @@
-* fetch() at root
-* test index()
+* Parser
+  * Implement Types
+    * Listed in the spec.
+    * Any first letter capitalized, unquoted, A-z term
+  * Regexp
+    * Allow us to define regexp with the ` character
+    * Aka: `http\\/\//\\\\///`
