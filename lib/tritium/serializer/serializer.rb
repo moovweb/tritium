@@ -68,12 +68,14 @@ module Tritium
       func.function = Transformer::Script::Instruction::FunctionCall::Function.const_get(const_name)
       
       func.children = convert_instructions(ins.statements)
-      #if ins.spec.positional
-      #  args = ins.pos_args[1..-1].dup
-      #  obj.position
-      #end
-      func.arguments = convert_instructions(ins.pos_args)
-      [obj]
+      if ins.spec.positional
+        func.arguments = convert_instructions(ins.pos_args[1..-1])
+        pos_const = ins.pos_args.first.value.upcase.to_sym
+        func.position = Transformer::Script::Instruction::FunctionCall::Position.const_get(pos_const)
+      else
+        func.arguments = convert_instructions(ins.pos_args)
+      end
+      obj
     end
     
     def convert_literal(ins)
