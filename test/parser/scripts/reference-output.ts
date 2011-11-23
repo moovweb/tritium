@@ -14,18 +14,18 @@ html() {
       log("blah")
       # LEAVING FILE: import-1.ts
       select("some/long/path/to/something/split/across/multiple/lines/and/concatenated") {
-        move(node("1"), node("2"), "top")
+        move("top", node("1"), node("2"))
         insert_at("before", "div") {
           attribute("data-ur-bleeble:blabble") {
             value() {
               set("bork")
             }
           }
-          move(node("2"), node("1"), "top")
+          move("top", node("2"), node("1"))
         }
         # ENTERING FILE: import 2.ts
         select(".//div[@class='something']") {
-          move(node("1"), node("2"), "bottom")
+          move("bottom", node("1"), node("2"))
           attribute("id") {
             value() {
               set("algol")
@@ -42,7 +42,7 @@ html() {
                 set("algol-span")
               }
             }
-            move(node("2"), node("1"), "top")
+            move("top", node("2"), node("1"))
           }
         }
         # LEAVING FILE: import 2.ts
@@ -60,7 +60,7 @@ html() {
       }
       select(".//img[not(@alt)]") {
         dup() {
-          move(node("1"), node("3"), "bottom")
+          move("bottom", node("1"), node("3"))
         }
       }
       # ENTERING FILE: import-3.ts

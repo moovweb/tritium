@@ -1,6 +1,6 @@
 $(@1) {
   dup() {
-    move(node(1), node(3), @2)
+    move(@2, node(1), node(3))
     yield()
   }
 }

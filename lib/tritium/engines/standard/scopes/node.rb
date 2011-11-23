@@ -57,7 +57,7 @@ module Tritium
             run_children(ins, Context[ins, result])
             @node_stack.pop
           when :move
-            position_node(args[1], args[0], args[2] || "bottom")
+            position_node(args[2], args[1], args[0])
           when :wrap_text_children
             tag_name = args.first
             ctx.value.search("./text()").wrap("<#{tag_name} />").each do |child|

@@ -1,4 +1,4 @@
 insert_at("before", @1) {
-  move(node(2), node(1), "top")
+  move("top", node(2), node(1))
   yield()
 }
