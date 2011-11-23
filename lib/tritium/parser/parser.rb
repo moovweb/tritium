@@ -17,6 +17,7 @@ module Tritium
       attr :errors
       attr :tokens
       attr :script_string
+      attr :macros_enabled
       
       def initialize(script_string, options = {})
         if script_string.is_a?(Hash)
@@ -30,6 +31,7 @@ module Tritium
         @logger       = options[:logger]       || Logger.new(STDOUT)
         @expander     = options[:expander]     || MacroExpander.new
         @errors       = options[:errors]       || ScriptErrors.new
+        @macros_enabled = options[:macros_enabled] || true
         @is_expansion = options[:is_expansion] || false
         
         prefix, base = File.dirname(@filename), File.basename(@filename)
@@ -167,7 +169,7 @@ module Tritium
         end
         signature = [:var, args[:pos].length]
         # If you have any number of keyword arguments, it only counts as one arg
-        if @expander.is_macro?(signature)
+        if @macros_enabled && @expander.is_macro?(signature)
           stub = cmd(ExpansionInlineBlock)
           macro_call = {
             signature: signature,
@@ -180,7 +182,7 @@ module Tritium
           @expander.expand(macro_call)
           return stub
         else
-          return cmd(Invocation, "var", [var_name], {}, stmts)
+          return cmd(Invocation, "var", [var_name], {}, stmts || [])
         end
       end
 
@@ -198,7 +200,7 @@ module Tritium
         if args[:kwd].any?
           signature[1] += 1
         end
-        if @expander.is_macro?(signature)
+        if @macros_enabled && @expander.is_macro?(signature)
           stub = cmd(ExpansionInlineBlock)
           macro_call = { signature: signature,
                          pos_args: args[:pos],
