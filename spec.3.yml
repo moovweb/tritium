@@ -70,7 +70,7 @@ Functions:
         -
           name: Regex or String
           doc: The regular expression or string to match with. Strings are perfect matches.
-    regex:
+    regexp:
       opens: Text
       returns: Regexp
       doc: Any value passed into this function will return a regex --- ready for fancy replace() or match() usage. NOTE! Use hard-coded regex if you can. This is much slower than hard-coding regex!
