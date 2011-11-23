@@ -11,7 +11,7 @@ module Tritium
             run_children(ins, value_ctx)
             @env[args.first] = value_ctx.value
             return value_ctx.value
-          when :regex
+          when :regexp
             return Regexp.new(args.first)
           when :concat
             return args.join("")
