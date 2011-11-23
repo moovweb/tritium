@@ -5,7 +5,7 @@ module Tritium
     
     def initialize(main_file)
       @main_file = main_file
-      @set = Transformer.new(:scripts => [])
+      @set = Transform.new(:scripts => [])
       @processed = []
       @imports = [main_file]
     end
@@ -23,7 +23,7 @@ module Tritium
       path = ts_file.split("/")[0..-2].join("/")
       parser = Tritium::Parser::Parser.new(:filename => filename, :path => path, :skip_imports => true)
       root_instruction = parser.parse
-      script = Transformer::Script.new(:name => ts_file.dup.force_encoding("BINARY"), :root => convert_block(root_instruction))
+      script = Transform::Script.new(:name => ts_file.dup.force_encoding("BINARY"), :root => convert_block(root_instruction))
       @set.scripts << script
       @processed << ts_file
       #puts "processed file #{ts_file}"
@@ -52,26 +52,24 @@ module Tritium
     end
     
     def convert_block(ins)
-      function_call = Transformer::Script::Instruction::FunctionCall.new(
-        :function => Transformer::Script::Instruction::FunctionCall::Function::BLOCK,
-        :children => convert_instructions(ins.statements))
-      Transformer::Script::Instruction.new(:type => Transformer::Script::Instruction::Type::BLOCK,
-                              :function_call => function_call)
+      Transform::Script::Instruction.new(:type => Transform::Script::Instruction::Type::BLOCK,
+                              :children => convert_instructions(ins.statements))
     end
     
     def convert_function_call(ins)
-      func = Transformer::Script::Instruction::FunctionCall.new
-      obj = Transformer::Script::Instruction.new(
-                                    :type => Transformer::Script::Instruction::Type::FUNCTION_CALL,
-                                    :function_call => func)
+      #func = Transform::Script::Instruction::FunctionCall.new
+      obj = Transform::Script::Instruction.new(
+                                    :type => Transform::Script::Instruction::Type::FUNCTION_CALL)
+                                    #:function_call => func)
+      func = obj
       const_name = ins.name.to_s.upcase.to_sym
-      func.function = Transformer::Script::Instruction::FunctionCall::Function.const_get(const_name)
+      func.function = Transform::Script::Instruction::Function.const_get(const_name)
       
       func.children = convert_instructions(ins.statements)
       if ins.spec.positional
         func.arguments = convert_instructions(ins.pos_args[1..-1])
         pos_const = ins.pos_args.first.value.upcase.to_sym
-        func.position = Transformer::Script::Instruction::FunctionCall::Position.const_get(pos_const)
+        func.position = Transform::Script::Instruction::Position.const_get(pos_const)
       else
         func.arguments = convert_instructions(ins.pos_args)
       end
@@ -79,11 +77,11 @@ module Tritium
     end
     
     def convert_literal(ins)
-      obj = Transformer::Script::Instruction.new
+      obj = Transform::Script::Instruction.new
       if ins.regexp?
-        obj['type'] =  Transformer::Script::Instruction::Type::REGEXP
+        obj['type'] =  Transform::Script::Instruction::Type::REGEXP
       else
-        obj['type'] =  Transformer::Script::Instruction::Type::TEXT
+        obj['type'] =  Transform::Script::Instruction::Type::STRING
       end
       obj.value = ins.value.to_s.force_encoding("BINARY")
       obj
@@ -93,7 +91,7 @@ module Tritium
       if !@imports.include?(ins.location)
         @imports << ins.location
       end
-      Transformer::Script::Instruction.new(:type => Transformer::Script::Instruction::Type::IMPORT,
+      Transform::Script::Instruction.new(:type => Transform::Script::Instruction::Type::IMPORT,
                               :import_index => @imports.index(ins.location))
     end
   end
