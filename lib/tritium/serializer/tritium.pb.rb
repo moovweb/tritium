@@ -1,86 +1,86 @@
-## Generated from tritium.proto for tritium
+## Generated from tritium.proto for tb
 require "beefcake"
 
 
 class Transform
   include Beefcake::Message
 
+  module Scope
+    TEXT_SCOPE = 0
+    NODE_SCOPE = 1
+    ATTRIBUTE_SCOPE = 2
+    XMLNODE_SCOPE = 3
+  end
+  module InstructionType
+    BLOCK = 0
+    FUNCTION_CALL = 1
+    IMPORT = 2
+    TEXT = 3
+    REGEXP = 4
+  end
+  module Function
+    VAR_FUNC = 1
+    SET_FUNC = 2
+    SELECT_FUNC = 3
+    CONCAT_FUNC = 4
+    APPEND_FUNC = 5
+    PREPEND_FUNC = 6
+    MATCH_FUNC = 7
+    WITH_FUNC = 8
+    NOT_FUNC = 9
+    MOVE_FUNC = 10
+    DUP_FUNC = 11
+    INDEX_FUNC = 12
+    NODE_FUNC = 13
+    ATTRIBUTE_FUNC = 14
+    VALUE_FUNC = 15
+    NAME_FUNC = 16
+    REPLACE_FUNC = 17
+    INSERT_AT_FUNC = 18
+    INJECT_AT_FUNC = 19
+    CLEAR_FUNC = 20
+    REMOVE_FUNC = 21
+    XML_FUNC = 22
+    HTML_FUNC = 23
+    HTML_FRAGMENT_FUNC = 24
+    LOG_FUNC = 25
+    DEBUG_FUNC = 26
+    EXPORT_FUNC = 27
+    REGEXP_FUNC = 28
+    FETCH_FUNC = 29
+    INNER_FUNC = 30
+    TEXT_FUNC = 31
+    CDATA_FUNC = 32
+    WRAP_TEXT_CHILDREN_FUNC = 33
+  end
+  module Position
+    BEFORE = 0
+    AFTER = 1
+    TOP = 2
+    BOTTOM = 3
+  end
 
   class Script
     include Beefcake::Message
 
-    module Scope
-      TEXT_SCOPE = 0
-      NODE_SCOPE = 1
-      ATTRIBUTE_SCOPE = 2
-      XMLNODE_SCOPE = 3
-    end
 
     class Instruction
       include Beefcake::Message
 
-      module Type
-        BLOCK = 0
-        FUNCTION_CALL = 1
-        IMPORT = 2
-        STRING = 3
-        REGEXP = 4
-      end
-      module Function
-        VAR = 1
-        SET = 2
-        SELECT = 3
-        CONCAT = 4
-        APPEND = 5
-        PREPEND = 6
-        MATCH = 7
-        WITH = 8
-        NOT = 9
-        MOVE = 10
-        DUP = 11
-        INDEX = 12
-        NODE = 13
-        ATTRIBUTE = 14
-        VALUE = 15
-        NAME = 16
-        REPLACE = 17
-        INSERT_AT = 18
-        INJECT_AT = 19
-        CLEAR = 20
-        REMOVE = 21
-        XML = 22
-        HTML = 23
-        HTML_FRAGMENT = 24
-        LOG = 25
-        DEBUG = 26
-        EXPORT = 27
-        REGEX = 28
-        FETCH = 29
-        INNER = 30
-        TEXT = 31
-        CDATA = 32
-        WRAP_TEXT_CHILDREN = 33
-      end
-      module Position
-        BEFORE = 0
-        AFTER = 1
-        TOP = 2
-        BOTTOM = 3
-      end
 
-      required :type, Transform::Script::Instruction::Type, 1
+      required :type, Transform::InstructionType, 1
       optional :value, :string, 2
       optional :import_index, :int32, 3
       repeated :children, Transform::Script::Instruction, 4
       repeated :arguments, Transform::Script::Instruction, 5
-      optional :function, Transform::Script::Instruction::Function, 6
-      optional :position, Transform::Script::Instruction::Position, 7
+      optional :function, Transform::Function, 6
+      optional :position, Transform::Position, 7
 
     end
 
     optional :name, :string, 1, :default => "main"
     optional :root, Transform::Script::Instruction, 2
-    optional :scope, Transform::Script::Scope, 3
+    optional :scope, Transform::Scope, 3
 
   end
 
