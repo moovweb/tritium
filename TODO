@@ -5,3 +5,6 @@
   * Regexp
     * Allow us to define regexp with the ` character
     * Aka: `http\\/\//\\\\///`
+* Engines
+  * match() should return either "worked" or "failed"
+  * with() and not() should do the same as match()
