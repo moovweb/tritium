@@ -8,3 +8,5 @@
 * Engines
   * match() should return either "worked" or "failed"
   * with() and not() should do the same as match()
+  * replace() is should be replace_regexp() and replace_string()
+    * macros sort it for you
