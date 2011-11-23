@@ -210,19 +210,35 @@ Node:
         name: Position
         doc: Can be "bottom", "top", "after", or "before"
         default: "bottom"
+  inject_at:
+    positional: true
+    hide: true
+    arguments:
+      -
+        name: Position
+      - 
+        name: HTML
+  insert_at:
+    positional: true
+    hide: true
+    arguments:
+      -
+        name: Position
+      - 
+        name: Tag Name
   move:
     doc: Move the first node, to the second node.
+    positional: true
+    hide: true
     arguments:
+      -
+        name: Position
       -
         name: What
         doc: The node() that we are copying
       -
         name: Where
         doc: The node() that we are copying
-      -
-        name: Position
-        doc: Can be "bottom", "top", "after", or "before"
-        default: "bottom"
   dup:
     doc: Copies the node and yields to it
   copy_here:
