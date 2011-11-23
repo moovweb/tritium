@@ -5,6 +5,6 @@ match(text(), "fail") {
 match(text(), "failed") {
   set("almost")
 }
-match(text(), regex("almo")) {
+match(text(), regexp("almo")) {
   set("worked")
 }

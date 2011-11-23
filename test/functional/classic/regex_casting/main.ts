@@ -4,7 +4,7 @@ replace(".", "?")
 replace("a", "Aa")
 // Should be Aabc now
 $var = ".$"
-replace(regex($var), "Cc") 
+replace(regexp($var), "Cc") 
 // Should be AabCc
-replace(regex("b"), "Bb")
+replace(regexp("b"), "Bb")
 // Should be AaBbCc
