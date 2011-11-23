@@ -35,6 +35,11 @@ class Script
       VALUE = 15
       NAME = 16
       REPLACE = 17
+      CONTENT = 18
+      INSERT_AT = 19
+      INJECT_AT = 20
+      INNER = 21
+      TEXT = 22
     end
 
     optional :name, :string, 1
