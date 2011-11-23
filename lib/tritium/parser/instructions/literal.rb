@@ -19,6 +19,10 @@ module Tritium
         def value_string
           @value.inspect
         end
+        
+        def name
+          @value
+        end
       
         def to_script(depth = 0)
           "#{@@tab * depth}#{value_string}"

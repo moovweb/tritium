@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+protoc --beefcake_out lib/tritium/serializer -I . tritium.proto
