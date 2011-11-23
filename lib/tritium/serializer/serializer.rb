@@ -56,24 +56,24 @@ module Tritium
     end
     
     def convert_block(ins)
-      obj = Transform::Script::Instruction.new(:type => Transform::Script::Instruction::Type::BLOCK,
+      obj = Transform::Script::Instruction.new(:type => Transform::InstructionType::BLOCK,
                               :children => convert_instructions(ins.statements))
       #set_scope(ins, obj)
       obj
     end
     
     def convert_function_call(ins)
-      obj = Transform::Script::Instruction.new(:type => Transform::Script::Instruction::Type::FUNCTION_CALL)
+      obj = Transform::Script::Instruction.new(:type => Transform::InstructionType::FUNCTION_CALL)
 
       func = obj
-      const_name = ins.name.to_s.upcase.to_sym
-      func.function = Transform::Script::Instruction::Function.const_get(const_name)
+      const_name = (ins.name.to_s.upcase + "_FUNC").to_sym
+      func.function = Transform::Function.const_get(const_name)
       
       func.children = convert_instructions(ins.statements)
       if ins.spec.positional
         func.arguments = convert_instructions(ins.pos_args[1..-1])
         pos_const = ins.pos_args.first.value.upcase.to_sym
-        func.position = Transform::Script::Instruction::Position.const_get(pos_const)
+        func.position = Transform::Position.const_get(pos_const)
       else
         func.arguments = convert_instructions(ins.pos_args)
       end
@@ -84,9 +84,9 @@ module Tritium
     def convert_literal(ins)
       obj = Transform::Script::Instruction.new
       if ins.regexp?
-        obj['type'] =  Transform::Script::Instruction::Type::REGEXP
+        obj['type'] =  Transform::InstructionType::REGEXP
       else
-        obj['type'] =  Transform::Script::Instruction::Type::STRING
+        obj['type'] =  Transform::InstructionType::TEXT
       end
       obj.value = ins.value.to_s.force_encoding("BINARY")
       obj
@@ -97,7 +97,7 @@ module Tritium
         @imports << ins.location
         @import_scopes << ins.scope.name
       end
-      obj = Transform::Script::Instruction.new(:type => Transform::Script::Instruction::Type::IMPORT,
+      obj = Transform::Script::Instruction.new(:type => Transform::InstructionType::IMPORT,
                               :import_index => @imports.index(ins.location))
       
     end
