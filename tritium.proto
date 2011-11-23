@@ -1,54 +1,81 @@
 package tritium;
 
-message Script {
-	optional string name = 1 [default='main'];
-	optional Instruction root = 2;
-	optional bool has_imports = 3;
-	
-	message Instruction {
-		optional string name = 1;
-		repeated Instruction children = 2;
-		repeated Instruction arguments = 3;
-		enum Type {
-			BLOCK = 0;
-			INVOCATION = 1;
-			IMPORT = 2;
-			STRING = 3;
-			REGEXP = 4;
-		}
-		required Type type = 4;
-		optional int32 line_number = 5;
-		optional string filename = 6;
-		
-		optional Function invocation_name = 7;
-		enum Function {
-			VAR = 0;
-			SET = 1;
-			REMOVE = 2;
-			SELECT = 3;
-			CONCAT = 4;
-			APPEND = 5;
-			PREPEND = 6;
-			MATCH = 7;
-			WITH = 8;
-			NOT = 9;
-			MOVE = 10;
-			DUP = 11;
-			INDEX = 12;
-			NODE = 13;
-			ATTRIBUTE = 14;
-			VALUE = 15;
-			NAME = 16;
-			REPLACE = 17;
-		}
-		
-		optional Position position = 8;
-		enum Position {
-			BEFORE = 0;
-			AFTER = 1;
-			TOP = 2;
-			BOTTOM = 3;
+message Transformer {
+	repeated Script scripts = 1;
+
+	message Script {
+		optional string name = 1 [default='main'];
+		optional Instruction root = 2;
+
+		message Instruction {
+			required Type type = 1;
+			optional string value = 2;
+			optional FunctionCall function_call = 3;
+			optional int32 import_index = 4; // only used if we are an import
+
+			enum Type {
+				BLOCK = 0;
+				FUNCTION_CALL = 1;
+				IMPORT = 2;
+				TEXT = 3;
+				REGEXP = 4;
+			}
+
+			message FunctionCall {
+				repeated Instruction children = 2;
+				repeated Instruction arguments = 3;
+				// The name of the function we are executing
+				required Function function = 7;
+				// Some Functions are positional and nature
+				optional Position position = 8;
+
+				enum Function {
+					BLOCK = 0;
+					VAR = 1;
+					SET = 2;
+					SELECT = 3;
+					CONCAT = 4;
+					APPEND = 5;
+					PREPEND = 6;
+					MATCH = 7;
+					WITH = 8;
+					NOT = 9;
+					MOVE = 10;
+					DUP = 11;
+					INDEX = 12;
+					NODE = 13;
+					ATTRIBUTE = 14;
+					VALUE = 15;
+					NAME = 16;
+					REPLACE = 17;
+					INSERT_AT = 18;
+					INJECT_AT = 19;
+					CLEAR = 20;
+					REMOVE = 21;
+					XML = 22;
+					HTML = 23;
+					HTML_FRAGMENT = 24;
+					LOG = 25;
+					DEBUG = 26;
+					EXPORT = 27;
+					REGEX = 28;
+					FETCH = 29;
+					INNER = 30;
+					TEXT = 31;
+					CDATA = 32;
+					WRAP_TEXT_CHILDREN = 33;
+				}
+
+				enum Position {
+					BEFORE = 0;
+					AFTER = 1;
+					TOP = 2;
+					BOTTOM = 3;
+				}
+			}
 		}
 	}
 }
+
+
 

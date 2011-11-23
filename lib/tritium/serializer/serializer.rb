@@ -1,49 +1,98 @@
 module Tritium
-  module Serializer
+  class Serializer
     require_relative 'tritium.pb'
-
-    def self.process_file(ts_file)
-      filename = ts_file.split("/").last
-      path = ts_file.split("/")[0..-2].join("/")
-      parser = Tritium::Parser::Parser.new(:filename => filename, :path => path)
-      root = parser.parse
-      script = Script.new(:root => convert_instruction(root))
-      result = script.encode
-      puts result.to_s.inspect
+    require 'pp'
+    
+    def initialize(main_file)
+      @main_file = main_file
+      @set = Transformer.new(:scripts => [])
+      @processed = []
+      @imports = [main_file]
     end
     
-    def self.convert_instruction(ins)
-      obj = Script::Instruction.new
-      set_name(obj, ins)
-      obj["type"] = instruction_type(ins)
-      obj.children = ins.statements.collect { |c| convert_instruction(c) }
-      obj.arguments = ins.pos_args.collect { |c| convert_instruction(c) } if ins.respond_to?("args")
+    def encode
+      @set.encode
+    end
+    
+    def process!
+      process_file(@main_file)
+    end
+
+    def process_file(ts_file)
+      filename = ts_file.split("/").last
+      path = ts_file.split("/")[0..-2].join("/")
+      parser = Tritium::Parser::Parser.new(:filename => filename, :path => path, :skip_imports => true)
+      root_instruction = parser.parse
+      script = Transformer::Script.new(:name => ts_file.dup.force_encoding("BINARY"), :root => convert_block(root_instruction))
+      @set.scripts << script
+      @processed << ts_file
+      #puts "processed file #{ts_file}"
+      #puts "need to process #{(@imports - @processed).size}"
+      while (import = (@imports - @processed).first) do 
+        process_file(import)
+      end
+    end
+    
+    def convert_instructions(ins_set)
+      (ins_set.collect do |ins|
+        convert_instruction(ins)
+      end).flatten
+    end
+    
+    def convert_instruction(ins)
+      if ins.is_a? Tritium::Parser::Instructions::Invocation
+        convert_function_call(ins)
+      elsif ins.is_a? Tritium::Parser::Instructions::Literal
+        convert_literal(ins)
+      elsif ins.is_a? Tritium::Parser::Instructions::Import
+        convert_import(ins)
+      else 
+        convert_block(ins)
+      end
+    end
+    
+    def convert_block(ins)
+      function_call = Transformer::Script::Instruction::FunctionCall.new(
+        :function => Transformer::Script::Instruction::FunctionCall::Function::BLOCK,
+        :children => convert_instructions(ins.statements))
+      Transformer::Script::Instruction.new(:type => Transformer::Script::Instruction::Type::BLOCK,
+                              :function_call => function_call)
+    end
+    
+    def convert_function_call(ins)
+      func = Transformer::Script::Instruction::FunctionCall.new
+      obj = Transformer::Script::Instruction.new(
+                                    :type => Transformer::Script::Instruction::Type::FUNCTION_CALL,
+                                    :function_call => func)
+      const_name = ins.name.to_s.upcase.to_sym
+      func.function = Transformer::Script::Instruction::FunctionCall::Function.const_get(const_name)
+      
+      func.children = convert_instructions(ins.statements)
+      #if ins.spec.positional
+      #  args = ins.pos_args[1..-1].dup
+      #  obj.position
+      #end
+      func.arguments = convert_instructions(ins.pos_args)
+      [obj]
+    end
+    
+    def convert_literal(ins)
+      obj = Transformer::Script::Instruction.new
+      if ins.regexp?
+        obj['type'] =  Transformer::Script::Instruction::Type::REGEXP
+      else
+        obj['type'] =  Transformer::Script::Instruction::Type::TEXT
+      end
+      obj.value = ins.value.to_s.force_encoding("BINARY")
       obj
     end
     
-    def self.set_name(obj, ins)
-      if ins.is_a? Tritium::Parser::Instructions::Invocation
-        const_name = ins.name.to_s.upcase.to_sym
-        if Script::Instruction::Function.constants.include?(const_name)
-          obj.invocation_name = Script::Instruction::Function.const_get(const_name)
-          return
-        end
+    def convert_import(ins)
+      if !@imports.include?(ins.location)
+        @imports << ins.location
       end
-      obj.name = ins.name.to_s.force_encoding("BINARY") if ins.respond_to?("name")
-    end
-    
-    def self.instruction_type(ins)
-      if ins.is_a? Tritium::Parser::Instructions::Invocation
-        return Script::Instruction::Type::INVOCATION
-      elsif ins.is_a? Tritium::Parser::Instructions::Literal
-        if ins.regexp?
-          return Script::Instruction::Type::REGEXP
-        else
-          return Script::Instruction::Type::STRING
-        end
-      else 
-        return Script::Instruction::Type::BLOCK
-      end
+      Transformer::Script::Instruction.new(:type => Transformer::Script::Instruction::Type::IMPORT,
+                              :import_index => @imports.index(ins.location))
     end
   end
 end

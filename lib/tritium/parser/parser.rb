@@ -17,7 +17,8 @@ module Tritium
       attr :errors
       attr :tokens
       attr :script_string
-      attr :macros_enabled
+      attr :macros_disabled
+      attr :skip_imports
       
       def initialize(script_string, options = {})
         if script_string.is_a?(Hash)
@@ -31,7 +32,8 @@ module Tritium
         @logger       = options[:logger]       || Logger.new(STDOUT)
         @expander     = options[:expander]     || MacroExpander.new
         @errors       = options[:errors]       || ScriptErrors.new
-        @macros_enabled = options[:macros_enabled] || true
+        @macros_disabled = options[:macros_disabled] || false
+        @skip_imports = options[:skip_imports] || false 
         @is_expansion = options[:is_expansion] || false
         
         prefix, base = File.dirname(@filename), File.basename(@filename)
@@ -129,24 +131,27 @@ module Tritium
       
       def import
         import_name = pop!.value
-        parser = nil
-        if !File.exists?(File.join(@path, import_name))
-          raise_error("missing import file (#{import_name})")
+        import_file = File.absolute_path(File.join(@path, import_name))
+        if !File.exists?(import_file)
+          raise_error("missing import file (#{import_file})")
         end
-        begin
-          script_string = File.read(File.join(@path, import_name))
-          parser = Parser.new(script_string,
-                              filename: import_name,
-                              path: @path,
-                              imports: @imports,
-                              errors: @errors)
-        rescue Exception => e
-          @errors << e
-          return nil
-        end
-
         @imports << { importer: @filename, importee: import_name }
-        return parser.inline_block
+        if @skip_imports
+          return cmd(Import, import_file)
+        else # actually process and include them
+          begin
+            script_string = File.read(import_file)
+            parser = Parser.new(script_string,
+                                filename: import_name,
+                                path: @path,
+                                imports: @imports,
+                                errors: @errors)
+          rescue Exception => e
+            @errors << e
+            return nil
+          end
+          return parser.inline_block
+        end
       end
 
       def reference
@@ -169,7 +174,7 @@ module Tritium
         end
         signature = [:var, args[:pos].length]
         # If you have any number of keyword arguments, it only counts as one arg
-        if @macros_enabled && @expander.is_macro?(signature)
+        if !@macros_disabled && @expander.is_macro?(signature)
           stub = cmd(ExpansionInlineBlock)
           macro_call = {
             signature: signature,
@@ -200,7 +205,7 @@ module Tritium
         if args[:kwd].any?
           signature[1] += 1
         end
-        if @macros_enabled && @expander.is_macro?(signature)
+        if !@macros_disabled && @expander.is_macro?(signature)
           stub = cmd(ExpansionInlineBlock)
           macro_call = { signature: signature,
                          pos_args: args[:pos],

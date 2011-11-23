@@ -3,4 +3,7 @@
 require_relative '../lib/tritium'
 require_relative '../lib/tritium/serializer/serializer'
 
-Tritium::Serializer.process_file(ARGV[0])#File.join(File.dirname(__FILE__), "../test/parser/scripts/basic.ts"))
+serializer = Tritium::Serializer.new(ARGV[0])
+serializer.process!
+puts serializer.encode.to_s.inspect
+#File.join(File.dirname(__FILE__), "../test/parser/scripts/basic.ts"))
