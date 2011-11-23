@@ -16,6 +16,10 @@ module Tritium
           value.is_a?(Regexp)
         end
         
+        def returns
+          regexp? ? "Regexp" : "Text"
+        end
+        
         def value_string
           @value.inspect
         end

@@ -48,6 +48,10 @@ module Tritium
           scope
         end
         
+        def returns
+          spec.returns
+        end
+        
         def delete
           @parent.statements.delete(self)
         end
