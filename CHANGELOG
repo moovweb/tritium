@@ -6,3 +6,4 @@ CHANGES:
   * No more asset.2 (warnings gone!). Must use asset.1
   * export.2 is now really export.1 { set(@2) } now. That means you can yield properly to export and set a dynamic value
   * regex() is now regexp()
+  * use SET=classic instead of TESTSET when running tests
