@@ -19,24 +19,22 @@ module Tritium
             ctx.set(ctx.value + args.first)
           when :text
             return ctx.value
-          when :replace
-            if args.first.is_a?(Regexp)
-              ctx.value.gsub!(args.first) do |match|
-                $~.captures.each_with_index do |arg, index|
-                  @env["#{index + 1}"] = arg
-                end
-                match_ctx = Context[ins, match]
-                run_children(ins, match_ctx)
-                match_ctx.value.gsub(/[\$\\]([\d])/) do
-                  @env[$1]
-                end
+          when :replace_regexp
+            ctx.value.gsub!(args.first) do |match|
+              $~.captures.each_with_index do |arg, index|
+                @env["#{index + 1}"] = arg
               end
-            else
-              ctx.value.gsub!(args.first) do |match|
-                match_ctx = Context[ins, match]
-                run_children(ins, match_ctx)
-                match_ctx.value
+              match_ctx = Context[ins, match]
+              run_children(ins, match_ctx)
+              match_ctx.value.gsub(/[\$\\]([\d])/) do
+                @env[$1]
               end
+            end
+          when :replace_text
+            ctx.value.gsub!(args.first) do |match|
+              match_ctx = Context[ins, match]
+              run_children(ins, match_ctx)
+              match_ctx.value
             end
           else
             throw "Method #{ins.name} not implemented in Text scope"

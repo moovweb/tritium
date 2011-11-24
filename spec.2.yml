@@ -407,14 +407,27 @@ Text:
         name: Value
         doc: The string you want to replace the whole thing with!
         
-  replace:
+  replace_regexp:
     doc: Replace all instances of the first argument with the second argument. This yields to a Text scope that allows you to set the Replacement string. Very powerful stuff. Look at the examples.
     opens: Text
     arguments:
       -
-        name: Regex
+        name: Regexp
+        type: Regexp
       -
         name: Replacement String
+        doc: Should be in the format of "$1.name$2" where $1 and $2 are the groups from the Regex.
+        expansion: true
+  replace_text:
+    doc: Replace all instances of the first argument with the second argument. This yields to a Text scope that allows you to set the Replacement string. Very powerful stuff. Look at the examples.
+    opens: Text
+    arguments:
+      -
+        name: Text to search for
+        type: Text
+      -
+        name: Replacement String
+        type: Text
         doc: Should be in the format of "$1.name$2" where $1 and $2 are the groups from the Regex.
         expansion: true
   xml:
