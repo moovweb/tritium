@@ -49,7 +49,7 @@ module Tritium
         end
         
         def returns
-          spec.returns
+          spec.returns || "Text"
         end
         
         def delete
