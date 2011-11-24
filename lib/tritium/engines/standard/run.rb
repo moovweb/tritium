@@ -77,12 +77,14 @@ module Tritium
         
         def run_children(ins, ctx)
           # we are a block of somesort!
+          result = nil
           ins.statements.each do |statement|
             result = process(statement, ctx)
             if result == false
               return
             end
           end
+          return result # Make sure to return the proper value
         end
       end
     end
