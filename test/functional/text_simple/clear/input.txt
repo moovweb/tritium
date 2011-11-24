@@ -1,0 +1,7 @@
+
+
+I have so much content! It will
+
+ALL BE deleted!
+
+by calling clear()
