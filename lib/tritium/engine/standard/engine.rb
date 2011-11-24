@@ -5,7 +5,7 @@ require_relative 'context'
 require_relative 'run'
 
 module Tritium
-  module Engines
+  module Engine
     class Standard < Base
       
       def run(input, options = {})

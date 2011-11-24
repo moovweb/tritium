@@ -1,5 +1,5 @@
 module Tritium
-  module Engines
+  module Engine
     class Standard < Base
       module NodeFunctions
         def node_invocation(ins, ctx, args, kwd_args)

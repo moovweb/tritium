@@ -4,10 +4,10 @@ require 'bundler'
 Bundler.setup()
 
 require_relative '../../lib/tritium'
-require_relative '../../lib/tritium/engines/standard/engine'
+require_relative '../../lib/tritium/engine/standard/engine'
 require 'rainbow'
 
-include Tritium::Engines
+include Tritium::Engine
 require_relative '../../../nagual/lib/judy'
 require_relative '../../../viper/lib/viper'
 

@@ -14,8 +14,7 @@ require 'yaml'
 require 'logger'
 
 module Tritium
-  module EngineTests
-    include Tritium::Engines
+  module Engine
 
     # We should break up the functional tests. This should return an hash of test sets
     # Right now, we only have one, so we will just return that
@@ -169,95 +168,6 @@ module Tritium
       tritium.close
     end
     
-    def diff_as_string(data_new, data_old)
-      require 'diff/lcs'
-      require 'diff/lcs/hunk'
-
-      data_old = data_old.split(/\n/).map! { |e| e.chomp }
-      data_new = data_new.split(/\n/).map! { |e| e.chomp }
-      output = ""
-      diffs = ::Diff::LCS.diff(data_old, data_new)
-      return output if diffs.empty?
-      oldhunk = hunk = nil  
-      file_length_difference = 0
-      diffs.each do |piece|
-        begin
-          hunk = ::Diff::LCS::Hunk.new(
-            data_old, data_new, piece, context_lines, file_length_difference
-          )
-          file_length_difference = hunk.file_length_difference      
-          next unless oldhunk      
-          # Hunks may overlap, which is why we need to be careful when our
-          # diff includes lines of context. Otherwise, we might print
-          # redundant lines.
-          if (context_lines > 0) and hunk.overlaps?(oldhunk)
-            hunk.unshift(oldhunk)
-          else
-            output << oldhunk.diff(format)
-          end
-        ensure
-          oldhunk = hunk
-          output << "\n"
-        end
-      end  
-      #Handle the last remaining hunk
-      output << oldhunk.diff(format) << "\n"
-    end
     
-    def format
-      :unified
-    end
-
-    def context_lines
-      3
-    end
-    
-  
-    if ENV["SCRIPT"].nil?
-      def test_log
-        @logger = MiniTest::Mock.new
-        @logger.expect("info", nil, ['hi mom!'])
-        engine = engine_class.new("log('h', 'i', ' ' ) { append('mom!') }", :logger => @logger)
-        engine.run("")
-        @logger.verify
-      end
-  
-      def test_log_dump
-        @logger = MiniTest::Mock.new
-        @logger.expect("info", nil, ['<a>hi mom!</a>'])
-        engine = engine_class.new("html() { $('//a') { log(dump()) } }", :logger => @logger)
-        engine.run("<html><body><a>hi mom!</a></body></html>")
-        @logger.verify
-      end
-    
-      def test_time
-        logger = log = Logger.new(nil)
-        engine = engine_class.new("set(time() { replace(/a/, 'b') })", :logger => logger)
-        result, env = engine.run("")
-        assert result.to_f > 0.0
-      end
-    
-      def test_bm
-        @logger =  MiniTest::Mock.new
-        @logger.expect("info", nil, ['<a>hi mom!</a>'])
-        engine = engine_class.new("bm('bench') { set('doc') }", :logger => @logger)
-        #puts engine.root_instruction.to_script
-        result, env = engine.run("")
-        assert_equal 'doc', result
-        log = @logger.instance_eval("@actual_calls")["info"].first[:args].first
-        name, value = log.split(": ")
-        assert_equal 'bench', name.strip
-        assert value.to_f > 0.0, "Should be a float of some sort"
-      end
-  
-      def test_export_function
-        script = "export('Content-Type', 'html/js'); export('cookie', 'a'); export('cookie', 'b')"
-        log = Logger.new(nil)
-        log.level = Logger::ERROR
-        tritium = engine_class.new(script, :path => EngineTests.test_sets.values.last + "/scripts", :logger => log)
-        result, export_vars = tritium.run("")
-        assert_equal [['Content-Type', 'html/js'], ['cookie', 'a'], ['cookie', 'b']], export_vars
-      end
-    end
   end
 end

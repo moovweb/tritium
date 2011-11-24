@@ -1,5 +1,5 @@
 module Tritium
-  module Engines
+  module Engine
     class Standard < Base
       module AttributeFunctions
         def attribute_invocation(ins, ctx, pos_args, kwd_args)

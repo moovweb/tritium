@@ -7,7 +7,7 @@ require_relative 'scopes/node'
 require_relative 'scopes/attribute'
 
 module Tritium
-  module Engines
+  module Engine
     class Standard < Base
       class Run
         attr :export_vars

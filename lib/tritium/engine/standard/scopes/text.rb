@@ -1,5 +1,5 @@
 module Tritium
-  module Engines
+  module Engine
     class Standard < Base
       module TextFunctions
         def text_invocation(ins, ctx, args, kwds)
@@ -7,7 +7,7 @@ module Tritium
           when :set
             ctx.set(args.first.dup)
           when :html, :xml, :html_fragment
-            doc = Tritium::Engines.xml_parsers[ins.name.to_s].parse(ctx.value)
+            doc = Tritium::Engine.xml_parsers[ins.name.to_s].parse(ctx.value)
             doc_ctx = Context[ins, doc]
             @node_stack.push doc
             run_children(ins, doc_ctx)

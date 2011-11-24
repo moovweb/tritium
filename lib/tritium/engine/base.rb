@@ -6,7 +6,7 @@ class Nokogiri::HTML::DocumentFragment
   alias :to_html_fragment :to_html
 end
 module Tritium
-  module Engines
+  module Engine
     
     def self.xml_parsers
       {"xml" =>  Nokogiri::XML, "html" =>  Nokogiri::HTML, "html_fragment" => Nokogiri::HTML::DocumentFragment}

@@ -1,6 +1,6 @@
 require_relative '../../../extensions/matcher'
 module Tritium
-  module Engines
+  module Engine
     class Standard < Base
       module BaseFunctions
         def base_invocation(ins, ctx, args, kwds)

@@ -16,5 +16,5 @@ Rake::TestTask.new(:test) do |t|
 end
 
 task :benchmark do
-  puts `ruby #{File.dirname(__FILE__)}/../engines/benchmarks.rb`
+  puts `ruby #{File.dirname(__FILE__)}/../engine/benchmarks.rb`
 end

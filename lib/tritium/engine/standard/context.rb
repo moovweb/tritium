@@ -1,5 +1,5 @@
 module Tritium
-  module Engines
+  module Engine
     class Standard < Base
       class Context
         attr :index, true

@@ -1,15 +1,14 @@
 #ENV["SCRIPT"] = "fetch"
 
 require 'minitest/autorun'
-require_relative '../../lib/tritium/engines/standard/engine'
+require_relative '../../lib/tritium/engine/standard/engine'
 require_relative '../../lib/tritium/engine_tests'
 
 class StandardEngineTest < MiniTest::Unit::TestCase
-  include Tritium::Engines
   include Tritium::EngineTests
   
   def engine_class
-    Standard
+    Tritium::Engine::Standard
   end
 
   if ENV["SCRIPT"].nil?
