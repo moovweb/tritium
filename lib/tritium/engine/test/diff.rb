@@ -1,7 +1,6 @@
-module Tritium
-  module Engine
-  module Tests
-    def self.diff_as_string(data_new, data_old)
+module Tritium::Engine::Test
+  module Diff
+    def self.strings(data_new, data_old)
       require 'diff/lcs'
       require 'diff/lcs/hunk'
       context_lines = 3

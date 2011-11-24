@@ -9,3 +9,4 @@ CHANGES:
   * use SET=classic instead of TESTSET when running tests
   * replace() is now replace_regexp() and replace_text()
     * macros sort it for you -- unlikely that users will ever use the two specific methods
+  * Big changes to the automated tests...

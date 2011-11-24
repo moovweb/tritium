@@ -2,10 +2,11 @@
 
 require 'minitest/autorun'
 require_relative '../../lib/tritium/engine/standard/engine'
-require_relative '../../lib/tritium/engine_tests'
+require_relative '../../lib/tritium/engine/test'
 
 class StandardEngineTest < MiniTest::Unit::TestCase
-  include Tritium::EngineTests
+  include Tritium::Engine
+  include Tritium::Engine::Test::Gauntlet
   
   def engine_class
     Tritium::Engine::Standard

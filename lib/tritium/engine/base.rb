@@ -1,4 +1,3 @@
-require 'nokogiri'
 require 'logger'
 require_relative '../parser/parser'
 

@@ -4,7 +4,6 @@ PATH
     tritium (1.3)
       beefcake
       bundler
-      diff-lcs (~> 1.1.2)
       nokogiri
 
 GEM
@@ -23,5 +22,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  diff-lcs (~> 1.1.2)
   moov_build_tasks (~> 0.2.24)
   tritium!

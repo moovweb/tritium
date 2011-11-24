@@ -6,21 +6,20 @@
 
 ENV["TEST"] = "true"
 
-require_relative 'config'
-
+require_relative 'diff'
 require 'minitest/unit'
 require 'minitest/mock'
 require 'yaml'
 require 'logger'
 
-module Tritium
-  module Engine
+module Tritium::Engine::Test
+  module Gauntlet
 
     # We should break up the functional tests. This should return an hash of test sets
     # Right now, we only have one, so we will just return that
     def self.test_sets
       sets = {}
-      Dir[File.join(File.dirname(__FILE__), "../../test/functional/*")].each do |test_dir|
+      Dir[File.join(File.dirname(__FILE__), "../../../../test/functional/*")].each do |test_dir|
         sets[test_dir.split("/").last.to_sym] = File.absolute_path(test_dir)
       end
       sets
@@ -136,7 +135,7 @@ module Tritium
           if ENV['TEST_DEBUG'] || ENV["SCRIPT"]
             if expected_output != result
               puts "Diff:"
-              puts diff_as_string(result, expected_output)
+              puts Diff.strings(result, expected_output)
               script = tritium.to_script
               if script.size < 2000
                 puts script
