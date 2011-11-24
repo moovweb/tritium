@@ -1,8 +1,8 @@
-## Generated from tritium.proto for tb
+## Generated from tritium.proto for tritium
 require "beefcake"
 
 
-class Transform
+class Script
   include Beefcake::Message
 
   module Scope
@@ -61,30 +61,30 @@ class Transform
     BOTTOM = 3
   end
 
-  class Script
+  class Instruction
     include Beefcake::Message
 
 
-    class Instruction
-      include Beefcake::Message
-
-
-      required :type, Transform::InstructionType, 1
-      optional :value, :string, 2
-      optional :import_index, :int32, 3
-      repeated :children, Transform::Script::Instruction, 4
-      repeated :arguments, Transform::Script::Instruction, 5
-      optional :function, Transform::Function, 6
-      optional :position, Transform::Position, 7
-
-    end
-
-    optional :name, :string, 1, :default => "main"
-    optional :root, Transform::Script::Instruction, 2
-    optional :scope, Transform::Scope, 3
+    required :type, Script::InstructionType, 1
+    optional :value, :string, 2
+    optional :import_index, :int32, 3
+    repeated :children, Script::Instruction, 4
+    repeated :arguments, Script::Instruction, 5
+    optional :function, Script::Function, 6
+    optional :position, Script::Position, 7
 
   end
 
-  repeated :scripts, Transform::Script, 1
+  optional :name, :string, 1, :default => "main"
+  optional :root, Script::Instruction, 2
+  optional :scope, Script::Scope, 3
+
+end
+
+class Transform
+  include Beefcake::Message
+
+
+  repeated :scripts, Script, 1
 
 end

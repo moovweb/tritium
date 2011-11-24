@@ -28,9 +28,9 @@ module Tritium
       parser = Tritium::Parser::Parser.new(:filename => filename, :path => path, :skip_imports => true, :starting_scope => scope_name)
       root_instruction = parser.parse
       @instructions << root_instruction # Keep the instructions around for debug
-      script = Transform::Script.new(:name => ts_file.dup.force_encoding("BINARY"), :root => convert_block(root_instruction))
+      script = Script.new(:name => ts_file.dup.force_encoding("BINARY"), :root => convert_block(root_instruction))
       scope_const_name = (root_instruction.scope.name.to_s.upcase + "_SCOPE").to_sym
-      script.scope = Transform::Scope.const_get(scope_const_name)
+      script.scope = Script::Scope.const_get(scope_const_name)
       @set.scripts << script
       @processed << ts_file
       #puts "processed file #{ts_file}"
@@ -59,24 +59,24 @@ module Tritium
     end
     
     def convert_block(ins)
-      obj = Transform::Script::Instruction.new(:type => Transform::InstructionType::BLOCK,
+      obj = Script::Instruction.new(:type => Script::InstructionType::BLOCK,
                               :children => convert_instructions(ins.statements))
       #set_scope(ins, obj)
       obj
     end
     
     def convert_function_call(ins)
-      obj = Transform::Script::Instruction.new(:type => Transform::InstructionType::FUNCTION_CALL)
+      obj = Script::Instruction.new(:type => Script::InstructionType::FUNCTION_CALL)
 
       func = obj
       const_name = (ins.name.to_s.upcase + "_FUNC").to_sym
-      func.function = Transform::Function.const_get(const_name)
+      func.function = Script::Function.const_get(const_name)
       
       func.children = convert_instructions(ins.statements)
       if ins.spec.positional
         func.arguments = convert_instructions(ins.pos_args[1..-1])
         pos_const = ins.pos_args.first.value.upcase.to_sym
-        func.position = Transform::Position.const_get(pos_const)
+        func.position = Script::Position.const_get(pos_const)
       else
         func.arguments = convert_instructions(ins.pos_args)
       end
@@ -85,11 +85,11 @@ module Tritium
     end
     
     def convert_literal(ins)
-      obj = Transform::Script::Instruction.new
+      obj = Script::Instruction.new
       if ins.regexp?
-        obj['type'] =  Transform::InstructionType::REGEXP
+        obj['type'] =  Script::InstructionType::REGEXP
       else
-        obj['type'] =  Transform::InstructionType::TEXT
+        obj['type'] =  Script::InstructionType::TEXT
       end
       obj.value = ins.value.to_s.force_encoding("BINARY")
       obj
@@ -100,7 +100,7 @@ module Tritium
         @imports << ins.location
         @import_scopes << ins.scope.name
       end
-      obj = Transform::Script::Instruction.new(:type => Transform::InstructionType::IMPORT,
+      obj = Script::Instruction.new(:type => Script::InstructionType::IMPORT,
                               :import_index => @imports.index(ins.location))
       
     end
