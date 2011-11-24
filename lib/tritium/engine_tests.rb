@@ -30,6 +30,19 @@ module Tritium
     def engine_class
       throw "Must override"
     end
+    
+    class RecordingLogger
+      attr :logs
+      def initialize
+        clear
+      end
+      def info(message)
+        @logs << message.to_s
+      end
+      def clear
+        @logs = []
+      end
+    end
 
     self.test_sets.each do |set_name, tests_directory|
       if ENV["TESTSET"].nil? || (set_name.to_s == ENV["TESTSET"])
@@ -49,24 +62,36 @@ module Tritium
       return @files[path] if @files[path] 
       @files[path] = open(path).read
     end
+    
+    def read_yaml(path)
+      if File.exists?(path)
+        YAML::load(read_file(path))
+      else
+        nil
+      end
+    end
   
     def fetch_env(path)
       @envs ||= {}
-      return @envs[path] if @envs[path]
-      if File.exists?(path)
-        @envs[path] = YAML::load(read_file(path))
-      else
-        @envs[path] = {}
-      end
+      @envs[path] ||= (read_yaml(path) || {})
+    end
+    
+    def fetch_exports(path)
+      @exports ||= {}
+      @exports[path] ||= (read_yaml(path) || [])
+    end
+    
+    def fetch_logs(path)
+      @logs ||= {}
+      @logs[path] ||= (read_yaml(path) || [])
     end
 
     def run_test(test_path, test_name = test_path.split("/").last)
       input_file_name = Dir[test_path + "/input.*"].last
-
-      log = Logger.new(STDOUT)
-      log.level = Logger::ERROR
-    
-      tritium = engine_class.new(:path => test_path, :script_name => "main.ts", :logger => log)
+      
+      # Setup the Mock logger to pass into the engine
+      logger = RecordingLogger.new
+      tritium = engine_class.new(:path => test_path, :script_name => "main.ts", :logger => logger)
     
       env = fetch_env(test_path + "/vars.yml")
     
@@ -83,13 +108,30 @@ module Tritium
       if expected_output_file_path
         expected_output = read_file(expected_output_file_path).strip
       end
-    
+      
+      expected_exports = fetch_exports(File.join(test_path, "exports.yml"))
+      expected_logs = fetch_logs(File.join(test_path, "logs.yml"))
+  
       2.times do |time|
         env_copy = env.dup
 
         # Run the input through the tritium script.
         begin
           result, export_vars = tritium.run(input, :env => env_copy)
+          
+          # Compare exports
+          expected_exports.each_with_index do |export_set, index|
+            assert_equal export_set, export_vars[index]
+          end
+          assert_equal expected_exports.size, export_vars.size, :message => "Exports didn't match up"
+          
+          # Check the logs!
+          expected_logs.each_with_index do |expected_message, index|
+            assert_equal expected_message, logger.logs[index]
+          end
+          assert_equal expected_logs.size, logger.logs.size, :message => "Number of log messages was wrong"
+          logger.clear
+          
           result.strip!
         
           if ENV['TEST_DEBUG'] || ENV["SCRIPT"]
@@ -123,6 +165,7 @@ module Tritium
           raise e
         end
       end
+
       tritium.close
     end
     
