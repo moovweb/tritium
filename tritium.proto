@@ -53,7 +53,6 @@ message Transform {
 		ATTRIBUTE_FUNC = 14;
 		VALUE_FUNC = 15;
 		NAME_FUNC = 16;
-		REPLACE_FUNC = 17;
 		INSERT_AT_FUNC = 18;
 		INJECT_AT_FUNC = 19;
 		CLEAR_FUNC = 20;
@@ -70,6 +69,8 @@ message Transform {
 		TEXT_FUNC = 31;
 		CDATA_FUNC = 32;
 		WRAP_TEXT_CHILDREN_FUNC = 33;
+		REPLACE_REGEXP_FUNC = 17;
+		REPLACE_TEXT_FUNC = 34;
 	}
 
 	enum Position {

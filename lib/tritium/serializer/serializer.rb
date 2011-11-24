@@ -2,11 +2,13 @@ module Tritium
   class Serializer
     require_relative 'tritium.pb'
     require 'pp'
+    attr :instructions
     
     def initialize(main_file)
       @main_file = main_file
       @set = Transform.new(:scripts => [])
       @processed = []
+      @instructions = []
       @imports = [main_file]
       @import_scopes = ["Text"]
     end
@@ -25,9 +27,10 @@ module Tritium
       path = ts_file.split("/")[0..-2].join("/")
       parser = Tritium::Parser::Parser.new(:filename => filename, :path => path, :skip_imports => true, :starting_scope => scope_name)
       root_instruction = parser.parse
+      @instructions << root_instruction # Keep the instructions around for debug
       script = Transform::Script.new(:name => ts_file.dup.force_encoding("BINARY"), :root => convert_block(root_instruction))
       scope_const_name = (root_instruction.scope.name.to_s.upcase + "_SCOPE").to_sym
-      script.scope = Transform::Script::Scope.const_get(scope_const_name)
+      script.scope = Transform::Scope.const_get(scope_const_name)
       @set.scripts << script
       @processed << ts_file
       #puts "processed file #{ts_file}"

@@ -29,13 +29,14 @@ module Tritium
         @script_path   = options[:path]        || options["path"]        || ""
         @logger        = options[:logger]      || options["logger"]      || Logger.new(STDOUT)
         @script_name   = options[:script_name] || options["script_name"] || "main.ts"
+        @script_location = File.join(@script_path, @script_name)
+        @script_path = File.expand_path(@script_path)
         
         # Load the script if we don't have it loaded already
         if @script_string.nil?
-          @script_string = File.read(File.join(@script_path, @script_name))
+          @script_string = File.read(@script_location)
         end
         
-        @script_path = File.expand_path(@script_path)
         @compiled_script = File.join(@script_path, "#{@script_name}.bin")
 
         if !options[:compile] && File.exists?(@compiled_script)
