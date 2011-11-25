@@ -19,8 +19,8 @@ module Tritium::Engine::Test
     # Right now, we only have one, so we will just return that
     def self.test_sets
       sets = {}
-      Dir[File.join(File.dirname(__FILE__), "../../../../test/functional/*")].each do |test_dir|
-        sets[test_dir.split("/").last.to_sym] = File.absolute_path(test_dir)
+      Dir[File.join(File.dirname(__FILE__), "../../../../test/functional/*/*")].each do |test_dir|
+        sets[test_dir.split("/")[-2..-1].join("_").to_sym] = File.absolute_path(test_dir)
       end
       sets
     end
