@@ -12,7 +12,7 @@ class StandardEngineTest < MiniTest::Unit::TestCase
     Tritium::Engine::Standard
   end
 
-  if ENV["SCRIPT"].nil?
+  if (ENV["SCRIPT"] || ENV["SET"]).nil?
     def test_no_script
       engine = Standard.new("")
       input = "hi"
