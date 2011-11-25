@@ -43,7 +43,7 @@ module Tritium::Engine::Test
     end
 
     self.test_sets.each do |set_name, tests_directory|
-      if ENV["SET"].nil? || (set_name.to_s == ENV["SET"])
+      if ENV["SET"].nil? || (set_name.to_s.index(ENV["SET"]) == 0) # If we start with the SET name, then go go go!
         Dir[tests_directory + "/*"].each do |test_dir|
           test_name = test_dir.split("/").last
           if ENV["SCRIPT"].nil? || test_name == ENV["SCRIPT"]
