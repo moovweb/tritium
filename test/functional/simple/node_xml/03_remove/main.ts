@@ -1,0 +1,5 @@
+xml() {
+  $("//deadman") {
+    remove()
+  }
+}
