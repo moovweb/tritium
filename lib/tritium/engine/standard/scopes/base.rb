@@ -20,7 +20,7 @@ module Tritium
             @should_continue.push(true)
             run_children(ins, ctx)
             @matchers.pop
-            @should_continue.pop
+            return (!@should_continue.pop).to_s # Return T/F as a string based off if we ever matched anything
           when :not_text, :not_regexp, :with_text, :with_regexp
             return "false" if !@should_continue.last
             matcher = @matchers.last
