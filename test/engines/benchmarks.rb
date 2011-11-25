@@ -10,17 +10,18 @@ require 'rainbow'
 include Tritium::Engine
 require_relative '../../../nagual/lib/judy'
 require_relative '../../../viper/lib/viper'
+require_relative '../../../snow/lib/snow'
 
 #ENV["CSV"] = "true"
 
-base_path = File.expand_path(File.join(File.dirname(__FILE__), "../functional"))
+base_path = File.expand_path(File.join(File.dirname(__FILE__), "../functional/text_simple"))
 
 log = Logger.new(STDOUT)
 log.level = Logger::ERROR
 
 totals = {}
 print("\nscript_name")
-engines = [Standard, Judy::Engine, Viper::Engine]
+engines = [Standard, Judy::Engine, Viper::Engine, Snow::Engine]
 engines.each do |engine_class|
   print(",")
   print(engine_class.name)
