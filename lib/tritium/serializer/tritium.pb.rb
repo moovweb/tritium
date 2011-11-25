@@ -26,8 +26,8 @@ class Script
     APPEND_FUNC = 5
     PREPEND_FUNC = 6
     MATCH_FUNC = 7
-    WITH_FUNC = 8
-    NOT_FUNC = 9
+    WITH_TEXT_FUNC = 8
+    NOT_TEXT_FUNC = 9
     MOVE_FUNC = 10
     DUP_FUNC = 11
     INDEX_FUNC = 12
@@ -53,6 +53,8 @@ class Script
     WRAP_TEXT_CHILDREN_FUNC = 33
     REPLACE_REGEXP_FUNC = 17
     REPLACE_TEXT_FUNC = 34
+    WITH_REGEXP_FUNC = 35
+    NOT_REGEXP_FUNC = 36
   end
   module Position
     BEFORE = 0

@@ -17,18 +17,23 @@ module Tritium
             return args.join("")
           when :match
             @matchers.push(args.first)
+            @should_continue.push(true)
             run_children(ins, ctx)
             @matchers.pop
+            @should_continue.pop
           when :not_text, :not_regexp, :with_text, :with_regexp
+            return "false" if !@should_continue.last
             matcher = @matchers.last
             with = args.first
             with.opposite = (ins.name.to_s.index("not") == 0)
             #puts "Tested that #{matcher.inspect}.#{ins.stub} and came out with #{with.match?(matcher)} (opposite #{with.opposite})"
             if with.match?(matcher)
               run_children(ins, ctx)
-              return false # signal to stop!
+              @should_continue[-1] = false # Make sure that we stop!
+              return "true"
+            else
+              return "false"
             end
-            return "false"
           when :time
             start = Time.now
             run_children(ins, ctx)
