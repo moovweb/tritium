@@ -24,6 +24,10 @@ module Tritium
           end
         end
         
+        def returns
+          @statements.last ? @statements.last.returns : nil
+        end
+        
         def opens
           scope
         end

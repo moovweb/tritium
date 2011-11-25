@@ -52,23 +52,42 @@ Base:
         name: Regex or String
         doc: If we are only matching against one string or regexp, you can pass it in here. This is the same as a single with()
         optional: true
-  not:
+  not_text:
     doc: Used with match($var, not('hi'))
     hide: true
     returns: Text
-    return_doc: Either "worked" or "failed"
+    return_doc: Either "true" or "false"
     arguments:
       -
-        name: Regex or String
-        doc: The regular expression or string to match with. Strings are perfect matches.
-  with:
-    doc: Used as a child of match("something")
+        name: Text
+        doc: Text to match with. Only perfect match
+  not_regexp:
+    doc: Used with match($var, not(/hi/))
+    hide: true
     returns: Text
-    return_doc: Either "worked" or "failed"
+    return_doc: Either "true" or "false"
     arguments:
       -
-        name: Regex or String
-        doc: The regular expression or string to match with. Strings are perfect matches.
+        name: Regexp
+        doc: Regexp to match with.
+  with_text:
+    doc: Used with match($var, 'hi')
+    hide: true
+    returns: Text
+    return_doc: Either "true" or "false"
+    arguments:
+      -
+        name: Text
+        doc: Text to match with. Only perfect match
+  with_regexp:
+    doc: Used with match($var, /hi/)
+    hide: true
+    returns: Text
+    return_doc: Either "true" or "false"
+    arguments:
+      -
+        name: Regexp
+        doc: Regexp to match with.
   read:
     doc: Use this to read in a file at *compile* time. Nothing dynamic allowed.
     returns: Text

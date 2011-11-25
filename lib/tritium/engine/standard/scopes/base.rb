@@ -19,21 +19,16 @@ module Tritium
             @matchers.push(args.first)
             run_children(ins, ctx)
             @matchers.pop
-          when :not, :with
+          when :not_text, :not_regexp, :with_text, :with_regexp
             matcher = @matchers.last
             with = args.first
-            with.opposite = (ins.name == :not)
+            with.opposite = (ins.name.to_s.index("not") == 0)
+            #puts "Tested that #{matcher.inspect}.#{ins.stub} and came out with #{with.match?(matcher)} (opposite #{with.opposite})"
             if with.match?(matcher)
               run_children(ins, ctx)
               return false # signal to stop!
             end
-          when :with
-            matcher = @matchers.last
-            with = args.first
-            if with.match?(matcher)
-              run_children(ins, ctx)
-              return false # signal to stop!
-            end
+            return "false"
           when :time
             start = Time.now
             run_children(ins, ctx)

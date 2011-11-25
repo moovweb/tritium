@@ -55,21 +55,42 @@ Functions:
         - 
           name: Log message
           doc: Debug Line! Just type something!
-    not:
+    not_text:
       doc: Used with match($var, not('hi'))
       hide: true
       returns: Text
+      return_doc: Either "true" or "false"
       arguments:
         -
-          name: Regex or String
-          doc: The regular expression or string to match with. Strings are perfect matches.
-    with:
-      doc: Used as a child of match("something")
+          name: Text
+          doc: Text to match with. Only perfect match
+    not_regexp:
+      doc: Used with match($var, not(/hi/))
+      hide: true
       returns: Text
+      return_doc: Either "true" or "false"
       arguments:
         -
-          name: Regex or String
-          doc: The regular expression or string to match with. Strings are perfect matches.
+          name: Regexp
+          doc: Regexp to match with.
+    with_text:
+      doc: Used with match($var, 'hi')
+      hide: true
+      returns: Text
+      return_doc: Either "true" or "false"
+      arguments:
+        -
+          name: Text
+          doc: Text to match with. Only perfect match
+    with_regexp:
+      doc: Used with match($var, /hi/)
+      hide: true
+      returns: Text
+      return_doc: Either "true" or "false"
+      arguments:
+        -
+          name: Regexp
+          doc: Regexp to match with.
     regexp:
       opens: Text
       returns: Regexp

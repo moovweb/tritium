@@ -10,6 +10,9 @@ xml()  {
       with(not(/r/)) {
         attribute("has_no", "r")
       }
+      not(fetch("@name")) {
+        log("never happened")
+      }
       else() {
         attribute("match", "false")
       }

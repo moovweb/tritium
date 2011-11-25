@@ -80,8 +80,9 @@ module Tritium
           result = nil
           ins.statements.each do |statement|
             result = process(statement, ctx)
-            if result == false
-              return
+            if result == false # this stops execution
+              # mostly used in match/with/not
+              return (ins.is_a?(InlineBlock) ? false : "true") # pass through the *stop* if we are in a block
             end
           end
           return result # Make sure to return the proper value
