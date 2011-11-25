@@ -55,6 +55,7 @@ class Script
     REPLACE_TEXT_FUNC = 34
     WITH_REGEXP_FUNC = 35
     NOT_REGEXP_FUNC = 36
+    DUMP_FUNC = 37
   end
   module Position
     BEFORE = 0
