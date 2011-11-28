@@ -142,14 +142,6 @@ Base:
       -
         name: Input String
         type: String
-  css: 
-    doc: Converts CSS selectors to XPath
-    arguments:
-      - 
-        name: CSS Selector
-        doc: A properly formatted CSS selector
-  path: 
-    doc: Gets the path of the current scope node
 Node:
   inherit: Base
   select: 
