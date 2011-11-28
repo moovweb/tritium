@@ -2,6 +2,10 @@
 # Rakefile for projects -*- ruby -*-
 ####################################
 
+require 'bundler'
+Bundler.setup
+Bundler.require(:default)
+
 require 'moov_build_tasks'
 Moov::BuildTasks.load!
 

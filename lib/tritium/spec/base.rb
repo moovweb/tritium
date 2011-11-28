@@ -40,7 +40,7 @@ module Tritium
           at_name = "#{name}_at"
           at_attributes = Marshal::load(Marshal.dump(attributes))
           at_attributes.delete("positional")
-          at_attributes["arguments"] = [{"name" => "Position", "doc" => "top/bottom/etc"}] + at_attributes["arguments"]
+          at_attributes["arguments"] = [{"name" => "Position", "doc" => "top/bottom/etc", "type" => "Position"}] + at_attributes["arguments"]
           parent.children[at_name] = self.class.new(at_name, at_attributes, parent)
         end
         self.class.defaults.each do |name, value|

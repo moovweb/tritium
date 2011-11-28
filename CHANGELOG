@@ -1,7 +1,18 @@
-Version: 1.1
-Manhattan: 0.11
+Version: 1.5
+Manhattan: 0.12+
 State: Development
 
-DONE:
+CHANGES:
   * No more asset.2 (warnings gone!). Must use asset.1
   * export.2 is now really export.1 { set(@2) } now. That means you can yield properly to export and set a dynamic value
+  * regex() is now regexp()
+  * use SET=classic instead of TESTSET when running tests
+  * replace() is now replace_regexp() and replace_text()
+    * macros sort it for you -- unlikely that users will ever use the two specific methods
+  * Big changes to the automated tests...
+    Used like this...
+        # Require the test framework...
+        require 'tritium/engine/test'
+        # Inside my tests
+	include Tritium::Engine::Test::Gauntlet
+  * match() now returns "true" and "false"

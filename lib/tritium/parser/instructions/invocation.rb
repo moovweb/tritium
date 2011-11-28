@@ -37,7 +37,6 @@ module Tritium
         
         def post_process!
           super
-          with_not_fix!
           process_args!
         end
         
@@ -55,27 +54,17 @@ module Tritium
           assign_ids(args.compact)
         end
         
-        def with_not_fix!
-          if @name == :with
-            arg = pos_args.first
-            if arg.is_a?(Invocation) && arg.name == :not
-              @name = :not
-              @pos_args[0] = pos_args.first.pos_args.first
-            end
-          end
-        end
-        
         def spec
           spec = scope[@name.to_s]
           if spec.nil?
-            throw "Invalid #{@name.to_s} in #{scope.name} scope"
+            throw "#{@filename}:#{@line_num} Invalid #{@name.to_s} in #{scope.name} scope"
           end
           spec
         end
         
         def valid?
           unless spec.arg_size_range === self.args.size
-            raise "Wrong number of arguments in #{debug_info}"
+            raise "#{@filename}:#{@line_num} Wrong number of arguments in #{debug_info}"
           end
         end
         
@@ -104,7 +93,6 @@ module Tritium
           return result
         end
 
-        
         def to_script(depth = 0)
           result = stub(depth)
           if @statements.any?

@@ -19,7 +19,7 @@ Base:
   var:
     opens: Text
     alias: $
-    returns: true
+    returns: Text
     arguments:
       -
         name: Name
@@ -29,18 +29,21 @@ Base:
         doc: The value you want to set the var to. Same as var('name') { set('value') }
         expansion: true
   time:
-    returns: true
+    returns: Text
     doc: If given a block, it returns the time-to-execute in seconds as a string
   bm:
     doc: Prints out the time a block took to run to the log
+    returns: Text
     arguments:
       -
         name: Name
         doc: The name of the thing you are benchmarking
   index:
-    returns: true
+    returns: Text
   match:
-    doc: 
+    doc:
+    returns: Text
+    return_doc: Either "worked" or "failed" 
     arguments:
       -
         name: Match Target
@@ -49,28 +52,52 @@ Base:
         name: Regex or String
         doc: If we are only matching against one string or regexp, you can pass it in here. This is the same as a single with()
         optional: true
-  not:
+  not_text:
     doc: Used with match($var, not('hi'))
     hide: true
+    returns: Text
+    return_doc: Either "true" or "false"
     arguments:
       -
-        name: Regex or String
-        doc: The regular expression or string to match with. Strings are perfect matches.
-  with:
-    doc: Used as a child of match("something")
+        name: Text
+        doc: Text to match with. Only perfect match
+  not_regexp:
+    doc: Used with match($var, not(/hi/))
+    hide: true
+    returns: Text
+    return_doc: Either "true" or "false"
     arguments:
       -
-        name: Regex or String
-        doc: The regular expression or string to match with. Strings are perfect matches.
+        name: Regexp
+        doc: Regexp to match with.
+  with_text:
+    doc: Used with match($var, 'hi')
+    hide: true
+    returns: Text
+    return_doc: Either "true" or "false"
+    arguments:
+      -
+        name: Text
+        doc: Text to match with. Only perfect match
+  with_regexp:
+    doc: Used with match($var, /hi/)
+    hide: true
+    returns: Text
+    return_doc: Either "true" or "false"
+    arguments:
+      -
+        name: Regexp
+        doc: Regexp to match with.
   read:
     doc: Use this to read in a file at *compile* time. Nothing dynamic allowed.
+    returns: Text
     arguments:
       -
         name: Filename
         doc: The location of the file. This should be relative to the script. Please report if it is NOT!
   fetch:
     opens: Text
-    returns: true
+    returns: Text
     doc: This is how you select an element to pass it to a function.
     arguments:
       -
@@ -78,16 +105,16 @@ Base:
         doc: A properly formatted XPath selector that starts with "./" or ".." or "//" depending on the scope you want. "./" is HIGHLY recommended
   node:
     opens: Node
-    returns: true
+    returns: Node
     doc: This is how you access the node stack. The current node is node(1), and the parent node is node(2)
     arguments:
       -
         name: Index
         doc: The index of the node that you want
         default: 1
-  regex:
+  regexp:
     opens: Text
-    returns: true
+    returns: Regexp
     doc: Any value passed into this function will return a regex --- ready for fancy replace() or match() usage. NOTE! Use hard-coded regex if you can. This is much slower than hard-coding regex!
     hide: true
     arguments:
@@ -210,19 +237,36 @@ Node:
         name: Position
         doc: Can be "bottom", "top", "after", or "before"
         default: "bottom"
+  inject_at:
+    hide: true
+    arguments:
+      -
+        name: Position
+        type: Position
+      - 
+        name: HTML
+  insert_at:
+    hide: true
+    arguments:
+      -
+        name: Position
+        type: Position
+      - 
+        name: Tag Name
   move:
     doc: Move the first node, to the second node.
+    positional: true
+    hide: true
     arguments:
+      -
+        name: Position
+        type: Position
       -
         name: What
         doc: The node() that we are copying
       -
         name: Where
         doc: The node() that we are copying
-      -
-        name: Position
-        doc: Can be "bottom", "top", "after", or "before"
-        default: "bottom"
   dup:
     doc: Copies the node and yields to it
   copy_here:
@@ -234,6 +278,7 @@ Node:
       -
         name: Position
         doc: Can be "bottom", "top", "after", or "before"
+        type: Position
         default: "bottom"
   copy_to:
     doc: Copy the current node to the indicated selector, at the indicated position
@@ -299,7 +344,7 @@ XMLNode:
   inherit: Node
   cdata:
     doc: Replace's the node's contents with a CDATA block
-    returns: true
+    returns: Node
     arguments:
       -
         name: Contents
@@ -383,14 +428,27 @@ Text:
         name: Value
         doc: The string you want to replace the whole thing with!
         
-  replace:
+  replace_regexp:
     doc: Replace all instances of the first argument with the second argument. This yields to a Text scope that allows you to set the Replacement string. Very powerful stuff. Look at the examples.
     opens: Text
     arguments:
       -
-        name: Regex
+        name: Regexp
+        type: Regexp
       -
         name: Replacement String
+        doc: Should be in the format of "$1.name$2" where $1 and $2 are the groups from the Regex.
+        expansion: true
+  replace_text:
+    doc: Replace all instances of the first argument with the second argument. This yields to a Text scope that allows you to set the Replacement string. Very powerful stuff. Look at the examples.
+    opens: Text
+    arguments:
+      -
+        name: Text to search for
+        type: Text
+      -
+        name: Replacement String
+        type: Text
         doc: Should be in the format of "$1.name$2" where $1 and $2 are the groups from the Regex.
         expansion: true
   xml:

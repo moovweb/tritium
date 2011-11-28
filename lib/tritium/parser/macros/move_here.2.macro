@@ -1,4 +1,4 @@
 $(@1) {
-  move(node(1), node(2), @2)
+  move(@2, node(1), node(2))
   yield()
 }
