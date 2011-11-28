@@ -3,6 +3,7 @@ require_relative 'base'
 module Tritium
   class Spec
     class Argument < Base
+      attr :type
 
       def self.defaults
         {:hide => false,
@@ -13,7 +14,8 @@ module Tritium
          :doc => "",
          :expansion => false,
          :optional => false,
-         :positional => false }
+         :positional => false,
+         :type => "Text" }
       end
       
       def expansion?

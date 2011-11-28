@@ -32,6 +32,7 @@ message Script {
 		IMPORT = 2;
 		TEXT = 3;
 		REGEXP = 4;
+		POSITION = 5;
 	}
 	enum Function {
 		//BLOCK_FUNC = 0;
@@ -72,6 +73,8 @@ message Script {
 		WITH_REGEXP_FUNC = 35;
 		NOT_REGEXP_FUNC = 36;
 		DUMP_FUNC = 37;
+		DOWNCASE_FUNC = 38;
+		UPCASE_FUNC = 39;
 	}
 
 	enum Position {

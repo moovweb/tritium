@@ -73,12 +73,16 @@ module Tritium
       func.function = Script::Function.const_get(const_name)
       
       func.children = convert_instructions(ins.statements)
-      if ins.spec.positional
-        func.arguments = convert_instructions(ins.pos_args[1..-1])
-        pos_const = ins.pos_args.first.value.upcase.to_sym
-        func.position = Script::Position.const_get(pos_const)
-      else
-        func.arguments = convert_instructions(ins.pos_args)
+      func.arguments = convert_instructions(ins.pos_args)
+
+      ins.spec.arguments.values.each_with_index do |arg, index|
+        if arg.type == "Position"
+          obj_arg = func.arguments[index]
+          obj_arg['type'] = Script::InstructionType::POSITION
+          constant_name = obj_arg.value.to_s.upcase.to_sym
+          obj_arg.position = Script::Position.const_get(constant_name)
+          obj_arg.value = nil
+        end
       end
 
       obj

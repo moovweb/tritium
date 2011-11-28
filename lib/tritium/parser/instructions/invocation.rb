@@ -93,7 +93,6 @@ module Tritium
           return result
         end
 
-        
         def to_script(depth = 0)
           result = stub(depth)
           if @statements.any?

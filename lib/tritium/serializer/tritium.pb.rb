@@ -17,6 +17,7 @@ class Script
     IMPORT = 2
     TEXT = 3
     REGEXP = 4
+    POSITION = 5
   end
   module Function
     VAR_FUNC = 1
@@ -56,6 +57,8 @@ class Script
     WITH_REGEXP_FUNC = 35
     NOT_REGEXP_FUNC = 36
     DUMP_FUNC = 37
+    DOWNCASE_FUNC = 38
+    UPCASE_FUNC = 39
   end
   module Position
     BEFORE = 0

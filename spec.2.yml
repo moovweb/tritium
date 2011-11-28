@@ -238,19 +238,19 @@ Node:
         doc: Can be "bottom", "top", "after", or "before"
         default: "bottom"
   inject_at:
-    positional: true
     hide: true
     arguments:
       -
         name: Position
+        type: Position
       - 
         name: HTML
   insert_at:
-    positional: true
     hide: true
     arguments:
       -
         name: Position
+        type: Position
       - 
         name: Tag Name
   move:
@@ -260,6 +260,7 @@ Node:
     arguments:
       -
         name: Position
+        type: Position
       -
         name: What
         doc: The node() that we are copying
@@ -277,6 +278,7 @@ Node:
       -
         name: Position
         doc: Can be "bottom", "top", "after", or "before"
+        type: Position
         default: "bottom"
   copy_to:
     doc: Copy the current node to the indicated selector, at the indicated position
