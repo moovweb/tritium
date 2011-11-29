@@ -40,6 +40,9 @@ Base:
         doc: The name of the thing you are benchmarking
   index:
     returns: Text
+  path: 
+    doc: Gets the path of the current scope node
+    returns: Text
   match:
     doc:
     returns: Text
