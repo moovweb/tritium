@@ -7,12 +7,20 @@ module Tritium
       attr :macros
 
       def initialize
+        clear!
+      end
+      
+      def clear!
         @macros = {}
         load_macros!
       end
       
       def load_macros!
         Macro.load_defaults.each {|m| register_macro(m)}
+      end
+      
+      def load_macro(filename)
+        register_macro(Macro.load_file(filename))
       end
 
       # Returns true or false if the signature matches a macro
