@@ -27,6 +27,7 @@ xml() {
         prepend("<![CDATA[")
         append("]]>")
       }
+      
     }
   }
 }

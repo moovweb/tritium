@@ -14,7 +14,7 @@ require_relative '../../../snow/lib/snow'
 
 #ENV["CSV"] = "true"
 
-base_path = File.expand_path(File.join(File.dirname(__FILE__), "../functional/simple/*"))
+base_path = File.expand_path(File.join(File.dirname(__FILE__), "../functional/standard/*"))
 
 log = Logger.new(STDOUT)
 log.level = Logger::ERROR
@@ -22,7 +22,7 @@ log.level = Logger::ERROR
 totals = {}
 real_totals = {}
 print("\nscript_name")
-engines = [Standard, Judy::Engine, Viper::Engine, Snow::Engine]
+engines = [Standard, Snow::Engine] #Judy::Engine, Viper::Engine, Snow::Engine]
 engines.each do |engine_class|
   print(",")
   print(engine_class.name)
