@@ -87,10 +87,19 @@ class Script
 
 end
 
-class Transform
+class TransformScript
   include Beefcake::Message
 
 
   repeated :scripts, Script, 1
+  optional :name, :string, 2
+
+end
+
+class TransformPackage
+  include Beefcake::Message
+
+
+  repeated :transforms, TransformScript, 1
 
 end

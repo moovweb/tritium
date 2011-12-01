@@ -85,6 +85,11 @@ message Script {
 	}
 }
 
-message Transform {
+message TransformScript {
 	repeated Script scripts = 1;
+	optional string name = 2;
+}
+
+message TransformPackage {
+	repeated TransformScript transforms = 1;
 }

@@ -14,7 +14,7 @@ require_relative '../../../snow/lib/snow'
 
 #ENV["CSV"] = "true"
 
-base_path = File.expand_path(File.join(File.dirname(__FILE__), "../functional/standard/*"))
+base_path = File.expand_path(File.join(File.dirname(__FILE__), "../functional/complex/*"))
 
 log = Logger.new(STDOUT)
 log.level = Logger::ERROR
@@ -22,7 +22,7 @@ log.level = Logger::ERROR
 totals = {}
 real_totals = {}
 print("\nscript_name")
-engines = [Standard, Snow::Engine] #Judy::Engine, Viper::Engine, Snow::Engine]
+engines = [Standard, Viper::Engine, Snow::Engine]
 engines.each do |engine_class|
   print(",")
   print(engine_class.name)
@@ -35,11 +35,11 @@ end
 
 def debug(msg)
   if ENV["DEBUG"]
-    puts "#{$engine_class.name}: #{msg}"
+    print "...#{$engine_class.name}: #{msg}"
   end
 end
 
-search = File.join(base_path, "/*")
+search = File.join(base_path, "/belk*")
 Dir[search].each do |test_folder|
   #puts test_folder.inspect
   test_name = File.basename(test_folder)
@@ -73,8 +73,7 @@ Dir[search].each do |test_folder|
     begin
       debug("Init engine")
       tritium = engine_class.new(:path => test_folder, :logger => log)
-      debug("Init done
-      ")
+      debug("Init done")
       totals[engine_class] ||= 0
       real_totals[engine_class] ||= 0
       start = Time.now
@@ -85,6 +84,7 @@ Dir[search].each do |test_folder|
         result, export_vars = tritium.run(input, :env => env_copy)
         #puts engine_class.name + result.inspect
       end
+      tritium.close
       debug("Done Run")
       took = Time.now - start
       real_totals[engine_class] += took
@@ -101,6 +101,7 @@ Dir[search].each do |test_folder|
     #  print("(#{engine_class.name} !)")
     end
   end
+  debug("\n")
   results.each do |engine, took|
     if ENV["CSV"]
       print("," + took.to_s)
