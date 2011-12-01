@@ -1,0 +1,5 @@
+ts, Script, txt
+tb, Script, bin
+tsb, TransformScript, bin
+tpkg, TransformPackage, bin
+tpkg.gz, TransformPackage, gz(bin)
