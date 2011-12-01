@@ -12,6 +12,6 @@ end
 group :benchmark do
   gem 'rainbow'
   gem 'erubis'
-  #gem 'nagual'
+  gem 'nagual'
   gem 'beefcake'
 end
