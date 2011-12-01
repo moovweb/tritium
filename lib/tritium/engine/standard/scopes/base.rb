@@ -37,7 +37,7 @@ module Tritium
           when :time
             start = Time.now
             run_children(ins, ctx)
-            return ((Time.now - start).to_f * 100000).to_s
+            return ((Time.now - start).to_f * 1000000).to_s
           when :index
             index_ctx = ctx
             while index_ctx.index == nil
