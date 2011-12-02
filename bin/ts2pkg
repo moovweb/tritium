@@ -4,4 +4,6 @@ require_relative '../lib/tritium'
 require_relative '../lib/tritium/serializer/serializer'
 
 pkg = Tritium::Serializer.package(ARGV[0])
-print pkg.encode.to_s
+File.open(ARGV[1], "wb") { |f|
+  f.write(pkg.encode)
+}
