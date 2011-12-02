@@ -22,7 +22,11 @@ module Tritium
           when :replace_regexp
             ctx.value.gsub!(args.first) do |match|
               $~.captures.each_with_index do |arg, index|
-                @env["#{index + 1}"] = arg
+                if $~.names.length > 0 then
+                  @env["#{$~.names[index]}"] = arg
+                else
+                  @env["#{index + 1}"] = arg
+                end
               end
               match_ctx = Context[ins, match]
               run_children(ins, match_ctx)
