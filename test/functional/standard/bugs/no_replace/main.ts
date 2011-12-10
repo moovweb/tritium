@@ -1,4 +1,5 @@
-$test {
-  replace(/b/)
+$testcase = "this"
+$testcase {
+  replace(/(?<asdf>th)/)
 }
-set($test)
+set($testcase)
