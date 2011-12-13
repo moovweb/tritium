@@ -24,9 +24,8 @@ module Tritium
               $~.captures.each_with_index do |arg, index|
                 if $~.names.length > 0 then
                   @env["#{$~.names[index]}"] = arg
-                else
-                  @env["#{index + 1}"] = arg
                 end
+                @env["#{index + 1}"] = arg
               end
               match_ctx = Context[ins, match]
               run_children(ins, match_ctx)
