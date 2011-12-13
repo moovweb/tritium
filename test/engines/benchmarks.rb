@@ -8,8 +8,8 @@ require_relative '../../lib/tritium/engine/standard/engine'
 require 'rainbow'
 
 include Tritium::Engine
-require_relative '../../../nagual/lib/judy'
-require_relative '../../../viper/lib/viper'
+#require_relative '../../../nagual/lib/judy'
+#require_relative '../../../viper/lib/viper'
 require_relative '../../../snow/lib/snow'
 
 #ENV["CSV"] = "true"
@@ -22,13 +22,13 @@ log.level = Logger::ERROR
 totals = {}
 real_totals = {}
 print("\nscript_name")
-engines = [Standard, Viper::Engine, Snow::Engine]
+engines = [Standard, Snow::Engine]
 engines.each do |engine_class|
   print(",")
   print(engine_class.name)
 end
 print("\n")
-run_times = 5000
+run_times = 1000
 if ENV["TIMES"]
   run_times = ENV["TIMES"].to_i
 end
