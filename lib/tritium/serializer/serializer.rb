@@ -2,6 +2,7 @@ module Tritium
   module Serializer
     require_relative 'instruction.pb'
     require_relative 'function.pb'
+    require_relative 'object.pb'
     require_relative 'package.pb'
     require_relative 'tritium.pb'
     require 'pp'
