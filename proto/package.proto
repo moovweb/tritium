@@ -1,0 +1,24 @@
+package tritium;
+
+import "function.proto";
+
+// Core data types must be enumerated in the message
+message Type {
+	optional string name = 1;
+}
+
+/* 
+	Structure representing a package of Tritium
+	types and functions.
+	
+	This is both used to store different packages headers and info (base, libxml, node, etc)
+	and is used in an Executable to bundle together needed headers, functions, etc
+*/
+message Package {
+	required string name = 1;
+	repeated Function functions = 2;
+	repeated Type types = 3;
+
+	// Only used in non-linked combined packages
+	repeated string dependent_package_names = 4;
+}

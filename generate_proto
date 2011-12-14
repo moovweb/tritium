@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-protoc --beefcake_out lib/tritium/serializer -I . tritium.proto
-protoc --go_out ../snow/src/tritium/ -I . tritium.proto

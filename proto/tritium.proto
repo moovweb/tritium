@@ -1,0 +1,22 @@
+package tritium;
+
+import "instruction.proto";
+import "package.proto";
+
+// Object representing a script
+// Possibly linked or not
+message Object {
+	optional string name = 1 [default='main'];
+	optional Instruction root = 2;
+	optional int32 scope_type_id = 3;
+}
+
+// A post-linking object for execution
+message Executable {
+	repeated Object objects = 1;
+	required Package pkg = 2;
+}
+
+message BlitzSlug {
+	repeated Executable transformers = 1;
+}
