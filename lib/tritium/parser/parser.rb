@@ -32,10 +32,10 @@ module Tritium
         @logger       = options[:logger]       || Logger.new(STDOUT)
         @expander     = options[:expander]     || MacroExpander.new
         @errors       = options[:errors]       || ScriptErrors.new
-        @macros_disabled = options[:macros_disabled] || false
+        @macros_disabled = true
         @starting_scope = options[:starting_scope] || "Text"
-        @skip_imports = options[:skip_imports] || false 
-        @is_expansion = options[:is_expansion] || false
+        @skip_imports = true
+        @is_expansion = false
         
         prefix, base = File.dirname(@filename), File.basename(@filename)
         prefix = "" if prefix == "."
@@ -90,7 +90,7 @@ module Tritium
         begin
           @result = inline_block
           @result.scope_name = @starting_scope
-          @result.post_process!# unless @is_expansion
+          #@result.post_process!# unless @is_expansion
         rescue ScriptErrors
           # dont' do anything
         rescue ParserError => e
