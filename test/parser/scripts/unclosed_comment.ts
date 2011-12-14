@@ -1,3 +1,0 @@
-/*
-
-IT NEVER ENDS

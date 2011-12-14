@@ -1,3 +1,0 @@
-attribute("style") {
-  remove()
-}
