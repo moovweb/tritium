@@ -15,7 +15,7 @@ class Instruction
 
   required :type, Instruction::InstructionType, 1
   optional :value, :string, 2
-  optional :import_index, :int32, 3
+  optional :object_id, :int32, 3
   repeated :children, Instruction, 4
   repeated :arguments, Instruction, 5
   optional :function_id, :int32, 6
