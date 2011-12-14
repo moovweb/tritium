@@ -1,16 +1,4 @@
-require_relative 'spec/spec'
-
 module Tritium
-
-  def self.spec_file(version)
-    File.read(File.dirname(__FILE__) + "/../../spec.#{version}.yml")
-  end
-
-  def self.spec(version = nil)
-    @@specs ||= {}
-    version ||= current_api_version.to_s.gsub(".", "-")
-    @@specs[version] ||= Tritium::Spec.load(spec_file(version), version)
-  end
   
   def self.functional_test_location
     File.dirname(__FILE__) + "/../../test/functional"
