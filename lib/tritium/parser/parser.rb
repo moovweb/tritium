@@ -9,46 +9,21 @@ module Tritium
       require_relative 'parser_errors'
       include Instructions
 
-      attr :filename
-      attr :path
-      attr :imports
-      attr :logger
+      attr :file_path
       attr :expander
       attr :errors
       attr :tokens
       attr :script_string
-      attr :macros_disabled
-      attr :skip_imports
       
-      def initialize(script_string, options = {})
-        if script_string.is_a?(Hash)
-          options = script_string
-          script_string = nil
-        end
-        
-        @filename     = options[:filename]     || "MAIN"
-        @path         = options[:path]         || File.dirname(__FILE__)
-        @imports      = options[:imports]      || []
-        @logger       = options[:logger]       || Logger.new(STDOUT)
-        @expander     = options[:expander]     || MacroExpander.new
+      def initialize(path, options = {})
+        @file_path         = path
         @errors       = options[:errors]       || ScriptErrors.new
-        @macros_disabled = true
         @starting_scope = options[:starting_scope] || "Text"
-        @skip_imports = true
         @is_expansion = false
-        
-        prefix, base = File.dirname(@filename), File.basename(@filename)
-        prefix = "" if prefix == "."
-        @path = File.join(@path, prefix)
-        @filename = base
-        
-        if script_string.nil?
-          script_string = File.read(File.join(@path, @filename))
-        end
-        
-        @script_string = script_string.clone
-        
-        @tokens = Tokenizer.new(@script_string, filename: @filename)
+
+        @script_string = File.read(@file_path)
+
+        @tokens = Tokenizer.new(@script_string, file_path: @file_path)
         @line_num = @tokens.peek.line_num
       end
 
@@ -66,7 +41,7 @@ module Tritium
       private :pop!
 
       def cmd(klass, *rest)
-        klass.new(@filename, @line_num, *rest)
+        klass.new(nil, @line_num, *rest)
       end
       private :cmd
 
@@ -77,7 +52,7 @@ module Tritium
           errobj = LexicalError.new(unexpected)
           @errors << errobj
         else
-          errobj = SyntaxError.new(@filename, @line_num, message, unexpected)
+          errobj = SyntaxError.new(@file_path, @line_num, message, unexpected)
           @errors << errobj
         end
         raise errobj
@@ -122,7 +97,8 @@ module Tritium
         case peek.lexeme
         when :IMPORT then
           return import
-        when :VAR then
+        when :VAR, :LVAR then
+          # TODO: Handle LVAR later
           return reference
         when :ID then
           return invocation
@@ -134,26 +110,11 @@ module Tritium
       def import
         import_name = pop!.value
         import_file = File.absolute_path(File.join(@path, import_name))
-        if !File.exists?(import_file)
-          raise_error("missing import file (#{import_file})")
-        end
-        @imports << { importer: @filename, importee: import_name }
-        if @skip_imports
-          return cmd(Import, import_file)
-        else # actually process and include them
-          begin
-            script_string = File.read(import_file)
-            parser = Parser.new(script_string,
-                                filename: import_name,
-                                path: @path,
-                                imports: @imports,
-                                errors: @errors)
-          rescue Exception => e
-            @errors << e
-            return nil
-          end
-          return parser.inline_block
-        end
+        return cmd(Import, import_file)
+      end
+      
+      def local_var
+        return cmd(LocalVar, "var")
       end
 
       def reference
@@ -162,7 +123,7 @@ module Tritium
         when :EQUAL
           pop!  # pop the equal sign
           case peek.lexeme
-          when :STRING, :REGEXP, :VAR, :ID
+          when :STRING, :VAR, :ID
             value = term
           else
             raise_error("assigned value is not a valid term")
@@ -175,22 +136,7 @@ module Tritium
           args = { pos: [ var_name ] }
         end
         signature = [:var, args[:pos].length]
-        # If you have any number of keyword arguments, it only counts as one arg
-        if !@macros_disabled && @expander.is_macro?(signature)
-          stub = cmd(ExpansionInlineBlock)
-          macro_call = {
-            signature: signature,
-            pos_args: args[:pos],
-            kwd_args: args[:kwd],
-            block:    stmts,
-            parser:   self,
-            expansion_site: stub
-          }
-          @expander.expand(macro_call)
-          return stub
-        else
-          return cmd(Invocation, "var", [var_name], {}, stmts || [])
-        end
+        return cmd(Invocation, "var", [var_name], {}, stmts || [])
       end
 
       def invocation
@@ -207,24 +153,13 @@ module Tritium
         if args[:kwd].any?
           signature[1] += 1
         end
-        if !@macros_disabled && @expander.is_macro?(signature)
-          stub = cmd(ExpansionInlineBlock)
-          macro_call = { signature: signature,
-                         pos_args: args[:pos],
-                         kwd_args: args[:kwd],
-                         block:    stmts,
-                         parser:   self,
-                         expansion_site: stub}
-          @expander.expand(macro_call)
-          return stub
-        else
-          stmts = stmts ? [stmts] : []
-          instruction_klass = Invocation
-          if (func_name == :concat) || (func_name == :log)
-            instruction_klass = NestedInvocation
-          end
-          return cmd(instruction_klass, func_name, args[:pos], args[:kwd], *stmts)
+        stmts = stmts ? [stmts] : []
+        instruction_klass = Invocation
+        if (func_name == :concat) || (func_name == :log)
+          instruction_klass = NestedInvocation
         end
+        return cmd(instruction_klass, func_name, args[:pos], args[:kwd], *stmts)
+
       end
 
       def arguments

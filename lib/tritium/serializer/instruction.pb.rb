@@ -9,7 +9,7 @@ class Instruction
     BLOCK = 0
     FUNCTION_CALL = 1
     IMPORT = 2
-    LITERAL = 3
+    TEXT = 3
   end
 
   required :type, Instruction::InstructionType, 1

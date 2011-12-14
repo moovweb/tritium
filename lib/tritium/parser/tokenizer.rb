@@ -5,7 +5,7 @@ module Tritium
         attr_reader :filename, :line_num, :lexeme, :value
 
         def initialize(filename, line_num, lexeme, value = nil)
-          @filename, @line_num = filename, line_num
+          @line_num = line_num
           @lexeme, @value = lexeme, value
         end
 
@@ -152,6 +152,8 @@ module Tritium
             end
           when m = pop_match!(/^\$\w+/)
             return token(:VAR, m[1, m.length].intern)
+          when m = pop_match!(/^\%\w+/)
+            return token(:LVAR, m[1, m.length].intern)
           when m = pop_match!(/^[a-zA-Z_:][-\w:.]*:/)
             return token(:KWD, m[0, m.length-1].intern)
           when m = pop_match!(/^(\$|[_a-zA-Z](\w|\$)*)/)

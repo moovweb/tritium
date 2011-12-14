@@ -5,8 +5,7 @@ module Tritium
         attr :location
         
         def initialize(filename, line_num, import_path)
-          @filename, @line_num = filename, line_num
-          @statements = []
+          @line_num = line_num
           @location = import_path
         end
       end

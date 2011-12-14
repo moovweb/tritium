@@ -47,7 +47,7 @@ module Tritium
         attr_reader :filename, :line_num, :message, :value
 
         def initialize(filename, line_num, message, value)
-          @filename, @line_num = filename, line_num
+          @line_num = line_num
           @message, @value = message, value
         end
 
