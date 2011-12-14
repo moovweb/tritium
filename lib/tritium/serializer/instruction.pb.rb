@@ -10,6 +10,7 @@ class Instruction
     FUNCTION_CALL = 1
     IMPORT = 2
     TEXT = 3
+    LOCAL_VAR = 4
   end
 
   required :type, Instruction::InstructionType, 1

@@ -1,7 +1,7 @@
 module Tritium
   module Parser
     module Instructions
-      %w(base literal invocation block import).each do |file|
+      %w(base literal invocation block import local_var).each do |file|
         require_relative "instructions/#{file}"
       end
     end
