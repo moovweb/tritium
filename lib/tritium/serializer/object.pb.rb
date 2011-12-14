@@ -2,7 +2,7 @@
 require "beefcake"
 
 
-class Object
+class ScriptObject
   include Beefcake::Message
 
 

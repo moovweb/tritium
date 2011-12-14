@@ -6,7 +6,7 @@ class Executable
   include Beefcake::Message
 
 
-  repeated :objects, Object, 1
+  repeated :objects, ScriptObject, 1
   required :pkg, Package, 2
 
 end

@@ -5,7 +5,7 @@ import "package.proto";
 
 // A post-linking object for execution
 message Executable {
-	repeated Object objects = 1;
+	repeated ScriptObject objects = 1;
 	required Package pkg = 2;
 }
 
