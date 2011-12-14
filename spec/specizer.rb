@@ -4,7 +4,7 @@ types = file["Functions"]
 
 types.each do |type, functions|
   functions.each do |name, function|
-    stub = "func "
+    stub = "@func "
     if function['doc']
       stub =  ("// " + function['doc'] + "\n" + stub)
     end
