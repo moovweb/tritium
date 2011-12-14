@@ -1,4 +1,5 @@
-Debug: &debug
+
+Base:
   log:
     opens: Text
     doc: Writes out a string to the console and debug log
@@ -6,16 +7,6 @@ Debug: &debug
       - 
         name: Log message
         doc: Debug Line! Just type something!
-  debug:
-    doc: Write down everything! This request will be logged if you call this
-    hide: true
-    arguments:
-      -
-        name: Debug ID
-        doc: Whatever ID you give it, that will be how the project is written down in the debug database!
-
-Base:
-  include: Debug
   var:
     opens: Text
     alias: $
