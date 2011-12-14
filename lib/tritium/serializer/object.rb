@@ -45,7 +45,7 @@ module Tritium
       def convert_function_call(ins)
         func = Instruction.new(:type => Instruction::InstructionType::FUNCTION_CALL)
 
-        func.value = ins.name.to_s
+        func.value = ins.name.to_s.force_encoding("BINARY")
 
         func.children = convert_instructions(ins.statements)
         func.arguments = convert_instructions(ins.pos_args)
@@ -54,9 +54,9 @@ module Tritium
 
       def convert_literal(ins)
         if ins.regexp?
-          Instruction.new(:type => Instruction::InstructionType::FUNCTION_CALL,
-                          :value => "regexp".force_encoding("BINARY"),
-                          :children => [convert_text(ins)])
+          obj = Instruction.new("type" => Instruction::InstructionType::FUNCTION_CALL)
+          obj.value = "regexp".force_encoding("BINARY")
+          obj.children = [convert_text(ins)]
         else
           convert_text(ins)
         end

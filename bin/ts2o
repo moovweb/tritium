@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/tritium'
+require_relative '../lib/tritium/serializer/serializer'
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: filename.ts filename.to"
+
+  opts.on("-s", "--stdout", "Print to STDOUT") do |s|
+    options[:standard_out] = s
+  end
+end.parse!
+
+result = Tritium::Serializer.script(ARGV[0])
+
+if options[:standard_out]
+  puts result
+else
+  File.open(ARGV[1], "wb") { |f| f.write(result) }
+end
