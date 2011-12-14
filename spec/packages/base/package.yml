@@ -1,0 +1,6 @@
+base:
+  packages:
+    # None, this is the base package, dork!
+  types:
+    Text:
+    Regexp:

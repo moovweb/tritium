@@ -1,0 +1,7 @@
+node:
+  packages:
+    base:
+  types:
+    Node:
+      interface: true
+    Position:

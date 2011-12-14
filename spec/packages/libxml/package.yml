@@ -1,0 +1,9 @@
+libxml:
+  packages:
+    base:
+    node:
+  types:
+    XmlNode:
+      implements: Node
+    Attribute:
+
