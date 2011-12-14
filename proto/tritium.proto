@@ -1,15 +1,7 @@
 package tritium;
 
-import "instruction.proto";
+import "object.proto";
 import "package.proto";
-
-// Object representing a script
-// Possibly linked or not
-message Object {
-	optional string name = 1 [default='main'];
-	optional Instruction root = 2;
-	optional int32 scope_type_id = 3;
-}
 
 // A post-linking object for execution
 message Executable {

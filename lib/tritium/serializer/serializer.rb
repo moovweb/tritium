@@ -1,44 +1,18 @@
 module Tritium
-  class Serializer
+  module Serializer
+    require_relative 'instruction.pb'
+    require_relative 'function.pb'
+    require_relative 'package.pb'
     require_relative 'tritium.pb'
     require 'pp'
-    attr :instructions
-    attr :transform
-    
-    def self.package(directory)
-      set = TransformPackage.new(:transforms => [])
-      scripts = %w(request response_pre body response_post)
-      scripts.each do |script|
-        file = File.join(directory, script + ".ts")
-        if !File.exist?(file)
-          raise "Expected there to be a file #{file}"
-        end
-      end
-      scripts.each do |script|
-        puts "Starting #{script}"
-        file_path = File.join(directory, script + ".ts")
-        serializer = Serializer.new(file_path, script)
-        serializer.process!
-        set.transforms << serializer.transform
-      end
-      set
-    end
-    
-    def initialize(main_file, name = "")
-      @main_file = main_file
-      @transform = TransformScript.new(:scripts => [], :name => name.force_encoding("BINARY"))
-      @processed = []
-      @instructions = []
-      @imports = [main_file]
-      @import_scopes = ["Text"]
-    end
+    require_relative 'object'
     
     def encode
       @transform.encode
     end
     
     def process!
-      process_file(@main_file)
+      process_file(@ts_file)
     end
 
     def process_file(ts_file)
