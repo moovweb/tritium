@@ -1,5 +1,5 @@
 ts, Script, txt
-tb, Script, bin
-tsb, TransformScript, bin
-tpkg, TransformPackage, bin
-tpkg.gz, TransformPackage, gz(bin)
+to, ScriptObject, bin
+tb, Tritium Transformation Ready-to-run, bin
+slug, BlitzSlug, bin
+slug.gz, BlitzSlug, gz(bin)
