@@ -1,9 +1,0 @@
-#!/usr/bin/env ruby
-
-require_relative '../lib/tritium'
-require_relative '../lib/tritium/serializer/serializer'
-
-pkg = Tritium::Serializer.package(ARGV[0])
-File.open(ARGV[1], "wb") { |f|
-  f.write(pkg.encode)
-}

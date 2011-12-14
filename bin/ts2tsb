@@ -1,9 +1,0 @@
-#!/usr/bin/env ruby
-
-require_relative '../lib/tritium'
-require_relative '../lib/tritium/serializer/serializer'
-
-serializer = Tritium::Serializer.new(ARGV[0])
-serializer.process!
-print serializer.encode.to_s
-#File.join(File.dirname(__FILE__), "../test/parser/scripts/basic.ts"))
