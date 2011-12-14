@@ -36,10 +36,8 @@ module Tritium
       end
 
       def convert_block(ins)
-        obj = Instruction.new(:type => Instruction::InstructionType::BLOCK,
-                                :children => convert_instructions(ins.statements))
-        #set_scope(ins, obj)
-        obj
+        Instruction.new(:type => Instruction::InstructionType::BLOCK,
+                        :children => convert_instructions(ins.statements))
       end
 
       def convert_function_call(ins)
