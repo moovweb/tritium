@@ -1,0 +1,9 @@
+
+
+
+
+
+@func Text.inherit() //Text
+
+
+

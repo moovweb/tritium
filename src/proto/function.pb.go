@@ -15,7 +15,7 @@ var _ os.Error
 type Function struct {
 	Name             *string              `protobuf:"bytes,1,opt,name=name" json:"name"`
 	TypeId           *int32               `protobuf:"varint,2,opt,name=type_id" json:"type_id"`
-	ReturnTypeId     *int32               `protobuf:"varint,3,req,name=return_type_id" json:"return_type_id"`
+	ReturnTypeId     *int32               `protobuf:"varint,3,opt,name=return_type_id" json:"return_type_id"`
 	OpensTypeId      *int32               `protobuf:"varint,4,opt,name=opens_type_id" json:"opens_type_id"`
 	BuiltIn          *bool                `protobuf:"varint,5,opt,name=built_in" json:"built_in"`
 	Args             []*Function_Argument `protobuf:"bytes,6,rep,name=args" json:"args"`

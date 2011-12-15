@@ -5,4 +5,5 @@ func main() {
 	pkg.Load("packages/base")
 	pkg.Load("packages/node")
 	pkg.Load("packages/libxml")
+	println(string(pkg.Marshal()))
 }

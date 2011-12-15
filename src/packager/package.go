@@ -45,6 +45,15 @@ func (pkg *Package)Load(location string) {
 		typeObj.Name = proto.String(typeName)
 		pkg.Types = append(pkg.Types, typeObj)
 	}
+	pkg.readHeaderFile(location)
+}
+
+func (pkg *Package)Marshal() []byte {
+	bytes, err := proto.Marshal(pkg.Package)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return bytes
 }
 
 func (pkg *Package)findTypeIndex(name string) int {
@@ -53,7 +62,7 @@ func (pkg *Package)findTypeIndex(name string) int {
 			return index
 		}
 	}
-	log.Fatal("Bad type load order, type", name, "uknown")
+	log.Fatal("Bad type load order, type", name, "unknown")
 	return -1
 }
 
@@ -69,3 +78,57 @@ func readPackageInfoFile(location string) (*PackageInfo){
 	return packageInfo
 }
 
+
+// Not fully functional. Dang it.
+func (pkg *Package)readHeaderFile(location string) {
+	headerFile, err := ioutil.ReadFile(location + "/headers.tf");
+	if err != nil {
+		log.Fatal("No header file found at " + location + "/headers.tf")
+	}
+	headerLines := strings.Split(string(headerFile), "\n")
+	for _, line := range(headerLines) {
+		if (len(line) > 2) && (line[:2] != "//") {
+			function := &tp.Function{Args: make([]*tp.Function_Argument, 0)}
+			line = line[6:]
+			methodName := strings.Split(line, "(")[0]
+			typeId := 0
+			back := line[len(methodName)+1:]
+			methodizer := strings.Split(methodName, ".")
+			if len(methodizer) > 1 {
+				typeStr := methodizer[0]
+				typeId = pkg.findTypeIndex(typeStr)
+				methodName = methodizer[1]
+			}
+			function.Name = proto.String(methodName)
+			function.TypeId = proto.Int32(int32(typeId))
+
+			splat := strings.Split(back, ")")
+			argString := splat[0]
+			// Process the arguments
+			if len(argString) > 0 {
+				argList := strings.Split(argString, ",")
+				for _, argLine := range(argList) {
+					arg := &tp.Function_Argument{}
+					typeStr := strings.Split(strings.Trim(argLine, " \t"), " ")[0]
+					typeId = pkg.findTypeIndex(typeStr)
+					arg.TypeId = proto.Int32(int32(typeId))
+					function.Args = append(function.Args, arg)
+				}
+			}
+			
+			back = splat[1]
+			
+			hintStrs := strings.Split(back, "//")
+			if len(hintStrs) == 2 {
+				hints := strings.Split(hintStrs[1], ",")
+				if len(hints) >= 1 {
+					 function.ReturnTypeId = proto.Int32(int32(pkg.findTypeIndex(hints[0])))
+				}
+				if len(hints) >= 2 {
+					 function.OpensTypeId = proto.Int32(int32(pkg.findTypeIndex(hints[1])))
+				}
+			}
+			pkg.Functions = append(pkg.Functions, function)
+		}
+	}
+}

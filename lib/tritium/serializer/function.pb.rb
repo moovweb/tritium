@@ -16,7 +16,7 @@ class Function
 
   optional :name, :string, 1
   optional :type_id, :int32, 2
-  required :return_type_id, :int32, 3
+  optional :return_type_id, :int32, 3
   optional :opens_type_id, :int32, 4
   optional :built_in, :bool, 5
   repeated :args, Function::Argument, 6
