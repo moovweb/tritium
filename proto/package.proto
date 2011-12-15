@@ -5,6 +5,7 @@ import "function.proto";
 // Core data types must be enumerated in the message
 message Type {
 	optional string name = 1;
+	optional int64 implements = 2;
 }
 
 /* 
