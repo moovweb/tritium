@@ -37,7 +37,7 @@ module Tritium
           @script_string = File.read(@script_location)
         end
         
-        parse!
+        @root_instruction = parse!
       end
       
       def parse!
