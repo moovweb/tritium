@@ -25,8 +25,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   s.add_dependency('nokogiri')
-  s.add_dependency('bundler')
   s.add_dependency('beefcake')
   s.add_dependency('diff-lcs', ['~> 1.1.2'])
-  s.add_development_dependency('moov_build_tasks', ['~> 0.2.24'])
+  s.add_development_dependency('moov_build_tasks', ['~> 0.2.0'])
 end
