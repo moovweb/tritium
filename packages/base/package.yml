@@ -1,6 +1,6 @@
-base:
-  packages:
-    # None, this is the base package, dork!
-  types:
-    Text:
-    Regexp:
+name: base
+# None, this is the base package, dork!
+packages: []
+types:
+  - Text
+  - Regexp

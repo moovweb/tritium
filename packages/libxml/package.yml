@@ -1,9 +1,6 @@
-libxml:
-  packages:
-    base:
-    node:
-  types:
-    XmlNode:
-      implements: Node
-    Attribute:
-
+name: libxml
+dependencies:
+  - node
+types:
+  - XmlNode < Node
+  - Attribute

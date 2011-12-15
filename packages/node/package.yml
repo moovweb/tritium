@@ -1,7 +1,6 @@
-node:
-  packages:
-    base:
-  types:
-    Node:
-      interface: true
-    Position:
+name: node
+dependencies:
+  - base
+types:
+  - Node
+  - Position

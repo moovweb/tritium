@@ -7,6 +7,7 @@ class Type
 
 
   optional :name, :string, 1
+  optional :implements, :int32, 2
 
 end
 

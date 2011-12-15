@@ -14,6 +14,7 @@ var _ os.Error
 
 type Type struct {
 	Name             *string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Implements       *int32  `protobuf:"varint,2,opt,name=implements" json:"implements"`
 	XXX_unrecognized []byte
 }
 
