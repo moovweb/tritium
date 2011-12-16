@@ -1,4 +1,0 @@
-inner() {
-  set(@1)
-  yield()
-}

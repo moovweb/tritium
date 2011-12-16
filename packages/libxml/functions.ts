@@ -11,6 +11,12 @@
       set(%value) }
     yield() } }
 
+@func XMLNode.inner_wrap(Text %tag_name) {
+  inner() {
+    prepend(concat("<", concat(%tag_name), ">"))
+    append(concat("</", concat(%tag_name), ">")) }
+  select("./*[1]") {
+    yield() } }
 
 @func XMLNode.absolutize() {
   # Absolutize IMG and SCRIPT SRCs

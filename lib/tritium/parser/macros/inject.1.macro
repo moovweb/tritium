@@ -1,3 +1,0 @@
-inject_at("bottom", @1) {
-  yield()
-}

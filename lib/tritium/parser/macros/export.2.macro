@@ -1,4 +1,0 @@
-export(@1) {
-  set(@2)
-  yield()
-}

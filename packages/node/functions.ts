@@ -16,5 +16,14 @@
       yield() } } }
 
 @func Node.copy_to(Text %xpath) {
-  copy_to(@1, position()) {
+  copy_to(%xpath, position()) {
+    yield() } }
+
+@func Node.inject(Text %html) {
+  inject_at("bottom", %html) {
+    yield() } }
+    
+@func Node.inner(Text %html) {
+  inner() {
+    set(%html) 
     yield() } }
