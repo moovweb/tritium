@@ -8,14 +8,17 @@
 // This is how you access the node stack. The current node is node(1), and the parent node is node(2)
 @func node(Text %index) //Node,Node
 
+// Casts a string to a Position node
+@func position(Text %position) //Position
+
 // Search the tree and select all matching nodes
-@func Node.select(Text %xpath_selector) //Node
+@func Node.select(Text %xpath_selector) //Text
 
 // Opens up the contents to text modification. All XML will get escaped.
 @func Node.text() //Text,Text
 
 // Move the first node, to the second node.
-@func Node.move(Node %what, Node %where) //Node
+@func Node.move(Node %what, Node %where, Position %pos) //Text
 
 // Copies the node and yields to it
 @func Node.dup() //Node

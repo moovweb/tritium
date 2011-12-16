@@ -1,6 +1,0 @@
-$(@1) {
-  dup() {
-    move(@2, node(1), node(3))
-    yield()
-  }
-}

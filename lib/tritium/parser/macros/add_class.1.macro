@@ -1,7 +1,0 @@
-attribute("class") {
-  value() {
-    append(" ")
-    append(@1)
-  }
-  yield()
-}

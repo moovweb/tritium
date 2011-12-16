@@ -1,3 +1,0 @@
-log(concat(@1, ": ", time() { 
-  yield()
-}, "µs"))
