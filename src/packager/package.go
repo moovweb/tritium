@@ -1,4 +1,4 @@
-package main
+package packager
 
 import(
 	tp "tritium/proto"
@@ -18,6 +18,15 @@ type PackageInfo struct {
 	Name string
 	Dependencies []string
 	Types []string
+}
+
+func BuildDefaultPackage() (*Package) {
+	// Terrible directory handling here... has to be executed from Tritium root
+	pkg := NewPackage()
+	pkg.Load("packages/base")
+	pkg.Load("packages/node")
+	pkg.Load("packages/libxml")
+	return pkg
 }
 
 func NewPackage() (*Package){
