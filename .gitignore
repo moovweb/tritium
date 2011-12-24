@@ -5,3 +5,5 @@ tmp/*
 pkg
 *.gem
 BUILD_VERSION
+bin/tritium
+src/tritium/tritium
