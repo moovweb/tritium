@@ -11,6 +11,8 @@ message Instruction {
 	// Linked: Function Reference
 	// Until this happens, value says the function call name
 	optional int32 function_id = 6;
+	
+	optional int32 line_number = 7;
 
 	enum InstructionType {
 		BLOCK = 0;

@@ -52,6 +52,7 @@ type Instruction struct {
 	Children         []*Instruction               `protobuf:"bytes,4,rep,name=children" json:"children"`
 	Arguments        []*Instruction               `protobuf:"bytes,5,rep,name=arguments" json:"arguments"`
 	FunctionId       *int32                       `protobuf:"varint,6,opt,name=function_id" json:"function_id"`
+	LineNumber       *int32                       `protobuf:"varint,7,opt,name=line_number" json:"line_number"`
 	XXX_unrecognized []byte
 }
 

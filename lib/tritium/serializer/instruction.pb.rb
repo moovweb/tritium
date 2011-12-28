@@ -19,5 +19,6 @@ class Instruction
   repeated :children, Instruction, 4
   repeated :arguments, Instruction, 5
   optional :function_id, :int32, 6
+  optional :line_number, :int32, 7
 
 end
