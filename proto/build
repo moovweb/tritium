@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 protoc --beefcake_out lib/tritium/serializer -I proto/ proto/tritium.proto
-protoc --go_out src/proto -I proto/ proto/*.proto
+protoc --go_out src/tritium/proto -I proto/ proto/*.proto
