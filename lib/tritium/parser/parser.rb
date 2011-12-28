@@ -109,7 +109,7 @@ module Tritium
       
       def import
         import_name = pop!.value
-        import_file = File.absolute_path(File.join(@path, import_name))
+        import_file = File.absolute_path(File.join(@file_path, import_name))
         return cmd(Import, import_file)
       end
       
@@ -224,7 +224,8 @@ module Tritium
         when :READ
           pop!
           # Read relative to the current script file
-          file_to_read = File.join(@path, @token.value)
+          directory = File.join( File.split(@file_path)[0..-2] )
+          file_to_read = File.join(directory, @token.value)
           val = open(file_to_read).read
           return cmd(Literal, val)
         else

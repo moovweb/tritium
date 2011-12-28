@@ -4,6 +4,7 @@ module Tritium
       def initialize(ts_file)
         @path = File.absolute_path(ts_file).force_encoding("BINARY")
         @object = ::ScriptObject.new(:name => @path)
+        @imports = []
       end
       
       def process
@@ -70,7 +71,7 @@ module Tritium
       def convert_import(ins)
         if !@imports.include?(ins.location)
           @imports << ins.location
-          @import_scopes << ins.scope.name
+          # @import_scopes << ins.scope.name
         end
         obj = Instruction.new(:type => Instruction::InstructionType::IMPORT,
                                 :import_index => @imports.index(ins.location))
