@@ -26,14 +26,16 @@ module Tritium
 
       def convert_instruction(ins)
         if ins.is_a? Tritium::Parser::Instructions::Invocation
-          convert_function_call(ins)
+          o = convert_function_call(ins)
         elsif ins.is_a? Tritium::Parser::Instructions::Literal
-          convert_literal(ins)
+          o = convert_literal(ins)
         elsif ins.is_a? Tritium::Parser::Instructions::Import
-          convert_import(ins)
+          o = convert_import(ins)
         else 
-          convert_block(ins)
+          o = convert_block(ins)
         end
+        o.line_number = ins.line_num
+        return o
       end
 
       def convert_block(ins)
@@ -56,6 +58,7 @@ module Tritium
           obj = Instruction.new("type" => Instruction::InstructionType::FUNCTION_CALL)
           obj.value = "regexp".force_encoding("BINARY")
           obj.children = [convert_text(ins)]
+          obj
         else
           convert_text(ins)
         end
