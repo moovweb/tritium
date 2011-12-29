@@ -102,6 +102,8 @@ module Tritium
           return reference
         when :ID then
           return invocation
+        when :STRING, :REGEXP
+          return term
         else
           raise_error("invalid statement")
         end
