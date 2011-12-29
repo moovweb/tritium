@@ -32,10 +32,9 @@ class ScriptToObjectTest < MiniTest::Unit::TestCase
              "'a'" => TEXT,
              '"a"' => TEXT,
              "@import a" => IMPORT }
-     
+
     tests.each do |script, type| 
        obj = compile_script(script)
-       #puts obj.inspect
        assert_equal type, obj.root.children.first.type
     end
   end
