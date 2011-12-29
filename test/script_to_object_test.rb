@@ -4,6 +4,7 @@ require_relative '../lib/tritium/serializer'
 require 'tempfile'
 
 class ScriptToObjectTest < MiniTest::Unit::TestCase
+  include ::Instruction::InstructionType
   
   def test_simple_var_script
     obj = compile_script("var('a')")
@@ -11,18 +12,32 @@ class ScriptToObjectTest < MiniTest::Unit::TestCase
     assert obj.name.size > 0, :message => "Must have a filename set"
     assert_equal ::Instruction, obj.root.class
     root = obj.root
-    assert_equal ::Instruction::InstructionType::BLOCK, root.type
+    assert_equal BLOCK, root.type
     assert_equal nil, root.value
     assert_equal 1, root.children.size
     var_call = root.children.first
-    assert_equal ::Instruction::InstructionType::FUNCTION_CALL, var_call.type
+    assert_equal FUNCTION_CALL, var_call.type
     assert_equal "var", var_call.value
     assert_equal nil, var_call.children
     
     literal = var_call.arguments.first
-    assert_equal ::Instruction::InstructionType::TEXT, literal.type
+    assert_equal TEXT, literal.type
     assert_equal "a", literal.value
-
+  end
+  
+  def test_instruction_types
+    tests = {"/a/" => FUNCTION_CALL,
+             "$a"  => FUNCTION_CALL,
+             #"%a"  => LOCAL_VAR,
+             "'a'" => TEXT,
+             '"a"' => TEXT,
+             "@import a" => IMPORT }
+     
+    tests.each do |script, type| 
+       obj = compile_script(script)
+       #puts obj.inspect
+       assert_equal type, obj.root.children.first.type
+    end
   end
   
   # ============ Helper methods ===============
