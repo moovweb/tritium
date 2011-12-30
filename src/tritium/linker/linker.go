@@ -1,8 +1,11 @@
 package linker
 
 import(
-	//proto "tritium/proto"
+	tp "tritium/proto"
 	packager "tritium/packager"
+	. "io/ioutil"
+	. "path"
+	"log"
 )
 
 func RunLinker(directory string) {
@@ -10,8 +13,9 @@ func RunLinker(directory string) {
 	// now) ./bin/ts2o AND possibly a package file. However, we can just ignore the "custom"
 	// package file for now, and load up the object that comes in from the Packager.
 	//
-	//
 	exec := NewExecutable(packager.BuildDefaultPackage())
+	objs := LoadScriptObjects(directory)
+	//exec.InsertObjects(objs)
 	// for each ScriptObject file in the directory
 	  // add script to t
 	// t.ProcessImports() (change string in Instruction objects to import_id)
@@ -26,5 +30,24 @@ func RunLinker(directory string) {
 		// Set the function_id if it is real, error otherwise
 	// optionally, remove functions from pkg that aren't used (dead code removal)
 	// Now, return the Transformer object.
-	println("THIS IS WHERE LINKING HAPPENS!!!! ZOMG!", exec)
+	println("THIS IS WHERE LINKING HAPPENS!!!! ZOMG!", exec, objs)
+}
+
+func LoadScriptObjects(dir string) ([]*tp.ScriptObject) {
+	objs := make([]*tp.ScriptObject, 0)
+	files, err := ReadDir(dir)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, file := range(files) {
+		fullPath := Join(dir, file.Name)
+		if Ext(fullPath) == ".to" {
+			println("Found object file! ", fullPath)
+		}
+	}
+	if len(objs) == 0 {
+		log.Fatal("No files found in ", dir)
+	}
+	
+	return objs
 }
