@@ -7,6 +7,9 @@ OptionParser.new do |opts|
   opts.on("-s", "--stdout", "Print to STDOUT") do |s|
     options[:standard_out] = s
   end
+  opts.on("-d DIRECTORY", "--output-dir=DIRECTORY", "Output directory") do |o|
+    options[:output_directory] = o
+  end
 end.parse!
 
 require_relative 'exec_init' # Sets up bundler, etc
@@ -15,18 +18,34 @@ require_relative '../lib/tritium/serializer/serializer'
 
 filename = ARGV[0] || ""
 
+def process_file(filename, output_file)
+  result = Tritium::Serializer.script(filename)
+  File.open(output_file, "wb") { |f| f.write(result) }
+end
+
 if !File.exists?(filename)
   puts "No file found!"
   exit(1)
 else # run command!
-  result = Tritium::Serializer.script(ARGV[0])
+  if File.directory?(filename)
+    input_dir = filename
+    puts "IS DIRECTORY"
+    
+    # If we don't specify an output dir, then get a decent one!
+    if options[:output_directory].nil? 
+      options[:output_directory] = input_dir
+    end
 
-  if options[:standard_out]
-    print result
-  elsif ARGV[1]
-    File.open(ARGV[1], "wb") { |f| f.write(result) }
+    Dir[input_dir + "/*.ts"].each do |file|
+      file = File.absolute_path(file)
+      output_name = file.split("/").last[0..-4] + ".to"
+      puts file.inspect
+      puts output_name
+      output_file = File.join(options[:output_directory], output_name)
+      puts output_file
+      process_file(file, output_file)
+    end
   else
-    puts "Needs second argument for output file"
-    exit(1)
+    process_file(filename, ARGV[1])
   end
 end
