@@ -1,13 +1,17 @@
 package linker
 
+import(
+	//proto "tritium/proto"
+	packager "tritium/packager"
+)
+
 func RunLinker(directory string) {
 	// This is run against a directory with a bunch of .tso files (generated in Ruby for
 	// now) ./bin/ts2o AND possibly a package file. However, we can just ignore the "custom"
 	// package file for now, and load up the object that comes in from the Packager.
 	//
 	//
-	// pkg = ReadPackage(directory) or BuildDefaultPackage()
-	// t := NewExecutable(pkg) (this is a Proto object!)
+	exec := NewExecutable(packager.BuildDefaultPackage())
 	// for each ScriptObject file in the directory
 	  // add script to t
 	// t.ProcessImports() (change string in Instruction objects to import_id)
@@ -22,5 +26,5 @@ func RunLinker(directory string) {
 		// Set the function_id if it is real, error otherwise
 	// optionally, remove functions from pkg that aren't used (dead code removal)
 	// Now, return the Transformer object.
-	println("THIS IS WHERE LINKING HAPPENS!!!! ZOMG!")
+	println("THIS IS WHERE LINKING HAPPENS!!!! ZOMG!", exec)
 }
