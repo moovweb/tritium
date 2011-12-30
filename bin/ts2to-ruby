@@ -28,7 +28,7 @@ if !File.exists?(filename)
   exit(1)
 else # run command!
   if File.directory?(filename)
-    input_dir = filename
+    input_dir = File.absolute_path(filename)
     puts "IS DIRECTORY"
     
     # If we don't specify an output dir, then get a decent one!
@@ -36,13 +36,12 @@ else # run command!
       options[:output_directory] = input_dir
     end
 
-    Dir[input_dir + "/*.ts"].each do |file|
-      file = File.absolute_path(file)
-      output_name = file.split("/").last[0..-4] + ".to"
-      puts file.inspect
-      puts output_name
+    files = Dir[input_dir + "/*.ts"]
+    files += Dir[input_dir + "/**/*.ts"]
+    files.each do |file|
+      output_name = (file[(input_dir.length + 1)..-4] + ".to").gsub("/", "__")
       output_file = File.join(options[:output_directory], output_name)
-      puts output_file
+      puts file.inspect
       process_file(file, output_file)
     end
   else
