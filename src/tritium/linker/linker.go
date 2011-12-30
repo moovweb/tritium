@@ -6,6 +6,7 @@ import(
 	. "io/ioutil"
 	. "path"
 	"log"
+	proto "goprotobuf.googlecode.com/hg/proto"
 )
 
 func RunLinker(directory string) {
@@ -15,21 +16,9 @@ func RunLinker(directory string) {
 	//
 	exec := NewExecutable(packager.BuildDefaultPackage())
 	objs := LoadScriptObjects(directory)
-	//exec.InsertObjects(objs)
-	// for each ScriptObject file in the directory
-	  // add script to t
-	// t.ProcessImports() (change string in Instruction objects to import_id)
-	// t.ProcessInstructions()
-		// Figure out function signature (name + arg types)
-			// have to start at the bottom of the tree (args first) and check types.
-		// Is this a real function?
-			// aka, text(regexp()) ... have to see that regexp returns Regexp object,
-			// which, then, when we go to process text() we notice we don't have a text(Regexp) 
-			// function, so we need to throw a reasonable error
-			// Hrrrm.... need line numbers, huh?
-		// Set the function_id if it is real, error otherwise
-	// optionally, remove functions from pkg that aren't used (dead code removal)
-	// Now, return the Transformer object.
+	exec.ProcessObjects(objs)
+	
+	// Now, return the Execution object.
 	println("THIS IS WHERE LINKING HAPPENS!!!! ZOMG!", exec, objs)
 }
 
@@ -42,11 +31,19 @@ func LoadScriptObjects(dir string) ([]*tp.ScriptObject) {
 	for _, file := range(files) {
 		fullPath := Join(dir, file.Name)
 		if Ext(fullPath) == ".to" {
-			println("Found object file! ", fullPath)
+			obj := &tp.ScriptObject{}
+			toFile, _ := ReadFile(fullPath);
+			err = proto.Unmarshal(toFile, obj)
+			if err != nil {
+				log.Fatal(err)
+			}
+			objs = append(objs, obj)
 		}
 	}
 	if len(objs) == 0 {
 		log.Fatal("No files found in ", dir)
+	} else {
+		println("Read in", len(objs), "objects")
 	}
 	
 	return objs
