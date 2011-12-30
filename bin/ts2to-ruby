@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+require "optparse"
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: filename.ts filename.to"
+
+  opts.on("-s", "--stdout", "Print to STDOUT") do |s|
+    options[:standard_out] = s
+  end
+end.parse!
+
+require_relative 'exec_init' # Sets up bundler, etc
+require_relative '../lib/tritium'
+require_relative '../lib/tritium/serializer/serializer'
+
+filename = ARGV[0] || ""
+
+if !File.exists?(filename)
+  puts "No file found!"
+  exit(1)
+else # run command!
+  result = Tritium::Serializer.script(ARGV[0])
+
+  if options[:standard_out]
+    print result
+  elsif ARGV[1]
+    File.open(ARGV[1], "wb") { |f| f.write(result) }
+  else
+    puts "Needs second argument for output file"
+    exit(1)
+  end
+end

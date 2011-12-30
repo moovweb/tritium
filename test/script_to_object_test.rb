@@ -6,7 +6,7 @@ require 'tempfile'
 class ScriptToObjectTest < MiniTest::Unit::TestCase
   include ::Instruction::InstructionType
   
-  def test_simple_var_script
+  def test_var_script
     obj = compile_script("var('a')")
     #puts obj.inspect
     assert obj.name.size > 0, :message => "Must have a filename set"
@@ -18,7 +18,7 @@ class ScriptToObjectTest < MiniTest::Unit::TestCase
     var_call = root.children.first
     assert_equal FUNCTION_CALL, var_call.type
     assert_equal "var", var_call.value
-    assert_equal nil, var_call.children
+    assert_equal [], (var_call.children || [])
     
     literal = var_call.arguments.first
     assert_equal TEXT, literal.type
