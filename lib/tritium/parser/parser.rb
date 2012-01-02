@@ -111,7 +111,7 @@ module Tritium
       
       def import
         import_name = pop!.value
-        import_file = File.absolute_path(File.join(@file_path, import_name))
+        import_file = File.absolute_path(File.join(File.dirname(@file_path), import_name))
         return cmd(Import, import_file)
       end
       
