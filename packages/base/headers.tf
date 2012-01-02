@@ -25,6 +25,9 @@
 // Used with match($var, /hi/)
 @func with(Regexp %regexp) //Text
 
+// Always matches
+@func else() //Text
+
 // Any value passed into this function will return a regex --- ready for fancy replace() or match() usage. NOTE! Use hard-coded regex if you can. This is much slower than hard-coding regex!
 @func regexp(Text %expression) //Regexp,Text
 
