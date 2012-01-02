@@ -1,0 +1,3 @@
+rm -rf tmp/*
+./bin/ts2to ../projects/macys/scripts -d tmp/
+./bin/tritium link tmp/
