@@ -25,6 +25,12 @@ class ScriptToObjectTest < MiniTest::Unit::TestCase
     assert_equal "a", literal.value
   end
   
+  def test_import
+    script = compile_script("@import hello.ts")
+    import_instruction = script.root.children.first
+    assert import_instruction.value != nil
+  end
+  
   def test_instruction_types
     tests = {"/a/" => FUNCTION_CALL,
              "$a"  => FUNCTION_CALL,
