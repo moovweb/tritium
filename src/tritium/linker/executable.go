@@ -3,6 +3,7 @@ package linker
 import(
 	tp "tritium/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
+	"log"
 	. "tritium/packager"
 )
 
@@ -54,8 +55,14 @@ func (exec *Executable) ProcessObjects(objs []*tp.ScriptObject) {
 			if *ins.Type == tp.Instruction_IMPORT {
 				// set its import_id and blank the value field
 				importValue := proto.GetString(ins.Value)
-				println("Found import!", importValue)
-				println("Index is...", objScriptNameLookupMap[importValue])
+				importId := objScriptNameLookupMap[importValue]
+				if importId == 0 {
+					log.Fatal("Invalid import for ", proto.GetString(obj.Name), ins.String())
+				}
+				//println("befor", ins.String())
+				ins.ObjectId = proto.Int(importId)
+				ins.Value = nil
+				//println("after", ins.String())
 			}
 			// if function
 				// Figure out function signature (name + arg types)
