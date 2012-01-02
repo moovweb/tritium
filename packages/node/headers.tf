@@ -33,4 +33,4 @@
 @func Node.inject(Text %html) //Text
 
 // Create a new node and insert it at the location specified
-@func Node.insert(Text %tag_name) //Text
+@func Node.insert_at(Position %pos, Text %tag_name) //Text

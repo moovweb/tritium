@@ -1,4 +1,5 @@
 // Looks up a global variable
+@func var(Text %name) //Text,Text
 @func var(Text %name, Text %value) //Text,Text
 
 // If given a block, it returns the time-to-execute as a string (time units vary by implementation)

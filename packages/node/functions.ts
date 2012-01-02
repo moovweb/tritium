@@ -27,3 +27,16 @@
   inner() {
     set(%html) 
     yield() } }
+
+@func Node.insert(Text %value) {
+  insert_at(position("bottom"), %value)
+}
+@func Node.insert_top(Text %value) {
+  insert_at(position("top"), %value)
+}
+@func Node.insert_after(Text %value) {
+  insert_at(position("after"), %value)
+}
+@func Node.insert_before(Text %value) {
+  insert_at(position("before"), %value)
+}
