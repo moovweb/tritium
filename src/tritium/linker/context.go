@@ -17,14 +17,14 @@ func NewLinkingContext(pkg *Package, objs []*tp.ScriptObject) (*LinkingContext){
 	
 	// Setup object script lookup map!
 	objScriptLookup := make(map[string]int, len(objs))
-	for objIndex, obj := range(objs) {
-		objScriptLookup[proto.GetString(obj.Name)] = objIndex
+	for index, obj := range(objs) {
+		objScriptLookup[proto.GetString(obj.Name)] = index
 	}
 	
 	// Setup the function map!
 	functionLookupMap := make(map[string]int, len(pkg.Functions))
-	for _, fun := range(pkg.Functions) {
-		println("Func!", fun.Stub())
+	for index, fun := range(pkg.Functions) {
+		functionLookupMap[fun.Stub()] = index
 	}
 	
 	// Setup the main context object
@@ -44,7 +44,6 @@ func (ctx *LinkingContext) Link() {
 	for _, obj := range(ctx.Objects) {
 		instructionList := make([]*tp.Instruction, 0)
 		instructionList = append(instructionList, obj.Root)
-
 		/* 
 			This is how I am currently looping through all of the 
 			instructions. The array above is going to end up being
