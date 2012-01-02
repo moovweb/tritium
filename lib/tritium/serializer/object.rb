@@ -76,8 +76,9 @@ module Tritium
           # @imports << ins.location
           # @import_scopes << ins.scope.name
         end
+        puts "Import! #{ins.location}"
         obj = Instruction.new(:type => Instruction::InstructionType::IMPORT,
-                              :value => ins.location)
+                              :value => ins.location.force_encoding("BINARY"))
 
       end
     end
