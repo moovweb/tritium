@@ -23,7 +23,33 @@ func (exec *Executable) ProcessObjects(objs []*tp.ScriptObject) {
 	// Add script objects to the exec
 	exec.Objects = objs
 	
-	exec.ProcessImports() //(change string in Instruction objects to import_id)
+	// Loop through all the objects, and get the index of every
+	// script object name.
+	objScriptNameLookupMap := make(map[string]int, 0)
+	for objIndex, obj := range(exec.Objects) {
+		objScriptNameLookupMap[proto.GetString(obj.Name)] = objIndex
+	}
+	
+	for _, obj := range(exec.Objects) {
+		instructionList := make([]*tp.Instruction, 0)
+		instructionList = append(instructionList, obj.Root)
+		//(change string in Instruction objects to import_id)
+		for i := 0; i < len(instructionList); i++ {
+			ins := instructionList[i]
+			if ins.Children != nil {
+				for _, child := range(ins.Children) {
+					instructionList = append(instructionList, child)
+				}
+				
+			}
+			if *ins.Type == tp.Instruction_IMPORT {
+				importValue := proto.GetString(ins.Value)
+				println("Found import!", importValue)
+				println("Index is...", objScriptNameLookupMap[importValue])
+			}
+		}
+	}
+	
 	// t.ProcessInstructions()
 		// Figure out function signature (name + arg types)
 			// have to start at the bottom of the tree (args first) and check types.
@@ -34,11 +60,4 @@ func (exec *Executable) ProcessObjects(objs []*tp.ScriptObject) {
 			// Hrrrm.... need line numbers, huh?
 		// Set the function_id if it is real, error otherwise
 	// optionally, remove functions from pkg that aren't used (dead code removal)
-}
-
-func (exec *Executable) ProcessImports() {
-	for _, obj := range(exec.Objects) {
-		// RESOLVE IMPORTS HERE!
-		println(proto.GetString(obj.Name))
-	}
 }
