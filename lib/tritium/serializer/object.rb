@@ -73,11 +73,11 @@ module Tritium
 
       def convert_import(ins)
         if !@imports.include?(ins.location)
-          @imports << ins.location
+          # @imports << ins.location
           # @import_scopes << ins.scope.name
         end
         obj = Instruction.new(:type => Instruction::InstructionType::IMPORT,
-                                :import_index => @imports.index(ins.location))
+                              :value => ins.location)
 
       end
     end

@@ -27,8 +27,9 @@ class ScriptToObjectTest < MiniTest::Unit::TestCase
   
   def test_import
     script = compile_script("@import hello.ts")
-    import_instruction = script.root.children.first
-    assert import_instruction.value != nil
+    import = script.root.children.first
+    assert_equal import.value, File.absolute_path(import.value)
+    assert import.value != nil
   end
   
   def test_instruction_types
