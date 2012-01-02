@@ -57,7 +57,7 @@ module Tritium
         if ins.regexp?
           obj = Instruction.new(:type => Instruction::InstructionType::FUNCTION_CALL)
           obj.value = "regexp".force_encoding("BINARY")
-          obj.children = [convert_text(ins)]
+          obj.arguments = [convert_text(ins)]
           obj
         else
           convert_text(ins)

@@ -32,6 +32,18 @@ class ScriptToObjectTest < MiniTest::Unit::TestCase
     assert import.value != nil
   end
   
+  def test_regexp_objects
+    script = compile_script("/h\\/i/")
+    regexp = script.root.children.first
+    assert_equal "regexp", regexp.value
+    assert_equal FUNCTION_CALL, regexp.type
+    assert_equal 0, (regexp.children || []).size
+    assert_equal 1, (regexp.arguments || []).size
+    regexp_text = regexp.arguments.first
+    assert_equal "(?-mix:h\\/i)", regexp_text.value
+    assert_equal TEXT, regexp_text.type
+  end
+  
   def test_instruction_types
     tests = {"/a/" => FUNCTION_CALL,
              "$a"  => FUNCTION_CALL,
