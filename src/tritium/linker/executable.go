@@ -33,16 +33,26 @@ func (exec *Executable) ProcessObjects(objs []*tp.ScriptObject) {
 	for _, obj := range(exec.Objects) {
 		instructionList := make([]*tp.Instruction, 0)
 		instructionList = append(instructionList, obj.Root)
-		//(change string in Instruction objects to import_id)
+
+		/* 
+			This is how I am currently looping through all of the 
+			instructions. The array above is going to end up being
+			an array of *every* instruction. Pushing and popping
+			is probably a better idea, but I don't have access to the 
+			Golang docs right now, so this is my solution. I don't believe
+			it will be that slow to do it this way, but feel free to
+			change this code to be more efficient in the future.
+		*/
 		for i := 0; i < len(instructionList); i++ {
 			ins := instructionList[i]
 			if ins.Children != nil {
 				for _, child := range(ins.Children) {
 					instructionList = append(instructionList, child)
 				}
-				
 			}
+			// Grab all imports
 			if *ins.Type == tp.Instruction_IMPORT {
+				// set its import_id and blank the value field
 				importValue := proto.GetString(ins.Value)
 				println("Found import!", importValue)
 				println("Index is...", objScriptNameLookupMap[importValue])
