@@ -4,18 +4,20 @@ import(
 	tp "tritium/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	"log"
+	"fmt"
 	. "tritium/packager"
 )
 
 type LinkingContext struct {
 	objMap map[string]int
 	funMap map[string]int
+	textType int
 	*tp.Executable
 }
 
 func NewLinkingContext(pkg *Package, objs []*tp.ScriptObject) (*LinkingContext){
 	
-	// Setup object script lookup map!
+	// Setup object lookup map!
 	objScriptLookup := make(map[string]int, len(objs))
 	for index, obj := range(objs) {
 		objScriptLookup[proto.GetString(obj.Name)] = index
@@ -24,7 +26,9 @@ func NewLinkingContext(pkg *Package, objs []*tp.ScriptObject) (*LinkingContext){
 	// Setup the function map!
 	functionLookupMap := make(map[string]int, len(pkg.Functions))
 	for index, fun := range(pkg.Functions) {
-		functionLookupMap[fun.Stub()] = index
+		stub := fun.Stub()
+		println(":", stub)
+		functionLookupMap[stub] = index
 	}
 	
 	// Setup the main context object
@@ -36,58 +40,79 @@ func NewLinkingContext(pkg *Package, objs []*tp.ScriptObject) (*LinkingContext){
 			Objects: objs,
 		},
 	}
+	
+	// Find Text type int -- need its ID to deal with Text literals during processing
+	for index, t := range(pkg.Types) {
+		if proto.GetString(t.Name) == "Text" {
+			ctx.textType = index
+		}
+	}
 
 	return ctx
 }
 
 func (ctx *LinkingContext) Link() {
 	for _, obj := range(ctx.Objects) {
-		instructionList := make([]*tp.Instruction, 0)
-		instructionList = append(instructionList, obj.Root)
-		/* 
-			This is how I am currently looping through all of the 
-			instructions. The array above is going to end up being
-			an array of *every* instruction. Pushing and popping
-			is probably a better idea, but I don't have access to the 
-			Golang docs right now, so this is my solution. I don't believe
-			it will be that slow to do it this way, but feel free to
-			change this code to be more efficient in the future.
-		*/
-		for i := 0; i < len(instructionList); i++ {
-			ins := instructionList[i]
-			if ins.Children != nil {
-				for _, child := range(ins.Children) {
-					instructionList = append(instructionList, child)
-				}
-			}
-			// Grab all imports
-			switch *ins.Type {
-				case tp.Instruction_IMPORT:
-					// set its import_id and blank the value field
-					importValue := proto.GetString(ins.Value)
-					importId, ok := ctx.objMap[importValue]
-					if ok != true {
-						log.Fatal("Invalid import ", proto.GetString(obj.Name), ins.String())
-					}
-					//println("befor", ins.String())
-					ins.ObjectId = proto.Int(importId)
-					ins.Value = nil
-					//println("after", ins.String())
-				case tp.Instruction_FUNCTION_CALL:
-					//signature := 
-					//println("ZOMG, function!")
-			}
-			
-			// if function
-				// Figure out function signature (name + arg types)
-					// have to start at the bottom of the tree (args first) and check types.
-				// Is this a real function?
-					// aka, text(regexp()) ... have to see that regexp returns Regexp object,
-					// which, then, when we go to process text() we notice we don't have a text(Regexp) 
-					// function, so we need to throw a reasonable error
-					// Hrrrm.... need line numbers, huh?
-				// Set the function_id if it is real, error otherwise
-		}
+		ctx.ProcessInstruction(obj.Root)
 	}
 	// optionally, remove functions from pkg that aren't used (dead code removal)
+}
+
+func (ctx *LinkingContext) ProcessInstruction(ins *tp.Instruction) (returnType int) {
+	returnType = -1
+	if ins.Children != nil {
+		for _, child := range(ins.Children) {
+			// Process all children.
+			// In the case of blocks, we'll actually want to have our return type be the
+			// return type of our LAST child. So, save that!
+			returnType = ctx.ProcessInstruction(child)
+		}
+	}
+	// Grab all imports
+	switch *ins.Type {
+		case tp.Instruction_IMPORT:
+			// set its import_id and blank the value field
+			importValue := proto.GetString(ins.Value)
+			importId, ok := ctx.objMap[importValue]
+			if ok != true {
+				log.Fatal("Invalid import ", ins.String())
+			}
+			//println("befor", ins.String())
+			ins.ObjectId = proto.Int(importId)
+			ins.Value = nil
+			//println("after", ins.String())
+		case tp.Instruction_FUNCTION_CALL:
+			stub := proto.GetString(ins.Value)
+			if ins.Arguments != nil {
+				for _, arg := range(ins.Arguments) {
+					argReturn := ctx.ProcessInstruction(arg)
+					println(argReturn)
+					if argReturn == -1 {
+						log.Fatal("Invalid argument object", arg.String())
+					}
+					stub = stub + "," + fmt.Sprintf("%d", argReturn)
+				}
+			}
+			funcId, ok := ctx.funMap[stub]
+			if ok != true {
+				log.Fatal("No such function found....", ins.String(), "with a stub", stub)
+			}
+			ins.FunctionId = proto.Int32(int32(funcId))
+			fun := ctx.Pkg.Functions[funcId]
+			returnType = int(proto.GetInt32(fun.ReturnTypeId))
+			println("Zomg, found function", fun.String())
+		case tp.Instruction_TEXT:
+			returnType = ctx.textType
+	}
+	
+	// if function
+		// Figure out function signature (name + arg types)
+			// have to start at the bottom of the tree (args first) and check types.
+		// Is this a real function?
+			// aka, text(regexp()) ... have to see that regexp returns Regexp object,
+			// which, then, when we go to process text() we notice we don't have a text(Regexp) 
+			// function, so we need to throw a reasonable error
+			// Hrrrm.... need line numbers, huh?
+		// Set the function_id if it is real, error otherwise
+	return
 }
