@@ -14,12 +14,14 @@ func RunLinker(directory string) {
 	// now) ./bin/ts2o AND possibly a package file. However, we can just ignore the "custom"
 	// package file for now, and load up the object that comes in from the Packager.
 	//
-	exec := NewExecutable(packager.BuildDefaultPackage())
+	
 	objs := LoadScriptObjects(directory)
-	exec.ProcessObjects(objs)
+	pkg := packager.BuildDefaultPackage()
+	ctx := NewLinkingContext(pkg, objs)
+	ctx.Link()
 	
 	// Now, return the Execution object.
-	output, err := proto.Marshal(exec.Executable)
+	output, err := proto.Marshal(ctx.Executable)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -7,36 +7,41 @@ import(
 	. "tritium/packager"
 )
 
-type Executable struct {
+type LinkingContext struct {
+	objMap map[string]int
+	funMap map[string]int
 	*tp.Executable
 }
 
-func NewExecutable(pkg *Package) (*Executable){
-	exec := &Executable{ 
-		Executable: &tp.Executable{
-			Pkg: pkg.Package,
-		},
-	}
-	return exec
-}
-
-func (exec *Executable) ProcessObjects(objs []*tp.ScriptObject) {
-	// Add script objects to the exec
-	exec.Objects = objs
+func NewLinkingContext(pkg *Package, objs []*tp.ScriptObject) (*LinkingContext){
 	
-	// Loop through all the objects, and get the index of every
-	// script object name.
-	objScriptNameLookupMap := make(map[string]int, 0)
-	for objIndex, obj := range(exec.Objects) {
-		objScriptNameLookupMap[proto.GetString(obj.Name)] = objIndex
+	// Setup object script lookup map!
+	objScriptLookup := make(map[string]int, len(objs))
+	for objIndex, obj := range(objs) {
+		objScriptLookup[proto.GetString(obj.Name)] = objIndex
 	}
 	
-	//functionLookupMap := make(map[string]int, 0)
-	for _, fun := range(exec.Pkg.Functions) {
+	// Setup the function map!
+	functionLookupMap := make(map[string]int, len(pkg.Functions))
+	for _, fun := range(pkg.Functions) {
 		println("Func!", fun.Stub())
 	}
 	
-	for _, obj := range(exec.Objects) {
+	// Setup the main context object
+	ctx := &LinkingContext{ 
+		objMap: objScriptLookup,
+		funMap: functionLookupMap,
+		Executable: &tp.Executable{
+			Pkg: pkg.Package,
+			Objects: objs,
+		},
+	}
+
+	return ctx
+}
+
+func (ctx *LinkingContext) Link() {
+	for _, obj := range(ctx.Objects) {
 		instructionList := make([]*tp.Instruction, 0)
 		instructionList = append(instructionList, obj.Root)
 
@@ -61,7 +66,7 @@ func (exec *Executable) ProcessObjects(objs []*tp.ScriptObject) {
 				case tp.Instruction_IMPORT:
 					// set its import_id and blank the value field
 					importValue := proto.GetString(ins.Value)
-					importId, ok := objScriptNameLookupMap[importValue]
+					importId, ok := ctx.objMap[importValue]
 					if ok != true {
 						log.Fatal("Invalid import ", proto.GetString(obj.Name), ins.String())
 					}
