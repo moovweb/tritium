@@ -27,6 +27,8 @@
   inner() {
     set(%html) 
     yield() } }
+    
+# DIRECTIONALS... UGH.
 
 @func Node.insert(Text %value) {
   insert_at(position("bottom"), %value)
@@ -40,3 +42,17 @@
 @func Node.insert_before(Text %value) {
   insert_at(position("before"), %value)
 }
+
+@func Node.inject(Text %value) {
+  inject_at(position("bottom"), %value)
+}
+@func Node.inject_top(Text %value) {
+  inject_at(position("top"), %value)
+}
+@func Node.inject_after(Text %value) {
+  inject_at(position("after"), %value)
+}
+@func Node.inject_before(Text %value) {
+  inject_at(position("before"), %value)
+}
+
