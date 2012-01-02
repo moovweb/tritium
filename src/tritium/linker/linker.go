@@ -19,7 +19,11 @@ func RunLinker(directory string) {
 	exec.ProcessObjects(objs)
 	
 	// Now, return the Execution object.
-	println("THIS IS WHERE LINKING HAPPENS!!!! ZOMG!", exec, objs)
+	output, err := proto.Marshal(exec.Executable)
+	if err != nil {
+		log.Fatal(err)
+	}
+	println("output", len(output), "bytes")
 }
 
 func LoadScriptObjects(dir string) ([]*tp.ScriptObject) {

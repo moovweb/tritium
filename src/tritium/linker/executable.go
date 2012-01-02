@@ -31,6 +31,11 @@ func (exec *Executable) ProcessObjects(objs []*tp.ScriptObject) {
 		objScriptNameLookupMap[proto.GetString(obj.Name)] = objIndex
 	}
 	
+	//functionLookupMap := make(map[string]int, 0)
+	for _, fun := range(exec.Pkg.Functions) {
+		println("Func!", fun.Stub())
+	}
+	
 	for _, obj := range(exec.Objects) {
 		instructionList := make([]*tp.Instruction, 0)
 		instructionList = append(instructionList, obj.Root)
@@ -52,18 +57,23 @@ func (exec *Executable) ProcessObjects(objs []*tp.ScriptObject) {
 				}
 			}
 			// Grab all imports
-			if *ins.Type == tp.Instruction_IMPORT {
-				// set its import_id and blank the value field
-				importValue := proto.GetString(ins.Value)
-				importId := objScriptNameLookupMap[importValue]
-				if importId == 0 {
-					log.Fatal("Invalid import for ", proto.GetString(obj.Name), ins.String())
-				}
-				//println("befor", ins.String())
-				ins.ObjectId = proto.Int(importId)
-				ins.Value = nil
-				//println("after", ins.String())
+			switch *ins.Type {
+				case tp.Instruction_IMPORT:
+					// set its import_id and blank the value field
+					importValue := proto.GetString(ins.Value)
+					importId, ok := objScriptNameLookupMap[importValue]
+					if ok != true {
+						log.Fatal("Invalid import ", proto.GetString(obj.Name), ins.String())
+					}
+					//println("befor", ins.String())
+					ins.ObjectId = proto.Int(importId)
+					ins.Value = nil
+					//println("after", ins.String())
+				case tp.Instruction_FUNCTION_CALL:
+					//signature := 
+					//println("ZOMG, function!")
 			}
+			
 			// if function
 				// Figure out function signature (name + arg types)
 					// have to start at the bottom of the tree (args first) and check types.
