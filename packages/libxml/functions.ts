@@ -2,21 +2,29 @@
   attribute("class") {
   value() {
     append(" ")
-    append(%class) }
-  yield() }
+    append(%class)
+  }
+  yield()
+}
 
 @func XMLNode.attribute(Text %name, Text %value) {
   attribute(%name) {
     value() {
-      set(%value) }
-    yield() } }
+      set(%value)
+    }
+    yield()
+  }
+}
 
 @func XMLNode.inner_wrap(Text %tag_name) {
   inner() {
     prepend(concat("<", concat(%tag_name), ">"))
-    append(concat("</", concat(%tag_name), ">")) }
+    append(concat("</", concat(%tag_name), ">"))
+  }
   select("./*[1]") {
-    yield() } }
+    yield()
+  }
+}
 
 @func XMLNode.absolutize() {
   # Absolutize IMG and SCRIPT SRCs
@@ -25,7 +33,8 @@
     set($path)
     replace(/[^\/]+$/, "")
     # turn empty string into a single slash because this is the only thing separating the host from the path relative path
-    replace(/^$/, "/") }
+    replace(/^$/, "/")
+  }
 
   $(".//img|.//script") {
     var("src", fetch("./@src"))
@@ -37,10 +46,18 @@
             with(/^\//) {
               # host-relative URL: just add the host
               prepend($host)
-              prepend("//") }
+              prepend("//")
+            }
             else() {
               # path-relative URL: add the host and the path
               prepend($slash_path)
               prepend($host)
-              prepend("//") } } } } }
-    yield() } }
+              prepend("//")
+            }
+          }
+        }
+      }
+    }
+    yield()
+  }
+}

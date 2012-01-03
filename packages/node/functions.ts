@@ -1,32 +1,46 @@
 @func position() {
-  position("bottom") }
+  position("bottom") 
+}
 
 @func Node.copy_here(Text %xpath) {
   copy_here(%xpath, position()) {
-    yield() } }
+    yield() 
+  } 
+}
 
 @func Node.copy_here(Text %xpath, Text %pos) {
   copy_here(%xpath, position(%pos)) {
-    yield() } }
+    yield() 
+  } 
+}
 
 @func Node.copy_here(Text %xpath, Position %pos) {
   $(%xpath) {
     dup() {
       move(%pos, node(1), node(3))
-      yield() } } }
+      yield() 
+    } 
+  } 
+}
 
 @func Node.copy_to(Text %xpath) {
   copy_to(%xpath, position()) {
-    yield() } }
+    yield()
+  } 
+}
 
 @func Node.inject(Text %html) {
   inject_at("bottom", %html) {
-    yield() } }
+    yield() 
+  } 
+}
     
 @func Node.inner(Text %html) {
   inner() {
     set(%html) 
-    yield() } }
+    yield() 
+  } 
+}
     
 # DIRECTIONALS... UGH.
 
