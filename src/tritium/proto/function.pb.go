@@ -14,7 +14,8 @@ var _ os.Error
 
 type Function struct {
 	Name             *string              `protobuf:"bytes,1,opt,name=name" json:"name"`
-	TypeId           *int32               `protobuf:"varint,2,opt,name=type_id" json:"type_id"`
+	ScopeTypeId      *int32               `protobuf:"varint,2,opt,name=scope_type_id" json:"scope_type_id"`
+	ScopeType        *string              `protobuf:"bytes,8,opt,name=scope_type" json:"scope_type"`
 	ReturnTypeId     *int32               `protobuf:"varint,3,opt,name=return_type_id" json:"return_type_id"`
 	OpensTypeId      *int32               `protobuf:"varint,4,opt,name=opens_type_id" json:"opens_type_id"`
 	BuiltIn          *bool                `protobuf:"varint,5,opt,name=built_in" json:"built_in"`
@@ -27,7 +28,9 @@ func (this *Function) Reset()         { *this = Function{} }
 func (this *Function) String() string { return proto.CompactTextString(this) }
 
 type Function_Argument struct {
-	TypeId           *int32 `protobuf:"varint,1,opt,name=type_id" json:"type_id"`
+	TypeId           *int32  `protobuf:"varint,1,opt,name=type_id" json:"type_id"`
+	TypeString       *string `protobuf:"bytes,2,opt,name=type_string" json:"type_string"`
+	Name             *string `protobuf:"bytes,3,opt,name=name" json:"name"`
 	XXX_unrecognized []byte
 }
 

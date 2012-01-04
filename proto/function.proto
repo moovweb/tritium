@@ -6,7 +6,8 @@ message Function {
 	optional string name = 1;
 
 	// Linked
-	optional int32 type_id = 2;
+	optional int32 scope_type_id = 2;
+	optional string scope_type = 8;
 	optional int32 return_type_id = 3;
 	optional int32 opens_type_id = 4;
 
@@ -20,5 +21,7 @@ message Function {
 
 	message Argument {
 		optional int32 type_id = 1;
+		optional string type_string = 2;
+		optional string name = 3;
 	}
 }

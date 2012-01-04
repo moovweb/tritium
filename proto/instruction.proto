@@ -3,7 +3,8 @@ package tritium;
 message Instruction {
 	required InstructionType type = 1;
 	optional string value = 2;
-	optional int32 object_id = 3; // only used if we are an import and we're all linked into an Executable
+	 // only used if we are an import and we're all linked into an Executable
+	optional int32 object_id = 3;
 
 	repeated Instruction children = 4;
 	repeated Instruction arguments = 5;

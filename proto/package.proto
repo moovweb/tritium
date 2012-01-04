@@ -16,7 +16,7 @@ message Type {
 	and is used in an Executable to bundle together needed headers, functions, etc
 */
 message Package {
-	required string name = 1;
+	optional string name = 1;
 	repeated Function functions = 2;
 	repeated Type types = 3;
 
