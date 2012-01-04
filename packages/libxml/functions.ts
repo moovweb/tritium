@@ -1,10 +1,11 @@
 @func XMLNode.add_class(Text %class) {
   attribute("class") {
-  value() {
-    append(" ")
-    append(%class)
+    value() {
+      append(" ")
+      append(%class)
+    }
+    yield()
   }
-  yield()
 }
 
 @func XMLNode.attribute(Text %name, Text %value) {
