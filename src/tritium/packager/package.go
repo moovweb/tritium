@@ -109,7 +109,7 @@ func (pkg *Package)readHeaderFile(location string) {
 				methodName = methodizer[1]
 			}
 			function.Name = proto.String(methodName)
-			function.TypeId = proto.Int32(int32(typeId))
+			function.ScopeTypeId = proto.Int32(int32(typeId))
 
 			splat := strings.Split(back, ")")
 			argString := splat[0]
