@@ -37,7 +37,8 @@ def parse_args(raw_function)
   # Do I need to keep anything beyond the type?
 
   args = args.split(",").collect do |arg_string|
-    arg_string.split(" ").first
+    arg = ::Function::Argument.new 
+    arg.type_id = arg_string.split(" ").first
   end
   
   args.compact!
@@ -47,9 +48,9 @@ end
 
 def get_function_signature(function)
 
-  signature = function[:name]
+  signature = function.name
   
-  function[:args].each do |arg|
+  function.args.each do |arg|
     signature << "." << arg
   end
 
@@ -88,11 +89,11 @@ def collect_function_definitions(tritium)
   raw_functions.delete_if {|function_string| function_string == "" }
 
   raw_functions.collect do |raw_function|
-    function = {}
+    function = ::Function.new
 
-    raw_function, function[:name] = parse_name(raw_function)
-    raw_function, function[:args] = parse_args(raw_function)
-    function[:instruction] = parse_function(raw_function, get_function_signature(function) )
+    raw_function, function.name = parse_name(raw_function)
+    raw_function, function.args = parse_args(raw_function)
+    function.instruction = parse_function(raw_function, get_function_signature(function) )
 
     function
   end
@@ -110,8 +111,6 @@ tritium = File.read(files[:input])
 functions = collect_function_definitions(tritium)
 
 puts "Output: #{functions}"
-
-puts "done"
 
 # File.open(files[:output], "w") {|f| f << Beefcake.marshall(functions) }
 
