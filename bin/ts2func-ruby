@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require "optparse"
-#require "ruby-debug"
 
 OptionParser.new do |opts|
   opts.banner = "Usage: ts2func-ruby filename.ts filename.to"
@@ -75,12 +74,17 @@ def parse_function(tritium, signature)
   temp_filename = signature + ".tmp"
   File.open(temp_filename, "w") {|f| f << block}
 
-  instructions = Tritium::Serializer::ObjectSerializer.new(temp_filename)
-  function_body = instructions.process  
+  parser = Tritium::Parser::Parser.new(temp_filename)
+  ins = parser.parse
+
+  instruction = ::Instruction.new
+  instruction.type = ::Instruction::InstructionType::BLOCK
+  instruction.children = Tritium::Serializer::ObjectSerializer.convert_instructions(ins.statements)
+  # instruction.arguments # @HC : Do I really need to set arguments here too?
 
   File.delete(temp_filename)
 
-  function_body
+  instruction
 end
 
 def collect_function_definitions(tritium)
@@ -94,6 +98,10 @@ def collect_function_definitions(tritium)
     raw_function, function.name = parse_name(raw_function)
     raw_function, function.args = parse_args(raw_function)
     function.instruction = parse_function(raw_function, get_function_signature(function) )
+
+    puts "-"*30
+    puts "Processing function #{function.name}\n\n"
+    p function
 
     function
   end
@@ -110,7 +118,7 @@ tritium = File.read(files[:input])
 
 functions = collect_function_definitions(tritium)
 
-puts "Output: #{functions}"
+# puts "Output: #{functions}"
 
 # File.open(files[:output], "w") {|f| f << Beefcake.marshall(functions) }
 
