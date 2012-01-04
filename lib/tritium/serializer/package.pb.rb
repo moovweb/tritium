@@ -15,7 +15,7 @@ class Package
   include Beefcake::Message
 
 
-  required :name, :string, 1
+  optional :name, :string, 1
   repeated :functions, Function, 2
   repeated :types, Type, 3
   repeated :dependent_package_names, :string, 4
