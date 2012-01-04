@@ -76,11 +76,11 @@ def parse_function(tritium, signature)
   File.open(temp_filename, "w") {|f| f << block}
 
   instructions = Tritium::Serializer::ObjectSerializer.new(temp_filename)
-  instructions.process  
+  function_body = instructions.process  
 
   File.delete(temp_filename)
 
-  instructions
+  function_body
 end
 
 def collect_function_definitions(tritium)
