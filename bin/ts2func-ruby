@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+
+require "optparse"
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: ts2func-ruby filename.ts filename.to"
+end.parse!
+
+
+files = {}
+files[:input] = ARGV[0] || ""
+files[:output] = ARGV[1] || ""
+
+require "beefcake"
+
+def collect_function_definitions(tritium)
+  
+  raw_functions = tritium.split("@func").compact
+
+  raw_functions.collect do |raw_function|
+    tritium_function = parse_function(raw_function)
+    serialize_function(tritium_function)
+  end
+  
+end
+
+def parse_function(tritium)
+  
+end
+
+def serialize_function(funktion) 
+  funktion
+end
+
+
+if !File.exists(files[:input])
+  puts "Missing input file: #{files[:input]}"
+  exit(1)
+end
+
+tritium = File.read(files[:input])
+
+functions = collect_function_definitions(tritium)
+
+File.open(files[:output], "w") {|f| f << Beefcake.marshall(functions) }
+
