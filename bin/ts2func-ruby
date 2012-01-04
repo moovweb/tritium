@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "optparse"
+#require "ruby-debug"
 
 OptionParser.new do |opts|
   opts.banner = "Usage: ts2func-ruby filename.ts filename.to"
@@ -12,14 +13,50 @@ files[:input] = ARGV[0] || ""
 files[:output] = ARGV[1] || ""
 
 require "beefcake"
+require_relative '../lib/tritium'
+require_relative '../lib/tritium/serializer/serializer'
+
+def parse_name(raw_function) 
+  parens_index = raw_function.index("(")
+
+  name = raw_function[0..parens_index-1].strip
+  raw_function = raw_function[parens_index..-1]
+
+  [raw_function, name]
+end
+
+def parse_args(raw_function) 
+  args_begin = raw_function.index("(")
+  args_end = raw_function.index(")", args_begin)
+  
+  args = raw_function[args_begin+1..args_end-1]
+  raw_function = raw_function[args_end+1..-1]  
+
+  # Do I need to keep anything beyond the type?
+
+  args = args.split(",").collect do |arg_string|
+    arg_string.split(" ").first
+  end
+  
+  args.compact!
+
+  [raw_function, args]
+end
 
 def collect_function_definitions(tritium)
   
   raw_functions = tritium.split("@func").compact
+  raw_functions.delete_if {|function_string| function_string == "" }
 
   raw_functions.collect do |raw_function|
-    tritium_function = parse_function(raw_function)
-    serialize_function(tritium_function)
+    function = {}
+
+    raw_function, function[:name] = parse_name(raw_function)
+    raw_function, function[:args] = parse_args(raw_function)
+#    function[:instruction] = parse_function(raw_function)
+
+#    serialize_function(function)
+    function
   end
   
 end
@@ -33,7 +70,7 @@ def serialize_function(funktion)
 end
 
 
-if !File.exists(files[:input])
+if !File.exists?(files[:input])
   puts "Missing input file: #{files[:input]}"
   exit(1)
 end
@@ -42,5 +79,9 @@ tritium = File.read(files[:input])
 
 functions = collect_function_definitions(tritium)
 
-File.open(files[:output], "w") {|f| f << Beefcake.marshall(functions) }
+puts "Output: #{functions}"
+
+puts "done"
+
+# File.open(files[:output], "w") {|f| f << Beefcake.marshall(functions) }
 
