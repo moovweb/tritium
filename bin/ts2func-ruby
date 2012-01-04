@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require_relative "exec_init"
 require "optparse"
 
 OptionParser.new do |opts|
