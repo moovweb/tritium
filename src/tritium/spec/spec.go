@@ -1,14 +1,17 @@
 package spec
 
 import(
-	//. "tritium"
+	. "tritium"
+	. "tritium/engine"
 )
 
 func RunTests() {
-	
+	eng := &Engine{}
+	RunTest(eng, "blank_test")
 }
 
-func RunTest(named string) bool {
+func RunTest(eng Transformer, named string) bool {
+	//eng.Run(transform, input, vars)
 	println("Ran test!", named)
 	return true
 }
