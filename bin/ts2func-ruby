@@ -3,8 +3,15 @@
 require_relative "exec_init"
 require "optparse"
 
+options = {}
+
 OptionParser.new do |opts|
   opts.banner = "Usage: ts2func-ruby filename.ts filename.to"
+
+  opts.on("-s", "--stdout", "Print to STDOUT") do |s|
+    options[:standard_out] = s
+  end
+
 end.parse!
 
 
@@ -37,8 +44,14 @@ def parse_args(raw_function)
   # Do I need to keep anything beyond the type?
 
   args = args.split(",").collect do |arg_string|
+
     arg = ::Function::Argument.new 
-    arg.type_id = arg_string.split(" ").first
+
+    arg_components = arg_string.split(" ")
+    arg.type_string = arg_components.first.force_encoding("BINARY")
+    arg.name = arg_components.last.force_encoding("BINARY")
+    
+    arg
   end
   
   args.compact!
@@ -51,7 +64,8 @@ def get_function_signature(function)
   signature = function.name
   
   function.args.each do |arg|
-    signature << "." << arg
+    signature << "." << arg.type_string unless arg.type_string.nil?
+    signature << "." << arg.name unless arg.name.nil?
   end
 
   signature
@@ -118,5 +132,7 @@ end
 tritium = File.read(files[:input])
 
 functions = collect_function_definitions(tritium)
+
+p functions if options[:standard_out] 
 
 File.open(files[:output], "wb") {|f| f.write(functions.encode) }
