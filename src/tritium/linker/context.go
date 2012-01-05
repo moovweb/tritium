@@ -8,9 +8,11 @@ import(
 	. "tritium/packager"
 )
 
+type FuncMap map[string]int;
+
 type LinkingContext struct {
 	objMap map[string]int
-	funMap map[string]int
+	funList []FuncMap
 	textType int
 	*tp.Executable
 }
@@ -24,17 +26,31 @@ func NewLinkingContext(pkg *Package, objs []*tp.ScriptObject) (*LinkingContext){
 	}
 	
 	// Setup the function map!
-	functionLookupMap := make(map[string]int, len(pkg.Functions))
-	for index, fun := range(pkg.Functions) {
-		stub := fun.Stub()
-		println(":", stub)
-		functionLookupMap[stub] = index
+	functionLookup := make([]FuncMap, len(pkg.Types))
+	for typeId, typeObj := range(pkg.Types) {
+		funcMap := make(FuncMap)
+		//println("Type:",proto.GetString(typeObj.Name))
+		//println("Implements:", proto.GetInt32(typeObj.Implements))
+		implements := functionLookup[proto.GetInt32(typeObj.Implements)]
+		for index, fun := range(pkg.Functions) {
+			stub := fun.Stub()
+			funScopeId := proto.GetInt32(fun.ScopeTypeId)
+			inherited := false
+			if implements != nil {
+				_, inherited = implements[stub]
+			}
+			if (funScopeId == int32(typeId)) || inherited {
+				//println(proto.GetString(typeObj.Name), ":", stub)
+				funcMap[stub] = index
+			}
+		}
+		functionLookup[typeId] = funcMap
 	}
 	
 	// Setup the main context object
 	ctx := &LinkingContext{ 
 		objMap: objScriptLookup,
-		funMap: functionLookupMap,
+		funList: functionLookup,
 		Executable: &tp.Executable{
 			Pkg: pkg.Package,
 			Objects: objs,
@@ -93,7 +109,7 @@ func (ctx *LinkingContext) ProcessInstruction(ins *tp.Instruction) (returnType i
 					stub = stub + "," + fmt.Sprintf("%d", argReturn)
 				}
 			}
-			funcId, ok := ctx.funMap[stub]
+			funcId, ok := ctx.funList[0][stub]
 			if ok != true {
 				log.Fatal("No such function found....", ins.String(), "with a stub", stub)
 			}
