@@ -8,7 +8,7 @@
   log(concat(%name, ": ", 
     time() {
       yield()
-    }, "µs"))
+    }, "s"))
 }
 
 @func Text.clear() {

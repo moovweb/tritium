@@ -25,3 +25,7 @@ message Function {
 		optional string name = 3;
 	}
 }
+
+message FunctionArray {
+        repeated Function functions = 1;
+}

@@ -26,3 +26,11 @@ class Function
   optional :instruction, Instruction, 7
 
 end
+
+class FunctionArray
+  include Beefcake::Message
+
+
+  repeated :functions, Function, 1
+
+end
