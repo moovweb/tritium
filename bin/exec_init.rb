@@ -4,7 +4,7 @@ require 'bundler'
 begin
   Bundler.setup(:default)
   Bundler.require(:default)
-  puts "Initialized..."
+  #puts "Initialized..."
 rescue Exception => e
   puts e.message
   puts "Please make sure to run: bundle install"
