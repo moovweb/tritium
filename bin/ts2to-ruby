@@ -45,6 +45,6 @@ else # run command!
       process_file(file, output_file)
     end
   else
-    process_file(filename, ARGV[1])
+    print Tritium::Serializer.script(filename)
   end
 end

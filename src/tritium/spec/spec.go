@@ -1,17 +1,34 @@
 package spec
 
 import(
-	. "tritium"
-	. "tritium/engine"
+	tp "tritium/proto"
 )
 
-func RunTests() {
-	eng := &Engine{}
-	RunTest(eng, "blank_test")
+
+type Spec struct {
+	Location string
+
+	// Inputs
+	Input string
+	Vars map[string]string
+	
+	// Script
+	script tp.Executable
+	
+	// Expected outputs
+	Output string
+	Exports [][]string
+	Logs []string
 }
 
-func RunTest(eng Transformer, named string) bool {
-	//eng.Run(transform, input, vars)
-	println("Ran test!", named)
-	return true
+func LoadTest(directory string) (*Spec) {
+	return &Spec{
+		Location: directory,
+		Input: "hi",
+		Vars: make(map[string]string, 0),
+		
+		Output: "hi",
+		Exports: make([][]string, 0),
+		Logs: make([]string, 0),
+	}
 }

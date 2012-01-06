@@ -1,0 +1,3 @@
+select("test") {
+  log("hi")
+}
