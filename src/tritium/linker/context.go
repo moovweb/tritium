@@ -111,7 +111,7 @@ func (ctx *LinkingContext) ProcessInstruction(ins *tp.Instruction) (returnType i
 			}
 			funcId, ok := ctx.funList[0][stub]
 			if ok != true {
-				log.Fatal("No such function found....", ins.String(), "with a stub", stub)
+				log.Fatal("No such function found....", ins.String(), "with the stub: ", stub)
 			}
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]

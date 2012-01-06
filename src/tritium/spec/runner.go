@@ -1,17 +1,29 @@
 package spec
 
 import(
-	. "tritium"
-	. "tritium/engine"
+	. "tritium/parser"
+	//. "tritium/engine"
+	//. "io/ioutil"
+	. "path/filepath"
+	//"log"
+	
 )
 
-func RunTests() {
-	eng := NewEngine()
-	RunTest(eng, "blank_test")
+func RunTests(directory string) {
+	//RunTest("blank_test")
+	/*files, err := Glob("*")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, file := range(files) {
+		println(file)
+	}
+	*/
+	RunTest(directory)
 }
 
-func RunTest(eng Transformer, named string) bool {
+func RunTest(dir string) bool {
 	//eng.Run(transform, input, vars)
-	println("Ran test!", named)
+	ParseFileSet(Join(dir, "main.ts"))
 	return true
 }

@@ -2,6 +2,7 @@ package linker
 
 import(
 	tp "tritium/proto"
+	"tritium/parser"
 	packager "tritium/packager"
 	. "io/ioutil"
 	. "path"
@@ -9,13 +10,13 @@ import(
 	proto "goprotobuf.googlecode.com/hg/proto"
 )
 
-func RunLinker(directory string) {
-	// This is run against a directory with a bunch of .tso files (generated in Ruby for
+func RunLinker(file string) {
+	// This is run against a directory with a bunch of .to files (generated in Ruby for
 	// now) ./bin/ts2o AND possibly a package file. However, we can just ignore the "custom"
 	// package file for now, and load up the object that comes in from the Packager.
 	//
 	
-	objs := LoadScriptObjects(directory)
+	objs := parser.ParseFileSet(file)
 	pkg := packager.BuildDefaultPackage()
 	ctx := NewLinkingContext(pkg, objs)
 	ctx.Link()

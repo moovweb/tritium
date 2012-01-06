@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.email       = ["hcatlin@moovweb.com"]
   s.homepage    = "https://github.com/moovweb/tritium"
 
-  s.files        = Dir['README.md', 'BUILD_VERSION', 'Gemfile', 'Gemfile.lock', 'Rakefile', 'spec.1-1.yml', 'spec.2.yml', 'lib/**/*', 'bin/ts2tb']
+  s.files        = Dir['README.md', 'BUILD_VERSION', 'Gemfile', 'Gemfile.lock', 'Rakefile', 'spec.1-1.yml', 'spec.2.yml', 'lib/**/*', 'bin/ts2tb', 'tritium.gemspec']
   s.executables  = ['ts2to', 'ts2func-ruby', 'exec_init.rb']
   s.test_files   = Dir['test/**/*']
   s.require_path = 'lib'

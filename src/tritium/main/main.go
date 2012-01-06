@@ -19,8 +19,8 @@ func main() {
 			println("Linking files found in the directory:", os.Args[2])
 			linker.RunLinker(os.Args[2])
 		} else if command == "test" {
-			println("Running tests")
-			spec.RunTests()
+			println("Running tests found in the directory:", os.Args[2])
+			spec.RunTests(os.Args[2])
 		} else {
 			println("No such command", command)
 			show_usage()
