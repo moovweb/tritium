@@ -22,6 +22,18 @@ func ParseFile(file string) (*tp.ScriptObject) {
 	return obj
 }
 
-//func ParseFileSet(mainFile string) ([]*tp.ScriptObject) {
+func ParseFileSet(file string) ([]*tp.ScriptObject) {
+	objs := make([]*tp.ScriptObject, 0)
+	files := make(map[string]int)
+	objs = append(objs, ParseFile(file))
+	files[file] = 1
+	for _, obj := range(objs) {
+		for _, importFile := range(obj.Imports()) {
+			if(files[importFile] == 0) {
+				println("must import ", importFile)
+			}
+		}
+	}
 	
-//}
+	return objs
+}
