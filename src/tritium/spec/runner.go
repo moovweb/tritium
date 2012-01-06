@@ -1,12 +1,18 @@
 package spec
+import(
+	"tritium/packager"
+	tp "tritium/proto"
+)
 
 func All(directory string) { 
-	Exec(directory)
+	pkg := packager.BuildDefaultPackage()
+	Run(directory, pkg)
+	Run(directory, pkg)
 }
 
-func Exec(dir string) bool {
+func Run(dir string, pkg *tp.Package) bool {
 	//eng.Run(transform, input, vars)
 	println("TESTING")
-	LoadSpec(dir)
+	LoadSpec(dir, pkg)
 	return true
 }

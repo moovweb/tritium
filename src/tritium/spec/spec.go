@@ -4,6 +4,8 @@ import(
 	tp "tritium/proto"
 	"tritium/linker"
 	. "path/filepath"
+	"log"
+	. "io/ioutil"
 )
 
 type Spec struct {
@@ -22,15 +24,32 @@ type Spec struct {
 	Logs []string
 }
 
-func LoadSpec(dir string) (*Spec) {
+func LoadSpec(dir string, pkg *tp.Package) (*Spec) {
 	//ParseFileSet()
 	return &Spec{
 		Location: dir,
-		Input: "hi",
+		Input: loadFile(dir, "input.*"),
 		Vars: make(map[string]string, 0),
-		script: linker.Run(Join(dir, "main.ts")),
+		script: linker.RunWithPackage(Join(dir, "main.ts"), pkg),
 		Output: "hi",
 		Exports: make([][]string, 0),
 		Logs: make([]string, 0),
 	}
+}
+
+func loadFile(dir, filename string) (string) {
+	list, err := Glob(Join(dir, filename))
+	if err != nil {
+		log.Fatal(err)
+	}
+	if len(list) == 0 {
+		println("Found nothing", Join(dir, filename))
+		return ""
+	}
+	data, err := ReadFile(list[0])
+	if err != nil {
+		return ""
+	}
+	println("Loaded file!")
+	return string(data)
 }
