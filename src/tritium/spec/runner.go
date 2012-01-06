@@ -1,10 +1,10 @@
 package spec
 
 import(
-	. "tritium/parser"
+	//. "tritium/parser"
 	//. "tritium/engine"
 	//. "io/ioutil"
-	. "path/filepath"
+	//. "path/filepath"
 	//"log"
 	
 )
@@ -24,6 +24,6 @@ func RunTests(directory string) {
 
 func RunTest(dir string) bool {
 	//eng.Run(transform, input, vars)
-	ParseFileSet(Join(dir, "main.ts"))
+	
 	return true
 }

@@ -2,8 +2,9 @@ package spec
 
 import(
 	tp "tritium/proto"
+	"tritium/linker"
+	. "path/filepath"
 )
-
 
 type Spec struct {
 	Location string
@@ -13,7 +14,7 @@ type Spec struct {
 	Vars map[string]string
 	
 	// Script
-	script tp.Executable
+	script *tp.Executable
 	
 	// Expected outputs
 	Output string
@@ -21,12 +22,13 @@ type Spec struct {
 	Logs []string
 }
 
-func LoadTest(directory string) (*Spec) {
+func LoadSpec(dir string) (*Spec) {
+	//ParseFileSet()
 	return &Spec{
-		Location: directory,
+		Location: dir,
 		Input: "hi",
 		Vars: make(map[string]string, 0),
-		
+		script: linker.Run(Join(dir, "main.ts")),
 		Output: "hi",
 		Exports: make([][]string, 0),
 		Logs: make([]string, 0),

@@ -8,4 +8,5 @@ message ScriptObject {
 	optional string name = 1 [default='main'];
 	optional Instruction root = 2;
 	optional int32 scope_type_id = 3;
+	optional bool linked = 4;
 }

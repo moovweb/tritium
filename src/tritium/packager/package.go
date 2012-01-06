@@ -25,13 +25,13 @@ type PackageInfo struct {
 	Types []string
 }
 
-func BuildDefaultPackage() (*Package) {
+func BuildDefaultPackage() (*tp.Package) {
 	// Terrible directory handling here... has to be executed from Tritium root
 	pkg := NewPackage()
 	pkg.Load("packages/base")
 	pkg.Load("packages/node")
 	pkg.Load("packages/libxml")
-	return pkg
+	return pkg.Package
 }
 
 func NewPackage() (*Package){

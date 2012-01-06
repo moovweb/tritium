@@ -1,11 +1,11 @@
 package linker
 
 import(
-	tp "tritium/proto"
+	. "tritium/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	"log"
 	"fmt"
-	. "tritium/packager"
+	//packager "tritium/packager"
 )
 
 type FuncMap map[string]int;
@@ -14,17 +14,22 @@ type LinkingContext struct {
 	objMap map[string]int
 	funList []FuncMap
 	textType int
-	*tp.Executable
+	*Executable
 }
 
-func NewLinkingContext(pkg *Package, objs []*tp.ScriptObject) (*LinkingContext){
-	
+func NewObjectLinkingContext(pkg *Package, objs []*ScriptObject) (*LinkingContext) {
 	// Setup object lookup map!
 	objScriptLookup := make(map[string]int, len(objs))
 	for index, obj := range(objs) {
 		objScriptLookup[proto.GetString(obj.Name)] = index
 	}
-	
+	ctx := NewLinkingContext(pkg)
+	ctx.objMap = objScriptLookup
+	ctx.Objects = objs
+	return ctx
+}
+
+func NewLinkingContext(pkg *Package) (*LinkingContext){
 	// Setup the function map!
 	functionLookup := make([]FuncMap, len(pkg.Types))
 	for typeId, typeObj := range(pkg.Types) {
@@ -49,11 +54,9 @@ func NewLinkingContext(pkg *Package, objs []*tp.ScriptObject) (*LinkingContext){
 	
 	// Setup the main context object
 	ctx := &LinkingContext{ 
-		objMap: objScriptLookup,
 		funList: functionLookup,
-		Executable: &tp.Executable{
-			Pkg: pkg.Package,
-			Objects: objs,
+		Executable: &Executable{
+			Pkg: pkg,
 		},
 	}
 	
@@ -68,24 +71,21 @@ func NewLinkingContext(pkg *Package, objs []*tp.ScriptObject) (*LinkingContext){
 }
 
 func (ctx *LinkingContext) Link() {
-	for _, obj := range(ctx.Objects) {
-		ctx.ProcessInstruction(obj.Root)
-	}
+	ctx.link(ctx.Objects[0], ctx.Pkg.GetTypeId("Text"))
 	// optionally, remove functions from pkg that aren't used (dead code removal)
 }
 
-func (ctx *LinkingContext) ProcessInstruction(ins *tp.Instruction) (returnType int) {
-	returnType = -1
-	if ins.Children != nil {
-		for _, child := range(ins.Children) {
-			// Process all children.
-			// In the case of blocks, we'll actually want to have our return type be the
-			// return type of our LAST child. So, save that!
-			returnType = ctx.ProcessInstruction(child)
-		}
+func (ctx *LinkingContext) link(obj *ScriptObject, scopeType int) {
+	if proto.GetBool(obj.Linked) == false {
+		
+		ctx.ProcessInstruction(obj.Root, scopeType)
 	}
+}
+
+func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (returnType int) {
+	returnType = -1
 	switch *ins.Type {
-		case tp.Instruction_IMPORT:
+		case Instruction_IMPORT:
 			// set its import_id and blank the value field
 			importValue := proto.GetString(ins.Value)
 			importId, ok := ctx.objMap[importValue]
@@ -96,11 +96,11 @@ func (ctx *LinkingContext) ProcessInstruction(ins *tp.Instruction) (returnType i
 			ins.ObjectId = proto.Int(importId)
 			ins.Value = nil
 			//println("after", ins.String())
-		case tp.Instruction_FUNCTION_CALL:
+		case Instruction_FUNCTION_CALL:
 			stub := proto.GetString(ins.Value)
 			if ins.Arguments != nil {
 				for _, arg := range(ins.Arguments) {
-					argReturn := ctx.ProcessInstruction(arg)
+					argReturn := ctx.ProcessInstruction(arg, scopeType)
 					println(argReturn)
 					if argReturn == -1 {
 						log.Fatal("Invalid argument object", arg.String())
@@ -108,18 +108,27 @@ func (ctx *LinkingContext) ProcessInstruction(ins *tp.Instruction) (returnType i
 					stub = stub + "," + fmt.Sprintf("%d", argReturn)
 				}
 			}
-			funcId, ok := ctx.funList[0][stub]
+			funcId, ok := ctx.funList[scopeType][stub]
 			if ok != true {
 				log.Fatal("No such function found....", ins.String(), "with the stub: ", stub)
 			}
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
 			returnType = int(proto.GetInt32(fun.ReturnTypeId))
+			scopeType = int(proto.GetInt32(fun.ScopeTypeId))
 			println("Zomg, found function", fun.String())
-		case tp.Instruction_TEXT:
+		case Instruction_TEXT:
 			returnType = ctx.textType
 	}
 	
+	if ins.Children != nil {
+		for _, child := range(ins.Children) {
+			// Process all children.
+			// In the case of blocks, we'll actually want to have our return type be the
+			// return type of our LAST child. So, save that!
+			returnType = ctx.ProcessInstruction(child, scopeType)
+		}
+	}
 	// if function
 		// Figure out function signature (name + arg types)
 			// have to start at the bottom of the tree (args first) and check types.
