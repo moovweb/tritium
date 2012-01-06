@@ -84,7 +84,6 @@ func (ctx *LinkingContext) ProcessInstruction(ins *tp.Instruction) (returnType i
 			returnType = ctx.ProcessInstruction(child)
 		}
 	}
-	// Grab all imports
 	switch *ins.Type {
 		case tp.Instruction_IMPORT:
 			// set its import_id and blank the value field
