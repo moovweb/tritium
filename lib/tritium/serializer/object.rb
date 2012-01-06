@@ -57,11 +57,11 @@ module Tritium
         end
 
         def convert_import(ins)
-          if !@imports.include?(ins.location)
+          #if !@imports.include?(ins.location)
             # @imports << ins.location
             # @import_scopes << ins.scope.name
-          end
-          puts "Import! #{ins.location}"
+          #end
+          #puts "Import! #{ins.location}"
           obj = Instruction.new(:type => Instruction::InstructionType::IMPORT,
                                 :value => ins.location.force_encoding("BINARY"))
 
