@@ -9,9 +9,9 @@ func (obj *ScriptObject) Imports() ([]string) {
 	obj.Root.Iterate(func(ins *Instruction) {
 		if *ins.Type == Instruction_IMPORT {
 			list = append(list, proto.GetString(ins.Value))
-			println("FOUND")
+			//println("FOUND")
 		}
-		println(*ins.Type)
+		//println(*ins.Type)
 	})
 	return list
 }

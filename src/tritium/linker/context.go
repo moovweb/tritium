@@ -77,14 +77,14 @@ func (ctx *LinkingContext) Link() {
 func (ctx *LinkingContext) link(objId, scopeType int) {
 	obj := ctx.Objects[objId]
 	if proto.GetBool(obj.Linked) == false {
-		println("Linking", proto.GetString(obj.Name))
+		//println("Linking", proto.GetString(obj.Name))
 		obj.ScopeTypeId = proto.Int(scopeType)
 		ctx.ProcessInstruction(obj.Root, scopeType)
 	} else {
 		if scopeType != int(proto.GetInt32(obj.ScopeTypeId)) {
 			log.Fatal("Imported a script in two different scopes!")
 		}
-		println("Already linked", proto.GetString(obj.Name))
+		//println("Already linked", proto.GetString(obj.Name))
 	}
 }
 
@@ -118,8 +118,8 @@ func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (
 			funcId, ok := ctx.funList[scopeType][stub]
 			if ok != true {
 				println("Available functions...")
-				for key, value := range(ctx.funList[scopeType]) {
-					println("Key:", key, "Value:", value)
+				for funcName, _ := range(ctx.funList[scopeType]) {
+					println(funcName)
 				}
 				log.Fatal("No such function found....", ins.String(), "with the stub: ",scopeType, stub)
 			}

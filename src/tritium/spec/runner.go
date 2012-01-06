@@ -2,6 +2,7 @@ package spec
 import(
 	"tritium/packager"
 	tp "tritium/proto"
+	"tritium/engine"
 )
 
 func All(directory string) { 
@@ -11,8 +12,14 @@ func All(directory string) {
 }
 
 func Run(dir string, pkg *tp.Package) bool {
+	spec := LoadSpec(dir, pkg)
+	eng := engine.NewEngine(spec.Script)
 	//eng.Run(transform, input, vars)
-	println("TESTING")
-	LoadSpec(dir, pkg)
+	output, _, _ := eng.Run(spec.Input, spec.Vars)
+	if output == spec.Output {
+		print(".")
+	} else {
+		print("F")
+	}
 	return true
 }
