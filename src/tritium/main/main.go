@@ -3,7 +3,7 @@ package main
 import "os"
 import "tritium/packager"
 //import . "tritium/linker"
-import "tritium/spec"
+import s "tritium/spec"
 import proto "goprotobuf.googlecode.com/hg/proto"
 import "log"
 
@@ -26,7 +26,7 @@ func main() {
 			//LinkerToBytes(os.Args[2])
 		} else if command == "test" {
 			println("Running tests found in the directory:", os.Args[2])
-			spec.RunTests(os.Args[2])
+			s.All(os.Args[2])
 		} else {
 			println("No such command", command)
 			show_usage()

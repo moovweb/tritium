@@ -71,14 +71,21 @@ func NewLinkingContext(pkg *Package) (*LinkingContext){
 }
 
 func (ctx *LinkingContext) Link() {
-	ctx.link(ctx.Objects[0], ctx.Pkg.GetTypeId("Text"))
+	ctx.link(0, ctx.Pkg.GetTypeId("Text"))
 	// optionally, remove functions from pkg that aren't used (dead code removal)
 }
 
-func (ctx *LinkingContext) link(obj *ScriptObject, scopeType int) {
+func (ctx *LinkingContext) link(objId, scopeType int) {
+	obj := ctx.Objects[objId]
 	if proto.GetBool(obj.Linked) == false {
-		
+		println("Linking", proto.GetString(obj.Name))
+		obj.ScopeTypeId = proto.Int(scopeType)
 		ctx.ProcessInstruction(obj.Root, scopeType)
+	} else {
+		if scopeType != int(proto.GetInt32(obj.ScopeTypeId)) {
+			log.Fatal("Imported a script in two different scopes!")
+		}
+		println("Already linked", proto.GetString(obj.Name))
 	}
 }
 
@@ -92,6 +99,8 @@ func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (
 			if ok != true {
 				log.Fatal("Invalid import ", ins.String())
 			}
+			// Make sure this object is linked with the right scopeType
+			ctx.link(importId, scopeType)
 			//println("befor", ins.String())
 			ins.ObjectId = proto.Int(importId)
 			ins.Value = nil

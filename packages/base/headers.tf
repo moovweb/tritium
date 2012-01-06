@@ -36,6 +36,7 @@
 @func concat(Text %first_value, Text %second_value) //Text,Text
 
 // This is a the way that we have Tritium communicate variables back to its execution environment. That sounds complicated, but in most uses of Tritium, it would be something like export("Content-Type", "application/js") to tell the app to change the content-type. Look at the reference for your server for more information on what you can export.
+@func export(Text %key_name) //Text,Text
 @func export(Text %key_name, Text %value) //Text,Text
 
 // Returns the input argument in ALL CAPS
