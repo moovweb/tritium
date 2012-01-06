@@ -12,7 +12,7 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-require_relative 'exec_init' # Sets up bundler, etc
+#require_relative 'exec_init' # Sets up bundler, etc
 require_relative '../lib/tritium'
 require_relative '../lib/tritium/serializer/serializer'
 

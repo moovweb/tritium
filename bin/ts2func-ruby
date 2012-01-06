@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require_relative "exec_init"
+#require_relative "exec_init"
 require "optparse"
 
 options = {}
