@@ -105,17 +105,28 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	output, err := command.CombinedOutput()
 
-	fmt.Printf("\t -- output -- \n\t %s", output)
-	fmt.Printf("\t -- err -- \n\t %s", err)
+	if err != nil {
+		fmt.Printf("\tFunction conversion output:\n\t %s", output)
+		log.Fatal(err)
+	}
+
+	// Load the output
+	/*
+	functionArrayBinary, err := ioutil.ReadFile(output_file);
+	functions := &tp.FunctionArray{}
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Load the output
+	err = proto.Unmarshal(functionArrayBinary, functions)
 
-	// 
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	fmt.Printf("functions: %v", functions)
+	 */
 }
 
 
