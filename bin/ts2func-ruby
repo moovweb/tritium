@@ -75,7 +75,9 @@ def parse_function(tritium, signature)
 
   # Get the function body without the curly brackets:
 
-  block_start = tritium.index("{")
+  tritium.gsub!(/#[^\n]*\n/,"") # Hack : Get rid of comments
+
+  block_start = tritium.index("{")  
   block_end = tritium.index(/\}\s*?\Z/)
 
   block = tritium[block_start+1..block_end-1]
@@ -105,7 +107,7 @@ end
 def collect_function_definitions(tritium)
   
   raw_functions = tritium.split("@func").compact
-  raw_functions.delete_if {|function_string| function_string == "" }
+  raw_functions.delete_if {|function_string| function_string =~ /\s*/m }
 
   function_array = ::FunctionArray.new
 

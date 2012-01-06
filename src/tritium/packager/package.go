@@ -7,7 +7,12 @@ import(
 	"io/ioutil"
 	"log"
 	"strings"
+	"fmt"
+	"exec"
 )
+
+//	"runtime"
+//	fpath "path/filepath"
 
 type Package struct {
 	loaded []*PackageInfo
@@ -41,7 +46,11 @@ func NewPackage() (*Package){
 }
 
 func (pkg *Package)Load(location string) {
+	
 	info := readPackageInfoFile(location)
+
+	fmt.Printf("--- info: %v\n", info)
+
 	for _, typeName := range(info.Types) {
 		split := strings.Split(typeName, " < ")
 		typeObj := &tp.Type{}
@@ -54,8 +63,61 @@ func (pkg *Package)Load(location string) {
 		typeObj.Name = proto.String(typeName)
 		pkg.Types = append(pkg.Types, typeObj)
 	}
+
+	fmt.Printf("--- Package types: %v\n", pkg.Types)
+
 	pkg.readHeaderFile(location)
+
+	// Now read the function declarations
+
+	pkg.readPackageDefinitions(location)
+
+	pkg.resolveDefinitions()
+
 }
+
+func (pkg *Package)resolveDefinitions() {
+	// Re-uses linker's logic to resolve function definitions
+}
+
+func (pkg *Package)readPackageDefinitions(location string) {
+	
+	// fmt.Printf("Location: %s\n", location)
+
+	// Execute the ts2func-ruby script
+
+	package_name := strings.Split(location,"/")[1]
+	input_file := location + "/functions.ts"
+	output_file := location + "/" + package_name + ".tf"
+
+	// Assume that tritium/bin is in $PATH (it will be when you install the gem)
+	// -- if you're developing, add $REPOS/tritium/bin to $PATH
+
+	script_path, err := exec.LookPath("ts2func-ruby")
+	
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	command := exec.Command(script_path, input_file, output_file)
+
+	fmt.Printf("\n\nExecuting command: \n %v\n", command)
+
+	output, err := command.CombinedOutput()
+
+	fmt.Printf("\t -- output -- \n\t %s", output)
+	fmt.Printf("\t -- err -- \n\t %s", err)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Load the output
+
+	// 
+
+}
+
 
 func (pkg *Package)Marshal() []byte {
 	bytes, err := proto.Marshal(pkg.Package)
