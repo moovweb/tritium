@@ -9,7 +9,7 @@ Syntactic rules (specified with EBNF):
                 ->  expression
                 ->  definition
                 
-    import      ->  '@import' PATH
+    import      ->  '@import' (PATH | STR)
 
     expression  ->  STR
                 ->  RGXP
