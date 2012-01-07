@@ -4,10 +4,10 @@ Syntactic rules (specified with EBNF):
 --------------------------------------
 
     script      ->  statement*
+                ->  definition*
 
     statement   ->  import
                 ->  expression
-                ->  definition
                 
     import      ->  '@import' (PATH | STR)
 
