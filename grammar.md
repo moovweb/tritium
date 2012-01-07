@@ -52,7 +52,7 @@ Lexical rules (specified with Ruby regexps):
 
     TYPE  ->  [A-Z](\w)*                     (capitalized identifiers)
 
-    ID    ->  \$|[_a-z](\w|\$)*              (uncapitalized ids with + $)
+    ID    ->  \$|[_a-z](\w|\$)*              (uncapitalized identifiers + $)
     
     KWD   ->  [a-zA-Z_:][-\w:.]*:            (XML attrs ending with ':')
 
