@@ -31,6 +31,10 @@ def parse_name(raw_function)
 
   parens_index = raw_function.index("(")
 
+  if parens_index.nil?
+    throw Exception.new("Error parsing function name. Raw tritium: #{raw_function}")
+  end
+
   name = raw_function[0..parens_index-1].strip
   raw_function = raw_function[parens_index..-1]
 
@@ -79,8 +83,6 @@ def parse_function(tritium, signature)
 
   # Get the function body without the curly brackets:
 
-  tritium.gsub!(/#[^\n]*\n/,"") # Hack : Get rid of comments
-
   block_start = tritium.index("{")  
   block_end = tritium.index(/\}\s*?\Z/)
 
@@ -111,6 +113,9 @@ def parse_function(tritium, signature)
 end
 
 def collect_function_definitions(tritium)
+
+  # Hack : Get rid of comments
+  tritium.gsub!(/#[^\n]*\n/,"") 
 
   raw_functions = tritium.split("@func").compact
   raw_functions.delete_if {|function_string| function_string =~ /\A\s*\Z/m }
