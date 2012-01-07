@@ -11,9 +11,6 @@ import(
 	"exec"
 )
 
-//	"runtime"
-//	fpath "path/filepath"
-
 type Package struct {
 	loaded []*PackageInfo
 	*tp.Package
@@ -49,7 +46,7 @@ func (pkg *Package)Load(location string) {
 	
 	info := readPackageInfoFile(location)
 
-	fmt.Printf("--- info: %v\n", info)
+	fmt.Printf("%v\n", location)
 
 	for _, typeName := range(info.Types) {
 		split := strings.Split(typeName, " < ")
@@ -63,8 +60,6 @@ func (pkg *Package)Load(location string) {
 		typeObj.Name = proto.String(typeName)
 		pkg.Types = append(pkg.Types, typeObj)
 	}
-
-	fmt.Printf("--- Package types: %v\n", pkg.Types)
 
 	pkg.readHeaderFile(location)
 
@@ -82,7 +77,7 @@ func (pkg *Package)resolveDefinitions() {
 
 func (pkg *Package)readPackageDefinitions(location string) {
 	
-	// fmt.Printf("Location: %s\n", location)
+	println(" -- reading definitions")
 
 	// Execute the ts2func-ruby script
 
@@ -93,16 +88,9 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	// Assume that tritium/bin is in $PATH (it will be when you install the gem)
 	// -- if you're developing, add $REPOS/tritium/bin to $PATH
 
-/*
-	script_path, err := exec.LookPath("ts2func-ruby")
-	
-	if err != nil {
-		log.Fatal(err)
-	}
-*/
 	command := exec.Command("ts2func-ruby", "-s", input_file, output_file)
 
-	fmt.Printf("\n\nExecuting command: \n %v\n", command)
+	//fmt.Printf("\n\nExecuting command: \n %v\n", command)
 
 	output, err := command.CombinedOutput()
 
@@ -110,35 +98,31 @@ func (pkg *Package)readPackageDefinitions(location string) {
 		fmt.Printf("\tFunction conversion output:\n\t %s", output)
 		log.Fatal(err)
 	}
-
-	// Load the output
 	
-	/*functionArrayBinary, err := ioutil.ReadFile(output_file);
-	if err != nil {
-		log.Fatal(err)
-	}*/
-
-	functionArrayBinary := output
-	functions := &tp.FunctionArray{}
-
-
-//	fmt.Printf("functions pre unmarshal: (%v)", functions)
-	fmt.Printf("functions pre unmarshal: (%s)", functionArrayBinary)
-	
-	err = proto.Unmarshal(functionArrayBinary, functions)
+	functions := &tp.FunctionArray{}	
+	err = proto.Unmarshal(output, functions)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
+/*
 	fmt.Printf("functions : %v", functions)
+	fmt.Printf("\n\n prelim pkg functions : %v\n", pkg.Package.Functions)
 
-/*	for index, obj := range(functions.functions) {
-		fmt.Printf("functions[%s]: %v", index, obj)
+
+//	for index, function := range(functions.Functions) {
+	for _, function := range(functions.Functions) {
+		//fmt.Printf("\n\t -- functions[%v]:\n %v", index, function)
+		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}
-*/
+	fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
 	
-	 
+	pkg.Package.Functions = functions.Functions
+
+	fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
+*/
+	println(" -- done\n")
 }
 
 
