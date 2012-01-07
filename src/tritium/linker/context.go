@@ -71,14 +71,20 @@ func NewLinkingContext(pkg *Package) (*LinkingContext){
 }
 
 func (ctx *LinkingContext) Link() {
-	ctx.link(ctx.Objects[0], ctx.Pkg.GetTypeId("Text"))
-	// optionally, remove functions from pkg that aren't used (dead code removal)
+	ctx.link(0, ctx.Pkg.GetTypeId("Text"))
 }
 
-func (ctx *LinkingContext) link(obj *ScriptObject, scopeType int) {
+func (ctx *LinkingContext) link(objId, scopeType int) {
+	obj := ctx.Objects[objId]
 	if proto.GetBool(obj.Linked) == false {
-		
+		//println("Linking", proto.GetString(obj.Name))
+		obj.ScopeTypeId = proto.Int(scopeType)
 		ctx.ProcessInstruction(obj.Root, scopeType)
+	} else {
+		if scopeType != int(proto.GetInt32(obj.ScopeTypeId)) {
+			log.Fatal("Imported a script in two different scopes!")
+		}
+		//println("Already linked", proto.GetString(obj.Name))
 	}
 }
 
@@ -92,6 +98,8 @@ func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (
 			if ok != true {
 				log.Fatal("Invalid import ", ins.String())
 			}
+			// Make sure this object is linked with the right scopeType
+			ctx.link(importId, scopeType)
 			//println("befor", ins.String())
 			ins.ObjectId = proto.Int(importId)
 			ins.Value = nil
@@ -101,7 +109,6 @@ func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (
 			if ins.Arguments != nil {
 				for _, arg := range(ins.Arguments) {
 					argReturn := ctx.ProcessInstruction(arg, scopeType)
-					println(argReturn)
 					if argReturn == -1 {
 						log.Fatal("Invalid argument object", arg.String())
 					}
@@ -110,25 +117,35 @@ func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (
 			}
 			funcId, ok := ctx.funList[scopeType][stub]
 			if ok != true {
-				log.Fatal("No such function found....", ins.String(), "with the stub: ", stub)
+				println("Available functions...")
+				for funcName, _ := range(ctx.funList[scopeType]) {
+					println(funcName)
+				}
+				log.Fatal("No such function found....", ins.String(), "with the stub: ",scopeType, stub)
 			}
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
 			returnType = int(proto.GetInt32(fun.ReturnTypeId))
-			scopeType = int(proto.GetInt32(fun.ScopeTypeId))
-			println("Zomg, found function", fun.String())
+			opensScopeType := int(proto.GetInt32(fun.OpensTypeId))
+			//println("Zomg, found function", fun.String())
+			//println("I open a Scope of type ", opensScopeType)
+			
+			if ins.Children != nil {
+				for _, child := range(ins.Children) {
+					ctx.ProcessInstruction(child, opensScopeType)
+				}
+			}
 		case Instruction_TEXT:
 			returnType = ctx.textType
+		case Instruction_BLOCK:
+			if ins.Children != nil {
+				for _, child := range(ins.Children) {
+					returnType = ctx.ProcessInstruction(child, scopeType)
+				}
+			}
 	}
 	
-	if ins.Children != nil {
-		for _, child := range(ins.Children) {
-			// Process all children.
-			// In the case of blocks, we'll actually want to have our return type be the
-			// return type of our LAST child. So, save that!
-			returnType = ctx.ProcessInstruction(child, scopeType)
-		}
-	}
+	
 	// if function
 		// Figure out function signature (name + arg types)
 			// have to start at the bottom of the tree (args first) and check types.

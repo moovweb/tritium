@@ -190,7 +190,7 @@ func (pkg *Package)readHeaderFile(location string) {
 			methodizer := strings.Split(methodName, ".")
 			if len(methodizer) > 1 {
 				typeStr := methodizer[0]
-				typeId = pkg.findTypeIndex(typeStr)
+				typeId = pkg.GetTypeId(typeStr)
 				methodName = methodizer[1]
 			}
 			function.Name = proto.String(methodName)

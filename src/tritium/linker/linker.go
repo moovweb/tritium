@@ -11,8 +11,11 @@ import(
 )
 
 func Run(file string) (*tp.Executable) {
+	return RunWithPackage(file, packager.BuildDefaultPackage())
+}
+
+func RunWithPackage(file string, pkg *tp.Package) (*tp.Executable) {
 	objs := parser.ParseFileSet(file)
-	pkg := packager.BuildDefaultPackage()
 	ctx := NewObjectLinkingContext(pkg, objs)
 	ctx.Link()
 	

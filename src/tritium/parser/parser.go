@@ -18,7 +18,6 @@ func ParseFile(file string) (*tp.ScriptObject) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	obj.Imports()
 	return obj
 }
 

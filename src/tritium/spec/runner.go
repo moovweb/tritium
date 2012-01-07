@@ -1,29 +1,25 @@
 package spec
-
 import(
-	//. "tritium/parser"
-	//. "tritium/engine"
-	//. "io/ioutil"
-	//. "path/filepath"
-	//"log"
-	
+	"tritium/packager"
+	tp "tritium/proto"
+	"tritium/engine"
 )
 
-func RunTests(directory string) {
-	//RunTest("blank_test")
-	/*files, err := Glob("*")
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, file := range(files) {
-		println(file)
-	}
-	*/
-	RunTest(directory)
+func All(directory string) { 
+	pkg := packager.BuildDefaultPackage()
+	Run(directory, pkg)
+	Run(directory, pkg)
 }
 
-func RunTest(dir string) bool {
+func Run(dir string, pkg *tp.Package) bool {
+	spec := LoadSpec(dir, pkg)
+	eng := engine.NewEngine(spec.Script)
 	//eng.Run(transform, input, vars)
-	
+	output, _, _ := eng.Run(spec.Input, spec.Vars)
+	if output == spec.Output {
+		print(".")
+	} else {
+		print("F")
+	}
 	return true
 }
