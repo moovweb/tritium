@@ -34,6 +34,7 @@ module Tritium
           func.value = ins.name.to_s.force_encoding("BINARY")
 
           func.children = convert_instructions(ins.statements)
+          # The argument serialization is wonky. 
           func.arguments = convert_instructions(ins.pos_args)
           func
         end

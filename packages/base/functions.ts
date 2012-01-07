@@ -5,10 +5,14 @@
 }
 
 @func bm(Text %name) {
-  log(concat(%name, ": ", 
-    time() {
-      yield()
-    }, "s"))
+
+# The argument serialization is wonky. 
+# Even in ruby land, I can't deserialize this properly
+
+#  log(concat(%name, ": ", 
+#    time() {
+      #yield() # More serializer unhappiness
+#    }, "s"))
 }
 
 @func Text.clear() {

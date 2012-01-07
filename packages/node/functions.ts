@@ -1,12 +1,14 @@
-@func position() {
-  position("bottom") 
-}
+# These cause errors when de-serialized
 
-@func Node.copy_here(Text %xpath) {
-  copy_here(%xpath, position()) {
-    yield() 
-  } 
-}
+# @func position() {
+#   position("bottom") 
+# }
+
+# @func Node.copy_here(Text %xpath) {
+#   copy_here(%xpath, position()) {
+#     yield() 
+#   } 
+# }
 
 @func Node.copy_here(Text %xpath, Text %pos) {
   copy_here(%xpath, position(%pos)) {

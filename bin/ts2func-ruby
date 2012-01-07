@@ -3,13 +3,17 @@
 #require_relative "exec_init"
 require "optparse"
 
-options = {}
+$options = {}
 
 OptionParser.new do |opts|
   opts.banner = "Usage: ts2func-ruby filename.ts filename.to"
 
   opts.on("-s", "--stdout", "Print to STDOUT") do |s|
-    options[:standard_out] = s
+    $options[:standard_out] = s
+  end
+
+  opts.on("-v", "--verbose", "Print debug messages") do |v|
+    $options[:verbose] = v
   end
 
 end.parse!
@@ -26,6 +30,10 @@ require_relative '../lib/tritium/serializer/serializer'
 def parse_name(raw_function) 
 
   parens_index = raw_function.index("(")
+
+  if parens_index.nil?
+    throw Exception.new("Error parsing function name. Raw tritium: #{raw_function}")
+  end
 
   name = raw_function[0..parens_index-1].strip
   raw_function = raw_function[parens_index..-1]
@@ -75,8 +83,6 @@ def parse_function(tritium, signature)
 
   # Get the function body without the curly brackets:
 
-  tritium.gsub!(/#[^\n]*\n/,"") # Hack : Get rid of comments
-
   block_start = tritium.index("{")  
   block_end = tritium.index(/\}\s*?\Z/)
 
@@ -89,6 +95,8 @@ def parse_function(tritium, signature)
 
   # Now stuff the body into a tmp file so that I can re-use the ObjectSerializer
   
+  puts "hacked tritium:\n#{block}" if $options[:verbose]
+
   temp_filename = signature + ".tmp"
   File.open(temp_filename, "w") {|f| f << block}
 
@@ -105,9 +113,12 @@ def parse_function(tritium, signature)
 end
 
 def collect_function_definitions(tritium)
-  
+
+  # Hack : Get rid of comments
+  tritium.gsub!(/#[^\n]*\n/,"") 
+
   raw_functions = tritium.split("@func").compact
-  raw_functions.delete_if {|function_string| function_string =~ /\s*/m }
+  raw_functions.delete_if {|function_string| function_string =~ /\A\s*\Z/m }
 
   function_array = ::FunctionArray.new
 
@@ -118,9 +129,18 @@ def collect_function_definitions(tritium)
     raw_function, function.args = parse_args(raw_function)
     function.instruction = parse_function(raw_function, get_function_signature(function) )
 
+    if $options[:verbose]
+      puts "-"*20
+      puts "Function: #{function.name}"
+      puts "raw tritium:\n#{raw_function}"
+      puts "result:\n"
+      p function
+      puts "\n"
+    end
+
     function
   end
-  
+
   function_array
 
 end
@@ -135,6 +155,32 @@ tritium = File.read(files[:input])
 
 functions = collect_function_definitions(tritium)
 
-p functions if options[:standard_out] 
+p functions if $options[:verbose] 
 
-File.open(files[:output], "wb") {|f| f.write(functions.encode) }
+encoded_functions = functions.encode
+
+print encoded_functions if $options[:standard_out]
+
+File.open(files[:output], "wb") {|f| f.write(encoded_functions) }
+
+# Now try and read the result:
+
+if $options[:verbose]
+
+  puts "-"*10
+
+  fa = ::FunctionArray.decode(encoded_functions)
+  # This is false because encoding removes empty optional fields
+  # puts fa == functions 
+
+  p fa
+
+  result = File.read(files[:output])
+  fab = ::FunctionArray.decode(result)
+
+  puts "-"*5
+  p fab
+  puts fa == fab
+  # I should put this into a test somewhere
+
+end
