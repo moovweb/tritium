@@ -93,13 +93,14 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	// Assume that tritium/bin is in $PATH (it will be when you install the gem)
 	// -- if you're developing, add $REPOS/tritium/bin to $PATH
 
+/*
 	script_path, err := exec.LookPath("ts2func-ruby")
 	
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	command := exec.Command(script_path, input_file, output_file)
+*/
+	command := exec.Command("ts2func-ruby", "-s", input_file, output_file)
 
 	fmt.Printf("\n\nExecuting command: \n %v\n", command)
 
@@ -111,22 +112,33 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	}
 
 	// Load the output
-	/*
-	functionArrayBinary, err := ioutil.ReadFile(output_file);
-	functions := &tp.FunctionArray{}
-
+	
+	/*functionArrayBinary, err := ioutil.ReadFile(output_file);
 	if err != nil {
 		log.Fatal(err)
-	}
+	}*/
 
+	functionArrayBinary := output
+	functions := &tp.FunctionArray{}
+
+
+//	fmt.Printf("functions pre unmarshal: (%v)", functions)
+	fmt.Printf("functions pre unmarshal: (%s)", functionArrayBinary)
+	
 	err = proto.Unmarshal(functionArrayBinary, functions)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("functions: %v", functions)
-	 */
+	fmt.Printf("functions : %v", functions)
+
+/*	for index, obj := range(functions.functions) {
+		fmt.Printf("functions[%s]: %v", index, obj)
+	}
+*/
+	
+	 
 }
 
 
