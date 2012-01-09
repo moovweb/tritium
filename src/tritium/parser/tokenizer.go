@@ -1,5 +1,10 @@
 package parser
 
+import (
+  "bytes"
+  //"strconv"
+)
+
 // Type tags so we know what kind of token we have
 type lexeme int
 const (
@@ -33,49 +38,45 @@ type token struct {
 }
 
 /*
-  Represent a tokenizer with an stuct containing the remaining source text
-  and the line number. Easier than using a stateless tokenizing function that
+  Represent a tokenizer with a struct containing the remaining source text and
+  the line number. Easier than using a stateless tokenizing function that
   returns them as extra values and requires the parser to keep track of them.
 */
-type tokenizer struct {
+type Tokenizer struct {
   Source []byte
   LineNum int
 }
 
+func (t *Tokenizer) hasPrefix(s string) bool {
+  return bytes.HasPrefix(t.Source, []byte(s))
+}
+
 // Discard leading spaces (excluding newlines) in the source text.
-func (t *tokenizer) discardSpaces() {
-  var i int
-  var c byte
-  for i, c = 0, t.Source[0]; c == ' ' || c == '\t'; i, c = i+1, t.Source[i+1] { }
-  t.Source = t.Source[i:]
+func (t *Tokenizer) discardSpaces() {
+  t.Source = bytes.TrimLeft(t.Source, " \t")
 }
 
-// Discard leading text until a newline is found.
-func(t *tokenizer) discardLine() {
-  var i int
-  var c byte
-  for i, c = 0, t.Source[0]; c != '\n'; i, c = i+1, t.Source[i+1] { }
-  t.Source = t.Source[i:]
+// Discard leading text until a newline (or EOF) is found.
+func(t *Tokenizer) discardLine() {
+  if i := bytes.IndexByte(t.Source, '\n'); i >= 0 {
+    t.Source = t.Source[i:]
+  } else {
+    t.Source = t.Source[len(t.Source):]
+  }
 }
 
-// Discard leading comments in the source text.
-func (t *tokenizer) discardComments() {
-  switch t.Source[0] {
-  case '#':
+// Discard the leading comment in the source text.
+func (t *Tokenizer) discardComment() {
+  if t.hasPrefix("#") || t.hasPrefix("//") {
     t.discardLine()
-  case '/':
-    switch t.Source[1] {
-    case '/':
-      t.discardLine()
-    case '*':
-      t.discardBlockComment()
-    }
+  } else if t.hasPrefix("/*") {
+    t.discardBlockComment()
   }
 }
 
 // Helper for discarding block comments.
 // TO DO: ERROR HANDLING FOR UNTERMINATED COMMENTS
-func (t *tokenizer) discardBlockComment() {
+func (t *Tokenizer) discardBlockComment() {
   depth, i, length := 1, 2, len(t.Source)
   for depth > 0 {
     if i >= length {
@@ -105,8 +106,24 @@ func (t *tokenizer) discardBlockComment() {
   }
   t.Source = t.Source[i:]
 }
-      
-      
+
+// Discard all leading whitespace and comments from the source text. Need to
+// tally up the newlines to keep LineNum up to date.
+func (t *Tokenizer) discardWhitespaceAndComments() {
+  for len(t.Source) > 0 {
+    switch {
+    case t.hasPrefix("\n"):
+      t.LineNum++
+      t.Source = t.Source[1:]
+    case t.hasPrefix(" ") || t.hasPrefix("\t"):
+      t.discardSpaces()
+    case t.hasPrefix("#") || t.hasPrefix("//") || t.hasPrefix("/*"):
+      t.discardComment()
+    default:
+      return
+    }
+  }
+}
 
 func init() {
   // Is there a more elegant way to do this?
