@@ -1,9 +1,8 @@
-package main
+package parser
 
 import (
   "bytes"
   //"strconv"
-  "fmt"
 )
 
 // Type tags so we know what kind of token we have
@@ -114,36 +113,17 @@ func (t *Tokenizer) discardWhitespaceAndComments() {
   for len(t.Source) > 0 {
     switch {
     case t.hasPrefix("\n"):
-      fmt.Println("newline")
       t.LineNum++
       t.Source = t.Source[1:]
     case t.hasPrefix(" ") || t.hasPrefix("\t"):
-      fmt.Println("spaces")
       t.discardSpaces()
     case t.hasPrefix("#") || t.hasPrefix("//") || t.hasPrefix("/*"):
-      fmt.Println("comment")
       t.discardComment()
     default:
       return
     }
   }
 }
-
-
-
-func main() {
-  t := Tokenizer{ Source: []byte("  \t // blah \n/* a /* b */ c */  hello"), LineNum: 1 }
-  // t.discardSpaces()
-  // t.discardComment()
-  // t.Source = t.Source[1:]
-  // t.discardComment()
-  // t.discardSpaces()
-  t.discardWhitespaceAndComments()
-  
-  fmt.Println(string(t.Source))
-}
-      
-      
 
 func init() {
   // Is there a more elegant way to do this?
