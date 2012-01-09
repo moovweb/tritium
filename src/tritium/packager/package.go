@@ -90,7 +90,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	command := exec.Command("ts2func-ruby", "-s", input_file, output_file)
 
-	//fmt.Printf("\n\nExecuting command: \n %v\n", command)
+	//fmt.Printf("\n\nExecuting commmand: \n %v\n", command)
 
 	output, err := command.CombinedOutput()
 
@@ -99,29 +99,25 @@ func (pkg *Package)readPackageDefinitions(location string) {
 		log.Fatal(err)
 	}
 	
-	functions := &tp.FunctionArray{}	
-	err = proto.Unmarshal(output, functions)
+	data, err := ioutil.ReadFile(output_file)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-/*
-	fmt.Printf("functions : %v", functions)
-	fmt.Printf("\n\n prelim pkg functions : %v\n", pkg.Package.Functions)
+	functions := &tp.FunctionArray{}	
+	err = proto.Unmarshal(data, functions)
+	// I can't use stdout because of the nokogiri warning that prints
 
+	if err != nil {
+		log.Fatal(err)
+	}
 
-//	for index, function := range(functions.Functions) {
+	// Append since the stubs are already there
 	for _, function := range(functions.Functions) {
-		//fmt.Printf("\n\t -- functions[%v]:\n %v", index, function)
 		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}
-	fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
-	
-	pkg.Package.Functions = functions.Functions
 
-	fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
-*/
 	println(" -- done\n")
 }
 
