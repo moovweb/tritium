@@ -2,6 +2,7 @@ package parser
 
 import (
   "bytes"
+  "rubex"
   //"strconv"
 )
 
@@ -13,6 +14,7 @@ const (
   LBRACE
   RBRACE
   COMMA
+  DOT
   EQUAL
   STRING
   REGEXP
@@ -26,9 +28,8 @@ const (
   IMPORT
   READ
   EOF
+  ERROR
 )
-// Map the numeric tags back to names for debugging purposes.
-var lexemeName [18]string
 
 // A token has a type (aka lexeme), a value, and a line number
 type token struct {
@@ -125,6 +126,10 @@ func (t *Tokenizer) discardWhitespaceAndComments() {
   }
 }
 
+
+var lexemeName [19]string
+var matcher [19]*rubex.Regexp
+
 func init() {
   // Is there a more elegant way to do this?
   lexemeName[LPAREN] = "LPAREN"
@@ -132,6 +137,7 @@ func init() {
   lexemeName[LBRACE] = "LBRACE"
   lexemeName[RBRACE] = "RBRACE"
   lexemeName[COMMA]  = "COMMA"
+  lexemeName[DOT]    = "DOT"
   lexemeName[EQUAL]  = "EQUAL"
   lexemeName[STRING] = "STRING"
   lexemeName[REGEXP] = "REGEXP"
@@ -145,4 +151,15 @@ func init() {
   lexemeName[IMPORT] = "IMPORT"
   lexemeName[READ]   = "READ"
   lexemeName[EOF]    = "EOF"
+  lexemeName[ERROR]  = "ERROR"
+  
+  // Inline comments below indicate which captures to use
+  matcher[STRING] = rubex.Compile(`^"(\\.|[^"\\])*"|^'(\\.|[^'\\])*'`)  // 0
+  matcher[REGEXP] = rubex.Compile(`^\/((\\.|[^\/\\])*)\/([imxouesn]*)`) // 1,3
+  matcher[POS]    = rubex.Compile("^(top|bottom|before|after)")         // 0
+  matcher[GVAR]   = rubex.Compile(`^\$(\w+)`)                           // 1
+  matcher[LVAR]   = rubex.Compile(`^%(\w+)`)                            // 1
+  matcher[KWD]    = rubex.Compile(`^([a-zA-Z_:][-\w:.]*):`)             // 1
+  matcher[ID]     = rubex.Compile(`^\$|[_a-z](\w|\$)*`)                 // 0
+  matcher[TYPE]   = rubex.Compile(`^[A-Z](\w*)`)                        // 0
 }
