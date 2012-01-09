@@ -11,6 +11,7 @@ class Instruction
     IMPORT = 2
     TEXT = 3
     LOCAL_VAR = 4
+    POSITION = 5
   end
 
   required :type, Instruction::InstructionType, 1
