@@ -46,6 +46,7 @@ type token struct {
 type Tokenizer struct {
   Source []byte
   LineNum int
+  Lookahead *token
 }
 
 func (t *Tokenizer) hasPrefix(s string) bool {
@@ -126,9 +127,17 @@ func (t *Tokenizer) discardWhitespaceAndComments() {
   }
 }
 
+// The heart of the tokenizer. This function tries to munch off a token from
+// the head of the source text.
+// func (t *Tokenizer) munch() {
+//   tSrc = t.Source
+//   switch {
+//   case len(tSrc) == 0:
+    
 
-var lexemeName [19]string
-var matcher [19]*rubex.Regexp
+
+var lexemeName [20]string
+var matcher [20]*rubex.Regexp
 
 func init() {
   // Is there a more elegant way to do this?
@@ -154,12 +163,12 @@ func init() {
   lexemeName[ERROR]  = "ERROR"
   
   // Inline comments below indicate which captures to use
-  matcher[STRING] = rubex.Compile(`^"(\\.|[^"\\])*"|^'(\\.|[^'\\])*'`)  // 0
-  matcher[REGEXP] = rubex.Compile(`^\/((\\.|[^\/\\])*)\/([imxouesn]*)`) // 1,3
-  matcher[POS]    = rubex.Compile("^(top|bottom|before|after)")         // 0
-  matcher[GVAR]   = rubex.Compile(`^\$(\w+)`)                           // 1
-  matcher[LVAR]   = rubex.Compile(`^%(\w+)`)                            // 1
-  matcher[KWD]    = rubex.Compile(`^([a-zA-Z_:][-\w:.]*):`)             // 1
-  matcher[ID]     = rubex.Compile(`^\$|[_a-z](\w|\$)*`)                 // 0
-  matcher[TYPE]   = rubex.Compile(`^[A-Z](\w*)`)                        // 0
+  matcher[STRING], _ = rubex.Compile(`^"(\\.|[^"\\])*"|^'(\\.|[^'\\])*'`)  // 0
+  matcher[REGEXP], _ = rubex.Compile(`^\/((\\.|[^\/\\])*)\/([imxouesn]*)`) // 1,3
+  matcher[POS], _    = rubex.Compile("^(top|bottom|before|after)")         // 0
+  matcher[GVAR], _   = rubex.Compile(`^\$(\w+)`)                           // 1
+  matcher[LVAR], _   = rubex.Compile(`^%(\w+)`)                            // 1
+  matcher[KWD], _    = rubex.Compile(`^([a-zA-Z_:][-\w:.]*):`)             // 1
+  matcher[ID], _     = rubex.Compile(`^\$|[_a-z](\w|\$)*`)                 // 0
+  matcher[TYPE], _   = rubex.Compile(`^[A-Z](\w*)`)                        // 0
 }
