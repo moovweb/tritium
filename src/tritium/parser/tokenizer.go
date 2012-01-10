@@ -4,7 +4,7 @@ import (
   "bytes"
   "rubex"
   "strconv"
-  //"fmt"
+  "fmt"
 )
 
 // Type tags so we know what kind of token we have
@@ -96,6 +96,10 @@ type Token struct {
   LineNum int
 }
 
+func (t *Token) Inspect() string {
+  return fmt.Sprintf("[%s: %s, %s, %d]", lexemeName[t.Lexeme], t.Value, t.ExtraValue, t.LineNum)
+}
+
 /*
   Represent a tokenizer with a struct containing the remaining source text and
   the line number. Easier than using a stateless tokenizing function that
@@ -105,6 +109,7 @@ type Tokenizer struct {
   Source []byte
   LineNum int
   Lookahead *Token
+  unterminatedComment bool
 }
 
 func (t *Tokenizer) hasPrefix(s string) bool {
@@ -138,9 +143,11 @@ func (t *Tokenizer) discardComment() {
 // TO DO: ERROR HANDLING FOR UNTERMINATED COMMENTS
 func (t *Tokenizer) discardBlockComment() {
   depth, i, length := 1, 2, len(t.Source)
+  error := false
   for depth > 0 {
     if i >= length {
-      // ERROR
+      error = true
+      break
     }
     switch t.Source[i] {
     case '\n':
@@ -148,7 +155,8 @@ func (t *Tokenizer) discardBlockComment() {
     case '/':
       i++
       if i >= length {
-        // ERROR
+        error = true
+        break
       }
       if t.Source[i] == '*' {
         depth++
@@ -156,7 +164,8 @@ func (t *Tokenizer) discardBlockComment() {
     case '*':
       i++
       if i >= length {
-        // ERROR
+        error = true
+        break
       }
       if t.Source[i] == '/' {
         depth--
@@ -165,6 +174,10 @@ func (t *Tokenizer) discardBlockComment() {
     i++
   }
   t.Source = t.Source[i:]
+  if error {
+    t.Lookahead = &Token{ Lexeme: ERROR, Value: "unterminated comment", ExtraValue: "", LineNum: t.LineNum }
+    t.unterminatedComment = true
+  }
 }
 
 // Discard all leading whitespace and comments from the source text. Need to
@@ -197,6 +210,24 @@ func (t *Tokenizer) popError(message string) *Token {
   return val
 }
 
+
+// Helper for unquoting strings. The main difficulty is that Go strings are
+// exclusively double-quoted, so single-quoted strings need to be converted
+// before being passed to strconv.Unquote(...).
+func unquote(chars []byte) string {
+  var converted []byte
+  if chars[0] == '\'' {
+    converted = bytes.Replace(chars, []byte(`\'`), []byte(`'`), -1)
+    converted = bytes.Replace(chars, []byte(`"`), []byte(`\"`), -1)
+    converted[0] = '"'
+    converted[len(converted)-1] = '"'
+  } else {
+    converted = chars
+  }
+  val, _ := strconv.Unquote(string(converted))
+  return val
+}
+
 // The heart of the tokenizer. This function tries to munch off a token from
 // the head of the source text.
 func (t *Tokenizer) munch() *Token {
@@ -211,16 +242,7 @@ func (t *Tokenizer) munch() *Token {
     return t.popToken(STRING, c, len(c))
   } else if t.hasPrefix("'") || t.hasPrefix("\"") {
     if c := matcher[STRING].Find(src); len(c) > 0 {
-      var d []byte
-      if c[0] == '\'' {
-        d = bytes.Replace(c, []byte(`\'`), []byte(`'`), -1)
-        d = bytes.Replace(d, []byte(`"`), []byte(`\"`), -1)
-        d[0] = '"'
-        d[len(d)-1] = '"'
-      } else {
-        d = c
-      }
-      unquoted, _ := strconv.Unquote(string(d))
+      unquoted := unquote(c)
       return t.popToken(STRING, unquoted, len(c))
     } else {
       return t.popError("unterminated string literal")
@@ -257,8 +279,8 @@ func (t *Tokenizer) munch() *Token {
     if c := string(matcher[PATH].Find(t.Source)); len(c) > 0 {
       tok.Value = c
       t.Source = t.Source[len(c):]
-    } else if c := string(matcher[STRING].Find(t.Source)); len(c) > 0 {
-      tok.Value, _ = strconv.Unquote(c)
+    } else if c := matcher[STRING].Find(t.Source); len(c) > 0 {
+      tok.Value = unquote(c)
       t.Source = t.Source[len(c):]
     } else {
       tok = t.popError("malformed import")
@@ -279,49 +301,16 @@ func (t *Tokenizer) Peek() *Token {
 func (t *Tokenizer) Pop() *Token {
   val := t.Lookahead
   t.discardWhitespaceAndComments()
-  t.Lookahead = t.munch()
+  if !t.unterminatedComment {
+    t.Lookahead = t.munch()
+  } else {
+    t.unterminatedComment = false
+  }
   return val
 }
 
 func MakeTokenizer(src []byte) *Tokenizer {
-  var t Tokenizer
-  t.Source = src
-  t.LineNum = 1
-  t.discardWhitespaceAndComments()
-  t.Lookahead = t.munch()
+  t := Tokenizer { Source: src, Lookahead: nil, LineNum: 1 }
+  t.Pop()
   return &t
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

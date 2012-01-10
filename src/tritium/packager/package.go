@@ -23,14 +23,16 @@ type PackageInfo struct {
 	Types []string
 }
 
-func BuildDefaultPackage() (*tp.Package) {
+func BuildDefaultPackage() (*Package) {
 	// Terrible directory handling here... has to be executed from Tritium root
 	pkg := NewPackage()
+
 	pkg.Load("packages/base")
 	pkg.Load("packages/node")
 	pkg.Load("packages/libxml")
 	println("Packages all loaded")
-	return pkg.Package
+
+	return pkg
 }
 
 func NewPackage() (*Package){
@@ -239,4 +241,13 @@ func (pkg *Package)readHeaderFile(location string) {
 			pkg.Functions = append(pkg.Functions, function)
 		}
 	}
+}
+
+func (pkg *Package)SerializedOutput() {
+
+	bytes, err := proto.Marshal(pkg.Package)
+	if err != nil {
+		log.Fatal(err)
+	}
+	println(string(bytes))
 }

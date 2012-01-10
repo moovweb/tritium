@@ -6,9 +6,18 @@ import (
 )
 
 func TestBlah(t *testing.T) {
-  tkzer := Tokenizer{Source: []byte(`'hello \'cruel\' world`), LineNum:1}
-  tkzer.discardWhitespaceAndComments()
-  fmt.Println(string(tkzer.Source), tkzer.LineNum)
-  tk := tkzer.munch()
-  fmt.Println(lexemeName[tk.Lexeme], tk.Value, tk.ExtraValue)
+  tokenizer := MakeTokenizer([]byte("hello /* blah"))
+  
+  token := tokenizer.Pop()
+  
+  if token != nil {
+  
+    fmt.Println(tokenizer.Pop().Inspect())
+  } else {
+    fmt.Println("Token is nil!")
+  }
+  
+  fmt.Println("--------")
+  fmt.Println(string(tokenizer.Source), tokenizer.Lookahead.Inspect())
+  
 }

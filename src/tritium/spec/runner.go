@@ -10,7 +10,7 @@ import(
 func All(directory string) {
 	eng := engine.NewEngine() 
 	pkg := packager.BuildDefaultPackage()
-	all(directory, pkg, eng)
+	all(directory, pkg.Package, eng)
 }
 
 func all(directory string, pkg *tp.Package, eng Transformer) {
