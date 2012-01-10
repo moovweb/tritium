@@ -90,7 +90,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	command := exec.Command("./bin/ts2func-ruby", "-s", input_file, output_file)
 
-	fmt.Printf("\n\nExecuting command: \n %v\n", command)
+	//fmt.Printf("\n\nExecuting command: \n %v\n", command)
 
 	output, err := command.CombinedOutput()
 
