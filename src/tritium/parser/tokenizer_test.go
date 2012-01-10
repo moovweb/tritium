@@ -2,14 +2,13 @@ package parser
 
 import (
   "testing"
-  //"fmt"
+  "fmt"
 )
 
 func TestBlah(t *testing.T) {
-  tk := Tokenizer{Source: []byte("  //comment \n  /* a /* b */ \n c */  \n\nhello"), LineNum:1}
-  tk.discardWhitespaceAndComments()
-  //fmt.Println(string(tk.Source), tk.LineNum)
-  if string(tk.Source) != "hello" || tk.LineNum != 5 {
-    t.Error("Didn't tokenize correctly!")
-  }
+  tkzer := Tokenizer{Source: []byte(`'hello \'cruel\' world`), LineNum:1}
+  tkzer.discardWhitespaceAndComments()
+  fmt.Println(string(tkzer.Source), tkzer.LineNum)
+  tk := tkzer.munch()
+  fmt.Println(lexemeName[tk.Lexeme], tk.Value, tk.ExtraValue)
 }

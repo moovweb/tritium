@@ -24,7 +24,7 @@ def process_file(filename, output_file)
 end
 
 if !File.exists?(filename)
-  puts "No file found!"
+  puts "No file found at #{filename}"
   exit(1)
 else # run command!
   if File.directory?(filename)

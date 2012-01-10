@@ -13,11 +13,11 @@ var _ = math.Inf
 var _ os.Error
 
 type ScriptObject struct {
-	Name             *string      `protobuf:"bytes,1,opt,name=name,def=main" json:"name,omitempty"`
-	Root             *Instruction `protobuf:"bytes,2,opt,name=root" json:"root,omitempty"`
-	ScopeTypeId      *int32       `protobuf:"varint,3,opt,name=scope_type_id" json:"scope_type_id,omitempty"`
-	Linked           *bool        `protobuf:"varint,4,opt,name=linked" json:"linked,omitempty"`
-	XXX_unrecognized []byte       `json:",omitempty"`
+	Name             *string      `protobuf:"bytes,1,opt,name=name,def=main" json:"name"`
+	Root             *Instruction `protobuf:"bytes,2,opt,name=root" json:"root"`
+	ScopeTypeId      *int32       `protobuf:"varint,3,opt,name=scope_type_id" json:"scope_type_id"`
+	Linked           *bool        `protobuf:"varint,4,opt,name=linked" json:"linked"`
+	XXX_unrecognized []byte
 }
 
 func (this *ScriptObject) Reset()         { *this = ScriptObject{} }

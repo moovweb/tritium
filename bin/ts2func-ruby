@@ -38,7 +38,7 @@ def parse_name(raw_function)
   name = raw_function[0..parens_index-1].strip
   raw_function = raw_function[parens_index..-1]
 
-  [raw_function, name]
+  [raw_function, name.force_encoding("BINARY")]
 end
 
 def parse_args(raw_function) 
@@ -69,14 +69,14 @@ end
 
 def get_function_signature(function)
 
-  signature = function.name
+  signature = function.name.dup
   
   function.args.each do |arg|
     signature << "." << arg.type_string unless arg.type_string.nil?
     signature << "." << arg.name unless arg.name.nil?
   end
 
-  signature
+  signature.force_encoding("BINARY")
 end
 
 def parse_function(tritium, signature)
@@ -125,7 +125,12 @@ def collect_function_definitions(tritium)
   function_array.functions = raw_functions.collect do |raw_function|
     function = ::Function.new
 
-    raw_function, function.name = parse_name(raw_function)
+    raw_function, name = parse_name(raw_function)
+    if name.include?(".")
+      function.scope_type, function.name = name.split(".")
+    else
+      function.name = name
+    end
     raw_function, function.args = parse_args(raw_function)
     function.instruction = parse_function(raw_function, get_function_signature(function) )
 

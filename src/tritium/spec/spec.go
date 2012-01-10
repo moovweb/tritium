@@ -4,8 +4,8 @@ import(
 	tp "tritium/proto"
 	"tritium/linker"
 	. "path/filepath"
-	"log"
 	. "io/ioutil"
+	"log"
 	yaml "launchpad.net/goyaml"
 )
 
@@ -51,7 +51,8 @@ func loadExports(dir string) ([][]string) {
 func loadFile(dir, filename string) (string) {
 	list, err := Glob(Join(dir, filename))
 	if err != nil {
-		log.Fatal(err)
+		return ""
+		//log.Fatal(err)
 	}
 	if len(list) == 0 {
 		//println("Found nothing", Join(dir, filename))

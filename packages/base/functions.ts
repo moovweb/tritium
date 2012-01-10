@@ -5,24 +5,36 @@
 }
 
 @func bm(Text %name) {
-
-# The argument serialization is wonky. 
-# Even in ruby land, I can't deserialize this properly
-
-#  log(concat(%name, ": ", 
-#    time() {
-      #yield() # More serializer unhappiness
-#    }, "s"))
+  log(concat(%name, ": ", 
+    time() {
+      yield()
+    }, "s"))
 }
 
 @func Text.clear() {
   set("") {
     yield()
-  } 
+  }
 }
 
 @func else() {
   with(/.?/) {
     yield()
+  }
+}
+
+@func match(Text %target, Text %comparitor) {
+  match(%target) {
+    with(%comparitor) {
+      yield()
+    }
+  }
+}
+
+@func match(Text %target, Regexp %comparitor) {
+  match(%target) {
+    with(%comparitor) {
+      yield()
+    }
   }
 }

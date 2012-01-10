@@ -88,9 +88,9 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	// Assume that tritium/bin is in $PATH (it will be when you install the gem)
 	// -- if you're developing, add $REPOS/tritium/bin to $PATH
 
-	command := exec.Command("ts2func-ruby", "-s", input_file, output_file)
+	command := exec.Command("./bin/ts2func-ruby", "-s", input_file, output_file)
 
-	//fmt.Printf("\n\nExecuting commmand: \n %v\n", command)
+	//fmt.Printf("\n\nExecuting command: \n %v\n", command)
 
 	output, err := command.CombinedOutput()
 
@@ -99,24 +99,29 @@ func (pkg *Package)readPackageDefinitions(location string) {
 		log.Fatal(err)
 	}
 	
-	data, err := ioutil.ReadFile(output_file)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	functions := &tp.FunctionArray{}	
-	err = proto.Unmarshal(data, functions)
-	// I can't use stdout because of the nokogiri warning that prints
+	err = proto.Unmarshal(output, functions)
 
 	if err != nil {
+		println("Failed while loading output from ts2func.")
+		println(string(output))
 		log.Fatal(err)
 	}
 
-	// Append since the stubs are already there
+
+	//fmt.Printf("functions : %v", functions)
+	//fmt.Printf("\n\n prelim pkg functions : %v\n", pkg.Package.Functions) */
+
+	println("Function count before ", len(pkg.Package.Functions))
 	for _, function := range(functions.Functions) {
+		//fmt.Printf("\n\t -- functions[%v]:\n %v", index, function)
 		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}
+	//fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
+	println("Function count after ", len(pkg.Package.Functions))
+	//pkg.Package.Functions = functions.Functions
+
+	//fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
 
 	println(" -- done\n")
 }

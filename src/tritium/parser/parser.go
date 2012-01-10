@@ -8,7 +8,7 @@ import(
 )
 
 func ParseFile(file string) (*tp.ScriptObject) {
-	cmd := Command("ts2to", file)
+	cmd := Command("./bin/ts2to", file)
 	data, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatal("ts2to failed with message:", err.String(), "\n", string(data))
