@@ -210,8 +210,17 @@ func (t *Tokenizer) munch() *Token {
   } else if c := string(numberPattern.Find(src)); len(c) > 0 {
     return t.popToken(STRING, c, len(c))
   } else if t.hasPrefix("'") || t.hasPrefix("\"") {
-    if c := string(matcher[STRING].Find(src)); len(c) > 0 {
-      unquoted, _ := strconv.Unquote(c)
+    if c := matcher[STRING].Find(src); len(c) > 0 {
+      var d []byte
+      if c[0] == '\'' {
+        d = bytes.Replace(c, []byte(`\'`), []byte(`'`), -1)
+        d = bytes.Replace(d, []byte(`"`), []byte(`\"`), -1)
+        d[0] = '"'
+        d[len(d)-1] = '"'
+      } else {
+        d = c
+      }
+      unquoted, _ := strconv.Unquote(string(d))
       return t.popToken(STRING, unquoted, len(c))
     } else {
       return t.popError("unterminated string literal")

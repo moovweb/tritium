@@ -6,9 +6,9 @@ import (
 )
 
 func TestBlah(t *testing.T) {
-  tkzer := Tokenizer{Source: []byte("  //comment \n  /* a /* b */ \n c */  \n\n="), LineNum:1}
+  tkzer := Tokenizer{Source: []byte(`'hello \'cruel\' world`), LineNum:1}
   tkzer.discardWhitespaceAndComments()
   fmt.Println(string(tkzer.Source), tkzer.LineNum)
   tk := tkzer.munch()
-  fmt.Println(lexemeName[tk.Lexeme], tk.Value)
+  fmt.Println(lexemeName[tk.Lexeme], tk.Value, tk.ExtraValue)
 }
