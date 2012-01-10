@@ -69,7 +69,7 @@ end
 
 def get_function_signature(function)
 
-  signature = function.name
+  signature = function.name.dup
   
   function.args.each do |arg|
     signature << "." << arg.type_string unless arg.type_string.nil?

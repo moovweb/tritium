@@ -45,7 +45,7 @@
   } 
 }
 
-@func XmlNode.move_to(Text %xpath, Position %pos) {
+@func Node.move_to(Text %xpath, Position %pos) {
   %parent_node = this()
   $(%xpath) {
     move(%parent_node, this(), %pos)
@@ -53,7 +53,7 @@
   }
 }
 
-@func XmlNode.move_to(Text %xpath, Text %pos) {
+@func Node.move_to(Text %xpath, Text %pos) {
   move_to(%xpath, position(%pos))
 }
 

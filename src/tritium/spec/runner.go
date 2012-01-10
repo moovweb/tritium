@@ -15,9 +15,9 @@ func All(directory string) {
 
 func all(directory string, pkg *tp.Package, eng Transformer) {
 	_, err := Glob(Join(directory, "main.ts"))
-	println("checking in", directory)
+	//println("checking in", directory)
 	if err == nil {
-		println("running")
+		//println("running")
 		Run(directory, pkg, eng)
 	}
 	subdirs, _ := Glob(Join(directory, "*"))

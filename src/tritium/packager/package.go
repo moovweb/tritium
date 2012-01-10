@@ -9,6 +9,7 @@ import(
 	"strings"
 	"fmt"
 	"exec"
+	linker "tritium/linker"
 )
 
 type Package struct {
@@ -65,6 +66,7 @@ func (pkg *Package)Load(location string) {
 
 	// Now read the function declarations
 
+
 	pkg.readPackageDefinitions(location)
 
 	pkg.resolveDefinitions()
@@ -72,7 +74,30 @@ func (pkg *Package)Load(location string) {
 }
 
 func (pkg *Package)resolveDefinitions() {
+	linkingContext := linker.NewLinkingContext(pkg.Package)
+
 	// Re-uses linker's logic to resolve function definitions
+	for _, fun := range(pkg.Functions) {
+		if ( proto.GetBool( fun.BuiltIn ) == false) {
+
+			fun.ScopeTypeId = pkg.GetProtoTypeId(fun.ScopeType)
+			fun.ScopeType = nil
+			//		fun.ReturnTypeId = pkg.GetProtoTypeId(fun.ReturnType)
+			for _, arg := range(fun.Args) {
+				arg.TypeId = pkg.GetProtoTypeId(arg.TypeString)
+			}
+
+
+
+			fmt.Printf("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
+
+			returnType := int32( linkingContext.ProcessInstruction( fun.Instruction, int(proto.GetInt32(fun.ScopeTypeId)) ) )
+			fun.ReturnTypeId = proto.Int32(returnType)
+		}
+
+	}
+
+
 }
 
 func (pkg *Package)readPackageDefinitions(location string) {
@@ -100,7 +125,15 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	}
 	
 	functions := &tp.FunctionArray{}	
-	err = proto.Unmarshal(output, functions)
+	data, err := ioutil.ReadFile(output_file)
+
+	if err != nil {
+		println("Failed to read output file.")
+		log.Fatal(err)
+	}
+
+
+	err = proto.Unmarshal(data, functions)
 
 	if err != nil {
 		println("Failed while loading output from ts2func.")
@@ -207,6 +240,8 @@ func (pkg *Package)readHeaderFile(location string) {
 					 function.OpensTypeId = proto.Int32(int32(pkg.findTypeIndex(hints[1])))
 				}
 			}
+			function.BuiltIn = proto.Bool(true)
+
 			pkg.Functions = append(pkg.Functions, function)
 		}
 	}
