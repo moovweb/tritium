@@ -64,3 +64,17 @@ func loadFile(dir, filename string) (string) {
 	}
 	return string(data)
 }
+
+func (spec *Spec) Compare(data string, exports [][]string, logs []string) (*Result) {
+	result := newResult()
+	result.Merge(spec.compareData(data))
+	return result
+}
+
+func (spec *Spec) compareData(data string) (*Result) {
+	result := newResult()
+	if spec.Output != data {
+		result.Error("Bad Output", data, spec.Output, "Didn't match")
+	}
+	return result
+}
