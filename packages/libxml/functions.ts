@@ -2,7 +2,7 @@
   attribute("class") {
     value() {
       append(" ")
-      # append(%class) -- the serializer doesn't like this
+      append(%class)
     }
     yield()
   }
@@ -19,9 +19,8 @@
 
 @func XMLNode.inner_wrap(Text %tag_name) {
   inner() {
-    # Serializer doesn't like this either
     prepend(concat("<", concat(%tag_name, ">")))
-    # append(concat("</", concat(%tag_name, ">")))
+    append(concat("</", concat(%tag_name, ">")))
   }
   select("./*[1]") {
     yield()
@@ -39,30 +38,30 @@
     replace(/^$/, "/")
   }
   
-# -- Serializer doesn't like this either  
-#  $(".//img|.//script") {
-#    #var("src", fetch("./@src"))
-#    # skip URLs which: are empty, have a host (//www.example.com), or have a protocol (http:// or mailto:)
-#    match($src, /^(?![a-z]+\:)(?!\/\/)(?!$)/) {
-#      attribute("src") {
-#        value() {
-#          match($src) {
-#            with(/^\//) {
-#              # host-relative URL: just add the host
-#              # prepend($host)
-#              prepend("//")
-#            }
-#            else() {
-#              # path-relative URL: add the host and the path
-#              #prepend($slash_path)
-#              #prepend($host)
-#              prepend("//")
-#            }
-#          }
-#        }
-#      }
-#    }
-#    yield()
-#  }
+
+  $(".//img|.//script") {
+    #var("src", fetch("./@src"))
+    # skip URLs which: are empty, have a host (//www.example.com), or have a protocol (http:// or mailto:)
+    match($src, /^(?![a-z]+\:)(?!\/\/)(?!$)/) {
+      attribute("src") {
+        value() {
+          match($src) {
+            with(/^\//) {
+              # host-relative URL: just add the host
+              prepend($host)
+              prepend("//")
+            }
+            else() {
+              # path-relative URL: add the host and the path
+              prepend($slash_path)
+              prepend($host)
+              prepend("//")
+            }
+          }
+        }
+      }
+    }
+    yield()
+  }
 
 }
