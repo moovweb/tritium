@@ -3,11 +3,11 @@ package parser
 import (
   "bytes"
   "rubex"
-  //"strconv"
+  "strconv"
 )
 
 // Type tags so we know what kind of token we have
-type lexeme int
+type Lexeme int
 const (
   LPAREN = iota
   RPAREN
@@ -31,10 +31,65 @@ const (
   ERROR
 )
 
+var lexemeName [20]string
+var matcher [20]*rubex.Regexp
+var symbolLexeme map[string]Lexeme
+var symbolPattern *rubex.Regexp
+var numberPattern *rubex.Regexp
+
+func init() {
+  // Is there a more elegant way to do this?
+  lexemeName[LPAREN] = "LPAREN"
+  lexemeName[RPAREN] = "RPAREN"
+  lexemeName[LBRACE] = "LBRACE"
+  lexemeName[RBRACE] = "RBRACE"
+  lexemeName[COMMA]  = "COMMA"
+  lexemeName[DOT]    = "DOT"
+  lexemeName[EQUAL]  = "EQUAL"
+  lexemeName[STRING] = "STRING"
+  lexemeName[REGEXP] = "REGEXP"
+  lexemeName[POS]    = "POS"
+  lexemeName[GVAR]   = "GVAR"
+  lexemeName[LVAR]   = "LVAR"
+  lexemeName[KWD]    = "KWD"
+  lexemeName[ID]     = "ID"
+  lexemeName[FUNC]   = "FUNC"
+  lexemeName[TYPE]   = "TYPE"
+  lexemeName[IMPORT] = "IMPORT"
+  lexemeName[READ]   = "READ"
+  lexemeName[EOF]    = "EOF"
+  lexemeName[ERROR]  = "ERROR"
+  
+  // Inline comments below indicate which captures to use. Should probably
+  // check those error codes sometime....
+  matcher[STRING], _ = rubex.Compile(`^"(\\.|[^"\\])*"|^'(\\.|[^'\\])*'`)  // 0
+  matcher[REGEXP], _ = rubex.Compile(`^\/((\\.|[^\/\\])*)\/([imxouesn]*)`) // 1,3
+  matcher[POS], _    = rubex.Compile("^(top|bottom|before|after)")         // 0
+  matcher[GVAR], _   = rubex.Compile(`^\$(\w+)`)                           // 1
+  matcher[LVAR], _   = rubex.Compile(`^%(\w+)`)                            // 1
+  matcher[KWD], _    = rubex.Compile(`^([a-zA-Z_:][-\w:.]*):`)             // 1
+  matcher[ID], _     = rubex.Compile(`^\$|[_a-z](\w|\$)*`)                 // 0
+  matcher[TYPE], _   = rubex.Compile(`^[A-Z](\w*)`)                        // 0
+  
+  // Map parens, braces, etc to their lexemes
+  symbolLexeme = make(map[string]Lexeme, 7)
+  symbolLexeme["("] = LPAREN
+  symbolLexeme[")"] = RPAREN
+  symbolLexeme["{"] = LBRACE
+  symbolLexeme["}"] = RBRACE
+  symbolLexeme[","] = COMMA
+  symbolLexeme["."] = DOT
+  symbolLexeme["="] = EQUAL
+  symbolPattern, _ = rubex.Compile(`^[(){},\.=]`)
+  
+  numberPattern, _ = rubex.Compile(`\d+`)
+}
+
 // A token has a type (aka lexeme), a value, and a line number
-type token struct {
-  Lexeme lexeme
+type Token struct {
+  Lexeme
   Value string
+  ExtraValue string
   LineNum int
 }
 
@@ -46,7 +101,7 @@ type token struct {
 type Tokenizer struct {
   Source []byte
   LineNum int
-  Lookahead *token
+  Lookahead *Token
 }
 
 func (t *Tokenizer) hasPrefix(s string) bool {
@@ -127,48 +182,104 @@ func (t *Tokenizer) discardWhitespaceAndComments() {
   }
 }
 
+func (t *Tokenizer) popToken(lexeme Lexeme, value string, length int) *Token {
+  val := &Token { Lexeme: lexeme, Value: value, ExtraValue: "", LineNum: t.LineNum }
+  t.Source = t.Source[length:]
+  return val
+}
+
+func (t *Tokenizer) popError(message string) *Token {
+  val := &Token { Lexeme: ERROR, Value: message, ExtraValue: "", LineNum: t.LineNum }
+  t.discardLine()
+  return val
+}
+
 // The heart of the tokenizer. This function tries to munch off a token from
 // the head of the source text.
-// func (t *Tokenizer) munch() {
-//   tSrc = t.Source
-//   switch {
-//   case len(tSrc) == 0:
+func (t *Tokenizer) munch() *Token {
+  src := t.Source
+  if len(src) == 0 {
+    return t.popToken(EOF, "", 0)
+  } else if t.hasPrefix("*/") {
+    return t.popError("unmatched comment terminator")
+  } else if c := string(symbolPattern.Find(src)); len(c) > 0 {
+    return t.popToken(symbolLexeme[c], c, 1)
+  } else if c := string(numberPattern.Find(src)); len(c) > 0 {
+    return t.popToken(STRING, c, len(c))
+  } else if t.hasPrefix("'") || t.hasPrefix("\"") {
+    if c := string(matcher[STRING].Find(src)); len(c) > 0 {
+      unquoted, _ := strconv.Unquote(c)
+      return t.popToken(STRING, unquoted, len(c))
+    } else {
+      return t.popError("unterminated string literal")
+    }
+  } else if t.hasPrefix("/") {
+    if cs := matcher[REGEXP].FindSubmatch(src); len(cs) > 0 {
+      pattern := cs[1][1:len(cs[1])-1]
+      options := cs[3]
+      val := t.popToken(REGEXP, string(pattern), len(cs[0]))
+      val.ExtraValue = string(options)
+      return val
+    } else {
+      return t.popError("unterminated regular expression literal")
+    }
+  } else if c := matcher[KWD].Find(src); len(c) > 0 {
+    return t.popToken(KWD, string(c[:len(c)-1]), len(c))
+  } else if c := string(matcher[ID].Find(src)); len(c) > 0 {
+    if matcher[POS].MatchString(c) {
+      return t.popToken(POS, c, len(c))
+    } else if c == "read" {
+      return t.popToken(READ, "", len(c))
+    } else {
+      return t.popToken(ID, c, len(c))
+    }
+  } else if c := matcher[GVAR].Find(src); len(c) > 0 {
+    return t.popToken(GVAR, string(c[1:]), len(c))
+  } else if c := matcher[LVAR].Find(src); len(c) > 0 {
+    return t.popToken(LVAR, string(c[1:]), len(c))
+  } else if c := string(matcher[TYPE].Find(src)); len(c) > 0 {
+    return t.popToken(TYPE, c, len(c))
+  }
     
-
-
-var lexemeName [20]string
-var matcher [20]*rubex.Regexp
-
-func init() {
-  // Is there a more elegant way to do this?
-  lexemeName[LPAREN] = "LPAREN"
-  lexemeName[RPAREN] = "RPAREN"
-  lexemeName[LBRACE] = "LBRACE"
-  lexemeName[RBRACE] = "RBRACE"
-  lexemeName[COMMA]  = "COMMA"
-  lexemeName[DOT]    = "DOT"
-  lexemeName[EQUAL]  = "EQUAL"
-  lexemeName[STRING] = "STRING"
-  lexemeName[REGEXP] = "REGEXP"
-  lexemeName[POS]    = "POS"
-  lexemeName[GVAR]   = "GVAR"
-  lexemeName[LVAR]   = "LVAR"
-  lexemeName[KWD]    = "KWD"
-  lexemeName[ID]     = "ID"
-  lexemeName[FUNC]   = "FUNC"
-  lexemeName[TYPE]   = "TYPE"
-  lexemeName[IMPORT] = "IMPORT"
-  lexemeName[READ]   = "READ"
-  lexemeName[EOF]    = "EOF"
-  lexemeName[ERROR]  = "ERROR"
-  
-  // Inline comments below indicate which captures to use
-  matcher[STRING], _ = rubex.Compile(`^"(\\.|[^"\\])*"|^'(\\.|[^'\\])*'`)  // 0
-  matcher[REGEXP], _ = rubex.Compile(`^\/((\\.|[^\/\\])*)\/([imxouesn]*)`) // 1,3
-  matcher[POS], _    = rubex.Compile("^(top|bottom|before|after)")         // 0
-  matcher[GVAR], _   = rubex.Compile(`^\$(\w+)`)                           // 1
-  matcher[LVAR], _   = rubex.Compile(`^%(\w+)`)                            // 1
-  matcher[KWD], _    = rubex.Compile(`^([a-zA-Z_:][-\w:.]*):`)             // 1
-  matcher[ID], _     = rubex.Compile(`^\$|[_a-z](\w|\$)*`)                 // 0
-  matcher[TYPE], _   = rubex.Compile(`^[A-Z](\w*)`)                        // 0
+    
+    
+    
+    
+  return t.popToken(ERROR, "blah", 0)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
