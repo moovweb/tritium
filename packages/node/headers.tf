@@ -5,8 +5,8 @@
 // This is how you select an element to pass it to a function.
 @func fetch(Text %selector) //Text,Text
 
-// This is how you access the node stack. The current node is node(1), and the parent node is node(2)
-@func node(Text %index) //Node,Node
+// This is how you access the current node
+@func node() //Node
 
 // Casts a string to a Position node
 @func position(Text %position) //Position
