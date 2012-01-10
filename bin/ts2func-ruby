@@ -125,7 +125,12 @@ def collect_function_definitions(tritium)
   function_array.functions = raw_functions.collect do |raw_function|
     function = ::Function.new
 
-    raw_function, function.name = parse_name(raw_function)
+    raw_function, name = parse_name(raw_function)
+    if name.include?(".")
+      function.scope_type, function.name = name.split(".")
+    else
+      function.name = name
+    end
     raw_function, function.args = parse_args(raw_function)
     function.instruction = parse_function(raw_function, get_function_signature(function) )
 
