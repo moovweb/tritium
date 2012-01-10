@@ -1,3 +1,8 @@
+// Yield function placeholder. I think it opens the same scope type as its parent
+@func yield() //Text
+
+@func set(Text %value) //Text
+
 // Looks up a global variable
 @func var(Text %name) //Text,Text
 @func var(Text %name, Text %value) //Text,Text
