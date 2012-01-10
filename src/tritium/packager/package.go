@@ -103,6 +103,8 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	err = proto.Unmarshal(output, functions)
 
 	if err != nil {
+		println("Failed while loading output from ts2func.")
+		println(string(output))
 		log.Fatal(err)
 	}
 
