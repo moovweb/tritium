@@ -96,6 +96,10 @@ type Token struct {
   LineNum int
 }
 
+func (t *Token) Inspect() string {
+  return fmt.Sprintf("[%s: %s, %s, %d]", lexemeName[t.Lexeme], t.Value, t.ExtraValue, t.LineNum)
+}
+
 /*
   Represent a tokenizer with a struct containing the remaining source text and
   the line number. Easier than using a stateless tokenizing function that
@@ -170,7 +174,7 @@ func (t *Tokenizer) discardBlockComment() {
   }
   t.Source = t.Source[i:]
   if error {
-    fmt.Println("UNTERMINATED COMMENT! PANICKING!")
+    t.Lookahead = &Token{ Lexeme: ERROR, Value: "unterminated comment", ExtraValue: "", LineNum: t.LineNum }
     panic("unterminated comment")
   }
 }
@@ -294,29 +298,24 @@ func (t *Tokenizer) Peek() *Token {
 }
 
 func (t *Tokenizer) Pop() *Token {
+  defer t.catchUnterminatedComment()
   val := t.Lookahead
-  defer func() {
-    if r := recover(); r != nil {
-      fmt.Println("RECOVERING")
-      //t.Lookahead = *Token(r)
-    }
-  }()
   t.discardWhitespaceAndComments()
   t.Lookahead = t.munch()
   return val
 }
 
 func MakeTokenizer(src []byte) *Tokenizer {
-  var t Tokenizer
-  t.Source = src
-  t.LineNum = 1
-  defer func() {
-    if r := recover(); r != nil {
-      fmt.Println("RECOVERING")
-      //t.Lookahead = *Token(r)
-    }
-  }()
-  t.discardWhitespaceAndComments()
-  t.Lookahead = t.munch()
+  t := Tokenizer { Source: src, Lookahead: nil, LineNum: 1 }
+  t.Pop()
   return &t
+}
+
+func (t* Tokenizer) catchUnterminatedComment() *Token {
+  if r := recover(); r != nil {
+    fmt.Println("RECOVERING")
+    fmt.Println(t.Lookahead.Inspect())
+    return t.Lookahead
+  }
+  return t.Lookahead
 }
