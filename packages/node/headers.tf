@@ -6,7 +6,7 @@
 @func fetch(Text %selector) //Text,Text
 
 // This is how you access the current node
-@func node() //Node
+@func this() //Node
 
 // Casts a string to a Position node
 @func position(Text %position) //Position

@@ -13,7 +13,7 @@
 @func Node.copy_here(Text %xpath, Text %pos) {
   copy_here(%xpath, position(%pos)) {
     yield() 
-  } 
+  }
 }
 
 @func Node.copy_here(Text %xpath, Position %pos) {
@@ -46,9 +46,9 @@
 }
 
 @func XmlNode.move_to(Text %xpath, Position %pos) {
-  %parent_node = node()
+  %parent_node = this()
   $(%xpath) {
-    move(%pos, %parent_node, node())
+    move(%parent_node, this(), %pos)
     yield()
   }
 }
@@ -56,7 +56,7 @@
 @func XmlNode.move_to(Text %xpath, Text %pos) {
   move_to(%xpath, position(%pos))
 }
-    
+
 # DIRECTIONALS... UGH.
 
 @func Node.insert(Text %value) {
