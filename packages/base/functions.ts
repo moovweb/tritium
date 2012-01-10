@@ -22,3 +22,19 @@
     yield()
   }
 }
+
+@func match(Text %target, Text %comparitor) {
+  match(%target) {
+    with(%comparitor) {
+      yield()
+    }
+  }
+}
+
+@func match(Text %target, Regexp %comparitor) {
+  match(%target) {
+    with(%comparitor) {
+      yield()
+    }
+  }
+}
