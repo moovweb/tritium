@@ -109,6 +109,7 @@ type Tokenizer struct {
   Source []byte
   LineNum int
   Lookahead *Token
+  unterminatedComment bool
 }
 
 func (t *Tokenizer) hasPrefix(s string) bool {
@@ -175,7 +176,7 @@ func (t *Tokenizer) discardBlockComment() {
   t.Source = t.Source[i:]
   if error {
     t.Lookahead = &Token{ Lexeme: ERROR, Value: "unterminated comment", ExtraValue: "", LineNum: t.LineNum }
-    panic("unterminated comment")
+    t.unterminatedComment = true
   }
 }
 
@@ -298,10 +299,13 @@ func (t *Tokenizer) Peek() *Token {
 }
 
 func (t *Tokenizer) Pop() *Token {
-  defer t.catchUnterminatedComment()
   val := t.Lookahead
   t.discardWhitespaceAndComments()
-  t.Lookahead = t.munch()
+  if !t.unterminatedComment {
+    t.Lookahead = t.munch()
+  } else {
+    t.unterminatedComment = false
+  }
   return val
 }
 
@@ -309,13 +313,4 @@ func MakeTokenizer(src []byte) *Tokenizer {
   t := Tokenizer { Source: src, Lookahead: nil, LineNum: 1 }
   t.Pop()
   return &t
-}
-
-func (t* Tokenizer) catchUnterminatedComment() *Token {
-  if r := recover(); r != nil {
-    fmt.Println("RECOVERING")
-    fmt.Println(t.Lookahead.Inspect())
-    return t.Lookahead
-  }
-  return t.Lookahead
 }
