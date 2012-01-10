@@ -180,6 +180,10 @@ func (pkg *Package)findTypeIndex(name string) int {
 	return -1
 }
 
+func (pkg *Package)loadPackageDependency(name string) bool{
+	// Try and load the dependency
+}
+
 // Not fully functional. Dang it.
 func readPackageInfoFile(location string) (*PackageInfo){
 	packageInfo := &PackageInfo{}
