@@ -4,8 +4,8 @@ import(
 	tp "tritium/proto"
 	"tritium/linker"
 	. "path/filepath"
-	"log"
 	. "io/ioutil"
+	"log"
 	yaml "launchpad.net/goyaml"
 )
 
