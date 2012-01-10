@@ -49,14 +49,14 @@ func (x Instruction_InstructionType) String() string {
 }
 
 type Instruction struct {
-	Type             *Instruction_InstructionType `protobuf:"varint,1,req,name=type,enum=tritium.Instruction_InstructionType" json:"type,omitempty"`
-	Value            *string                      `protobuf:"bytes,2,opt,name=value" json:"value,omitempty"`
-	ObjectId         *int32                       `protobuf:"varint,3,opt,name=object_id" json:"object_id,omitempty"`
-	Children         []*Instruction               `protobuf:"bytes,4,rep,name=children" json:"children,omitempty"`
-	Arguments        []*Instruction               `protobuf:"bytes,5,rep,name=arguments" json:"arguments,omitempty"`
-	FunctionId       *int32                       `protobuf:"varint,6,opt,name=function_id" json:"function_id,omitempty"`
-	LineNumber       *int32                       `protobuf:"varint,7,opt,name=line_number" json:"line_number,omitempty"`
-	XXX_unrecognized []byte                       `json:",omitempty"`
+	Type             *Instruction_InstructionType `protobuf:"varint,1,req,name=type,enum=tritium.Instruction_InstructionType" json:"type"`
+	Value            *string                      `protobuf:"bytes,2,opt,name=value" json:"value"`
+	ObjectId         *int32                       `protobuf:"varint,3,opt,name=object_id" json:"object_id"`
+	Children         []*Instruction               `protobuf:"bytes,4,rep,name=children" json:"children"`
+	Arguments        []*Instruction               `protobuf:"bytes,5,rep,name=arguments" json:"arguments"`
+	FunctionId       *int32                       `protobuf:"varint,6,opt,name=function_id" json:"function_id"`
+	LineNumber       *int32                       `protobuf:"varint,7,opt,name=line_number" json:"line_number"`
+	XXX_unrecognized []byte
 }
 
 func (this *Instruction) Reset()         { *this = Instruction{} }
