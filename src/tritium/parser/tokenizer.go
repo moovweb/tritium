@@ -272,7 +272,25 @@ func (t *Tokenizer) munch() *Token {
   return t.popError("unrecognized token")
 }
 
+func (t *Tokenizer) Peek() *Token {
+  return t.Lookahead
+}
 
+func (t *Tokenizer) Pop() *Token {
+  val := t.Lookahead
+  t.discardWhitespaceAndComments()
+  t.Lookahead = t.munch()
+  return val
+}
+
+func MakeTokenizer(src []byte) *Tokenizer {
+  var t Tokenizer
+  t.Source = src
+  t.LineNum = 1
+  t.discardWhitespaceAndComments()
+  t.Lookahead = t.munch()
+  return &t
+}
 
 
 
