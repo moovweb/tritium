@@ -4,6 +4,7 @@ import (
   "bytes"
   "rubex"
   "strconv"
+  //"fmt"
 )
 
 // Type tags so we know what kind of token we have
@@ -25,14 +26,15 @@ const (
   ID
   FUNC
   TYPE
+  PATH
   IMPORT
   READ
   EOF
   ERROR
 )
 
-var lexemeName [20]string
-var matcher [20]*rubex.Regexp
+var lexemeName [21]string
+var matcher [21]*rubex.Regexp
 var symbolLexeme map[string]Lexeme
 var symbolPattern *rubex.Regexp
 var numberPattern *rubex.Regexp
@@ -55,21 +57,22 @@ func init() {
   lexemeName[ID]     = "ID"
   lexemeName[FUNC]   = "FUNC"
   lexemeName[TYPE]   = "TYPE"
+  lexemeName[PATH]   = "PATH"
   lexemeName[IMPORT] = "IMPORT"
   lexemeName[READ]   = "READ"
   lexemeName[EOF]    = "EOF"
   lexemeName[ERROR]  = "ERROR"
   
-  // Inline comments below indicate which captures to use. Should probably
-  // check those error codes sometime....
-  matcher[STRING], _ = rubex.Compile(`^"(\\.|[^"\\])*"|^'(\\.|[^'\\])*'`)  // 0
-  matcher[REGEXP], _ = rubex.Compile(`^\/((\\.|[^\/\\])*)\/([imxouesn]*)`) // 1,3
-  matcher[POS], _    = rubex.Compile("^(top|bottom|before|after)")         // 0
-  matcher[GVAR], _   = rubex.Compile(`^\$(\w+)`)                           // 1
-  matcher[LVAR], _   = rubex.Compile(`^%(\w+)`)                            // 1
-  matcher[KWD], _    = rubex.Compile(`^([a-zA-Z_:][-\w:.]*):`)             // 1
-  matcher[ID], _     = rubex.Compile(`^\$|[_a-z](\w|\$)*`)                 // 0
-  matcher[TYPE], _   = rubex.Compile(`^[A-Z](\w*)`)                        // 0
+  matcher[STRING], _ = rubex.Compile(`^"(\\.|[^"\\])*"|^'(\\.|[^'\\])*'`)
+  // the pattern and options of the regexp are in captures 1 and 3
+  matcher[REGEXP], _ = rubex.Compile(`^\/((\\.|[^\/\\])*)\/([imxouesn]*)`)
+  matcher[POS], _    = rubex.Compile("^(top|bottom|before|after)")
+  matcher[GVAR], _   = rubex.Compile(`^\$\w+`)
+  matcher[LVAR], _   = rubex.Compile(`^%\w+`)
+  matcher[KWD], _    = rubex.Compile(`^[a-zA-Z_:][-\w:.]*:`)
+  matcher[ID], _     = rubex.Compile(`^\$|^[_a-z][\w\$]*`)
+  matcher[TYPE], _   = rubex.Compile(`^[A-Z]\w*`)
+  matcher[PATH], _   = rubex.Compile(`^[-+.*?:\/\w]+`)
   
   // Map parens, braces, etc to their lexemes
   symbolLexeme = make(map[string]Lexeme, 7)
@@ -203,7 +206,7 @@ func (t *Tokenizer) munch() *Token {
   } else if t.hasPrefix("*/") {
     return t.popError("unmatched comment terminator")
   } else if c := string(symbolPattern.Find(src)); len(c) > 0 {
-    return t.popToken(symbolLexeme[c], c, 1)
+    return t.popToken(symbolLexeme[c], "", 1)
   } else if c := string(numberPattern.Find(src)); len(c) > 0 {
     return t.popToken(STRING, c, len(c))
   } else if t.hasPrefix("'") || t.hasPrefix("\"") {
@@ -225,6 +228,10 @@ func (t *Tokenizer) munch() *Token {
     }
   } else if c := matcher[KWD].Find(src); len(c) > 0 {
     return t.popToken(KWD, string(c[:len(c)-1]), len(c))
+  } else if c := matcher[GVAR].Find(src); len(c) > 0 {
+    return t.popToken(GVAR, string(c[1:]), len(c))
+  } else if c := matcher[LVAR].Find(src); len(c) > 0 {
+    return t.popToken(LVAR, string(c[1:]), len(c))
   } else if c := string(matcher[ID].Find(src)); len(c) > 0 {
     if matcher[POS].MatchString(c) {
       return t.popToken(POS, c, len(c))
@@ -233,19 +240,27 @@ func (t *Tokenizer) munch() *Token {
     } else {
       return t.popToken(ID, c, len(c))
     }
-  } else if c := matcher[GVAR].Find(src); len(c) > 0 {
-    return t.popToken(GVAR, string(c[1:]), len(c))
-  } else if c := matcher[LVAR].Find(src); len(c) > 0 {
-    return t.popToken(LVAR, string(c[1:]), len(c))
   } else if c := string(matcher[TYPE].Find(src)); len(c) > 0 {
     return t.popToken(TYPE, c, len(c))
+  } else if t.hasPrefix("@import") {
+    tok := t.popToken(IMPORT, "", 7)
+    t.discardWhitespaceAndComments()
+    if c := string(matcher[PATH].Find(t.Source)); len(c) > 0 {
+      tok.Value = c
+      t.Source = t.Source[len(c):]
+    } else if c := string(matcher[STRING].Find(t.Source)); len(c) > 0 {
+      tok.Value, _ = strconv.Unquote(c)
+      t.Source = t.Source[len(c):]
+    } else {
+      tok = t.popError("malformed import")
+    }
+    return tok
+  } else if t.hasPrefix("@func") {
+    return t.popToken(FUNC, "", 5)
+  } else {
+    return t.popError("unrecognized token")
   }
-    
-    
-    
-    
-    
-  return t.popToken(ERROR, "blah", 0)
+  return t.popError("unrecognized token")
 }
 
 
