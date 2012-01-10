@@ -108,22 +108,21 @@ func (pkg *Package)readPackageDefinitions(location string) {
 		log.Fatal(err)
 	}
 
-/*
-	fmt.Printf("functions : %v", functions)
-	fmt.Printf("\n\n prelim pkg functions : %v\n", pkg.Package.Functions)
 
+	//fmt.Printf("functions : %v", functions)
+	//fmt.Printf("\n\n prelim pkg functions : %v\n", pkg.Package.Functions) */
 
-//	for index, function := range(functions.Functions) {
+	println("Function count before ", len(pkg.Package.Functions))
 	for _, function := range(functions.Functions) {
 		//fmt.Printf("\n\t -- functions[%v]:\n %v", index, function)
 		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}
-	fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
-	
-	pkg.Package.Functions = functions.Functions
+	//fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
+	println("Function count after ", len(pkg.Package.Functions))
+	//pkg.Package.Functions = functions.Functions
 
-	fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
-*/
+	//fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
+
 	println(" -- done\n")
 }
 
