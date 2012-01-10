@@ -6,7 +6,12 @@ import (
 )
 
 func TestBlah(t *testing.T) {
-  tkzer := Tokenizer{Source: []byte(`'hello \'cruel\' world`), LineNum:1}
+  defer func() {
+    if r := recover(); r != nil {
+      fmt.Println(r)
+    }
+  }()
+  tkzer := Tokenizer{Source: []byte(`/* comment`), LineNum:1}
   tkzer.discardWhitespaceAndComments()
   fmt.Println(string(tkzer.Source), tkzer.LineNum)
   tk := tkzer.munch()
