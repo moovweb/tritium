@@ -85,7 +85,7 @@ func init() {
   symbolLexeme["="] = EQUAL
   symbolPattern, _ = rubex.Compile(`^[(){},\.=]`)
   
-  numberPattern, _ = rubex.Compile(`\d+`)
+  numberPattern, _ = rubex.Compile(`^\d+`)
 }
 
 // A token has a type (aka lexeme), a value, and a line number
@@ -218,7 +218,7 @@ func (t *Tokenizer) munch() *Token {
     }
   } else if t.hasPrefix("/") {
     if cs := matcher[REGEXP].FindSubmatch(src); len(cs) > 0 {
-      pattern := cs[1][1:len(cs[1])-1]
+      pattern := cs[1]
       options := cs[3]
       val := t.popToken(REGEXP, string(pattern), len(cs[0]))
       val.ExtraValue = string(options)
