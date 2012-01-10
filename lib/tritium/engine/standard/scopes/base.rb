@@ -58,6 +58,8 @@ module Tritium
             fetch_ctx = Context[ins, result]
             run_children(ins, fetch_ctx)
             return fetch_ctx.value
+          when :length
+            return args.first.to_s.length.to_s
           when :node
             return @node_stack[@node_stack.size - args.first.to_i]
           when :fetch

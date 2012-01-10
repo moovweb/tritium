@@ -31,6 +31,13 @@ Base:
   time:
     returns: Text
     doc: If given a block, it returns the time-to-execute in seconds as a string
+  length:
+    returns: Text
+    doc: Given a Text string, return the length
+    arguments:
+      -
+        name: Text
+        doc: What to measure
   bm:
     doc: Prints out the time a block took to run to the log
     returns: Text
