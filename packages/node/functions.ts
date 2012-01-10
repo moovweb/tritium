@@ -44,6 +44,18 @@
     yield() 
   } 
 }
+
+@func XmlNode.move_to(Text %xpath, Position %pos) {
+  %parent_node = node()
+  $(%xpath) {
+    move(%pos, %parent_node, node())
+    yield()
+  }
+}
+
+@func XmlNode.move_to(Text %xpath, Text %pos) {
+  move_to(%xpath, position(%pos))
+}
     
 # DIRECTIONALS... UGH.
 
