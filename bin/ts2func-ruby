@@ -38,7 +38,7 @@ def parse_name(raw_function)
   name = raw_function[0..parens_index-1].strip
   raw_function = raw_function[parens_index..-1]
 
-  [raw_function, name]
+  [raw_function, name.force_encoding("BINARY")]
 end
 
 def parse_args(raw_function) 
@@ -76,7 +76,7 @@ def get_function_signature(function)
     signature << "." << arg.name unless arg.name.nil?
   end
 
-  signature
+  signature.force_encoding("BINARY")
 end
 
 def parse_function(tritium, signature)

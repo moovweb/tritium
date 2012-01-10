@@ -88,9 +88,9 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	// Assume that tritium/bin is in $PATH (it will be when you install the gem)
 	// -- if you're developing, add $REPOS/tritium/bin to $PATH
 
-	command := exec.Command("ts2func-ruby", "-s", input_file, output_file)
+	command := exec.Command("./bin/ts2func-ruby", "-s", input_file, output_file)
 
-	//fmt.Printf("\n\nExecuting command: \n %v\n", command)
+	fmt.Printf("\n\nExecuting command: \n %v\n", command)
 
 	output, err := command.CombinedOutput()
 
@@ -103,6 +103,8 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	err = proto.Unmarshal(output, functions)
 
 	if err != nil {
+		println("Failed while loading output from ts2func.")
+		println(string(output))
 		log.Fatal(err)
 	}
 

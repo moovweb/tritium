@@ -2,20 +2,20 @@ package spec
 import(
 	"tritium/packager"
 	tp "tritium/proto"
+	. "tritium"
 	"tritium/engine"
 )
 
-func All(directory string) { 
+func All(directory string) {
+	eng := engine.NewEngine() 
 	pkg := packager.BuildDefaultPackage()
-	Run(directory, pkg)
-	Run(directory, pkg)
+	Run(directory, pkg, eng)
+	Run(directory, pkg, eng)
 }
 
-func Run(dir string, pkg *tp.Package) bool {
+func Run(dir string, pkg *tp.Package, eng Transformer) bool {
 	spec := LoadSpec(dir, pkg)
-	eng := engine.NewEngine(spec.Script)
-	//eng.Run(transform, input, vars)
-	output, _, _ := eng.Run(spec.Input, spec.Vars)
+	output, _, _ := eng.Run(spec.Script, spec.Input, spec.Vars)
 	if output == spec.Output {
 		print(".")
 	} else {

@@ -20,7 +20,7 @@
 @func XMLNode.inner_wrap(Text %tag_name) {
   inner() {
     # Serializer doesn't like this either
-    # prepend(concat("<", concat(%tag_name, ">")))
+    prepend(concat("<", concat(%tag_name, ">")))
     # append(concat("</", concat(%tag_name, ">")))
   }
   select("./*[1]") {
@@ -34,7 +34,7 @@
   var("slash_path") {
     # the 'slash_path' is the path of this page without anything following it's last slash
     set($path)
-    # replace(/[^\/]+$/, "") - serializer  says no
+    replace(/[^\/]+$/, "")
     # turn empty string into a single slash because this is the only thing separating the host from the path relative path
     replace(/^$/, "/")
   }

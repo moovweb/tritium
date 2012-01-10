@@ -13,20 +13,20 @@ var _ = math.Inf
 var _ os.Error
 
 type Type struct {
-	Name             *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Implements       *int32  `protobuf:"varint,2,opt,name=implements" json:"implements,omitempty"`
-	XXX_unrecognized []byte  `json:",omitempty"`
+	Name             *string `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Implements       *int32  `protobuf:"varint,2,opt,name=implements" json:"implements"`
+	XXX_unrecognized []byte
 }
 
 func (this *Type) Reset()         { *this = Type{} }
 func (this *Type) String() string { return proto.CompactTextString(this) }
 
 type Package struct {
-	Name                  *string     `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Functions             []*Function `protobuf:"bytes,2,rep,name=functions" json:"functions,omitempty"`
-	Types                 []*Type     `protobuf:"bytes,3,rep,name=types" json:"types,omitempty"`
-	DependentPackageNames []string    `protobuf:"bytes,4,rep,name=dependent_package_names" json:"dependent_package_names,omitempty"`
-	XXX_unrecognized      []byte      `json:",omitempty"`
+	Name                  *string     `protobuf:"bytes,1,opt,name=name" json:"name"`
+	Functions             []*Function `protobuf:"bytes,2,rep,name=functions" json:"functions"`
+	Types                 []*Type     `protobuf:"bytes,3,rep,name=types" json:"types"`
+	DependentPackageNames []string    `protobuf:"bytes,4,rep,name=dependent_package_names" json:"dependent_package_names"`
+	XXX_unrecognized      []byte
 }
 
 func (this *Package) Reset()         { *this = Package{} }
