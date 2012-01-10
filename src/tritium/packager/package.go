@@ -73,6 +73,19 @@ func (pkg *Package)Load(location string) {
 
 func (pkg *Package)resolveDefinitions() {
 	// Re-uses linker's logic to resolve function definitions
+	for _, fun := range(pkg.Functions) {
+		typeName := proto.GetString(fun.ScopeType)
+		if len(typeName) > 0 {
+			scopeTypeId := pkg.GetTypeId(proto.GetString(fun.ScopeType))
+			fun.ScopeTypeId = proto.Int32(int32(scopeTypeId))
+			if scopeTypeId == -1 {
+				// ERROR
+				log.Fatal("Didn't find type ", typeName)
+			}
+			//println("Set scope ID to ", scopeTypeId)
+		}
+		
+	}
 }
 
 func (pkg *Package)readPackageDefinitions(location string) {
