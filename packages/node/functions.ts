@@ -1,31 +1,35 @@
-# These cause errors when de-serialized
 
-# @func position() {
-#   position("bottom") 
-# }
+@func position() {
+  position("bottom") 
+}
 
-# @func Node.copy_here(Text %xpath) {
-#   copy_here(%xpath, position()) {
-#     yield() 
-#   } 
-# }
-
-
+@func Node.node() {
+  this() {
+    yield()
+  }
+}
 
 @func Node.copy_here(Text %xpath, Position %pos) {
+  %calling_node = this()
   $(%xpath) {
     dup() {
       # Not sure why, but adding any other args causes a serialization error
-      move(%pos) # node(1), node(3))
-      yield() 
-    } 
-  } 
+      move(this(), %calling_node, %pos)
+      yield()
+    }
+  }
 }
 
 @func Node.copy_here(Text %xpath, Text %pos) {
   copy_here(%xpath, position(%pos)) {
     yield() 
   }
+}
+
+@func Node.copy_here(Text %xpath) {
+  copy_here(%xpath, position()) {
+    yield() 
+  } 
 }
 
 @func Node.copy_to(Text %xpath) {
