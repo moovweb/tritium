@@ -122,11 +122,12 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			} else {
 				if len(ins.Arguments) > 0 {
 					// We are going to assign something to this variable
-					returnType = ctx.ProcessInstruction(ins.Arguments[0], scopeType)
+					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope)
 					// Duplicate the localScope before we go messing with my parents scope
-					newScope := make(localDef, len(localScope))
-					for s, t := range(localScope) {
-						newScope[s] = t
+					parentScope := localScope
+					localScope = make(localDef, len(parentScope))
+					for s, t := range(parentScope) {
+						localScope[s] = t
 					}
 					localScope[proto.GetString(ins.Value)] = returnType
 				} else {
@@ -137,7 +138,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			stub := proto.GetString(ins.Value)
 			if ins.Arguments != nil {
 				for _, arg := range(ins.Arguments) {
-					argReturn := ctx.ProcessInstruction(arg, scopeType)
+					argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope)
 					if argReturn == -1 {
 						log.Fatal("Invalid argument object", arg.String())
 					}
@@ -161,7 +162,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			
 			if ins.Children != nil {
 				for _, child := range(ins.Children) {
-					ctx.ProcessInstruction(child, opensScopeType)
+					ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope)
 				}
 			}
 		case Instruction_TEXT:
@@ -169,7 +170,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 		case Instruction_BLOCK:
 			if ins.Children != nil {
 				for _, child := range(ins.Children) {
-					returnType = ctx.ProcessInstruction(child, scopeType)
+					returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope)
 				}
 			}
 	}
