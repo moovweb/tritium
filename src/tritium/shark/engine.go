@@ -120,7 +120,14 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 				println("Must implement", fun.Name)
 			}
 		} else {
-			localScope := 
+			localVar := ctx.LocalVar
+			ctx.LocalVar = make(map[string]interface{}, len(args))
+			
+			//for i, arg := range(fun.Arguments) {
+				//ctx.LocalVar[i]
+			//}
+			
+			ctx.LocalVar = localVar
 		}
 	}
 	return
