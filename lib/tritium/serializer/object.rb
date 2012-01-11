@@ -10,15 +10,15 @@ module Tritium
         end
 
         def convert_instruction(ins)
-          if ins.is_a? Tritium::Parser::Instructions::Invocation
+          if ins.is_a? Tritium::Parser::Instructions::LocalVar
+            o = convert_local_var(ins)
+          elsif ins.is_a? Tritium::Parser::Instructions::Invocation
             o = convert_function_call(ins)
           elsif ins.is_a? Tritium::Parser::Instructions::Literal
             o = convert_literal(ins)
           elsif ins.is_a? Tritium::Parser::Instructions::Import
             o = convert_import(ins)
-          elsif ins.is_a? Tritium::Parser::Instructions::LocalVar
-            o = convert_local_var(ins)
-          else 
+          else
             o = convert_block(ins)
           end
           o.line_number = ins.line_num

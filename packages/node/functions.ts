@@ -13,11 +13,11 @@
   %calling_node = this()
   $(%xpath) {
     dup() {
-      # Not sure why, but adding any other args causes a serialization error
-      move(this(), %calling_node, %pos)
-      yield()
-    }
-  }
+      # move(this(), this(), %pos)
+      # same deal as below ... %pos is treated like Text
+      yield() 
+    } 
+  } 
 }
 
 @func Node.copy_here(Text %xpath, Text %pos) {
@@ -52,9 +52,12 @@
 }
 
 @func Node.move_to(Text %xpath, Position %pos) {
-  %parent_node = this()
+  # %parent_node = this()
+  # THIS shit breaks. The linker thinks %parent_node returns text
   $(%xpath) {
-    move(%parent_node, this(), %pos)
+    # move(%parent_node, this(), %pos)
+#    move(this(), this(), %pos) # stupid, just want it to pass
+    # This is borked even w the above hack. the %pos variable is interpreted as a Text type
     yield()
   }
 }

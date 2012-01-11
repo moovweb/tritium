@@ -5,18 +5,29 @@ import(
 	. "exec"
 	"log"
 	proto "goprotobuf.googlecode.com/hg/proto"
+	"io/ioutil"
+	. "strings"
 )
 
 func ParseFile(file string) (*tp.ScriptObject) {
-	cmd := Command("./bin/ts2to", file)
-	data, err := cmd.CombinedOutput()
+	output_file := Replace(file, ".ts", ".to", 1)
+	cmd := Command("./bin/ts2to", file, output_file)
+
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal("ts2to failed with message:", err.String(), "\n", string(data))
+		log.Panic("ts2to failed with message:", err.String(), "\n", string(output))
 	}
+
+	data, err := ioutil.ReadFile(output_file)
+
+	if err != nil {
+		log.Panic("Couldn't find output of ts2to :", output_file)
+	}
+
 	obj := &tp.ScriptObject{}
 	err = proto.Unmarshal(data, obj)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	return obj
 }

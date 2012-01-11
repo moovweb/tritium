@@ -1,3 +1,10 @@
+@func export(Text %key, Text %value) {
+  export(%key) {
+    set(%value)
+    yield()
+  }
+}
+
 @func asset(Text %name) {
   concat($asset_host, %name) {
     yield()
@@ -40,6 +47,12 @@
 }
 
 @func Text.replace(Regexp %search, Text %with) {
+  replace(%search) {
+    set(%with)
+  }
+}
+
+@func Text.replace(Text %search, Text %with) {
   replace(%search) {
     set(%with)
   }

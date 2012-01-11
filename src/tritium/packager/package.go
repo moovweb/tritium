@@ -94,21 +94,57 @@ func (pkg *Package)Load(location string) {
 func (pkg *Package)resolveFunction(fun *tp.Function) {
 	linkingContext := linker.NewLinkingContext(pkg.Package)
 
+	pkg.resolveFunctionDescendants(fun)
+
 	// Re-uses linker's logic to resolve function definitions
 	if ( proto.GetBool( fun.BuiltIn ) == false) {
 		fun.ScopeTypeId = pkg.GetProtoTypeId(fun.ScopeType)
 		fun.ScopeType = nil
+		localScope := make(linker.LocalDef, len(fun.Args))
 
 		//		fun.ReturnTypeId = pkg.GetProtoTypeId(fun.ReturnType)
 		for _, arg := range(fun.Args) {
 			arg.TypeId = pkg.GetProtoTypeId(arg.TypeString)
+			//println("Processing %", proto.GetString(arg.Name))
+			localScope[proto.GetString(arg.Name)] = pkg.GetTypeId(proto.GetString(arg.TypeString))
+			arg.TypeString = nil
 		}
 
 		//fmt.Printf("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
-
-		returnType := int32( linkingContext.ProcessInstruction( fun.Instruction, int(proto.GetInt32(fun.ScopeTypeId)) ) )
-		fun.ReturnTypeId = proto.Int32(returnType)
+		scopeTypeId := int(proto.GetInt32(fun.ScopeTypeId))
+		
+		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope)
+		fun.ReturnTypeId = proto.Int32(int32(returnType))
 	}
+}
+
+func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
+
+	// Check if this function contains any types that have descendants
+
+	println("Function:", proto.GetString(fun.Name) )
+
+	// Todo: Iterate over ScopeType, Arg types, return Type, opens Type
+	this_type_name := proto.GetString(fun.ScopeType)
+	
+	if len(this_type_name) > 0 {
+
+		println("this type name:", this_type_name,  )
+
+		this_type_index := pkg.findTypeIndex(this_type_name)
+		println("this type index:", this_type_index)
+
+		this_type := pkg.Types[this_type_index]
+		fmt.Printf("this type: %v\n", this_type)
+
+		implements := proto.GetInt32(this_type.Implements)
+
+//		if ( implements != 0 ) {
+		println("ScopeType (", this_type,") implements", implements, ":", proto.GetString(pkg.Types[implements].Name) )
+//		}
+
+	}
+
 }
 
 func (pkg *Package)readPackageDefinitions(location string) {
@@ -132,7 +168,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	if err != nil {
 		fmt.Printf("\tFunction conversion output:\n\t %s", output)
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	
 	functions := &tp.FunctionArray{}	
@@ -140,7 +176,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	if err != nil {
 		println("Failed to read output file.")
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 
@@ -149,7 +185,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	if err != nil {
 		println("Failed while loading output from ts2func.")
 		println(string(output))
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 
@@ -175,7 +211,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 func (pkg *Package)Marshal() []byte {
 	bytes, err := proto.Marshal(pkg.Package)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	return bytes
 }
@@ -187,7 +223,7 @@ func (pkg *Package)findTypeIndex(name string) int {
 		}
 	}
 	
-	log.Fatal("Bad type load order, type", name, "unknown")
+	log.Panic("Bad type load order, type", name, "unknown")
 	return -1
 }
 
@@ -210,7 +246,7 @@ func (pkg *Package)loadPackageDependency(name string) {
 		pkg.Load(new_path)
 	} else {
 		println("Cannot find package at:", new_path)
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 }
@@ -220,7 +256,7 @@ func readPackageInfoFile(location string) (*PackageInfo){
 	packageInfo := &PackageInfo{}
 	infoFile, err := ioutil.ReadFile(location + "/package.yml");
 	if err != nil {
-		log.Fatal("No package info file found at " + location + "/package.yml")
+		log.Panic("No package info file found at " + location + "/package.yml")
 	}
 	yaml.Unmarshal([]byte(infoFile), &packageInfo)
 	//fmt.Printf("--- m:\n%v\n\n", packageInfo)
@@ -232,7 +268,7 @@ func readPackageInfoFile(location string) (*PackageInfo){
 func (pkg *Package)readHeaderFile(location string) {
 	headerFile, err := ioutil.ReadFile(location + "/headers.tf");
 	if err != nil {
-		log.Fatal("No header file found at " + location + "/headers.tf")
+		log.Panic("No header file found at " + location + "/headers.tf")
 	}
 	headerLines := strings.Split(string(headerFile), "\n")
 	for _, line := range(headerLines) {
@@ -288,7 +324,7 @@ func (pkg *Package)SerializedOutput() {
 
 	bytes, err := proto.Marshal(pkg.Package)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	println(string(bytes))
 }

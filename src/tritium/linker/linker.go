@@ -6,15 +6,15 @@ import(
 )
 
 /*
-func Run(file string) (*tp.Executable) {
+func Run(file string) (*tp.Transform) {
 	return RunWithPackage(file, packager.BuildDefaultPackage())
 }*/
 
-func RunWithPackage(file string, pkg *tp.Package) (*tp.Executable) {
+func RunWithPackage(file string, pkg *tp.Package) (*tp.Transform) {
 	objs := parser.ParseFileSet(file)
 	ctx := NewObjectLinkingContext(pkg, objs)
 	ctx.Link()
 	
-	return ctx.Executable
+	return ctx.Transform
 }
 

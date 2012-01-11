@@ -1,0 +1,97 @@
+package shark
+
+import(
+	tp "tritium/proto"
+	"libxml/xpath"
+	"rubex"
+	proto "goprotobuf.googlecode.com/hg/proto"
+)
+
+type Shark struct {
+	RegexpCache map[string]*rubex.Regexp
+	XPathCache map[string]*xpath.Expression
+}
+
+type Ctx struct {
+	Functions []*Function
+	Types []string
+	Exports [][]string
+	Logs []string
+	Env map[string]string
+	*Shark
+	*tp.Transform
+}
+
+type Function struct {
+	Name string
+	*tp.Function
+}
+
+func NewEngine() (*Shark) {
+	e := &Shark{
+		RegexpCache: make(map[string]*rubex.Regexp),
+		XPathCache: make(map[string]*xpath.Expression),
+	}
+	return e
+}
+
+func (ctx *Ctx) UsePackage(pkg *tp.Package) {
+	ctx.Types = make([]string, len(pkg.Types))
+	for i, t := range(pkg.Types) {
+		ctx.Types[i] = proto.GetString(t.Name)
+	}
+	
+	ctx.Functions = make([]*Function, len(pkg.Functions))
+	for i, f := range(pkg.Functions) {
+		fun := &Function{
+			Name: proto.GetString(f.Name),
+			Function: f,
+		}
+		ctx.Functions[i] = fun
+	}
+}
+
+func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]string) (data string, exports [][]string, logs []string) {
+	ctx := &Ctx{
+		Shark: eng,
+		Exports: make([][]string, 0),
+		Logs: make([]string, 0),
+		Env: make(map[string]string),
+		Transform: transform,
+	}
+	ctx.UsePackage(transform.Pkg)
+	data = ctx.runInstruction(input, transform.Objects[0].Root).(string)
+	return
+}
+
+func (ctx *Ctx) runInstruction(scope interface{}, ins *tp.Instruction) (returnValue interface{}) {
+	returnValue = ""
+	switch *ins.Type {
+	case tp.Instruction_BLOCK:
+		for _, child := range(ins.Children) {
+			returnValue = ctx.runInstruction(scope, child)
+		}
+	case tp.Instruction_TEXT:
+		returnValue = proto.GetString(ins.Value)
+	case tp.Instruction_FUNCTION_CALL:
+		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]
+		args := make([]interface{}, len(ins.Arguments))
+		for i, argIns := range(ins.Arguments) {
+			args[i] = ctx.runInstruction(scope, argIns)
+		}
+		if proto.GetBool(fun.BuiltIn) {
+			println(fun.Name)
+			
+		} else {
+			println("Not Built in!")
+		}
+	}
+	return
+}
+
+func (ctx *Ctx) runChildren(scope interface{}, ins *tp.Instruction) (returnValue interface{}) {
+	for _, child := range(ins.Children) {
+		returnValue = ctx.runInstruction(scope, child)
+	}
+	return
+}

@@ -14,8 +14,10 @@ type LinkingContext struct {
 	objMap map[string]int
 	funList []FuncMap
 	textType int
-	*Executable
+	*Transform
 }
+
+type LocalDef map[string]int
 
 func NewObjectLinkingContext(pkg *Package, objs []*ScriptObject) (*LinkingContext) {
 	// Setup object lookup map!
@@ -55,7 +57,7 @@ func NewLinkingContext(pkg *Package) (*LinkingContext){
 	// Setup the main context object
 	ctx := &LinkingContext{ 
 		funList: functionLookup,
-		Executable: &Executable{
+		Transform: &Transform{
 			Pkg: pkg,
 		},
 	}
@@ -82,13 +84,18 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 		ctx.ProcessInstruction(obj.Root, scopeType)
 	} else {
 		if scopeType != int(proto.GetInt32(obj.ScopeTypeId)) {
-			log.Fatal("Imported a script in two different scopes!")
+			log.Panic("Imported a script in two different scopes!")
 		}
 		//println("Already linked", proto.GetString(obj.Name))
 	}
 }
 
 func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (returnType int) {
+	localScope := make(LocalDef, 0)
+	return ctx.ProcessInstructionWithLocalScope(ins, scopeType, localScope)
+}
+
+func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, scopeType int, localScope LocalDef) (returnType int) {
 	returnType = -1
 	switch *ins.Type {
 		case Instruction_IMPORT:
@@ -96,7 +103,7 @@ func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (
 			importValue := proto.GetString(ins.Value)
 			importId, ok := ctx.objMap[importValue]
 			if ok != true {
-				log.Fatal("Invalid import ", ins.String())
+				log.Panic("Invalid import ", ins.String())
 			}
 			// Make sure this object is linked with the right scopeType
 			ctx.link(importId, scopeType)
@@ -104,13 +111,36 @@ func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (
 			ins.ObjectId = proto.Int(importId)
 			ins.Value = nil
 			//println("after", ins.String())
+		case Instruction_LOCAL_VAR:
+			name := proto.GetString(ins.Value)
+			typeId, found := localScope[name]
+			if found {
+				returnType = typeId
+				if len(ins.Arguments) > 0 {
+					log.Panic("The local variable %", name, " has been assigned before and cannot be reassigned!")
+				}
+			} else {
+				if len(ins.Arguments) > 0 {
+					// We are going to assign something to this variable
+					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope)
+					// Duplicate the localScope before we go messing with my parents scope
+					parentScope := localScope
+					localScope = make(LocalDef, len(parentScope))
+					for s, t := range(parentScope) {
+						localScope[s] = t
+					}
+					localScope[proto.GetString(ins.Value)] = returnType
+				} else {
+					log.Panic("I've never seen the variable %", name, " before! Please assign a value before usage.")
+				}
+			}
 		case Instruction_FUNCTION_CALL:
 			stub := proto.GetString(ins.Value)
 			if ins.Arguments != nil {
 				for _, arg := range(ins.Arguments) {
-					argReturn := ctx.ProcessInstruction(arg, scopeType)
+					argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope)
 					if argReturn == -1 {
-						log.Fatal("Invalid argument object", arg.String())
+						log.Panic("Invalid argument object", arg.String())
 					}
 					stub = stub + "," + fmt.Sprintf("%d", argReturn)
 				}
@@ -121,7 +151,7 @@ func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (
 				for funcName, _ := range(ctx.funList[scopeType]) {
 					println(funcName)
 				}
-				log.Fatal("No such function found....", ins.String(), "with the stub: ",scopeType, stub)
+				log.Panic("No such function found....", ins.String(), "with the stub: ",scopeType, stub)
 			}
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
@@ -132,7 +162,7 @@ func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (
 			
 			if ins.Children != nil {
 				for _, child := range(ins.Children) {
-					ctx.ProcessInstruction(child, opensScopeType)
+					ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope)
 				}
 			}
 		case Instruction_TEXT:
@@ -140,7 +170,7 @@ func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (
 		case Instruction_BLOCK:
 			if ins.Children != nil {
 				for _, child := range(ins.Children) {
-					returnType = ctx.ProcessInstruction(child, scopeType)
+					returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope)
 				}
 			}
 	}

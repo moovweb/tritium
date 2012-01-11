@@ -13,7 +13,7 @@ message Type {
 	types and functions.
 	
 	This is both used to store different packages headers and info (base, libxml, node, etc)
-	and is used in an Executable to bundle together needed headers, functions, etc
+	and is used in an Transform to bundle together needed headers, functions, etc
 */
 message Package {
 	optional string name = 1;
