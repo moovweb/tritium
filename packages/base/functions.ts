@@ -1,3 +1,10 @@
+@func export(Text %key, Text %value) {
+  export(%key) {
+    set(%value)
+    yield()
+  }
+}
+
 @func asset(Text %name) {
   concat($asset_host, %name) {
     yield()
