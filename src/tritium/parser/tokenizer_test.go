@@ -3,21 +3,23 @@ package parser
 import (
   "testing"
   "fmt"
+  "io/ioutil"
 )
 
 func TestBlah(t *testing.T) {
-  tokenizer := MakeTokenizer([]byte("hello /* blah"))
+  fmt.Println("BEGINNING TEST RUN")
   
-  token := tokenizer.Pop()
+  src, _ := ioutil.ReadFile("blah.ts")
   
-  if token != nil {
+  fmt.Println("SOURCE FILE IS:")
+  fmt.Println(string(src))
   
-    fmt.Println(tokenizer.Pop().Inspect())
-  } else {
-    fmt.Println("Token is nil!")
+  tokenizer := MakeTokenizer(src)
+  
+  fmt.Println("OUTPUT IS:")
+  // fmt.Println(tokenizer.Lookahead.Inspect())
+  
+  for token := tokenizer.Pop(); token.Lexeme != EOF; token = tokenizer.Pop() {
+    fmt.Println(token.Inspect())
   }
-  
-  fmt.Println("--------")
-  fmt.Println(string(tokenizer.Source), tokenizer.Lookahead.Inspect())
-  
 }
