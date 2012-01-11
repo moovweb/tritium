@@ -98,6 +98,8 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 				ctx.Env[args[0].(string)] = returnValue.(string)
 			case "set":
 				scope.Value = args[0]
+			case "log":
+				ctx.Logs = append(ctx.Logs, args[0].(string))
 			default:
 				println("Must implement", fun.Name)
 			}
