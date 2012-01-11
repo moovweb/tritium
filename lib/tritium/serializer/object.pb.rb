@@ -8,7 +8,8 @@ class ScriptObject
 
   optional :name, :string, 1, :default => "main"
   optional :root, Instruction, 2
-  optional :scope_type_id, :int32, 3
-  optional :linked, :bool, 4
+  repeated :functions, Function, 3
+  optional :scope_type_id, :int32, 4
+  optional :linked, :bool, 5
 
 end
