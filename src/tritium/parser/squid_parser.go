@@ -1,7 +1,7 @@
 package parser
 
 import (
-  //ir "tritium/proto"
+  // ir "tritium/proto"
   "io/ioutil"
   t "tritium/tokenizer"
 )
@@ -30,4 +30,22 @@ func MakeParser(path string) *Parser {
 }
 
 // function (p *Parser) script() ir.ScriptObject {
-//   
+//   switch p.peek().Lexeme {
+//     
+
+// func (p *Parser) statement() *ir.Instruction {
+//   node := new(ir.Instruction)
+//   switch p.peek().Lexeme {
+//   case t.IMPORT:
+//     token := p.pop()
+//     node.Type = ir.Instruction_IMPORT
+//     node.Value = ir.String(token.Value)
+//   default:
+//     node = p.expression
+//   }
+//   return node
+// }
+// 
+// func (p *Parser) expression() *ir.Instruction {
+//   return nil
+// }
