@@ -4,6 +4,7 @@ Syntactic rules (specified with EBNF):
 --------------------------------------
 
     script      ->  statement*
+                ->  signature*
                 ->  definition*
 
     statement   ->  import
@@ -30,8 +31,12 @@ Syntactic rules (specified with EBNF):
 
     block       ->  '{' statement* '}'
     
-    definition  ->  '@func' TYPE '.' id '(' parameters? ')' block
+    signature   ->  abstractor TYPE TYPE?
     
+    definition  ->  abstractor block
+    
+    abstractor  ->  '@func' TYPE '.' id '(' parameters? ')'
+        
     parameters  ->  parameter (',' parameter)*
     
     parameter   ->  TYPE LVAR
