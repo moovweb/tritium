@@ -100,15 +100,20 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 	if ( proto.GetBool( fun.BuiltIn ) == false) {
 		fun.ScopeTypeId = pkg.GetProtoTypeId(fun.ScopeType)
 		fun.ScopeType = nil
+		localScope := make(linker.LocalDef, len(fun.Args))
 
 		//		fun.ReturnTypeId = pkg.GetProtoTypeId(fun.ReturnType)
 		for _, arg := range(fun.Args) {
 			arg.TypeId = pkg.GetProtoTypeId(arg.TypeString)
+			println("Processing %", proto.GetString(arg.Name))
+			localScope[proto.GetString(arg.Name)] = pkg.GetTypeId(proto.GetString(arg.TypeString))
+			arg.TypeString = nil
 		}
 
 		//fmt.Printf("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
 		scopeTypeId := int(proto.GetInt32(fun.ScopeTypeId))
-		returnType := linkingContext.ProcessInstruction(fun.Instruction, scopeTypeId)
+		
+		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope)
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
 	}
 }

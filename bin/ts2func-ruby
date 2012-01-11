@@ -57,7 +57,7 @@ def parse_args(raw_function)
 
     arg_components = arg_string.split(" ")
     arg.type_string = arg_components.first.force_encoding("BINARY")
-    arg.name = arg_components.last.force_encoding("BINARY")
+    arg.name = arg_components.last[1..-1].force_encoding("BINARY")
     
     arg
   end

@@ -17,7 +17,7 @@ type LinkingContext struct {
 	*Executable
 }
 
-type localDef map[string]int
+type LocalDef map[string]int
 
 func NewObjectLinkingContext(pkg *Package, objs []*ScriptObject) (*LinkingContext) {
 	// Setup object lookup map!
@@ -91,11 +91,11 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 }
 
 func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (returnType int) {
-	localScope := make(localDef, 0)
+	localScope := make(LocalDef, 0)
 	return ctx.ProcessInstructionWithLocalScope(ins, scopeType, localScope)
 }
 
-func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, scopeType int, localScope localDef) (returnType int) {
+func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, scopeType int, localScope LocalDef) (returnType int) {
 	returnType = -1
 	switch *ins.Type {
 		case Instruction_IMPORT:
@@ -125,7 +125,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope)
 					// Duplicate the localScope before we go messing with my parents scope
 					parentScope := localScope
-					localScope = make(localDef, len(parentScope))
+					localScope = make(LocalDef, len(parentScope))
 					for s, t := range(parentScope) {
 						localScope[s] = t
 					}
