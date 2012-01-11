@@ -45,6 +45,12 @@ else # run command!
       process_file(file, output_file)
     end
   else
-    print Tritium::Serializer.script(filename)
+    output_file = ARGV[1]
+
+    if output_file
+      process_file(filename, output_file)
+    else
+      print Tritium::Serializer.script(filename)
+    end
   end
 end
