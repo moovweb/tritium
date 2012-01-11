@@ -18,6 +18,7 @@ type Ctx struct {
 	Exports [][]string
 	Logs []string
 	Env map[string]string
+	LocalVars map[string]interface{}
 	*Shark
 	*tp.Transform
 }
@@ -30,8 +31,6 @@ type Function struct {
 type Scope struct {
 	Value interface{}
 }
-
-
 
 func NewEngine() (*Shark) {
 	e := &Shark{
@@ -49,8 +48,13 @@ func (ctx *Ctx) UsePackage(pkg *tp.Package) {
 	
 	ctx.Functions = make([]*Function, len(pkg.Functions))
 	for i, f := range(pkg.Functions) {
+		name := proto.GetString(f.Name)
+		for _, a := range(f.Args) {
+			typeString := ctx.Types[int(proto.GetInt32(a.TypeId))]
+			name = name + "." + typeString
+		}
 		fun := &Function{
-			Name: proto.GetString(f.Name),
+			Name: name,
 			Function: f,
 		}
 		ctx.Functions[i] = fun
@@ -81,6 +85,8 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 		}
 	case tp.Instruction_TEXT:
 		returnValue = proto.GetString(ins.Value)
+	case tp.Instruction_LOCAL_VAR:
+		
 	case tp.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]
 		args := make([]interface{}, len(ins.Arguments))
@@ -89,16 +95,23 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 		}
 		if proto.GetBool(fun.BuiltIn) {
 			switch fun.Name {
-			case "concat":
+			case "concat.Text.Text":
 				returnValue = args[0].(string) + args[1].(string)
-			case "var":
+			case "var.Text":
 				ts := &Scope{Value: ctx.Env[args[0].(string)]}
 				ctx.runChildren(ts, ins)
 				returnValue = ts.Value
 				ctx.Env[args[0].(string)] = returnValue.(string)
-			case "set":
+			case "export.Text":
+				val := make([]string, 2)
+				val[0] = args[0].(string)
+				ts := &Scope{Value:""}
+				ctx.runChildren(ts, ins)
+				val[1] = ts.Value.(string)
+				ctx.Exports = append(ctx.Exports, val)
+			case "set.Text":
 				scope.Value = args[0]
-			case "log":
+			case "log.Text":
 				ctx.Logs = append(ctx.Logs, args[0].(string))
 			default:
 				println("Must implement", fun.Name)
