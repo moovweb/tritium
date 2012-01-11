@@ -120,13 +120,18 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 				println("Must implement", fun.Name)
 			}
 		} else {
+			// Store the current frame
 			localVar := ctx.LocalVar
-			ctx.LocalVar = make(map[string]interface{}, len(args))
 			
+			// Setup the new local var
+			ctx.LocalVar = make(map[string]interface{}, len(args))
 			for i, arg := range(fun.Args) {
 				ctx.LocalVar[proto.GetString(arg.Name)] = args[i]
 			}
 			
+			returnValue = ctx.runChildren(scope, fun.Instruction)
+			
+			// Put the local var scope back!
 			ctx.LocalVar = localVar
 		}
 	}
