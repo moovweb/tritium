@@ -1,18 +1,16 @@
-# These cause errors when deserialized
- 
- @func position() {
-   position("bottom") 
- }
 
- @func Node.copy_here(Text %xpath) {
-   copy_here(%xpath, position()) {
-     yield() 
-   } 
- }
+@func position() {
+  position("bottom") 
+}
 
-
+@func Node.node() {
+  this() {
+    yield()
+  }
+}
 
 @func Node.copy_here(Text %xpath, Position %pos) {
+  %calling_node = this()
   $(%xpath) {
     dup() {
       # move(this(), this(), %pos)
@@ -26,6 +24,12 @@
   copy_here(%xpath, position(%pos)) {
     yield() 
   }
+}
+
+@func Node.copy_here(Text %xpath) {
+  copy_here(%xpath, position()) {
+    yield() 
+  } 
 }
 
 @func Node.copy_to(Text %xpath) {

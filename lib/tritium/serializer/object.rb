@@ -16,6 +16,8 @@ module Tritium
             o = convert_literal(ins)
           elsif ins.is_a? Tritium::Parser::Instructions::Import
             o = convert_import(ins)
+          elsif ins.is_a? Tritium::Parser::Instructions::LocalVar
+            o = convert_local_var(ins)
           else 
             o = convert_block(ins)
           end
@@ -26,6 +28,12 @@ module Tritium
         def convert_block(ins)
           Instruction.new(:type => Instruction::InstructionType::BLOCK,
                           :children => convert_instructions(ins.statements))
+        end
+        
+        def convert_local_var(ins)
+          lvar = Instruction.new(:type => Instruction::InstructionType::LOCAL_VAR)
+          lvar.value = ins.name.to_s.force_encoding("BINARY")
+          lvar
         end
 
         def convert_function_call(ins)

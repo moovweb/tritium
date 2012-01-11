@@ -114,10 +114,6 @@ module Tritium
         import_file = File.absolute_path(File.join(File.dirname(@file_path), import_name))
         return cmd(Import, import_file)
       end
-      
-      def local_var
-        return cmd(LocalVar, "var")
-      end
 
       def reference
         var_name, value = cmd(Literal, pop!.value.to_s), nil
@@ -125,7 +121,7 @@ module Tritium
         when :EQUAL
           pop!  # pop the equal sign
           case peek.lexeme
-          when :STRING, :VAR, :ID
+          when :STRING, :VAR, :ID, :LVAR
             value = term
           else
             raise_error("assigned value is not a valid term")
@@ -139,6 +135,28 @@ module Tritium
         end
         signature = [:var, args[:pos].length]
         return cmd(Invocation, "var", [var_name], {}, stmts || [])
+      end
+      
+      def lvar
+        var_name, value = cmd(Literal, pop!.value.to_s), nil
+        case peek.lexeme
+        when :EQUAL
+          pop!  # pop the equal sign
+          case peek.lexeme
+          when :STRING, :VAR, :ID, :LVAR
+            value = term
+          else
+            raise_error("assigned value is not a valid term")
+          end
+        end
+        stmts = peek.lexeme == :LBRACE ? block : nil
+        if value
+          args = { pos: [ var_name, value ] }
+        else
+          args = { pos: [ var_name ] }
+        end
+        signature = [:var, args[:pos].length]
+        return cmd(LocalVar, "lvar", [var_name], {}, stmts || [])
       end
 
       def invocation
@@ -176,7 +194,7 @@ module Tritium
         # parse the head of the argument list
         kwd = pop!.value if peek.lexeme == :KWD
         case peek.lexeme
-        when :STRING, :REGEXP, :VAR, :ID, :READ
+        when :STRING, :REGEXP, :VAR, :ID, :READ, :LVAR
           arg = term
           arg.is_arg = true
         else
@@ -194,7 +212,7 @@ module Tritium
           pop!
           kwd = pop!.value if peek.lexeme == :KWD
           case peek.lexeme
-          when :STRING, :REGEXP, :VAR, :ID, :READ
+          when :STRING, :REGEXP, :VAR, :ID, :READ, :LVAR
             arg = term
             arg.is_arg = true
           else
@@ -216,6 +234,9 @@ module Tritium
         when :VAR
           pop!
           return cmd(Reference, @token.value.to_s)
+        when :LVAR
+          pop!
+          return cmd(LocalVar, @token.value.to_s)
         when :ID
           # func_name = @token.value
           # raise_error("function call is missing a valid argument list") if

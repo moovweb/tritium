@@ -6,7 +6,7 @@
 @func fetch(Text %selector) //Text,Text
 
 // This is how you access the current node
-@func this() //Node
+@func this() //Node,Node
 
 // Casts a string to a Position node
 @func position(Text %position) //Position
@@ -23,9 +23,7 @@
 @func Node.move(Node %what, Node %where, Position %pos) //Text,Node
 
 // Copies the node and yields to it
-@func Node.dup() //Node
 @func Node.dup() //Node,Node
-
 
 // Open's the node's name the currently select Node's name. Aka, change a "div" to a "span"
 @func Node.name() //Text,Text
