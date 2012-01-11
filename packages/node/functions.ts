@@ -10,11 +10,7 @@
 #   } 
 # }
 
-@func Node.copy_here(Text %xpath, Text %pos) {
-  copy_here(%xpath, position(%pos)) {
-    yield() 
-  }
-}
+
 
 @func Node.copy_here(Text %xpath, Position %pos) {
   $(%xpath) {
@@ -24,6 +20,12 @@
       yield() 
     } 
   } 
+}
+
+@func Node.copy_here(Text %xpath, Text %pos) {
+  copy_here(%xpath, position(%pos)) {
+    yield() 
+  }
 }
 
 @func Node.copy_to(Text %xpath) {

@@ -23,13 +23,16 @@ type PackageInfo struct {
 	Types []string
 }
 
-func BuildDefaultPackage() (*tp.Package) {
+func BuildDefaultPackage() (*Package) {
 	// Terrible directory handling here... has to be executed from Tritium root
 	pkg := NewPackage()
+
 	pkg.Load("packages/base")
 	pkg.Load("packages/node")
 	pkg.Load("packages/libxml")
-	return pkg.Package
+	println("Packages all loaded")
+
+	return pkg
 }
 
 func NewPackage() (*Package){
@@ -69,35 +72,27 @@ func (pkg *Package)Load(location string) {
 
 	pkg.readPackageDefinitions(location)
 
-	pkg.resolveDefinitions()
-
+	println(" -- done\n")
 }
 
-func (pkg *Package)resolveDefinitions() {
+func (pkg *Package)resolveFunction(fun *tp.Function) {
 	linkingContext := linker.NewLinkingContext(pkg.Package)
 
 	// Re-uses linker's logic to resolve function definitions
-	for _, fun := range(pkg.Functions) {
-		if ( proto.GetBool( fun.BuiltIn ) == false) {
+	if ( proto.GetBool( fun.BuiltIn ) == false) {
+		fun.ScopeTypeId = pkg.GetProtoTypeId(fun.ScopeType)
+		fun.ScopeType = nil
 
-			fun.ScopeTypeId = pkg.GetProtoTypeId(fun.ScopeType)
-			fun.ScopeType = nil
-			//		fun.ReturnTypeId = pkg.GetProtoTypeId(fun.ReturnType)
-			for _, arg := range(fun.Args) {
-				arg.TypeId = pkg.GetProtoTypeId(arg.TypeString)
-			}
-
-
-
-			fmt.Printf("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
-
-			returnType := int32( linkingContext.ProcessInstruction( fun.Instruction, int(proto.GetInt32(fun.ScopeTypeId)) ) )
-			fun.ReturnTypeId = proto.Int32(returnType)
+		//		fun.ReturnTypeId = pkg.GetProtoTypeId(fun.ReturnType)
+		for _, arg := range(fun.Args) {
+			arg.TypeId = pkg.GetProtoTypeId(arg.TypeString)
 		}
 
+		//fmt.Printf("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
+
+		returnType := int32( linkingContext.ProcessInstruction( fun.Instruction, int(proto.GetInt32(fun.ScopeTypeId)) ) )
+		fun.ReturnTypeId = proto.Int32(returnType)
 	}
-
-
 }
 
 func (pkg *Package)readPackageDefinitions(location string) {
@@ -148,6 +143,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	println("Function count before ", len(pkg.Package.Functions))
 	for _, function := range(functions.Functions) {
 		//fmt.Printf("\n\t -- functions[%v]:\n %v", index, function)
+		pkg.resolveFunction(function)
 		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}
 	//fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
@@ -156,7 +152,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	//fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
 
-	println(" -- done\n")
+
 }
 
 
@@ -176,6 +172,11 @@ func (pkg *Package)findTypeIndex(name string) int {
 	}
 	log.Fatal("Bad type load order, type", name, "unknown")
 	return -1
+}
+
+func (pkg *Package)loadPackageDependency(name string) bool{
+	// Try and load the dependency
+	return false
 }
 
 // Not fully functional. Dang it.
@@ -245,4 +246,13 @@ func (pkg *Package)readHeaderFile(location string) {
 			pkg.Functions = append(pkg.Functions, function)
 		}
 	}
+}
+
+func (pkg *Package)SerializedOutput() {
+
+	bytes, err := proto.Marshal(pkg.Package)
+	if err != nil {
+		log.Fatal(err)
+	}
+	println(string(bytes))
 }

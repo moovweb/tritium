@@ -10,7 +10,7 @@ import(
 func All(directory string) {
 	eng := engine.NewEngine() 
 	pkg := packager.BuildDefaultPackage()
-	all(directory, pkg, eng)
+	all(directory, pkg.Package, eng)
 }
 
 func all(directory string, pkg *tp.Package, eng Transformer) {
@@ -28,8 +28,8 @@ func all(directory string, pkg *tp.Package, eng Transformer) {
 
 func Run(dir string, pkg *tp.Package, eng Transformer) bool {
 	spec := LoadSpec(dir, pkg)
-	output, _, _ := eng.Run(spec.Script, spec.Input, spec.Vars)
-	if output == spec.Output {
+	result := spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars))
+	if result.Passed() {
 		print(".")
 	} else {
 		print("F")

@@ -12,7 +12,7 @@
 @func position(Text %position) //Position
 
 // Search the tree and select all matching nodes
-@func Node.select(Text %xpath_selector) //Text
+@func Node.select(Text %xpath_selector) //Text,Node
 
 // Opens up the contents to text modification. All XML will get escaped.
 @func Node.text() //Text,Text
