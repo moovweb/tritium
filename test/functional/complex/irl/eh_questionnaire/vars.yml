@@ -1,0 +1,38 @@
+--- 
+source_host: r7.eharmony.com.au
+rewrite_link_matcher: !ruby/regexp /(^|\/\/|\"|\')(?!mlocal\.)(www\.)?(([a-z0-9\-\.]*eharmony\.(com\.au|co\.uk|ca|com))|([a-z0-9\-\.]*compatiblepartners\.net))/
+rewrite_link_matcher_str: (^|\/\/|\"|\')(?!mlocal\.)(www\.)?(([a-z0-9\-\.]*eharmony\.(com\.au|co\.uk|ca|com))|([a-z0-9\-\.]*compatiblepartners\.net))
+rewrite_link_replacement: \1mlocal.\3
+rewrite_cookie_matcher: !ruby/regexp /\.?(www\.)?(([a-z0-9\-\.]*eharmony\.(com\.au|co\.uk|ca|com))|([a-z0-9\-\.]*compatiblepartners\.net))/
+rewrite_cookie_replacement: .\2
+rewrite_cookie_missing_replacement: 
+rewrite_incoming_json: "[{\"matcher\":\"m[a-z]*\\\\.(eharmony\\\\.(com\\\\.au|co\\\\.uk|ca|com)|compatiblepartners\\\\.net)\",\"replacement\":\"www.\\\\1\"},{\"matcher\":\"m[a-z]*\\\\.([a-z0-9\\\\-\\\\.]*)(eharmony\\\\.(com\\\\.au|co\\\\.uk|ca|com)|compatiblepartners\\\\.net)\",\"replacement\":\"\\\\1\\\\2\"}]"
+secure: true
+host: mlocal.r7.eharmony.com.au
+connection: close
+cache_control: no-store
+pragma: no-cache
+user_agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7
+accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+referer: http://mlocal.r7.eharmony.com.au/singles/servlet/logindispatcher
+accept_encoding: gzip,deflate,sdch
+accept_language: en-US,en;q=0.8
+accept_charset: ISO-8859-1,utf-8;q=0.7,*;q=0.3
+cookie: BIGipServerQA-R7-Front=313393162.16671.0000; EHCampaignTrackingCookie=20120111102708eHC0eHC0eHCNO_VALUEeHCNO_VALUE; BIGipServerQA-R7-SinglesProxy=1101725706.22811.0000; __qca=P0-863627598-1326306440135; JSESSIONID=1mwv1frq1prnj; ehg=8425f; EHTrackingCookie=677093925eHT1eHT20120011102655eHT1eHT0; lbid=8aaea51b-850b-4ad7-67de-183734ef1712
+expires: Thu, 01 Jan 1970 00:00:00 GMT
+set_cookie: "EHTrackingCookie=677093925eHT1eHT20120011102655eHT1eHT0;Path=/;Domain=.eharmony.com.au;Expires=Sun, 11-Mar-12 18:29:31 GMT; lbid=8aaea51b-850b-4ad7-67de-183734ef1712;expires=Mon, 09-Jul-2012 18:29:36 GMT;path=/;domain=.eharmony.com.au;; "
+etag: 99c7be54-4524-490e-bcc9-7d3b33613ef3
+content_type: text/html; charset=utf-8
+content_language: en-GB
+server: Jetty(6.1.20)
+device_stylesheet: devices/webkit
+stylesheet_asset_location: stylesheets/.css/
+image_asset_location: images/
+js_asset_location: javascript/
+User-Agent-matched-default: "true"
+User-Agent-matched-webkit: "true"
+path: /singles/servlet/questionnaire/relationship/2
+status: "200"
+asset_host: http://localhost:3003/
+
+request_id: uj001
