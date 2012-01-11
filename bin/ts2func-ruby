@@ -91,7 +91,7 @@ def parse_function(tritium, signature)
   ## Hack to fix %function_variables_like_this
   ## TODO(SJ): Update the parser to handle these correctly (HC says it should work)
 
-  block.gsub!(/\%(\w*?\W)/, "$function_\\1")
+  #block.gsub!(/\%(\w*?\W)/, "$function_\\1")
 
   # Now stuff the body into a tmp file so that I can re-use the ObjectSerializer
   

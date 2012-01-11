@@ -28,8 +28,8 @@ func BuildDefaultPackage() (*Package) {
 	pkg := NewPackage()
 
 	pkg.Load("packages/base")
-	pkg.Load("packages/node")
-	pkg.Load("packages/libxml")
+	//pkg.Load("packages/node")
+	//pkg.Load("packages/libxml")
 	println("Packages all loaded")
 
 	return pkg
