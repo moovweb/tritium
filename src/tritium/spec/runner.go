@@ -37,7 +37,7 @@ func (result *Result)all(directory string, pkg *tp.Package, eng Engine) {
 	}
 }
 
-func (result *Result)Run(dir string, pkg *tp.Package, eng Engine) bool {
+func (result *Result)Run(dir string, pkg *tp.Package, eng Engine) {
 	spec := LoadSpec(dir, pkg)
 	this_result := spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars))
 	if this_result.Passed() {
