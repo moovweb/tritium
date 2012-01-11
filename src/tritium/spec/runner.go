@@ -5,34 +5,45 @@ import(
 	. "tritium"
 	. "path/filepath"
 	"tritium/engine"
+	. "fmt"
 )
 
 func All(directory string) {
 	eng := engine.NewEngine() 
 	pkg := packager.BuildDefaultPackage()
-	all(directory, pkg.Package, eng)
+
+	globalResult := newResult()
+	globalResult.all(directory, pkg.Package, eng)
+
+	// TODO : Walk over the results here and print errors. 
+
+	for _, error := range(globalResult.Errors) {
+		Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", error.Name, error.Message, error.Got, error.Expected)
+	}
+
 }
 
-func all(directory string, pkg *tp.Package, eng Transformer) {
+func (result *Result)all(directory string, pkg *tp.Package, eng Transformer) {
 	_, err := Glob(Join(directory, "main.ts"))
 	//println("checking in", directory)
+
 	if err == nil {
 		//println("running")
-		Run(directory, pkg, eng)
+		result.Run(directory, pkg, eng)
 	}
 	subdirs, _ := Glob(Join(directory, "*"))
 	for _, subdir := range(subdirs) {
-		all(subdir, pkg, eng)
+		result.all(subdir, pkg, eng)
 	}
 }
 
-func Run(dir string, pkg *tp.Package, eng Transformer) bool {
+func (result *Result)Run(dir string, pkg *tp.Package, eng Transformer) {
 	spec := LoadSpec(dir, pkg)
-	result := spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars))
-	if result.Passed() {
+	this_result := spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars))
+	if this_result.Passed() {
 		print(".")
 	} else {
+		result.Merge(this_result)
 		print("F")
 	}
-	return true
 }

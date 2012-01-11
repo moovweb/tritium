@@ -6,6 +6,7 @@ import(
 	. "path/filepath"
 	. "io/ioutil"
 	"log"
+	. "fmt"
 	yaml "launchpad.net/goyaml"
 )
 
@@ -68,8 +69,11 @@ func loadFile(dir, filename string) (string) {
 func (spec *Spec) Compare(data string, exports [][]string, logs []string) (*Result) {
 	result := newResult()
 	result.Merge(spec.compareData(data))
+	result.Merge(spec.compareExports(exports))	
 	return result
 }
+
+// TODO : Consolidate these comparisons into an interface
 
 func (spec *Spec) compareData(data string) (*Result) {
 	result := newResult()
@@ -77,4 +81,76 @@ func (spec *Spec) compareData(data string) (*Result) {
 		result.Error("Bad Output", data, spec.Output, "Didn't match")
 	}
 	return result
+}
+
+func (spec *Spec) compareExports(exports [][]string) (*Result) {
+	exportsResult := newResult()
+	//Printf("exports: %v \n\n %v", exports, spec.Exports)
+
+	// As I check each export successfully, I need to delete it from the spec exports
+	// So that if the spec export has any extras, I can generate the appropriate error
+
+	for index, export := range(exports) {	
+		println("Checking export:", summarizeExport(export))
+		spec.checkExport(exportsResult, export)
+		// Delete it from the result
+		Printf("exports pre deletion (deleting number %v): \n %v\n", index, spec.Exports)
+		spec.Exports = append(spec.Exports[:index], spec.Exports[index+1:]...)
+		Printf("exports post deletion: \n %v\n", spec.Exports)
+	}
+
+	if len(spec.Exports) > 0 {
+		exportsResult.Error("Bad Export", summarizeExports(exports), summarizeExports(spec.Exports), "Missing export(s)")
+	}
+
+	return exportsResult
+}
+
+func (spec *Spec)checkExport(globalResult *Result, export []string) {
+	result := newResult()
+	spec_export := make([]string,10)
+
+	defer func() {
+		if r := recover(); r != nil {
+			Printf("Recovering %v", r)
+			// Here is where I would add a 'missing export' error to the result
+			result.Error("Export", summarizeExport(export), summarizeExport(spec_export), "Extra export")
+		}
+	}()
+
+	spec_export = findByName(&spec.Exports, export[0])
+
+
+
+}
+
+func summarizeExport(export []string) string{
+	return export[0] + " : " + export[1]
+}
+
+func summarizeExports(exports [][]string) string {
+	var summary string
+	summary += "["
+	for index, export := range(exports){
+		if index == 0 {
+			summary += "\n"
+		}
+		summary += "\t" + summarizeExport(export) + "\n"
+	}
+	summary += "]"
+	return summary
+}
+
+
+// TODO(SJ): Make exports a struct and define this find method on the struct. This way I could cache the searches
+
+func findByName(exports *[][]string, name string) ([]string) {
+	for _, export := range(*exports) {
+		if export[0] == name {
+			return export
+		}
+	}
+
+	println("CANT FIND EXPORT", name)
+	panic("Couldn't find export :" + name)
 }
