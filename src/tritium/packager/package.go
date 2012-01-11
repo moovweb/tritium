@@ -107,9 +107,9 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 		}
 
 		//fmt.Printf("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
-
-		returnType := int32( linkingContext.ProcessInstruction( fun.Instruction, int(proto.GetInt32(fun.ScopeTypeId)) ) )
-		fun.ReturnTypeId = proto.Int32(returnType)
+		scopeTypeId := int(proto.GetInt32(fun.ScopeTypeId))
+		returnType := linkingContext.ProcessInstruction(fun.Instruction, scopeTypeId)
+		fun.ReturnTypeId = proto.Int32(int32(returnType))
 	}
 }
 

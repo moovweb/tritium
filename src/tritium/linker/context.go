@@ -17,6 +17,8 @@ type LinkingContext struct {
 	*Executable
 }
 
+type localDef map[string]int
+
 func NewObjectLinkingContext(pkg *Package, objs []*ScriptObject) (*LinkingContext) {
 	// Setup object lookup map!
 	objScriptLookup := make(map[string]int, len(objs))
@@ -89,6 +91,11 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 }
 
 func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (returnType int) {
+	localScope := make(localDef, 0)
+	return ctx.ProcessInstructionWithLocalScope(ins, scopeType, localScope)
+}
+
+func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, scopeType int, localScope localDef) (returnType int) {
 	returnType = -1
 	switch *ins.Type {
 		case Instruction_IMPORT:
@@ -104,6 +111,23 @@ func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (
 			ins.ObjectId = proto.Int(importId)
 			ins.Value = nil
 			//println("after", ins.String())
+		case Instruction_LOCAL_VAR:
+			name := proto.GetString(ins.Value)
+			typeId, found := localScope[name]
+			if found {
+				returnType = typeId
+				if len(ins.Arguments) > 0 {
+					log.Panic("The local variable %", name, " has been assigned before and cannot be reassigned!")
+				}
+			} else {
+				if len(ins.Arguments) > 0 {
+					// We are going to assign something to this variable
+					returnType = ctx.ProcessInstruction(ins.Arguments[0], scopeType)
+					localScope[proto.GetString(ins.Value)] = returnType
+				} else {
+					log.Panic("I've never seen the variable %", name, " before! Please assign a value before usage.")
+				}
+			}
 		case Instruction_FUNCTION_CALL:
 			stub := proto.GetString(ins.Value)
 			if ins.Arguments != nil {
