@@ -89,10 +89,19 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 		}
 		if proto.GetBool(fun.BuiltIn) {
 			switch fun.Name {
+			case "concat":
+				returnValue = args[0].(string) + args[1].(string)
+			case "var":
+				ts := &Scope{Value: ctx.Env[args[0].(string)]}
+				ctx.runChildren(ts, ins)
+				returnValue = ts.Value
+				ctx.Env[args[0].(string)] = returnValue.(string)
 			case "set":
 				scope.Value = args[0]
+			default:
+				println("Must implement", fun.Name)
 			}
-			println(fun.Name)
+			
 		} else {
 			println("Not Built in!")
 		}
