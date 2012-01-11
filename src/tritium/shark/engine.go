@@ -18,7 +18,7 @@ type Ctx struct {
 	Exports [][]string
 	Logs []string
 	Env map[string]string
-	LocalVars map[string]interface{}
+	LocalVar map[string]interface{}
 	*Shark
 	*tp.Transform
 }
@@ -68,6 +68,7 @@ func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]str
 		Logs: make([]string, 0),
 		Env: make(map[string]string),
 		Transform: transform,
+		LocalVar: make(map[string]interface{}, 0),
 	}
 	ctx.UsePackage(transform.Pkg)
 	scope := &Scope{Value:input}
@@ -80,13 +81,15 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 	returnValue = ""
 	switch *ins.Type {
 	case tp.Instruction_BLOCK:
-		for _, child := range(ins.Children) {
-			returnValue = ctx.runInstruction(scope, child)
-		}
+		returnValue = ctx.runChildren(scope, ins)
 	case tp.Instruction_TEXT:
 		returnValue = proto.GetString(ins.Value)
 	case tp.Instruction_LOCAL_VAR:
-		
+		name := proto.GetString(ins.Value)
+		if len(ins.Arguments) > 0 {
+			ctx.LocalVar[name] = ctx.runInstruction(scope, ins.Arguments[0])
+		}
+		returnValue = ctx.LocalVar[name]
 	case tp.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]
 		args := make([]interface{}, len(ins.Arguments))
@@ -116,9 +119,8 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 			default:
 				println("Must implement", fun.Name)
 			}
-			
 		} else {
-			println("Not Built in!")
+			localScope := 
 		}
 	}
 	return
