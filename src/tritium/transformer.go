@@ -4,6 +4,6 @@ import(
 	tp "tritium/proto"
 )
 
-type Transformer interface {
+type Engine interface {
 	Run(transform *tp.Transform, input string, vars map[string]string) (data string, exports [][]string, logs []string)
 }

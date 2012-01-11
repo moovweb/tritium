@@ -4,16 +4,16 @@ import(
 	tp "tritium/proto"
 	. "tritium"
 	. "path/filepath"
-	"tritium/engine"
+	"tritium/shark"
 )
 
 func All(directory string) {
-	eng := engine.NewEngine() 
+	eng := shark.NewEngine() 
 	pkg := packager.BuildDefaultPackage()
 	all(directory, pkg.Package, eng)
 }
 
-func all(directory string, pkg *tp.Package, eng Transformer) {
+func all(directory string, pkg *tp.Package, eng Engine) {
 	_, err := Glob(Join(directory, "main.ts"))
 	//println("checking in", directory)
 	if err == nil {
@@ -26,7 +26,7 @@ func all(directory string, pkg *tp.Package, eng Transformer) {
 	}
 }
 
-func Run(dir string, pkg *tp.Package, eng Transformer) bool {
+func Run(dir string, pkg *tp.Package, eng Engine) bool {
 	spec := LoadSpec(dir, pkg)
 	result := spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars))
 	if result.Passed() {
