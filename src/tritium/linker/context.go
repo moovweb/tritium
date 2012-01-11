@@ -123,6 +123,11 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				if len(ins.Arguments) > 0 {
 					// We are going to assign something to this variable
 					returnType = ctx.ProcessInstruction(ins.Arguments[0], scopeType)
+					// Duplicate the localScope before we go messing with my parents scope
+					newScope := make(localDef, len(localScope))
+					for s, t := range(localScope) {
+						newScope[s] = t
+					}
 					localScope[proto.GetString(ins.Value)] = returnType
 				} else {
 					log.Panic("I've never seen the variable %", name, " before! Please assign a value before usage.")
