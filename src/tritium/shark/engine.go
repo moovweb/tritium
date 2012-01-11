@@ -72,44 +72,48 @@ func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]str
 	}
 	ctx.UsePackage(transform.Pkg)
 	scope := &Scope{Value:input}
-	ctx.runInstruction(scope, transform.Objects[0].Root)
+	ctx.runInstruction(scope, transform.Objects[0].Root, nil)
 	data = scope.Value.(string)
+	exports = ctx.Exports
+	logs = ctx.Logs
 	return
 }
 
-func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
+func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp.Instruction) (returnValue interface{}) {
 	returnValue = ""
 	switch *ins.Type {
 	case tp.Instruction_BLOCK:
-		returnValue = ctx.runChildren(scope, ins)
+		returnValue = ctx.runChildren(scope, ins, yieldBlock)
 	case tp.Instruction_TEXT:
 		returnValue = proto.GetString(ins.Value)
 	case tp.Instruction_LOCAL_VAR:
 		name := proto.GetString(ins.Value)
 		if len(ins.Arguments) > 0 {
-			ctx.LocalVar[name] = ctx.runInstruction(scope, ins.Arguments[0])
+			ctx.LocalVar[name] = ctx.runInstruction(scope, ins.Arguments[0], yieldBlock)
 		}
 		returnValue = ctx.LocalVar[name]
 	case tp.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]
 		args := make([]interface{}, len(ins.Arguments))
 		for i, argIns := range(ins.Arguments) {
-			args[i] = ctx.runInstruction(scope, argIns)
+			args[i] = ctx.runInstruction(scope, argIns, yieldBlock)
 		}
 		if proto.GetBool(fun.BuiltIn) {
 			switch fun.Name {
+			case "yield": 
+				returnValue = ctx.runChildren(scope, yieldBlock, nil)
 			case "concat.Text.Text":
 				returnValue = args[0].(string) + args[1].(string)
 			case "var.Text":
 				ts := &Scope{Value: ctx.Env[args[0].(string)]}
-				ctx.runChildren(ts, ins)
+				ctx.runChildren(ts, ins, yieldBlock)
 				returnValue = ts.Value
 				ctx.Env[args[0].(string)] = returnValue.(string)
 			case "export.Text":
 				val := make([]string, 2)
 				val[0] = args[0].(string)
 				ts := &Scope{Value:""}
-				ctx.runChildren(ts, ins)
+				ctx.runChildren(ts, ins, yieldBlock)
 				val[1] = ts.Value.(string)
 				ctx.Exports = append(ctx.Exports, val)
 			case "set.Text":
@@ -129,7 +133,11 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 				ctx.LocalVar[proto.GetString(arg.Name)] = args[i]
 			}
 			
-			returnValue = ctx.runChildren(scope, fun.Instruction)
+			yieldIns := &tp.Instruction{
+				Type: tp.NewInstruction_InstructionType(tp.Instruction_BLOCK),
+				Children: ins.Children,
+			}
+			returnValue = ctx.runChildren(scope, fun.Instruction, yieldIns)
 			
 			// Put the local var scope back!
 			ctx.LocalVar = localVar
@@ -138,9 +146,9 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 	return
 }
 
-func (ctx *Ctx) runChildren(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
+func (ctx *Ctx) runChildren(scope *Scope, ins *tp.Instruction, yieldBlock *tp.Instruction) (returnValue interface{}) {
 	for _, child := range(ins.Children) {
-		returnValue = ctx.runInstruction(scope, child)
+		returnValue = ctx.runInstruction(scope, child, yieldBlock)
 	}
 	return
 }
