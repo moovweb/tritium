@@ -15,7 +15,7 @@ func ParseFile(file string) (*tp.ScriptObject) {
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal("ts2to failed with message:", err.String(), "\n", string(output))
+		log.Panic("ts2to failed with message:", err.String(), "\n", string(output))
 	}
 
 	data, err := ioutil.ReadFile(output_file)
