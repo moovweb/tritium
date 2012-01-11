@@ -27,6 +27,12 @@ type Function struct {
 	*tp.Function
 }
 
+type Scope struct {
+	Value interface{}
+}
+
+
+
 func NewEngine() (*Shark) {
 	e := &Shark{
 		RegexpCache: make(map[string]*rubex.Regexp),
@@ -60,11 +66,13 @@ func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]str
 		Transform: transform,
 	}
 	ctx.UsePackage(transform.Pkg)
-	data = ctx.runInstruction(input, transform.Objects[0].Root).(string)
+	scope := &Scope{Value:input}
+	ctx.runInstruction(scope, transform.Objects[0].Root)
+	data = scope.Value.(string)
 	return
 }
 
-func (ctx *Ctx) runInstruction(scope interface{}, ins *tp.Instruction) (returnValue interface{}) {
+func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
 	returnValue = ""
 	switch *ins.Type {
 	case tp.Instruction_BLOCK:
@@ -80,8 +88,11 @@ func (ctx *Ctx) runInstruction(scope interface{}, ins *tp.Instruction) (returnVa
 			args[i] = ctx.runInstruction(scope, argIns)
 		}
 		if proto.GetBool(fun.BuiltIn) {
+			switch fun.Name {
+			case "set":
+				scope.Value = args[0]
+			}
 			println(fun.Name)
-			
 		} else {
 			println("Not Built in!")
 		}
@@ -89,7 +100,7 @@ func (ctx *Ctx) runInstruction(scope interface{}, ins *tp.Instruction) (returnVa
 	return
 }
 
-func (ctx *Ctx) runChildren(scope interface{}, ins *tp.Instruction) (returnValue interface{}) {
+func (ctx *Ctx) runChildren(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
 	for _, child := range(ins.Children) {
 		returnValue = ctx.runInstruction(scope, child)
 	}
