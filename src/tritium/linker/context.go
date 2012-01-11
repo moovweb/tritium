@@ -84,7 +84,7 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 		ctx.ProcessInstruction(obj.Root, scopeType)
 	} else {
 		if scopeType != int(proto.GetInt32(obj.ScopeTypeId)) {
-			log.Fatal("Imported a script in two different scopes!")
+			log.Panic("Imported a script in two different scopes!")
 		}
 		//println("Already linked", proto.GetString(obj.Name))
 	}
@@ -103,7 +103,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			importValue := proto.GetString(ins.Value)
 			importId, ok := ctx.objMap[importValue]
 			if ok != true {
-				log.Fatal("Invalid import ", ins.String())
+				log.Panic("Invalid import ", ins.String())
 			}
 			// Make sure this object is linked with the right scopeType
 			ctx.link(importId, scopeType)
@@ -140,7 +140,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				for _, arg := range(ins.Arguments) {
 					argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope)
 					if argReturn == -1 {
-						log.Fatal("Invalid argument object", arg.String())
+						log.Panic("Invalid argument object", arg.String())
 					}
 					stub = stub + "," + fmt.Sprintf("%d", argReturn)
 				}
@@ -151,7 +151,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				for funcName, _ := range(ctx.funList[scopeType]) {
 					println(funcName)
 				}
-				log.Fatal("No such function found....", ins.String(), "with the stub: ",scopeType, stub)
+				log.Panic("No such function found....", ins.String(), "with the stub: ",scopeType, stub)
 			}
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]

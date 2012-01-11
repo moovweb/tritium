@@ -11,12 +11,12 @@ func ParseFile(file string) (*tp.ScriptObject) {
 	cmd := Command("./bin/ts2to", file)
 	data, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatal("ts2to failed with message:", err.String(), "\n", string(data))
+		log.Panic("ts2to failed with message:", err.String(), "\n", string(data))
 	}
 	obj := &tp.ScriptObject{}
 	err = proto.Unmarshal(data, obj)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	return obj
 }

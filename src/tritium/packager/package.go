@@ -105,7 +105,7 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 		//		fun.ReturnTypeId = pkg.GetProtoTypeId(fun.ReturnType)
 		for _, arg := range(fun.Args) {
 			arg.TypeId = pkg.GetProtoTypeId(arg.TypeString)
-			println("Processing %", proto.GetString(arg.Name))
+			//println("Processing %", proto.GetString(arg.Name))
 			localScope[proto.GetString(arg.Name)] = pkg.GetTypeId(proto.GetString(arg.TypeString))
 			arg.TypeString = nil
 		}
@@ -168,7 +168,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	if err != nil {
 		fmt.Printf("\tFunction conversion output:\n\t %s", output)
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	
 	functions := &tp.FunctionArray{}	
@@ -176,7 +176,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	if err != nil {
 		println("Failed to read output file.")
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 
@@ -185,7 +185,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	if err != nil {
 		println("Failed while loading output from ts2func.")
 		println(string(output))
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 
@@ -211,7 +211,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 func (pkg *Package)Marshal() []byte {
 	bytes, err := proto.Marshal(pkg.Package)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	return bytes
 }
@@ -223,7 +223,7 @@ func (pkg *Package)findTypeIndex(name string) int {
 		}
 	}
 	
-	log.Fatal("Bad type load order, type", name, "unknown")
+	log.Panic("Bad type load order, type", name, "unknown")
 	return -1
 }
 
@@ -246,7 +246,7 @@ func (pkg *Package)loadPackageDependency(name string) {
 		pkg.Load(new_path)
 	} else {
 		println("Cannot find package at:", new_path)
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 }
@@ -256,7 +256,7 @@ func readPackageInfoFile(location string) (*PackageInfo){
 	packageInfo := &PackageInfo{}
 	infoFile, err := ioutil.ReadFile(location + "/package.yml");
 	if err != nil {
-		log.Fatal("No package info file found at " + location + "/package.yml")
+		log.Panic("No package info file found at " + location + "/package.yml")
 	}
 	yaml.Unmarshal([]byte(infoFile), &packageInfo)
 	//fmt.Printf("--- m:\n%v\n\n", packageInfo)
@@ -268,7 +268,7 @@ func readPackageInfoFile(location string) (*PackageInfo){
 func (pkg *Package)readHeaderFile(location string) {
 	headerFile, err := ioutil.ReadFile(location + "/headers.tf");
 	if err != nil {
-		log.Fatal("No header file found at " + location + "/headers.tf")
+		log.Panic("No header file found at " + location + "/headers.tf")
 	}
 	headerLines := strings.Split(string(headerFile), "\n")
 	for _, line := range(headerLines) {
@@ -324,7 +324,7 @@ func (pkg *Package)SerializedOutput() {
 
 	bytes, err := proto.Marshal(pkg.Package)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	println(string(bytes))
 }

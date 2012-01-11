@@ -43,7 +43,7 @@ func loadExports(dir string) ([][]string) {
 	exports := make([][]string, 0)
 	err := yaml.Unmarshal(data, &exports)
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 	return exports
 }
@@ -52,7 +52,7 @@ func loadFile(dir, filename string) (string) {
 	list, err := Glob(Join(dir, filename))
 	if err != nil {
 		return ""
-		//log.Fatal(err)
+		//log.Panic(err)
 	}
 	if len(list) == 0 {
 		//println("Found nothing", Join(dir, filename))

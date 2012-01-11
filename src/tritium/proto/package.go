@@ -23,7 +23,7 @@ func (pkg *Package) GetProtoTypeId(name *string) (*int32) {
 
 		if scopeTypeId == -1 {
 			// ERROR
-			log.Fatal("Didn't find type ", typeName)
+			log.Panic("Didn't find type ", typeName)
 		}
 		//println("Set scope ID to ", scopeTypeId)
 	}
