@@ -15,8 +15,7 @@
 @func Node.copy_here(Text %xpath, Position %pos) {
   $(%xpath) {
     dup() {
-      # Not sure why, but adding any other args causes a serialization error
-      move(%pos) # node(1), node(3))
+      move(%pos, node(1), node(3))
       yield() 
     } 
   } 

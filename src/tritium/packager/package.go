@@ -10,10 +10,12 @@ import(
 	"fmt"
 	"exec"
 	linker "tritium/linker"
+	"path/filepath"
 )
 
 type Package struct {
 	loaded []*PackageInfo
+	location *string
 	*tp.Package
 }
 
@@ -48,7 +50,21 @@ func NewPackage() (*Package){
 
 func (pkg *Package)Load(location string) {
 	
+	pkg.location = &location
+
 	info := readPackageInfoFile(location)
+	
+	if len(info.Dependencies) > 0 {
+
+		println("==========\nLoading dependencies:")
+
+		for _, dependency := range(info.Dependencies) {
+			pkg.loadPackageDependency(dependency)
+		}
+
+		println("done.\n==========")
+
+	}
 
 	fmt.Printf("%v\n", location)
 
@@ -170,13 +186,33 @@ func (pkg *Package)findTypeIndex(name string) int {
 			return index
 		}
 	}
+	
 	log.Fatal("Bad type load order, type", name, "unknown")
 	return -1
 }
 
-func (pkg *Package)loadPackageDependency(name string) bool{
+func (pkg *Package)loadPackageDependency(name string) {
+
 	// Try and load the dependency
-	return false
+	// TODO : remove passing location around since I added it to the Package struct	
+	
+	cleaned_path := filepath.Clean(*pkg.location)
+	path_segments := strings.Split(cleaned_path, "/")
+	
+	new_path := strings.Join(append( path_segments[0:len(path_segments)-1], name) , "/")
+
+	// TODO : Check for a pre-built package (pre-req is outputting a .tpkg file upon completion of a package load)
+
+	_, err := ioutil.ReadDir(new_path)
+
+	if err == nil {
+		// Directory exists
+		pkg.Load(new_path)
+	} else {
+		println("Cannot find package at:", new_path)
+		log.Fatal(err)
+	}
+
 }
 
 // Not fully functional. Dang it.
