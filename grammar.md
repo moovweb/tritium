@@ -12,12 +12,12 @@ Syntactic rules (specified with EBNF):
                 
     import      ->  '@import' (PATH | STR)
 
-    expression  ->  STR
-                ->  RGXP
-                ->  POS
+    expression  ->  literal
                 ->  read
                 ->  call
                 ->  variable
+    
+    literal     ->  STR | RGXP | POS
                 
     read        ->  'read' '(' STR ')'
 
