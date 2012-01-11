@@ -56,7 +56,8 @@
 @func Text.set(Text %value) //Text
 
 // Replace all instances of the first argument with the second argument. This yields to a Text scope that allows you to set the Replacement string. Very powerful stuff. Look at the examples.
-@func Text.replace(Regexp %regex) //Text,Text
+@func Text.replace(Regexp %search) //Text,Text
+@func Text.replace(Text %search) //Text,Text
 
 // Prepend the string to the front of the text area
 @func Text.prepend(Text %text_to_prepend) //Text

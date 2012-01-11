@@ -44,3 +44,9 @@
     set(%with)
   }
 }
+
+@func Text.replace(Text %search, Text %with) {
+  replace(%search) {
+    set(%with)
+  }
+}
