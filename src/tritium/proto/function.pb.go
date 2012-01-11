@@ -13,33 +13,33 @@ var _ = math.Inf
 var _ os.Error
 
 type Function struct {
-	Name             *string              `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	ScopeTypeId      *int32               `protobuf:"varint,2,opt,name=scope_type_id" json:"scope_type_id,omitempty"`
-	ScopeType        *string              `protobuf:"bytes,8,opt,name=scope_type" json:"scope_type,omitempty"`
-	ReturnTypeId     *int32               `protobuf:"varint,3,opt,name=return_type_id" json:"return_type_id,omitempty"`
-	OpensTypeId      *int32               `protobuf:"varint,4,opt,name=opens_type_id" json:"opens_type_id,omitempty"`
-	BuiltIn          *bool                `protobuf:"varint,5,opt,name=built_in" json:"built_in,omitempty"`
-	Args             []*Function_Argument `protobuf:"bytes,6,rep,name=args" json:"args,omitempty"`
-	Instruction      *Instruction         `protobuf:"bytes,7,opt,name=instruction" json:"instruction,omitempty"`
-	XXX_unrecognized []byte               `json:",omitempty"`
+	Name             *string              `protobuf:"bytes,1,opt,name=name" json:"name"`
+	ScopeTypeId      *int32               `protobuf:"varint,2,opt,name=scope_type_id" json:"scope_type_id"`
+	ScopeType        *string              `protobuf:"bytes,8,opt,name=scope_type" json:"scope_type"`
+	ReturnTypeId     *int32               `protobuf:"varint,3,opt,name=return_type_id" json:"return_type_id"`
+	OpensTypeId      *int32               `protobuf:"varint,4,opt,name=opens_type_id" json:"opens_type_id"`
+	BuiltIn          *bool                `protobuf:"varint,5,opt,name=built_in" json:"built_in"`
+	Args             []*Function_Argument `protobuf:"bytes,6,rep,name=args" json:"args"`
+	Instruction      *Instruction         `protobuf:"bytes,7,opt,name=instruction" json:"instruction"`
+	XXX_unrecognized []byte
 }
 
 func (this *Function) Reset()         { *this = Function{} }
 func (this *Function) String() string { return proto.CompactTextString(this) }
 
 type Function_Argument struct {
-	TypeId           *int32  `protobuf:"varint,1,opt,name=type_id" json:"type_id,omitempty"`
-	TypeString       *string `protobuf:"bytes,2,opt,name=type_string" json:"type_string,omitempty"`
-	Name             *string `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	XXX_unrecognized []byte  `json:",omitempty"`
+	TypeId           *int32  `protobuf:"varint,1,opt,name=type_id" json:"type_id"`
+	TypeString       *string `protobuf:"bytes,2,opt,name=type_string" json:"type_string"`
+	Name             *string `protobuf:"bytes,3,opt,name=name" json:"name"`
+	XXX_unrecognized []byte
 }
 
 func (this *Function_Argument) Reset()         { *this = Function_Argument{} }
 func (this *Function_Argument) String() string { return proto.CompactTextString(this) }
 
 type FunctionArray struct {
-	Functions        []*Function `protobuf:"bytes,1,rep,name=functions" json:"functions,omitempty"`
-	XXX_unrecognized []byte      `json:",omitempty"`
+	Functions        []*Function `protobuf:"bytes,1,rep,name=functions" json:"functions"`
+	XXX_unrecognized []byte
 }
 
 func (this *FunctionArray) Reset()         { *this = FunctionArray{} }

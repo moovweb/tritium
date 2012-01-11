@@ -5,5 +5,5 @@ import(
 )
 
 type Transformer interface {
-	Run(transform *tp.Executable, input string, vars map[string]string) (data string, exports [][]string, logs []string)
+	Run(transform *tp.Transform, input string, vars map[string]string) (data string, exports [][]string, logs []string)
 }

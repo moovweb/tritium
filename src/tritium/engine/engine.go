@@ -19,7 +19,7 @@ func NewEngine() (*Engine) {
 	return e
 }
 
-func (eng *Engine) Run(transform *tp.Executable, input string, vars map[string]string) (data string, exports [][]string, logs []string) {
+func (eng *Engine) Run(transform *tp.Transform, input string, vars map[string]string) (data string, exports [][]string, logs []string) {
 	data = input
 	exports = make([][]string, 0)
 	logs = make([]string, 0)

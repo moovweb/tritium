@@ -17,7 +17,7 @@ type Spec struct {
 	Vars map[string]string
 	
 	// Script
-	Script *tp.Executable
+	Script *tp.Transform
 	
 	// Expected outputs
 	Output string

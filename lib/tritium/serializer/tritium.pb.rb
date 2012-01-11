@@ -2,7 +2,7 @@
 require "beefcake"
 
 
-class Executable
+class Transform
   include Beefcake::Message
 
 
@@ -11,10 +11,10 @@ class Executable
 
 end
 
-class BlitzSlug
+class Slug
   include Beefcake::Message
 
 
-  repeated :transformers, Executable, 1
+  repeated :transformers, Transform, 1
 
 end
