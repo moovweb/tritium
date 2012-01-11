@@ -123,9 +123,9 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 			localVar := ctx.LocalVar
 			ctx.LocalVar = make(map[string]interface{}, len(args))
 			
-			//for i, arg := range(fun.Arguments) {
-				//ctx.LocalVar[i]
-			//}
+			for i, arg := range(fun.Args) {
+				ctx.LocalVar[proto.GetString(arg.Name)] = args[i]
+			}
 			
 			ctx.LocalVar = localVar
 		}
