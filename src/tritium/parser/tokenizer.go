@@ -63,16 +63,16 @@ func init() {
   lexemeName[EOF]    = "EOF"
   lexemeName[ERROR]  = "ERROR"
   
-  matcher[STRING], _ = rubex.Compile(`^"(\\.|[^"\\])*"|^'(\\.|[^'\\])*'`)
+  matcher[STRING], _ = rubex.Compile(`\A"(\\.|[^"\\])*"|\A'(\\.|[^'\\])*'`)
   // the pattern and options of the regexp are in captures 1 and 3
-  matcher[REGEXP], _ = rubex.Compile(`^\/((\\.|[^\/\\])*)\/([imxouesn]*)`)
-  matcher[POS], _    = rubex.Compile("^(top|bottom|before|after)")
-  matcher[GVAR], _   = rubex.Compile(`^\$\w+`)
-  matcher[LVAR], _   = rubex.Compile(`^%\w+`)
-  matcher[KWD], _    = rubex.Compile(`^[a-zA-Z_:][-\w:.]*:`)
-  matcher[ID], _     = rubex.Compile(`^\$|^[_a-z][\w\$]*`)
-  matcher[TYPE], _   = rubex.Compile(`^[A-Z]\w*`)
-  matcher[PATH], _   = rubex.Compile(`^[-+.*?:\/\w]+`)
+  matcher[REGEXP], _ = rubex.Compile(`\A\/((\\.|[^\/\\])*)\/([imxouesn]*)`)
+  matcher[POS], _    = rubex.Compile(`\A(top|bottom|before|after)`)
+  matcher[GVAR], _   = rubex.Compile(`\A\$\w+`)
+  matcher[LVAR], _   = rubex.Compile(`\A%\w+`)
+  matcher[KWD], _    = rubex.Compile(`\A[a-zA-Z_:][-\w:.]*:`)
+  matcher[ID], _     = rubex.Compile(`\A\$|^[_a-z][\w\$]*`)
+  matcher[TYPE], _   = rubex.Compile(`\A[A-Z]\w*`)
+  matcher[PATH], _   = rubex.Compile(`\A[-+.*?:\/\w]+`)
   
   // Map parens, braces, etc to their lexemes
   symbolLexeme = make(map[string]Lexeme, 7)
@@ -83,9 +83,9 @@ func init() {
   symbolLexeme[","] = COMMA
   symbolLexeme["."] = DOT
   symbolLexeme["="] = EQUAL
-  symbolPattern, _ = rubex.Compile(`^[(){},\.=]`)
+  symbolPattern, _ = rubex.Compile(`\A[\(\)\{\}\,\.=]`)
   
-  numberPattern, _ = rubex.Compile(`^\d+`)
+  numberPattern, _ = rubex.Compile(`\A\d+`)
 }
 
 // A token has a type (aka lexeme), a value, and a line number
@@ -237,7 +237,7 @@ func (t *Tokenizer) munch() *Token {
   } else if t.hasPrefix("*/") {
     return t.popError("unmatched comment terminator")
   } else if c := string(symbolPattern.Find(src)); len(c) > 0 {
-    return t.popToken(symbolLexeme[c], "", 1)
+    return t.popToken(symbolLexeme[c], c, 1)
   } else if c := string(numberPattern.Find(src)); len(c) > 0 {
     return t.popToken(STRING, c, len(c))
   } else if t.hasPrefix("'") || t.hasPrefix("\"") {
@@ -310,7 +310,7 @@ func (t *Tokenizer) Pop() *Token {
 }
 
 func MakeTokenizer(src []byte) *Tokenizer {
-  t := Tokenizer { Source: src, Lookahead: nil, LineNum: 1 }
+  t := Tokenizer { Source: src, Lookahead: nil, LineNum: 1, unterminatedComment: false }
   t.Pop()
   return &t
 }
