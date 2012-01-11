@@ -4,11 +4,11 @@ import "object.proto";
 import "package.proto";
 
 // A post-linking object for execution
-message Executable {
+message Transform {
 	repeated ScriptObject objects = 1;
 	required Package pkg = 2;
 }
 
-message BlitzSlug {
-	repeated Executable transformers = 1;
+message Slug {
+	repeated Transform transformers = 1;
 }

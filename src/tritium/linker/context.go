@@ -14,7 +14,7 @@ type LinkingContext struct {
 	objMap map[string]int
 	funList []FuncMap
 	textType int
-	*Executable
+	*Transform
 }
 
 type LocalDef map[string]int
@@ -57,7 +57,7 @@ func NewLinkingContext(pkg *Package) (*LinkingContext){
 	// Setup the main context object
 	ctx := &LinkingContext{ 
 		funList: functionLookup,
-		Executable: &Executable{
+		Transform: &Transform{
 			Pkg: pkg,
 		},
 	}
