@@ -1,21 +1,22 @@
-# These cause errors when de-serialized
+# These cause errors when deserialized
+ 
+ @func position() {
+   position("bottom") 
+ }
 
-# @func position() {
-#   position("bottom") 
-# }
-
-# @func Node.copy_here(Text %xpath) {
-#   copy_here(%xpath, position()) {
-#     yield() 
-#   } 
-# }
+ @func Node.copy_here(Text %xpath) {
+   copy_here(%xpath, position()) {
+     yield() 
+   } 
+ }
 
 
 
 @func Node.copy_here(Text %xpath, Position %pos) {
   $(%xpath) {
     dup() {
-      move(%pos, node(1), node(3))
+      # move(this(), this(), %pos)
+      # same deal as below ... %pos is treated like Text
       yield() 
     } 
   } 
@@ -47,9 +48,12 @@
 }
 
 @func Node.move_to(Text %xpath, Position %pos) {
-  %parent_node = this()
+  # %parent_node = this()
+  # THIS shit breaks. The linker thinks %parent_node returns text
   $(%xpath) {
-    move(%parent_node, this(), %pos)
+    # move(%parent_node, this(), %pos)
+#    move(this(), this(), %pos) # stupid, just want it to pass
+    # This is borked even w the above hack. the %pos variable is interpreted as a Text type
     yield()
   }
 }

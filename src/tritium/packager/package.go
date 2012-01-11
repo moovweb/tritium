@@ -94,6 +94,8 @@ func (pkg *Package)Load(location string) {
 func (pkg *Package)resolveFunction(fun *tp.Function) {
 	linkingContext := linker.NewLinkingContext(pkg.Package)
 
+	pkg.resolveFunctionDescendants(fun)
+
 	// Re-uses linker's logic to resolve function definitions
 	if ( proto.GetBool( fun.BuiltIn ) == false) {
 		fun.ScopeTypeId = pkg.GetProtoTypeId(fun.ScopeType)
@@ -109,6 +111,35 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 		returnType := int32( linkingContext.ProcessInstruction( fun.Instruction, int(proto.GetInt32(fun.ScopeTypeId)) ) )
 		fun.ReturnTypeId = proto.Int32(returnType)
 	}
+}
+
+func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
+
+	// Check if this function contains any types that have descendants
+
+	println("Function:", proto.GetString(fun.Name) )
+
+	// Todo: Iterate over ScopeType, Arg types, return Type, opens Type
+	this_type_name := proto.GetString(fun.ScopeType)
+	
+	if len(this_type_name) > 0 {
+
+		println("this type name:", this_type_name,  )
+
+		this_type_index := pkg.findTypeIndex(this_type_name)
+		println("this type index:", this_type_index)
+
+		this_type := pkg.Types[this_type_index]
+		fmt.Printf("this type: %v\n", this_type)
+
+		implements := proto.GetInt32(this_type.Implements)
+
+//		if ( implements != 0 ) {
+		println("ScopeType (", this_type,") implements", implements, ":", proto.GetString(pkg.Types[implements].Name) )
+//		}
+
+	}
+
 }
 
 func (pkg *Package)readPackageDefinitions(location string) {
