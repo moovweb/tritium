@@ -33,7 +33,7 @@ const (
   ERROR
 )
 
-var lexemeName [21]string
+var LexemeName [21]string
 var matcher [21]*rubex.Regexp
 var symbolLexeme map[string]Lexeme
 var symbolPattern *rubex.Regexp
@@ -41,27 +41,27 @@ var numberPattern *rubex.Regexp
 
 func init() {
   // Is there a more elegant way to do this?
-  lexemeName[LPAREN] = "LPAREN"
-  lexemeName[RPAREN] = "RPAREN"
-  lexemeName[LBRACE] = "LBRACE"
-  lexemeName[RBRACE] = "RBRACE"
-  lexemeName[COMMA]  = "COMMA"
-  lexemeName[DOT]    = "DOT"
-  lexemeName[EQUAL]  = "EQUAL"
-  lexemeName[STRING] = "STRING"
-  lexemeName[REGEXP] = "REGEXP"
-  lexemeName[POS]    = "POS"
-  lexemeName[GVAR]   = "GVAR"
-  lexemeName[LVAR]   = "LVAR"
-  lexemeName[KWD]    = "KWD"
-  lexemeName[ID]     = "ID"
-  lexemeName[FUNC]   = "FUNC"
-  lexemeName[TYPE]   = "TYPE"
-  lexemeName[PATH]   = "PATH"
-  lexemeName[IMPORT] = "IMPORT"
-  lexemeName[READ]   = "READ"
-  lexemeName[EOF]    = "EOF"
-  lexemeName[ERROR]  = "ERROR"
+  LexemeName[LPAREN] = "LPAREN"
+  LexemeName[RPAREN] = "RPAREN"
+  LexemeName[LBRACE] = "LBRACE"
+  LexemeName[RBRACE] = "RBRACE"
+  LexemeName[COMMA]  = "COMMA"
+  LexemeName[DOT]    = "DOT"
+  LexemeName[EQUAL]  = "EQUAL"
+  LexemeName[STRING] = "STRING"
+  LexemeName[REGEXP] = "REGEXP"
+  LexemeName[POS]    = "POS"
+  LexemeName[GVAR]   = "GVAR"
+  LexemeName[LVAR]   = "LVAR"
+  LexemeName[KWD]    = "KWD"
+  LexemeName[ID]     = "ID"
+  LexemeName[FUNC]   = "FUNC"
+  LexemeName[TYPE]   = "TYPE"
+  LexemeName[PATH]   = "PATH"
+  LexemeName[IMPORT] = "IMPORT"
+  LexemeName[READ]   = "READ"
+  LexemeName[EOF]    = "EOF"
+  LexemeName[ERROR]  = "ERROR"
   
   matcher[STRING], _ = rubex.Compile(`\A"(\\.|[^"\\])*"|\A'(\\.|[^'\\])*'`)
   // the pattern and options of the regexp are in captures 1 and 3
@@ -70,7 +70,7 @@ func init() {
   matcher[GVAR], _   = rubex.Compile(`\A\$\w+`)
   matcher[LVAR], _   = rubex.Compile(`\A%\w+`)
   matcher[KWD], _    = rubex.Compile(`\A[a-zA-Z_:][-\w:.]*:`)
-  matcher[ID], _     = rubex.Compile(`\A\$|^[_a-z][\w\$]*`)
+  matcher[ID], _     = rubex.Compile(`\A\$|\A[_a-z][\w\$]*`)
   matcher[TYPE], _   = rubex.Compile(`\A[A-Z]\w*`)
   matcher[PATH], _   = rubex.Compile(`\A[-+.*?:\/\w]+`)
   
@@ -97,7 +97,7 @@ type Token struct {
 }
 
 func (t *Token) Inspect() string {
-  return fmt.Sprintf("[%s: %s, %s, %d]", lexemeName[t.Lexeme], t.Value, t.ExtraValue, t.LineNum)
+  return fmt.Sprintf("[%s: %s, %s, %d]", LexemeName[t.Lexeme], t.Value, t.ExtraValue, t.LineNum)
 }
 
 /*
