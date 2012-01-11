@@ -198,12 +198,15 @@ func (t *Tokenizer) discardWhitespaceAndComments() {
   }
 }
 
+// Returns the next token and simultaneously discards the specified number of
+// characters from the source text.
 func (t *Tokenizer) popToken(lexeme Lexeme, value string, length int) *Token {
   val := &Token { Lexeme: lexeme, Value: value, ExtraValue: "", LineNum: t.LineNum }
   t.Source = t.Source[length:]
   return val
 }
 
+// Returns an error token and discards the rest of the line.
 func (t *Tokenizer) popError(message string) *Token {
   val := &Token { Lexeme: ERROR, Value: message, ExtraValue: "", LineNum: t.LineNum }
   t.discardLine()
@@ -294,6 +297,16 @@ func (t *Tokenizer) munch() *Token {
   return t.popError("unrecognized token")
 }
 
+/*
+  The following three functions constitute the API for the tokenizer.
+*/
+
+func MakeTokenizer(src []byte) *Tokenizer {
+  t := Tokenizer { Source: src, Lookahead: nil, LineNum: 1, unterminatedComment: false }
+  t.Pop()
+  return &t
+}
+
 func (t *Tokenizer) Peek() *Token {
   return t.Lookahead
 }
@@ -307,10 +320,4 @@ func (t *Tokenizer) Pop() *Token {
     t.unterminatedComment = false
   }
   return val
-}
-
-func MakeTokenizer(src []byte) *Tokenizer {
-  t := Tokenizer { Source: src, Lookahead: nil, LineNum: 1, unterminatedComment: false }
-  t.Pop()
-  return &t
 }
