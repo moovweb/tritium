@@ -13,7 +13,7 @@
   %calling_node = this()
   $(%xpath) {
     dup() {
-      # move(this(), this(), %pos)
+      move(this(), %calling_node, %pos)
       # same deal as below ... %pos is treated like Text
       yield() 
     } 
