@@ -161,6 +161,25 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 						returnValue = "true"
 					}
 				}
+			case "not.Text":
+				returnValue = "false"
+				if ctx.matchShouldContinue() {
+					if args[0].(string) != ctx.matchTarget() {
+						ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
+						ctx.runChildren(scope, ins, yieldBlock)
+						returnValue = "true"
+					}
+				}
+			case "not.Regexp":
+				returnValue = "false"
+				if ctx.matchShouldContinue() {
+					//println(matcher.MatchAgainst, matchWith)
+					if !(args[0].(*rubex.Regexp)).Match([]uint8(ctx.matchTarget())) {
+						ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
+						ctx.runChildren(scope, ins, yieldBlock)
+						returnValue = "true"
+					}
+				}
 			case "regexp.Text":
 				returnValue = rubex.MustCompile(args[0].(string))
 			case "export.Text":
