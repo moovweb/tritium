@@ -43,7 +43,6 @@ func MakeParser(fullpath string) *Parser {
     FullPath: fullpath,
     Lookahead: nil,
     counter: 0,
-    header: false,
   }
   p.pop()
   return p
@@ -330,16 +329,50 @@ func (p *Parser) block() []*ir.Instruction {
 }
 
 // func (p *Parser) definition() *ir.Function {
+//   isSignature := false
+//   node := new(ir.Function)
 //   
 //   p.pop() // pop the "@func" keyword
 //   opensIn := ""
 //   if p.peek().Lexeme == TYPE {
 //     opensIn = p.pop().Value
+//     if p.peek().Lexeme != DOT {
+//       panic("function context and function name must be separated by '.'")
+//     }
+//     p.pop() // pop the dot
 //   }
 //   
+//   if p.peek().Lexeme != ID {
+//     panic("invalid function name in definition")
+//   }
+//   funcName := p.pop().Value
+//   
+//   if p.peek().Lexeme != LPAREN {
+//     panic("malformed parameter list in function definition")
+//   }
+//   p.pop() // pop the lparen
+//   params := p.parameters()
+//   p.pop() // pop the rparen
+//   
+//   returns := ""
+//   opensUp := ""
+//   if p.peek().Lexeme == TYPE {
+//     isSignature = true
+//     returns = p.pop().Value
+//     if p.peek().Lexeme == TYPE {
+//       opensUp = p.pop().Value
+//     }
+//   }
+//   
+//   node.Name = proto.String(funcName)
+//   node.Args = params
+// 
+//   
 // }
-
-
+// 
+// func (p *Parser) parameters() []*ir.Function_Argument {
+//   
+// }
 
 
 

@@ -3,22 +3,18 @@
 */
 
 @import ../parser/one.ts
-@import /* comment */ 'two.ts'
+@import "two.ts"
+@import "three.ts"
 
-$("./div") {
-  insert_top("h1", class: "mw_title", data-ur-set: "superhero")
-  insert_at(bottom, "span", read("text.txt"))
-  $global = 'global'
-  %local = "local"
-  
-  match($path, /\/home\/index\.html/i) {
-    foo()
-  }
-  
+"hello"
+"goodbye"
+
+foo()
+
+insert("span") {
+  set("class", foo("a", "b"), read("text.txt"))
 }
 
-@func Text.blah(Text x) {
-  log(x)
-}
+insert("table", class: "hoo", id: "ha", data-ur-set: "toggler", src: fetch("..."))
 
-# END OF BLAH.TS
+foo($blah = "groo" { roo() })
