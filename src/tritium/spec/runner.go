@@ -42,6 +42,12 @@ func (result *Result)Run(dir string, pkg *tp.Package, eng Engine) {
 	this_result := spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars))
 	if this_result.Passed() {
 		print(".")
+		this_result = spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars))
+		if this_result.Passed() {
+			print(".")
+		} else {
+			print("R")
+		}
 	} else {
 		result.Merge(this_result)
 		print("F")
