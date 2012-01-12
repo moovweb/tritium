@@ -10,4 +10,4 @@ func Compile(file string) (*tp.Transform) {
 	return linker.RunWithPackage(file, packager.BuildDefaultPackage(PackagePath).Package)
 }
 
-var PackagePath = "./packages"
+var PackagePath = "packages"

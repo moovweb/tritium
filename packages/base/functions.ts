@@ -30,6 +30,11 @@
   }
 }
 
+@func rewrite(Text %type) {
+  %prefix = concat("rewrite_", %type)
+  replace(regexp(var(concat(%prefix, "_matcher"))), var(concat(%prefix, "_replacement")))
+}
+
 @func match(Text %target, Text %comparitor) {
   match(%target) {
     with(%comparitor) {

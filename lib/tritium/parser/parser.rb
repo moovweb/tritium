@@ -130,6 +130,7 @@ module Tritium
           end
         end
         stmts = peek.lexeme == :LBRACE ? block : nil
+
         if value
           args = { pos: [ var_name, value ] }
         else
@@ -152,13 +153,12 @@ module Tritium
           end
         end
         stmts = peek.lexeme == :LBRACE ? block : nil
+        args = []
         if value
-          args = { pos: [ var_name, value ] }
-        else
-          args = { pos: [ var_name ] }
+          args << value
         end
-        signature = [:var, args[:pos].length]
-        return cmd(LocalVar, "lvar", [var_name], {}, stmts || [])
+
+        return cmd(LocalVar, var_name.name, args, {}, stmts || [])
       end
 
       def invocation

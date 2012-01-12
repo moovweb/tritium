@@ -52,12 +52,9 @@
 }
 
 @func Node.move_to(Text %xpath, Position %pos) {
-  # %parent_node = this()
-  # THIS shit breaks. The linker thinks %parent_node returns text
+  %parent_node = this()
   $(%xpath) {
-    # move(%parent_node, this(), %pos)
-#    move(this(), this(), %pos) # stupid, just want it to pass
-    # This is borked even w the above hack. the %pos variable is interpreted as a Text type
+    move(%parent_node, this(), %pos)
     yield()
   }
 }

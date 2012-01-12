@@ -31,8 +31,8 @@ func BuildDefaultPackage(dir string) (*Package) {
 	pkg := NewPackage(dir)
 
 	pkg.Load("base")
-	//pkg.Load("packages/node")
-	//pkg.Load("packages/libxml")
+	//pkg.Load("node")
+	//pkg.Load("libxml")
 	println("Packages all loaded")
 
 	return pkg
@@ -236,21 +236,17 @@ func (pkg *Package)loadPackageDependency(name string) {
 
 	// Try and load the dependency
 	// TODO : remove passing location around since I added it to the Package struct	
-	
-	cleaned_path := filepath.Clean(pkg.location)
-	path_segments := strings.Split(cleaned_path, "/")
-	
-	new_path := strings.Join(append( path_segments[0:len(path_segments)-1], name) , "/")
 
 	// TODO : Check for a pre-built package (pre-req is outputting a .tpkg file upon completion of a package load)
 
-	_, err := ioutil.ReadDir(new_path)
+	newPath := filepath.Join(pkg.LoadPath, name)
+	_, err := ioutil.ReadDir(newPath)
 
 	if err == nil {
 		// Directory exists
-		pkg.Load(new_path)
+		pkg.Load(name)
 	} else {
-		println("Cannot find package at:", new_path)
+		println("Cannot find package at:", newPath)
 		log.Panic(err)
 	}
 
