@@ -6,10 +6,12 @@ import(
 	. "path/filepath"
 	"tritium/shark"
 	. "fmt"
+	"log4go"
 )
 
 func All(directory string) {
-	eng := shark.NewEngine() 
+	logger := log4go.NewDefaultLogger(log4go.FINEST)
+	eng := shark.NewEngine(logger) 
 	pkg := packager.BuildDefaultPackage()
 
 	globalResult := newResult()
