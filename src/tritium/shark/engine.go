@@ -128,11 +128,6 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 			case "yield": 
 				returnValue = ctx.runChildren(scope, yieldBlock, nil)
 				yieldBlock = nil
-			case "concat.Text.Text":
-				//println("Concat:", args[0].(string), "+", args[1].(string))
-				returnValue = args[0].(string) + args[1].(string)
-			case "concat.Text.Text.Text": //REMOVE
-				returnValue = args[0].(string) + args[1].(string) + args[2].(string)
 			case "var.Text":
 				val := ctx.Env[args[0].(string)]
 				ts := &Scope{Value: val}
@@ -208,6 +203,19 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				ctx.Exports = append(ctx.Exports, val)
 			case "log.Text":
 				ctx.Logs = append(ctx.Logs, args[0].(string))
+			
+			// ATOMIC FUNCTIONS
+			case "concat.Text.Text":
+				//println("Concat:", args[0].(string), "+", args[1].(string))
+				returnValue = args[0].(string) + args[1].(string)
+			case "concat.Text.Text.Text": //REMOVE
+				returnValue = args[0].(string) + args[1].(string) + args[2].(string)
+			case "downcase.Text":
+				returnValue = strings.ToLower(args[0].(string))
+				return
+			case "upcase.Text":
+				returnValue = strings.ToUpper(args[0].(string))
+				return
 				
 			// TEXT FUNCTIONS
 			case "set.Text":
