@@ -129,13 +129,13 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	
 	if len(this_type_name) > 0 {
 
-		println("this type name:", this_type_name,  )
+		//println("this type name:", this_type_name,  )
 
 		this_type_index := pkg.findTypeIndex(this_type_name)
-		println("this type index:", this_type_index)
+		//println("this type index:", this_type_index)
 
 		this_type := pkg.Types[this_type_index]
-		fmt.Printf("this type: %v\n", this_type)
+		//fmt.Printf("this type: %v\n", this_type)
 
 		implements := proto.GetInt32(this_type.Implements)
 
