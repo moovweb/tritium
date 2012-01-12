@@ -7,6 +7,7 @@ import(
 	. "io/ioutil"
 	"log"
 	yaml "launchpad.net/goyaml"
+	strings "strings"
 )
 
 type Spec struct {
@@ -69,6 +70,7 @@ func (spec *Spec) Compare(data string, exports [][]string, logs []string) (*Resu
 	result := newResult()
 	result.Merge(spec.compareData(data))
 	result.Merge(spec.compareExports(exports))	
+	result.Merge(spec.compareLogs(logs))
 	return result
 }
 
@@ -90,6 +92,18 @@ func (spec *Spec) compareExports(exports [][]string) (*Result) {
 	}
 
 	return exportsResult
+}
+
+func (spec *Spec) compareLogs(logs []string) (*Result) {
+	result := newResult()
+	
+	expectedSummary := strings.Join(spec.Logs, "\n")
+	outputSummary := strings.Join(logs, "\n")
+	
+	if expectedSummary != outputSummary {
+		result.Error("Bad Log Output", outputSummary, expectedSummary, "Didn't match")
+	}
+	return result
 }
 
 func summarizeExport(export []string) string{
