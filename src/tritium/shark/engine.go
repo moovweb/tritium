@@ -121,6 +121,8 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				yieldBlock = nil
 			case "concat.Text.Text":
 				returnValue = args[0].(string) + args[1].(string)
+			case "concat.Text.Text.Text": //REMOVE
+				returnValue = args[0].(string) + args[1].(string) + args[2].(string)
 			case "var.Text":
 				val := ctx.Env[args[0].(string)]
 				ts := &Scope{Value: val}
