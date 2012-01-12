@@ -114,6 +114,8 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 		}
 		if proto.GetBool(fun.BuiltIn) {
 			switch fun.Name {
+			case "this":
+				returnValue = scope.Value
 			case "yield": 
 				returnValue = ctx.runChildren(scope, yieldBlock, nil)
 				yieldBlock = nil
@@ -195,8 +197,10 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				scope.Value = args[0]
 			case "log.Text":
 				ctx.Logs = append(ctx.Logs, args[0].(string))
-			case "this":
-				returnValue = scope.Value.(string)
+			case "append.Text":
+				scope.Value = scope.Value.(string) + args[0].(string)
+			case "prepend.Text":
+				scope.Value = args[0].(string) + scope.Value.(string)
 			default:
 				println("Must implement", fun.Name)
 			}
