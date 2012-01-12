@@ -1,2 +1,2 @@
-$a = "a"
-export("a", $a)
+$variable = "value"
+export("key", $variable)

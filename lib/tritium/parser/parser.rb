@@ -97,9 +97,11 @@ module Tritium
         case peek.lexeme
         when :IMPORT then
           return import
-        when :VAR, :LVAR then
+        when :VAR then
           # TODO: Handle LVAR later
           return reference
+        when :LVAR then
+          return lvar
         when :ID then
           return invocation
         when :STRING, :REGEXP

@@ -63,11 +63,7 @@ func NewLinkingContext(pkg *Package) (*LinkingContext){
 	}
 	
 	// Find Text type int -- need its ID to deal with Text literals during processing
-	for index, t := range(pkg.Types) {
-		if proto.GetString(t.Name) == "Text" {
-			ctx.textType = index
-		}
-	}
+	ctx.textType = pkg.GetTypeId("Text")
 
 	return ctx
 }
@@ -78,6 +74,7 @@ func (ctx *LinkingContext) Link() {
 
 func (ctx *LinkingContext) link(objId, scopeType int) {
 	obj := ctx.Objects[objId]
+	//println(obj.String())
 	if proto.GetBool(obj.Linked) == false {
 		//println("Linking", proto.GetString(obj.Name))
 		obj.ScopeTypeId = proto.Int(scopeType)
@@ -138,6 +135,9 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			stub := proto.GetString(ins.Value)
 			if ins.Arguments != nil {
 				for _, arg := range(ins.Arguments) {
+					//println("arg:", arg)
+					//println("scopeType:", scopeType)
+					//println("localScope", localScope)
 					argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope)
 					if argReturn == -1 {
 						log.Panic("Invalid argument object", arg.String())
