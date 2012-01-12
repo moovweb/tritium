@@ -8,9 +8,9 @@ import(
 	"log"
 	"strings"
 	"fmt"
-	"exec"
 	linker "tritium/linker"
 	"path/filepath"
+	parser "tritium/parser"
 )
 
 type Package struct {
@@ -147,63 +147,25 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 }
 
+
+
 func (pkg *Package)readPackageDefinitions(location string) {
-	
+	fmt.Printf("Package types : %v\n\n\n", pkg.Types)
 	println(" -- reading definitions")
 
-	// Execute the ts2func-ruby script
-
-	package_name := strings.Split(location,"/")[1]
 	input_file := location + "/functions.ts"
-	output_file := location + "/" + package_name + ".tf"
 
-	// Assume that tritium/bin is in $PATH (it will be when you install the gem)
-	// -- if you're developing, add $REPOS/tritium/bin to $PATH
+	definitions := parser.ParseFile(input_file)
 
-	command := exec.Command("ts2func-ruby", "-s", input_file, output_file)
-
-	//fmt.Printf("\n\nExecuting command: \n %v\n", command)
-
-	output, err := command.CombinedOutput()
-
-	if err != nil {
-		fmt.Printf("\tFunction conversion output:\n\t %s", output)
-		log.Panic(err)
-	}
-	
-	functions := &tp.FunctionArray{}	
-	data, err := ioutil.ReadFile(output_file)
-
-	if err != nil {
-		println("Failed to read output file.")
-		log.Panic(err)
-	}
-
-
-	err = proto.Unmarshal(data, functions)
-
-	if err != nil {
-		println("Failed while loading output from ts2func.")
-		println(string(output))
-		log.Panic(err)
-	}
-
-
-	//fmt.Printf("functions : %v", functions)
-	//fmt.Printf("\n\n prelim pkg functions : %v\n", pkg.Package.Functions) */
+	fmt.Printf("Got definitions: %v", definitions)
 
 	//println("Function count before ", len(pkg.Package.Functions))
-	for _, function := range(functions.Functions) {
+	for _, function := range(definitions.Functions) {
 		//fmt.Printf("\n\t -- functions[%v]:\n %v", index, function)
 		pkg.resolveFunction(function)
 		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}
-	//fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
 	//println("Function count after ", len(pkg.Package.Functions))
-	//pkg.Package.Functions = functions.Functions
-
-	//fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
-
 
 }
 
@@ -263,9 +225,43 @@ func readPackageInfoFile(location string) (*PackageInfo){
 	return packageInfo
 }
 
+func (pkg *Package)readHeaderFile(location string) {
+	// TODO : plug in new go parser to do this
+	input_file := location + "/headers.tf"
+
+	stubs := parser.ParseFile(input_file)
+
+	fmt.Printf("Got stubs: %v", stubs)
+
+	for _, function := range(stubs.Functions) {
+		//fmt.Printf("\n\t -- functions[%v]:\n %v", index, function)
+
+		returnType := proto.GetString( function.ReturnType )
+		if len(returnType) > 0 {
+			function.ReturnTypeId = proto.Int32( int32( pkg.findTypeIndex( returnType ) ) )
+		}
+
+		scopeType := proto.GetString( function.ScopeType )
+		if len(scopeType) > 0{
+			function.ScopeTypeId = proto.Int32( int32( pkg.findTypeIndex( scopeType ) ) )
+		}
+		
+		opensType := proto.GetString( function.OpensType )
+		if len(opensType) > 0 {
+			function.OpensTypeId = proto.Int32( int32( pkg.findTypeIndex( opensType ) ) )
+		}
+
+		fmt.Printf("\nthis function: %v \n", function )
+		fmt.Printf("\nthis stub: %v \n", function.Stub())
+
+		pkg.Package.Functions = append(pkg.Package.Functions, function)
+	}
+	
+}
+
 
 // Not fully functional. Dang it.
-func (pkg *Package)readHeaderFile(location string) {
+func (pkg *Package)oldReadHeaderFile(location string) {
 	headerFile, err := ioutil.ReadFile(location + "/headers.tf");
 	if err != nil {
 		log.Panic("No header file found at " + location + "/headers.tf")
@@ -328,3 +324,17 @@ func (pkg *Package)SerializedOutput() {
 	}
 	println(string(bytes))
 }
+/*
+func (pkg *Package)getStub(function *tp.Function) string {
+//	println("type:", proto.GetString(function.ScopeType), " id:", proto.GetInt32(function.ScopeTypeId) )
+
+//	stub := string( pkg.findTypeIndex( proto.GetString(function.ScopeType) ) )
+	stub := string( proto.GetInt32(function.ScopeTypeId) )
+	stub += proto.GetString(function.Name)
+	if function.Args != nil {
+		for _, arg := range(function.Args) {
+			stub = stub + "," + fmt.Sprintf("%d", pkg.findTypeIndex(proto.GetString(arg.TypeString) ) )
+		}
+	}
+	return stub
+}*/
