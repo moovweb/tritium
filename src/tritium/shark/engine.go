@@ -160,6 +160,8 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				scope.Value = args[0]
 			case "log.Text":
 				ctx.Logs = append(ctx.Logs, args[0].(string))
+			case "text":
+				returnValue = scope.Value.(string)
 			default:
 				println("Must implement", fun.Name)
 			}
