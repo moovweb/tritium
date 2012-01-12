@@ -9,3 +9,5 @@ import(
 func Compile(file string) (*tp.Transform) {
 	return linker.RunWithPackage(file, packager.BuildDefaultPackage().Package)
 }
+
+var TritiumPath = "."
