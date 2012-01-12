@@ -15,7 +15,8 @@ import(
 
 type Package struct {
 	loaded []*PackageInfo
-	location *string
+	location string
+	LoadPath string
 	*tp.Package
 }
 
@@ -25,11 +26,11 @@ type PackageInfo struct {
 	Types []string
 }
 
-func BuildDefaultPackage() (*Package) {
+func BuildDefaultPackage(dir string) (*Package) {
 	// Terrible directory handling here... has to be executed from Tritium root
-	pkg := NewPackage()
+	pkg := NewPackage(dir)
 
-	pkg.Load("packages/base")
+	pkg.Load("base")
 	//pkg.Load("packages/node")
 	//pkg.Load("packages/libxml")
 	println("Packages all loaded")
@@ -37,7 +38,7 @@ func BuildDefaultPackage() (*Package) {
 	return pkg
 }
 
-func NewPackage() (*Package){
+func NewPackage(loadPath string) (*Package){
 	return &Package{
 		Package: &tp.Package{
 			Name: proto.String("combined"),
@@ -45,12 +46,14 @@ func NewPackage() (*Package){
 			Types: make([]*tp.Type, 0),
 		},
 		loaded: make([]*PackageInfo, 0),
+		LoadPath: loadPath,
 	}
 }
 
-func (pkg *Package)Load(location string) {
+func (pkg *Package)Load(packageName string) {
 	
-	pkg.location = &location
+	location := filepath.Join(pkg.LoadPath, packageName)
+	pkg.location = location
 
 	info := readPackageInfoFile(location)
 	
@@ -154,8 +157,10 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	// Execute the ts2func-ruby script
 
 	package_name := strings.Split(location,"/")[1]
-	input_file := location + "/functions.ts"
-	output_file := location + "/" + package_name + ".tf"
+	input_file := filepath.Join(location, "functions.ts")
+	output_file := filepath.Join(location, package_name + ".tf")
+	
+	println(input_file)
 
 	// Assume that tritium/bin is in $PATH (it will be when you install the gem)
 	// -- if you're developing, add $REPOS/tritium/bin to $PATH
@@ -232,7 +237,7 @@ func (pkg *Package)loadPackageDependency(name string) {
 	// Try and load the dependency
 	// TODO : remove passing location around since I added it to the Package struct	
 	
-	cleaned_path := filepath.Clean(*pkg.location)
+	cleaned_path := filepath.Clean(pkg.location)
 	path_segments := strings.Split(cleaned_path, "/")
 	
 	new_path := strings.Join(append( path_segments[0:len(path_segments)-1], name) , "/")

@@ -1,13 +1,13 @@
 
-@func regexp(Text %exp) {
-  regexp(%exp, "")
-}
-
 @func export(Text %key, Text %value) {
   export(%key) {
     set(%value)
     yield()
   }
+}
+
+@func regexp(Text %exp) {
+  regexp(%exp, "")
 }
 
 @func asset(Text %name) {
