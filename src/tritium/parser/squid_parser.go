@@ -393,7 +393,27 @@ func (p *Parser) definition() *ir.Function {
 
 func (p *Parser) parameters() []*ir.Function_Argument {
   params := make([]*ir.Function_Argument, 0)
+  // if p.peek().Lexeme != RPAREN {
+  //   if p.peek().Lexeme != TYPE {
+  //     panic("function parameter is missing a type")
+  //   }
+  //   param := &ir.Function_Argument {
+  //     TypeString: proto.String(p.pop().Value),
+  //   }
+  //   if p.peek().Lexeme != LVAR {
+  //     panic("function parameter has invalid name")
+  //   }
+  //   param.Name = proto.String(p.pop().Value)
+  //   params = append(params, param)
+  // }
+  counter := 0
   for p.peek().Lexeme != RPAREN {
+    if counter > 0 {
+      if p.peek().Lexeme != COMMA {
+        panic("parameter list must be separated by commas")
+      }
+      p.pop() // pop the comma
+    }
     if p.peek().Lexeme != TYPE {
       panic("function parameter is missing a type")
     }
@@ -405,6 +425,7 @@ func (p *Parser) parameters() []*ir.Function_Argument {
     }
     param.Name = proto.String(p.pop().Value)
     params = append(params, param)
+    counter++
   }
   return params
 }
