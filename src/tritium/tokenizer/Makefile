@@ -4,7 +4,7 @@
 
 include $(GOROOT)/src/Make.inc
 
-TARG=ptcp
+TARG=tritium/tokenizer
 GOFILES=\
     tokenizer.go
 
