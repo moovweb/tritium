@@ -55,18 +55,17 @@ func (p *Parser) Parse() *ir.ScriptObject {
   
   
   stmts := make([]*ir.Instruction, 0)
-  // defs := make([]*ir.Function, 0)
+  defs := make([]*ir.Function, 0)
   
   switch p.peek().Lexeme {
-  // case FUNC:
-  //   for p.peek().Lexeme != EOF {
-  //     defs = append(defs, p.definition())
-  //   }
-  //   if len(defs) == 0 {
-  //     defs = nil
-  //   }
-  //   script.Functions = defs
-  // }
+  case FUNC:
+    for p.peek().Lexeme != EOF {
+      defs = append(defs, p.definition())
+    }
+    if len(defs) == 0 {
+      defs = nil
+    }
+    script.Functions = defs
   default:
     for p.peek().Lexeme != EOF {
       stmts = append(stmts, p.statement())
@@ -329,51 +328,86 @@ func (p *Parser) block() []*ir.Instruction {
   return stmts
 }
 
-// func (p *Parser) definition() *ir.Function {
-//   isSignature := false
-//   node := new(ir.Function)
-//   
-//   p.pop() // pop the "@func" keyword
-//   opensIn := ""
-//   if p.peek().Lexeme == TYPE {
-//     opensIn = p.pop().Value
-//     if p.peek().Lexeme != DOT {
-//       panic("function context and function name must be separated by '.'")
-//     }
-//     p.pop() // pop the dot
-//   }
-//   
-//   if p.peek().Lexeme != ID {
-//     panic("invalid function name in definition")
-//   }
-//   funcName := p.pop().Value
-//   
-//   if p.peek().Lexeme != LPAREN {
-//     panic("malformed parameter list in function definition")
-//   }
-//   p.pop() // pop the lparen
-//   params := p.parameters()
-//   p.pop() // pop the rparen
-//   
-//   returns := ""
-//   opensUp := ""
-//   if p.peek().Lexeme == TYPE {
-//     isSignature = true
-//     returns = p.pop().Value
-//     if p.peek().Lexeme == TYPE {
-//       opensUp = p.pop().Value
-//     }
-//   }
-//   
-//   node.Name = proto.String(funcName)
-//   node.Args = params
-// 
-//   
-// }
-// 
-// func (p *Parser) parameters() []*ir.Function_Argument {
-//   
-// }
+func (p *Parser) definition() *ir.Function {
+  isSignature := false
+  node := new(ir.Function)
+  
+  p.pop() // pop the "@func" keyword
+  contextType := ""
+  if p.peek().Lexeme == TYPE {
+    contextType = p.pop().Value
+    if p.peek().Lexeme != DOT {
+      panic("function context and function name must be separated by '.'")
+    }
+    p.pop() // pop the dot
+  }
+  
+  if p.peek().Lexeme != ID {
+    panic("invalid function name in definition")
+  }
+  funcName := p.pop().Value
+  
+  if p.peek().Lexeme != LPAREN {
+    panic("malformed parameter list in function signature")
+  }
+  p.pop() // pop the lparen
+  params := p.parameters()
+  if len(params) == 0 {
+    params = nil
+  }
+  p.pop() // pop the rparen
+  
+  returnType := ""
+  opensType := ""
+  if p.peek().Lexeme == TYPE {
+    isSignature = true
+    returnType = p.pop().Value
+    if p.peek().Lexeme == TYPE {
+      opensType = p.pop().Value
+    }
+  }
+  
+  node.Name = proto.String(funcName)
+  node.Args = params
+  node.ScopeType = proto.String(contextType)
+  node.ReturnType = proto.String(returnType)
+  node.OpensType = proto.String(opensType)
+
+  if isSignature {
+    if p.peek().Lexeme == LBRACE {
+      panic("body not permitted in function signature")
+    }
+    return node
+  }
+  
+  if p.peek().Lexeme != LBRACE {
+    panic("function definition is missing a body")
+  }
+  funcBody := &ir.Instruction {
+    Type: ir.NewInstruction_InstructionType(ir.Instruction_BLOCK),
+    Children: p.block(),
+  }
+  node.Instruction = funcBody
+  return node
+}
+
+func (p *Parser) parameters() []*ir.Function_Argument {
+  params := make([]*ir.Function_Argument, 0)
+  for p.peek().Lexeme != RPAREN {
+    if p.peek().Lexeme != TYPE {
+      panic("function parameter is missing a type")
+    }
+    param := &ir.Function_Argument {
+      TypeString: proto.String(p.pop().Value),
+    }
+    if p.peek().Lexeme != LVAR {
+      panic("function parameter has invalid name")
+    }
+    param.Name = proto.String(p.pop().Value)
+    params = append(params, param)
+  }
+  return params
+}
 
 
 

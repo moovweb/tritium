@@ -9,10 +9,14 @@ import (
 func TestBlah(t *testing.T) {
   fmt.Println("BEGINNING TEST RUN")
   
-  p := MakeParser("blah.ts")
+  p := MakeParser("instructions.ts")
+  q := MakeParser("functions.ts")
   
-  fmt.Println("OUTPUT IS:")
+  script1 := p.Parse()
+  fmt.Println("OUTPUT FOR INSTRUCTIONS:")
+  fmt.Println(script1.String())
   
-  script := p.Parse()
-  fmt.Println(script.String())
+  script2 := q.Parse()
+  fmt.Println("OUTPUT FOR FUNCTIONS:")
+  fmt.Println(script2.String())
 }
