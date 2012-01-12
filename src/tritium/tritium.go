@@ -7,7 +7,7 @@ import(
 )
 
 func Compile(file string) (*tp.Transform) {
-	return linker.RunWithPackage(file, packager.BuildDefaultPackage(TritiumPath).Package)
+	return linker.RunWithPackage(file, packager.BuildDefaultPackage(PackagePath).Package)
 }
 
-var TritiumPath = "./packages"
+var PackagePath = "./packages"

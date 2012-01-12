@@ -19,13 +19,13 @@ func main() {
 				// Build the package specified by the path
 				path := os.Args[2]
 				
-				pkg := packager.NewPackage(tritium.TritiumPath)
+				pkg := packager.NewPackage(tritium.PackagePath)
 				pkg.Load(path)
-				pkg.SerializedOutput()				
+				pkg.SerializedOutput()
 
 			} else {
 				
-				pkg := packager.BuildDefaultPackage(tritium.TritiumPath)
+				pkg := packager.BuildDefaultPackage(tritium.PackagePath)
 				pkg.SerializedOutput()
 			}
 
