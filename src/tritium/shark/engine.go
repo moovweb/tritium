@@ -103,6 +103,8 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 			ctx.LocalVar[name] = ctx.runInstruction(scope, ins.Arguments[0], yieldBlock)
 		}
 		returnValue = ctx.LocalVar[name]
+	case tp.Instruction_IMPORT:
+		ctx.runChildren(scope, ctx.Objects[int(proto.GetInt32(ins.ObjectId))].Root, nil)
 	case tp.Instruction_FUNCTION_CALL:
 		//println(ins.String())
 		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]

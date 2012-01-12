@@ -22,7 +22,7 @@ func ParseFileSet(file string) ([]*tp.ScriptObject) {
 	for _, obj := range(objs) {
 		for _, importFile := range(obj.Imports()) {
 			if(files[importFile] == 0) {
-				println("must import ", importFile)
+				objs = append(objs, ParseFile(importFile))
 			}
 		}
 	}
