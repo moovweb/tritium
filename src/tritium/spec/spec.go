@@ -6,7 +6,6 @@ import(
 	. "path/filepath"
 	. "io/ioutil"
 	"log"
-	. "fmt"
 	yaml "launchpad.net/goyaml"
 )
 
@@ -93,24 +92,6 @@ func (spec *Spec) compareExports(exports [][]string) (*Result) {
 	return exportsResult
 }
 
-func (spec *Spec)checkExport(globalResult *Result, export []string) {
-	result := newResult()
-	spec_export := make([]string,10)
-
-	defer func() {
-		if r := recover(); r != nil {
-			Printf("Recovering %v", r)
-			// Here is where I would add a 'missing export' error to the result
-			result.Error("Export", summarizeExport(export), summarizeExport(spec_export), "Extra export")
-		}
-	}()
-
-	spec_export = findByName(&spec.Exports, export[0])
-
-
-
-}
-
 func summarizeExport(export []string) string{
 	return export[0] + " : " + export[1]
 }
@@ -126,18 +107,4 @@ func summarizeExports(exports [][]string) string {
 	}
 	summary += "]"
 	return summary
-}
-
-
-// TODO(SJ): Make exports a struct and define this find method on the struct. This way I could cache the searches
-
-func findByName(exports *[][]string, name string) ([]string) {
-	for _, export := range(*exports) {
-		if export[0] == name {
-			return export
-		}
-	}
-
-	println("CANT FIND EXPORT", name)
-	panic("Couldn't find export :" + name)
 }
