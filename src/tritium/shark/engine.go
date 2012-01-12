@@ -5,12 +5,14 @@ import(
 	"libxml/xpath"
 	"rubex"
 	"strings"
+	"log4go"
 	proto "goprotobuf.googlecode.com/hg/proto"
 )
 
 type Shark struct {
 	RegexpCache map[string]*rubex.Regexp
 	XPathCache map[string]*xpath.Expression
+	Logger log4go.Logger
 }
 
 type Ctx struct {
@@ -35,10 +37,11 @@ type Scope struct {
 	Value interface{}
 }
 
-func NewEngine() (*Shark) {
+func NewEngine(logger log4go.Logger) (*Shark) {
 	e := &Shark{
 		RegexpCache: make(map[string]*rubex.Regexp),
 		XPathCache: make(map[string]*xpath.Expression),
+		Logger: logger,
 	}
 	return e
 }
