@@ -68,7 +68,7 @@ func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]str
 		Shark: eng,
 		Exports: make([][]string, 0),
 		Logs: make([]string, 0),
-		Env: make(map[string]string),
+		Env: vars,
 		Transform: transform,
 		LocalVar: make(map[string]interface{}, 0),
 		MatchStack: make([]string, 0),
