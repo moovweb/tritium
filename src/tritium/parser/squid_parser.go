@@ -16,6 +16,7 @@ type Parser struct {
   FullPath string
   Lookahead *Token
   counter int
+  header bool
 }
 
 func (p *Parser) gensym() string {
@@ -42,14 +43,11 @@ func MakeParser(fullpath string) *Parser {
     FullPath: fullpath,
     Lookahead: nil,
     counter: 0,
+    header: false,
   }
   p.pop()
   return p
 }
-
-// function (p *Parser) script() tritium.ScriptObject {
-//   switch p.peek().Lexeme {
-//
 
 func (p *Parser) Parse() *ir.ScriptObject {
   script := new(ir.ScriptObject)
@@ -57,11 +55,18 @@ func (p *Parser) Parse() *ir.ScriptObject {
   
   
   stmts := make([]*ir.Instruction, 0)
-  //defs := make([]*ir.Function, 0)
+  // defs := make([]*ir.Function, 0)
   
   switch p.peek().Lexeme {
-  case FUNC:
-    // to do
+  // case FUNC:
+  //   for p.peek().Lexeme != EOF {
+  //     defs = append(defs, p.definition())
+  //   }
+  //   if len(defs) == 0 {
+  //     defs = nil
+  //   }
+  //   script.Functions = defs
+  // }
   default:
     for p.peek().Lexeme != EOF {
       stmts = append(stmts, p.statement())
@@ -81,7 +86,7 @@ func (p *Parser) statement() *ir.Instruction {
   node := new(ir.Instruction)
   switch p.peek().Lexeme {
   case IMPORT:
-    token := p.pop()
+    token := p.pop() // pop the "@import" keyword
     node.Type = ir.NewInstruction_InstructionType(ir.Instruction_IMPORT)
     node.Value = proto.String(path.Join(p.DirName, token.Value))
   default:
@@ -291,6 +296,8 @@ func (p *Parser) variable() *ir.Instruction {
     if p.peek().Lexeme == EQUAL {
       p.pop() // pop the equal sign
       value = p.expression()
+    } else {
+      value = nil
     }
     if value == nil {
       node.Arguments = make([]*ir.Instruction, 1)
@@ -322,7 +329,15 @@ func (p *Parser) block() []*ir.Instruction {
   return stmts
 }
 
-
+// func (p *Parser) definition() *ir.Function {
+//   
+//   p.pop() // pop the "@func" keyword
+//   opensIn := ""
+//   if p.peek().Lexeme == TYPE {
+//     opensIn = p.pop().Value
+//   }
+//   
+// }
 
 
 
