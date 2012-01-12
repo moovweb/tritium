@@ -19,6 +19,8 @@ type Ctx struct {
 	Logs []string
 	Env map[string]string
 	LocalVar map[string]interface{}
+	MatchStack []string
+	MatchShouldContinue []bool
 	*Shark
 	*tp.Transform
 }
@@ -69,6 +71,8 @@ func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]str
 		Env: make(map[string]string),
 		Transform: transform,
 		LocalVar: make(map[string]interface{}, 0),
+		MatchStack: make([]string, 0),
+		MatchShouldContinue: make([]bool, 0),
 	}
 	ctx.UsePackage(transform.Pkg)
 	scope := &Scope{Value:input}
@@ -77,6 +81,13 @@ func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]str
 	exports = ctx.Exports
 	logs = ctx.Logs
 	return
+}
+
+func (ctx *Ctx) matchShouldContinue() (bool) {
+	return ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1]
+}
+func (ctx *Ctx) matchTarget() (string) {
+	return ctx.MatchStack[len(ctx.MatchStack)-1]
 }
 
 func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp.Instruction) (returnValue interface{}) {
@@ -93,6 +104,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 		}
 		returnValue = ctx.LocalVar[name]
 	case tp.Instruction_FUNCTION_CALL:
+		//println(ins.String())
 		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]
 		args := make([]interface{}, len(ins.Arguments))
 		for i, argIns := range(ins.Arguments) {
@@ -102,13 +114,35 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 			switch fun.Name {
 			case "yield": 
 				returnValue = ctx.runChildren(scope, yieldBlock, nil)
+				yieldBlock = nil
 			case "concat.Text.Text":
 				returnValue = args[0].(string) + args[1].(string)
 			case "var.Text":
-				ts := &Scope{Value: ctx.Env[args[0].(string)]}
+				val := ctx.Env[args[0].(string)]
+				ts := &Scope{Value: val}
 				ctx.runChildren(ts, ins, yieldBlock)
 				returnValue = ts.Value
 				ctx.Env[args[0].(string)] = returnValue.(string)
+			case "var.Text.Text":
+				ctx.Env[args[0].(string)] = args[1].(string)
+			case "match.Text":
+				// Setup stacks
+				ctx.MatchStack = append(ctx.MatchStack, args[0].(string))
+				ctx.MatchShouldContinue = append(ctx.MatchShouldContinue, true)
+				
+				// Run children
+				ctx.runChildren(scope, ins, yieldBlock)
+				
+				// Clear
+				ctx.MatchShouldContinue = ctx.MatchShouldContinue[:len(ctx.MatchShouldContinue)-1]
+				ctx.MatchStack = ctx.MatchStack[:len(ctx.MatchStack)-1]
+			case "with.Text":
+				if ctx.matchShouldContinue() {
+					if args[0].(string) == ctx.matchTarget() {
+						ctx.runChildren(scope, ins, yieldBlock)
+						ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
+					}
+				}
 			case "export.Text":
 				val := make([]string, 2)
 				val[0] = args[0].(string)
@@ -123,7 +157,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 			default:
 				println("Must implement", fun.Name)
 			}
-		} else {
+		} else { // We are using a user-defined function
 			// Store the current frame
 			localVar := ctx.LocalVar
 			
