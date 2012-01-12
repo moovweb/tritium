@@ -17,7 +17,9 @@ type Function struct {
 	ScopeTypeId      *int32               `protobuf:"varint,2,opt,name=scope_type_id" json:"scope_type_id"`
 	ScopeType        *string              `protobuf:"bytes,8,opt,name=scope_type" json:"scope_type"`
 	ReturnTypeId     *int32               `protobuf:"varint,3,opt,name=return_type_id" json:"return_type_id"`
+	ReturnType       *string              `protobuf:"bytes,9,opt,name=return_type" json:"return_type"`
 	OpensTypeId      *int32               `protobuf:"varint,4,opt,name=opens_type_id" json:"opens_type_id"`
+	OpensType        *string              `protobuf:"bytes,10,opt,name=opens_type" json:"opens_type"`
 	BuiltIn          *bool                `protobuf:"varint,5,opt,name=built_in" json:"built_in"`
 	Args             []*Function_Argument `protobuf:"bytes,6,rep,name=args" json:"args"`
 	Instruction      *Instruction         `protobuf:"bytes,7,opt,name=instruction" json:"instruction"`

@@ -20,7 +20,9 @@ class Function
   optional :scope_type_id, :int32, 2
   optional :scope_type, :string, 8
   optional :return_type_id, :int32, 3
+  optional :return_type, :string, 9
   optional :opens_type_id, :int32, 4
+  optional :opens_type, :string, 10
   optional :built_in, :bool, 5
   repeated :args, Function::Argument, 6
   optional :instruction, Instruction, 7
