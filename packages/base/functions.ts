@@ -1,13 +1,13 @@
 
-@func regexp(Text %exp) {
-  regexp(%exp, "")
-}
-
 @func export(Text %key, Text %value) {
   export(%key) {
     set(%value)
     yield()
   }
+}
+
+@func regexp(Text %exp) {
+  regexp(%exp, "")
 }
 
 @func asset(Text %name) {
@@ -69,5 +69,14 @@
 @func Text.replace(Text %search, Text %with) {
   replace(%search) {
     set(%with)
+  }
+}
+
+
+@func Text.rewrite(Text %type) {
+  # Wrote this when the parser was a little funky. This can be much
+  # prettier with some nice lvar usage
+  replace(regexp(var(concat(concat("rewrite_", %type), "_matcher")))) {
+    set(var(concat(concat("rewrite_", %type), "_replacement")))
   }
 }

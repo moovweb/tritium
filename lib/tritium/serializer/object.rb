@@ -33,6 +33,8 @@ module Tritium
         def convert_local_var(ins)
           lvar = Instruction.new(:type => Instruction::InstructionType::LOCAL_VAR)
           lvar.value = ins.name.to_s.force_encoding("BINARY")
+          lvar.arguments = convert_instructions(ins.pos_args)
+          lvar.children = convert_instructions(ins.statements)
           lvar
         end
 
@@ -43,6 +45,7 @@ module Tritium
 
           func.children = convert_instructions(ins.statements)
           # The argument serialization is wonky. 
+          #puts("The variable #{func.value} has these args #{ins.pos_args.inspect}")
           func.arguments = convert_instructions(ins.pos_args)
           func
         end

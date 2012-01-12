@@ -47,7 +47,7 @@ def parse_args(raw_function)
   args_end = raw_function.index(")", args_begin)
   
   args = raw_function[args_begin+1..args_end-1]
-  raw_function = raw_function[args_end+1..-1]  
+  raw_function = raw_function[args_end+1..-1]
 
   # Do I need to keep anything beyond the type?
 

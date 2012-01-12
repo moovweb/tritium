@@ -12,7 +12,7 @@ import(
 func All(directory string) {
 	logger := log4go.NewDefaultLogger(log4go.FINEST)
 	eng := shark.NewEngine(logger) 
-	pkg := packager.BuildDefaultPackage()
+	pkg := packager.BuildDefaultPackage(PackagePath)
 
 	globalResult := newResult()
 	globalResult.all(directory, pkg.Package, eng)
