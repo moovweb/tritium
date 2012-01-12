@@ -6,8 +6,9 @@ import(
 	. "path/filepath"
 	. "io/ioutil"
 	"log"
-	. "fmt"
 	yaml "launchpad.net/goyaml"
+	strings "strings"
+	. "fmt"
 )
 
 type Spec struct {
@@ -35,8 +36,18 @@ func LoadSpec(dir string, pkg *tp.Package) (*Spec) {
 		Script: linker.RunWithPackage(Join(dir, "main.ts"), pkg),
 		Output: loadFile(dir, "output.*"),
 		Exports: loadExports(dir),
-		Logs: make([]string, 0),
+	        Logs: loadLogs(dir),
 	}
+}
+
+func loadLogs(dir string) ([]string) {
+	data := []byte(loadFile(dir, "logs.yml"))
+	logs := make([]string, 0)
+	err := yaml.Unmarshal(data, &logs)
+	if err != nil {
+		log.Panic(err)
+	}
+	return logs
 }
 
 func loadExports(dir string) ([][]string) {
@@ -70,6 +81,7 @@ func (spec *Spec) Compare(data string, exports [][]string, logs []string) (*Resu
 	result := newResult()
 	result.Merge(spec.compareData(data))
 	result.Merge(spec.compareExports(exports))	
+	result.Merge(spec.compareLogs(logs))
 	return result
 }
 
@@ -93,22 +105,20 @@ func (spec *Spec) compareExports(exports [][]string) (*Result) {
 	return exportsResult
 }
 
-func (spec *Spec)checkExport(globalResult *Result, export []string) {
+func (spec *Spec) compareLogs(logs []string) (*Result) {
 	result := newResult()
-	spec_export := make([]string,10)
+	
+	expectedSummary := summarizeLogs(spec.Logs)
+	outputSummary := summarizeLogs(logs)
+	
+	if expectedSummary != outputSummary {
+		result.Error("Bad Log Output", outputSummary, expectedSummary, "Didn't match")
+	}
+	return result
+}
 
-	defer func() {
-		if r := recover(); r != nil {
-			Printf("Recovering %v", r)
-			// Here is where I would add a 'missing export' error to the result
-			result.Error("Export", summarizeExport(export), summarizeExport(spec_export), "Extra export")
-		}
-	}()
-
-	spec_export = findByName(&spec.Exports, export[0])
-
-
-
+func summarizeLogs(logs []string) string {
+	return Sprintf("(%v)", strings.Join(logs, ")\n("))
 }
 
 func summarizeExport(export []string) string{
@@ -126,18 +136,4 @@ func summarizeExports(exports [][]string) string {
 	}
 	summary += "]"
 	return summary
-}
-
-
-// TODO(SJ): Make exports a struct and define this find method on the struct. This way I could cache the searches
-
-func findByName(exports *[][]string, name string) ([]string) {
-	for _, export := range(*exports) {
-		if export[0] == name {
-			return export
-		}
-	}
-
-	println("CANT FIND EXPORT", name)
-	panic("Couldn't find export :" + name)
 }
