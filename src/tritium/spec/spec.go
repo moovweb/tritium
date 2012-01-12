@@ -8,6 +8,7 @@ import(
 	"log"
 	yaml "launchpad.net/goyaml"
 	strings "strings"
+	. "fmt"
 )
 
 type Spec struct {
@@ -97,13 +98,17 @@ func (spec *Spec) compareExports(exports [][]string) (*Result) {
 func (spec *Spec) compareLogs(logs []string) (*Result) {
 	result := newResult()
 	
-	expectedSummary := strings.Join(spec.Logs, "\n")
-	outputSummary := strings.Join(logs, "\n")
+	expectedSummary := summarizeLogs(spec.Logs)
+	outputSummary := summarizeLogs(logs)
 	
 	if expectedSummary != outputSummary {
 		result.Error("Bad Log Output", outputSummary, expectedSummary, "Didn't match")
 	}
 	return result
+}
+
+func summarizeLogs(logs []string) string {
+	return Sprintf("(%v)", strings.Join(logs, ")\n("))
 }
 
 func summarizeExport(export []string) string{
