@@ -4,6 +4,7 @@ import(
 	tp "tritium/proto"
 	"libxml/xpath"
 	"rubex"
+	"strings"
 	proto "goprotobuf.googlecode.com/hg/proto"
 )
 
@@ -102,6 +103,11 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 		if len(ins.Arguments) > 0 {
 			ctx.LocalVar[name] = ctx.runInstruction(scope, ins.Arguments[0], yieldBlock)
 		}
+		if len(ins.Children) > 0 {
+			ts := &Scope{Value: ctx.LocalVar[name]}
+			ctx.runChildren(ts, ins, yieldBlock)
+			ctx.LocalVar[name] = ts.Value.(string)
+		}
 		returnValue = ctx.LocalVar[name]
 	case tp.Instruction_IMPORT:
 		ctx.runChildren(scope, ctx.Objects[int(proto.GetInt32(ins.ObjectId))].Root, nil)
@@ -120,6 +126,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				returnValue = ctx.runChildren(scope, yieldBlock, nil)
 				yieldBlock = nil
 			case "concat.Text.Text":
+				//println("Concat:", args[0].(string), "+", args[1].(string))
 				returnValue = args[0].(string) + args[1].(string)
 			case "concat.Text.Text.Text": //REMOVE
 				returnValue = args[0].(string) + args[1].(string) + args[2].(string)
@@ -131,6 +138,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				ctx.Env[args[0].(string)] = returnValue.(string)
 			case "var.Text.Text":
 				ctx.Env[args[0].(string)] = args[1].(string)
+				returnValue = args[1].(string)
 			case "match.Text":
 				// Setup stacks
 				ctx.MatchStack = append(ctx.MatchStack, args[0].(string))
@@ -195,14 +203,51 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				ctx.runChildren(ts, ins, yieldBlock)
 				val[1] = ts.Value.(string)
 				ctx.Exports = append(ctx.Exports, val)
-			case "set.Text":
-				scope.Value = args[0]
 			case "log.Text":
 				ctx.Logs = append(ctx.Logs, args[0].(string))
+				
+			// TEXT FUNCTIONS
+			case "set.Text":
+				scope.Value = args[0]
 			case "append.Text":
 				scope.Value = scope.Value.(string) + args[0].(string)
 			case "prepend.Text":
 				scope.Value = args[0].(string) + scope.Value.(string)
+			case "replace.Text":
+				ts := &Scope{Value:""}
+				ctx.runChildren(ts, ins, yieldBlock)
+				scope.Value = strings.Replace(scope.Value.(string), args[0].(string), ts.Value.(string), -1)
+			case "replace.Regexp":
+				regexp := args[0].(*rubex.Regexp)
+				scope.Value = regexp.GsubFunc(scope.Value.(string), func(match string, captures map[string]string) string {
+					usesGlobal := (ctx.Env["use_global_replace_vars"] == "true")
+					
+					for name, capture := range captures {
+						if usesGlobal {
+							//println("setting $", name, "to", capture)
+							ctx.Env[name] = capture
+						}
+						ctx.LocalVar[name] = capture
+					}
+
+					replacementScope := &Scope{Value:match}
+					ctx.runChildren(replacementScope, ins, yieldBlock)
+					//println(ins.String())
+					
+					//println("Replacement:", replacementScope.Value.(string))
+					innerReplacer := rubex.MustCompile(`[\\\$]([\d])`)
+					return innerReplacer.GsubFunc(replacementScope.Value.(string), func(_ string, numeric_captures map[string]string) string {
+						capture := numeric_captures["1"]
+						var val string
+						if usesGlobal {
+							val = ctx.Env[capture]
+						} else {
+							val = ctx.LocalVar[capture].(string)
+						}
+						return val
+				    })
+				})
+				returnValue = scope.Value
 			default:
 				println("Must implement", fun.Name)
 			}

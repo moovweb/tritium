@@ -62,6 +62,7 @@
 @func Text.replace(Regexp %search, Text %with) {
   replace(%search) {
     set(%with)
+    yield()
   }
 }
 
