@@ -73,7 +73,9 @@ module Tritium
             node.children.first.replace(cdata_node)
           when :dup
             node = ctx.value.dup
-            ctx.value.add_next_sibling(node)
+            if ctx.value.class != Nokogiri::XML::Text
+              ctx.value.add_next_sibling(node)
+            end
             ctx = Context[ins, node]
             @node_stack.push(node)
             run_children(ins, ctx)
