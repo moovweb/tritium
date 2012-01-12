@@ -133,6 +133,12 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				// Run children
 				ctx.runChildren(scope, ins, yieldBlock)
 				
+				if ctx.matchShouldContinue() {
+					returnValue = "false"
+				} else {
+					returnValue = "true"
+				}
+				
 				// Clear
 				ctx.MatchShouldContinue = ctx.MatchShouldContinue[:len(ctx.MatchShouldContinue)-1]
 				ctx.MatchStack = ctx.MatchStack[:len(ctx.MatchStack)-1]
