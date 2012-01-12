@@ -94,7 +94,7 @@ func (pkg *Package)Load(location string) {
 func (pkg *Package)resolveFunction(fun *tp.Function) {
 	linkingContext := linker.NewLinkingContext(pkg.Package)
 
-	pkg.resolveFunctionDescendants(fun)
+	// pkg.resolveFunctionDescendants(fun)
 
 	// Re-uses linker's logic to resolve function definitions
 	if ( proto.GetBool( fun.BuiltIn ) == false) {
@@ -140,7 +140,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 		implements := proto.GetInt32(this_type.Implements)
 
 //		if ( implements != 0 ) {
-		println("ScopeType (", this_type,") implements", implements, ":", proto.GetString(pkg.Types[implements].Name) )
+		fmt.Printf("ScopeType (%v) implements %v: %v\n", this_type, implements, proto.GetString(pkg.Types[implements].Name) )
 //		}
 
 	}
