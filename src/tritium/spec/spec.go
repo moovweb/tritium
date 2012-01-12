@@ -36,8 +36,18 @@ func LoadSpec(dir string, pkg *tp.Package) (*Spec) {
 		Script: linker.RunWithPackage(Join(dir, "main.ts"), pkg),
 		Output: loadFile(dir, "output.*"),
 		Exports: loadExports(dir),
-		Logs: make([]string, 0),
+	        Logs: loadLogs(dir),
 	}
+}
+
+func loadLogs(dir string) ([]string) {
+	data := []byte(loadFile(dir, "logs.yml"))
+	logs := make([]string, 0)
+	err := yaml.Unmarshal(data, &logs)
+	if err != nil {
+		log.Panic(err)
+	}
+	return logs
 }
 
 func loadExports(dir string) ([][]string) {
