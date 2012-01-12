@@ -18,11 +18,6 @@
     }, "s"))
 }
 
-@func Text.clear() {
-  set("") {
-    yield()
-  }
-}
 
 @func else() {
   with(/.?/) {
@@ -45,6 +40,19 @@
     }
   }
 }
+
+@func Text.clear() {
+  set("") {
+    yield()
+  }
+}
+
+@func Text.text() {
+  this() {
+    yield()
+  }
+}
+
 
 @func Text.replace(Regexp %search, Text %with) {
   replace(%search) {
