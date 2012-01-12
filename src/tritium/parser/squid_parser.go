@@ -20,6 +20,7 @@ type Parser struct {
 }
 
 func (p *Parser) gensym() string {
+  p.counter++
   return p.FullPath + string(p.counter)
 }
 
