@@ -125,14 +125,10 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				if len(ins.Arguments) > 0 {
 					// We are going to assign something to this variable
 					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope)
-					// Duplicate the localScope before we go messing with my parents scope
-					parentScope := localScope
-					localScope = make(LocalDef, len(parentScope))
-					for s, t := range(parentScope) {
-						localScope[s] = t
-					}
-					localScope[proto.GetString(ins.Value)] = returnType
+					localScope[name] = returnType
 				} else {
+					println(ins.String())
+					println("referenced: ", localScope)
 					log.Panic("I've never seen the variable %", name, " before! Please assign a value before usage.")
 				}
 			}
@@ -169,6 +165,13 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			}
 			//println("Zomg, found function", fun.String())
 			//println("I open a Scope of type ", opensScopeType)
+			
+			// Copy the local scope
+			parentScope := localScope
+			localScope = make(LocalDef, len(parentScope))
+			for s, t := range(parentScope) {
+				localScope[s] = t
+			}
 			
 			if ins.Children != nil {
 				for _, child := range(ins.Children) {
