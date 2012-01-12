@@ -14,6 +14,7 @@ type LinkingContext struct {
 	objMap map[string]int
 	funList []FuncMap
 	textType int
+	types []string
 	*Transform
 }
 
@@ -34,8 +35,11 @@ func NewObjectLinkingContext(pkg *Package, objs []*ScriptObject) (*LinkingContex
 func NewLinkingContext(pkg *Package) (*LinkingContext){
 	// Setup the function map!
 	functionLookup := make([]FuncMap, len(pkg.Types))
+	types := make([]string, len(pkg.Types))
+
 	for typeId, typeObj := range(pkg.Types) {
 		funcMap := make(FuncMap)
+		types[typeId] = proto.GetString(typeObj.Name)
 		//println("Type:",proto.GetString(typeObj.Name))
 		//println("Implements:", proto.GetInt32(typeObj.Implements))
 		implements := functionLookup[proto.GetInt32(typeObj.Implements)]
@@ -57,6 +61,7 @@ func NewLinkingContext(pkg *Package) (*LinkingContext){
 	// Setup the main context object
 	ctx := &LinkingContext{ 
 		funList: functionLookup,
+		types: types,
 		Transform: &Transform{
 			Pkg: pkg,
 		},
@@ -151,12 +156,17 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				for funcName, _ := range(ctx.funList[scopeType]) {
 					println(funcName)
 				}
-				log.Panic("No such function found....", ins.String(), "with the stub: ",scopeType, stub)
+				println(scopeType)
+				log.Panic("No such function found....", ins.String(), "with the scope: ", ctx.types[scopeType], " and stub ", stub)
 			}
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
 			returnType = int(proto.GetInt32(fun.ReturnTypeId))
 			opensScopeType := int(proto.GetInt32(fun.OpensTypeId))
+			if opensScopeType == 0 {
+				// If we're a Base scope, don't mess with texas!
+				opensScopeType = scopeType
+			}
 			//println("Zomg, found function", fun.String())
 			//println("I open a Scope of type ", opensScopeType)
 			
