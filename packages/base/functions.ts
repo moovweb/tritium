@@ -30,11 +30,6 @@
   }
 }
 
-@func rewrite(Text %type) {
-  %prefix = concat("rewrite_", %type)
-  replace(regexp(var(concat(%prefix, "_matcher"))), var(concat(%prefix, "_replacement")))
-}
-
 @func match(Text %target, Text %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -74,5 +69,14 @@
 @func Text.replace(Text %search, Text %with) {
   replace(%search) {
     set(%with)
+  }
+}
+
+
+@func Text.rewrite(Text %type) {
+  # Wrote this when the parser was a little funky. This can be much
+  # prettier with some nice lvar usage
+  replace(regexp(var(concat(concat("rewrite_", %type), "_matcher")))) {
+    set(var(concat(concat("rewrite_", %type), "_replacement")))
   }
 }
