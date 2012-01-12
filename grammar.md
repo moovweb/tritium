@@ -35,7 +35,7 @@ Syntactic rules (specified with EBNF):
     
     definition  ->  abstractor block
     
-    abstractor  ->  '@func' TYPE '.' id '(' parameters? ')'
+    abstractor  ->  '@func' (TYPE '.')? id '(' parameters? ')'
         
     parameters  ->  parameter (',' parameter)*
     

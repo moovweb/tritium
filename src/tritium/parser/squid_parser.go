@@ -6,6 +6,7 @@ import (
   "io/ioutil"
   . "tritium/tokenizer" // was meant to be in this package
   "path"
+  //"fmt"
 )
 
 type Parser struct {
@@ -15,6 +16,7 @@ type Parser struct {
   FullPath string
   Lookahead *Token
   counter int
+  header bool
 }
 
 func (p *Parser) gensym() string {
@@ -41,20 +43,50 @@ func MakeParser(fullpath string) *Parser {
     FullPath: fullpath,
     Lookahead: nil,
     counter: 0,
+    header: false,
   }
   p.pop()
   return p
 }
 
-// function (p *Parser) script() tritium.ScriptObject {
-//   switch p.peek().Lexeme {
-//     
+func (p *Parser) Parse() *ir.ScriptObject {
+  script := new(ir.ScriptObject)
+  script.Name = proto.String(p.FullPath)
+  
+  
+  stmts := make([]*ir.Instruction, 0)
+  // defs := make([]*ir.Function, 0)
+  
+  switch p.peek().Lexeme {
+  // case FUNC:
+  //   for p.peek().Lexeme != EOF {
+  //     defs = append(defs, p.definition())
+  //   }
+  //   if len(defs) == 0 {
+  //     defs = nil
+  //   }
+  //   script.Functions = defs
+  // }
+  default:
+    for p.peek().Lexeme != EOF {
+      stmts = append(stmts, p.statement())
+    }
+    if len(stmts) == 0 {
+      stmts = nil
+    }
+    script.Root = &ir.Instruction {
+      Type: ir.NewInstruction_InstructionType(ir.Instruction_BLOCK),
+      Children: stmts,
+    }
+  }
+  return script
+}
 
 func (p *Parser) statement() *ir.Instruction {
   node := new(ir.Instruction)
   switch p.peek().Lexeme {
   case IMPORT:
-    token := p.pop()
+    token := p.pop() // pop the "@import" keyword
     node.Type = ir.NewInstruction_InstructionType(ir.Instruction_IMPORT)
     node.Value = proto.String(path.Join(p.DirName, token.Value))
   default:
@@ -148,8 +180,8 @@ func (p *Parser) call() *ir.Instruction {
   // Expand keyword args
   if kwds != nil {
     kwdToGensym := make(map[string]string, len(kwds))
-    outer := make([]*ir.Instruction, len(kwds))
-    for k, v := range kwds {
+    outer := make([]*ir.Instruction, 0)
+    for k, v:= range kwds {
       temp := new(ir.Instruction)
       temp.Type = ir.NewInstruction_InstructionType(ir.Instruction_FUNCTION_CALL)
       temp.Value = proto.String("var")
@@ -162,8 +194,8 @@ func (p *Parser) call() *ir.Instruction {
       temp.Arguments[1] = v
       outer = append(outer, temp)
       kwdToGensym[k] = tempName
-    }    
-    inner := make([]*ir.Instruction, len(kwds) + len(block))
+    }
+    inner := make([]*ir.Instruction, 0)
     for k, _ := range kwds {
       getter := new(ir.Instruction)
       getter.Type = ir.NewInstruction_InstructionType(ir.Instruction_FUNCTION_CALL)
@@ -180,10 +212,10 @@ func (p *Parser) call() *ir.Instruction {
       setter.Arguments[0] = &ir.Instruction {
         Type: ir.NewInstruction_InstructionType(ir.Instruction_TEXT),
         Value: proto.String(k),
-      }      
+      }
       setter.Arguments[1] = getter
       inner = append(inner, setter)
-    }
+    }    
     
     theCall := new(ir.Instruction)
     theCall.Type = ir.NewInstruction_InstructionType(ir.Instruction_FUNCTION_CALL)
@@ -210,13 +242,12 @@ func (p *Parser) call() *ir.Instruction {
     node.Arguments = ords
     node.Children = block
   }
-  
   return node
 }
   
 func (p *Parser) arguments() (ords []*ir.Instruction, kwds map[string]*ir.Instruction) {
   ords, kwds = make([]*ir.Instruction, 0), make(map[string]*ir.Instruction, 0)
-  for p.peek().Lexeme != RPAREN {
+  if p.peek().Lexeme != RPAREN {
     if p.peek().Lexeme == KWD {
       k := p.pop().Value
       kwds[k] = p.expression()
@@ -224,7 +255,19 @@ func (p *Parser) arguments() (ords []*ir.Instruction, kwds map[string]*ir.Instru
       ords = append(ords, p.expression())
     }
   }
-  p.pop() // pop the rparen
+  for p.peek().Lexeme != RPAREN {
+    if p.peek().Lexeme == COMMA {
+      p.pop()
+    } else {
+      panic("arguments must be separated by commas")
+    }
+    if p.peek().Lexeme == KWD {
+      k := p.pop().Value
+      kwds[k] = p.expression()
+    } else {
+      ords = append(ords, p.expression())
+    }
+  }
   if len(ords) == 0 {
     ords = nil
   }
@@ -253,6 +296,8 @@ func (p *Parser) variable() *ir.Instruction {
     if p.peek().Lexeme == EQUAL {
       p.pop() // pop the equal sign
       value = p.expression()
+    } else {
+      value = nil
     }
     if value == nil {
       node.Arguments = make([]*ir.Instruction, 1)
@@ -272,13 +317,27 @@ func (p *Parser) variable() *ir.Instruction {
 }
 
 func (p *Parser) block() []*ir.Instruction {
-  return make([]*ir.Instruction, 0)
+  stmts := make([]*ir.Instruction, 0)
+  p.pop() // pop the lbrace
+  for p.peek().Lexeme != RBRACE {
+    stmts = append(stmts, p.statement())
+  }
+  p.pop() // pop the rbrace
+  if len(stmts) == 0 {
+    stmts = nil
+  }
+  return stmts
 }
 
-
-
-
-
+// func (p *Parser) definition() *ir.Function {
+//   
+//   p.pop() // pop the "@func" keyword
+//   opensIn := ""
+//   if p.peek().Lexeme == TYPE {
+//     opensIn = p.pop().Value
+//   }
+//   
+// }
 
 
 
