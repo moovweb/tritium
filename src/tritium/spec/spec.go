@@ -85,21 +85,8 @@ func (spec *Spec) compareData(data string) (*Result) {
 
 func (spec *Spec) compareExports(exports [][]string) (*Result) {
 	exportsResult := newResult()
-	//Printf("exports: %v \n\n %v", exports, spec.Exports)
 
-	// As I check each export successfully, I need to delete it from the spec exports
-	// So that if the spec export has any extras, I can generate the appropriate error
-
-	for index, export := range(exports) {	
-		println("Checking export:", summarizeExport(export))
-		spec.checkExport(exportsResult, export)
-		// Delete it from the result
-		Printf("exports pre deletion (deleting number %v): \n %v\n", index, spec.Exports)
-		spec.Exports = append(spec.Exports[:index], spec.Exports[index+1:]...)
-		Printf("exports post deletion: \n %v\n", spec.Exports)
-	}
-
-	if len(spec.Exports) > 0 {
+	if summarizeExports(spec.Exports) != summarizeExports(exports) {
 		exportsResult.Error("Bad Export", summarizeExports(exports), summarizeExports(spec.Exports), "Missing export(s)")
 	}
 
