@@ -6,6 +6,7 @@ import(
 	"rubex"
 	"strings"
 	"log4go"
+	"os"
 	proto "goprotobuf.googlecode.com/hg/proto"
 )
 
@@ -193,7 +194,15 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 					}
 				}
 			case "regexp.Text.Text":
-				returnValue = rubex.MustCompile(args[0].(string))
+				mode := rubex.ONIG_OPTION_DEFAULT
+				if strings.Index(args[1].(string), "i") >= 0 {
+					mode = rubex.ONIG_OPTION_IGNORECASE
+				}
+				var err os.Error
+				returnValue, err = rubex.NewRegexp(args[0].(string), mode)
+				if err != nil {
+					panic("Invalid regexp")
+				}
 			case "export.Text":
 				val := make([]string, 2)
 				val[0] = args[0].(string)
