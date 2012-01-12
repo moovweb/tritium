@@ -186,7 +186,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 						returnValue = "true"
 					}
 				}
-			case "regexp.Text":
+			case "regexp.Text.Text":
 				returnValue = rubex.MustCompile(args[0].(string))
 			case "export.Text":
 				val := make([]string, 2)

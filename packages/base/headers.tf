@@ -34,7 +34,7 @@
 @func Text.this() //Text
 
 // Any value passed into this function will return a regex --- ready for fancy replace() or match() usage. NOTE! Use hard-coded regex if you can. This is much slower than hard-coding regex!
-@func regexp(Text %expression) //Regexp,Text
+@func regexp(Text %expression, Text %options) //Regexp,Text
 
 // A function for concatenating strings. Can accept 2 or more args
 @func concat(Text %a, Text %b) //Text,Text
