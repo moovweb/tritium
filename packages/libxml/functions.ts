@@ -69,6 +69,12 @@
   }
 }
 
+@func XMLNode.name(Text %value) {
+  name() {
+    set(%value)
+  }
+}
+
 # 
 # @func XMLNode.absolutize() {
 #   # Absolutize IMG and SCRIPT SRCs
