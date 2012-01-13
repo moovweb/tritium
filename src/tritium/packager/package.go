@@ -153,8 +153,11 @@ func (pkg *Package)inheritFunctions() {
 // TODO : Make a hash for this
 func (pkg *Package)findDescendentType(thisType int32) int {	
 	for index, someType := range(pkg.Types) {
-		if proto.GetInt32(someType.Implements) == thisType {
-			//fmt.Printf("=== %v is ancestor of %v ===\n", thisType, someType)
+		implements := proto.GetInt32(someType.Implements)
+		if implements == thisType && implements != 0 {
+			// The implements field defaults to 0. Base doesn't implement Base. Text doesn't implement Base
+			// TODO(SJ): make the default value -1 so I know if its not set versus something is inheriting from base
+			fmt.Printf("=== %v is ancestor of %v === (%v is of type %v and implements : %v)\n", thisType, someType, proto.GetString(someType.Name), index, implements)
 			return index
 		}
 	}
@@ -215,9 +218,8 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	thisTypeId = proto.GetInt32(fun.OpensTypeId)
 	newType = pkg.findDescendentType(thisTypeId)
 
-	if thisTypeId > 0 && newType != -1 {
-		// HACK(SJ) : Fix this
-		// I exclude base from inheritance				
+	if newType != -1 {
+
 		if !inherit {
 			fmt.Printf("\t -- OpensType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 			newFun = fun.Clone()
