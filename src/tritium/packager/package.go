@@ -86,10 +86,9 @@ func (pkg *Package)Load(packageName string) {
 
 	pkg.readHeaderFile(location)
 
-	// Now read the function declarations
-
-
 	pkg.readPackageDefinitions(location)
+
+	pkg.inheritFunctions()
 
 	println(" -- done\n")
 }
@@ -97,7 +96,7 @@ func (pkg *Package)Load(packageName string) {
 func (pkg *Package)resolveFunction(fun *tp.Function) {
 	linkingContext := linker.NewLinkingContext(pkg.Package)
 
-	// pkg.resolveFunctionDescendants(fun)
+//	pkg.resolveFunctionDescendants(fun)
 
 	// Re-uses linker's logic to resolve function definitions
 	if ( proto.GetBool( fun.BuiltIn ) == false) {
@@ -121,32 +120,72 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 	}
 }
 
+
+func (pkg *Package)inheritFunctions() {
+	fmt.Printf("pkg types: %v", pkg.Types)
+	for _, function := range(pkg.Functions) {
+		pkg.resolveFunctionDescendants(function)
+	}
+}
+
+// TODO : Make a hash for this
+func (pkg *Package)findDescendentType(thisType int32) int {	
+	for index, someType := range(pkg.Types) {
+		if proto.GetInt32(someType.Implements) == thisType {
+			return index
+		}
+	}
+	return -1
+}
+
+
+// TODO(SJ) : Make this not suck. I think I could make this 50% shorter if I use reflection
+// - Also, I'm assuming a single depth level of inheritance. I'd have to run this function n times for n levels
+// - Well that should be fine as long as I run it at the end of every package load
+
 func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 	// Check if this function contains any types that have descendants
 
-	//println("Function:", proto.GetString(fun.Name) )
+	println("Checking for inheritance on function:", proto.GetString(fun.Name) )
+
+	newFun := &tp.Function{}
+	valid := false
+
+//	newFun = fun.Clone()
+
+//	newFun.Name = proto.String("Hey-ya")
+//	fmt.Printf("\n\nOld fun: (%v)\n\n\n New fun: (%v)", fun, newFun)
 
 	// Todo: Iterate over ScopeType, Arg types, return Type, opens Type
-	this_type_name := proto.GetString(fun.ScopeType)
-	
-	if len(this_type_name) > 0 {
 
-		//println("this type name:", this_type_name,  )
+	thisTypeId := proto.GetInt32(fun.ScopeTypeId)
+	println("scope type:", thisTypeId)
 
-		this_type_index := pkg.findTypeIndex(this_type_name)
-		//println("this type index:", this_type_index)
+	newType := pkg.findDescendentType(thisTypeId)
 
-		this_type := pkg.Types[this_type_index]
-		//fmt.Printf("this type: %v\n", this_type)
+	if thisTypeId > 1 && newType != -1 {
+		// I exclude text (type 1) from inheritance		
+		
+		if !valid {
+			fmt.Printf("\t -- Found ancestral type. Cloning function %v", proto.GetString( fun.Name ) )
+			newFun = fun.Clone()
+			// fmt.Printf("\t -- New fun: %v", newFun)
+			valid = true
+		}
 
-		implements := proto.GetInt32(this_type.Implements)
-
-//		if ( implements != 0 ) {
-		fmt.Printf("ScopeType (%v) implements %v: %v\n", this_type, implements, proto.GetString(pkg.Types[implements].Name) )
-//		}
+//		fmt.Printf("\t -- ScopeType (%v) implements %v: %v\n", thisTypeId, implements, proto.GetString(pkg.Types[implements].Name) )
+		
+		newFun.ScopeTypeId = proto.Int32( int32( newType ) )
 
 	}
+
+
+
+	// Iterate the instructions and insert the proper types as needed
+
+
+	fmt.Printf("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
 
 }
 

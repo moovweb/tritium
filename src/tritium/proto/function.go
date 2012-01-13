@@ -12,3 +12,20 @@ func (fun *Function) Stub() (string) {
 	}
 	return name + args
 }
+
+// We need this for inherited function resolution. 
+// - for now we just make duplicated functions for the package w the types changed
+// - this way, the engine can play dumb
+
+func (fun *Function)Clone() (*Function) {
+	bytes, err := proto.Marshal(fun)
+
+	if err != nil {
+		panic("Couldn't clone function" + proto.GetString( fun.Name ) )
+	}
+	
+	newFun := &Function{}
+	proto.Unmarshal(bytes, newFun)
+
+	return newFun
+}

@@ -13,17 +13,17 @@ var _ = math.Inf
 var _ os.Error
 
 type Transform struct {
-	Objects          []*ScriptObject `protobuf:"bytes,1,rep,name=objects" json:"objects"`
-	Pkg              *Package        `protobuf:"bytes,2,req,name=pkg" json:"pkg"`
-	XXX_unrecognized []byte
+	Objects          []*ScriptObject `protobuf:"bytes,1,rep,name=objects" json:"objects,omitempty"`
+	Pkg              *Package        `protobuf:"bytes,2,req,name=pkg" json:"pkg,omitempty"`
+	XXX_unrecognized []byte          `json:",omitempty"`
 }
 
 func (this *Transform) Reset()         { *this = Transform{} }
 func (this *Transform) String() string { return proto.CompactTextString(this) }
 
 type Slug struct {
-	Transformers     []*Transform `protobuf:"bytes,1,rep,name=transformers" json:"transformers"`
-	XXX_unrecognized []byte
+	Transformers     []*Transform `protobuf:"bytes,1,rep,name=transformers" json:"transformers,omitempty"`
+	XXX_unrecognized []byte       `json:",omitempty"`
 }
 
 func (this *Slug) Reset()         { *this = Slug{} }

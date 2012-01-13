@@ -21,7 +21,7 @@ func main() {
 				
 				pkg := packager.NewPackage(tritium.PackagePath)
 				pkg.Load(path)
-				pkg.SerializedOutput()
+				//pkg.SerializedOutput()
 
 			} else {
 				
