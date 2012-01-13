@@ -103,10 +103,8 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 
 	// Re-uses linker's logic to resolve function definitions
 	if ( proto.GetBool( fun.BuiltIn ) == false) {
-//		fmt.Printf("Initial scope type id: %v\n", proto.GetInt32(fun.ScopeTypeId) )
 		typeName := proto.GetString(fun.ScopeType)
-//		isNil := (len(typeName) == 0)
-//		fmt.Printf("Initial scope type: %v, %v \n", typeName, isNil )
+
 		if len(typeName) != 0 {
 			// When I pass in functions from the inheritance resolver, they're typeId is already set
 			fun.ScopeTypeId = pkg.GetProtoTypeId(fun.ScopeType)
@@ -117,24 +115,21 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 
 		//		fun.ReturnTypeId = pkg.GetProtoTypeId(fun.ReturnType)
 		for _, arg := range(fun.Args) {
-			fmt.Printf("resolving arg: %v\n", arg)
 			argTypeName := arg.TypeString
-			fmt.Printf("arg type name: %v\n", argTypeName)
 			var argTypeId int
 
 			if argTypeName != nil {
 				// Similar deal. Input functions from inheritance resolution already have ids set
+
 				arg.TypeId = pkg.GetProtoTypeId(arg.TypeString)
 				//println("Processing %", proto.GetString(arg.Name))
-				//localScope[proto.GetString(arg.Name)] = pkg.GetTypeId(proto.GetString(arg.TypeString))
 				argTypeId = pkg.GetTypeId(proto.GetString(arg.TypeString))
 				arg.TypeString = nil
 			} else {
 				argTypeId = int( proto.GetInt32(arg.TypeId) )
 			}
+
 			localScope[proto.GetString(arg.Name)] = argTypeId
-
-
 		}
 
 		//fmt.Printf("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
@@ -186,10 +181,6 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 	thisTypeId := proto.GetInt32(fun.ScopeTypeId)
 	newType := pkg.findDescendentType(thisTypeId)
-
-	if name == "this" {
-		fmt.Printf("\n\n\n\nfound this() : scopetype: %v :: descendant: %v\n\n\n\n", thisTypeId, newType)
-	}
 
 	if thisTypeId > 1 && newType != -1 {
 		// I exclude text (type 1) from inheritance				
@@ -258,31 +249,10 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 		
 	}
 
-	// Instructions
-/*
-	fun.Instruction.Iterate(func(ins *tp.Instruction) {
-		thisTypeId = int32(*ins.Type) //proto.GetInt32(ins.Type)
-		println("got ins:", thisTypeId)
-		newType = pkg.findDescendentType(thisTypeId)
-
-		if thisTypeId > 1 && newType != -1 {
-			// I exclude text (type 1) from inheritance				
-			if !inherit {
-				fmt.Printf("\t -- Found ancestral type. Cloning function %v", proto.GetString( fun.Name ) )
-				newFun = fun.Clone()
-				// fmt.Printf("\t -- New fun: %v", newFun)
-				inherit = true
-			}
-			println("\t -- Resetting instruction")
-			ins.Type = proto.Int32( int32( newType ) )
-		}		
-	})
-*/
 	fmt.Printf("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
 
 	if inherit {
 		pkg.resolveFunction(newFun)
-		// Resolving will add it to the package, but there are some function call errors right now
 	}
 
 }
