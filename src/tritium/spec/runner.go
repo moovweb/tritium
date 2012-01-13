@@ -21,7 +21,7 @@ func All(directory string) {
 
 	for _, error := range(globalResult.Errors) {
 		if error.Panic {
-			Printf("Had panic in", error.Name)
+			Printf("Had panic in", error.Name, "\n", error.Message)
 		} else {
 			Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", error.Name, error.Message, error.Got, error.Expected)
 		}
@@ -48,9 +48,9 @@ func (result *Result)Run(dir string, pkg *tp.Package, eng Engine) {
 	this_result := NewResult()
 	defer func() {
 			//log.Println("done")  // Println executes normally even in there is a panic
-			if x := recover(); x != nil {
-				this_result.Error(dir, Sprintf("run time panic: %v", x))
-			}
+			//if x := recover(); x != nil {
+			//	this_result.Error(dir, Sprintf("run time panic: %v", x))
+			//}
 			print(this_result.CharStatus())
 			result.Merge(this_result)
 		}()
