@@ -336,7 +336,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 			// SHARED NODE FUNCTIONS
 			case "remove":
 				scope.Value.(xml.Node).Remove()
-			case "inner", "value":
+			case "inner", "value", "inner_text":
 				node := scope.Value.(xml.Node)
 				ts := &Scope{Value:node.Content()}
 				ctx.runChildren(ts, ins, yieldBlock)

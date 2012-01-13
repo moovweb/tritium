@@ -13,6 +13,9 @@
 // Opens up the entire innerHTML to text modification. Any html you insert WILL get interpreted as actual tags.
 @func XMLNode.inner() //Text,Text
 
+// Main alias for XMLNode.text()
+@func XMLNode.inner_text() //Text,Text
+
 // Creates or opens the attribute named. Returns the value()
 @func XMLNode.attribute(Text %name) //Text,Attribute
 
