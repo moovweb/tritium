@@ -51,11 +51,7 @@ func (result *Result)Run(dir string, pkg *tp.Package, eng Engine) {
 			if x := recover(); x != nil {
 				this_result.Error(dir, Sprintf("run time panic: %v", x))
 			}
-			if this_result.Passed() {
-				print(".")
-			} else {
-				print("F")
-			}
+			print(this_result.CharStatus())
 			result.Merge(this_result)
 		}()
 	spec := LoadSpec(dir, pkg)
