@@ -194,6 +194,25 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 		newFun.ReturnTypeId = proto.Int32( int32( newType ) )
 	}
 
+	// OpensType
+
+	thisTypeId = proto.GetInt32(fun.OpensTypeId)
+	println("return type:", thisTypeId)
+
+	newType = pkg.findDescendentType(thisTypeId)
+
+	if thisTypeId > 1 && newType != -1 {
+		// I exclude text (type 1) from inheritance				
+		if !inherit {
+			fmt.Printf("\t -- Found ancestral type. Cloning function %v", proto.GetString( fun.Name ) )
+			newFun = fun.Clone()
+			// fmt.Printf("\t -- New fun: %v", newFun)
+			inherit = true
+		}
+		println("\t -- Resetting openTypeId")
+		newFun.OpensTypeId = proto.Int32( int32( newType ) )
+	}
+
 
 	// Instructions
 
