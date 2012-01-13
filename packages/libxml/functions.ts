@@ -39,6 +39,24 @@
     set(%value)
   }
 }
+
+@func sass(Text %filename) {
+  asset(concat("stylesheets/.css/", concat(%filename, ".css"))) {
+    yield()
+  }
+}
+
+@func XMLNode.set(Text %name, Text %value) {
+  attribute(%name) {
+    value(%value)
+  }
+}
+
+# Used to be a helper function, just pass through and should work the same
+@func XMLNode.attributes() {
+  yield()
+}
+
 # 
 # @func XMLNode.absolutize() {
 #   # Absolutize IMG and SCRIPT SRCs
