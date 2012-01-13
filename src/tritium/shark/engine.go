@@ -3,6 +3,7 @@ package shark
 import(
 	tp "tritium/proto"
 	"libxml/xpath"
+	xml "libxml/tree"
 	"rubex"
 	"strings"
 	"log4go"
@@ -278,6 +279,34 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				ctx.runChildren(ns, ins, yieldBlock)
 				scope.Value = doc.String()
 				returnValue = scope.Value
+			case "html":
+				doc := libxml.HtmlParseString(scope.Value.(string))
+				defer doc.Free()
+				ns := &Scope{Value:doc}
+				ctx.runChildren(ns, ins, yieldBlock)
+				scope.Value = doc.DumpHTML()
+				returnValue = scope.Value
+			case "select.Text":
+				// TODO reuse XPath object
+				node := scope.Value.(xml.Node)
+				xpCtx := xpath.NewXPath(node.Doc())
+				xpath := xpath.CompileXPath(args[0].(string))
+				//xpath := ctx.XPath(args[0].(string))
+				nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
+				defer xpCtx.Free()
+				if len(nodeSet) == 0 {
+					returnValue = "false"
+				} else {
+					returnValue = "true"
+				}
+
+				for i := range(nodeSet) {
+					node := nodeSet[i]
+					if (node != nil) && node.IsLinked() && node.IsValid() {
+						ns := &Scope{Value: node}
+						ctx.runChildren(ns, ins, yieldBlock)
+					}
+				}
 			default:
 				println("Must implement", fun.Name)
 			}
