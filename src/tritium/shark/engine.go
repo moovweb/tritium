@@ -309,6 +309,13 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				}
 			case "remove":
 				scope.Value.(xml.Node).Remove()
+			case "inner":
+				node := scope.Value.(xml.Node)
+				ts := &Scope{Value:node.Content()}
+				ctx.runChildren(ts, ins, yieldBlock)
+				val := ts.Value.(string)
+				node.SetContent(val)
+				returnValue = val
 			default:
 				println("Must implement", fun.Name)
 			}
