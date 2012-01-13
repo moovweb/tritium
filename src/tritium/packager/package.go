@@ -154,6 +154,7 @@ func (pkg *Package)inheritFunctions() {
 func (pkg *Package)findDescendentType(thisType int32) int {	
 	for index, someType := range(pkg.Types) {
 		if proto.GetInt32(someType.Implements) == thisType {
+			//fmt.Printf("=== %v is ancestor of %v ===\n", thisType, someType)
 			return index
 		}
 	}
@@ -182,8 +183,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	thisTypeId := proto.GetInt32(fun.ScopeTypeId)
 	newType := pkg.findDescendentType(thisTypeId)
 
-	if thisTypeId > 1 && newType != -1 {
-		// I exclude text (type 1) from inheritance				
+	if newType != -1 {
 		if !inherit {
 			fmt.Printf("\t -- ScopeType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 			newFun = fun.Clone()
@@ -199,8 +199,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	thisTypeId = proto.GetInt32(fun.ReturnTypeId)
 	newType = pkg.findDescendentType(thisTypeId)
 
-	if thisTypeId > 1 && newType != -1 {
-		// I exclude text (type 1) from inheritance				
+	if newType != -1 {
 		if !inherit {
 			fmt.Printf("\t -- ReturnType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 			newFun = fun.Clone()
@@ -216,8 +215,9 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	thisTypeId = proto.GetInt32(fun.OpensTypeId)
 	newType = pkg.findDescendentType(thisTypeId)
 
-	if thisTypeId > 1 && newType != -1 {
-		// I exclude text (type 1) from inheritance				
+	if thisTypeId > 0 && newType != -1 {
+		// HACK(SJ) : Fix this
+		// I exclude base from inheritance				
 		if !inherit {
 			fmt.Printf("\t -- OpensType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 			newFun = fun.Clone()
@@ -234,8 +234,8 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 		thisTypeId = proto.GetInt32(arg.TypeId)
 		newType = pkg.findDescendentType(thisTypeId)
 
-		if thisTypeId > 1 && newType != -1 {
-			// I exclude text (type 1) from inheritance				
+		if newType != -1 {
+
 			if !inherit {
 				fmt.Printf("\t -- ArgType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 				newFun = fun.Clone()
