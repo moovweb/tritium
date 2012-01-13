@@ -4,8 +4,6 @@ import(
 	. "tritium/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	"log"
-	"fmt"
-	//packager "tritium/packager"
 )
 
 type FuncMap map[string]int;
@@ -44,7 +42,7 @@ func NewLinkingContext(pkg *Package) (*LinkingContext){
 		//println("Implements:", proto.GetInt32(typeObj.Implements))
 		implements := functionLookup[proto.GetInt32(typeObj.Implements)]
 		for index, fun := range(pkg.Functions) {
-			stub := fun.Stub()
+			stub := fun.Stub(pkg)
 			funScopeId := proto.GetInt32(fun.ScopeTypeId)
 			inherited := false
 			if implements != nil {
@@ -143,7 +141,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 					if argReturn == -1 {
 						log.Panic("Invalid argument object", arg.String())
 					}
-					stub = stub + "," + fmt.Sprintf("%d", argReturn)
+					stub = stub + "," + ctx.types[argReturn]
 				}
 			}
 			funcId, ok := ctx.funList[scopeType][stub]

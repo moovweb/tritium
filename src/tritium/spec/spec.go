@@ -7,7 +7,7 @@ import(
 	. "io/ioutil"
 	"log"
 	yaml "launchpad.net/goyaml"
-	strings "strings"
+	"strings"
 	. "fmt"
 )
 
@@ -99,7 +99,7 @@ func (spec *Spec) Compare(data string, exports [][]string, logs []string) (*Resu
 
 func (spec *Spec) compareData(data string) (*Result) {
 	result := newResult()
-	if spec.Output != data {
+	if strings.TrimSpace(spec.Output) != strings.TrimSpace(data) {
 		result.Error("Bad Output", data, spec.Output, "Didn't match")
 	}
 	return result

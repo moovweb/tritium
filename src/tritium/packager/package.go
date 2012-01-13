@@ -30,9 +30,9 @@ func BuildDefaultPackage(dir string) (*Package) {
 	// Terrible directory handling here... has to be executed from Tritium root
 	pkg := NewPackage(dir)
 
-	pkg.Load("base")
+	//pkg.Load("base")
 	//pkg.Load("node")
-	//pkg.Load("libxml")
+	pkg.Load("libxml")
 	println("Packages all loaded")
 
 	return pkg
