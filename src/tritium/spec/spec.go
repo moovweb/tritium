@@ -88,7 +88,7 @@ func loadFile(dir, filename string) (string) {
 }
 
 func (spec *Spec) Compare(data string, exports [][]string, logs []string) (*Result) {
-	result := newResult()
+	result := NewResult()
 	result.Merge(spec.compareData(data))
 	result.Merge(spec.compareExports(exports))	
 	result.Merge(spec.compareLogs(logs))
@@ -98,31 +98,31 @@ func (spec *Spec) Compare(data string, exports [][]string, logs []string) (*Resu
 // TODO : Consolidate these comparisons into an interface
 
 func (spec *Spec) compareData(data string) (*Result) {
-	result := newResult()
+	result := NewResult()
 	if strings.TrimSpace(spec.Output) != strings.TrimSpace(data) {
-		result.Error("Bad Output", data, spec.Output, "Didn't match")
+		result.Fail("Bad Output", data, spec.Output, "Didn't match")
 	}
 	return result
 }
 
 func (spec *Spec) compareExports(exports [][]string) (*Result) {
-	exportsResult := newResult()
+	exportsResult := NewResult()
 
 	if summarizeExports(spec.Exports) != summarizeExports(exports) {
-		exportsResult.Error("Bad Export", summarizeExports(exports), summarizeExports(spec.Exports), "Missing export(s)")
+		exportsResult.Fail("Bad Export", summarizeExports(exports), summarizeExports(spec.Exports), "Missing export(s)")
 	}
 
 	return exportsResult
 }
 
 func (spec *Spec) compareLogs(logs []string) (*Result) {
-	result := newResult()
+	result := NewResult()
 	
 	expectedSummary := summarizeLogs(spec.Logs)
 	outputSummary := summarizeLogs(logs)
 	
 	if expectedSummary != outputSummary {
-		result.Error("Bad Log Output", outputSummary, expectedSummary, "Didn't match")
+		result.Fail("Bad Log Output", outputSummary, expectedSummary, "Didn't match")
 	}
 	return result
 }
