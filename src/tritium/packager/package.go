@@ -12,6 +12,7 @@ import(
 	linker "tritium/linker"
 	"path/filepath"
 	"log4go"
+	"os"
 )
 
 type Package struct { 
@@ -54,9 +55,12 @@ func NewPackage(loadPath string) (*Package){
 }
 
 func newLog() (log4go.Logger) {
-	log := log4go.NewLogger()
-	log.AddFilter("file", log4go.FINE, log4go.NewFileLogWriter("debug.log", false))	
-	return log
+	// TODO : Make a log directory and put the output there
+	pkgLog := log4go.NewLogger()
+	os.Mkdir("log", uint32(0777) )
+
+	pkgLog.AddFilter("file", log4go.FINE, log4go.NewFileLogWriter("log/debug.log", false))	
+	return pkgLog
 }
 
 func (pkg *Package)Load(packageName string) {
