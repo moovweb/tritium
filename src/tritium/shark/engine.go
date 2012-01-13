@@ -7,6 +7,7 @@ import(
 	"strings"
 	"log4go"
 	"os"
+	"libxml"
 	proto "goprotobuf.googlecode.com/hg/proto"
 )
 
@@ -267,6 +268,15 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 						return val
 				    })
 				})
+				returnValue = scope.Value
+			
+			// XML FUNCTIONS
+			case "xml":
+				doc := libxml.XmlParseString(scope.Value.(string))
+				defer doc.Free()
+				ns := &Scope{Value:doc}
+				ctx.runChildren(ns, ins, yieldBlock)
+				scope.Value = doc.String()
 				returnValue = scope.Value
 			default:
 				println("Must implement", fun.Name)
