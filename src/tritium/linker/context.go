@@ -136,7 +136,6 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			if ins.Arguments != nil {
 				for _, arg := range(ins.Arguments) {
 				//fmt.Printf("\narg:(%v)\n", arg)
-					println("scopeType:", scopeType)
 				//fmt.Printf("localScope: (%v) \n", localScope)
 					argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope)
 					if argReturn == -1 {

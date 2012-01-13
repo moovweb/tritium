@@ -7,7 +7,6 @@ import(
 	"io/ioutil"
 	"log"
 	"strings"
-	"fmt"
 	linker "tritium/linker"
 	parser "tritium/parser"
 	"path/filepath"
@@ -265,15 +264,9 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	
 	println(" -- reading definitions")
 
-	// Execute the ts2func-ruby script
-
-//	package_name := strings.Split(location,"/")[1]
 	input_file := filepath.Join(location, "functions.ts")
-//	output_file := filepath.Join(location, package_name + ".tf")
 
 	definitions := parser.ParseFile(input_file)
-
-	fmt.Printf("Got definitions: %v", definitions)
 
 	//println("Function count before ", len(pkg.Package.Functions))
 	for _, function := range(definitions.Functions) {
@@ -342,10 +335,7 @@ func (pkg *Package)readHeaderFile(location string) {
 
 	stubs := parser.ParseFile(input_file)
 
-	fmt.Printf("Got stubs: %v", stubs)
-
 	for _, function := range(stubs.Functions) {
-		//fmt.Printf("\n\t -- functions[%v]:\n %v", index, function)
 
 		returnType := proto.GetString( function.ReturnType )
 		if len(returnType) > 0 {
@@ -373,9 +363,6 @@ func (pkg *Package)readHeaderFile(location string) {
 				arg.TypeString = nil
 			}			
 		}
-
-		fmt.Printf("\nthis function: %v \n", function )
-		fmt.Printf("\nthis stub: %v \n", function.Stub(pkg.Package))
 
 		function.BuiltIn = proto.Bool( true )
 
@@ -449,17 +436,3 @@ func (pkg *Package)SerializedOutput() {
 	}
 	println(string(bytes))
 }
-/*
-func (pkg *Package)getStub(function *tp.Function) string {
-//	println("type:", proto.GetString(function.ScopeType), " id:", proto.GetInt32(function.ScopeTypeId) )
-
-//	stub := string( pkg.findTypeIndex( proto.GetString(function.ScopeType) ) )
-	stub := string( proto.GetInt32(function.ScopeTypeId) )
-	stub += proto.GetString(function.Name)
-	if function.Args != nil {
-		for _, arg := range(function.Args) {
-			stub = stub + "," + fmt.Sprintf("%d", pkg.findTypeIndex(proto.GetString(arg.TypeString) ) )
-		}
-	}
-	return stub
-}*/
