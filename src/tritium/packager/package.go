@@ -13,7 +13,7 @@ import(
 	"path/filepath"
 )
 
-type Package struct {
+type Package struct { 
 	loaded []*PackageInfo
 	location string
 	LoadPath string
@@ -98,10 +98,21 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 
 //	pkg.resolveFunctionDescendants(fun)
 
+	fmt.Printf("\t -- Resolving --\n")
+	fmt.Printf("\t\t -- function: %v\n", fun)
+
 	// Re-uses linker's logic to resolve function definitions
 	if ( proto.GetBool( fun.BuiltIn ) == false) {
-		fun.ScopeTypeId = pkg.GetProtoTypeId(fun.ScopeType)
-		fun.ScopeType = nil
+//		fmt.Printf("Initial scope type id: %v\n", proto.GetInt32(fun.ScopeTypeId) )
+		typeName := proto.GetString(fun.ScopeType)
+//		isNil := (len(typeName) == 0)
+//		fmt.Printf("Initial scope type: %v, %v \n", typeName, isNil )
+		if len(typeName) != 0 {
+			// When I pass in functions from the inheritance resolver, they're typeId is already set
+			fun.ScopeTypeId = pkg.GetProtoTypeId(fun.ScopeType)
+			fun.ScopeType = nil
+		}
+
 		localScope := make(linker.LocalDef, len(fun.Args))
 
 		//		fun.ReturnTypeId = pkg.GetProtoTypeId(fun.ReturnType)
@@ -114,11 +125,12 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 
 		//fmt.Printf("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
 		scopeTypeId := int(proto.GetInt32(fun.ScopeTypeId))
-		
+		fmt.Printf("\t\t -- opening scope type : %v\n", scopeTypeId)
 		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope)
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
 	}
 	pkg.Package.Functions = append(pkg.Package.Functions, fun)
+	fmt.Printf("\t\t -- done --\n")
 }
 
 
@@ -147,8 +159,8 @@ func (pkg *Package)findDescendentType(thisType int32) int {
 func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 	// Check if this function contains any types that have descendants
-
-	println("Checking for inheritance on function:", fun.Stub(pkg.Package) )
+	name := fun.Stub(pkg.Package)
+	println("Checking for inheritance on function:", name )
 
 	newFun := &tp.Function{}
 	inherit := false
@@ -160,6 +172,10 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 	thisTypeId := proto.GetInt32(fun.ScopeTypeId)
 	newType := pkg.findDescendentType(thisTypeId)
+
+	if name == "this" {
+		fmt.Printf("\n\n\n\nfound this() : scopetype: %v :: descendant: %v\n\n\n\n", thisTypeId, newType)
+	}
 
 	if thisTypeId > 1 && newType != -1 {
 		// I exclude text (type 1) from inheritance				
@@ -306,7 +322,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	//println("Function count before ", len(pkg.Package.Functions))
 	for _, function := range(functions.Functions) {
-		//fmt.Printf("\n\t -- functions[%v]:\n %v", index, function)
+		fmt.Printf("\t -- function: %v", function)
 		pkg.resolveFunction(function)
 	}
 	//fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
