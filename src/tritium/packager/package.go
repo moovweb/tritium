@@ -13,7 +13,7 @@ import(
 	"path/filepath"
 )
 
-type Package struct {
+type Package struct { 
 	loaded []*PackageInfo
 	location string
 	LoadPath string
@@ -86,66 +86,175 @@ func (pkg *Package)Load(packageName string) {
 
 	pkg.readHeaderFile(location)
 
-	// Now read the function declarations
-
-
 	pkg.readPackageDefinitions(location)
 
-	println(" -- done\n")
+	pkg.inheritFunctions()
+
+	println(" -- done\n\n\n\n\n")
 }
 
 func (pkg *Package)resolveFunction(fun *tp.Function) {
 	linkingContext := linker.NewLinkingContext(pkg.Package)
 
-	pkg.resolveFunctionDescendants(fun)
+//	pkg.resolveFunctionDescendants(fun)
+
+	fmt.Printf("\t -- Resolving --\n")
+	fmt.Printf("\t\t -- function: %v\n", fun)
 
 	// Re-uses linker's logic to resolve function definitions
 	if ( proto.GetBool( fun.BuiltIn ) == false) {
-		fun.ScopeTypeId = pkg.GetProtoTypeId(fun.ScopeType)
-		fun.ScopeType = nil
+		typeName := proto.GetString(fun.ScopeType)
+
+		if len(typeName) != 0 {
+			// When I pass in functions from the inheritance resolver, they're typeId is already set
+			fun.ScopeTypeId = pkg.GetProtoTypeId(fun.ScopeType)
+			fun.ScopeType = nil
+		}
+
 		localScope := make(linker.LocalDef, len(fun.Args))
 
 		//		fun.ReturnTypeId = pkg.GetProtoTypeId(fun.ReturnType)
 		for _, arg := range(fun.Args) {
-			arg.TypeId = pkg.GetProtoTypeId(arg.TypeString)
-			//println("Processing %", proto.GetString(arg.Name))
-			localScope[proto.GetString(arg.Name)] = pkg.GetTypeId(proto.GetString(arg.TypeString))
-			arg.TypeString = nil
+			argTypeName := arg.TypeString
+			var argTypeId int
+
+			if argTypeName != nil {
+				// Similar deal. Input functions from inheritance resolution already have ids set
+
+				arg.TypeId = pkg.GetProtoTypeId(arg.TypeString)
+				//println("Processing %", proto.GetString(arg.Name))
+				argTypeId = pkg.GetTypeId(proto.GetString(arg.TypeString))
+				arg.TypeString = nil
+			} else {
+				argTypeId = int( proto.GetInt32(arg.TypeId) )
+			}
+
+			localScope[proto.GetString(arg.Name)] = argTypeId
 		}
 
 		//fmt.Printf("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
 		scopeTypeId := int(proto.GetInt32(fun.ScopeTypeId))
-		
+		fmt.Printf("\t\t -- opening scope type : %v\n", scopeTypeId)
 		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope)
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
 	}
+	pkg.Package.Functions = append(pkg.Package.Functions, fun)
+	fmt.Printf("\t\t -- done --\n")
 }
+
+
+func (pkg *Package)inheritFunctions() {
+	fmt.Printf("pkg types: %v", pkg.Types)
+	for _, function := range(pkg.Functions) {
+		pkg.resolveFunctionDescendants(function)
+	}
+}
+
+// TODO : Make a hash for this
+func (pkg *Package)findDescendentType(thisType int32) int {	
+	for index, someType := range(pkg.Types) {
+		implements := proto.GetInt32(someType.Implements)
+		if implements == thisType && implements != 0 {
+			// The implements field defaults to 0. Base doesn't implement Base. Text doesn't implement Base
+			// TODO(SJ): make the default value -1 so I know if its not set versus something is inheriting from base
+			fmt.Printf("=== %v is ancestor of %v === (%v is of type %v and implements : %v)\n", thisType, someType, proto.GetString(someType.Name), index, implements)
+			return index
+		}
+	}
+	return -1
+}
+
+
+// TODO(SJ) : Make this not suck. I think I could make this 50% shorter if I use reflection
+// - Also, I'm assuming a single depth level of inheritance. I'd have to run this function n times for n levels
+// - Well that should be fine as long as I run it at the end of every package load
 
 func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 	// Check if this function contains any types that have descendants
+	name := fun.Stub(pkg.Package)
+	println("Checking for inheritance on function:", name )
 
-	//println("Function:", proto.GetString(fun.Name) )
+	newFun := &tp.Function{}
+	inherit := false
 
-	// Todo: Iterate over ScopeType, Arg types, return Type, opens Type
-	this_type_name := proto.GetString(fun.ScopeType)
-	
-	if len(this_type_name) > 0 {
+	// Iterate over ScopeType, Arg types, return Type, opens Type
 
-		//println("this type name:", this_type_name,  )
 
-		this_type_index := pkg.findTypeIndex(this_type_name)
-		//println("this type index:", this_type_index)
+	// ScopeType
 
-		this_type := pkg.Types[this_type_index]
-		//fmt.Printf("this type: %v\n", this_type)
+	thisTypeId := proto.GetInt32(fun.ScopeTypeId)
+	newType := pkg.findDescendentType(thisTypeId)
 
-		implements := proto.GetInt32(this_type.Implements)
+	if newType != -1 {
+		if !inherit {
+			fmt.Printf("\t -- ScopeType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
+			newFun = fun.Clone()
+			// fmt.Printf("\t -- New fun: %v", newFun)
+			inherit = true
+		}
+		println("\t -- Resetting scopeId")		
+		newFun.ScopeTypeId = proto.Int32( int32( newType ) )
+	}
 
-//		if ( implements != 0 ) {
-		println("ScopeType (", this_type,") implements", implements, ":", proto.GetString(pkg.Types[implements].Name) )
-//		}
+	// ReturnType
 
+	thisTypeId = proto.GetInt32(fun.ReturnTypeId)
+	newType = pkg.findDescendentType(thisTypeId)
+
+	if newType != -1 {
+		if !inherit {
+			fmt.Printf("\t -- ReturnType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
+			newFun = fun.Clone()
+			// fmt.Printf("\t -- New fun: %v", newFun)
+			inherit = true
+		}
+		println("\t -- Resetting returnId")
+		newFun.ReturnTypeId = proto.Int32( int32( newType ) )
+	}
+
+	// OpensType
+
+	thisTypeId = proto.GetInt32(fun.OpensTypeId)
+	newType = pkg.findDescendentType(thisTypeId)
+
+	if newType != -1 {
+
+		if !inherit {
+			fmt.Printf("\t -- OpensType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
+			newFun = fun.Clone()
+			// fmt.Printf("\t -- New fun: %v", newFun)
+			inherit = true
+		}
+		println("\t -- Resetting openTypeId")
+		newFun.OpensTypeId = proto.Int32( int32( newType ) )
+	}
+
+	// Arguments
+
+	for index, arg := range( fun.Args) {
+		thisTypeId = proto.GetInt32(arg.TypeId)
+		newType = pkg.findDescendentType(thisTypeId)
+
+		if newType != -1 {
+
+			if !inherit {
+				fmt.Printf("\t -- ArgType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
+				newFun = fun.Clone()
+				// fmt.Printf("\t -- New fun: %v", newFun)
+				inherit = true
+			}
+			println("\t -- Resetting argument")
+			newFun.Args[index].TypeId = proto.Int32( int32( newType ) )
+		}
+		
+		
+	}
+
+	fmt.Printf("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
+
+	if inherit {
+		pkg.resolveFunction(newFun)
 	}
 
 }
@@ -199,9 +308,8 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	//println("Function count before ", len(pkg.Package.Functions))
 	for _, function := range(functions.Functions) {
-		//fmt.Printf("\n\t -- functions[%v]:\n %v", index, function)
+		fmt.Printf("\t -- function: %v", function)
 		pkg.resolveFunction(function)
-		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}
 	//fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
 	//println("Function count after ", len(pkg.Package.Functions))
