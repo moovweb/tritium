@@ -15,7 +15,7 @@ xml()  {
   }
 
   var("fifth", "worked")
-  match(var("first"), "\^o\$") { # Shouldn't match since this needs a full-match. Strings are automatically regexized
+  match(var("first"), regexp("\^o\$")) { # Shouldn't match since this needs a full-match. Strings are automatically regexized
     var("fifth", "failed");
   }
 
