@@ -135,9 +135,9 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			stub := proto.GetString(ins.Value)
 			if ins.Arguments != nil {
 				for _, arg := range(ins.Arguments) {
-				fmt.Printf("\narg:(%v)\n", arg)
+				//fmt.Printf("\narg:(%v)\n", arg)
 					println("scopeType:", scopeType)
-				fmt.Printf("localScope: (%v) \n", localScope)
+				//fmt.Printf("localScope: (%v) \n", localScope)
 					argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope)
 					if argReturn == -1 {
 						log.Panic("Invalid argument object", arg.String())

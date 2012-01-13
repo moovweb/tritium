@@ -1,9 +1,3 @@
-@func Node.$(Text %xpath) {
-  select(%xpath) {
-    yield()
-  }
-}
-
 @func XMLNode.add_class(Text %class) {
   attribute("class") {
     value() {

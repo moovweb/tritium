@@ -1,3 +1,8 @@
+@func Node.$(Text %xpath) {
+  select(%xpath) {
+    yield()
+  }
+}
 
 @func position() {
   position("bottom") 

@@ -9,6 +9,7 @@ import(
 	"strings"
 	"fmt"
 	linker "tritium/linker"
+	parser "tritium/parser"
 	"path/filepath"
 	"log4go"
 	"os"
@@ -266,16 +267,16 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	// Execute the ts2func-ruby script
 
-	package_name := strings.Split(location,"/")[1]
+//	package_name := strings.Split(location,"/")[1]
 	input_file := filepath.Join(location, "functions.ts")
-	output_file := filepath.Join(location, package_name + ".tf")
+//	output_file := filepath.Join(location, package_name + ".tf")
 
 	definitions := parser.ParseFile(input_file)
 
 	fmt.Printf("Got definitions: %v", definitions)
 
 	//println("Function count before ", len(pkg.Package.Functions))
-	for _, function := range(functions.Functions) {
+	for _, function := range(definitions.Functions) {
 		pkg.Log.Info("\t -- function: %v", function)
 		pkg.resolveFunction(function)
 	}
@@ -362,7 +363,7 @@ func (pkg *Package)readHeaderFile(location string) {
 		}
 
 		fmt.Printf("\nthis function: %v \n", function )
-		fmt.Printf("\nthis stub: %v \n", function.Stub())
+		fmt.Printf("\nthis stub: %v \n", function.Stub(pkg.Package))
 
 		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}
