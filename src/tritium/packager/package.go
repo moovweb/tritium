@@ -350,16 +350,28 @@ func (pkg *Package)readHeaderFile(location string) {
 		returnType := proto.GetString( function.ReturnType )
 		if len(returnType) > 0 {
 			function.ReturnTypeId = proto.Int32( int32( pkg.findTypeIndex( returnType ) ) )
+			function.ReturnType = nil
 		}
 
 		scopeType := proto.GetString( function.ScopeType )
 		if len(scopeType) > 0{
 			function.ScopeTypeId = proto.Int32( int32( pkg.findTypeIndex( scopeType ) ) )
+			function.ScopeType = nil
 		}
 		
 		opensType := proto.GetString( function.OpensType )
 		if len(opensType) > 0 {
 			function.OpensTypeId = proto.Int32( int32( pkg.findTypeIndex( opensType ) ) )
+			function.OpensType = nil
+		}
+
+
+		for _, arg := range(function.Args) {
+			typeName := proto.GetString( arg.TypeString )
+			if len(typeName) > 0 {
+				arg.TypeId = proto.Int32( int32( pkg.findTypeIndex( typeName ) ) )
+				arg.TypeString = nil
+			}			
 		}
 
 		fmt.Printf("\nthis function: %v \n", function )
