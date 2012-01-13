@@ -323,8 +323,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 					returnValue = "true"
 				}
 
-				for i := range(nodeSet) {
-					node := nodeSet[i]
+				for _, node := range(nodeSet) {
 					if (node != nil) && node.IsLinked() && node.IsValid() {
 						ns := &Scope{Value: node}
 						ctx.runChildren(ns, ins, yieldBlock)
@@ -349,6 +348,12 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				ctx.runChildren(ts, ins, yieldBlock)
 				node.SetName(ts.Value.(string))
 				returnValue = ts.Value.(string)
+			case "dup":
+				node := scope.Value.(xml.Node)
+				newNode := node.Duplicate()
+				MoveFunc(newNode, node, AFTER)
+				ns := &Scope{Value:newNode}
+				ctx.runChildren(ns, ins, yieldBlock)
 
 			// LIBXML FUNCTIONS
 			case "insert_at.Position.Text":
@@ -359,6 +364,26 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				MoveFunc(element, node, position)
 				ns := &Scope{Value: element}
 				ctx.runChildren(ns, ins, yieldBlock)
+			case "inject_at.Position.Text":
+				node := scope.Value.(xml.Node)
+				position := args[0].(Position)
+				nodeSet := node.Doc().ParseHtmlFragment(args[1].(string))
+				for _, newNode := range(nodeSet) {
+					MoveFunc(newNode, node, position)
+				}
+				if len(nodeSet) > 0 {
+					element, ok := nodeSet[0].(*xml.Element)
+					if ok {
+						// successfully ran scope
+						returnValue = "true"
+						ns := &Scope{Value: element}
+						ctx.runChildren(ns, ins, yieldBlock)
+					}
+				} else {
+					returnValue = "false"
+				}
+			case "move.XMLNode.XMLNode.Position":
+				MoveFunc(args[0].(xml.Node), args[1].(xml.Node), args[2].(Position))
 
 			// ATTRIBUTE FUNCTIONS
 			case "attribute.Text":
