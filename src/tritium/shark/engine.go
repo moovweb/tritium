@@ -307,6 +307,8 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 						ctx.runChildren(ns, ins, yieldBlock)
 					}
 				}
+			case "remove":
+				scope.Value.(xml.Node).Remove()
 			default:
 				println("Must implement", fun.Name)
 			}
