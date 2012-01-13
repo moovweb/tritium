@@ -323,7 +323,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 					returnValue = "true"
 				}
 
-				for _, node := range(nodeSet) {
+				for _              , node := range(nodeSet) {
 					if (node != nil) && node.IsLinked() && node.IsValid() {
 						ns := &Scope{Value: node}
 						ctx.runChildren(ns, ins, yieldBlock)
@@ -354,6 +354,20 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				MoveFunc(newNode, node, AFTER)
 				ns := &Scope{Value:newNode}
 				ctx.runChildren(ns, ins, yieldBlock)
+			case "fetch.Text":
+				searchNode := scope.Value.(xml.Node)
+				xPathObj := xpath.NewXPath(searchNode.Doc())
+				nodeSet := xPathObj.Search(searchNode, args[0].(string))
+				if nodeSet.Size() > 0 {
+					node := nodeSet.First()
+					attr, ok := node.(*xml.Attribute)
+					if ok {
+						returnValue = attr.Content()
+					} else {
+						returnValue = node.String()
+					}
+				}
+				xPathObj.Free()
 
 			// LIBXML FUNCTIONS
 			case "insert_at.Position.Text":
