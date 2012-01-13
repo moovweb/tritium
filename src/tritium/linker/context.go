@@ -43,6 +43,7 @@ func NewLinkingContext(pkg *Package) (*LinkingContext){
 		implements := functionLookup[proto.GetInt32(typeObj.Implements)]
 		for index, fun := range(pkg.Functions) {
 			stub := fun.Stub(pkg)
+
 			funScopeId := proto.GetInt32(fun.ScopeTypeId)
 			inherited := false
 			if implements != nil {
@@ -146,7 +147,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			}
 			funcId, ok := ctx.funList[scopeType][stub]
 			if ok != true {
-				println("Available functions...")
+			println("Available functions (", len(ctx.funList[scopeType]), "):")
 				for funcName, _ := range(ctx.funList[scopeType]) {
 					println(funcName)
 				}
@@ -161,6 +162,13 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				// If we're a Base scope, don't mess with texas!
 				opensScopeType = scopeType
 			}
+		        // If it inherits:
+		        inheritedOpensScopeType := ctx.Pkg.FindDescendantType( int32( opensScopeType ) )
+		        if inheritedOpensScopeType != -1 {
+			        opensScopeType = inheritedOpensScopeType
+		        }
+
+
 			//println("Zomg, found function", fun.String())
 			//println("I open a Scope of type ", opensScopeType)
 			

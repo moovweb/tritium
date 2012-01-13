@@ -69,6 +69,7 @@ func (pkg *Package)Load(packageName string) {
 	pkg.location = location
 
 	println(location)
+	pkg.Log.Info("\n\n\n\nLoading:%v", location)
 
 	info := readPackageInfoFile(location)
 	
@@ -164,21 +165,6 @@ func (pkg *Package)inheritFunctions() {
 	}
 }
 
-// TODO : Make a hash for this
-func (pkg *Package)findDescendentType(thisType int32) int {	
-	for index, someType := range(pkg.Types) {
-		implements := proto.GetInt32(someType.Implements)
-		if implements == thisType && implements != 0 {
-			// The implements field defaults to 0. Base doesn't implement Base. Text doesn't implement Base
-			// TODO(SJ): make the default value -1 so I know if its not set versus something is inheriting from base
-			pkg.Log.Info("=== %v is ancestor of %v === (%v is of type %v and implements : %v)\n", thisType, someType, proto.GetString(someType.Name), index, implements)
-			return index
-		}
-	}
-	return -1
-}
-
-
 // TODO(SJ) : Make this not suck. I think I could make this 50% shorter if I use reflection
 // - Also, I'm assuming a single depth level of inheritance. I'd have to run this function n times for n levels
 // - Well that should be fine as long as I run it at the end of every package load
@@ -198,7 +184,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	// ScopeType
 
 	thisTypeId := proto.GetInt32(fun.ScopeTypeId)
-	newType := pkg.findDescendentType(thisTypeId)
+	newType := pkg.Package.FindDescendantType(thisTypeId)
 
 	if newType != -1 {
 		if !inherit {
@@ -214,7 +200,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	// ReturnType
 
 	thisTypeId = proto.GetInt32(fun.ReturnTypeId)
-	newType = pkg.findDescendentType(thisTypeId)
+	newType = pkg.Package.FindDescendantType(thisTypeId)
 
 	if newType != -1 {
 		if !inherit {
@@ -230,7 +216,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	// OpensType
 
 	thisTypeId = proto.GetInt32(fun.OpensTypeId)
-	newType = pkg.findDescendentType(thisTypeId)
+	newType = pkg.Package.FindDescendantType(thisTypeId)
 
 	if newType != -1 {
 
@@ -248,7 +234,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 	for index, arg := range( fun.Args) {
 		thisTypeId = proto.GetInt32(arg.TypeId)
-		newType = pkg.findDescendentType(thisTypeId)
+		newType = pkg.Package.FindDescendantType(thisTypeId)
 
 		if newType != -1 {
 
