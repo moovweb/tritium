@@ -90,7 +90,7 @@ func (pkg *Package)Load(packageName string) {
 
 	pkg.inheritFunctions()
 
-	println(" -- done\n")
+	println(" -- done\n\n\n\n\n")
 }
 
 func (pkg *Package)resolveFunction(fun *tp.Function) {
@@ -118,6 +118,7 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope)
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
 	}
+	pkg.Package.Functions = append(pkg.Package.Functions, fun)
 }
 
 
@@ -150,14 +151,12 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	println("Checking for inheritance on function:", proto.GetString(fun.Name) )
 
 	newFun := &tp.Function{}
-	valid := false
+	inherit := false
 
-//	newFun = fun.Clone()
+	// Iterate over ScopeType, Arg types, return Type, opens Type
 
-//	newFun.Name = proto.String("Hey-ya")
-//	fmt.Printf("\n\nOld fun: (%v)\n\n\n New fun: (%v)", fun, newFun)
 
-	// Todo: Iterate over ScopeType, Arg types, return Type, opens Type
+	// ScopeType
 
 	thisTypeId := proto.GetInt32(fun.ScopeTypeId)
 	println("scope type:", thisTypeId)
@@ -165,27 +164,46 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	newType := pkg.findDescendentType(thisTypeId)
 
 	if thisTypeId > 1 && newType != -1 {
-		// I exclude text (type 1) from inheritance		
-		
-		if !valid {
+		// I exclude text (type 1) from inheritance				
+		if !inherit {
 			fmt.Printf("\t -- Found ancestral type. Cloning function %v", proto.GetString( fun.Name ) )
 			newFun = fun.Clone()
 			// fmt.Printf("\t -- New fun: %v", newFun)
-			valid = true
+			inherit = true
 		}
-
-//		fmt.Printf("\t -- ScopeType (%v) implements %v: %v\n", thisTypeId, implements, proto.GetString(pkg.Types[implements].Name) )
-		
+		println("\t -- Resetting scopeId")		
 		newFun.ScopeTypeId = proto.Int32( int32( newType ) )
+	}
 
+	// ReturnType
+
+	thisTypeId = proto.GetInt32(fun.ReturnTypeId)
+	println("return type:", thisTypeId)
+
+	newType = pkg.findDescendentType(thisTypeId)
+
+	if thisTypeId > 1 && newType != -1 {
+		// I exclude text (type 1) from inheritance				
+		if !inherit {
+			fmt.Printf("\t -- Found ancestral type. Cloning function %v", proto.GetString( fun.Name ) )
+			newFun = fun.Clone()
+			// fmt.Printf("\t -- New fun: %v", newFun)
+			inherit = true
+		}
+		println("\t -- Resetting returnId")
+		newFun.ReturnTypeId = proto.Int32( int32( newType ) )
 	}
 
 
-
-	// Iterate the instructions and insert the proper types as needed
+	// Instructions
 
 
 	fmt.Printf("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
+
+	if inherit {
+		//pkg.resolveFunction(newFun)
+		// Resolving will add it to the package, but there are some function call errors right now
+	}
 
 }
 
@@ -240,7 +258,6 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	for _, function := range(functions.Functions) {
 		//fmt.Printf("\n\t -- functions[%v]:\n %v", index, function)
 		pkg.resolveFunction(function)
-		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}
 	//fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
 	//println("Function count after ", len(pkg.Package.Functions))
