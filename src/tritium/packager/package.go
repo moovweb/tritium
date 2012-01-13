@@ -148,7 +148,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 	// Check if this function contains any types that have descendants
 
-	println("Checking for inheritance on function:", proto.GetString(fun.Name) )
+	println("Checking for inheritance on function:", fun.Stub() )
 
 	newFun := &tp.Function{}
 	inherit := false
@@ -164,7 +164,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	if thisTypeId > 1 && newType != -1 {
 		// I exclude text (type 1) from inheritance				
 		if !inherit {
-			fmt.Printf("\t -- Found ancestral type. Cloning function %v", proto.GetString( fun.Name ) )
+			fmt.Printf("\t -- ScopeType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 			newFun = fun.Clone()
 			// fmt.Printf("\t -- New fun: %v", newFun)
 			inherit = true
@@ -181,7 +181,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	if thisTypeId > 1 && newType != -1 {
 		// I exclude text (type 1) from inheritance				
 		if !inherit {
-			fmt.Printf("\t -- Found ancestral type. Cloning function %v", proto.GetString( fun.Name ) )
+			fmt.Printf("\t -- ReturnType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 			newFun = fun.Clone()
 			// fmt.Printf("\t -- New fun: %v", newFun)
 			inherit = true
@@ -198,7 +198,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	if thisTypeId > 1 && newType != -1 {
 		// I exclude text (type 1) from inheritance				
 		if !inherit {
-			fmt.Printf("\t -- Found ancestral type. Cloning function %v", proto.GetString( fun.Name ) )
+			fmt.Printf("\t -- OpensType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 			newFun = fun.Clone()
 			// fmt.Printf("\t -- New fun: %v", newFun)
 			inherit = true
@@ -216,7 +216,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 		if thisTypeId > 1 && newType != -1 {
 			// I exclude text (type 1) from inheritance				
 			if !inherit {
-				fmt.Printf("\t -- Found ancestral type. Cloning function %v", proto.GetString( fun.Name ) )
+				fmt.Printf("\t -- ArgType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 				newFun = fun.Clone()
 				// fmt.Printf("\t -- New fun: %v", newFun)
 				inherit = true
@@ -229,12 +229,29 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	}
 
 	// Instructions
+/*
+	fun.Instruction.Iterate(func(ins *tp.Instruction) {
+		thisTypeId = int32(*ins.Type) //proto.GetInt32(ins.Type)
+		println("got ins:", thisTypeId)
+		newType = pkg.findDescendentType(thisTypeId)
 
-
+		if thisTypeId > 1 && newType != -1 {
+			// I exclude text (type 1) from inheritance				
+			if !inherit {
+				fmt.Printf("\t -- Found ancestral type. Cloning function %v", proto.GetString( fun.Name ) )
+				newFun = fun.Clone()
+				// fmt.Printf("\t -- New fun: %v", newFun)
+				inherit = true
+			}
+			println("\t -- Resetting instruction")
+			ins.Type = proto.Int32( int32( newType ) )
+		}		
+	})
+*/
 	fmt.Printf("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
 
 	if inherit {
-		//pkg.resolveFunction(newFun)
+		pkg.resolveFunction(newFun)
 		// Resolving will add it to the package, but there are some function call errors right now
 	}
 
