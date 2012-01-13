@@ -365,6 +365,8 @@ func (pkg *Package)readHeaderFile(location string) {
 		fmt.Printf("\nthis function: %v \n", function )
 		fmt.Printf("\nthis stub: %v \n", function.Stub(pkg.Package))
 
+		function.BuiltIn = proto.Bool( true )
+
 		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}
 	
