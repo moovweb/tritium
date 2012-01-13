@@ -11,12 +11,15 @@ import(
 	"exec"
 	linker "tritium/linker"
 	"path/filepath"
+	"log4go"
+	"os"
 )
 
 type Package struct { 
 	loaded []*PackageInfo
 	location string
 	LoadPath string
+	Log log4go.Logger
 	*tp.Package
 }
 
@@ -46,14 +49,27 @@ func NewPackage(loadPath string) (*Package){
 			Types: make([]*tp.Type, 0),
 		},
 		loaded: make([]*PackageInfo, 0),
+  	        Log: newLog(),
 		LoadPath: loadPath,
 	}
+}
+
+func newLog() (log4go.Logger) {
+	// TODO : Make a log directory and put the output there
+	pkgLog := log4go.NewLogger()
+	os.Mkdir("log", uint32(0777) )
+
+	pkgLog.AddFilter("file", log4go.FINE, log4go.NewFileLogWriter("log/debug.log", false))	
+	return pkgLog
 }
 
 func (pkg *Package)Load(packageName string) {
 	
 	location := filepath.Join(pkg.LoadPath, packageName)
 	pkg.location = location
+
+	println(location)
+	pkg.Log.Info("\n\n\n\nLoading:%v", location)
 
 	info := readPackageInfoFile(location)
 	
@@ -68,8 +84,6 @@ func (pkg *Package)Load(packageName string) {
 		//println("done.\n==========")
 
 	}
-
-	//fmt.Printf("%v\n", location)
 
 	for _, typeName := range(info.Types) {
 		split := strings.Split(typeName, " < ")
@@ -90,7 +104,8 @@ func (pkg *Package)Load(packageName string) {
 
 	pkg.inheritFunctions()
 
-	//println(" -- done\n\n\n\n\n")
+	println(" -- done")
+	pkg.Log.Close()
 }
 
 func (pkg *Package)resolveFunction(fun *tp.Function) {
@@ -98,8 +113,8 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 
 //	pkg.resolveFunctionDescendants(fun)
 
-	//fmt.Printf("\t -- Resolving --\n")
-	//fmt.Printf("\t\t -- function: %v\n", fun)
+	pkg.Log.Info("\t -- Resolving --\n")
+	pkg.Log.Info("\t\t -- function: %v\n", fun)
 
 	// Re-uses linker's logic to resolve function definitions
 	if ( proto.GetBool( fun.BuiltIn ) == false) {
@@ -132,38 +147,23 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 			localScope[proto.GetString(arg.Name)] = argTypeId
 		}
 
-		//fmt.Printf("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
+		//pkg.Log.Info("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
 		scopeTypeId := int(proto.GetInt32(fun.ScopeTypeId))
-		//fmt.Printf("\t\t -- opening scope type : %v\n", scopeTypeId)
+		pkg.Log.Info("\t\t -- opening scope type : %v\n", scopeTypeId)
 		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope)
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
 	}
 	pkg.Package.Functions = append(pkg.Package.Functions, fun)
-	//fmt.Printf("\t\t -- done --\n")
+	pkg.Log.Info("\t\t -- done --\n")
 }
 
 
 func (pkg *Package)inheritFunctions() {
-	//fmt.Printf("pkg types: %v", pkg.Types)
+	pkg.Log.Info("pkg types: %v", pkg.Types)
 	for _, function := range(pkg.Functions) {
 		pkg.resolveFunctionDescendants(function)
 	}
 }
-
-// TODO : Make a hash for this
-func (pkg *Package)findDescendentType(thisType int32) int {	
-	for index, someType := range(pkg.Types) {
-		implements := proto.GetInt32(someType.Implements)
-		if implements == thisType && implements != 0 {
-			// The implements field defaults to 0. Base doesn't implement Base. Text doesn't implement Base
-			// TODO(SJ): make the default value -1 so I know if its not set versus something is inheriting from base
-			//fmt.Printf("=== %v is ancestor of %v === (%v is of type %v and implements : %v)\n", thisType, someType, proto.GetString(someType.Name), index, implements)
-			return index
-		}
-	}
-	return -1
-}
-
 
 // TODO(SJ) : Make this not suck. I think I could make this 50% shorter if I use reflection
 // - Also, I'm assuming a single depth level of inheritance. I'd have to run this function n times for n levels
@@ -172,8 +172,8 @@ func (pkg *Package)findDescendentType(thisType int32) int {
 func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 	// Check if this function contains any types that have descendants
-	//name := fun.Stub(pkg.Package)
-	//println("Checking for inheritance on function:", name )
+	name := fun.Stub(pkg.Package)
+	pkg.Log.Info("Checking for inheritance on function: %v", name )
 
 	newFun := &tp.Function{}
 	inherit := false
@@ -184,49 +184,49 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	// ScopeType
 
 	thisTypeId := proto.GetInt32(fun.ScopeTypeId)
-	newType := pkg.findDescendentType(thisTypeId)
+	newType := pkg.Package.FindDescendantType(thisTypeId)
 
 	if newType != -1 {
 		if !inherit {
-			//fmt.Printf("\t -- ScopeType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
+			pkg.Log.Info("\t -- ScopeType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 			newFun = fun.Clone()
-			// fmt.Printf("\t -- New fun: %v", newFun)
+			// pkg.Log.Info("\t -- New fun: %v", newFun)
 			inherit = true
 		}
-		//println("\t -- Resetting scopeId")		
+		pkg.Log.Info("\t -- Resetting scopeId")		
 		newFun.ScopeTypeId = proto.Int32( int32( newType ) )
 	}
 
 	// ReturnType
 
 	thisTypeId = proto.GetInt32(fun.ReturnTypeId)
-	newType = pkg.findDescendentType(thisTypeId)
+	newType = pkg.Package.FindDescendantType(thisTypeId)
 
 	if newType != -1 {
 		if !inherit {
-			fmt.Printf("\t -- ReturnType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
+			pkg.Log.Info("\t -- ReturnType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 			newFun = fun.Clone()
-			// fmt.Printf("\t -- New fun: %v", newFun)
+			// pkg.Log.Info("\t -- New fun: %v", newFun)
 			inherit = true
 		}
-		//println("\t -- Resetting returnId")
+		pkg.Log.Info("\t -- Resetting returnId")
 		newFun.ReturnTypeId = proto.Int32( int32( newType ) )
 	}
 
 	// OpensType
 
 	thisTypeId = proto.GetInt32(fun.OpensTypeId)
-	newType = pkg.findDescendentType(thisTypeId)
+	newType = pkg.Package.FindDescendantType(thisTypeId)
 
 	if newType != -1 {
 
 		if !inherit {
-			//fmt.Printf("\t -- OpensType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
+			pkg.Log.Info("\t -- OpensType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 			newFun = fun.Clone()
-			// fmt.Printf("\t -- New fun: %v", newFun)
+			// pkg.Log.Info("\t -- New fun: %v", newFun)
 			inherit = true
 		}
-		//println("\t -- Resetting openTypeId")
+		pkg.Log.Info("\t -- Resetting openTypeId")
 		newFun.OpensTypeId = proto.Int32( int32( newType ) )
 	}
 
@@ -234,24 +234,24 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 	for index, arg := range( fun.Args) {
 		thisTypeId = proto.GetInt32(arg.TypeId)
-		newType = pkg.findDescendentType(thisTypeId)
+		newType = pkg.Package.FindDescendantType(thisTypeId)
 
 		if newType != -1 {
 
 			if !inherit {
-				//fmt.Printf("\t -- ArgType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
+				pkg.Log.Info("\t -- ArgType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 				newFun = fun.Clone()
-				// fmt.Printf("\t -- New fun: %v", newFun)
+				// pkg.Log.Info("\t -- New fun: %v", newFun)
 				inherit = true
 			}
-			//println("\t -- Resetting argument")
+			pkg.Log.Info("\t -- Resetting argument")
 			newFun.Args[index].TypeId = proto.Int32( int32( newType ) )
 		}
 		
 		
 	}
 
-	//fmt.Printf("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
+	pkg.Log.Info("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
 
 	if inherit {
 		pkg.resolveFunction(newFun)
@@ -261,22 +261,20 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 func (pkg *Package)readPackageDefinitions(location string) {
 	
-	//println(" -- reading definitions")
+	println(" -- reading definitions")
 
 	// Execute the ts2func-ruby script
 
 	package_name := strings.Split(location,"/")[1]
 	input_file := filepath.Join(location, "functions.ts")
 	output_file := filepath.Join(location, package_name + ".tf")
-	
-	//println(input_file)
 
 	// Assume that tritium/bin is in $PATH (it will be when you install the gem)
 	// -- if you're developing, add $REPOS/tritium/bin to $PATH
 
 	command := exec.Command("ts2func-ruby", "-s", input_file, output_file)
 
-	//fmt.Printf("\n\nExecuting command: \n %v\n", command)
+	//pkg.Log.Info("\n\nExecuting command: \n %v\n", command)
 
 	output, err := command.CombinedOutput()
 
@@ -308,7 +306,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	//println("Function count before ", len(pkg.Package.Functions))
 	for _, function := range(functions.Functions) {
-		//fmt.Printf("\t -- function: %v", function)
+		pkg.Log.Info("\t -- function: %v", function)
 		pkg.resolveFunction(function)
 	}
 	//fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
