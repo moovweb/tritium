@@ -27,8 +27,5 @@ func (pkg *Package) GetProtoTypeId(name *string) (*int32) {
 		}
 		//println("Set scope ID to ", scopeTypeId)
 	}
-
-
 	return proto.Int32(int32(scopeTypeId))
-
 }
