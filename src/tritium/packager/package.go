@@ -33,7 +33,7 @@ func BuildDefaultPackage(dir string) (*Package) {
 	//pkg.Load("base")
 	//pkg.Load("node")
 	pkg.Load("libxml")
-	println("Packages all loaded")
+	//println("Packages all loaded")
 
 	return pkg
 }
@@ -59,17 +59,17 @@ func (pkg *Package)Load(packageName string) {
 	
 	if len(info.Dependencies) > 0 {
 
-		println("==========\nLoading dependencies:")
+		//println("==========\nLoading dependencies:")
 
 		for _, dependency := range(info.Dependencies) {
 			pkg.loadPackageDependency(dependency)
 		}
 
-		println("done.\n==========")
+		//println("done.\n==========")
 
 	}
 
-	fmt.Printf("%v\n", location)
+	//fmt.Printf("%v\n", location)
 
 	for _, typeName := range(info.Types) {
 		split := strings.Split(typeName, " < ")
@@ -90,7 +90,7 @@ func (pkg *Package)Load(packageName string) {
 
 	pkg.inheritFunctions()
 
-	println(" -- done\n\n\n\n\n")
+	//println(" -- done\n\n\n\n\n")
 }
 
 func (pkg *Package)resolveFunction(fun *tp.Function) {
@@ -98,8 +98,8 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 
 //	pkg.resolveFunctionDescendants(fun)
 
-	fmt.Printf("\t -- Resolving --\n")
-	fmt.Printf("\t\t -- function: %v\n", fun)
+	//fmt.Printf("\t -- Resolving --\n")
+	//fmt.Printf("\t\t -- function: %v\n", fun)
 
 	// Re-uses linker's logic to resolve function definitions
 	if ( proto.GetBool( fun.BuiltIn ) == false) {
@@ -134,17 +134,17 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 
 		//fmt.Printf("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
 		scopeTypeId := int(proto.GetInt32(fun.ScopeTypeId))
-		fmt.Printf("\t\t -- opening scope type : %v\n", scopeTypeId)
+		//fmt.Printf("\t\t -- opening scope type : %v\n", scopeTypeId)
 		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope)
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
 	}
 	pkg.Package.Functions = append(pkg.Package.Functions, fun)
-	fmt.Printf("\t\t -- done --\n")
+	//fmt.Printf("\t\t -- done --\n")
 }
 
 
 func (pkg *Package)inheritFunctions() {
-	fmt.Printf("pkg types: %v", pkg.Types)
+	//fmt.Printf("pkg types: %v", pkg.Types)
 	for _, function := range(pkg.Functions) {
 		pkg.resolveFunctionDescendants(function)
 	}
@@ -157,7 +157,7 @@ func (pkg *Package)findDescendentType(thisType int32) int {
 		if implements == thisType && implements != 0 {
 			// The implements field defaults to 0. Base doesn't implement Base. Text doesn't implement Base
 			// TODO(SJ): make the default value -1 so I know if its not set versus something is inheriting from base
-			fmt.Printf("=== %v is ancestor of %v === (%v is of type %v and implements : %v)\n", thisType, someType, proto.GetString(someType.Name), index, implements)
+			//fmt.Printf("=== %v is ancestor of %v === (%v is of type %v and implements : %v)\n", thisType, someType, proto.GetString(someType.Name), index, implements)
 			return index
 		}
 	}
@@ -172,8 +172,8 @@ func (pkg *Package)findDescendentType(thisType int32) int {
 func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 	// Check if this function contains any types that have descendants
-	name := fun.Stub(pkg.Package)
-	println("Checking for inheritance on function:", name )
+	//name := fun.Stub(pkg.Package)
+	//println("Checking for inheritance on function:", name )
 
 	newFun := &tp.Function{}
 	inherit := false
@@ -188,12 +188,12 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 	if newType != -1 {
 		if !inherit {
-			fmt.Printf("\t -- ScopeType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
+			//fmt.Printf("\t -- ScopeType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 			newFun = fun.Clone()
 			// fmt.Printf("\t -- New fun: %v", newFun)
 			inherit = true
 		}
-		println("\t -- Resetting scopeId")		
+		//println("\t -- Resetting scopeId")		
 		newFun.ScopeTypeId = proto.Int32( int32( newType ) )
 	}
 
@@ -209,7 +209,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 			// fmt.Printf("\t -- New fun: %v", newFun)
 			inherit = true
 		}
-		println("\t -- Resetting returnId")
+		//println("\t -- Resetting returnId")
 		newFun.ReturnTypeId = proto.Int32( int32( newType ) )
 	}
 
@@ -221,12 +221,12 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	if newType != -1 {
 
 		if !inherit {
-			fmt.Printf("\t -- OpensType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
+			//fmt.Printf("\t -- OpensType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 			newFun = fun.Clone()
 			// fmt.Printf("\t -- New fun: %v", newFun)
 			inherit = true
 		}
-		println("\t -- Resetting openTypeId")
+		//println("\t -- Resetting openTypeId")
 		newFun.OpensTypeId = proto.Int32( int32( newType ) )
 	}
 
@@ -239,19 +239,19 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 		if newType != -1 {
 
 			if !inherit {
-				fmt.Printf("\t -- ArgType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
+				//fmt.Printf("\t -- ArgType : Found ancestral type. Cloning function %v\n", proto.GetString( fun.Name ) )
 				newFun = fun.Clone()
 				// fmt.Printf("\t -- New fun: %v", newFun)
 				inherit = true
 			}
-			println("\t -- Resetting argument")
+			//println("\t -- Resetting argument")
 			newFun.Args[index].TypeId = proto.Int32( int32( newType ) )
 		}
 		
 		
 	}
 
-	fmt.Printf("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
+	//fmt.Printf("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
 
 	if inherit {
 		pkg.resolveFunction(newFun)
@@ -261,7 +261,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 func (pkg *Package)readPackageDefinitions(location string) {
 	
-	println(" -- reading definitions")
+	//println(" -- reading definitions")
 
 	// Execute the ts2func-ruby script
 
@@ -269,7 +269,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 	input_file := filepath.Join(location, "functions.ts")
 	output_file := filepath.Join(location, package_name + ".tf")
 	
-	println(input_file)
+	//println(input_file)
 
 	// Assume that tritium/bin is in $PATH (it will be when you install the gem)
 	// -- if you're developing, add $REPOS/tritium/bin to $PATH
@@ -308,7 +308,7 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	//println("Function count before ", len(pkg.Package.Functions))
 	for _, function := range(functions.Functions) {
-		fmt.Printf("\t -- function: %v", function)
+		//fmt.Printf("\t -- function: %v", function)
 		pkg.resolveFunction(function)
 	}
 	//fmt.Printf("\n\npkg functions : %v\n", pkg.Package.Functions)
