@@ -117,10 +117,24 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 
 		//		fun.ReturnTypeId = pkg.GetProtoTypeId(fun.ReturnType)
 		for _, arg := range(fun.Args) {
-			arg.TypeId = pkg.GetProtoTypeId(arg.TypeString)
-			//println("Processing %", proto.GetString(arg.Name))
-			localScope[proto.GetString(arg.Name)] = pkg.GetTypeId(proto.GetString(arg.TypeString))
-			arg.TypeString = nil
+			fmt.Printf("resolving arg: %v\n", arg)
+			argTypeName := arg.TypeString
+			fmt.Printf("arg type name: %v\n", argTypeName)
+			var argTypeId int
+
+			if argTypeName != nil {
+				// Similar deal. Input functions from inheritance resolution already have ids set
+				arg.TypeId = pkg.GetProtoTypeId(arg.TypeString)
+				//println("Processing %", proto.GetString(arg.Name))
+				//localScope[proto.GetString(arg.Name)] = pkg.GetTypeId(proto.GetString(arg.TypeString))
+				argTypeId = pkg.GetTypeId(proto.GetString(arg.TypeString))
+				arg.TypeString = nil
+			} else {
+				argTypeId = int( proto.GetInt32(arg.TypeId) )
+			}
+			localScope[proto.GetString(arg.Name)] = argTypeId
+
+
 		}
 
 		//fmt.Printf("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
