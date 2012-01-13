@@ -1,1 +1,1 @@
-set("worked")
+@import "import_again.ts"
