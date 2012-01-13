@@ -57,6 +57,18 @@
   yield()
 }
 
+@func XMLNode.text() {
+  inner_text() {
+    yield()
+  }
+}
+
+@func XMLNode.text(Text %value) {
+  text() {
+    set(%value)
+  }
+}
+
 # 
 # @func XMLNode.absolutize() {
 #   # Absolutize IMG and SCRIPT SRCs
