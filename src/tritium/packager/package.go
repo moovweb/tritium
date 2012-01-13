@@ -159,8 +159,6 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	// ScopeType
 
 	thisTypeId := proto.GetInt32(fun.ScopeTypeId)
-	println("scope type:", thisTypeId)
-
 	newType := pkg.findDescendentType(thisTypeId)
 
 	if thisTypeId > 1 && newType != -1 {
@@ -178,8 +176,6 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	// ReturnType
 
 	thisTypeId = proto.GetInt32(fun.ReturnTypeId)
-	println("return type:", thisTypeId)
-
 	newType = pkg.findDescendentType(thisTypeId)
 
 	if thisTypeId > 1 && newType != -1 {
@@ -197,8 +193,6 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	// OpensType
 
 	thisTypeId = proto.GetInt32(fun.OpensTypeId)
-	println("return type:", thisTypeId)
-
 	newType = pkg.findDescendentType(thisTypeId)
 
 	if thisTypeId > 1 && newType != -1 {
@@ -213,6 +207,26 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 		newFun.OpensTypeId = proto.Int32( int32( newType ) )
 	}
 
+	// Arguments
+
+	for index, arg := range( fun.Args) {
+		thisTypeId = proto.GetInt32(arg.TypeId)
+		newType = pkg.findDescendentType(thisTypeId)
+
+		if thisTypeId > 1 && newType != -1 {
+			// I exclude text (type 1) from inheritance				
+			if !inherit {
+				fmt.Printf("\t -- Found ancestral type. Cloning function %v", proto.GetString( fun.Name ) )
+				newFun = fun.Clone()
+				// fmt.Printf("\t -- New fun: %v", newFun)
+				inherit = true
+			}
+			println("\t -- Resetting argument")
+			newFun.Args[index].TypeId = proto.Int32( int32( newType ) )
+		}
+		
+		
+	}
 
 	// Instructions
 
