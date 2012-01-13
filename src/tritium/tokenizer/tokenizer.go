@@ -118,16 +118,18 @@ func (t *Tokenizer) hasPrefix(s string) bool {
 
 // Discard leading spaces (excluding newlines) in the source text.
 func (t *Tokenizer) discardSpaces() {
-  t.Source = bytes.TrimLeft(t.Source, " \t")
+  t.Source = bytes.TrimLeft(t.Source, " \t\r")
 }
 
 // Discard leading text until a newline (or EOF) is found.
 func(t *Tokenizer) discardLine() {
-  if i := bytes.IndexByte(t.Source, '\n'); i >= 0 {
-    t.Source = t.Source[i:]
-  } else {
-    t.Source = t.Source[len(t.Source):]
+  var i int
+  for i = 0; i < len(t.Source); i++ {
+    if t.Source[i] == '\n' {
+      break
+    }
   }
+  t.Source = t.Source[i:]
 }
 
 // Discard the leading comment in the source text.
@@ -188,7 +190,7 @@ func (t *Tokenizer) discardWhitespaceAndComments() {
     case t.hasPrefix("\n"):
       t.LineNum++
       t.Source = t.Source[1:]
-    case t.hasPrefix(" ") || t.hasPrefix("\t"):
+    case t.hasPrefix(" ") || t.hasPrefix("\t") || t.hasPrefix("\r"):
       t.discardSpaces()
     case t.hasPrefix("#") || t.hasPrefix("//") || t.hasPrefix("/*"):
       t.discardComment()

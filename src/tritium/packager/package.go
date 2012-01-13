@@ -35,7 +35,7 @@ func BuildDefaultPackage(dir string) (*Package) {
 	//pkg.Load("base")
 	//pkg.Load("node")
 	pkg.Load("libxml")
-	println("Packages all loaded")
+	//println("Packages all loaded")
 
 	return pkg
 }

@@ -12,6 +12,22 @@ import(
 	proto "goprotobuf.googlecode.com/hg/proto"
 )
 
+type Position int;
+const (
+	TOP = iota;
+	BOTTOM
+	BEFORE
+	AFTER
+)
+var Positions = map[string]Position{
+	"TOP":    TOP,
+	"BOTTOM": BOTTOM,
+	"BEFORE": BEFORE,
+	"AFTER":  AFTER,
+	"ABOVE":  BEFORE,
+	"BELOW":  BOTTOM,
+}
+
 type Shark struct {
 	RegexpCache map[string]*rubex.Regexp
 	XPathCache map[string]*xpath.Expression
@@ -286,6 +302,13 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				ctx.runChildren(ns, ins, yieldBlock)
 				scope.Value = doc.DumpHTML()
 				returnValue = scope.Value
+			case "html_fragment":
+				doc := libxml.HtmlParseFragment(scope.Value.(string))
+				defer doc.Free()
+				ns := &Scope{Value: doc.RootElement()}
+				ctx.runChildren(ns, ins, yieldBlock)
+				scope.Value = ns.Value.(xml.Node).Content()
+				returnValue = scope.Value
 			case "select.Text":
 				// TODO reuse XPath object
 				node := scope.Value.(xml.Node)
@@ -307,8 +330,50 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 						ctx.runChildren(ns, ins, yieldBlock)
 					}
 				}
+			case "position.Text":
+				returnValue = Positions[args[0].(string)]
+				
+			// SHARED NODE FUNCTIONS
 			case "remove":
 				scope.Value.(xml.Node).Remove()
+			case "inner", "value":
+				node := scope.Value.(xml.Node)
+				ts := &Scope{Value:node.Content()}
+				ctx.runChildren(ts, ins, yieldBlock)
+				val := ts.Value.(string)
+				node.SetContent(val)
+				returnValue = val
+			case "name":
+				node := scope.Value.(xml.Node)
+				ts := &Scope{Value:node.Name()}
+				ctx.runChildren(ts, ins, yieldBlock)
+				node.SetName(ts.Value.(string))
+				returnValue = ts.Value.(string)
+
+			// LIBXML FUNCTIONS
+			case "insert_at.Position.Text":
+				node := scope.Value.(xml.Node)
+				position := args[0].(Position)
+				tagName := args[1].(string)
+				element := node.Doc().NewElement(tagName)
+				MoveFunc(element, node, position)
+				ns := &Scope{Value: element}
+				ctx.runChildren(ns, ins, yieldBlock)
+
+			// ATTRIBUTE FUNCTIONS
+			case "attribute.Text":
+				node := scope.Value.(xml.Node)
+				attr, _ := node.Attribute(args[0].(string))
+				as := &Scope{Value:attr}
+				ctx.runChildren(as, ins, yieldBlock)
+				if attr.IsLinked() && (attr.Content() == "") {
+					attr.Remove()
+				}
+				if !attr.IsLinked() {
+					attr.Free()
+				}
+				returnValue = "true"
+				
 			default:
 				println("Must implement", fun.Name)
 			}
@@ -341,3 +406,18 @@ func (ctx *Ctx) runChildren(scope *Scope, ins *tp.Instruction, yieldBlock *tp.In
 	}
 	return
 }
+
+func MoveFunc(what, where xml.Node, position Position) {
+	//what.Remove()
+	switch position {
+	case BOTTOM:
+		where.AppendChildNode(what)
+	case TOP:
+		where.PrependChildNode(what)
+	case BEFORE:
+		where.AddNodeBefore(what)
+	case AFTER:
+		where.AddNodeAfter(what)
+	}
+}
+
