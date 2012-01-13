@@ -148,7 +148,7 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 	// Check if this function contains any types that have descendants
 
-	println("Checking for inheritance on function:", fun.Stub() )
+	println("Checking for inheritance on function:", fun.Stub(pkg.Package) )
 
 	newFun := &tp.Function{}
 	inherit := false
