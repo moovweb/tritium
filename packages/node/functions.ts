@@ -70,6 +70,22 @@
   }
 }
 
+@func Node.move_here(Text %where, Position %pos) {
+  %parent = this()
+  select(%where) {
+    move(this(), %parent, %pos)
+    yield()
+  }
+}
+
+@func Node.move_here(Text %where, Text %pos) {
+  move_here(%where, position(%pos))
+}
+
+@func Node.move_here(Text %where) {
+  move_here(%where, position("bottom"))
+}
+
 # DIRECTIONALS... UGH.
 
 @func Node.insert(Text %value) {

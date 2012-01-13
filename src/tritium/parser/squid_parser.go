@@ -4,6 +4,7 @@ import (
   "goprotobuf.googlecode.com/hg/proto"
   ir "tritium/proto"
   "io/ioutil"
+  "path/filepath"
   . "tritium/tokenizer" // was meant to be in this package
   "path"
   //"fmt"
@@ -35,6 +36,7 @@ func (p *Parser) pop() *Token {
 }
 
 func MakeParser(fullpath string) *Parser {
+  fullpath, _ = filepath.Abs(fullpath)
   src, _ := ioutil.ReadFile(fullpath)
   d, f := path.Split(fullpath)
   p := &Parser {

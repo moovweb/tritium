@@ -19,7 +19,8 @@ func ParseFileSet(file string) ([]*tp.ScriptObject) {
 	files := make(map[string]int)
 	objs = append(objs, ParseFile(file))
 	files[file] = 1
-	for _, obj := range(objs) {
+	for i := 0; i < len(objs); i++ {
+		obj := objs[i]
 		for _, importFile := range(obj.Imports()) {
 			if(files[importFile] == 0) {
 				objs = append(objs, ParseFile(importFile))
