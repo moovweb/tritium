@@ -14,13 +14,18 @@ func All(directory string) {
 	eng := shark.NewEngine(logger) 
 	pkg := packager.BuildDefaultPackage(PackagePath)
 
-	globalResult := newResult()
+	globalResult := NewResult()
 	globalResult.all(directory, pkg.Package, eng)
 
 	// TODO : Walk over the results here and print errors. 
 
 	for _, error := range(globalResult.Errors) {
-		Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", error.Name, error.Message, error.Got, error.Expected)
+		if error.Panic {
+			Printf("Had panic in", error.Name, "\n", error.Message)
+		} else {
+			Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", error.Name, error.Message, error.Got, error.Expected)
+		}
+		println("\n=========================================\n")
 	}
 
 }
@@ -40,18 +45,15 @@ func (result *Result)all(directory string, pkg *tp.Package, eng Engine) {
 }
 
 func (result *Result)Run(dir string, pkg *tp.Package, eng Engine) {
+	this_result := NewResult()
+	defer func() {
+			//log.Println("done")  // Println executes normally even in there is a panic
+			//if x := recover(); x != nil {
+			//	this_result.Error(dir, Sprintf("run time panic: %v", x))
+			//}
+			print(this_result.CharStatus())
+			result.Merge(this_result)
+		}()
 	spec := LoadSpec(dir, pkg)
-	this_result := spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars))
-	if this_result.Passed() {
-		print(".")
-		this_result = spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars))
-		if this_result.Passed() {
-			print(".")
-		} else {
-			print("R")
-		}
-	} else {
-		result.Merge(this_result)
-		print("F")
-	}
+	this_result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
 }

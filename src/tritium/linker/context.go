@@ -147,12 +147,11 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			}
 			funcId, ok := ctx.funList[scopeType][stub]
 			if ok != true {
-			println("Available functions (", len(ctx.funList[scopeType]), "):")
+				message := "Available functions...\n"
 				for funcName, _ := range(ctx.funList[scopeType]) {
-					println(funcName)
+					message = message + funcName + "\n"
 				}
-				println(scopeType)
-				log.Panic("No such function found....", ins.String(), "with the scope: ", ctx.types[scopeType], " and stub ", stub)
+				log.Panic(message + "No such function found....", ins.String(), "with the scope: ", ctx.types[scopeType], " and stub ", stub)
 			}
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
