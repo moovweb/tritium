@@ -10,3 +10,4 @@ pkg
 BUILD_VERSION
 bin/tritium
 src/tritium/main/tritium
+log/*

@@ -4,8 +4,6 @@ import(
 	. "tritium/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	"log"
-	"fmt"
-	//packager "tritium/packager"
 )
 
 type FuncMap map[string]int;
@@ -44,7 +42,8 @@ func NewLinkingContext(pkg *Package) (*LinkingContext){
 		//println("Implements:", proto.GetInt32(typeObj.Implements))
 		implements := functionLookup[proto.GetInt32(typeObj.Implements)]
 		for index, fun := range(pkg.Functions) {
-			stub := fun.Stub()
+			stub := fun.Stub(pkg)
+
 			funScopeId := proto.GetInt32(fun.ScopeTypeId)
 			inherited := false
 			if implements != nil {
@@ -125,14 +124,10 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				if len(ins.Arguments) > 0 {
 					// We are going to assign something to this variable
 					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope)
-					// Duplicate the localScope before we go messing with my parents scope
-					parentScope := localScope
-					localScope = make(LocalDef, len(parentScope))
-					for s, t := range(parentScope) {
-						localScope[s] = t
-					}
-					localScope[proto.GetString(ins.Value)] = returnType
+					localScope[name] = returnType
 				} else {
+					println(ins.String())
+					println("referenced: ", localScope)
 					log.Panic("I've never seen the variable %", name, " before! Please assign a value before usage.")
 				}
 			}
@@ -147,17 +142,16 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 					if argReturn == -1 {
 						log.Panic("Invalid argument object", arg.String())
 					}
-					stub = stub + "," + fmt.Sprintf("%d", argReturn)
+					stub = stub + "," + ctx.types[argReturn]
 				}
 			}
 			funcId, ok := ctx.funList[scopeType][stub]
 			if ok != true {
-				println("Available functions...")
+				message := "Available functions...\n"
 				for funcName, _ := range(ctx.funList[scopeType]) {
-					println(funcName)
+					message = message + funcName + "\n"
 				}
-				println(scopeType)
-				log.Panic("No such function found....", ins.String(), "with the scope: ", ctx.types[scopeType], " and stub ", stub)
+				log.Panic(message + "No such function found....", ins.String(), "with the scope: ", ctx.types[scopeType], " and stub ", stub)
 			}
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
@@ -167,8 +161,22 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				// If we're a Base scope, don't mess with texas!
 				opensScopeType = scopeType
 			}
+		        // If it inherits:
+		        inheritedOpensScopeType := ctx.Pkg.FindDescendantType( int32( opensScopeType ) )
+		        if inheritedOpensScopeType != -1 {
+			        opensScopeType = inheritedOpensScopeType
+		        }
+
+
 			//println("Zomg, found function", fun.String())
 			//println("I open a Scope of type ", opensScopeType)
+			
+			// Copy the local scope
+			parentScope := localScope
+			localScope = make(LocalDef, len(parentScope))
+			for s, t := range(parentScope) {
+				localScope[s] = t
+			}
 			
 			if ins.Children != nil {
 				for _, child := range(ins.Children) {

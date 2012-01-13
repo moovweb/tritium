@@ -3,11 +3,30 @@ package shark
 import(
 	tp "tritium/proto"
 	"libxml/xpath"
+	xml "libxml/tree"
 	"rubex"
 	"strings"
 	"log4go"
+	"os"
+	"libxml"
 	proto "goprotobuf.googlecode.com/hg/proto"
 )
+
+type Position int;
+const (
+	TOP = iota;
+	BOTTOM
+	BEFORE
+	AFTER
+)
+var Positions = map[string]Position{
+	"TOP":    TOP,
+	"BOTTOM": BOTTOM,
+	"BEFORE": BEFORE,
+	"AFTER":  AFTER,
+	"ABOVE":  BEFORE,
+	"BELOW":  BOTTOM,
+}
 
 type Shark struct {
 	RegexpCache map[string]*rubex.Regexp
@@ -128,11 +147,6 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 			case "yield": 
 				returnValue = ctx.runChildren(scope, yieldBlock, nil)
 				yieldBlock = nil
-			case "concat.Text.Text":
-				//println("Concat:", args[0].(string), "+", args[1].(string))
-				returnValue = args[0].(string) + args[1].(string)
-			case "concat.Text.Text.Text": //REMOVE
-				returnValue = args[0].(string) + args[1].(string) + args[2].(string)
 			case "var.Text":
 				val := ctx.Env[args[0].(string)]
 				ts := &Scope{Value: val}
@@ -198,7 +212,15 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 					}
 				}
 			case "regexp.Text.Text":
-				returnValue = rubex.MustCompile(args[0].(string))
+				mode := rubex.ONIG_OPTION_DEFAULT
+				if strings.Index(args[1].(string), "i") >= 0 {
+					mode = rubex.ONIG_OPTION_IGNORECASE
+				}
+				var err os.Error
+				returnValue, err = rubex.NewRegexp(args[0].(string), mode)
+				if err != nil {
+					panic("Invalid regexp")
+				}
 			case "export.Text":
 				val := make([]string, 2)
 				val[0] = args[0].(string)
@@ -208,6 +230,19 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				ctx.Exports = append(ctx.Exports, val)
 			case "log.Text":
 				ctx.Logs = append(ctx.Logs, args[0].(string))
+			
+			// ATOMIC FUNCTIONS
+			case "concat.Text.Text":
+				//println("Concat:", args[0].(string), "+", args[1].(string))
+				returnValue = args[0].(string) + args[1].(string)
+			case "concat.Text.Text.Text": //REMOVE
+				returnValue = args[0].(string) + args[1].(string) + args[2].(string)
+			case "downcase.Text":
+				returnValue = strings.ToLower(args[0].(string))
+				return
+			case "upcase.Text":
+				returnValue = strings.ToUpper(args[0].(string))
+				return
 				
 			// TEXT FUNCTIONS
 			case "set.Text":
@@ -251,6 +286,94 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				    })
 				})
 				returnValue = scope.Value
+			
+			// XML FUNCTIONS
+			case "xml":
+				doc := libxml.XmlParseString(scope.Value.(string))
+				defer doc.Free()
+				ns := &Scope{Value:doc}
+				ctx.runChildren(ns, ins, yieldBlock)
+				scope.Value = doc.String()
+				returnValue = scope.Value
+			case "html":
+				doc := libxml.HtmlParseString(scope.Value.(string))
+				defer doc.Free()
+				ns := &Scope{Value:doc}
+				ctx.runChildren(ns, ins, yieldBlock)
+				scope.Value = doc.DumpHTML()
+				returnValue = scope.Value
+			case "html_fragment":
+				doc := libxml.HtmlParseFragment(scope.Value.(string))
+				defer doc.Free()
+				ns := &Scope{Value: doc.RootElement()}
+				ctx.runChildren(ns, ins, yieldBlock)
+				scope.Value = ns.Value.(xml.Node).Content()
+				returnValue = scope.Value
+			case "select.Text":
+				// TODO reuse XPath object
+				node := scope.Value.(xml.Node)
+				xpCtx := xpath.NewXPath(node.Doc())
+				xpath := xpath.CompileXPath(args[0].(string))
+				//xpath := ctx.XPath(args[0].(string))
+				nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
+				defer xpCtx.Free()
+				if len(nodeSet) == 0 {
+					returnValue = "false"
+				} else {
+					returnValue = "true"
+				}
+
+				for i := range(nodeSet) {
+					node := nodeSet[i]
+					if (node != nil) && node.IsLinked() && node.IsValid() {
+						ns := &Scope{Value: node}
+						ctx.runChildren(ns, ins, yieldBlock)
+					}
+				}
+			case "position.Text":
+				returnValue = Positions[args[0].(string)]
+				
+			// SHARED NODE FUNCTIONS
+			case "remove":
+				scope.Value.(xml.Node).Remove()
+			case "inner", "value", "inner_text":
+				node := scope.Value.(xml.Node)
+				ts := &Scope{Value:node.Content()}
+				ctx.runChildren(ts, ins, yieldBlock)
+				val := ts.Value.(string)
+				node.SetContent(val)
+				returnValue = val
+			case "name":
+				node := scope.Value.(xml.Node)
+				ts := &Scope{Value:node.Name()}
+				ctx.runChildren(ts, ins, yieldBlock)
+				node.SetName(ts.Value.(string))
+				returnValue = ts.Value.(string)
+
+			// LIBXML FUNCTIONS
+			case "insert_at.Position.Text":
+				node := scope.Value.(xml.Node)
+				position := args[0].(Position)
+				tagName := args[1].(string)
+				element := node.Doc().NewElement(tagName)
+				MoveFunc(element, node, position)
+				ns := &Scope{Value: element}
+				ctx.runChildren(ns, ins, yieldBlock)
+
+			// ATTRIBUTE FUNCTIONS
+			case "attribute.Text":
+				node := scope.Value.(xml.Node)
+				attr, _ := node.Attribute(args[0].(string))
+				as := &Scope{Value:attr}
+				ctx.runChildren(as, ins, yieldBlock)
+				if attr.IsLinked() && (attr.Content() == "") {
+					attr.Remove()
+				}
+				if !attr.IsLinked() {
+					attr.Free()
+				}
+				returnValue = "true"
+				
 			default:
 				println("Must implement", fun.Name)
 			}
@@ -283,3 +406,18 @@ func (ctx *Ctx) runChildren(scope *Scope, ins *tp.Instruction, yieldBlock *tp.In
 	}
 	return
 }
+
+func MoveFunc(what, where xml.Node, position Position) {
+	//what.Remove()
+	switch position {
+	case BOTTOM:
+		where.AppendChildNode(what)
+	case TOP:
+		where.PrependChildNode(what)
+	case BEFORE:
+		where.AddNodeBefore(what)
+	case AFTER:
+		where.AddNodeAfter(what)
+	}
+}
+

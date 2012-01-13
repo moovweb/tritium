@@ -52,45 +52,60 @@
 }
 
 @func Node.move_to(Text %xpath, Position %pos) {
-  # %parent_node = this()
-  # THIS shit breaks. The linker thinks %parent_node returns text
+  %parent_node = this()
   $(%xpath) {
-    # move(%parent_node, this(), %pos)
-#    move(this(), this(), %pos) # stupid, just want it to pass
-    # This is borked even w the above hack. the %pos variable is interpreted as a Text type
+    move(%parent_node, this(), %pos)
     yield()
   }
 }
 
 @func Node.move_to(Text %xpath, Text %pos) {
-  move_to(%xpath, position(%pos))
+  move_to(%xpath, position(%pos)) {
+    yield()
+  }
 }
 
 # DIRECTIONALS... UGH.
 
 @func Node.insert(Text %value) {
-  insert_at(position("bottom"), %value)
+  insert_at(position("bottom"), %value) {
+    yield()
+  }
 }
 @func Node.insert_top(Text %value) {
-  insert_at(position("top"), %value)
+  insert_at(position("top"), %value) {
+    yield()
+  }
 }
 @func Node.insert_after(Text %value) {
-  insert_at(position("after"), %value)
+  insert_at(position("after"), %value) {
+    yield()
+  }
 }
 @func Node.insert_before(Text %value) {
-  insert_at(position("before"), %value)
+  insert_at(position("before"), %value) {
+    yield()
+  }
 }
 
 @func Node.inject(Text %value) {
-  inject_at(position("bottom"), %value)
+  inject_at(position("bottom"), %value) {
+    yield()
+  }
 }
 @func Node.inject_top(Text %value) {
-  inject_at(position("top"), %value)
+  inject_at(position("top"), %value) {
+    yield()
+  }
 }
 @func Node.inject_after(Text %value) {
-  inject_at(position("after"), %value)
+  inject_at(position("after"), %value) {
+    yield()
+  }
 }
 @func Node.inject_before(Text %value) {
-  inject_at(position("before"), %value)
+  inject_at(position("before"), %value) {
+    yield()
+  }
 }
 

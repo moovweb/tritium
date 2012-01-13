@@ -4,6 +4,7 @@ import "os"
 import "tritium/packager"
 //import . "tritium/linker"
 import s "tritium/spec"
+import "tritium"
 
 func show_usage() {
 	println("General purpose Tritium command line interface. Commands are: package, link, test")
@@ -18,13 +19,13 @@ func main() {
 				// Build the package specified by the path
 				path := os.Args[2]
 				
-				pkg := packager.NewPackage()
+				pkg := packager.NewPackage(tritium.PackagePath)
 				pkg.Load(path)
-				pkg.SerializedOutput()				
+				//pkg.SerializedOutput()
 
 			} else {
 				
-				pkg := packager.BuildDefaultPackage()
+				pkg := packager.BuildDefaultPackage(tritium.PackagePath)
 				pkg.SerializedOutput()
 			}
 

@@ -6,7 +6,7 @@
 @func fetch(Text %selector) //Text,Text
 
 // This is how you access the current node
-@func this() //Node,Node
+@func Node.this() //Node,Node
 
 // Casts a string to a Position node
 @func position(Text %position) //Position
@@ -44,8 +44,6 @@
 // Copy some shit
 @func Node.copy_to(Text %xpath, Position %pos)
 
-// Copy and put it here
-@func Node.copy_here(Text %xpath, Position %pos)
 
 // Set the inner stuff
 @func Node.inner() //Text,Node
