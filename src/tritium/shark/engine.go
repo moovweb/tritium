@@ -307,15 +307,39 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 						ctx.runChildren(ns, ins, yieldBlock)
 					}
 				}
+				
+			// SHARED NODE FUNCTIONS
 			case "remove":
 				scope.Value.(xml.Node).Remove()
-			case "inner":
+			case "inner", "value":
 				node := scope.Value.(xml.Node)
 				ts := &Scope{Value:node.Content()}
 				ctx.runChildren(ts, ins, yieldBlock)
 				val := ts.Value.(string)
 				node.SetContent(val)
 				returnValue = val
+			case "name":
+				node := scope.Value.(xml.Node)
+				ts := &Scope{Value:node.Name()}
+				ctx.runChildren(ts, ins, yieldBlock)
+				node.SetName(ts.Value.(string))
+				returnValue = ts.Value.(string)
+
+
+			// ATTRIBUTE FUNCTIONS
+			case "attribute.Text":
+				node := scope.Value.(xml.Node)
+				attr, _ := node.Attribute(args[0].(string))
+				as := &Scope{Value:attr}
+				ctx.runChildren(as, ins, yieldBlock)
+				if attr.IsLinked() && (attr.Content() == "") {
+					attr.Remove()
+				}
+				if !attr.IsLinked() {
+					attr.Free()
+				}
+				returnValue = "true"
+				
 			default:
 				println("Must implement", fun.Name)
 			}

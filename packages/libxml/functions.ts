@@ -25,14 +25,20 @@
 }
 
 
-# @func XMLNode.attribute(Text %name, Text %value) {
-#   attribute(%name) {
-#     value() {
-#       set(%value)
-#     }
-#     yield()
-#   }
-# }
+@func XMLNode.attribute(Text %name, Text %value) {
+  attribute(%name) {
+    value() {
+      set(%value)
+    }
+    yield()
+  }
+}
+
+@func Attribute.value(Text %value) {
+  value() {
+    set(%value)
+  }
+}
 # 
 # @func XMLNode.absolutize() {
 #   # Absolutize IMG and SCRIPT SRCs
