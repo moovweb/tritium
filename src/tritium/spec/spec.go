@@ -100,7 +100,7 @@ func (spec *Spec) Compare(data string, exports [][]string, logs []string) (*Resu
 func (spec *Spec) compareData(data string) (*Result) {
 	result := NewResult()
 	if strings.TrimSpace(spec.Output) != strings.TrimSpace(data) {
-		result.Fail("Bad Output", data, spec.Output, "Didn't match")
+		result.Fail(spec.Location, "Bad Output", data, spec.Output, "Didn't match")
 	}
 	return result
 }
@@ -109,7 +109,7 @@ func (spec *Spec) compareExports(exports [][]string) (*Result) {
 	exportsResult := NewResult()
 
 	if summarizeExports(spec.Exports) != summarizeExports(exports) {
-		exportsResult.Fail("Bad Export", summarizeExports(exports), summarizeExports(spec.Exports), "Missing export(s)")
+		exportsResult.Fail(spec.Location, "Bad Export", summarizeExports(exports), summarizeExports(spec.Exports), "Missing export(s)")
 	}
 
 	return exportsResult
@@ -122,7 +122,7 @@ func (spec *Spec) compareLogs(logs []string) (*Result) {
 	outputSummary := summarizeLogs(logs)
 	
 	if expectedSummary != outputSummary {
-		result.Fail("Bad Log Output", outputSummary, expectedSummary, "Didn't match")
+		result.Fail(spec.Location, "Bad Log Output", outputSummary, expectedSummary, "Didn't match")
 	}
 	return result
 }

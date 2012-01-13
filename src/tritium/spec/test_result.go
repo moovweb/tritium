@@ -1,6 +1,7 @@
 package spec
 
 type error struct {
+	Location string
 	Name string
 	Got string
 	Expected string
@@ -36,17 +37,18 @@ func (r *Result) CharStatus() (string) {
 	return "F"
 }
 
-func (r *Result) Error(name, message string) {
+func (r *Result) Error(loc, message string) {
 	e := &error{
-		Name: name,
+		Location: loc,
 		Message: message,
 		Panic: true,
 	}
 	r.hadPanic = true
 	r.Errors = append(r.Errors, e)
 }
-func (r *Result) Fail(named, got, expected, message string) {
+func (r *Result) Fail(location, named, got, expected, message string) {
 	e := &error{
+		Location: location,
 		Name: named,
 		Got: got,
 		Expected: expected,
