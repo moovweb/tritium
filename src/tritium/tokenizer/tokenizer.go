@@ -38,6 +38,8 @@ var matcher [21]*rubex.Regexp
 var symbolLexeme map[string]Lexeme
 var symbolPattern *rubex.Regexp
 var numberPattern *rubex.Regexp
+var regexpSlashPattern *rubex.Regexp
+var regexpBackQuotePattern *rubex.Regexp
 
 func init() {
   // Is there a more elegant way to do this?
@@ -64,8 +66,11 @@ func init() {
   LexemeName[ERROR]  = "ERROR"
   
   matcher[STRING], _ = rubex.Compile(`\A"(\\.|[^"\\])*"|\A'(\\.|[^'\\])*'`)
-  // the pattern and options of the regexp are in captures 1 and 3
-  matcher[REGEXP], _ = rubex.Compile(`\A\/((\\.|[^\/\\])*)\/([imxouesn]*)`)
+      
+  // the pattern and options of the regexp matches are in captures 1 and 3
+  //regexpSlashPattern, _ = rubex.Compile(`\A\/((\\.|[^\/\\])*)\/([imxouesn]*)`)
+  regexpSlashPattern, _ = rubex.Compile(`\A/((\\.|[^/\\])*)/([imxouesn]*)`)
+  regexpBackQuotePattern, _ = rubex.Compile("\\A`((\\\\.|[^\\`\\\\])*)`([imxouesn]*)")
   matcher[POS], _    = rubex.Compile(`\A(top|bottom|before|after)`)
   matcher[GVAR], _   = rubex.Compile(`\A\$\w+`)
   matcher[LVAR], _   = rubex.Compile(`\A%\w+`)
@@ -253,7 +258,17 @@ func (t *Tokenizer) munch() *Token {
       return t.popError("unterminated string literal")
     }
   } else if t.hasPrefix("/") {
-    if cs := matcher[REGEXP].FindSubmatch(src); len(cs) > 0 {
+    if cs := regexpSlashPattern.FindSubmatch(src); len(cs) > 0 {
+      pattern := cs[1]
+      options := cs[3]
+      val := t.popToken(REGEXP, string(pattern), len(cs[0]))
+      val.ExtraValue = string(options)
+      return val
+    } else {
+      return t.popError("unterminated regular expression literal")
+    }
+  } else if t.hasPrefix("`") {
+    if cs := regexpBackQuotePattern.FindSubmatch(src); len(cs) > 0 {
       pattern := cs[1]
       options := cs[3]
       val := t.popToken(REGEXP, string(pattern), len(cs[0]))

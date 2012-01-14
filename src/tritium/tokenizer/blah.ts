@@ -7,6 +7,8 @@
 
 foo()
 
-# select("div") {
-#   insert("span", class: "foo", read("text.txt"))
-# }
+select("div") {
+  insert("span", class: "foo", read("text.txt"))
+  /^\/home\/blah\.html/i
+  `^/home/(blah|blee)\.html`i
+}
