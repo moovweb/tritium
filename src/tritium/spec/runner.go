@@ -11,7 +11,6 @@ import(
 
 func All(directory string) {
 	logger := make(l4g.Logger)
-	logger.AddFilter("stdout", l4g.ERROR, l4g.NewConsoleLogWriter())
 	logger.AddFilter("test", l4g.ERROR, l4g.NewConsoleLogWriter())
 	l4g.Global = logger
 	eng := shark.NewEngine(logger) 
@@ -19,6 +18,8 @@ func All(directory string) {
 
 	globalResult := NewResult()
 	globalResult.all(directory, pkg.Package, eng, logger)
+	
+	logger.AddFilter("stdout", l4g.ERROR, l4g.NewConsoleLogWriter())
 
 	// TODO : Walk over the results here and print errors. 
 
@@ -59,7 +60,7 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 				result.Error(dir, Sprintf("run time panic: %v", x))
 			}
 			for _, rec := range(logWriter.Logs) {
-				println("HAZ LOGS")
+				//println("HAZ LOGS")
 				error := l4g.FormatLogRecord("[%D %T] [%L] (%S) %M", rec)
 				result.Error(dir, error)
 			}
