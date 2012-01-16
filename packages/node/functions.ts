@@ -48,6 +48,11 @@
     } 
   }
 }
+@func Node.copy_to(Text %xpath, Text %pos) {
+  copy_to(%xpath, position(%pos)) {
+    yield()
+  } 
+}
 
 @func Node.copy_to(Text %xpath) {
   copy_to(%xpath, position()) {
