@@ -28,7 +28,11 @@ func main() {
 				pkg := packager.BuildDefaultPackage(tritium.PackagePath)
 				pkg.SerializedOutput()
 			}
-
+		} else if command == "pkginfo" {
+			name := os.Args[2]
+			pkg := packager.NewPackage(tritium.PackagePath)
+			pkg.Load(name)
+			println(pkg.DebugInfo())
 		} else if command == "link" {
 			println("Linking files found in the directory:", os.Args[2])
 			//LinkerToBytes(os.Args[2])

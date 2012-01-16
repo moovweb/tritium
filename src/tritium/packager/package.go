@@ -379,3 +379,11 @@ func (pkg *Package)SerializedOutput() {
 	}
 	println(string(bytes))
 }
+
+func (pkg *Package) DebugInfo() (string) {
+	result := ""
+	for _, fun := range(pkg.Package.Functions) {
+		result = result + fun.DebugInfo(pkg.Package) + "\n"
+	}
+	return result
+}
