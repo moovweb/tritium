@@ -45,8 +45,4 @@
 @func Node.copy_to(Text %xpath, Position %pos)  Text
 
 
-// Set the inner stuff
-@func Node.inner() Text Node
-
-
 @func Node.set(Text %value) Text

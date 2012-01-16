@@ -106,3 +106,9 @@
   }
 }
 
+@func XMLNode.inner(Text %html) {
+  inner() {
+    set(%html) 
+    yield() 
+  } 
+}

@@ -49,13 +49,6 @@
   } 
 }
     
-@func Node.inner(Text %html) {
-  inner() {
-    set(%html) 
-    yield() 
-  } 
-}
-
 @func Node.move_to(Text %xpath, Position %pos) {
   %parent_node = this()
   $(%xpath) {
