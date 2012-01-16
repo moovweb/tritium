@@ -9,6 +9,7 @@ import(
 	l4g "log4go"
 	"os"
 	"libxml"
+	"fmt"
 	proto "goprotobuf.googlecode.com/hg/proto"
 )
 
@@ -54,6 +55,7 @@ type Function struct {
 
 type Scope struct {
 	Value interface{}
+	Index int
 }
 
 func NewEngine(logger l4g.Logger) (*Shark) {
@@ -249,6 +251,8 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 			case "upcase.Text":
 				returnValue = strings.ToUpper(args[0].(string))
 				return
+			case "index.XMLNode":
+				returnValue = fmt.Sprintf("%d", scope.Index)
 				
 			// TEXT FUNCTIONS
 			case "set.Text":
@@ -329,9 +333,9 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 					returnValue = "true"
 				}
 
-				for _              , node := range(nodeSet) {
+				for index, node := range(nodeSet) {
 					if (node != nil) && node.IsLinked() && node.IsValid() {
-						ns := &Scope{Value: node}
+						ns := &Scope{Value: node, Index: index}
 						ctx.runChildren(ns, ins, yieldBlock)
 					}
 				}
