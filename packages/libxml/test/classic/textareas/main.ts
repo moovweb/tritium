@@ -1,3 +1,5 @@
+$use_global_replace_vars = "true"
+
 replace(/<textarea([^>]*)>(.*)<\/textarea>/m) {
   $2 {
     replace(/</, "&lt;")

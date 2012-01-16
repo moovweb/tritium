@@ -219,6 +219,9 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				if strings.Index(args[1].(string), "i") >= 0 {
 					mode = rubex.ONIG_OPTION_IGNORECASE
 				}
+				if strings.Index(args[1].(string), "m") >= 0 {
+					mode = rubex.ONIG_OPTION_MULTILINE
+				}
 				var err os.Error
 				returnValue, err = rubex.NewRegexp(args[0].(string), mode)
 				if err != nil {
