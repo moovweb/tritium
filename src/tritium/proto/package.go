@@ -14,6 +14,10 @@ func (pkg *Package) GetTypeId(name string) (int) {
 	return -1
 }
 
+func (pkg *Package) GetTypeName(id int32) (string) {
+	return proto.GetString(pkg.Types[id].Name)
+}
+
 func (pkg *Package) GetProtoTypeId(name *string) (*int32) {
 	scopeTypeId := 0
 

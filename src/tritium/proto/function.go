@@ -32,3 +32,34 @@ func (fun *Function)Clone() (*Function) {
 
 	return newFun
 }
+
+func (fun *Function) NameString() (string) {
+	return proto.GetString(fun.Name)
+}
+func (fun *Function) ReturnTypeString(pkg *Package) (string) {
+	return pkg.GetTypeName(proto.GetInt32(fun.ReturnTypeId))
+}
+func (fun *Function) ScopeTypeString(pkg *Package) (string) {
+	return pkg.GetTypeName(proto.GetInt32(fun.ScopeTypeId))
+}
+func (fun *Function) OpensTypeString(pkg *Package) (string) {
+	return pkg.GetTypeName(proto.GetInt32(fun.OpensTypeId))
+}
+
+func (fun *Function) DebugInfo(pkg *Package) (string) {
+	name := fun.NameString()
+	scopeType := fun.ScopeTypeString(pkg)
+	returnType := fun.ReturnTypeString(pkg)
+	openType := fun.OpensTypeString(pkg)
+	
+	args := ""
+	for _, arg := range(fun.Args) {
+		argName := proto.GetString(arg.TypeString)
+		if argName == "" {
+			argName = pkg.GetTypeName(proto.GetInt32(arg.TypeId))
+		}
+		args = args + "," + argName
+	}
+	
+	return "@func " + scopeType + "." + name + "(" + args + ") " + returnType + " " + openType
+}
