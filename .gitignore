@@ -3,6 +3,7 @@
 *.6
 *_test/
 _obj/
+_bin/
 tmp/*
 .DS_Store
 pkg
