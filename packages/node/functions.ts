@@ -17,6 +17,7 @@
 @func Node.name(Text %value) {
   name() {
     set(%value)
+    yield()
   }
 }
 
@@ -95,11 +96,15 @@
 }
 
 @func Node.move_here(Text %where, Text %pos) {
-  move_here(%where, position(%pos))
+  move_here(%where, position(%pos)) {
+    yield()
+  }
 }
 
 @func Node.move_here(Text %where) {
-  move_here(%where, position("bottom"))
+  move_here(%where, position("bottom")) {
+    yield()
+  }
 }
 
 # DIRECTIONALS... UGH.

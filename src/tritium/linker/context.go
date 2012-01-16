@@ -133,6 +133,9 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			}
 		case Instruction_FUNCTION_CALL:
 			stub := proto.GetString(ins.Value)
+			if stub == "yield" {
+				ins.YieldTypeId = proto.Int32(int32(scopeType))
+			}
 			if ins.Arguments != nil {
 				for _, arg := range(ins.Arguments) {
 				//fmt.Printf("\narg:(%v)\n", arg)
@@ -161,11 +164,11 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				// If we're a Base scope, don't mess with texas!
 				opensScopeType = scopeType
 			}
-		        // If it inherits:
-		        inheritedOpensScopeType := ctx.Pkg.FindDescendantType( int32( opensScopeType ) )
-		        if inheritedOpensScopeType != -1 {
-			        opensScopeType = inheritedOpensScopeType
-		        }
+			// If it inherits:
+			inheritedOpensScopeType := ctx.Pkg.FindDescendantType( int32( opensScopeType ) )
+			if inheritedOpensScopeType != -1 {
+				opensScopeType = inheritedOpensScopeType
+			}
 
 
 			//println("Zomg, found function", fun.String())

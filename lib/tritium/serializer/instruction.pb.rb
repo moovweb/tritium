@@ -21,5 +21,6 @@ class Instruction
   repeated :arguments, Instruction, 5
   optional :function_id, :int32, 6
   optional :line_number, :int32, 7
+  optional :yield_type_id, :int32, 8
 
 end

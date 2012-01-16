@@ -19,7 +19,6 @@
 @func Node.text() Text Text
 
 // Move the first node, to the second node.
-@func Node.move(Node %what, Node %where, Position %pos) Text
 @func Node.move(Node %what, Node %where, Position %pos) Text Node
 
 // Copies the node and yields to it

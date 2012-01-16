@@ -73,6 +73,11 @@ func MakeBlock(children []*Instruction) *Instruction {
   }
 }
 
+func (ins *Instruction) GetFunction(pkg *Package) (*Function) {
+	funId := proto.GetInt32(ins.FunctionId)
+	return pkg.Functions[int(funId)]
+}
+
 func (instr *Instruction) Append(more ...*Instruction) {
   if instr.Children == nil {
     instr.Children = more
