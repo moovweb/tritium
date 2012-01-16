@@ -14,6 +14,12 @@
   }
 }
 
+@func Node.name(Text %value) {
+  name() {
+    set(%value)
+  }
+}
+
 @func Node.copy_here(Text %xpath, Position %pos) {
   %calling_node = this()
   $(%xpath) {
