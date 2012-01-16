@@ -6,11 +6,11 @@ import(
 	. "path/filepath"
 	"tritium/shark"
 	. "fmt"
-	"log4go"
+	l4g "log4go"
 )
 
 func All(directory string) {
-	logger := log4go.NewDefaultLogger(log4go.FINEST)
+	logger := l4g.NewDefaultLogger(l4g.FINEST)
 	eng := shark.NewEngine(logger) 
 	pkg := packager.BuildDefaultPackage(PackagePath)
 
@@ -46,11 +46,16 @@ func (result *Result)all(directory string, pkg *tp.Package, eng Engine) {
 
 func (result *Result)Run(dir string, pkg *tp.Package, eng Engine) {
 	this_result := NewResult()
+	standardLogger := l4g.Global
+	l4g.Global = make(l4g.Logger)
+	logWriter := NewLogWriter()
+	l4g.Global.AddFilter("", l4g.ERROR, logWriter)
 	defer func() {
 			//log.Println("done")  // Println executes normally even in there is a panic
 			if x := recover(); x != nil {
 				this_result.Error(dir, Sprintf("run time panic: %v", x))
 			}
+			l4g.Global = standardLogger
 			print(this_result.CharStatus())
 			result.Merge(this_result)
 		}()

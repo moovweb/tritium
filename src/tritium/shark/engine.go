@@ -6,7 +6,7 @@ import(
 	xml "libxml/tree"
 	"rubex"
 	"strings"
-	"log4go"
+	l4g "log4go"
 	"os"
 	"libxml"
 	proto "goprotobuf.googlecode.com/hg/proto"
@@ -31,7 +31,7 @@ var Positions = map[string]Position{
 type Shark struct {
 	RegexpCache map[string]*rubex.Regexp
 	XPathCache map[string]*xpath.Expression
-	Logger log4go.Logger
+	Logger l4g.Logger
 }
 
 type Ctx struct {
@@ -56,7 +56,7 @@ type Scope struct {
 	Value interface{}
 }
 
-func NewEngine(logger log4go.Logger) (*Shark) {
+func NewEngine(logger l4g.Logger) (*Shark) {
 	e := &Shark{
 		RegexpCache: make(map[string]*rubex.Regexp),
 		XPathCache: make(map[string]*xpath.Expression),
@@ -414,7 +414,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				returnValue = "true"
 				
 			default:
-				println("Must implement", fun.Name)
+				l4g.Error("Must implement", fun.Name)
 			}
 		} else { // We are using a user-defined function
 			// Store the current frame
