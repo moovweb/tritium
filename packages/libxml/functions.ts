@@ -112,3 +112,33 @@
     yield() 
   } 
 }
+
+# POSITIONALS
+# siblings of these are in node, but these use Inner so are here.
+@func Node.insert_at(Position %pos, Text %tag, Text %content) {
+  insert_at(%pos, %tag) {
+    inner(%content)
+    yield()
+  }
+}
+@func Node.insert(Text %tag, Text %inner) {
+  insert_at(position(), %tag, %inner) {
+    yield()
+  }
+}
+@func Node.insert_top(Text %tag, Text %inner) {
+  insert_at(position("top"), %tag, %inner) {
+    yield()
+  }
+}
+@func Node.insert_after(Text %tag, Text %inner) {
+  insert_at(position("after"), %tag, %inner) {
+    yield()
+  }
+}
+@func Node.insert_before(Text %tag, Text %inner) {
+  insert_at(position("before"), %tag, %inner) {
+    yield()
+  }
+}
+

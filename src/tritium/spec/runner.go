@@ -52,9 +52,9 @@ func (result *Result)Run(dir string, pkg *tp.Package, eng Engine) {
 	l4g.Global.AddFilter("", l4g.ERROR, logWriter)
 	defer func() {
 			//log.Println("done")  // Println executes normally even in there is a panic
-			if x := recover(); x != nil {
-				this_result.Error(dir, Sprintf("run time panic: %v", x))
-			}
+			//if x := recover(); x != nil {
+			//	this_result.Error(dir, Sprintf("run time panic: %v", x))
+			//}
 			l4g.Global = standardLogger
 			print(this_result.CharStatus())
 			result.Merge(this_result)

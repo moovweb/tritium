@@ -98,29 +98,29 @@
 
 # DIRECTIONALS... UGH.
 
-@func Node.insert(Text %value) {
-  insert_at(position("bottom"), %value) {
+@func Node.insert(Text %tag) {
+  insert_at(position("bottom"), %tag) {
     yield()
   }
 }
-@func Node.insert_top(Text %value) {
-  insert_at(position("top"), %value) {
+@func Node.insert_top(Text %tag) {
+  insert_at(position("top"), %tag) {
     yield()
   }
 }
-@func Node.insert_after(Text %value) {
-  insert_at(position("after"), %value) {
+@func Node.insert_after(Text %tag) {
+  insert_at(position("after"), %tag) {
     yield()
   }
 }
-@func Node.insert_before(Text %value) {
-  insert_at(position("before"), %value) {
+@func Node.insert_before(Text %tag) {
+  insert_at(position("before"), %tag) {
     yield()
   }
 }
 
-@func Node.inject(Text %value) {
-  inject_at(position("bottom"), %value) {
+@func Node.inject(Text %html) {
+  inject_at(position("bottom"), %html) {
     yield()
   }
 }

@@ -145,8 +145,10 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 			case "this":
 				returnValue = scope.Value
 			case "yield": 
-				returnValue = ctx.runChildren(scope, yieldBlock, nil)
-				yieldBlock = nil
+				if yieldBlock != nil {
+					returnValue = ctx.runChildren(scope, yieldBlock, nil)
+					yieldBlock = nil
+				}
 			case "var.Text":
 				val := ctx.Env[args[0].(string)]
 				ts := &Scope{Value: val}
