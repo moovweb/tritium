@@ -252,7 +252,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				returnValue = strings.ToUpper(args[0].(string))
 				return
 			case "index.XMLNode":
-				returnValue = fmt.Sprintf("%d", scope.Index)
+				returnValue = fmt.Sprintf("%d", scope.Index + 1)
 				
 			// TEXT FUNCTIONS
 			case "set.Text":
