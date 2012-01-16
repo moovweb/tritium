@@ -54,8 +54,7 @@ func NewPackage(loadPath string) (*Package){
 }
 
 func newLog() (log4go.Logger) {
-	// TODO : Make a log directory and put the output there
-	pkgLog := log4go.NewLogger()
+	pkgLog := make(log4go.Logger)
 	os.Mkdir("log", uint32(0777) )
 
 	pkgLog.AddFilter("file", log4go.FINE, log4go.NewFileLogWriter("log/debug.log", false))	

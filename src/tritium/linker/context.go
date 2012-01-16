@@ -85,7 +85,7 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 		ctx.ProcessInstruction(obj.Root, scopeType)
 	} else {
 		if scopeType != int(proto.GetInt32(obj.ScopeTypeId)) {
-			log.Crash("Imported a script in two different scopes!")
+			log.Error("Imported a script in two different scopes!")
 		}
 		//println("Already linked", proto.GetString(obj.Name))
 	}
@@ -104,7 +104,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			importValue := proto.GetString(ins.Value)
 			importId, ok := ctx.objMap[importValue]
 			if ok != true {
-				log.Crash("Invalid import ", ins.String())
+				log.Error("Invalid import ", ins.String())
 			}
 			// Make sure this object is linked with the right scopeType
 			ctx.link(importId, scopeType)
@@ -118,7 +118,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			if found {
 				returnType = typeId
 				if len(ins.Arguments) > 0 {
-					log.Crash("The local variable %", name, " has been assigned before and cannot be reassigned!")
+					log.Error("The local variable %", name, " has been assigned before and cannot be reassigned!")
 				}
 			} else {
 				if len(ins.Arguments) > 0 {
@@ -128,7 +128,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				} else {
 					println(ins.String())
 					println("referenced: ", localScope)
-					log.Crash("I've never seen the variable %", name, " before! Please assign a value before usage.")
+					log.Error("I've never seen the variable %", name, " before! Please assign a value before usage.")
 				}
 			}
 		case Instruction_FUNCTION_CALL:
@@ -139,7 +139,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				//fmt.Printf("localScope: (%v) \n", localScope)
 					argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope)
 					if argReturn == -1 {
-						log.Crash("Invalid argument object", arg.String())
+						log.Error("Invalid argument object", arg.String())
 					}
 					stub = stub + "," + ctx.types[argReturn]
 				}
@@ -151,7 +151,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 					message = message + funcName + "\n"
 				}
 				log.Debug(message)
-				log.Crash("No such function found....", ins.String(), "with the scope: ", ctx.types[scopeType], " and stub ", stub)
+				log.Error("No such function found....", ins.String(), "with the scope: ", ctx.types[scopeType], " and stub ", stub)
 			}
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]

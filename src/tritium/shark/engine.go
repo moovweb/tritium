@@ -31,7 +31,7 @@ var Positions = map[string]Position{
 type Shark struct {
 	RegexpCache map[string]*rubex.Regexp
 	XPathCache map[string]*xpath.Expression
-	Logger l4g.Logger
+	Log l4g.Logger
 }
 
 type Ctx struct {
@@ -60,7 +60,7 @@ func NewEngine(logger l4g.Logger) (*Shark) {
 	e := &Shark{
 		RegexpCache: make(map[string]*rubex.Regexp),
 		XPathCache: make(map[string]*xpath.Expression),
-		Logger: logger,
+		Log: logger,
 	}
 	return e
 }
@@ -149,6 +149,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 					returnValue = ctx.runChildren(scope, yieldBlock, nil)
 					yieldBlock = nil
 				}
+
 			case "var.Text":
 				val := ctx.Env[args[0].(string)]
 				ts := &Scope{Value: val}
@@ -416,7 +417,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				returnValue = "true"
 				
 			default:
-				l4g.Error("Must implement", fun.Name)
+				ctx.Log.Error("Must implement " + fun.Name)
 			}
 		} else { // We are using a user-defined function
 			// Store the current frame
