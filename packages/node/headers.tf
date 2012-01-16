@@ -3,7 +3,7 @@
 @func index(Node %node) Text
 
 // This is how you select an element to pass it to a function.
-@func fetch(Text %selector) Text Text
+@func Node.fetch(Text %selector) Text Text
 
 // This is how you access the current node
 @func Node.this() Node Node

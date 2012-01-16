@@ -14,6 +14,12 @@
   }
 }
 
+@func Node.index() {
+  index(this()) {
+    yield()
+  }
+}
+
 @func Node.name(Text %value) {
   name() {
     set(%value)
