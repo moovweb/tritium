@@ -37,6 +37,18 @@
   } 
 }
 
+// Copy some shit
+@func Node.copy_to(Text %xpath, Position %pos) {
+  %calling_node = this()
+  $(%xpath) {
+    dup() {
+      move(%calling_node, this(), %pos)
+      # same deal as below ... %pos is treated like Text
+      yield() 
+    } 
+  }
+}
+
 @func Node.copy_to(Text %xpath) {
   copy_to(%xpath, position()) {
     yield()

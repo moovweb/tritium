@@ -41,8 +41,5 @@
 @func Node.inject_at(Position %pos, Text %tag_name) Text
 @func Node.inject_at(Text %pos, Text %tag_name) Text
 
-// Copy some shit
-@func Node.copy_to(Text %xpath, Position %pos)  Text
-
 
 @func Node.set(Text %value) Text
