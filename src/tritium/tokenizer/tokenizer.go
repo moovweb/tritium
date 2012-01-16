@@ -98,7 +98,7 @@ type Token struct {
   Lexeme
   Value string
   ExtraValue string
-  LineNum int
+  LineNum int32
 }
 
 func (t *Token) Inspect() string {
@@ -112,7 +112,7 @@ func (t *Token) Inspect() string {
 */
 type Tokenizer struct {
   Source []byte
-  LineNum int
+  LineNum int32
   Lookahead *Token
   unterminatedComment bool
 }
