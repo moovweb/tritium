@@ -3,7 +3,7 @@ package packager
 import(
 	tp "tritium/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
-	yaml "launchpad.net/goyaml/trunk"
+	yaml "launchpad.net/goyaml"
 	"io/ioutil"
 	"log"
 	"strings"
