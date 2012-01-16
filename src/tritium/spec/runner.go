@@ -38,7 +38,8 @@ func (result *Result)all(directory string, pkg *tp.Package, eng Engine, logger l
 
 	if err == nil {
 		//println("running")
-		result.Run(directory, pkg, eng, logger)
+		newResult := RunSpec(directory, pkg, eng, logger)
+		result.Merge(newResult)
 	}
 	subdirs, _ := Glob(Join(directory, "*"))
 	for _, subdir := range(subdirs) {
@@ -46,8 +47,8 @@ func (result *Result)all(directory string, pkg *tp.Package, eng Engine, logger l
 	}
 }
 
-func (result *Result)Run(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) {
-	this_result := NewResult()
+func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result *Result) {
+	result = NewResult()
 	logWriter := NewTestLogWriter()
 	logger["test"] = &l4g.Filter{l4g.DEBUG, logWriter}
 
@@ -55,16 +56,16 @@ func (result *Result)Run(dir string, pkg *tp.Package, eng Engine, logger l4g.Log
 			//log.Println("done")  // Println executes normally even in there is a panic
 			recover()
 			if x := recover(); x != nil {
-				this_result.Error(dir, Sprintf("run time panic: %v", x))
+				result.Error(dir, Sprintf("run time panic: %v", x))
 			}
 			for _, rec := range(logWriter.Logs) {
 				println("HAZ LOGS")
 				error := l4g.FormatLogRecord("[%D %T] [%L] (%S) %M", rec)
-				this_result.Error(dir, error)
+				result.Error(dir, error)
 			}
-			print(this_result.CharStatus())
-			result.Merge(this_result)
+			print(result.CharStatus())
 		}()
 	spec := LoadSpec(dir, pkg)
-	this_result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
+	result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
+	return
 }

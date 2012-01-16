@@ -99,7 +99,7 @@
 # DIRECTIONALS... UGH.
 
 @func Node.insert(Text %tag) {
-  insert_at(position("bottom"), %tag) {
+  insert_at(position(), %tag) {
     yield()
   }
 }

@@ -20,12 +20,12 @@ const (
 	AFTER
 )
 var Positions = map[string]Position{
-	"TOP":    TOP,
-	"BOTTOM": BOTTOM,
-	"BEFORE": BEFORE,
-	"AFTER":  AFTER,
-	"ABOVE":  BEFORE,
-	"BELOW":  BOTTOM,
+	"top":    TOP,
+	"bottom": BOTTOM,
+	"before": BEFORE,
+	"after":  AFTER,
+	"above":  BEFORE,
+	"below":  BOTTOM,
 }
 
 type Shark struct {
