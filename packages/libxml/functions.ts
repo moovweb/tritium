@@ -129,6 +129,12 @@
     yield()
   }
 }
+@func XMLNode.insert_bottom(Text %tag, Text %inner) {
+  insert_at(position("bottom"), %tag) {
+    inner(%inner)
+    yield()
+  }
+}
 @func XMLNode.insert_top(Text %tag, Text %inner) {
   insert_at(position("top"), %tag) {
     inner(%inner)

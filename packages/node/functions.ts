@@ -126,6 +126,11 @@
     yield()
   }
 }
+@func Node.insert_bottom(Text %tag) {
+  insert_at(position(), %tag) {
+    yield()
+  }
+}
 @func Node.insert_top(Text %tag) {
   insert_at(position("top"), %tag) {
     yield()
@@ -143,6 +148,11 @@
 }
 
 @func Node.inject(Text %html) {
+  inject_at(position("bottom"), %html) {
+    yield()
+  }
+}
+@func Node.inject_bottom(Text %html) {
   inject_at(position("bottom"), %html) {
     yield()
   }
