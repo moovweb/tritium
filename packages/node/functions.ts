@@ -93,6 +93,12 @@
   }
 }
 
+@func Node.move_to(Text %xpath) {
+  move_to(%xpath, position()) {
+    yield()
+  }
+}
+
 @func Node.move_here(Text %where, Position %pos) {
   %parent = this()
   select(%where) {
