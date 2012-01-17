@@ -407,4 +407,13 @@ func (pkg *Package) write() {
 	ioutil.WriteFile(outputFilename, bytes, uint32(0666) )
 }
 
+func (pkg *Package) encrypt() {
+	
+}
+
+func (pkg *Package) Decrypt(userKey string) {
+	// Check key
+
+	// If pass
+}
 
