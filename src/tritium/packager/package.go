@@ -62,7 +62,8 @@ func newLog() (log4go.Logger) {
 }
 
 func (pkg *Package)Load(packageName string) {
-	
+	old_location := pkg.location
+
 	location := filepath.Join(pkg.LoadPath, packageName)
 	pkg.location = location
 
@@ -73,13 +74,9 @@ func (pkg *Package)Load(packageName string) {
 	
 	if len(info.Dependencies) > 0 {
 
-		//println("==========\nLoading dependencies:")
-
 		for _, dependency := range(info.Dependencies) {
 			pkg.loadPackageDependency(dependency)
 		}
-
-		//println("done.\n==========")
 
 	}
 
@@ -102,8 +99,14 @@ func (pkg *Package)Load(packageName string) {
 
 	pkg.inheritFunctions()
 
+	pkg.write()
+
 	println(" -- done")
 	pkg.Log.Close()
+	
+	// TODO(SJ) : Kind of lame. Ideally I think we load other packages as whole packages and write a *.Merge method
+	pkg.location = old_location
+
 }
 
 func (pkg *Package)resolveFunction(fun *tp.Function) {
@@ -386,3 +389,22 @@ func (pkg *Package) DebugInfo() (string) {
 	}
 	return result
 }
+
+
+func (pkg *Package) write() {
+	path, name := filepath.Split(pkg.location)
+	outputFilename := filepath.Join(path, name, name + ".tpkg")
+
+	println("output", outputFilename)
+
+	bytes, err := proto.Marshal(pkg.Package)
+	
+	if err != nil {
+		println("Could not marshal package:", name)
+		log.Panic(err)
+	}
+
+	ioutil.WriteFile(outputFilename, bytes, uint32(0666) )
+}
+
+
