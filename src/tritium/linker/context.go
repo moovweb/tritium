@@ -78,10 +78,12 @@ func (ctx *LinkingContext) Link() {
 
 func (ctx *LinkingContext) link(objId, scopeType int) {
 	obj := ctx.Objects[objId]
+	//println("link object", objId)
 	//println(obj.String())
 	if proto.GetBool(obj.Linked) == false {
 		//println("Linking", proto.GetString(obj.Name))
 		obj.ScopeTypeId = proto.Int(scopeType)
+		obj.Linked = proto.Bool(true)
 		ctx.ProcessInstruction(obj.Root, scopeType)
 	} else {
 		if scopeType != int(proto.GetInt32(obj.ScopeTypeId)) {
@@ -102,6 +104,8 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 		case Instruction_IMPORT:
 			// set its import_id and blank the value field
 			importValue := proto.GetString(ins.Value)
+			//println("import: ", importValue)
+			//println(proto.GetInt32(ins.LineNumber))
 			importId, ok := ctx.objMap[importValue]
 			if ok != true {
 				log.Error("Invalid import ", ins.String())

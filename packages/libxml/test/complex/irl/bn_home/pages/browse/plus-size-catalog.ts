@@ -2,7 +2,7 @@ $("body") {
   attribute("class", "mw_plus_size_catalog")
   $("form/div[@id='mainContainer']") {
     # Remove the left bar
-    @import _remove_left_nav.ts
+    @import "_remove_left_nav.ts"
     $("div[@class='contentContainer2']") {
       # Remove empty divs at bottom of page to avoid styling side effects
       $("div[@id='contentMain2']") {
