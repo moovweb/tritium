@@ -2,7 +2,6 @@ package tritium
 
 import (
   "goprotobuf.googlecode.com/hg/proto"
-  t "tritium/tokenizer"
 )
 
 func (ins *Instruction) Iterate(itFunc func(*Instruction)) {
@@ -21,55 +20,62 @@ func List(instrs ...*Instruction) []*Instruction {
   return append(make([]*Instruction, 0), instrs...)
 }
 
-func MakeText(text *t.Token) *Instruction {
+func FoldLeft(funcName string, base *Instruction, seq []*Instruction) (acc *Instruction) {
+  for acc = base; len(seq) > 0; seq = seq[1:] {
+    acc = MakeFunctionCall(funcName, List(acc, seq[0]), nil, *base.LineNumber)
+  }
+  return acc
+}
+
+func MakeText(text string, lineNum int32) *Instruction {
   return &Instruction {
     Type: NewInstruction_InstructionType(Instruction_TEXT),
-    Value: proto.String(text.Value),
-    LineNumber: proto.Int32(text.LineNum),
+    Value: proto.String(text),
+    LineNumber: proto.Int32(lineNum),
   }
 }
 
-func MakePosition(pos *t.Token) *Instruction {
+func MakePosition(pos string, lineNum int32) *Instruction {
   return &Instruction {
     Type: NewInstruction_InstructionType(Instruction_POSITION),
-    Value: proto.String(pos.Value),
-    LineNumber: proto.Int32(pos.LineNum),
+    Value: proto.String(pos),
+    LineNumber: proto.Int32(lineNum),
   }
 }
 
-func MakeImport(path *t.Token) *Instruction {
+func MakeImport(path string, lineNum int32) *Instruction {
   return &Instruction {
     Type: NewInstruction_InstructionType(Instruction_IMPORT),
-    Value: proto.String(path.Value),
-    LineNumber: proto.Int32(path.LineNum),
+    Value: proto.String(path),
+    LineNumber: proto.Int32(lineNum),
   }
 }
 
-func MakeLocalVar(name *t.Token, val *Instruction, children []*Instruction) *Instruction {
+func MakeLocalVar(name string, val *Instruction, block []*Instruction, lineNum int32) *Instruction {
   return &Instruction {
     Type: NewInstruction_InstructionType(Instruction_LOCAL_VAR),
-    Value: proto.String(name.Value),
+    Value: proto.String(name),
     Arguments: List(val),
-    Children: children,
-    LineNumber: proto.Int32(name.LineNum),
+    Children: block,
+    LineNumber: proto.Int32(lineNum),
   }
 }
 
-func MakeFunctionCall(name *t.Token, args []*Instruction, body []*Instruction) *Instruction {
+func MakeFunctionCall(name string, args []*Instruction, block []*Instruction, lineNum int32) *Instruction {
   return &Instruction {
     Type: NewInstruction_InstructionType(Instruction_FUNCTION_CALL),
-    Value: proto.String(name.Value),
+    Value: proto.String(name),
     Arguments: args,
-    Children: body,
-    LineNumber: proto.Int32(name.LineNum),
+    Children: block,
+    LineNumber: proto.Int32(lineNum),
   }
 }
 
-func MakeBlock(children []*Instruction) *Instruction {
+func MakeBlock(children []*Instruction, lineNum int32) *Instruction {
   return &Instruction {
     Type: NewInstruction_InstructionType(Instruction_BLOCK),
     Children: children,
-    LineNumber: children[0].LineNumber,
+    LineNumber: proto.Int32(lineNum),
   }
 }
 
