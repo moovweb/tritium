@@ -4,6 +4,7 @@ import(
 	. "tritium/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	log "log4go"
+	"fmt"
 )
 
 type FuncMap map[string]int;
@@ -13,6 +14,7 @@ type LinkingContext struct {
 	funList []FuncMap
 	textType int
 	types []string
+	files []string
 	*Transform
 }
 
@@ -84,7 +86,9 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 		//println("Linking", proto.GetString(obj.Name))
 		obj.ScopeTypeId = proto.Int(scopeType)
 		obj.Linked = proto.Bool(true)
+		ctx.files = append(ctx.files, proto.GetString(obj.Name))
 		ctx.ProcessInstruction(obj.Root, scopeType)
+		ctx.files = ctx.files[:(len(ctx.files)-1)]
 	} else {
 		if scopeType != int(proto.GetInt32(obj.ScopeTypeId)) {
 			log.Error("Imported a script in two different scopes!")
@@ -158,7 +162,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 					message = message + funcName + "\n"
 				}
 				log.Debug(message)
-				log.Error("No such function found....", ins.String(), "with the scope: ", ctx.types[scopeType], " and stub ", stub)
+				log.Error("No such function found: " + ctx.types[scopeType] + "." + stub + " in file " + ctx.files[(len(ctx.files)-1)] + ":" + fmt.Sprintf("%d", proto.GetInt32(ins.LineNumber)))
 			}
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
