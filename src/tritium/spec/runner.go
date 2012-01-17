@@ -7,6 +7,8 @@ import(
 	"tritium/shark"
 	. "fmt"
 	l4g "log4go"
+	"os"
+	"runtime/debug"
 )
 
 func All(directory string) {
@@ -31,6 +33,7 @@ func All(directory string) {
 			Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", error.Name, error.Message, error.Got, error.Expected)
 		}
 	}
+	println("\n\n")
 }
 
 func (result *Result)all(directory string, pkg *tp.Package, eng Engine, logger l4g.Logger) {
@@ -55,9 +58,8 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 
 	defer func() {
 			//log.Println("done")  // Println executes normally even in there is a panic
-			recover()
 			if x := recover(); x != nil {
-				result.Error(dir, Sprintf("run time panic: %v", x))
+				logger.Error(dir + x.(os.Error).String() + string(debug.Stack()))
 			}
 			for _, rec := range(logWriter.Logs) {
 				//println("HAZ LOGS")
