@@ -31,6 +31,14 @@
 @func Attribute.value(Text %value) {
   value() {
     set(%value)
+    yield()
+  }
+}
+
+@func Attribute.name(Text %name) {
+  name() { 
+    set(%name) 
+    yield()
   }
 }
 
