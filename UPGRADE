@@ -1,0 +1,32 @@
+If you see this error...
+
+[2012/01/17 08:57:59 PST] [EROR] (tritium/linker.(*LinkingContext).ProcessInstructionWithLocalScope:165) No such function found: Text.fetch,Text in file /Users/hcatlin/dev/moov/tritium/packages/libxml/test/complex/irl/bn_home/pages/browse/product-details.ts:0
+
+It means that in the file product-details.ts, there is a function call fetch() that is happening in a Text scope
+instead of a Node scope (where you can fetch from.) Upon inspection, you will find this...
+
+
+    inner_wrap("span") {
+      text() {
+        set(fetch("img/@alt"))
+      }
+    }
+
+The problem is, inside of text(), we are in a Text scope... and we can't fetch() from there.
+So, we just rework it a bit to be....
+
+    inner_wrap("span") {
+      text(fetch("img/@alt"))
+    }
+
+See, here fetch() is called outside of the text() scope. And, we just pass it in as the first argument.
+If an argument wasn't an option, we could have done this...
+
+    inner_wrap("span") {
+      %alt = fetch("img/@alt")
+      text() {
+        set(%alt)
+      }
+    }
+
+The two are basically equivalent.

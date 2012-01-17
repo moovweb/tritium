@@ -390,9 +390,7 @@ $("body") {
                   attribute("data-ur-state", "disabled")
                   attribute("style", "")
                   inner_wrap("span") {
-                    text() {
-                      set(fetch("img/@alt"))
-                    }
+                    text(fetch("img/@alt"))
                   }
                   # Add icons using sprites
                   insert_bottom("div", class: "icons-accordion-closed")
