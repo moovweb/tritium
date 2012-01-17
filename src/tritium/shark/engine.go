@@ -126,12 +126,14 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 		name := proto.GetString(ins.Value)
 		if len(ins.Arguments) > 0 {
 			ctx.LocalVar[name] = ctx.runInstruction(scope, ins.Arguments[0], yieldBlock)
+			//println("Setting ", name, "to", ctx.LocalVar[name])
 		}
 		if len(ins.Children) > 0 {
 			ts := &Scope{Value: ctx.LocalVar[name]}
 			ctx.runChildren(ts, ins, yieldBlock)
 			ctx.LocalVar[name] = ts.Value.(string)
 		}
+		//println("Getting ", name, "as", ctx.LocalVar[name])
 		returnValue = ctx.LocalVar[name]
 	case tp.Instruction_IMPORT:
 		ctx.runChildren(scope, ctx.Objects[int(proto.GetInt32(ins.ObjectId))].Root, nil)
@@ -407,6 +409,9 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 					returnValue = "false"
 				}
 			case "move.XMLNode.XMLNode.Position", "move.Node.Node.Position":
+				//for name, value := range(ctx.LocalVar) {
+				//	println(name, ":", value)
+				//}
 				MoveFunc(args[0].(xml.Node), args[1].(xml.Node), args[2].(Position))
 			case "wrap_text_children.Text":
 				returnValue = "false"
@@ -445,10 +450,11 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 			}
 		} else { // We are using a user-defined function
 			// Store the current frame
-			localVar := ctx.LocalVar
+			//localVar := ctx.LocalVar
 			
+			//println("Resetting localvar")
 			// Setup the new local var
-			ctx.LocalVar = make(map[string]interface{}, len(args))
+			//ctx.LocalVar = make(map[string]interface{}, len(args))
 			for i, arg := range(fun.Args) {
 				ctx.LocalVar[proto.GetString(arg.Name)] = args[i]
 			}
@@ -460,7 +466,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 			returnValue = ctx.runChildren(scope, fun.Instruction, yieldIns)
 			
 			// Put the local var scope back!
-			ctx.LocalVar = localVar
+			//ctx.LocalVar = localVar
 		}
 	}
 	return
