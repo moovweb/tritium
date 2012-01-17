@@ -68,6 +68,7 @@
 @func XMLNode.text(Text %value) {
   text() {
     set(%value)
+    yield()
   }
 }
 
