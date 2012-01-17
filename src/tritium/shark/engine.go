@@ -406,8 +406,25 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp
 				} else {
 					returnValue = "false"
 				}
-			case "move.XMLNode.XMLNode.Position":
+			case "move.XMLNode.XMLNode.Position", "move.Node.Node.Position":
 				MoveFunc(args[0].(xml.Node), args[1].(xml.Node), args[2].(Position))
+			case "wrap_text_children.Text":
+				returnValue = "false"
+				child := scope.Value.(xml.Node).First()
+				index := 0
+				tagName := args[0].(string)
+				for child != nil {
+					text, ok := child.(*xml.Text)
+					childNext := child.Next()
+					if ok {
+						returnValue = "true"
+						wrap := text.Wrap(tagName)
+						ns := &Scope{wrap, index}
+						ctx.runChildren(ns, ins, yieldBlock)
+						index++
+					}
+					child = childNext
+				}
 
 			// ATTRIBUTE FUNCTIONS
 			case "attribute.Text":
