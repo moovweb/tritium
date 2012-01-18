@@ -18,13 +18,16 @@ var SessionUser *User
 
 func FetchSessionUser() *User {
 	home := os.Getenv("HOME")
-	path := filepath.Join(home, ".ssh/moovweb.pub")
+	path := filepath.Join(home, ".ssh/id_rsa.pub")
 
 	if SessionUser != nil {
 		return SessionUser
 	} else {
 		SessionUser = NewUser(path)
 	}
+
+	// TODO(SJ): Make a prompt to ask for the keys location?
+	// The SDK should know where the github key is ...
 
 	if SessionUser == nil {
 		panic("Could not load user information at:" + path)
