@@ -5,6 +5,7 @@ import(
 	proto "goprotobuf.googlecode.com/hg/proto"
 	yaml "launchpad.net/goyaml"
 	"io/ioutil"
+	api "tritium/api"
 	"log"
 	"strings"
 	linker "tritium/linker"
@@ -62,6 +63,13 @@ func newLog() (log4go.Logger) {
 }
 
 func (pkg *Package)Load(packageName string) {
+	user := api.FetchSessionUser()
+	approved := user.RequestFeature("package:" + packageName)
+	
+	if !approved {
+		panic("Package " + packageName + " not approved for use.")
+	}	
+
 	old_location := pkg.location
 
 	location := filepath.Join(pkg.LoadPath, packageName)
@@ -395,7 +403,7 @@ func (pkg *Package) write() {
 	path, name := filepath.Split(pkg.location)
 	outputFilename := filepath.Join(path, name, name + ".tpkg")
 
-	println("output", outputFilename)
+	println(" -- output:", outputFilename)
 
 	bytes, err := proto.Marshal(pkg.Package)
 	
@@ -406,14 +414,3 @@ func (pkg *Package) write() {
 
 	ioutil.WriteFile(outputFilename, bytes, uint32(0666) )
 }
-
-func (pkg *Package) encrypt() {
-	
-}
-
-func (pkg *Package) Decrypt(userKey string) {
-	// Check key
-
-	// If pass
-}
-
