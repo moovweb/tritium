@@ -40,8 +40,14 @@ type Ctx struct {
 	LocalVar map[string]interface{}
 	MatchStack []string
 	MatchShouldContinue []bool
+	Yields []*YieldBlock
 	*Shark
 	*tp.Transform
+}
+
+type YieldBlock struct {
+	Ins *tp.Instruction
+	Vars map[string]interface{}
 }
 
 type Function struct {
@@ -91,13 +97,14 @@ func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]str
 		Logs: make([]string, 0),
 		Env: vars,
 		Transform: transform,
-		LocalVar: make(map[string]interface{}, 0),
 		MatchStack: make([]string, 0),
 		MatchShouldContinue: make([]bool, 0),
+		Yields: make([]*YieldBlock, 0),
 	}
+	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars:make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
 	scope := &Scope{Value:input}
-	ctx.runInstruction(scope, transform.Objects[0].Root, nil)
+	ctx.runInstruction(scope, transform.Objects[0].Root, )
 	data = scope.Value.(string)
 	exports = ctx.Exports
 	logs = ctx.Logs
@@ -110,65 +117,70 @@ func (ctx *Ctx) matchShouldContinue() (bool) {
 func (ctx *Ctx) matchTarget() (string) {
 	return ctx.MatchStack[len(ctx.MatchStack)-1]
 }
+func (ctx *Ctx) yieldBlock() (*YieldBlock) {
+	return ctx.Yields[(len(ctx.Yields)-1)]
+}
+func (ctx *Ctx) vars() (map[string]interface{}) {
+	return ctx.yieldBlock().Vars
+}
 
-func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction, yieldBlock *tp.Instruction) (returnValue interface{}) {
+func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
 	returnValue = ""
 	switch *ins.Type {
 	case tp.Instruction_BLOCK:
-		returnValue = ctx.runChildren(scope, ins, yieldBlock)
+		returnValue = ctx.runChildren(scope, ins)
 	case tp.Instruction_TEXT:
 		returnValue = proto.GetString(ins.Value)
 	case tp.Instruction_LOCAL_VAR:
 		name := proto.GetString(ins.Value)
+		vars := ctx.vars()
 		if len(ins.Arguments) > 0 {
-			ctx.LocalVar[name] = ctx.runInstruction(scope, ins.Arguments[0], yieldBlock)
+			vars[name] = ctx.runInstruction(scope, ins.Arguments[0])
 			//println("Setting ", name, "to", ctx.LocalVar[name])
 		}
 		if len(ins.Children) > 0 {
 			ts := &Scope{Value: ctx.LocalVar[name]}
-			ctx.runChildren(ts, ins, yieldBlock)
-			ctx.LocalVar[name] = ts.Value.(string)
+			ctx.runChildren(ts, ins)
+			vars[name] = ts.Value.(string)
 		}
 		//println("Getting ", name, "as", ctx.LocalVar[name])
-		returnValue = ctx.LocalVar[name]
+		returnValue = vars[name]
 	case tp.Instruction_IMPORT:
-		ctx.runChildren(scope, ctx.Objects[int(proto.GetInt32(ins.ObjectId))].Root, nil)
+		ctx.runChildren(scope, ctx.Objects[int(proto.GetInt32(ins.ObjectId))].Root)
 	case tp.Instruction_FUNCTION_CALL:
 		//println(ins.String())
 		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]
 		args := make([]interface{}, len(ins.Arguments))
 		for i, argIns := range(ins.Arguments) {
-			args[i] = ctx.runInstruction(scope, argIns, yieldBlock)
+			args[i] = ctx.runInstruction(scope, argIns)
 		}
 		if proto.GetBool(fun.BuiltIn) {
-			returnValue = ctx.runBuiltIn(fun, scope, ins, yieldBlock, args)
+			returnValue = ctx.runBuiltIn(fun, scope, ins, args)
 		} else { // We are using a user-defined function
-			// Store the current frame
-			//localVar := ctx.LocalVar
-			
 			//println("Resetting localvar")
 			// Setup the new local var
-			//ctx.LocalVar = make(map[string]interface{}, len(args))
+			vars := make(map[string]interface{}, len(args))
 			for i, arg := range(fun.Args) {
-				ctx.LocalVar[proto.GetString(arg.Name)] = args[i]
+				vars[proto.GetString(arg.Name)] = args[i]
 			}
 			
-			yieldIns := &tp.Instruction{
-				Type: tp.NewInstruction_InstructionType(tp.Instruction_BLOCK),
-				Children: ins.Children,
+			yieldBlock := &YieldBlock{
+				Ins: ins,
+				Vars: vars,
 			}
-			returnValue = ctx.runChildren(scope, fun.Instruction, yieldIns)
-			
-			// Put the local var scope back!
-			//ctx.LocalVar = localVar
+			// PUSH!
+			ctx.Yields = append(ctx.Yields, yieldBlock)
+			returnValue = ctx.runChildren(scope, fun.Instruction)
+			// POP!
+			ctx.Yields = ctx.Yields[:(len(ctx.Yields)-1)]
 		}
 	}
 	return
 }
 
-func (ctx *Ctx) runChildren(scope *Scope, ins *tp.Instruction, yieldBlock *tp.Instruction) (returnValue interface{}) {
+func (ctx *Ctx) runChildren(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
 	for _, child := range(ins.Children) {
-		returnValue = ctx.runInstruction(scope, child, yieldBlock)
+		returnValue = ctx.runInstruction(scope, child)
 	}
 	return
 }
