@@ -7,7 +7,7 @@ xml()  {
       with("Michael") {
         attribute("sexy", "true")
       }
-      with(not(/r/)) {
+      not(/r/) {
         attribute("has_no", "r")
       }
       not(fetch("@name")) {
