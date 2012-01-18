@@ -13,7 +13,6 @@ import(
 	"path/filepath"
 	"log4go"
 	"os"
-	"fmt"
 	"tritium/crypto"
 )
 
@@ -82,25 +81,17 @@ func buildPackage(options PackageOptions) (*Package) {
 func mergeOptions(options PackageOptions) PackageOptions {
 	defaults := fetchDefaultOptions()
 	
-	fmt.Printf("default options: %v\n", defaults)
-	fmt.Printf("initial options: %v\n", options)
-
 	if options == nil {
 		return defaults
 	}
 
-	for k, v := range defaults {
+	for k, _ := range defaults {
 		_, ok := options[k]
 
 		if !ok {
 			options[k] = defaults[k]
 		}
-
-		fmt.Printf("k: %v, v: %v\n", k, v)
 	}
-
-	fmt.Printf("Final options: %v\n", options)
-	fmt.Printf("Stdout: %v\n", options["stdout"])
 
 	return options
 }
@@ -142,7 +133,7 @@ func (pkg *Package)Load(packageName string) {
 	location := filepath.Join(pkg.LoadPath, packageName)
 	pkg.location = location
 
-	println(location)
+	pkg.Println(location)
 	pkg.Log.Info("\n\n\n\nLoading:%v", location)
 
 	info := readPackageInfoFile(location)
@@ -176,7 +167,7 @@ func (pkg *Package)Load(packageName string) {
 
 	pkg.write()
 
-	println(" -- done")
+	pkg.Println(" -- done")
 	pkg.Log.Close()
 	
 	// TODO(SJ) : Kind of lame. Ideally I think we load other packages as whole packages and write a *.Merge method
@@ -339,19 +330,16 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 func (pkg *Package)readPackageDefinitions(location string) {
 	
-	println(" -- reading definitions")
+	pkg.Println(" -- reading definitions")
 
 	input_file := filepath.Join(location, "functions.ts")
 
 	definitions := parser.ParseFile(input_file)
 
-	//println("Function count before ", len(pkg.Package.Functions))
 	for _, function := range(definitions.Functions) {
 		pkg.Log.Info("\t -- function: %v", function)
 		pkg.resolveFunction(function)
 	}
-	//println("Function count after ", len(pkg.Package.Functions))
-
 }
 
 
@@ -482,5 +470,11 @@ func (pkg *Package) write() {
 
 	ioutil.WriteFile(outputFilename, bytes, uint32(0666) )
 
-	println(" -- output:", outputFilename)
+	pkg.Println(" -- output: " +  outputFilename)
+}
+
+func (pkg *Package)Println(message string) {
+	if pkg.Options["stdout"] {
+		println(message)
+	}
 }
