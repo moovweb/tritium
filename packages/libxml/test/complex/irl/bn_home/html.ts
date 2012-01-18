@@ -4,7 +4,7 @@ $("html") {
     remove()
   }
   $("head") {
-    insert_bottom("link", rel: "stylesheet", type: "text/css", href: sass("main"))
+    insert("link", rel: "stylesheet", type: "text/css", href: sass("main"))
     insert_bottom("meta", http-equiv: "Content-Type", content: "text/html")
     insert_bottom("meta", name: "viewport", content: "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0")
     insert_bottom("meta", request_id: $request_id)

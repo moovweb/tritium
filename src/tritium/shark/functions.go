@@ -218,12 +218,22 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	// SHARED NODE FUNCTIONS
 	case "remove":
 		scope.Value.(xml.Node).Remove()
-	case "inner", "value", "inner_text", "text":
+	case "inner", "inner_text", "text":
 		node := scope.Value.(xml.Node)
 		ts := &Scope{Value:node.Content()}
 		ctx.runChildren(ts, ins)
 		val := ts.Value.(string)
 		_, ok := node.(*xml.Element)
+		if ok && node.IsLinked() {
+			node.SetContent(val)
+		}
+		returnValue = val
+	case "value":
+		node := scope.Value.(xml.Node)
+		ts := &Scope{Value:node.Content()}
+		ctx.runChildren(ts, ins)
+		val := ts.Value.(string)
+		_, ok := node.(*xml.Attribute)
 		if ok && node.IsLinked() {
 			node.SetContent(val)
 		}
@@ -312,6 +322,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		_, ok := node.(*xml.Element)
 		if ok == true {
 			attr, _ := node.Attribute(name)
+			
 			as := &Scope{Value:attr}
 			ctx.runChildren(as, ins)
 			if attr.IsLinked() && (attr.Content() == "") {
