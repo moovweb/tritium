@@ -41,7 +41,7 @@ func BuildOptions() PackageOptions {
 		buildOptions =  PackageOptions{
 			"stdout" : true,
 			"output_tpkg" : true,
-			"use_tpkg" : false,
+			"use_tpkg" : true,
 		}
 	}
 	return buildOptions
@@ -131,11 +131,16 @@ func (pkg *Package)Load(packageName string) {
 	old_location := pkg.location
 
 	location := filepath.Join(pkg.LoadPath, packageName)
-	pkg.location = location
 
 	pkg.Println(location)
 	pkg.Log.Info("\n\n\n\nLoading:%v", location)
 
+	if pkg.Options["use_tpkg"] {
+		pkg.open(location)
+		return
+	}
+
+	pkg.location = location
 	info := readPackageInfoFile(location)
 	
 	if len(info.Dependencies) > 0 {
@@ -473,6 +478,35 @@ func (pkg *Package) write() {
 	ioutil.WriteFile(outputFilename, bytes, uint32(0666) )
 
 	pkg.Println(" -- output: " +  outputFilename)
+}
+
+func (pkg *Package) open(location string) {
+	pathComponents := strings.Split(location, "/")
+	name := pathComponents[len(pathComponents)-1]
+	
+	tpkg_path := filepath.Join(location, name + ".tpkg")
+
+	data, err := ioutil.ReadFile(tpkg_path)
+
+	if err != nil {
+		pkg.Println("No tpkg at:" + tpkg_path)
+		return
+	}
+
+	data = crypto.Decrypt(data)
+
+	thisPackage := &tp.Package{}
+	err = proto.Unmarshal(data, thisPackage)
+
+	if err != nil {
+		panic("Error unmarshalling package at:" + tpkg_path)
+	}
+
+	// Now load all the functions and resolve them
+
+	pkg.Println("Using tpkg at:" + tpkg_path)
+
+
 }
 
 func (pkg *Package)Println(message string) {
