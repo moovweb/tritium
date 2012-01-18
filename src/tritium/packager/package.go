@@ -13,6 +13,8 @@ import(
 	"path/filepath"
 	"log4go"
 	"os"
+	"fmt"
+	"tritium/crypto"
 )
 
 type Package struct { 
@@ -21,6 +23,7 @@ type Package struct {
 	LoadPath string
 	Log log4go.Logger
 	*tp.Package
+	Options PackageOptions
 }
 
 type PackageInfo struct {
@@ -29,19 +32,82 @@ type PackageInfo struct {
 	Types []string
 }
 
-func BuildDefaultPackage(dir string) (*Package) {
-	// Terrible directory handling here... has to be executed from Tritium root
-	pkg := NewPackage(dir)
+type PackageOptions map[string]bool
 
-	//pkg.Load("base")
-	//pkg.Load("node")
+var defaultOptions PackageOptions
+var buildOptions PackageOptions
+
+func BuildOptions() PackageOptions {
+	if buildOptions == nil {
+		buildOptions =  PackageOptions{
+			"stdout" : true,
+			"output_tpkg" : true,
+			"use_tpkg" : false,
+		}
+	}
+	return buildOptions
+}
+
+func fetchDefaultOptions() PackageOptions{
+	if defaultOptions == nil {
+		defaultOptions = PackageOptions{
+			"stdout":false,
+			"output_tpkg":false,
+			"use_tpkg":true,
+		}
+	}
+	return defaultOptions
+}
+
+var DefaultPackagePath = "packages"
+
+func LoadDefaultPackage() (*Package) {
+	return buildPackage(nil)
+}
+
+func BuildDefaultPackage() (*Package) {
+	options := BuildOptions()
+	return buildPackage(options)
+}
+
+func buildPackage(options PackageOptions) (*Package) {
+	// Terrible directory handling here... has to be executed from Tritium root
+
+	pkg := NewPackage(DefaultPackagePath, options)
 	pkg.Load("libxml")
-	//println("Packages all loaded")
 
 	return pkg
 }
 
-func NewPackage(loadPath string) (*Package){
+func mergeOptions(options PackageOptions) PackageOptions {
+	defaults := fetchDefaultOptions()
+	
+	fmt.Printf("default options: %v\n", defaults)
+	fmt.Printf("initial options: %v\n", options)
+
+	if options == nil {
+		return defaults
+	}
+
+	for k, v := range defaults {
+		_, ok := options[k]
+
+		if !ok {
+			options[k] = defaults[k]
+		}
+
+		fmt.Printf("k: %v, v: %v\n", k, v)
+	}
+
+	fmt.Printf("Final options: %v\n", options)
+	fmt.Printf("Stdout: %v\n", options["stdout"])
+
+	return options
+}
+
+func NewPackage(loadPath string, options PackageOptions) (*Package){
+	options = mergeOptions(options)	
+	
 	return &Package{
 		Package: &tp.Package{
 			Name: proto.String("combined"),
@@ -51,6 +117,7 @@ func NewPackage(loadPath string) (*Package){
 		loaded: make([]*PackageInfo, 0),
   	        Log: newLog(),
 		LoadPath: loadPath,
+	        Options: options,
 	}
 }
 
@@ -403,8 +470,6 @@ func (pkg *Package) write() {
 	path, name := filepath.Split(pkg.location)
 	outputFilename := filepath.Join(path, name, name + ".tpkg")
 
-	println(" -- output:", outputFilename)
-
 	bytes, err := proto.Marshal(pkg.Package)
 	
 	if err != nil {
@@ -412,5 +477,10 @@ func (pkg *Package) write() {
 		log.Panic(err)
 	}
 
+
+	bytes = crypto.Encrypt(bytes)
+
 	ioutil.WriteFile(outputFilename, bytes, uint32(0666) )
+
+	println(" -- output:", outputFilename)
 }

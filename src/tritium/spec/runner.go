@@ -14,7 +14,7 @@ func All(directory string) {
 	logger.AddFilter("test", l4g.ERROR, l4g.NewConsoleLogWriter())
 	l4g.Global = logger
 	eng := shark.NewEngine(logger) 
-	pkg := packager.BuildDefaultPackage(PackagePath)
+	pkg := packager.BuildDefaultPackage()
 
 	globalResult := NewResult()
 	globalResult.all(directory, pkg.Package, eng, logger)
