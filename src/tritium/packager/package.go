@@ -165,7 +165,9 @@ func (pkg *Package)Load(packageName string) {
 
 	pkg.inheritFunctions()
 
-	pkg.write()
+	if pkg.Options["output_tpkg"] {
+		pkg.write()
+	}
 
 	pkg.Println(" -- done")
 	pkg.Log.Close()
