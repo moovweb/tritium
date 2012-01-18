@@ -223,7 +223,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		ts := &Scope{Value:node.Content()}
 		ctx.runChildren(ts, ins)
 		val := ts.Value.(string)
-		if node.IsLinked() {
+		_, ok := node.(*xml.Element)
+		if ok && node.IsLinked() {
 			node.SetContent(val)
 		}
 		returnValue = val
