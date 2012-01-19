@@ -58,7 +58,6 @@
   }
 }
 
-
 @func Text.replace(Regexp %search, Text %with) {
   replace(%search) {
     set(%with)
@@ -79,6 +78,16 @@
   replace(regexp(var(concat(concat("rewrite_", %type), "_matcher")))) {
     set(var(concat(concat("rewrite_", %type), "_replacement")))
   }
+}
+
+# TEMPORARY UNTIL I STOP CRYING
+@func Text.index() { 
+  deprecated("You can only use index() in a Node scope")
+  "1"
+}
+@func Text.fetch(Text %text) {
+  deprecated("You can only use fetch() in a Node scope")
+  "fetchfail" 
 }
 
 # TEMPORARY UNTIL THE PARSER HANDLES THIS

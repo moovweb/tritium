@@ -109,6 +109,18 @@
   }
 }
 
+@func XMLNode.insert_javascript_at(Position %pos, Text %js) {
+  insert_at(%pos, "script") {
+    attribute("type", "text/javascript")
+    cdata(concat("//<![CDATA[\n", %js, "\n//]]>"))
+    yield()
+  }
+}
+
+@func XMLNode.insert_javascript(Text %js) {
+  insert_javascript_at(position(), %js)
+}
+
 @func XMLNode.inner(Text %html) {
   inner() {
     set(%html) 
