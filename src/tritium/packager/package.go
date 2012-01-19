@@ -41,7 +41,7 @@ func BuildOptions() PackageOptions {
 		buildOptions =  PackageOptions{
 			"stdout" : true,
 			"output_tpkg" : true,
-			"use_tpkg" : true,
+			"use_tpkg" : false,
 		}
 	}
 	return buildOptions
@@ -182,10 +182,8 @@ func (pkg *Package)Load(packageName string) {
 
 }
 
-func (pkg *Package)resolveFunction(fun *tp.Function) {
+func (pkg *Package)resolveDefinition(fun *tp.Function) {
 	linkingContext := linker.NewLinkingContext(pkg.Package)
-
-//	pkg.resolveFunctionDescendants(fun)
 
 	pkg.Log.Info("\t -- Resolving --\n")
 	pkg.Log.Info("\t\t -- function: %v\n", fun)
@@ -227,10 +225,8 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope)
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
 	}
-	pkg.Package.Functions = append(pkg.Package.Functions, fun)
 	pkg.Log.Info("\t\t -- done --\n")
 }
-
 
 func (pkg *Package)inheritFunctions() {
 	pkg.Log.Info("pkg types: %v", pkg.Types)
@@ -328,7 +324,9 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	pkg.Log.Info("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
 
 	if inherit {
-		pkg.resolveFunction(newFun)
+		pkg.resolveDefinition(newFun)
+		pkg.Package.Functions = append(pkg.Package.Functions, newFun)
+
 	}
 
 }
@@ -345,7 +343,8 @@ func (pkg *Package)readPackageDefinitions(location string) {
 
 	for _, function := range(definitions.Functions) {
 		pkg.Log.Info("\t -- function: %v", function)
-		pkg.resolveFunction(function)
+		pkg.resolveDefinition(function)
+		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}
 }
 
@@ -408,33 +407,7 @@ func (pkg *Package)readHeaderFile(location string) {
 	stubs := parser.ParseFile(input_file)
 
 	for _, function := range(stubs.Functions) {
-
-		returnType := proto.GetString( function.ReturnType )
-		if len(returnType) > 0 {
-			function.ReturnTypeId = proto.Int32( int32( pkg.findTypeIndex( returnType ) ) )
-			function.ReturnType = nil
-		}
-
-		scopeType := proto.GetString( function.ScopeType )
-		if len(scopeType) > 0{
-			function.ScopeTypeId = proto.Int32( int32( pkg.findTypeIndex( scopeType ) ) )
-			function.ScopeType = nil
-		}
-		
-		opensType := proto.GetString( function.OpensType )
-		if len(opensType) > 0 {
-			function.OpensTypeId = proto.Int32( int32( pkg.findTypeIndex( opensType ) ) )
-			function.OpensType = nil
-		}
-
-
-		for _, arg := range(function.Args) {
-			typeName := proto.GetString( arg.TypeString )
-			if len(typeName) > 0 {
-				arg.TypeId = proto.Int32( int32( pkg.findTypeIndex( typeName ) ) )
-				arg.TypeString = nil
-			}			
-		}
+		pkg.resolveHeader(function)
 
 		function.BuiltIn = proto.Bool( true )
 
@@ -442,6 +415,37 @@ func (pkg *Package)readHeaderFile(location string) {
 	}
 	
 }
+
+func (pkg *Package)resolveHeader(function *tp.Function) {
+
+	returnType := proto.GetString( function.ReturnType )
+	if len(returnType) > 0 {
+		function.ReturnTypeId = proto.Int32( int32( pkg.findTypeIndex( returnType ) ) )
+		function.ReturnType = nil
+	}
+
+	scopeType := proto.GetString( function.ScopeType )
+	if len(scopeType) > 0{
+		function.ScopeTypeId = proto.Int32( int32( pkg.findTypeIndex( scopeType ) ) )
+		function.ScopeType = nil
+	}
+	
+	opensType := proto.GetString( function.OpensType )
+	if len(opensType) > 0 {
+		function.OpensTypeId = proto.Int32( int32( pkg.findTypeIndex( opensType ) ) )
+		function.OpensType = nil
+	}
+
+
+	for _, arg := range(function.Args) {
+		typeName := proto.GetString( arg.TypeString )
+		if len(typeName) > 0 {
+			arg.TypeId = proto.Int32( int32( pkg.findTypeIndex( typeName ) ) )
+			arg.TypeString = nil
+		}			
+	}	
+}
+
 
 func (pkg *Package)SerializedOutput() {
 
@@ -504,7 +508,23 @@ func (pkg *Package) open(location string) {
 
 	// Now load all the functions and resolve them
 
-	pkg.Println("Using tpkg at:" + tpkg_path)
+	//// Reflection would make this code cleaner:
+	pkg.Name = thisPackage.Name
+	pkg.Types = thisPackage.Types
+	pkg.DependentPackageNames = thisPackage.DependentPackageNames
+	
+
+	for _, function := range(thisPackage.Functions) {
+
+ 		if proto.GetBool( function.BuiltIn ) {
+			pkg.resolveHeader(function)
+		} else {
+			pkg.resolveDefinition(function)
+		}
+		pkg.Package.Functions = append(pkg.Package.Functions, function)
+	}
+
+	pkg.Println("\t -- Using tpkg at:" + tpkg_path)
 
 
 }
