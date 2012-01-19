@@ -507,8 +507,7 @@ func (pkg *Package) open(location string) {
 	data, err := ioutil.ReadFile(tpkg_path)
 
 	if err != nil {
-		pkg.Println("No tpkg at:" + tpkg_path)
-		return
+		panic("Could not find tpkg file:" + tpkg_path)
 	}
 
 	data = crypto.Decrypt(data)
