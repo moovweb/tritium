@@ -11,6 +11,9 @@
 // Writes out a string to the console and debug log
 @func log(Text %log_message) Text Text
 
+// Used to denote when a function is deprecated
+@func deprecated(Text %message) Text Text
+
 // Used with match($var) {not('hi')}
 @func not(Text %text) Text
 

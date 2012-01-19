@@ -12,6 +12,7 @@ import(
 )
 
 func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	returnValue = ""
 	switch fun.Name {
 	case "this":
 		returnValue = scope.Value
@@ -21,7 +22,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		if (ctx.yieldBlock() != nil) {
 			returnValue = ctx.runChildren(scope, myYieldBlock.Ins)
 		} else {
-			panic("yield() failure")
+			ctx.Log.Error("yield() failure")
 		}
 		ctx.Yields = append(ctx.Yields, myYieldBlock)
 
@@ -36,7 +37,11 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		returnValue = args[1].(string)
 	case "match.Text":
 		// Setup stacks
-		ctx.MatchStack = append(ctx.MatchStack, args[0].(string))
+		against, ok := args[0].(string)
+		if !ok {
+			ctx.Log.Error("AH!")
+		}
+		ctx.MatchStack = append(ctx.MatchStack, against)
 		ctx.MatchShouldContinue = append(ctx.MatchShouldContinue, true)
 	
 		// Run children
@@ -100,7 +105,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		var err os.Error
 		returnValue, err = rubex.NewRegexp(args[0].(string), mode)
 		if err != nil {
-			panic("Invalid regexp")
+			ctx.Log.Error("Invalid regexp")
 		}
 	case "export.Text":
 		val := make([]string, 2)
@@ -292,6 +297,11 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		} else {
 			returnValue = "false"
 		}
+	case "cdata.Text":
+		elem, ok := scope.Value.(*xml.Element)
+		if ok {
+			elem.SetCDataContent(args[0].(string))
+		}
 	case "move.XMLNode.XMLNode.Position", "move.Node.Node.Position":
 		//for name, value := range(ctx.LocalVar) {
 		//	println(name, ":", value)
@@ -335,7 +345,6 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		}
 	default:
 		ctx.Log.Error("Must implement " + fun.Name)
-		returnValue = ""
 	}
 	return
 }
