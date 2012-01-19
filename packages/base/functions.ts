@@ -46,6 +46,23 @@
   }
 }
 
+@func match_not(Text %target, Text %comparitor) {
+  match(%target) {
+    not(%comparitor) {
+      yield()
+    }
+  }
+}
+
+@func match_not(Text %target, Regexp %comparitor) {
+  match(%target) {
+    not(%comparitor) {
+      yield()
+    }
+  }
+}
+
+
 @func Text.clear() {
   set("") {
     yield()
