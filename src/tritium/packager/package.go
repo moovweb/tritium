@@ -5,6 +5,7 @@ import(
 	proto "goprotobuf.googlecode.com/hg/proto"
 	yaml "launchpad.net/goyaml"
 	"io/ioutil"
+	api "tritium/api"
 	"log"
 	"strings"
 	linker "tritium/linker"
@@ -12,6 +13,7 @@ import(
 	"path/filepath"
 	"log4go"
 	"os"
+	"tritium/crypto"
 )
 
 type Package struct { 
@@ -20,6 +22,7 @@ type Package struct {
 	LoadPath string
 	Log log4go.Logger
 	*tp.Package
+	Options PackageOptions
 }
 
 type PackageInfo struct {
@@ -28,19 +31,74 @@ type PackageInfo struct {
 	Types []string
 }
 
-func BuildDefaultPackage(dir string) (*Package) {
-	// Terrible directory handling here... has to be executed from Tritium root
-	pkg := NewPackage(dir)
+type PackageOptions map[string]bool
 
-	//pkg.Load("base")
-	//pkg.Load("node")
+var defaultOptions PackageOptions
+var buildOptions PackageOptions
+
+func BuildOptions() PackageOptions {
+	if buildOptions == nil {
+		buildOptions =  PackageOptions{
+			"stdout" : true,
+			"output_tpkg" : true,
+			"use_tpkg" : false,
+		}
+	}
+	return buildOptions
+}
+
+func fetchDefaultOptions() PackageOptions{
+	if defaultOptions == nil {
+		defaultOptions = PackageOptions{
+			"stdout":false,
+			"output_tpkg":false,
+			"use_tpkg":true,
+		}
+	}
+	return defaultOptions
+}
+
+var DefaultPackagePath = "packages"
+
+func LoadDefaultPackage() (*Package) {
+	return buildPackage(nil)
+}
+
+func BuildDefaultPackage() (*Package) {
+	options := BuildOptions()
+	return buildPackage(options)
+}
+
+func buildPackage(options PackageOptions) (*Package) {
+	// Terrible directory handling here... has to be executed from Tritium root
+
+	pkg := NewPackage(DefaultPackagePath, options)
 	pkg.Load("libxml")
-	//println("Packages all loaded")
 
 	return pkg
 }
 
-func NewPackage(loadPath string) (*Package){
+func mergeOptions(options PackageOptions) PackageOptions {
+	defaults := fetchDefaultOptions()
+	
+	if options == nil {
+		return defaults
+	}
+
+	for k, _ := range defaults {
+		_, ok := options[k]
+
+		if !ok {
+			options[k] = defaults[k]
+		}
+	}
+
+	return options
+}
+
+func NewPackage(loadPath string, options PackageOptions) (*Package){
+	options = mergeOptions(options)	
+	
 	return &Package{
 		Package: &tp.Package{
 			Name: proto.String("combined"),
@@ -50,6 +108,7 @@ func NewPackage(loadPath string) (*Package){
 		loaded: make([]*PackageInfo, 0),
   	        Log: newLog(),
 		LoadPath: loadPath,
+	        Options: options,
 	}
 }
 
@@ -62,24 +121,33 @@ func newLog() (log4go.Logger) {
 }
 
 func (pkg *Package)Load(packageName string) {
+	user := api.FetchSessionUser()
+	approved := user.RequestFeature("package:" + packageName)
 	
-	location := filepath.Join(pkg.LoadPath, packageName)
-	pkg.location = location
+	if !approved {
+		panic("Package " + packageName + " not approved for use.")
+	}	
 
-	println(location)
+	old_location := pkg.location
+
+	location := filepath.Join(pkg.LoadPath, packageName)
+
+	pkg.Println(location)
 	pkg.Log.Info("\n\n\n\nLoading:%v", location)
 
+	if pkg.Options["use_tpkg"] {
+		pkg.open(location)
+		return
+	}
+
+	pkg.location = location
 	info := readPackageInfoFile(location)
 	
 	if len(info.Dependencies) > 0 {
 
-		//println("==========\nLoading dependencies:")
-
 		for _, dependency := range(info.Dependencies) {
 			pkg.loadPackageDependency(dependency)
 		}
-
-		//println("done.\n==========")
 
 	}
 
@@ -102,14 +170,20 @@ func (pkg *Package)Load(packageName string) {
 
 	pkg.inheritFunctions()
 
-	println(" -- done")
+	if pkg.Options["output_tpkg"] {
+		pkg.write()
+	}
+
+	pkg.Println(" -- done")
 	pkg.Log.Close()
+	
+	// TODO(SJ) : Kind of lame. Ideally I think we load other packages as whole packages and write a *.Merge method
+	pkg.location = old_location
+
 }
 
-func (pkg *Package)resolveFunction(fun *tp.Function) {
+func (pkg *Package)resolveDefinition(fun *tp.Function) {
 	linkingContext := linker.NewLinkingContext(pkg.Package)
-
-//	pkg.resolveFunctionDescendants(fun)
 
 	pkg.Log.Info("\t -- Resolving --\n")
 	pkg.Log.Info("\t\t -- function: %v\n", fun)
@@ -161,10 +235,8 @@ func (pkg *Package)resolveFunction(fun *tp.Function) {
 		}
 		
 	}
-	pkg.Package.Functions = append(pkg.Package.Functions, fun)
 	pkg.Log.Info("\t\t -- done --\n")
 }
-
 
 func (pkg *Package)inheritFunctions() {
 	pkg.Log.Info("pkg types: %v", pkg.Types)
@@ -262,7 +334,9 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 	pkg.Log.Info("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
 
 	if inherit {
-		pkg.resolveFunction(newFun)
+		pkg.resolveDefinition(newFun)
+		pkg.Package.Functions = append(pkg.Package.Functions, newFun)
+
 	}
 
 }
@@ -271,19 +345,17 @@ func (pkg *Package)resolveFunctionDescendants(fun *tp.Function) {
 
 func (pkg *Package)readPackageDefinitions(location string) {
 	
-	println(" -- reading definitions")
+	pkg.Println(" -- reading definitions")
 
 	input_file := filepath.Join(location, "functions.ts")
 
 	definitions := parser.ParseFile(input_file)
 
-	//println("Function count before ", len(pkg.Package.Functions))
 	for _, function := range(definitions.Functions) {
 		pkg.Log.Info("\t -- function: %v", function)
-		pkg.resolveFunction(function)
+		pkg.resolveDefinition(function)
+		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}
-	//println("Function count after ", len(pkg.Package.Functions))
-
 }
 
 
@@ -345,33 +417,7 @@ func (pkg *Package)readHeaderFile(location string) {
 	stubs := parser.ParseFile(input_file)
 
 	for _, function := range(stubs.Functions) {
-
-		returnType := proto.GetString( function.ReturnType )
-		if len(returnType) > 0 {
-			function.ReturnTypeId = proto.Int32( int32( pkg.findTypeIndex( returnType ) ) )
-			function.ReturnType = nil
-		}
-
-		scopeType := proto.GetString( function.ScopeType )
-		if len(scopeType) > 0{
-			function.ScopeTypeId = proto.Int32( int32( pkg.findTypeIndex( scopeType ) ) )
-			function.ScopeType = nil
-		}
-		
-		opensType := proto.GetString( function.OpensType )
-		if len(opensType) > 0 {
-			function.OpensTypeId = proto.Int32( int32( pkg.findTypeIndex( opensType ) ) )
-			function.OpensType = nil
-		}
-
-
-		for _, arg := range(function.Args) {
-			typeName := proto.GetString( arg.TypeString )
-			if len(typeName) > 0 {
-				arg.TypeId = proto.Int32( int32( pkg.findTypeIndex( typeName ) ) )
-				arg.TypeString = nil
-			}			
-		}
+		pkg.resolveHeader(function)
 
 		function.BuiltIn = proto.Bool( true )
 
@@ -379,6 +425,37 @@ func (pkg *Package)readHeaderFile(location string) {
 	}
 	
 }
+
+func (pkg *Package)resolveHeader(function *tp.Function) {
+
+	returnType := proto.GetString( function.ReturnType )
+	if len(returnType) > 0 {
+		function.ReturnTypeId = proto.Int32( int32( pkg.findTypeIndex( returnType ) ) )
+		function.ReturnType = nil
+	}
+
+	scopeType := proto.GetString( function.ScopeType )
+	if len(scopeType) > 0{
+		function.ScopeTypeId = proto.Int32( int32( pkg.findTypeIndex( scopeType ) ) )
+		function.ScopeType = nil
+	}
+	
+	opensType := proto.GetString( function.OpensType )
+	if len(opensType) > 0 {
+		function.OpensTypeId = proto.Int32( int32( pkg.findTypeIndex( opensType ) ) )
+		function.OpensType = nil
+	}
+
+
+	for _, arg := range(function.Args) {
+		typeName := proto.GetString( arg.TypeString )
+		if len(typeName) > 0 {
+			arg.TypeId = proto.Int32( int32( pkg.findTypeIndex( typeName ) ) )
+			arg.TypeString = nil
+		}			
+	}	
+}
+
 
 func (pkg *Package)SerializedOutput() {
 
@@ -395,4 +472,75 @@ func (pkg *Package) DebugInfo() (string) {
 		result = result + fun.DebugInfo(pkg.Package) + "\n"
 	}
 	return result
+}
+
+
+func (pkg *Package) write() {
+	path, name := filepath.Split(pkg.location)
+	outputFilename := filepath.Join(path, name, name + ".tpkg")
+
+	bytes, err := proto.Marshal(pkg.Package)
+	
+	if err != nil {
+		println("Could not marshal package:", name)
+		log.Panic(err)
+	}
+
+
+	bytes = crypto.Encrypt(bytes)
+
+	ioutil.WriteFile(outputFilename, bytes, uint32(0666) )
+
+	pkg.Println(" -- output: " +  outputFilename)
+}
+
+func (pkg *Package) open(location string) {
+	pathComponents := strings.Split(location, "/")
+	name := pathComponents[len(pathComponents)-1]
+	
+	tpkg_path := filepath.Join(location, name + ".tpkg")
+
+	data, err := ioutil.ReadFile(tpkg_path)
+
+	if err != nil {
+		pkg.Println("No tpkg at:" + tpkg_path)
+		return
+	}
+
+	data = crypto.Decrypt(data)
+
+	thisPackage := &tp.Package{}
+	err = proto.Unmarshal(data, thisPackage)
+
+	if err != nil {
+		panic("Error unmarshalling package at:" + tpkg_path)
+	}
+
+	// Now load all the functions and resolve them
+
+	//// Reflection would make this code cleaner:
+	pkg.Name = thisPackage.Name
+	pkg.Types = thisPackage.Types
+	pkg.DependentPackageNames = thisPackage.DependentPackageNames
+	
+
+	for _, function := range(thisPackage.Functions) {
+
+ 		if proto.GetBool( function.BuiltIn ) {
+			pkg.resolveHeader(function)
+		} else {
+			pkg.resolveDefinition(function)
+		}
+		pkg.Package.Functions = append(pkg.Package.Functions, function)
+	}
+
+	pkg.Println("\t -- Using tpkg at:" + tpkg_path)
+
+
+}
+
+func (pkg *Package)Println(message string) {
+	if pkg.Options["stdout"] {
+		println(message)
+	}
 }
