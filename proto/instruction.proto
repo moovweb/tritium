@@ -14,6 +14,9 @@ message Instruction {
 	optional int32 function_id = 6;
 	
 	optional int32 line_number = 7;
+	
+	// Used for yield() calls, because we need to know parent type
+	optional int32 yield_type_id = 8;
 
 	enum InstructionType {
 		BLOCK = 0;

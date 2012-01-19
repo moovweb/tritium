@@ -33,10 +33,7 @@ html() {
         #Content::Meta::ExtractAttributeValues
         #[["selector", ".globalNavigationBar img"], ["attribute", "alt"], ["regex_capture", ""], ["result_key", ""]]
         $("//*[contains(concat(' ', @class, ' '), ' globalNavigationBar ')]//img") {
-          $chain = "chain"
-          $chain {
-            append(index())
-          }
+          $chain = concat("chain", index())
           var($chain, fetch("./@alt"))
         }
         
@@ -46,10 +43,7 @@ html() {
         #[["selector", ".globalNavigationBar a"], ["text", ""], ["match_string", ""], ["replace_string", ""], ["prepend", ""], ["append", ""], ["use_query_parameter", ""], ["chain", "true"]]
         # NOTE: not sure if /html() or /text() is what I want to be using here
         $("//*[contains(concat(' ', @class, ' '), ' globalNavigationBar ')]//a") {
-            $chain = "chain"
-            $chain {
-              append(index())
-            }
+          $chain = concat("chain", index())
           inner() {
             set(var($chain))
           }
@@ -86,10 +80,7 @@ html() {
         #Content::Meta::ExtractAttributeValues
         #[["selector", ".subNavImageMap img"], ["attribute", "alt"], ["regex_capture", ""], ["result_key", ""]]
         $("//*[contains(concat(' ', @class, ' '), ' subNavImageMap ')]//img") {
-          $chain = "chain"
-          $chain {
-            append(index())
-          }
+          $chain = concat("chain", index())
           var($chain, fetch("./@alt"))
         }
         
@@ -99,10 +90,7 @@ html() {
         #[["selector", ".subNavImageMap > a"], ["text", ""], ["match_string", ""], ["replace_string", ""], ["prepend", ""], ["append", ""], ["use_query_parameter", ""], ["chain", "true"]]
         # NOTE: not sure if /html() or /text() is what I want to be using here
         $("//*[contains(concat(' ', @class, ' '), ' subNavImageMap ')]/a") {
-            $chain = "chain"
-            $chain {
-              append(index())
-            }
+          $chain = concat("chain", index())
           inner() {
             set(var($chain))
           }
@@ -135,10 +123,7 @@ html() {
         #Content::Meta::ExtractAttributeValues
         #[["selector", "#globalSubNav > form > img"], ["attribute", "alt"], ["regex_capture", ""], ["result_key", ""]]
         $("//*[@id = 'globalSubNav']/form/img") {
-          $chain = "chain"
-          $chain {
-            append(index())
-          }
+        $chain = concat("chain", index())
           var($chain, fetch("./@alt"))
         }
         
@@ -148,10 +133,7 @@ html() {
         #[["selector", "#globalSubNav > form > span"], ["text", ""], ["match_string", ""], ["replace_string", ""], ["prepend", ""], ["append", ""], ["use_query_parameter", ""], ["chain", "true"]]
         # NOTE: not sure if /html() or /text() is what I want to be using here
         $("//*[@id = 'globalSubNav']/form/span") {
-            $chain = "chain"
-            $chain {
-              append(index())
-            }
+          $chain = concat("chain", index())
           inner() {
             set(var($chain))
           }

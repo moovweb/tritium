@@ -1,6 +1,14 @@
+Version 2.0
+Manhattan: 0.14+
+State: Development
+
+CHANGES:
+  * Complete functional rewrite
+  * No more imperfect scoping
+
 Version: 1.5
 Manhattan: 0.12+
-State: Development
+State: Stable
 
 CHANGES:
   * No more asset.2 (warnings gone!). Must use asset.1

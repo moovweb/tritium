@@ -3,7 +3,7 @@
 @func index(Node %node) Text
 
 // This is how you select an element to pass it to a function.
-@func fetch(Text %selector) Text Text
+@func Node.fetch(Text %selector) Text Text
 
 // This is how you access the current node
 @func Node.this() Node Node
@@ -19,7 +19,6 @@
 @func Node.text() Text Text
 
 // Move the first node, to the second node.
-@func Node.move(Node %what, Node %where, Position %pos) Text
 @func Node.move(Node %what, Node %where, Position %pos) Text Node
 
 // Copies the node and yields to it
@@ -30,6 +29,9 @@
 
 // Delete the current node
 @func Node.remove() Text
+
+// Get the XPath of the current node
+@func Node.path() Text
 
 // Inject some HTML into the node at the prescribed location
 @func Node.inject(Text %html) Text

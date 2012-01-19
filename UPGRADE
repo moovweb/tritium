@@ -1,0 +1,77 @@
+======= fetch() and index() changes! =============
+
+[2012/01/17 08:57:59 PST] [EROR] (tritium/linker.(*LinkingContext).ProcessInstructionWithLocalScope:165) No such function found: Text.fetch,Text in file /Users/hcatlin/dev/moov/tritium/packages/libxml/test/complex/irl/bn_home/pages/browse/product-details.ts:0
+
+It means that in the file product-details.ts, there is a function call fetch() that is happening in a Text scope
+instead of a Node scope (where you can fetch from.) Upon inspection, you will find this...
+
+
+    inner_wrap("span") {
+      text() {
+        set(fetch("img/@alt"))
+      }
+    }
+
+The problem is, inside of text(), we are in a Text scope... and we can't fetch() from there.
+So, we just rework it a bit to be....
+
+    inner_wrap("span") {
+      text(fetch("img/@alt"))
+    }
+
+See, here fetch() is called outside of the text() scope. And, we just pass it in as the first argument.
+If an argument wasn't an option, we could have done this...
+
+    inner_wrap("span") {
+      %alt = fetch("img/@alt")
+      text() {
+        set(%alt)
+      }
+    }
+
+The two are basically equivalent.
+
+NOTE: index() has similar issues too. It must now be issued inside of a Node scope.
+
+When fixing this in v1 converted projects, look out for $mw_temp --- its all over
+the place. And often uses out-of-scope calls to index() and fetch() as part of the 
+block conversion.
+
+============= with(not()) deletion =========
+
+You might have had this in the past...
+
+    match($type) {
+      with(not(/submit/)) {
+        attribute("type") {
+          value() {
+              set("button")
+          }
+        }            
+      }
+    }
+
+However, that was funky. with() and not() are now siblings. Use 
+with() when you want a positive match, and not() when you want
+an opposite match.
+
+    match($type) {
+      not(/submit/) {
+        attribute("type") {
+          value() {
+              set("button")
+          }
+        }            
+      }
+    }
+
+A find-and-replace should sort this one out. As a further note, this used to
+work and will no longer.
+
+    match("hi", not($var)) {
+      log("worked!")
+    }
+
+not() is meaningless as a second argument. The two argument form of match is only
+for positive matches. If you want not(), you have to open a scope.
+

@@ -224,6 +224,16 @@ func (pkg *Package)resolveDefinition(fun *tp.Function) {
 		pkg.Log.Info("\t\t -- opening scope type : %v\n", scopeTypeId)
 		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope)
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
+		if fun.Instruction != nil {
+			fun.Instruction.Iterate(func (ins *tp.Instruction) {
+				if *ins.Type == tp.Instruction_FUNCTION_CALL {
+					if proto.GetString(ins.Value) == "yield" {
+						fun.OpensTypeId = ins.YieldTypeId
+					}
+				}
+			})
+		}
+		
 	}
 	pkg.Log.Info("\t\t -- done --\n")
 }

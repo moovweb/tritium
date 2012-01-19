@@ -4,6 +4,7 @@ import(
 	. "tritium/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	log "log4go"
+	"fmt"
 )
 
 type FuncMap map[string]int;
@@ -13,6 +14,7 @@ type LinkingContext struct {
 	funList []FuncMap
 	textType int
 	types []string
+	files []string
 	*Transform
 }
 
@@ -78,11 +80,15 @@ func (ctx *LinkingContext) Link() {
 
 func (ctx *LinkingContext) link(objId, scopeType int) {
 	obj := ctx.Objects[objId]
+	//println("link object", objId)
 	//println(obj.String())
 	if proto.GetBool(obj.Linked) == false {
 		//println("Linking", proto.GetString(obj.Name))
 		obj.ScopeTypeId = proto.Int(scopeType)
+		obj.Linked = proto.Bool(true)
+		ctx.files = append(ctx.files, proto.GetString(obj.Name))
 		ctx.ProcessInstruction(obj.Root, scopeType)
+		ctx.files = ctx.files[:(len(ctx.files)-1)]
 	} else {
 		if scopeType != int(proto.GetInt32(obj.ScopeTypeId)) {
 			log.Error("Imported a script in two different scopes!")
@@ -102,6 +108,8 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 		case Instruction_IMPORT:
 			// set its import_id and blank the value field
 			importValue := proto.GetString(ins.Value)
+			//println("import: ", importValue)
+			//println(proto.GetInt32(ins.LineNumber))
 			importId, ok := ctx.objMap[importValue]
 			if ok != true {
 				log.Error("Invalid import ", ins.String())
@@ -133,6 +141,9 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			}
 		case Instruction_FUNCTION_CALL:
 			stub := proto.GetString(ins.Value)
+			if stub == "yield" {
+				ins.YieldTypeId = proto.Int32(int32(scopeType))
+			}
 			if ins.Arguments != nil {
 				for _, arg := range(ins.Arguments) {
 				//fmt.Printf("\narg:(%v)\n", arg)
@@ -151,7 +162,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 					message = message + funcName + "\n"
 				}
 				log.Debug(message)
-				log.Error("No such function found....", ins.String(), "with the scope: ", ctx.types[scopeType], " and stub ", stub)
+				log.Error("No such function found: " + ctx.types[scopeType] + "." + stub + " in file " + ctx.files[(len(ctx.files)-1)] + ":" + fmt.Sprintf("%d", proto.GetInt32(ins.LineNumber)))
 			}
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
@@ -161,11 +172,11 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				// If we're a Base scope, don't mess with texas!
 				opensScopeType = scopeType
 			}
-		        // If it inherits:
-		        inheritedOpensScopeType := ctx.Pkg.FindDescendantType( int32( opensScopeType ) )
-		        if inheritedOpensScopeType != -1 {
-			        opensScopeType = inheritedOpensScopeType
-		        }
+			// If it inherits:
+			inheritedOpensScopeType := ctx.Pkg.FindDescendantType( int32( opensScopeType ) )
+			if inheritedOpensScopeType != -1 {
+				opensScopeType = inheritedOpensScopeType
+			}
 
 
 			//println("Zomg, found function", fun.String())
