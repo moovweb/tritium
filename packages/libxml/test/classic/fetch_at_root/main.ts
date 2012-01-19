@@ -6,4 +6,4 @@ match(fetch(".")) {
   else() {
     set("failed")
   }
-} 
+}

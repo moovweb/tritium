@@ -104,7 +104,7 @@
 }
 @func Text.fetch(Text %text) {
   deprecated("You can only use fetch() in a Node scope")
-  "fetchfail" 
+  "" 
 }
 
 # TEMPORARY UNTIL THE PARSER HANDLES THIS

@@ -36,7 +36,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		ctx.Env[args[0].(string)] = args[1].(string)
 		returnValue = args[1].(string)
 	case "deprecated.Text":
-		ctx.Log.Warn(args[0].(string))
+		ctx.Log.Info(args[0].(string))
 	case "match.Text":
 		// Setup stacks
 		against, ok := args[0].(string)
