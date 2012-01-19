@@ -175,3 +175,24 @@
   }
 }
 
+@func XMLNode.insert_javascript_bottom(Text %js) {
+  insert_javascript_at(position("bottom"), %js) {
+    yield()
+  }
+}
+@func XMLNode.insert_javascript_top(Text %js) {
+  insert_javascript_at(position("top"), %js) {
+    yield()
+  }
+}
+@func XMLNode.insert_javascript_after(Text %js) {
+  insert_javascript_at(position("after"), %js) {
+    yield()
+  }
+}
+@func XMLNode.insert_javascript_before(Text %js) {
+  insert_javascript_at(position("before"), %js) {
+    yield()
+  }
+}
+
