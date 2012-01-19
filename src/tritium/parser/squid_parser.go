@@ -89,7 +89,8 @@ func (p *Parser) statement() *ir.Instruction {
   case IMPORT:
     token := p.pop() // pop the "@import" keyword
     node.Type = ir.NewInstruction_InstructionType(ir.Instruction_IMPORT)
-    node.Value = proto.String(path.Join(p.DirName, token.Value))
+	importPath := path.Join(p.DirName, token.Value)
+    node.Value = proto.String(importPath)
   default:
     node = p.expression()
   }

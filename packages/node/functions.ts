@@ -14,9 +14,16 @@
   }
 }
 
+@func Node.index() {
+  index(this()) {
+    yield()
+  }
+}
+
 @func Node.name(Text %value) {
   name() {
     set(%value)
+    yield()
   }
 }
 
@@ -27,8 +34,8 @@
       move(this(), %calling_node, %pos)
       # same deal as below ... %pos is treated like Text
       yield() 
-    } 
-  } 
+    }
+  }
 }
 
 @func Node.copy_here(Text %xpath, Text %pos) {
@@ -86,6 +93,12 @@
   }
 }
 
+@func Node.move_to(Text %xpath) {
+  move_to(%xpath, position()) {
+    yield()
+  }
+}
+
 @func Node.move_here(Text %where, Position %pos) {
   %parent = this()
   select(%where) {
@@ -95,16 +108,25 @@
 }
 
 @func Node.move_here(Text %where, Text %pos) {
-  move_here(%where, position(%pos))
+  move_here(%where, position(%pos)) {
+    yield()
+  }
 }
 
 @func Node.move_here(Text %where) {
-  move_here(%where, position("bottom"))
+  move_here(%where, position("bottom")) {
+    yield()
+  }
 }
 
 # DIRECTIONALS... UGH.
 
 @func Node.insert(Text %tag) {
+  insert_at(position(), %tag) {
+    yield()
+  }
+}
+@func Node.insert_bottom(Text %tag) {
   insert_at(position(), %tag) {
     yield()
   }
@@ -126,6 +148,11 @@
 }
 
 @func Node.inject(Text %html) {
+  inject_at(position("bottom"), %html) {
+    yield()
+  }
+}
+@func Node.inject_bottom(Text %html) {
   inject_at(position("bottom"), %html) {
     yield()
   }
