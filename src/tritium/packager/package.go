@@ -60,19 +60,23 @@ func fetchDefaultOptions() PackageOptions{
 
 var DefaultPackagePath = "packages"
 
-func LoadDefaultPackage() (*Package) {
-	return buildPackage(nil)
+func LoadDefaultPackage(path *string) (*Package) {
+	if path == nil {
+		path = &DefaultPackagePath
+	}
+
+	return buildPackage(*path, nil)
 }
 
 func BuildDefaultPackage() (*Package) {
 	options := BuildOptions()
-	return buildPackage(options)
+	return buildPackage(DefaultPackagePath, options)
 }
 
-func buildPackage(options PackageOptions) (*Package) {
+func buildPackage(path string, options PackageOptions) (*Package) {
 	// Terrible directory handling here... has to be executed from Tritium root
 
-	pkg := NewPackage(DefaultPackagePath, options)
+	pkg := NewPackage(path, options)
 	pkg.Load("libxml")
 
 	return pkg
