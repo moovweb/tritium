@@ -118,7 +118,9 @@
 }
 
 @func XMLNode.insert_javascript(Text %js) {
-  insert_javascript_at(position(), %js)
+  insert_javascript_at(position(), %js) {
+    yield()
+  }
 }
 
 @func XMLNode.inner(Text %html) {
