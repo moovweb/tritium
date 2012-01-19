@@ -122,23 +122,35 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			//println("after", ins.String())
 		case Instruction_LOCAL_VAR:
 			name := proto.GetString(ins.Value)
-			typeId, found := localScope[name]
-			if found {
-				returnType = typeId
-				if len(ins.Arguments) > 0 {
-					log.Error("The local variable %", name, " has been assigned before and cannot be reassigned!")
-				}
-			} else {
+			if name == "1" || name == "2" || name == "3"  || name == "4"  || name == "5"  || name == "6"  || name == "7" {
 				if len(ins.Arguments) > 0 {
 					// We are going to assign something to this variable
 					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope)
-					localScope[name] = returnType
+					if returnType != ctx.textType {
+						log.Error("Numeric local vars can ONLY be Text")
+					}
+				}
+				returnType = ctx.textType
+			} else { // Not numeric.
+				typeId, found := localScope[name]
+				if found {
+					returnType = typeId
+					if len(ins.Arguments) > 0 {
+						log.Error("The local variable %", name, " has been assigned before and cannot be reassigned!")
+					}
 				} else {
-					println(ins.String())
-					println("referenced: ", localScope)
-					log.Error("I've never seen the variable %", name, " before! Please assign a value before usage.")
+					if len(ins.Arguments) > 0 {
+						// We are going to assign something to this variable
+						returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope)
+						localScope[name] = returnType
+					} else {
+						println(ins.String())
+						println("referenced: ", localScope)
+						log.Error("I've never seen the variable %", name, " before! Please assign a value before usage.")
+					}
 				}
 			}
+			
 		case Instruction_FUNCTION_CALL:
 			stub := proto.GetString(ins.Value)
 			if stub == "yield" {

@@ -35,6 +35,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "var.Text.Text":
 		ctx.Env[args[0].(string)] = args[1].(string)
 		returnValue = args[1].(string)
+	case "deprecated.Text":
+		ctx.Log.Warn(args[0].(string))
 	case "match.Text":
 		// Setup stacks
 		against, ok := args[0].(string)
@@ -147,7 +149,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		regexp := args[0].(*rubex.Regexp)
 		scope.Value = regexp.GsubFunc(scope.Value.(string), func(match string, captures map[string]string) string {
 			usesGlobal := (ctx.Env["use_global_replace_vars"] == "true")
-		
+
 			for name, capture := range captures {
 				if usesGlobal {
 					//println("setting $", name, "to", capture)
@@ -161,7 +163,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			//println(ins.String())
 		
 			//println("Replacement:", replacementScope.Value.(string))
-			innerReplacer := rubex.MustCompile(`[\\\$]([\d])`)
+			innerReplacer := rubex.MustCompile(`[\\$](\d)`)
 			return innerReplacer.GsubFunc(replacementScope.Value.(string), func(_ string, numeric_captures map[string]string) string {
 				capture := numeric_captures["1"]
 				var val string
