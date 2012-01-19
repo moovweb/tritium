@@ -1,4 +1,0 @@
-$hi
-inavli() {
-  who("answers")
-}

@@ -138,6 +138,10 @@
   }
 }
 
+@func XMLNode.dump() {
+  to_text(this())
+}
+
 # POSITIONALS
 # siblings of these are in node, but these use Inner so are here.
 @func XMLNode.insert_at(Position %pos, Text %tag, Text %content) {

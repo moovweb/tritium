@@ -180,25 +180,25 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	// XML FUNCTIONS
 	case "xml":
 		doc := libxml.XmlParseString(scope.Value.(string))
-		defer doc.Free()
 		ns := &Scope{Value:doc}
 		ctx.runChildren(ns, ins)
 		scope.Value = doc.String()
 		returnValue = scope.Value
+		doc.Free()
 	case "html":
 		doc := libxml.HtmlParseString(scope.Value.(string))
-		defer doc.Free()
 		ns := &Scope{Value:doc}
 		ctx.runChildren(ns, ins)
 		scope.Value = doc.DumpHTML()
 		returnValue = scope.Value
+		doc.Free()
 	case "html_fragment":
 		doc := libxml.HtmlParseFragment(scope.Value.(string))
-		defer doc.Free()
 		ns := &Scope{Value: doc.RootElement()}
 		ctx.runChildren(ns, ins)
 		scope.Value = ns.Value.(xml.Node).Content()
 		returnValue = scope.Value
+		doc.Free()
 	case "select.Text":
 		// TODO reuse XPath object
 		node := scope.Value.(xml.Node)
@@ -254,7 +254,10 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "dup":
 		node := scope.Value.(xml.Node)
 		newNode := node.Duplicate()
-		MoveFunc(newNode, node, AFTER)
+		_, isElement := node.(*xml.Element)
+		if isElement {
+			MoveFunc(newNode, node, AFTER)
+		}
 		ns := &Scope{Value:newNode}
 		ctx.runChildren(ns, ins)
 	case "fetch.Text":
@@ -345,6 +348,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			}
 			returnValue = "true"
 		}
+	case "to_text.XMLNode":
+		returnValue = scope.Value.(xml.Node).String()
 	default:
 		ctx.Log.Error("Must implement " + fun.Name)
 	}
