@@ -1,3 +1,5 @@
+@func css(Text %selector) Text Text
+
 // Parses the document as XML and passes you back an XMLNode scope
 @func Text.xml() Text XMLNode
 
