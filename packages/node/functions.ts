@@ -34,8 +34,8 @@
       move(this(), %calling_node, %pos)
       # same deal as below ... %pos is treated like Text
       yield() 
-    } 
-  } 
+    }
+  }
 }
 
 @func Node.copy_here(Text %xpath, Text %pos) {
