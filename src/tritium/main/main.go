@@ -22,6 +22,7 @@ func main() {
 				pkg := packager.NewPackage(packager.DefaultPackagePath, packager.BuildOptions() )
 				pkg.Load(path)
 				//pkg.SerializedOutput()
+				//println(pkg.DebugInfo())
 
 			} else {
 

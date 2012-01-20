@@ -7,9 +7,15 @@ import(
 )
 
 func Compile(file string) (*tp.Transform) {
+/*
 	defaultPackage := packager.LoadDefaultPackage(PackagePath)
-	defaultPackage.LoadUserPackage(UserPackagePath, PackagePath)
 
+	println("\n\n\n ADDING USER PACKAGE \n\n\n")
+	defaultPackage.LoadUserPackage(UserPackagePath, PackagePath)
+	println("\n\n\n DONE ADDING USER PACKAGE \n\n\n")
+*/
+	defaultPackage := packager.NewUserPackage(UserPackagePath, PackagePath)
+	println(defaultPackage.DebugInfo())
 	return linker.RunWithPackage(file, defaultPackage.Package)
 }
 

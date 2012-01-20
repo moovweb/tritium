@@ -1,6 +1,7 @@
 package packager
 
 import(
+	"fmt"
 	tp "tritium/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	yaml "launchpad.net/goyaml"
@@ -127,13 +128,18 @@ func NewUserPackage(loadPath *string, fallbackPath *string) (*Package) {
 	
 	userPackage := NewPackage(*loadPath, PackageOptions{"stdout" : true,"output_tpkg" : false,"use_tpkg" : false})
 	
-	userPackage.FallbackPath = *loadPath
-	
+	userPackage.FallbackPath = *fallbackPath
+
+	userPackage.Load("myfunctions")	
+
+/*
 	userPackages, _ := filepath.Glob(filepath.Join(userPackage.FallbackPath, "*"))
 
-	for _, name := range(userPackages) {
+	for _, path := range(userPackages) {
+		components := strings.Split(path, "/")
+		name := components[len(components)-1]
 		userPackage.Load(name)
-	}
+	}*/
 	
 	
 	return userPackage
@@ -156,11 +162,17 @@ func (pkg *Package)Load(packageName string) {
 		panic("Package " + packageName + " not approved for use.")
 	}	
 
+	println("LOADING PACKAGE:" + packageName)
+	println("Load path:" + pkg.LoadPath)
+	println("Fallback:" + pkg.FallbackPath)
+
 	location := filepath.Join(pkg.LoadPath, packageName)
+	println("Trying to load from location:" + location)
 	err := pkg.loadFromPath(location)
 
 	if err != nil && len(pkg.FallbackPath) != 0 {
 		location = filepath.Join(pkg.FallbackPath, packageName)
+		println("Trying to fallback to location:" + location)
 		err = pkg.loadFromPath(location)
 	}
 
@@ -171,7 +183,7 @@ func (pkg *Package)Load(packageName string) {
 }
 
 func (pkg *Package)loadFromPath(location string) (err *string) {
-	pkg.Println(location)
+
 	pkg.Log.Info("\n\n\n\nLoading:%v", location)
 
 	if pkg.Options["use_tpkg"] {
@@ -584,7 +596,12 @@ func (pkg *Package)Merge(otherPackage *tp.Package) {
 
 	//// Reflection would make this code cleaner:
 
+	fmt.Printf("%v : Existing types:%v\n", proto.GetString( pkg.Name ), pkg.Types)
+	fmt.Printf("%v : New types:     %v\n", proto.GetString( otherPackage.Name ), otherPackage.Types)
+
 	pkg.Name = otherPackage.Name
+
+//	pkg.Types = otherPackage.Types
 
 	var existingTypeId int
 
@@ -595,6 +612,8 @@ func (pkg *Package)Merge(otherPackage *tp.Package) {
 		}
 	}	
 
+
+	fmt.Printf("%v : Final types:   %v\n", proto.GetString( pkg.Name ), pkg.Types)
 	for _, function := range(otherPackage.Functions) {
 
  		if proto.GetBool( function.BuiltIn ) {
