@@ -34,6 +34,7 @@ func All(directory string) {
 		}
 	}
 	println("\n\n")
+	println("+++TEST COMPLETE+++\n\n")
 }
 
 func (result *Result)all(directory string, pkg *tp.Package, eng Engine, logger l4g.Logger) {

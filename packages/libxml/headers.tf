@@ -21,6 +21,9 @@
 // Creates or opens the attribute named. Returns the value()
 @func XMLNode.attribute(Text %name) Text Attribute
 
+@func XMLNode.to_text(XMLNode %node) Text
+@func Node.to_text(Node %node) Text
+
 // Wraps each text child inside the specified tag. Only the text children though!
 @func XMLNode.wrap_text_children(Text %tag_name) Text
 
