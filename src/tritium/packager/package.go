@@ -20,6 +20,7 @@ type Package struct {
 	loaded []*PackageInfo
 	location string
 	LoadPath string
+	FallbackPath string
 	Log log4go.Logger
 	*tp.Package
 	Options PackageOptions
@@ -102,7 +103,7 @@ func mergeOptions(options PackageOptions) PackageOptions {
 
 func NewPackage(loadPath string, options PackageOptions) (*Package){
 	options = mergeOptions(options)	
-	
+
 	return &Package{
 		Package: &tp.Package{
 			Name: proto.String("combined"),
@@ -116,6 +117,28 @@ func NewPackage(loadPath string, options PackageOptions) (*Package){
 	}
 }
 
+func (pkg *Package)LoadUserPackage(loadPath *string, fallbackPath *string) {
+	userPackage := NewUserPackage(loadPath, fallbackPath)
+	pkg.Merge(userPackage.Package)
+}
+
+func NewUserPackage(loadPath *string, fallbackPath *string) (*Package) {
+	//TODO : Check for user-defined feature support
+	
+	userPackage := NewPackage(*loadPath, PackageOptions{"stdout" : true,"output_tpkg" : false,"use_tpkg" : false})
+	
+	userPackage.FallbackPath = *loadPath
+	
+	userPackages, _ := filepath.Glob(filepath.Join(userPackage.FallbackPath, "*"))
+
+	for _, name := range(userPackages) {
+		userPackage.Load(name)
+	}
+	
+	
+	return userPackage
+}
+
 func newLog() (log4go.Logger) {
 	pkgLog := make(log4go.Logger)
 	os.Mkdir("log", uint32(0777) )
@@ -125,6 +148,7 @@ func newLog() (log4go.Logger) {
 }
 
 func (pkg *Package)Load(packageName string) {
+
 	user := api.FetchSessionUser()
 	approved := user.RequestFeature("package:" + packageName)
 	
@@ -132,21 +156,38 @@ func (pkg *Package)Load(packageName string) {
 		panic("Package " + packageName + " not approved for use.")
 	}	
 
-	old_location := pkg.location
-
 	location := filepath.Join(pkg.LoadPath, packageName)
+	err := pkg.loadFromPath(location)
 
+	if err != nil && len(pkg.FallbackPath) != 0 {
+		location = filepath.Join(pkg.FallbackPath, packageName)
+		err = pkg.loadFromPath(location)
+	}
+
+	if err != nil {
+		panic(*err)
+	}
+
+}
+
+func (pkg *Package)loadFromPath(location string) (err *string) {
 	pkg.Println(location)
 	pkg.Log.Info("\n\n\n\nLoading:%v", location)
 
 	if pkg.Options["use_tpkg"] {
+		println("USING TPKG")
 		pkg.open(location)
-		return
+		return nil
 	}
 
+	old_location := pkg.location
 	pkg.location = location
-	info := readPackageInfoFile(location)
+	info, err := readPackageInfoFile(location)
 	
+	if err != nil {
+		return err
+	}
+
 	if len(info.Dependencies) > 0 {
 
 		for _, dependency := range(info.Dependencies) {
@@ -184,7 +225,9 @@ func (pkg *Package)Load(packageName string) {
 	// TODO(SJ) : Kind of lame. Ideally I think we load other packages as whole packages and write a *.Merge method
 	pkg.location = old_location
 
+	return nil
 }
+
 
 func (pkg *Package)resolveDefinition(fun *tp.Function) {
 	linkingContext := linker.NewLinkingContext(pkg.Package)
@@ -384,34 +427,39 @@ func (pkg *Package)findTypeIndex(name string) int {
 
 func (pkg *Package)loadPackageDependency(name string) {
 
-	// Try and load the dependency
-	// TODO : remove passing location around since I added it to the Package struct	
-
-	// TODO : Check for a pre-built package (pre-req is outputting a .tpkg file upon completion of a package load)
-
 	newPath := filepath.Join(pkg.LoadPath, name)
 	_, err := ioutil.ReadDir(newPath)
+
+	if err != nil {
+		if len(pkg.FallbackPath) != 0 {
+			newPath = filepath.Join(pkg.FallbackPath, name)
+			_, err = ioutil.ReadDir(newPath)
+		} 
+
+		if err != nil {
+			println("Cannot find package at:", newPath)
+			log.Panic(err)
+		}
+
+	}
 
 	if err == nil {
 		// Directory exists
 		pkg.Load(name)
-	} else {
-		println("Cannot find package at:", newPath)
-		log.Panic(err)
-	}
-
+	} 
 }
 
 // Not fully functional. Dang it.
-func readPackageInfoFile(location string) (*PackageInfo){
+func readPackageInfoFile(location string) (info *PackageInfo, error *string){
 	packageInfo := &PackageInfo{}
 	infoFile, err := ioutil.ReadFile(location + "/package.yml");
 	if err != nil {
-		log.Panic("No package info file found at " + location + "/package.yml")
+		message := "No package info file found at " + location + "/package.yml"
+		return nil, &message
 	}
 	yaml.Unmarshal([]byte(infoFile), &packageInfo)
 	//fmt.Printf("--- m:\n%v\n\n", packageInfo)
-	return packageInfo
+	return packageInfo, nil
 }
 
 func (pkg *Package)readHeaderFile(location string) {
@@ -521,13 +569,33 @@ func (pkg *Package) open(location string) {
 
 	// Now load all the functions and resolve them
 
-	//// Reflection would make this code cleaner:
-	pkg.Name = thisPackage.Name
-	pkg.Types = thisPackage.Types
-	pkg.DependentPackageNames = thisPackage.DependentPackageNames
-	
+	pkg.Merge(thisPackage)
 
-	for _, function := range(thisPackage.Functions) {
+	pkg.Println("\t -- Using tpkg at:" + tpkg_path)
+
+
+}
+
+func (pkg *Package)Merge(otherPackage *tp.Package) {
+
+	if otherPackage == nil {
+		return
+	}
+
+	//// Reflection would make this code cleaner:
+
+	pkg.Name = otherPackage.Name
+
+	var existingTypeId int
+
+	for _, someType := range(otherPackage.Types) {
+		existingTypeId = pkg.GetTypeId( proto.GetString( someType.Name ) )
+		if existingTypeId == -1 {
+			pkg.Types = append( pkg.Types, someType)
+		}
+	}	
+
+	for _, function := range(otherPackage.Functions) {
 
  		if proto.GetBool( function.BuiltIn ) {
 			pkg.resolveHeader(function)
@@ -535,10 +603,7 @@ func (pkg *Package) open(location string) {
 			pkg.resolveDefinition(function)
 		}
 		pkg.Package.Functions = append(pkg.Package.Functions, function)
-	}
-
-	pkg.Println("\t -- Using tpkg at:" + tpkg_path)
-
+	}	
 
 }
 

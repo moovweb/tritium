@@ -7,7 +7,11 @@ import(
 )
 
 func Compile(file string) (*tp.Transform) {
-	return linker.RunWithPackage(file, packager.LoadDefaultPackage(PackagePath).Package)
+	defaultPackage := packager.LoadDefaultPackage(PackagePath)
+	defaultPackage.LoadUserPackage(UserPackagePath, PackagePath)
+
+	return linker.RunWithPackage(file, defaultPackage.Package)
 }
 
 var PackagePath *string
+var UserPackagePath *string
