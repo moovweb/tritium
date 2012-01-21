@@ -52,13 +52,18 @@ func MakeImport(path string, lineNum int32) *Instruction {
 }
 
 func MakeLocalVar(name string, val *Instruction, block []*Instruction, lineNum int32) *Instruction {
-  return &Instruction {
+  node := &Instruction {
     Type: NewInstruction_InstructionType(Instruction_LOCAL_VAR),
     Value: proto.String(name),
-    Arguments: ListInstructions(val),
     Children: block,
     LineNumber: proto.Int32(lineNum),
   }
+  if val == nil {
+    node.Arguments = nil
+  } else {
+    node.Arguments = ListInstructions(val)
+  }
+  return node
 }
 
 func MakeFunctionCall(name string, args []*Instruction, block []*Instruction, lineNum int32) *Instruction {
