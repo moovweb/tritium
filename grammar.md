@@ -15,6 +15,7 @@ Syntactic rules (specified with EBNF):
     expression  ->  literal
                 ->  read
                 ->  call
+                ->  cast
                 ->  variable
     
     literal     ->  STR | RGXP | POS
@@ -22,6 +23,8 @@ Syntactic rules (specified with EBNF):
     read        ->  'read' '(' STR ')'
 
     call        ->  ID '(' arguments? ')' block?
+    
+    cast        ->  TYPE '(' expression ')' block?
 
     arguments   ->  argument (',' argument)*
 
