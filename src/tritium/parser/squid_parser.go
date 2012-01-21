@@ -72,11 +72,14 @@ func (p *Parser) Parse() *ir.ScriptObject {
     for p.peek().Lexeme != EOF {
       stmts = append(stmts, p.statement())
     }
+    line := int32(0)
     if len(stmts) == 0 {
       stmts = nil
+    } else {
+      line = *stmts[0].LineNumber	
     }
     
-    script.Root = ir.MakeBlock(stmts, *stmts[0].LineNumber)
+    script.Root = ir.MakeBlock(stmts, line)
     
     // script.Root = &ir.Instruction {
     //   Type: ir.NewInstruction_InstructionType(ir.Instruction_BLOCK),
