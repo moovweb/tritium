@@ -110,6 +110,8 @@ func (p *Parser) expression() (node *ir.Instruction) {
     node = p.read()
   case ID:
     node = p.call()
+  case TYPE:
+    node = p.cast()
   case GVAR, LVAR:
     node = p.variable()
   default:
@@ -324,6 +326,27 @@ func (p *Parser) arguments() (ords []*ir.Instruction, kwdnames []string, kwdvals
     kwdvals = nil
   }
   return ords, kwdnames, kwdvals
+}
+
+func (p *Parser) cast() (node *ir.Instruction) {
+  typeName := p.pop().Value // grab the function name
+  typeLineNo := p.peek().LineNumber
+  if p.peek().Lexeme != LPAREN {
+    panic("expression needed in typecast")
+  }
+  p.pop() // pop the lparen
+  expr := p.expression()
+  if p.peek().Lexeme != RPAREN {
+    panic("typecast missing closing parenthesis")
+  }
+  p.pop() // pop the rparen
+  var block []*ir.Instruction
+  if p.peek().Lexeme == LBRACE {
+    block = p.block()
+  }
+  
+  node = ir.MakeFunctionCall(typeName, ir.ListInstructions(expr), block, typeLineNo)
+  return node
 }
 
 func (p *Parser) variable() (node *ir.Instruction) {
