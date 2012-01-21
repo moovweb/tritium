@@ -98,11 +98,11 @@ type Token struct {
   Lexeme
   Value string
   ExtraValue string
-  LineNum int32
+  LineNumber int32
 }
 
 func (t *Token) Inspect() string {
-  return fmt.Sprintf("[%s: %s, %s, %d]", LexemeName[t.Lexeme], t.Value, t.ExtraValue, t.LineNum)
+  return fmt.Sprintf("[%s: %s, %s, %d]", LexemeName[t.Lexeme], t.Value, t.ExtraValue, t.LineNumber)
 }
 
 /*
@@ -112,7 +112,7 @@ func (t *Token) Inspect() string {
 */
 type Tokenizer struct {
   Source []byte
-  LineNum int32
+  LineNumber int32
   Lookahead *Token
   unterminatedComment bool
 }
@@ -158,7 +158,7 @@ func (t *Tokenizer) discardBlockComment() {
     }
     switch t.Source[i] {
     case '\n':
-      t.LineNum++
+      t.LineNumber++
     case '/':
       i++
       if i >= length {
@@ -182,18 +182,18 @@ func (t *Tokenizer) discardBlockComment() {
   }
   t.Source = t.Source[i:]
   if error {
-    t.Lookahead = &Token{ Lexeme: ERROR, Value: "unterminated comment", ExtraValue: "", LineNum: t.LineNum }
+    t.Lookahead = &Token{ Lexeme: ERROR, Value: "unterminated comment", ExtraValue: "", LineNumber: t.LineNumber }
     t.unterminatedComment = true
   }
 }
 
 // Discard all leading whitespace and comments from the source text. Need to
-// tally up the newlines to keep LineNum up to date.
+// tally up the newlines to keep LineNumber up to date.
 func (t *Tokenizer) discardWhitespaceAndComments() {
   for len(t.Source) > 0 {
     switch {
     case t.hasPrefix("\n"):
-      t.LineNum++
+      t.LineNumber++
       t.Source = t.Source[1:]
     case t.hasPrefix(" ") || t.hasPrefix("\t") || t.hasPrefix("\r") || t.hasPrefix(";"):
       t.discardSpaces()
@@ -208,14 +208,14 @@ func (t *Tokenizer) discardWhitespaceAndComments() {
 // Returns the next token and simultaneously discards the specified number of
 // characters from the source text.
 func (t *Tokenizer) popToken(lexeme Lexeme, value string, length int) *Token {
-  val := &Token { Lexeme: lexeme, Value: value, ExtraValue: "", LineNum: t.LineNum }
+  val := &Token { Lexeme: lexeme, Value: value, ExtraValue: "", LineNumber: t.LineNumber }
   t.Source = t.Source[length:]
   return val
 }
 
 // Returns an error token and discards the rest of the line.
 func (t *Tokenizer) popError(message string) *Token {
-  val := &Token { Lexeme: ERROR, Value: message, ExtraValue: "", LineNum: t.LineNum }
+  val := &Token { Lexeme: ERROR, Value: message, ExtraValue: "", LineNumber: t.LineNumber }
   t.discardLine()
   return val
 }
@@ -319,7 +319,7 @@ func (t *Tokenizer) munch() *Token {
 */
 
 func MakeTokenizer(src []byte) *Tokenizer {
-  t := Tokenizer { Source: src, Lookahead: nil, LineNum: 1, unterminatedComment: false }
+  t := Tokenizer { Source: src, Lookahead: nil, LineNumber: 1, unterminatedComment: false }
   t.Pop()
   return &t
 }
