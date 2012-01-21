@@ -16,13 +16,13 @@ func (ins *Instruction) Iterate(itFunc func(*Instruction)) {
 
 
 
-func List(instrs ...*Instruction) []*Instruction {
+func ListInstructions(instrs ...*Instruction) []*Instruction {
   return append(make([]*Instruction, 0), instrs...)
 }
 
 func FoldLeft(funcName string, base *Instruction, seq []*Instruction) (acc *Instruction) {
   for acc = base; len(seq) > 0; seq = seq[1:] {
-    acc = MakeFunctionCall(funcName, List(acc, seq[0]), nil, *base.LineNumber)
+    acc = MakeFunctionCall(funcName, ListInstructions(acc, seq[0]), nil, *base.LineNumber)
   }
   return acc
 }
@@ -55,7 +55,7 @@ func MakeLocalVar(name string, val *Instruction, block []*Instruction, lineNum i
   return &Instruction {
     Type: NewInstruction_InstructionType(Instruction_LOCAL_VAR),
     Value: proto.String(name),
-    Arguments: List(val),
+    Arguments: ListInstructions(val),
     Children: block,
     LineNumber: proto.Int32(lineNum),
   }
