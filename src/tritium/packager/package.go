@@ -143,9 +143,9 @@ func NewUserPackage(loadPath *string, fallbackPath *string) (*Package) {
 
 func newLog() (log4go.Logger) {
 	pkgLog := make(log4go.Logger)
-	os.Mkdir("log", uint32(0777) )
+	os.Mkdir("tmp", uint32(0777) )
 
-	pkgLog.AddFilter("file", log4go.FINE, log4go.NewFileLogWriter("log/debug.log", false))	
+	pkgLog.AddFilter("file", log4go.FINE, log4go.NewFileLogWriter("tmp/packager.log", false))	
 	return pkgLog
 }
 
