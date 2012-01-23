@@ -142,6 +142,23 @@
   to_text(this())
 }
 
+@func XMLNode.wrap(Text %tag) {
+  %node = this()
+  insert_at(position("before"), %tag) {
+    move(%node, this(), position("top"))
+    yield()
+  }
+}
+
+@func XMLNode.wrap_together(Text %selector, Text %tag) {
+  $(concat(%selector, "[1]")) {
+    wrap(%tag) {
+      move_here(concat("../", %selector))
+      yield()
+    }
+  }
+}
+
 # POSITIONALS
 # siblings of these are in node, but these use Inner so are here.
 @func XMLNode.insert_at(Position %pos, Text %tag, Text %content) {

@@ -185,7 +185,6 @@ func (ctx *Ctx) runChildren(scope *Scope, ins *tp.Instruction) (returnValue inte
 }
 
 func MoveFunc(what, where xml.Node, position Position) {
-	//what.Remove()
 	switch position {
 	case BOTTOM:
 		where.AppendChildNode(what)
