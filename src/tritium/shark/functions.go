@@ -28,10 +28,13 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 
 	case "var.Text":
 		val := ctx.Env[args[0].(string)]
-		ts := &Scope{Value: val}
-		ctx.runChildren(ts, ins)
-		returnValue = ts.Value
-		ctx.Env[args[0].(string)] = returnValue.(string)
+		returnValue = val
+		if len(ins.Children) > 0 {
+			ts := &Scope{Value: val}
+			ctx.runChildren(ts, ins)
+			returnValue = ts.Value
+			ctx.Env[args[0].(string)] = returnValue.(string)
+		}
 	case "var.Text.Text":
 		ctx.Env[args[0].(string)] = args[1].(string)
 		returnValue = args[1].(string)
