@@ -17,6 +17,7 @@ const (
   COMMA
   DOT
   EQUAL
+  PLUS
   STRING
   REGEXP
   POS
@@ -33,8 +34,8 @@ const (
   ERROR
 )
 
-var LexemeName [21]string
-var matcher [21]*rubex.Regexp
+var LexemeName [22]string
+var matcher [22]*rubex.Regexp
 var symbolLexeme map[string]Lexeme
 var symbolPattern *rubex.Regexp
 var numberPattern *rubex.Regexp
@@ -50,6 +51,7 @@ func init() {
   LexemeName[COMMA]  = "COMMA"
   LexemeName[DOT]    = "DOT"
   LexemeName[EQUAL]  = "EQUAL"
+  LexemeName[PLUS]   = "PLUS"
   LexemeName[STRING] = "STRING"
   LexemeName[REGEXP] = "REGEXP"
   LexemeName[POS]    = "POS"
@@ -80,7 +82,7 @@ func init() {
   matcher[PATH], _   = rubex.Compile(`\A[-+.*?:\/\w]+`)
   
   // Map parens, braces, etc to their lexemes
-  symbolLexeme = make(map[string]Lexeme, 7)
+  symbolLexeme = make(map[string]Lexeme, 8)
   symbolLexeme["("] = LPAREN
   symbolLexeme[")"] = RPAREN
   symbolLexeme["{"] = LBRACE
@@ -88,7 +90,8 @@ func init() {
   symbolLexeme[","] = COMMA
   symbolLexeme["."] = DOT
   symbolLexeme["="] = EQUAL
-  symbolPattern, _ = rubex.Compile(`\A[\(\)\{\}\,\.=]`)
+  symbolLexeme["+"] = PLUS
+  symbolPattern, _ = rubex.Compile(`\A[\(\)\{\}\,\.=\+]`)
   
   numberPattern, _ = rubex.Compile(`\A\d+`)
 }

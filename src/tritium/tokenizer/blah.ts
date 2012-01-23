@@ -7,6 +7,8 @@
 
 foo()
 
+log("blah" + "blee" + "bloo")
+
 select("div") {
   insert("span", class: "foo", read("text.txt"))
   /^\/home\/blah\.html/i

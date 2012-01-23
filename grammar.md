@@ -12,11 +12,14 @@ Syntactic rules (specified with EBNF):
                 
     import      ->  '@import' (PATH | STR)
 
-    expression  ->  literal
+    expression  ->  term ('+' term)*
+    
+    term        ->  literal
                 ->  read
                 ->  call
                 ->  cast
                 ->  variable
+                -> '(' expression ')'
     
     literal     ->  STR | RGXP | POS
                 

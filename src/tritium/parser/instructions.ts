@@ -11,6 +11,9 @@
 
 foo()
 
+$x = "a" + "b"
+$y = "c" + $x { append("d") } + "e"
+
 insert("span") {
   set("class", foo("a", "b"), read("text.txt"))
   Text(fetch("blah")) {

@@ -106,6 +106,19 @@ func (p *Parser) statement() (node *ir.Instruction) {
 }
 
 func (p *Parser) expression() (node *ir.Instruction) {
+  node = p.term()
+  rest := ir.ListInstructions()  
+  for p.peek().Lexeme == PLUS {
+    p.pop() // pop the plus sign
+    rest = append(rest, p.term())
+  }
+  if len(rest) > 0 {
+    node = ir.FoldLeft("concat", node, rest)
+  }
+  return node
+}
+
+func (p *Parser) term() (node *ir.Instruction) {
   switch p.peek().Lexeme {
   case STRING, REGEXP, POS:
     node = p.literal()
@@ -117,6 +130,13 @@ func (p *Parser) expression() (node *ir.Instruction) {
     node = p.cast()
   case GVAR, LVAR:
     node = p.variable()
+  case LPAREN:
+    p.pop() // pop the lparen
+    node = p.expression()
+    if p.peek().Lexeme != RPAREN {
+      panic("unclosed parenthesis")
+    }
+    p.pop() // pop the rparen
   default:
     panic("malformed expression")
   }
