@@ -223,5 +223,16 @@
 
 @func XMLNode.asset(Text %name, Text %type) {
   deprecated("Please use asset('path/to/asset.jpg')")
-  concat(%name, %type)
+  match(%type) {
+    with("js") {
+      $_deprecated_assets_tmp = concat("javascript/", %name)
+    }
+    with("image") {
+      $_deprecated_assets_tmp = concat("images/", %name)
+    }
+    with("sass") {
+      $_deprecated_assets_tmp = sass(%name)
+    }
+  }
+  $_deprecated_assets_tmp
 }
