@@ -150,7 +150,11 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 					}
 				}
 			}
-			
+			if ins.Children != nil {
+				for _, child := range(ins.Children) {
+					ctx.ProcessInstructionWithLocalScope(child, ctx.textType, localScope)
+				}
+			}
 		case Instruction_FUNCTION_CALL:
 			stub := proto.GetString(ins.Value)
 			if stub == "yield" {
