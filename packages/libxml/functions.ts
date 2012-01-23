@@ -219,3 +219,9 @@
   }
 }
 
+### DEPRECATED ####
+
+@func XMLNode.asset(Text %name, Text %type) {
+  deprecated("Please use asset('path/to/asset.jpg')")
+  concat(%name, %type)
+}

@@ -107,6 +107,17 @@
   "" 
 }
 
+# DEPRECATED
+@func match(Regexp %regexp, Text %against) {
+  deprecated("Please use match(Text, Regexp). Reverse them!")
+  match(%against, %regexp) {
+    yield()
+  }
+}
+@func Text.dump() {
+  this()
+}
+
 # TEMPORARY UNTIL THE PARSER HANDLES THIS
 @func concat(Text %a, Text %b, Text %c) {
   concat(%a, concat(%b, %c))
