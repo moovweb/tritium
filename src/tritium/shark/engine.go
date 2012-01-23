@@ -37,7 +37,6 @@ type Ctx struct {
 	Exports [][]string
 	Logs []string
 	Env map[string]string
-	LocalVar map[string]interface{}
 	MatchStack []string
 	MatchShouldContinue []bool
 	Yields []*YieldBlock
@@ -139,7 +138,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 			//println("Setting ", name, "to", ctx.LocalVar[name])
 		}
 		if len(ins.Children) > 0 {
-			ts := &Scope{Value: ctx.LocalVar[name]}
+			ts := &Scope{Value: ctx.vars()[name]}
 			ctx.runChildren(ts, ins)
 			vars[name] = ts.Value.(string)
 		}
