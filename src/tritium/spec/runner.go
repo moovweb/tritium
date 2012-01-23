@@ -39,10 +39,8 @@ func All(directory string) {
 
 func (result *Result)all(directory string, pkg *tp.Package, eng Engine, logger l4g.Logger) {
 	_, err := Glob(Join(directory, "main.ts"))
-	//println("checking in", directory)
 
 	if err == nil {
-		//println("running")
 		newResult := RunSpec(directory, pkg, eng, logger)
 		result.Merge(newResult)
 	}
