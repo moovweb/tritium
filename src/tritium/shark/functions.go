@@ -209,7 +209,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		xpath := xpath.CompileXPath(args[0].(string))
 		//xpath := ctx.XPath(args[0].(string))
 		nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
-		println("Node search for", args[0].(string), "returned this many results", len(nodeSet))
+		//println("Node search for", args[0].(string), "returned this many results", len(nodeSet))
 		defer xpCtx.Free()
 		if len(nodeSet) == 0 {
 			returnValue = "false"
