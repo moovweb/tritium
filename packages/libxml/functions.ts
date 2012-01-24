@@ -225,10 +225,10 @@
   deprecated("Please use asset('path/to/asset.jpg')")
   match(%type) {
     with("js") {
-      $_deprecated_assets_tmp = concat("javascript/", %name)
+      $_deprecated_assets_tmp = asset(concat("javascript/", %name))
     }
     with("image") {
-      $_deprecated_assets_tmp = concat("images/", %name)
+      $_deprecated_assets_tmp = asset(concat("images/", %name))
     }
     with("sass") {
       $_deprecated_assets_tmp = sass(%name)
