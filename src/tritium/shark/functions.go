@@ -21,6 +21,9 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		ctx.Yields = ctx.Yields[:(len(ctx.Yields)-1)]
 		if (ctx.yieldBlock() != nil) {
 			returnValue = ctx.runChildren(scope, myYieldBlock.Ins)
+			if returnValue == nil {
+				returnValue = "false"
+			}
 		} else {
 			ctx.Log.Error("yield() failure")
 		}
