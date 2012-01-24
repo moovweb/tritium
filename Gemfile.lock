@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tritium (1.6)
+    tritium (2.0)
       beefcake
       bundler
       diff-lcs (~> 1.1.2)
