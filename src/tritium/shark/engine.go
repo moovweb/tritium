@@ -7,6 +7,9 @@ import(
 	xml "libxml/tree"
 	l4g "log4go"
 	proto "goprotobuf.googlecode.com/hg/proto"
+	"fmt"
+	"os"
+	//"runtime/debug"
 )
 
 type Position int;
@@ -42,6 +45,10 @@ type Ctx struct {
 	Yields []*YieldBlock
 	*Shark
 	*tp.Transform
+	
+	// Debug info
+	filename string
+	hadError bool
 }
 
 type YieldBlock struct {
@@ -99,11 +106,14 @@ func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]str
 		MatchStack: make([]string, 0),
 		MatchShouldContinue: make([]bool, 0),
 		Yields: make([]*YieldBlock, 0),
+		hadError: false,
 	}
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars:make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
 	scope := &Scope{Value:input}
-	ctx.runInstruction(scope, transform.Objects[0].Root, )
+	obj := transform.Objects[0]
+	ctx.filename = proto.GetString(obj.Name)
+	ctx.runInstruction(scope, obj.Root, )
 	data = scope.Value.(string)
 	exports = ctx.Exports
 	logs = ctx.Logs
@@ -124,6 +134,24 @@ func (ctx *Ctx) vars() (map[string]interface{}) {
 }
 
 func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
+	defer func() {
+		if x := recover(); x != nil {
+			err, ok := x.(os.Error)
+			errString := ""
+			if ok {
+				errString = err.String()
+			} else {
+				errString = x.(string)
+			}
+			if ctx.hadError == false {
+				ctx.hadError = true
+				errString = errString + "\n" + ins.Type.String() + " " + proto.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n" 
+			}
+			errString = errString + ctx.fileAndLine(ins) + "\n"
+			panic(errString)
+		}
+	}()
+	
 	returnValue = ""
 	switch *ins.Type {
 	case tp.Instruction_BLOCK:
@@ -145,7 +173,11 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 		//println("Getting ", name, "as", ctx.LocalVar[name])
 		returnValue = vars[name]
 	case tp.Instruction_IMPORT:
-		ctx.runChildren(scope, ctx.Objects[int(proto.GetInt32(ins.ObjectId))].Root)
+		obj := ctx.Objects[int(proto.GetInt32(ins.ObjectId))]
+		curFile := ctx.filename
+		ctx.filename = proto.GetString(obj.Name)
+		ctx.runChildren(scope, obj.Root)
+		ctx.filename = curFile
 	case tp.Instruction_FUNCTION_CALL:
 		//println(ins.String())
 		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]
@@ -174,7 +206,13 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 			ctx.Yields = ctx.Yields[:(len(ctx.Yields)-1)]
 		}
 	}
+
 	return
+}
+
+func (ctx *Ctx) fileAndLine(ins *tp.Instruction) string {
+	lineNum := fmt.Sprintf("%d", proto.GetInt32(ins.LineNumber))
+	return (ctx.filename + ":" + lineNum)
 }
 
 func (ctx *Ctx) runChildren(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {

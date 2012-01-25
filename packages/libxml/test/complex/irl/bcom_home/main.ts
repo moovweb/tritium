@@ -12,18 +12,17 @@ $optomize_prime = "nope"
 # optimization variable
 $optimize_the_shit_out_of_me = "true"
 
-with(/((redirect\.jsp)|(\/redirect\?))/) {
-  replace(/onload=\".*?replace\(['\"](.*?)['\"]/) {
-      rewrite("link")
-  }
-}
-
 # Varnish caching will be determined via this variable
 $cache_me = "false";
 
 # start matching fool!
 # Fix content_type and all malformed html here
 match($path) {
+  with(/((redirect\.jsp)|(\/redirect\?))/) {
+    replace(/onload=\".*?replace\(['\"](.*?)['\"]/) {
+        rewrite("link")
+    }
+  }
 
   # make bcoms xhr assetts jsonp 
   with(/((mobile\/mobMainAd\.)|(mobile\/mobOffersAd\.))/){

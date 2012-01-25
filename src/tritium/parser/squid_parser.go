@@ -55,7 +55,6 @@ func (p *Parser) Parse() *ir.ScriptObject {
   script := new(ir.ScriptObject)
   script.Name = proto.String(p.FullPath)
   
-  
   stmts := ir.ListInstructions()
   defs := make([]*ir.Function, 0) // Add a new constructor in instruction.go
   
@@ -78,13 +77,7 @@ func (p *Parser) Parse() *ir.ScriptObject {
     } else {
       line = *stmts[0].LineNumber	
     }
-    
     script.Root = ir.MakeBlock(stmts, line)
-    
-    // script.Root = &ir.Instruction {
-    //   Type: ir.NewInstruction_InstructionType(ir.Instruction_BLOCK),
-    //   Children: stmts,
-    // }
   }
   return script
 }
@@ -93,12 +86,7 @@ func (p *Parser) statement() (node *ir.Instruction) {
   switch p.peek().Lexeme {
   case IMPORT:
     token := p.pop() // pop the "@import" token (includes importee)
-    
     node = ir.MakeImport(path.Join(p.DirName, token.Value), token.LineNumber)
-    
-    // node.Type = ir.NewInstruction_InstructionType(ir.Instruction_IMPORT)
-    // importPath := path.Join(p.DirName, token.Value)
-    // node.Value = proto.String(importPath)
   default:
     node = p.expression()
   }
@@ -147,34 +135,14 @@ func (p *Parser) literal() (node *ir.Instruction) {
   token := p.pop()
   switch token.Lexeme {
   case STRING:
-    // node.Type = ir.NewInstruction_InstructionType(ir.Instruction_TEXT)
-    // node.Value = proto.String(token.Value)
-    
     node = ir.MakeText(token.Value, token.LineNumber)
   case REGEXP:
-    // pattern := new(ir.Instruction)
-    // options := new(ir.Instruction)
-    // po := make([]*ir.Instruction, 2)
-    // pattern.Type = ir.NewInstruction_InstructionType(ir.Instruction_TEXT)
-    // pattern.Value = proto.String(token.Value)
-    // options.Type = ir.NewInstruction_InstructionType(ir.Instruction_TEXT)
-    // options.Value = proto.String(token.ExtraValue)
-    // po[0] = pattern
-    // po[1] = options
-    // node.Type = ir.NewInstruction_InstructionType(ir.Instruction_FUNCTION_CALL)
-    // node.Value = proto.String("regexp")
-    // node.Arguments = po
-    
     node = ir.MakeFunctionCall("regexp",
                                ir.ListInstructions(ir.MakeText(token.Value, token.LineNumber),
                                                    ir.MakeText(token.ExtraValue, token.LineNumber)),
                                nil,
                                token.LineNumber)
-    
   case POS:
-    // node.Type = ir.NewInstruction_InstructionType(ir.Instruction_POSITION)
-    // node.Value = proto.String(token.Value)
-    
     node = ir.MakePosition(token.Value, token.LineNumber)
   }
   return node
@@ -191,18 +159,12 @@ func (p *Parser) read() (node *ir.Instruction) {
     panic("read requires a literal string argument")
   }
   readPath := p.pop().Value
-  // pathLineNo := p.peek().LineNumber
   if p.peek().Lexeme != RPAREN {
     panic("unterminated argument list in read")
   }
   p.pop() // pop the rparen
   contents, _ := ioutil.ReadFile(path.Join(p.DirName, readPath))
-  // node.Type = ir.NewInstruction_InstructionType(ir.Instruction_TEXT)
-  // node.Value = proto.String(string(contents))
-  
-  
-  node = ir.MakeText(string(contents), readLineNo)
-  
+  node = ir.MakeText(string(contents), readLineNo)  
   return node
 }
 
@@ -213,7 +175,10 @@ func (p *Parser) call() (node *ir.Instruction) {
     panic("argument list expected for call to " + funcName)
   }
   p.pop() // pop the lparen
+
   ords, kwdnames, kwdvals := p.arguments() // gather the arguments
+  numArgs := len(ords)
+
   if p.peek().Lexeme != RPAREN {
     panic("unterminated argument list in call to " + funcName)
   }
@@ -228,19 +193,6 @@ func (p *Parser) call() (node *ir.Instruction) {
     kwdToGensym := make(map[string]string, len(kwdnames))
     outer := ir.ListInstructions()
     for i, k := range kwdnames {
-      // temp := new(ir.Instruction)
-      // temp.Type = ir.NewInstruction_InstructionType(ir.Instruction_FUNCTION_CALL)
-      // temp.Value = proto.String("var")
-      // temp.Arguments = make([]*ir.Instruction, 2)
-      // tempName := p.gensym()
-      // temp.Arguments[0] = &ir.Instruction {
-      //   Type: ir.NewInstruction_InstructionType(ir.Instruction_TEXT),
-      //   Value: proto.String(tempName),
-      // }
-      // temp.Arguments[1] = v
-      // outer = append(outer, temp)
-      // kwdToGensym[k] = tempName
-      
       tempname := p.gensym()
       tempvar := ir.MakeFunctionCall("var",
                                      ir.ListInstructions(ir.MakeText(tempname, funcLineNo),
@@ -251,25 +203,6 @@ func (p *Parser) call() (node *ir.Instruction) {
     }
     inner := ir.ListInstructions()
     for _, k := range kwdnames {
-      // getter := new(ir.Instruction)
-      // getter.Type = ir.NewInstruction_InstructionType(ir.Instruction_FUNCTION_CALL)
-      // getter.Value = proto.String("var")
-      // getter.Arguments = make([]*ir.Instruction, 1)
-      // getter.Arguments[0] = &ir.Instruction {
-      //   Type: ir.NewInstruction_InstructionType(ir.Instruction_TEXT),
-      //   Value: proto.String(kwdToGensym[k]),
-      // }      
-      // setter := new(ir.Instruction)
-      // setter.Type = ir.NewInstruction_InstructionType(ir.Instruction_FUNCTION_CALL)
-      // setter.Value = proto.String("set")
-      // setter.Arguments = make([]*ir.Instruction, 2)
-      // setter.Arguments[0] = &ir.Instruction {
-      //   Type: ir.NewInstruction_InstructionType(ir.Instruction_TEXT),
-      //   Value: proto.String(k),
-      // }
-      // setter.Arguments[1] = getter
-      // inner = append(inner, setter)
-      
       getter := ir.MakeFunctionCall("var",
                                     ir.ListInstructions(ir.MakeText(kwdToGensym[k], funcLineNo)),
                                     nil, funcLineNo)
@@ -278,44 +211,25 @@ func (p *Parser) call() (node *ir.Instruction) {
                                     nil, funcLineNo)
       inner = append(inner, setter)
     }    
-    
-    // theCall := new(ir.Instruction)
-    // theCall.Type = ir.NewInstruction_InstructionType(ir.Instruction_FUNCTION_CALL)
-    // theCall.Value = proto.String(funcName)
-    // theCall.Arguments = ords
-    // 
-    // if block == nil {
-    //   block = inner
-    // } else {
-    //   for _, v := range block {
-    //     inner = append(inner, v)
-    //   }
-    // }
-    
     if block != nil {
       for _, v := range block {
         inner = append(inner, v)
       }
     }
-    
     theCall := ir.MakeFunctionCall(funcName, ords, inner, funcLineNo)
     outer = append(outer, theCall)
-    
     node = ir.MakeBlock(outer, funcLineNo)
-    
-    
-    // theCall.Children = inner
-    // outer = append(outer, theCall)
-    // 
-    // node.Type = ir.NewInstruction_InstructionType(ir.Instruction_BLOCK)
-    // node.Children = outer
-    
+
+  } else if funcName == "concat" && numArgs > 2 {
+    // expand variadic concat into nested binary concats
+    lhs := ir.FoldLeft("concat", ords[0], ords[1:numArgs-1])
+    rhs := ords[numArgs-1]
+    node = ir.MakeFunctionCall("concat", ir.ListInstructions(lhs,rhs), block, funcLineNo)
+  } else if funcName == "log" && numArgs > 1 {
+    // expand variadic log into composition of log and concat
+    cats := ir.FoldLeft("concat", ords[0], ords[1:])
+    node = ir.MakeFunctionCall("log", ir.ListInstructions(cats), block, funcLineNo)
   } else {
-    // node.Type = ir.NewInstruction_InstructionType(ir.Instruction_FUNCTION_CALL)
-    // node.Value = proto.String(funcName)
-    // node.Arguments = ords
-    // node.Children = block
-    
     node = ir.MakeFunctionCall(funcName, ords, block, funcLineNo)
   }
   return node
@@ -395,60 +309,6 @@ func (p *Parser) variable() (node *ir.Instruction) {
     node = ir.MakeFunctionCall("var", args, block, lineNo)
   }
   return node
-  
-  
-  // switch p.peek().Lexeme {
-  // case LVAR:
-  //   // node.Type = ir.NewInstruction_InstructionType(ir.Instruction_LOCAL_VAR)
-  //   // node.Value = proto.String(p.pop().Value)
-  //   // if p.peek().Lexeme == EQUAL {
-  //   //   p.pop() // pop the equal sign
-  //   //   node.Arguments = make([]*ir.Instruction, 1)
-  //   //   node.Arguments[0] = p.expression()
-  //   // }
-  //   token := p.pop()
-  //   name, lineNo := token.Value, token.LineNumber
-  //   var args []*ir.Instruction
-  //   if p.peek().Lexeme == EQUAL {
-  //     p.pop() // pop the equal sign
-  //     args = ir.ListInstructions(p.expression())
-  //     if len(args) == 0 {
-  //       args = nil
-  //     }
-  //   }
-  //   node = ir.MakeLocalVar(name, args, nil, lineNo)
-  //     
-  // case GVAR:
-  //   node.Type = ir.NewInstruction_InstructionType(ir.Instruction_FUNCTION_CALL)
-  //   node.Value = proto.String("var")
-  //   name := p.pop().Value
-  //   value := new(ir.Instruction)
-  //   if p.peek().Lexeme == EQUAL {
-  //     p.pop() // pop the equal sign
-  //     value = p.expression()
-  //   } else {
-  //     value = nil
-  //   }
-  //   if value == nil {
-  //     node.Arguments = make([]*ir.Instruction, 1)
-  //   } else {
-  //     node.Arguments = make([]*ir.Instruction, 2)
-  //     node.Arguments[1] = value
-  //   }
-  //   node.Arguments[0] = &ir.Instruction {
-  //     Type: ir.NewInstruction_InstructionType(ir.Instruction_TEXT),
-  //     Value: proto.String(name),
-  //   }
-  //   
-  //   token := p.pop()
-  //   name, lineNo := token.Value, token.LineNumber
-  //   var args []*ir.Instruction
-  //   
-  // }
-  // if p.peek().Lexeme == LBRACE {
-  //   node.Children = p.block()
-  // }
-  // return node
 }
 
 func (p *Parser) block() (stmts []*ir.Instruction) {
@@ -553,11 +413,3 @@ func (p *Parser) parameters() []*ir.Function_Argument {
   }
   return params
 }
-
-
-
-
-
-
-
-
