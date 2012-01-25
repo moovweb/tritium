@@ -7,6 +7,7 @@ import s "tritium/spec"
 
 func show_usage() {
 	println("General purpose Tritium command line interface. Commands are: package, link, test")
+	println("\tpackage:\n\t\ttritium package --name <pkg_name>\n\t\tOr\n\t\tpackage --output-path <path>")				
 }
 
 func main() {
@@ -14,21 +15,27 @@ func main() {
 		command := os.Args[1]
 
 		if command == "package" {
+			
+			if len(os.Args) > 3 {
+				if os.Args[2] == "--name" {
+					// Build the package specified by the path
+					path := os.Args[2]
 
-			if (len(os.Args) == 3) {
-				// Build the package specified by the path
-				path := os.Args[2]
+					pkg := packager.NewPackage(packager.DefaultPackagePath, packager.BuildOptions() )
+					pkg.Load(path)
+					//pkg.SerializedOutput()
+					//println(pkg.DebugInfo())
+
+				} else if (os.Args[2] == "--output-path") {
+					_, path := packager.OutputDefaultPackage(os.Args[3])
+					println("Output default package to:", path)
+				} 
 				
-				pkg := packager.NewPackage(packager.DefaultPackagePath, packager.BuildOptions() )
-				pkg.Load(path)
-				//pkg.SerializedOutput()
-				//println(pkg.DebugInfo())
-
 			} else {
-
 				pkg := packager.BuildDefaultPackage()
 				pkg.SerializedOutput()
 			}
+			
 		} else if command == "pkginfo" {
 			name := os.Args[2]
 			pkg := packager.NewPackage(packager.DefaultPackagePath, packager.BuildOptions() )

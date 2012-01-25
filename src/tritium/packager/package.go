@@ -21,6 +21,7 @@ type Package struct {
 	location string
 	LoadPath string
 	FallbackPath string
+	OutputFile string
 	Log log4go.Logger
 	*tp.Package
 	Options PackageOptions
@@ -67,6 +68,26 @@ func LoadDefaultPackage(path *string) (*Package) {
 	}
 
 	return buildPackage(*path, nil)
+}
+
+func OutputDefaultPackage(path string) (pkg *Package, newFilePath string) {
+	pkg = BuildDefaultPackage()
+	
+	_, err := os.Stat(path)
+	
+	if err != nil {
+		creationErr := os.MkdirAll(path, uint32(0777) ) 
+		if creationErr != nil {
+			panic("Could not make path(" + path + "). Error:" + creationErr.String())
+		}
+	}
+	
+	_, name := filepath.Split(pkg.OutputFile)
+	newOutputFile := filepath.Join(path, name)
+	
+	os.Rename(pkg.OutputFile, newOutputFile)
+	
+	return pkg, newOutputFile
 }
 
 func BuildDefaultPackage() (*Package) {
@@ -544,6 +565,7 @@ func (pkg *Package) write() {
 	bytes = crypto.Encrypt(bytes)
 
 	ioutil.WriteFile(outputFilename, bytes, uint32(0666) )
+	pkg.OutputFile = outputFilename
 
 	pkg.Println(" -- output: " +  outputFilename)
 }
