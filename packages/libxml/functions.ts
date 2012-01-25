@@ -198,6 +198,7 @@
   }
 }
 
+
 @func XMLNode.insert_javascript_bottom(Text %js) {
   insert_javascript_at(position("bottom"), %js) {
     yield()
