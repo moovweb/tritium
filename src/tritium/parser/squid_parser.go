@@ -7,7 +7,7 @@ import (
   "path/filepath"
   . "tritium/tokenizer" // was meant to be in this package
   "path"
-  // "fmt"
+  "fmt"
 )
 
 type Parser struct {
@@ -33,6 +33,16 @@ func (p *Parser) pop() *Token {
   val := p.Lookahead
   p.Lookahead = p.Tokenizer.Pop()
   return val
+}
+
+func (p *Parser) error(msg string, errObj *Token, lineNum int32) {
+  fullMsg := fmt.Sprintf("%s:%d -- %s; found unexpected %s: %s",
+                         p.FileName,
+                         lineNum,
+                         msg,
+                         LexemeName[errObj.Lexeme],
+                         errObj.Value)
+  panic(fullMsg)
 }
 
 func MakeParser(fullpath string) *Parser {
