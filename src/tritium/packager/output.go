@@ -4,7 +4,6 @@ import(
 	tp "tritium/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	"io/ioutil"
-	"strings"
 	"log"
 	"path/filepath"
 	"tritium/crypto"
@@ -30,12 +29,8 @@ func (pkg *Package) write() {
 	pkg.Println(" -- output: " +  outputFilename)
 }
 
-func (pkg *Package) open(location string) {
-	pathComponents := strings.Split(location, "/")
-	name := pathComponents[len(pathComponents)-1]
-	
-	tpkg_path := filepath.Join(location, name + ".tpkg")
-
+func (pkg *Package) open(path string, name string) {	
+	tpkg_path := filepath.Join(path, name + ".tpkg")
 	data, err := ioutil.ReadFile(tpkg_path)
 
 	if err != nil {

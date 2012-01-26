@@ -105,7 +105,7 @@ func NewPackage(loadPath string, options PackageOptions) (*Package){
 	}
 }
 
-func (pkg *Package)LoadUserPackage(loadPath *string, fallbackPath *string) {
+func (pkg *Package) BuildUserPackage(loadPath *string, fallbackPath *string) {
 	userPackage := NewUserPackage(loadPath, fallbackPath)
 	pkg.Merge(userPackage.Package)
 }
@@ -146,13 +146,10 @@ func (pkg *Package)Load(packageName string) {
 		panic("Package " + packageName + " not approved for use.")
 	}	
 
-	location := filepath.Join(pkg.LoadPath, packageName)
-
-	err := pkg.loadFromPath(location)
+	err := pkg.loadFromPath(pkg.LoadPath, packageName)
 
 	if err != nil && len(pkg.FallbackPath) != 0 {
-		location = filepath.Join(pkg.FallbackPath, packageName)
-		err = pkg.loadFromPath(location)
+		err = pkg.loadFromPath(pkg.FallbackPath, packageName)
 	}
 
 	if err != nil {
@@ -161,16 +158,16 @@ func (pkg *Package)Load(packageName string) {
 
 }
 
-func (pkg *Package)loadFromPath(location string) (err *string) {
-	pkg.Println(location)
-	pkg.Log.Info("\n\n\n\nLoading:%v", location)
+func (pkg *Package)loadFromPath(path string, name string) (err *string) {
+	pkg.Println(path + ":" + name)
+	pkg.Log.Info("\n\n\n\nLoading:%v", path + ":" + name)
 
-/* TODO: Adjust to call w filename too
 	if pkg.Options["use_tpkg"] {
-		pkg.open(location)
+		pkg.open(path, name)
 		return nil
 	}
-*/
+
+	location := filepath.Join(path, name)
 
 	old_location := pkg.location
 	pkg.location = location

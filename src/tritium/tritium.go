@@ -9,7 +9,7 @@ import(
 func Compile(file string) (*tp.Transform) {
 
 	defaultPackage := packager.LoadDefaultPackage(PackagePath)
-	defaultPackage.LoadUserPackage(UserPackagePath, PackagePath)
+	defaultPackage.BuildUserPackage(UserPackagePath, PackagePath)
 
 	return linker.RunWithPackage(file, defaultPackage.Package)
 }
