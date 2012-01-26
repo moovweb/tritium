@@ -7,6 +7,9 @@ module Tritium
           case ins.name
           when :var
             value = @env[args.first] || ""
+            if args[1] != nil
+              value = args[1]
+            end
             value_ctx = Context[ins, value]
             run_children(ins, value_ctx)
             @env[args.first] = value_ctx.value
