@@ -31,9 +31,6 @@ var DefaultPackagePath = "packages"
 
 func LoadDefaultPackage(path *string) (*Package) {
 	if path == nil {
-		if os.ShellExpand("$TRITIUM_PACKAGES") != "" {
-			DefaultPackagePath = os.ShellExpand("$TRITIUM_PACKAGES")
-		}
 		path = &DefaultPackagePath
 	}
 
