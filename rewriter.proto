@@ -1,6 +1,8 @@
 package hermes;
 
+import "file.proto";
+
 message Rewriter {
         required string name = 1;
-        repeated bytes template = 2; //template .ts file
+        repeated File templates = 2;
 }

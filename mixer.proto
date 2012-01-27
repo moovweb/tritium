@@ -1,6 +1,6 @@
 package hermes;
 
-import "asset.proto";
+import "file.proto";
 import "feature.proto";
 import "recipe.proto";
 import "rewriter.proto";
@@ -12,7 +12,10 @@ message Mixer {
   // Need to set this for rewriters, since they're handled specially
   required string type = 3; 
   
-  repeated Asset assets = 4;
+  repeated File assets = 4;
+  // Not sure what assets we want to bundle beyond those in the recipes
+  // Perhaps documentation / examples / etc?
+
   repeated Feature features = 5;
   repeated Recipe recipes = 6;
   repeated Rewriter rewriters = 7;      

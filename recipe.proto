@@ -1,6 +1,8 @@
 package hermes;
 
+import "file.proto";
+
 message Recipe {
         required string name = 1;
-        repeated bytes data = 2; // tarball goes here
+        repeated File files = 2;
 }
