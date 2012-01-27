@@ -5,7 +5,7 @@ import "feature.proto";
 import "recipe.proto";
 import "rewriter.proto";
 
-message Module {
+message Mixer {
   required string name = 1;
   required string version = 2;
   
