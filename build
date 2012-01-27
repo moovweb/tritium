@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+protoc --go_out src/hermes/proto -I proto/ proto/*.proto

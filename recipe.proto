@@ -1,0 +1,6 @@
+package hermes;
+
+message Recipe {
+        required string name = 1;
+        repeated bytes data = 2; // tarball goes here
+}

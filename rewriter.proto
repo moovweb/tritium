@@ -1,0 +1,6 @@
+package hermes;
+
+message Rewriter {
+        required string name = 1;
+        repeated bytes template = 2; //template .ts file
+}

@@ -1,0 +1,23 @@
+package hermes;
+
+import "asset.proto";
+import "feature.proto";
+import "recipe.proto";
+import "rewriter.proto";
+
+message Module {
+  required string name = 1;
+  required string version = 2;
+  
+  // Need to set this for rewriters, since they're handled specially
+  required string type = 3; 
+  
+  repeated Asset assets = 4;
+  repeated Feature features = 5;
+  repeated Recipe recipes = 6;
+  repeated Rewriter rewriters = 7;      
+
+  repeated bytes package = 8; 
+  // Later, when all the protos are in their own repo, this will be a proper package object
+  
+}
