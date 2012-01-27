@@ -4,6 +4,7 @@ import "file.proto";
 import "feature.proto";
 import "recipe.proto";
 import "rewriter.proto";
+import "package.proto";
 
 message Mixer {
   required string name = 1;
@@ -20,7 +21,5 @@ message Mixer {
   repeated Recipe recipes = 6;
   repeated Rewriter rewriters = 7;      
 
-  repeated bytes package = 8; 
-  // Later, when all the protos are in their own repo, this will be a proper package object
-  
+  required Package package = 8;  
 }
