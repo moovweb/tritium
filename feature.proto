@@ -1,12 +1,14 @@
 package hermes;
 
-message FeatureState {
-        // To accomodate bool features, as well as numbers / strings / etc
-        required string type = 1;
-        required string value = 2;
-}
 
 message Feature {
+
+        message State {
+                // To accomodate bool features, as well as numbers / strings / etc
+                required string type = 1;
+                required string value = 2;
+        }
+
         required string name = 1;
-        required FeatureState state = 2;
+        required State state = 2;
 }
