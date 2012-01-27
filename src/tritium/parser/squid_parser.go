@@ -8,6 +8,7 @@ import (
   . "tritium/tokenizer" // was meant to be in this package
   "path"
   "fmt"
+  "strconv"
 )
 
 type Parser struct {
@@ -35,13 +36,48 @@ func (p *Parser) pop() *Token {
   return val
 }
 
-func (p *Parser) error(msg string, errObj *Token, lineNum int32) {
-  fullMsg := fmt.Sprintf("%s:%d -- %s; found unexpected %s: %s",
-                         p.FileName,
-                         lineNum,
-                         msg,
-                         LexemeName[errObj.Lexeme],
-                         errObj.Value)
+func (p *Parser) error(msg string) {
+  formatString := "%s:%d -- %s; found unexpected %s"
+  numVals := 0
+  val1 := ""
+  val2 := ""
+  if p.peek().Value != "" {
+    formatString += ": %s"
+    numVals++
+    val1 = p.peek().Value
+    if p.peek().Lexeme == STRING {
+      val1 = strconv.Quote(val1)
+    }
+    if p.peek().ExtraValue != "" {
+      formatString += ", %s"
+      numVals++
+      val2 = p.peek().ExtraValue
+    }
+  }
+  var fullMsg string
+  switch numVals {
+  case 0:
+    fullMsg = fmt.Sprintf(formatString,
+                           p.FileName,
+                           p.peek().LineNumber,
+                           msg,
+                           LexemeName[p.peek().Lexeme])
+  case 1:
+    fullMsg = fmt.Sprintf(formatString,
+                           p.FileName,
+                           p.peek().LineNumber,
+                           msg,
+                           LexemeName[p.peek().Lexeme],
+                           val1)
+  case 2:
+    fullMsg = fmt.Sprintf(formatString,
+                           p.FileName,
+                           p.peek().LineNumber,
+                           msg,
+                           LexemeName[p.peek().Lexeme],
+                           val1,
+                           val2)
+  }
   panic(fullMsg)
 }
 
@@ -97,8 +133,10 @@ func (p *Parser) statement() (node *ir.Instruction) {
   case IMPORT:
     token := p.pop() // pop the "@import" token (includes importee)
     node = ir.MakeImport(path.Join(p.DirName, token.Value), token.LineNumber)
-  default:
+  case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
     node = p.expression()
+  default:
+    p.error("statement must consist of import or expression") 
   }
   return node
 }
@@ -108,7 +146,12 @@ func (p *Parser) expression() (node *ir.Instruction) {
   rest := ir.ListInstructions()  
   for p.peek().Lexeme == PLUS {
     p.pop() // pop the plus sign
-    rest = append(rest, p.term())
+    switch p.peek().Lexeme {
+    case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
+      rest = append(rest, p.term())
+    default:
+      p.error("argument to + must be a self-contained expression")
+    }
   }
   if len(rest) > 0 {
     node = ir.FoldLeft("concat", node, rest)
@@ -132,11 +175,12 @@ func (p *Parser) term() (node *ir.Instruction) {
     p.pop() // pop the lparen
     node = p.expression()
     if p.peek().Lexeme != RPAREN {
-      panic("unclosed parenthesis")
+      p.error("unclosed parenthesis")
     }
     p.pop() // pop the rparen
   default:
-    panic("malformed expression")
+    // will never get to this point because p.statement() and p.expression() check first
+    p.error("expression begins with invalid element")
   }
   return node
 }
@@ -162,18 +206,22 @@ func (p *Parser) read() (node *ir.Instruction) {
   p.pop() // pop the "read" keyword
   readLineNo := p.peek().LineNumber
   if p.peek().Lexeme != LPAREN {
-    panic("argument list expected for read")
+    p.error("argument list expected for read")
   }
   p.pop() // pop the lparen
   if p.peek().Lexeme != STRING {
-    panic("read requires a literal string argument")
+    p.error("read requires a literal string argument")
   }
   readPath := p.pop().Value
   if p.peek().Lexeme != RPAREN {
-    panic("unterminated argument list in read")
+    p.error("unterminated argument list in read")
   }
   p.pop() // pop the rparen
-  contents, _ := ioutil.ReadFile(path.Join(p.DirName, readPath))
+  contents, err := ioutil.ReadFile(path.Join(p.DirName, readPath))
+  if err.String() != "" { // can't use p.error because it's not a syntax error
+    msg := fmt.Sprintf("%s:%d -- read could not open %s", p.FileName, readLineNo, readPath)
+    panic(msg)
+  }
   node = ir.MakeText(string(contents), readLineNo)  
   return node
 }
@@ -182,15 +230,28 @@ func (p *Parser) call() (node *ir.Instruction) {
   funcName := p.pop().Value // grab the function name
   funcLineNo := p.peek().LineNumber
   if p.peek().Lexeme != LPAREN {
-    panic("argument list expected for call to " + funcName)
+    p.error("parenthesized argument list expected in call to " + funcName)
   }
   p.pop() // pop the lparen
 
-  ords, kwdnames, kwdvals := p.arguments() // gather the arguments
+  ords, kwdnames, kwdvals := p.arguments(funcName) // gather the arguments
   numArgs := len(ords)
 
+  // TO DO: integrate this block for better variadic concat/log expansions
+  // if funcName == "concat" && numArgs > 2 {
+  //   // expand variadic concat into nested binary concats
+  //   lhs := ir.FoldLeft("concat", ords[0], ords[1:numArgs-1])
+  //   rhs := ords[numArgs-1]
+  //   node = ir.MakeFunctionCall("concat", ir.ListInstructions(lhs,rhs), block, funcLineNo)
+  // } else if funcName == "log" && numArgs > 1 {
+  //   // expand variadic log into composition of log and concat
+  //   cats := ir.FoldLeft("concat", ords[0], ords[1:])
+  //   node = ir.MakeFunctionCall("log", ir.ListInstructions(cats), block, funcLineNo)
+  // }
+
+  // this will never happen because p.arguments() only returns when it encounters an rparen
   if p.peek().Lexeme != RPAREN {
-    panic("unterminated argument list in call to " + funcName)
+    p.error("unterminated argument list in call to " + funcName)
   }
   p.pop() // pop the rparen
   var block []*ir.Instruction
@@ -245,13 +306,13 @@ func (p *Parser) call() (node *ir.Instruction) {
   return node
 }
   
-func (p *Parser) arguments() (ords []*ir.Instruction, kwdnames []string, kwdvals []*ir.Instruction) {
+func (p *Parser) arguments(funcName string) (ords []*ir.Instruction, kwdnames []string, kwdvals []*ir.Instruction) {
   ords, kwdnames, kwdvals = make([]*ir.Instruction, 0), make([]string, 0), make([]*ir.Instruction, 0)
   counter := 0
   for p.peek().Lexeme != RPAREN {
     if counter > 0 {
       if p.peek().Lexeme != COMMA {
-        panic("arguments must be separated by commas")
+        p.error("arguments must be separated by commas")
       }
       p.pop() // pop the comma
     }
@@ -259,9 +320,19 @@ func (p *Parser) arguments() (ords []*ir.Instruction, kwdnames []string, kwdvals
       k := p.pop().Value
       kwdnames = append(kwdnames, k)
       // TO DO: CHECK EXPRESSION FIRST-SET
-      kwdvals = append(kwdvals, p.expression())
+      switch p.peek().Lexeme {
+      case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
+        kwdvals = append(kwdvals, p.expression())
+      default:
+        p.error("value for keyword argument " + strconv.Quote(k) + " in call to " + funcName + " is not a valid expression")
+      }
     } else {
-      ords = append(ords, p.expression())
+      switch p.peek().Lexeme {
+      case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
+        ords = append(ords, p.expression())
+      default:
+        p.error("value for ordinal argument in call to " + funcName + " is not a valid expression")
+      }
     }
     counter++
   }
@@ -279,12 +350,12 @@ func (p *Parser) cast() (node *ir.Instruction) {
   typeName := p.pop().Value // grab the function name
   typeLineNo := p.peek().LineNumber
   if p.peek().Lexeme != LPAREN {
-    panic("expression needed in typecast")
+    p.error("parenthesized argument needed for typecast to " + typeName)
   }
   p.pop() // pop the lparen
   expr := p.expression()
   if p.peek().Lexeme != RPAREN {
-    panic("typecast missing closing parenthesis")
+    p.error("single argument to " + typeName + " typecast is missing closing parenthesis")
   }
   p.pop() // pop the rparen
   var block []*ir.Instruction
@@ -299,12 +370,20 @@ func (p *Parser) cast() (node *ir.Instruction) {
 func (p *Parser) variable() (node *ir.Instruction) {
   token := p.pop()
   lexeme, name, lineNo := token.Lexeme, token.Value, token.LineNumber
+  sigil := "$"
+  if lexeme == LVAR {
+    sigil = "%"
+  } 
   var val *ir.Instruction
   var block []*ir.Instruction
   if p.peek().Lexeme == EQUAL {
     p.pop() // pop the equal sign
-    // TO DO: check for expression first-set
-    val = p.expression()
+    switch p.peek().Lexeme {
+    case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
+      val = p.expression()
+    default:
+      p.error("invalid expression in assignment to " + sigil + name)
+    }
   }
   if p.peek().Lexeme == LBRACE {
     block = p.block()
@@ -343,21 +422,21 @@ func (p *Parser) definition() *ir.Function {
   if p.peek().Lexeme == TYPE {
     contextType = p.pop().Value
     if p.peek().Lexeme != DOT {
-      panic("function context and function name must be separated by '.'")
+      p.error("function context and function name must be separated by '.'")
     }
     p.pop() // pop the dot
   }
   
   if p.peek().Lexeme != ID {
-    panic("invalid function name in definition")
+    p.error("invalid function name in definition")
   }
   funcName := p.pop().Value
   
   if p.peek().Lexeme != LPAREN {
-    panic("malformed parameter list in function signature")
+    p.error("parenthesized parameter list expected in function declaration")
   }
   p.pop() // pop the lparen
-  params := p.parameters()
+  params := p.parameters(funcName)
   if len(params) == 0 {
     params = nil
   }
@@ -381,14 +460,14 @@ func (p *Parser) definition() *ir.Function {
   
   if isSignature {
     if p.peek().Lexeme == LBRACE {
-      panic("body not permitted in function signature")
+      p.error("body not permitted in signature for " + funcName)
     }
     node.BuiltIn = proto.Bool(true)
     return node
   }
   node.BuiltIn = proto.Bool(false)
   if p.peek().Lexeme != LBRACE {
-    panic("function definition is missing a body")
+    p.error("definition for " + funcName + " is missing a body")
   }
   funcBody := &ir.Instruction {
     Type: ir.NewInstruction_InstructionType(ir.Instruction_BLOCK),
@@ -398,24 +477,24 @@ func (p *Parser) definition() *ir.Function {
   return node
 }
 
-func (p *Parser) parameters() []*ir.Function_Argument {
+func (p *Parser) parameters(funcName string) []*ir.Function_Argument {
   params := make([]*ir.Function_Argument, 0)
   counter := 0
   for p.peek().Lexeme != RPAREN {
     if counter > 0 {
       if p.peek().Lexeme != COMMA {
-        panic("parameter list must be separated by commas")
+        p.error("parameter list for " + funcName + " must be separated by commas")
       }
       p.pop() // pop the comma
     }
     if p.peek().Lexeme != TYPE {
-      panic("function parameter is missing a type")
+      p.error("parameter for " + funcName + " is missing a type")
     }
     param := &ir.Function_Argument {
       TypeString: proto.String(p.pop().Value),
     }
     if p.peek().Lexeme != LVAR {
-      panic("function parameter has invalid name")
+      p.error("parameter for " + funcName + " has invalid name")
     }
     param.Name = proto.String(p.pop().Value)
     params = append(params, param)

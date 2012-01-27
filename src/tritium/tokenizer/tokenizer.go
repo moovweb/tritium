@@ -54,18 +54,18 @@ func init() {
   LexemeName[PLUS]   = "PLUS"
   LexemeName[STRING] = "STRING"
   LexemeName[REGEXP] = "REGEXP"
-  LexemeName[POS]    = "POS"
-  LexemeName[GVAR]   = "GVAR"
-  LexemeName[LVAR]   = "LVAR"
-  LexemeName[KWD]    = "KWD"
-  LexemeName[ID]     = "ID"
-  LexemeName[FUNC]   = "FUNC"
-  LexemeName[TYPE]   = "TYPE"
+  LexemeName[POS]    = "POSITION"
+  LexemeName[GVAR]   = "GLOBAL VAR"
+  LexemeName[LVAR]   = "LOCAL VAR"
+  LexemeName[KWD]    = "KEYWORD"
+  LexemeName[ID]     = "FUNCTION NAME"
+  LexemeName[FUNC]   = "FUNC KEYWORD"
+  LexemeName[TYPE]   = "TYPE NAME"
   LexemeName[PATH]   = "PATH"
-  LexemeName[IMPORT] = "IMPORT"
-  LexemeName[READ]   = "READ"
-  LexemeName[EOF]    = "EOF"
-  LexemeName[ERROR]  = "ERROR"
+  LexemeName[IMPORT] = "IMPORT KEYWORD"
+  LexemeName[READ]   = "READ MACRO"
+  LexemeName[EOF]    = "END OF FILE"
+  LexemeName[ERROR]  = "LEXICAL ERROR"
   
   matcher[STRING], _ = rubex.Compile(`\A"(\\.|[^"\\])*"|\A'(\\.|[^'\\])*'`)
       
@@ -250,7 +250,7 @@ func (t *Tokenizer) munch() *Token {
   } else if t.hasPrefix("*/") {
     return t.popError("unmatched comment terminator")
   } else if c := string(symbolPattern.Find(src)); len(c) > 0 {
-    return t.popToken(symbolLexeme[c], c, 1)
+    return t.popToken(symbolLexeme[c], "", 1)
   } else if c := string(numberPattern.Find(src)); len(c) > 0 {
     return t.popToken(STRING, c, len(c))
   } else if t.hasPrefix("'") || t.hasPrefix("\"") {
