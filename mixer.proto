@@ -9,10 +9,7 @@ import "package.proto";
 message Mixer {
   required string name = 1;
   required string version = 2;
-  
-  // Need to set this for rewriters, since they're handled specially
-  required string type = 3; 
-  
+    
   repeated File assets = 4;
   // Not sure what assets we want to bundle beyond those in the recipes
   // Perhaps documentation / examples / etc?
@@ -21,5 +18,4 @@ message Mixer {
   repeated Recipe recipes = 6;
   repeated Rewriter rewriters = 7;      
 
-  required Package package = 8;  
 }
