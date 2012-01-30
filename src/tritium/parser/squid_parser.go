@@ -83,7 +83,10 @@ func (p *Parser) error(msg string) {
 
 func MakeParser(fullpath string) *Parser {
   fullpath, _ = filepath.Abs(fullpath)
-  src, _ := ioutil.ReadFile(fullpath)
+  src, err := ioutil.ReadFile(fullpath)
+	if err != nil {
+		panic("No tritium file found at path" + fullpath)
+	}
   d, f := path.Split(fullpath)
   p := &Parser {
     Tokenizer: MakeTokenizer(src),
