@@ -1,0 +1,9 @@
+all: install
+build:
+	./all.bash
+	cd src && gb -b
+clean:
+	cd src && gb -c
+	rm src/*/*.pb.go
+install:
+	cd src && gb -i
