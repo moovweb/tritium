@@ -1,0 +1,68 @@
+
+host:
+  - test: m.{{#GOPERIOD#Domain}}
+    expected: www.{{#GOPERIOD#Domain}}
+  - test: m.{{#GOPERIOD#Domain}}
+    expected: www.{{#GOPERIOD#Domain}}
+  - test: m.product.{{#GOPERIOD#Domain}}
+    expected: product.{{#GOPERIOD#Domain}}
+  - test: m.www1.{{#GOPERIOD#Domain}}
+    expected: www1.{{#GOPERIOD#Domain}}
+  - test: mlocal.{{#GOPERIOD#Domain}}
+    expected: www.{{#GOPERIOD#Domain}}
+  - test: mstage.{{#GOPERIOD#Domain}}
+    expected: www.{{#GOPERIOD#Domain}}
+  - test: mlocal.smartphone.{{#GOPERIOD#Domain}}
+    expected: smartphone.{{#GOPERIOD#Domain}}
+  - test: mstage.mconfig.{{#GOPERIOD#Domain}}
+    expected: mconfig.{{#GOPERIOD#Domain}}
+link:
+  - host: m.{{#GOPERIOD#Domain}}
+    test: www.{{#GOPERIOD#Domain}}
+    expected: m.{{#GOPERIOD#Domain}}
+  - host: m.{{#GOPERIOD#Domain}}
+    test: {{#GOPERIOD#Domain}}
+    expected: m.{{#GOPERIOD#Domain}}
+  - host: m.burma.{{#GOPERIOD#Domain}}
+    test: thailand.{{#GOPERIOD#Domain}}
+    expected: m.thailand.{{#GOPERIOD#Domain}}
+  - host: m.{{#GOPERIOD#Domain}}
+    test: pipeline.{{#GOPERIOD#Domain}}
+    expected: m.pipeline.{{#GOPERIOD#Domain}}
+  - host: m.{{#GOPERIOD#Domain}}
+    test: magic.{{#GOPERIOD#Domain}}
+    expected: m.magic.{{#GOPERIOD#Domain}}
+  - host: mlocal.{{#GOPERIOD#Domain}}
+    test: www.{{#GOPERIOD#Domain}}
+    expected: mlocal.{{#GOPERIOD#Domain}}
+  - host: m.{{#GOPERIOD#Domain}}
+    test: http://{{#GOPERIOD#Domain}}/location?x=y
+    expected: http://m.{{#GOPERIOD#Domain}}/location?x=y
+  - host: m.smartphone.{{#GOPERIOD#Domain}}
+    test: http://smartphone.{{#GOPERIOD#Domain}}
+    expected: http://m.smartphone.{{#GOPERIOD#Domain}}
+  - host: mstage.mconfig.{{#GOPERIOD#Domain}}
+    test: http://smartphone.{{#GOPERIOD#Domain}}
+    expected: http://mstage.smartphone.{{#GOPERIOD#Domain}}
+  - host: m.mconfig.{{#GOPERIOD#Domain}}
+    test: http://mconfig.{{#GOPERIOD#Domain}}/loc?x=y
+    expected: http://m.mconfig.{{#GOPERIOD#Domain}}/loc?x=y
+
+
+cookie_domain:
+  - host: m.{{#GOPERIOD#Domain}}
+    test: .{{#GOPERIOD#Domain}}
+    expected: .{{#GOPERIOD#Domain}}
+  - host: mlocal.{{#GOPERIOD#Domain}}
+    test: .{{#GOPERIOD#Domain}}
+    expected: .{{#GOPERIOD#Domain}}
+  - host: m.{{#GOPERIOD#Domain}}
+    test: www.{{#GOPERIOD#Domain}}
+    expected: .{{#GOPERIOD#Domain}}
+  - host: m.{{#GOPERIOD#Domain}}
+    test: muay.{{#GOPERIOD#Domain}}
+    expected: .muay.{{#GOPERIOD#Domain}}
+  - host: m.{{#GOPERIOD#Domain}}
+    test: .thai.{{#GOPERIOD#Domain}}
+    expected: .thai.{{#GOPERIOD#Domain}}
+
