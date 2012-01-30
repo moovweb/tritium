@@ -218,7 +218,7 @@ func (p *Parser) read() (node *ir.Instruction) {
   }
   p.pop() // pop the rparen
   contents, err := ioutil.ReadFile(path.Join(p.DirName, readPath))
-  if err.String() != "" { // can't use p.error because it's not a syntax error
+  if err != nil { // can't use p.error because it's not a syntax error
     msg := fmt.Sprintf("%s:%d -- read could not open %s", p.FileName, readLineNo, readPath)
     panic(msg)
   }
