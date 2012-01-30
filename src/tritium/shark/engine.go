@@ -1,7 +1,7 @@
 package shark
 
 import(
-	tp "tritium/proto"
+	tp "athena/tritium"
 	"rubex"
 	"libxml/xpath"
 	xml "libxml/tree"

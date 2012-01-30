@@ -2,7 +2,7 @@ package tritium
 
 import(
 	"tritium/linker"
-	tp "tritium/proto"
+	tp "athena/tritium"
 	"tritium/packager"
 )
 

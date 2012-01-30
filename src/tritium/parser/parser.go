@@ -1,7 +1,7 @@
 package parser
 
 import(
-	tp "tritium/proto"
+	tp "athena/tritium"
 	//. "exec"
 	//"log"
 	//proto "goprotobuf.googlecode.com/hg/proto"

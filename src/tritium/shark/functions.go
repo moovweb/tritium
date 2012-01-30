@@ -6,7 +6,7 @@ import(
 	"libxml"
 	"fmt"
 	xml "libxml/tree"
-	tp "tritium/proto"
+	tp "athena/tritium"
 	"libxml/xpath"
 	"rubex"
 )
