@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+protoc --go_out src/athena/tritium -I proto/tritium proto/tritium/*.proto

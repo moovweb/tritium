@@ -1,0 +1,8 @@
+package hermes;
+
+import "file.proto";
+
+message Rewriter {
+        required string name = 1;
+        repeated File templates = 2;
+}
