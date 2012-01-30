@@ -16,6 +16,6 @@ message Mixer {
 
   repeated Feature features = 5;
   repeated Recipe recipes = 6;
-  repeated Rewriter rewriters = 7;      
+  repeated File rewriters = 7;      
 
 }
