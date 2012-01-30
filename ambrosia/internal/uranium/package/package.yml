@@ -1,6 +1,3 @@
-name: libxml
+name: uranium
 dependencies:
-  - node
-types:
-  - XMLNode < Node
-  - Attribute
+  - XMLNode
