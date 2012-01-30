@@ -1,0 +1,14 @@
+package tritium;
+
+import "object.proto";
+import "package.proto";
+
+// A post-linking object for execution
+message Transform {
+	repeated ScriptObject objects = 1;
+	required Package pkg = 2;
+}
+
+message Slug {
+	repeated Transform transformers = 1;
+}

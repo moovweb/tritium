@@ -1,0 +1,6 @@
+package hermes;
+
+message File {
+        required string path = 1;
+        repeated bytes data = 2;
+}
