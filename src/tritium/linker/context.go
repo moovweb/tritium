@@ -1,7 +1,7 @@
 package linker
 
 import(
-	. "athena/tritium"
+	. "athena/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	log "log4go"
 	"fmt"

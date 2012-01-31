@@ -1,7 +1,7 @@
 package spec
 import(
 	"tritium/packager"
-	tp "athena/tritium"
+	tp "athena/proto"
 	. "tritium"
 	. "path/filepath"
 	"tritium/shark"
