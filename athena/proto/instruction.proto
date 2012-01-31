@@ -17,6 +17,8 @@ message Instruction {
 	
 	// Used for yield() calls, because we need to know parent type
 	optional int32 yield_type_id = 8;
+	
+	optional bool is_valid = 9;
 
 	enum InstructionType {
 		BLOCK = 0;
