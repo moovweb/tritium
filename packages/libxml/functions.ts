@@ -151,12 +151,18 @@
 }
 
 @func XMLNode.wrap_together(Text %selector, Text %tag) {
-  $(concat(%selector, "[1]")) {
-    wrap(%tag) {
-      move_here(concat("../", %selector))
+  $(%selector + "[1]") {
+    insert_at(position("before"), %tag) {
+      %node = node()
+      $("../" + %selector) {
+        match_not(index(), "1") {
+          move(this(), %node, position("top"))
+        }
+      }
       yield()
     }
   }
+   
 }
 
 # POSITIONALS

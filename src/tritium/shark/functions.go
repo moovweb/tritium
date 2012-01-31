@@ -15,7 +15,6 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	returnValue = ""
 	switch fun.Name {
 	case "this":
-		println(fun.String())
 		returnValue = scope.Value
 	case "yield": 
 		myYieldBlock := ctx.yieldBlock()
@@ -138,7 +137,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "upcase.Text":
 		returnValue = strings.ToUpper(args[0].(string))
 		return
-	case "index.XMLNode":
+	case "index.XMLNode", "index.Node":
 		returnValue = fmt.Sprintf("%d", scope.Index + 1)
 	
 	// TEXT FUNCTIONS
