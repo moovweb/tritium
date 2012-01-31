@@ -1,4 +1,4 @@
-package tritium;
+package proto;
 
 message Instruction {
 	required InstructionType type = 1;
