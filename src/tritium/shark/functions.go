@@ -279,6 +279,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			}
 		}
 		xPathObj.Free()
+	case "path":
+		returnValue = scope.Value.(xml.Node).Path()
 
 	// LIBXML FUNCTIONS
 	case "insert_at.Position.Text":
