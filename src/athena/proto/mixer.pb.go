@@ -19,7 +19,7 @@ type Mixer struct {
 	Features         []*Feature `protobuf:"bytes,5,rep,name=features" json:"features,omitempty"`
 	Recipes          []*Recipe  `protobuf:"bytes,6,rep,name=recipes" json:"recipes,omitempty"`
 	Rewriters        []*File    `protobuf:"bytes,7,rep,name=rewriters" json:"rewriters,omitempty"`
-	Package          *Package   `protobuf:"bytes,8,req,name=package" json:"package,omitempty"`
+	Package          *Package   `protobuf:"bytes,8,opt,name=package" json:"package,omitempty"`
 	XXX_unrecognized []byte     `json:",omitempty"`
 }
 

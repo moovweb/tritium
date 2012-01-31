@@ -18,5 +18,5 @@ message Mixer {
   repeated Recipe recipes = 6;
   repeated File rewriters = 7;      
 
-  required Package package = 8;  
+  optional Package package = 8;  
 }
