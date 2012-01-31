@@ -34,8 +34,8 @@ func (pkg *Package) open(path string, name string) (thisError *string) {
 	data, err := ioutil.ReadFile(tpkg_path)
 
 	if err != nil {
-	  *thisError = ("Could not find tpkg file:" + tpkg_path)
-		return thisError
+	  newError := "Could not find tpkg file:" + tpkg_path
+		return &newError
 	}
 
 	data = crypto.Decrypt(data)
