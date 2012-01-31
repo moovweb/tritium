@@ -1,8 +1,0 @@
-package hermes;
-
-message Package {
-  required string name = 1;
-  required string version = 2;
-  repeated bytes package = 3; 
-  // Later, when all the protos are in their own repo, this will be a proper package object
-}
