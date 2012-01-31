@@ -233,7 +233,7 @@ func (pkg *Package)loadPackageDependency(name string) {
 }
 
 // Not fully functional. Dang it.
-func readPackageInfoFile(location string) (info *PackageInfo, error *string){
+func ReadPackageInfoFile(location string) (info *PackageInfo, error *string){
 	packageInfo := &PackageInfo{}
 	infoFile, err := ioutil.ReadFile(location + "/package.yml");
 	if err != nil {

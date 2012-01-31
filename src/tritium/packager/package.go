@@ -137,7 +137,7 @@ func newLog() (log4go.Logger) {
 	return pkgLog
 }
 
-func (pkg *Package)Load(packageName string) {
+func (pkg *Package) Load(packageName string) {
 
 	user := api.FetchSessionUser()
 	approved := user.RequestFeature("package:" + packageName)
@@ -158,20 +158,20 @@ func (pkg *Package)Load(packageName string) {
 
 }
 
-func (pkg *Package)loadFromPath(path string, name string) (err *string) {
+func (pkg *Package) loadFromPath(path string, name string) (err *string) {
 	pkg.Println(path + ":" + name)
 	pkg.Log.Info("\n\n\n\nLoading:%v", path + ":" + name)
 
 	if pkg.Options["use_tpkg"] {
-		pkg.open(path, name)
-		return nil
+		err := pkg.open(path, name)
+		return err
 	}
 
 	location := filepath.Join(path, name)
 
 	old_location := pkg.location
 	pkg.location = location
-	info, err := readPackageInfoFile(location)
+	info, err := ReadPackageInfoFile(location)
 	
 	if err != nil {
 		return err

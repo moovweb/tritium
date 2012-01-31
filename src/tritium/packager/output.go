@@ -29,12 +29,13 @@ func (pkg *Package) write() {
 	pkg.Println(" -- output: " +  outputFilename)
 }
 
-func (pkg *Package) open(path string, name string) {	
+func (pkg *Package) open(path string, name string) (thisError *string) {	
 	tpkg_path := filepath.Join(path, name + ".tpkg")
 	data, err := ioutil.ReadFile(tpkg_path)
 
 	if err != nil {
-		panic("Could not find tpkg file:" + tpkg_path)
+	  *thisError = ("Could not find tpkg file:" + tpkg_path)
+		return thisError
 	}
 
 	data = crypto.Decrypt(data)
@@ -52,7 +53,7 @@ func (pkg *Package) open(path string, name string) {
 
 	pkg.Println("\t -- Using tpkg at:" + tpkg_path)
 
-
+  return nil
 }
 
 
