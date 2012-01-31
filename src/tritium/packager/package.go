@@ -1,6 +1,6 @@
 package packager
 
-import(
+import (
 	tp "athena/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	api "tritium/api"
@@ -10,26 +10,26 @@ import(
 	"os"
 )
 
-type Package struct { 
-	loaded []*PackageInfo
-	location string
-	LoadPath string
+type Package struct {
+	loaded       []*PackageInfo
+	location     string
+	LoadPath     string
 	FallbackPath string
-	OutputFile string
-	Log log4go.Logger
+	OutputFile   string
+	Log          log4go.Logger
 	*tp.Package
 	Options PackageOptions
 }
 
 type PackageInfo struct {
-	Name string
+	Name         string
 	Dependencies []string
-	Types []string
+	Types        []string
 }
 
 var DefaultPackagePath = "packages"
 
-func LoadDefaultPackage(path *string) (*Package) {
+func LoadDefaultPackage(path *string) *Package {
 	if path == nil {
 		path = &DefaultPackagePath
 	}
@@ -39,30 +39,30 @@ func LoadDefaultPackage(path *string) (*Package) {
 
 func OutputDefaultPackage(path string) (pkg *Package, newFilePath string) {
 	pkg = BuildDefaultPackage()
-	
+
 	_, err := os.Stat(path)
-	
+
 	if err != nil {
-		creationErr := os.MkdirAll(path, uint32(0777) ) 
+		creationErr := os.MkdirAll(path, uint32(0777))
 		if creationErr != nil {
 			panic("Could not make path(" + path + "). Error:" + creationErr.String())
 		}
 	}
-	
+
 	_, name := filepath.Split(pkg.OutputFile)
 	newOutputFile := filepath.Join(path, name)
-	
+
 	os.Rename(pkg.OutputFile, newOutputFile)
-	
+
 	return pkg, newOutputFile
 }
 
-func BuildDefaultPackage() (*Package) {
+func BuildDefaultPackage() *Package {
 	options := BuildOptions()
 	return buildPackage(DefaultPackagePath, options)
 }
 
-func buildPackage(path string, options PackageOptions) (*Package) {
+func buildPackage(path string, options PackageOptions) *Package {
 	// Terrible directory handling here... has to be executed from Tritium root
 
 	pkg := NewPackage(path, options)
@@ -73,7 +73,7 @@ func buildPackage(path string, options PackageOptions) (*Package) {
 
 func mergeOptions(options PackageOptions) PackageOptions {
 	defaults := fetchDefaultOptions()
-	
+
 	if options == nil {
 		return defaults
 	}
@@ -89,19 +89,19 @@ func mergeOptions(options PackageOptions) PackageOptions {
 	return options
 }
 
-func NewPackage(loadPath string, options PackageOptions) (*Package){
-	options = mergeOptions(options)	
+func NewPackage(loadPath string, options PackageOptions) *Package {
+	options = mergeOptions(options)
 
 	return &Package{
 		Package: &tp.Package{
-			Name: proto.String("combined"),
+			Name:      proto.String("combined"),
 			Functions: make([]*tp.Function, 0),
-			Types: make([]*tp.Type, 0),
+			Types:     make([]*tp.Type, 0),
 		},
-		loaded: make([]*PackageInfo, 0),
-  	        Log: newLog(),
+		loaded:   make([]*PackageInfo, 0),
+		Log:      newLog(),
 		LoadPath: loadPath,
-	        Options: options,
+		Options:  options,
 	}
 }
 
@@ -110,30 +110,29 @@ func (pkg *Package) BuildUserPackage(loadPath *string, fallbackPath *string) {
 	pkg.Merge(userPackage.Package)
 }
 
-func NewUserPackage(loadPath *string, fallbackPath *string) (*Package) {
+func NewUserPackage(loadPath *string, fallbackPath *string) *Package {
 	//TODO : Check for user-defined feature support
-	
-	userPackage := NewPackage(*loadPath, PackageOptions{"stdout" : false,"output_tpkg" : false,"use_tpkg" : false})
-	
+
+	userPackage := NewPackage(*loadPath, PackageOptions{"stdout": false, "output_tpkg": false, "use_tpkg": false})
+
 	userPackage.FallbackPath = *fallbackPath
 
 	userPackages, _ := filepath.Glob(filepath.Join(userPackage.LoadPath, "*"))
 
-	for _, path := range(userPackages) {
+	for _, path := range userPackages {
 		components := strings.Split(path, "/")
 		name := components[len(components)-1]
 		userPackage.Load(name)
 	}
-	
-	
+
 	return userPackage
 }
 
-func newLog() (log4go.Logger) {
+func newLog() log4go.Logger {
 	pkgLog := make(log4go.Logger)
-	os.Mkdir("tmp", uint32(0777) )
+	os.Mkdir("tmp", uint32(0777))
 
-	pkgLog.AddFilter("file", log4go.FINE, log4go.NewFileLogWriter("tmp/packager.log", false))	
+	pkgLog.AddFilter("file", log4go.FINE, log4go.NewFileLogWriter("tmp/packager.log", false))
 	return pkgLog
 }
 
@@ -141,10 +140,10 @@ func (pkg *Package) Load(packageName string) {
 
 	user := api.FetchSessionUser()
 	approved := user.RequestFeature("package:" + packageName)
-	
+
 	if !approved {
 		panic("Package " + packageName + " not approved for use.")
-	}	
+	}
 
 	err := pkg.loadFromPath(pkg.LoadPath, packageName)
 
@@ -160,7 +159,7 @@ func (pkg *Package) Load(packageName string) {
 
 func (pkg *Package) loadFromPath(path string, name string) (err *string) {
 	pkg.Println(path + ":" + name)
-	pkg.Log.Info("\n\n\n\nLoading:%v", path + ":" + name)
+	pkg.Log.Info("\n\n\n\nLoading:%v", path+":"+name)
 
 	if pkg.Options["use_tpkg"] {
 		err := pkg.open(path, name)
@@ -172,26 +171,26 @@ func (pkg *Package) loadFromPath(path string, name string) (err *string) {
 	old_location := pkg.location
 	pkg.location = location
 	info, err := ReadPackageInfoFile(location)
-	
+
 	if err != nil {
 		return err
 	}
 
 	if len(info.Dependencies) > 0 {
 
-		for _, dependency := range(info.Dependencies) {
+		for _, dependency := range info.Dependencies {
 			pkg.loadPackageDependency(dependency)
 		}
 
 	}
 
-	for _, typeName := range(info.Types) {
+	for _, typeName := range info.Types {
 		split := strings.Split(typeName, " < ")
 		typeObj := &tp.Type{}
 		if len(split) == 2 {
 			typeName = split[0]
 			index := pkg.findTypeIndex(split[1])
-			
+
 			typeObj.Implements = proto.Int32(int32(index))
 		}
 		typeObj.Name = proto.String(typeName)
@@ -210,10 +209,9 @@ func (pkg *Package) loadFromPath(path string, name string) (err *string) {
 
 	pkg.Println(" -- done")
 	pkg.Log.Close()
-	
+
 	// TODO(SJ) : Kind of lame. Ideally I think we load other packages as whole packages and write a *.Merge method
 	pkg.location = old_location
 
 	return nil
 }
-

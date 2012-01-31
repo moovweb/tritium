@@ -1,6 +1,6 @@
 package tritium
 
-import(
+import (
 	tp "athena/proto"
 )
 

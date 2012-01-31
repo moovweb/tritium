@@ -1,6 +1,6 @@
 package tritium
 
-import(
+import (
 	"tritium/linker"
 	tp "athena/proto"
 	"tritium/packager"

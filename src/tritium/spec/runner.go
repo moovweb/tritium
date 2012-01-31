@@ -1,5 +1,6 @@
 package spec
-import(
+
+import (
 	"tritium/packager"
 	tp "athena/proto"
 	. "tritium"
@@ -15,17 +16,17 @@ func All(directory string) {
 	logger := make(l4g.Logger)
 	logger.AddFilter("test", l4g.ERROR, l4g.NewConsoleLogWriter())
 	l4g.Global = logger
-	eng := shark.NewEngine(logger) 
+	eng := shark.NewEngine(logger)
 	pkg := packager.BuildDefaultPackage()
 
 	globalResult := NewResult()
 	globalResult.all(directory, pkg.Package, eng, logger)
-	
+
 	logger.AddFilter("stdout", l4g.ERROR, l4g.NewConsoleLogWriter())
 
 	// TODO : Walk over the results here and print errors. 
 
-	for _, error := range(globalResult.Errors) {
+	for _, error := range globalResult.Errors {
 		println("\n=========================================", error.Location, "\n")
 		if error.Panic {
 			Printf(error.Message)
@@ -37,7 +38,7 @@ func All(directory string) {
 	println("+++TEST COMPLETE+++\n\n")
 }
 
-func (result *Result)all(directory string, pkg *tp.Package, eng Engine, logger l4g.Logger) {
+func (result *Result) all(directory string, pkg *tp.Package, eng Engine, logger l4g.Logger) {
 	_, err := Glob(Join(directory, "main.ts"))
 
 	if err == nil {
@@ -45,7 +46,7 @@ func (result *Result)all(directory string, pkg *tp.Package, eng Engine, logger l
 		result.Merge(newResult)
 	}
 	subdirs, _ := Glob(Join(directory, "*"))
-	for _, subdir := range(subdirs) {
+	for _, subdir := range subdirs {
 		result.all(subdir, pkg, eng, logger)
 	}
 }
@@ -56,23 +57,23 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 	logger["test"] = &l4g.Filter{l4g.WARNING, "test", logWriter}
 
 	defer func() {
-			//log.Println("done")  // Println executes normally even in there is a panic
-			if x := recover(); x != nil {
-				err, ok := x.(os.Error)
-				if ok {
-					logger.Error(dir + " === " + err.String() + "\n\n" + string(debug.Stack()))
-				} else {
-					logger.Error(dir + " === " + x.(string) + "\n\n" + string(debug.Stack()))
-				}
-				
+		//log.Println("done")  // Println executes normally even in there is a panic
+		if x := recover(); x != nil {
+			err, ok := x.(os.Error)
+			if ok {
+				logger.Error(dir + " === " + err.String() + "\n\n" + string(debug.Stack()))
+			} else {
+				logger.Error(dir + " === " + x.(string) + "\n\n" + string(debug.Stack()))
 			}
-			for _, rec := range(logWriter.Logs) {
-				//println("HAZ LOGS")
-				error := l4g.FormatLogRecord("[%D %T] [%L] (%S) %M", rec)
-				result.Error(dir, error)
-			}
-			print(result.CharStatus())
-		}()
+
+		}
+		for _, rec := range logWriter.Logs {
+			//println("HAZ LOGS")
+			error := l4g.FormatLogRecord("[%D %T] [%L] (%S) %M", rec)
+			result.Error(dir, error)
+		}
+		print(result.CharStatus())
+	}()
 	spec, err := LoadSpec(dir, pkg)
 	if err != nil {
 		result.Error(dir, err.String())

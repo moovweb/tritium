@@ -1,16 +1,16 @@
 package api
 
-import(
+import (
 	keys "tritium/api/key"
 	"path/filepath"
 	"os"
-	)
+)
 
 type User struct {
-	Name string
-	Email string
-	id string
-	key *keys.Key
+	Name     string
+	Email    string
+	id       string
+	key      *keys.Key
 	approved map[string]bool
 }
 
@@ -37,43 +37,41 @@ func FetchSessionUser() *User {
 		panic("Invalid API key at " + path + ".")
 	}
 
-
 	return SessionUser
 
 }
-
 
 func NewUser(location string) *User {
 	//TODO(SJ): Populate other fields from apollo
 
 	return &User{
-	Name: "",
-	Email: "",
-	id:"",
-	key: keys.NewKey(&location),
-	approved: make(map[string]bool),
+		Name:     "",
+		Email:    "",
+		id:       "",
+		key:      keys.NewKey(&location),
+		approved: make(map[string]bool),
 	}
 }
 
-func (user *User)Validate() bool {
+func (user *User) Validate() bool {
 	return user.key.Validate()
 }
 
-func (user *User)RequestFeature(feature string) bool {
+func (user *User) RequestFeature(feature string) bool {
 	allowed := false
-	
+
 	if user.approved[feature] == true {
 		return true
 	}
 
 	// TODO(SJ) : Make apollo call here
-	
+
 	// For now, make something up
 
 	if len(*user.key.Value) > 100 {
 		allowed = true
 		user.approved[feature] = true
 	}
-	
+
 	return allowed
 }

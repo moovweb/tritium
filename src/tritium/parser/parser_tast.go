@@ -1,6 +1,6 @@
 package parser
 
-import(
+import (
 	. "testing"
 )
 

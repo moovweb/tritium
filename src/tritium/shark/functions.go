@@ -1,6 +1,6 @@
 package shark
 
-import(
+import (
 	"strings"
 	"os"
 	"libxml"
@@ -16,10 +16,10 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	switch fun.Name {
 	case "this":
 		returnValue = scope.Value
-	case "yield": 
+	case "yield":
 		myYieldBlock := ctx.yieldBlock()
-		ctx.Yields = ctx.Yields[:(len(ctx.Yields)-1)]
-		if (ctx.yieldBlock() != nil) {
+		ctx.Yields = ctx.Yields[:(len(ctx.Yields) - 1)]
+		if ctx.yieldBlock() != nil {
 			returnValue = ctx.runChildren(scope, myYieldBlock.Ins)
 			if returnValue == nil {
 				returnValue = "false"
@@ -51,16 +51,16 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		}
 		ctx.MatchStack = append(ctx.MatchStack, against)
 		ctx.MatchShouldContinue = append(ctx.MatchShouldContinue, true)
-	
+
 		// Run children
 		ctx.runChildren(scope, ins)
-	
+
 		if ctx.matchShouldContinue() {
 			returnValue = "false"
 		} else {
 			returnValue = "true"
 		}
-	
+
 		// Clear
 		ctx.MatchShouldContinue = ctx.MatchShouldContinue[:len(ctx.MatchShouldContinue)-1]
 		ctx.MatchStack = ctx.MatchStack[:len(ctx.MatchStack)-1]
@@ -118,7 +118,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "export.Text":
 		val := make([]string, 2)
 		val[0] = args[0].(string)
-		ts := &Scope{Value:""}
+		ts := &Scope{Value: ""}
 		ctx.runChildren(ts, ins)
 		val[1] = ts.Value.(string)
 		ctx.Exports = append(ctx.Exports, val)
@@ -138,8 +138,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		returnValue = strings.ToUpper(args[0].(string))
 		return
 	case "index.XMLNode", "index.Node":
-		returnValue = fmt.Sprintf("%d", scope.Index + 1)
-	
+		returnValue = fmt.Sprintf("%d", scope.Index+1)
+
 	// TEXT FUNCTIONS
 	case "set.Text":
 		scope.Value = args[0]
@@ -148,7 +148,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "prepend.Text":
 		scope.Value = args[0].(string) + scope.Value.(string)
 	case "replace.Text":
-		ts := &Scope{Value:""}
+		ts := &Scope{Value: ""}
 		ctx.runChildren(ts, ins)
 		scope.Value = strings.Replace(scope.Value.(string), args[0].(string), ts.Value.(string), -1)
 	case "replace.Regexp":
@@ -164,10 +164,10 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 				ctx.vars()[name] = capture
 			}
 
-			replacementScope := &Scope{Value:match}
+			replacementScope := &Scope{Value: match}
 			ctx.runChildren(replacementScope, ins)
 			//println(ins.String())
-		
+
 			//println("Replacement:", replacementScope.Value.(string))
 			innerReplacer := rubex.MustCompile(`[\\$](\d)`)
 			return innerReplacer.GsubFunc(replacementScope.Value.(string), func(_ string, numeric_captures map[string]string) string {
@@ -179,21 +179,21 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 					val = ctx.vars()[capture].(string)
 				}
 				return val
-		    })
+			})
 		})
 		returnValue = scope.Value
 
 	// XML FUNCTIONS
 	case "xml":
 		doc := libxml.XmlParseString(scope.Value.(string))
-		ns := &Scope{Value:doc}
+		ns := &Scope{Value: doc}
 		ctx.runChildren(ns, ins)
 		scope.Value = doc.String()
 		returnValue = scope.Value
 		doc.Free()
 	case "html":
 		doc := libxml.HtmlParseString(scope.Value.(string))
-		ns := &Scope{Value:doc}
+		ns := &Scope{Value: doc}
 		ctx.runChildren(ns, ins)
 		scope.Value = doc.DumpHTML()
 		returnValue = scope.Value
@@ -218,7 +218,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			returnValue = "true"
 		}
 
-		for index, node := range(nodeSet) {
+		for index, node := range nodeSet {
 			if (node != nil) && node.IsLinked() {
 				ns := &Scope{Value: node, Index: index}
 				ctx.runChildren(ns, ins)
@@ -226,13 +226,13 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		}
 	case "position.Text":
 		returnValue = Positions[args[0].(string)]
-	
+
 	// SHARED NODE FUNCTIONS
 	case "remove":
 		scope.Value.(xml.Node).Remove()
 	case "inner", "inner_text", "text":
 		node := scope.Value.(xml.Node)
-		ts := &Scope{Value:node.Content()}
+		ts := &Scope{Value: node.Content()}
 		ctx.runChildren(ts, ins)
 		val := ts.Value.(string)
 		_, ok := node.(*xml.Element)
@@ -242,7 +242,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		returnValue = val
 	case "value":
 		node := scope.Value.(xml.Node)
-		ts := &Scope{Value:node.Content()}
+		ts := &Scope{Value: node.Content()}
 		ctx.runChildren(ts, ins)
 		val := ts.Value.(string)
 		_, ok := node.(*xml.Attribute)
@@ -252,7 +252,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		returnValue = val
 	case "name":
 		node := scope.Value.(xml.Node)
-		ts := &Scope{Value:node.Name()}
+		ts := &Scope{Value: node.Name()}
 		ctx.runChildren(ts, ins)
 		node.SetName(ts.Value.(string))
 		returnValue = ts.Value.(string)
@@ -263,7 +263,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		if isElement {
 			MoveFunc(newNode, node, AFTER)
 		}
-		ns := &Scope{Value:newNode}
+		ns := &Scope{Value: newNode}
 		ctx.runChildren(ns, ins)
 	case "fetch.Text":
 		searchNode := scope.Value.(xml.Node)
@@ -295,7 +295,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		node := scope.Value.(xml.Node)
 		position := args[0].(Position)
 		nodeSet := node.Doc().ParseHtmlFragment(args[1].(string))
-		for _, newNode := range(nodeSet) {
+		for _, newNode := range nodeSet {
 			MoveFunc(newNode, node, position)
 		}
 		if len(nodeSet) > 0 {
@@ -344,8 +344,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		_, ok := node.(*xml.Element)
 		if ok == true {
 			attr, _ := node.Attribute(name)
-			
-			as := &Scope{Value:attr}
+
+			as := &Scope{Value: attr}
 			ctx.runChildren(as, ins)
 			if attr.IsLinked() && (attr.Content() == "") {
 				attr.Remove()

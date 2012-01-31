@@ -1,11 +1,10 @@
 package linker
 
-import(
+import (
 	tp "athena/proto"
 	parser "tritium/parser"
 	"os"
 )
-
 
 func RunStringWithPackage(src, path string, pkg *tp.Package) (*tp.Transform, os.Error) {
 	objs := parser.Parse(src, path)
@@ -22,7 +21,7 @@ func runWithObjs(objs []*tp.ScriptObject, pkg *tp.Package) (*tp.Transform, os.Er
 	ctx.Link()
 	if ctx.HasErrors() {
 		message := ""
-		for _, msg := range(ctx.errors) {
+		for _, msg := range ctx.errors {
 			message = message + "\n" + msg
 		}
 		return nil, os.NewError(message)
@@ -30,4 +29,3 @@ func runWithObjs(objs []*tp.ScriptObject, pkg *tp.Package) (*tp.Transform, os.Er
 
 	return ctx.Transform, nil
 }
-

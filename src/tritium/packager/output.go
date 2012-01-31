@@ -1,6 +1,6 @@
 package packager
 
-import(
+import (
 	tp "athena/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	"io/ioutil"
@@ -11,30 +11,29 @@ import(
 
 func (pkg *Package) write() {
 	path, name := filepath.Split(pkg.location)
-	outputFilename := filepath.Join(path, name, name + ".tpkg")
+	outputFilename := filepath.Join(path, name, name+".tpkg")
 
 	bytes, err := proto.Marshal(pkg.Package)
-	
+
 	if err != nil {
 		println("Could not marshal package:", name)
 		log.Panic(err)
 	}
 
-
 	bytes = crypto.Encrypt(bytes)
 
-	ioutil.WriteFile(outputFilename, bytes, uint32(0666) )
+	ioutil.WriteFile(outputFilename, bytes, uint32(0666))
 	pkg.OutputFile = outputFilename
 
-	pkg.Println(" -- output: " +  outputFilename)
+	pkg.Println(" -- output: " + outputFilename)
 }
 
-func (pkg *Package) open(path string, name string) (thisError *string) {	
-	tpkg_path := filepath.Join(path, name + ".tpkg")
+func (pkg *Package) open(path string, name string) (thisError *string) {
+	tpkg_path := filepath.Join(path, name+".tpkg")
 	data, err := ioutil.ReadFile(tpkg_path)
 
 	if err != nil {
-	  newError := "Could not find tpkg file:" + tpkg_path
+		newError := "Could not find tpkg file:" + tpkg_path
 		return &newError
 	}
 
@@ -53,11 +52,10 @@ func (pkg *Package) open(path string, name string) (thisError *string) {
 
 	pkg.Println("\t -- Using tpkg at:" + tpkg_path)
 
-  return nil
+	return nil
 }
 
-
-func (pkg *Package)Merge(otherPackage *tp.Package) {
+func (pkg *Package) Merge(otherPackage *tp.Package) {
 
 	if otherPackage == nil {
 		return
@@ -69,21 +67,21 @@ func (pkg *Package)Merge(otherPackage *tp.Package) {
 
 	var existingTypeId int
 
-	for _, someType := range(otherPackage.Types) {
-		existingTypeId = pkg.GetTypeId( proto.GetString( someType.Name ) )
+	for _, someType := range otherPackage.Types {
+		existingTypeId = pkg.GetTypeId(proto.GetString(someType.Name))
 		if existingTypeId == -1 {
-			pkg.Types = append( pkg.Types, someType)
+			pkg.Types = append(pkg.Types, someType)
 		}
-	}	
+	}
 
-	for _, function := range(otherPackage.Functions) {
+	for _, function := range otherPackage.Functions {
 
- 		if proto.GetBool( function.BuiltIn ) {
+		if proto.GetBool(function.BuiltIn) {
 			pkg.resolveHeader(function)
 		} else {
 			pkg.resolveDefinition(function)
 		}
 		pkg.Package.Functions = append(pkg.Package.Functions, function)
-	}	
+	}
 
 }
