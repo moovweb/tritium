@@ -1,4 +1,4 @@
-package hermes;
+package proto;
 
 import "file.proto";
 import "feature.proto";
