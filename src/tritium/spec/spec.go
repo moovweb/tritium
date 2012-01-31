@@ -1,7 +1,7 @@
 package spec
 
 import(
-	tp "tritium/proto"
+	tp "athena/tritium"
 	"tritium/linker"
 	. "path/filepath"
 	. "io/ioutil"

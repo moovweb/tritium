@@ -1,7 +1,7 @@
 package packager
 
 import(
-	tp "tritium/proto"
+	tp "athena/tritium"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	api "tritium/api"
 	"strings"

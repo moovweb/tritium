@@ -2,7 +2,7 @@ package parser
 
 import (
   "goprotobuf.googlecode.com/hg/proto"
-  ir "tritium/proto"
+  ir "athena/tritium"
   "io/ioutil"
   "path/filepath"
   . "tritium/tokenizer" // was meant to be in this package
