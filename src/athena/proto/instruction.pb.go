@@ -57,6 +57,7 @@ type Instruction struct {
 	FunctionId       *int32                       `protobuf:"varint,6,opt,name=function_id" json:"function_id,omitempty"`
 	LineNumber       *int32                       `protobuf:"varint,7,opt,name=line_number" json:"line_number,omitempty"`
 	YieldTypeId      *int32                       `protobuf:"varint,8,opt,name=yield_type_id" json:"yield_type_id,omitempty"`
+	IsValid          *bool                        `protobuf:"varint,9,opt,name=is_valid" json:"is_valid,omitempty"`
 	XXX_unrecognized []byte                       `json:",omitempty"`
 }
 
