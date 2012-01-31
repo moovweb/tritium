@@ -73,7 +73,11 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 			}
 			print(result.CharStatus())
 		}()
-	spec := LoadSpec(dir, pkg)
-	result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
+	spec, err := LoadSpec(dir, pkg)
+	if err != nil {
+		result.Error(dir, err.String())
+	} else {
+		result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
+	}
 	return
 }

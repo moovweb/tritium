@@ -15,6 +15,7 @@ type LinkingContext struct {
 	textType int
 	types []string
 	files []string
+	errors []string
 	*Transform
 }
 
@@ -63,6 +64,7 @@ func NewLinkingContext(pkg *Package) (*LinkingContext){
 	ctx := &LinkingContext{ 
 		funList: functionLookup,
 		types: types,
+		errors: make([]string, 0),
 		Transform: &Transform{
 			Pkg: pkg,
 		},
@@ -91,9 +93,8 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 		ctx.files = ctx.files[:(len(ctx.files)-1)]
 	} else {
 		if scopeType != int(proto.GetInt32(obj.ScopeTypeId)) {
-			log.Error("Imported a script in two different scopes!")
+			ctx.error("script", "Imported a script in two different scopes! Not processing second import.")
 		}
-		//println("Already linked", proto.GetString(obj.Name))
 	}
 }
 
@@ -104,6 +105,7 @@ func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (
 
 func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, scopeType int, localScope LocalDef) (returnType int) {
 	returnType = -1
+	ins.IsValid = proto.Bool(true)
 	switch *ins.Type {
 		case Instruction_IMPORT:
 			// set its import_id and blank the value field
@@ -112,7 +114,8 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			//println(proto.GetInt32(ins.LineNumber))
 			importId, ok := ctx.objMap[importValue]
 			if ok != true {
-				log.Error("Invalid import ", ins.String())
+				ctx.error(ins, "Invalid import " + ins.String())
+
 			}
 			// Make sure this object is linked with the right scopeType
 			ctx.link(importId, scopeType)
@@ -127,7 +130,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 					// We are going to assign something to this variable
 					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope)
 					if returnType != ctx.textType {
-						log.Error("Numeric local vars can ONLY be Text")
+						ctx.error(ins, "Numeric local vars can ONLY be Text")
 					}
 				}
 				returnType = ctx.textType
@@ -136,7 +139,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				if found {
 					returnType = typeId
 					if len(ins.Arguments) > 0 {
-						log.Error("The local variable %", name, " has been assigned before and cannot be reassigned!")
+						ctx.error(ins, "The local variable %" + name + " has been assigned before and cannot be reassigned!")
 					}
 				} else {
 					if len(ins.Arguments) > 0 {
@@ -145,8 +148,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 						localScope[name] = returnType
 					} else {
 						println(ins.String())
-						println("referenced: ", localScope)
-						log.Error("I've never seen the variable %", name, " before! Please assign a value before usage.")
+						ctx.error(ins, "I've never seen the variable %" + name + " before! Please assign a value before usage.")
 					}
 				}
 			}
@@ -166,7 +168,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				//fmt.Printf("localScope: (%v) \n", localScope)
 					argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope)
 					if argReturn == -1 {
-						log.Error("Invalid argument object", arg.String())
+						ctx.error(ins, "Invalid argument object" + arg.String())
 					}
 					stub = stub + "," + ctx.types[argReturn]
 				}
@@ -184,36 +186,34 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				} else {
 					fileName = "in package"
 				}
-				log.Error("No such function found: " + ctx.types[scopeType] + "." + stub + " in file " + fileName + ":" + fmt.Sprintf("%d", proto.GetInt32(ins.LineNumber)))
-			}
-			ins.FunctionId = proto.Int32(int32(funcId))
-			fun := ctx.Pkg.Functions[funcId]
-			returnType = int(proto.GetInt32(fun.ReturnTypeId))
-			opensScopeType := int(proto.GetInt32(fun.OpensTypeId))
-			if opensScopeType == 0 {
-				// If we're a Base scope, don't mess with texas!
-				opensScopeType = scopeType
-			}
-			// If it inherits:
-			inheritedOpensScopeType := ctx.Pkg.FindDescendantType( int32( opensScopeType ) )
-			if inheritedOpensScopeType != -1 {
-				opensScopeType = inheritedOpensScopeType
-			}
-
-
-			//println("Zomg, found function", fun.String())
-			//println("I open a Scope of type ", opensScopeType)
+				ctx.error(ins, "No such function found: " + ctx.types[scopeType] + "." + stub + " in file " + fileName + ":" + fmt.Sprintf("%d", proto.GetInt32(ins.LineNumber)))
+			} else {
+				ins.FunctionId = proto.Int32(int32(funcId))
+				fun := ctx.Pkg.Functions[funcId]
+				returnType = int(proto.GetInt32(fun.ReturnTypeId))
+				opensScopeType := int(proto.GetInt32(fun.OpensTypeId))
+				if opensScopeType == 0 {
+					// If we're a Base scope, don't mess with texas!
+					opensScopeType = scopeType
+				}
+				// If it inherits:
+				inheritedOpensScopeType := ctx.Pkg.FindDescendantType( int32( opensScopeType ) )
+				if inheritedOpensScopeType != -1 {
+					opensScopeType = inheritedOpensScopeType
+				}
 			
-			// Copy the local scope
-			parentScope := localScope
-			localScope = make(LocalDef, len(parentScope))
-			for s, t := range(parentScope) {
-				localScope[s] = t
-			}
+
+				// Copy the local scope
+				parentScope := localScope
+				localScope = make(LocalDef, len(parentScope))
+				for s, t := range(parentScope) {
+					localScope[s] = t
+				}
 			
-			if ins.Children != nil {
-				for _, child := range(ins.Children) {
-					ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope)
+				if ins.Children != nil {
+					for _, child := range(ins.Children) {
+						ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope)
+					}
 				}
 			}
 		case Instruction_TEXT:
@@ -225,16 +225,18 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				}
 			}
 	}
-	
-	
-	// if function
-		// Figure out function signature (name + arg types)
-			// have to start at the bottom of the tree (args first) and check types.
-		// Is this a real function?
-			// aka, text(regexp()) ... have to see that regexp returns Regexp object,
-			// which, then, when we go to process text() we notice we don't have a text(Regexp) 
-			// function, so we need to throw a reasonable error
-			// Hrrrm.... need line numbers, huh?
-		// Set the function_id if it is real, error otherwise
 	return
+}
+
+func (ctx *LinkingContext) HasErrors() (bool) {
+	return (len(ctx.errors) > 0)
+}
+
+func (ctx *LinkingContext) error(obj interface{}, message string) {
+	ctx.errors = append(ctx.errors, message)
+	ins, ok := obj.(*Instruction)
+	if ok {
+		ins.IsValid = proto.Bool(false)
+	}
+	log.Error(message)
 }

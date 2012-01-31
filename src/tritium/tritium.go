@@ -4,9 +4,10 @@ import(
 	"tritium/linker"
 	tp "athena/proto"
 	"tritium/packager"
+	"os"
 )
 
-func Compile(file string) (*tp.Transform) {
+func Compile(file string) (*tp.Transform, os.Error) {
 
 	defaultPackage := packager.LoadDefaultPackage(PackagePath)
 	defaultPackage.BuildUserPackage(UserPackagePath, PackagePath)
@@ -14,7 +15,7 @@ func Compile(file string) (*tp.Transform) {
 	return linker.RunWithPackage(file, defaultPackage.Package)
 }
 
-func CompileString(data, path string) (*tp.Transform) {
+func CompileString(data, path string) (*tp.Transform, os.Error) {
 
 	defaultPackage := packager.LoadDefaultPackage(PackagePath)
 	defaultPackage.BuildUserPackage(UserPackagePath, PackagePath)

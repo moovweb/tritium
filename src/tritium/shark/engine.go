@@ -108,7 +108,7 @@ func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]str
 		Yields: make([]*YieldBlock, 0),
 		hadError: false,
 	}
-	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars:make(map[string]interface{})})
+	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
 	scope := &Scope{Value:input}
 	obj := transform.Objects[0]
@@ -134,6 +134,7 @@ func (ctx *Ctx) vars() (map[string]interface{}) {
 }
 
 func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
+	
 	defer func() {
 		if x := recover(); x != nil {
 			err, ok := x.(os.Error)
@@ -151,6 +152,11 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 			panic(errString)
 		}
 	}()
+	
+	// If our object is invalid, then skip it
+	if proto.GetBool(ins.IsValid) == false {
+		panic("Invalid instruction. Should have stopped before linking!")
+	}
 	
 	returnValue = ""
 	switch *ins.Type {

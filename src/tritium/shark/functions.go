@@ -15,6 +15,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	returnValue = ""
 	switch fun.Name {
 	case "this":
+		println(fun.String())
 		returnValue = scope.Value
 	case "yield": 
 		myYieldBlock := ctx.yieldBlock()

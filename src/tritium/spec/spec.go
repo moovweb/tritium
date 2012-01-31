@@ -9,6 +9,7 @@ import(
 	yaml "launchpad.net/goyaml"
 	"strings"
 	. "fmt"
+	"os"
 )
 
 type Spec struct {
@@ -27,17 +28,19 @@ type Spec struct {
 	Logs []string
 }
 
-func LoadSpec(dir string, pkg *tp.Package) (*Spec) {
-	//ParseFileSet()
-	return &Spec{
+func LoadSpec(dir string, pkg *tp.Package) (*Spec, os.Error) {
+	script, err := linker.RunWithPackage(Join(dir, "main.ts"), pkg)
+
+	spec := &Spec{
 		Location: dir,
 		Input: loadFile(dir, "input.*"),
 		Vars: loadVars(dir),
-		Script: linker.RunWithPackage(Join(dir, "main.ts"), pkg),
+		Script: script,
 		Output: loadFile(dir, "output.*"),
 		Exports: loadExports(dir),
 		Logs: loadLogs(dir),
 	}
+	return spec, err
 }
 
 func loadLogs(dir string) ([]string) {
