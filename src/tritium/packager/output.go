@@ -83,5 +83,9 @@ func (pkg *Package) Merge(otherPackage *tp.Package) {
 		}
 		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}
+	
+	for _, dependency := range otherPackage.Dependencies {
+		pkg.Dependencies = append(pkg.Dependencies, dependency)		
+	}
 
 }

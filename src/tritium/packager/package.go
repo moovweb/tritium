@@ -66,7 +66,10 @@ func buildPackage(path string, options PackageOptions) *Package {
 	// Terrible directory handling here... has to be executed from Tritium root
 
 	pkg := NewPackage(path, options)
-	pkg.Load("libxml")
+	rootName := "libxml"
+	
+	pkg.Name = proto.String(rootName)
+	pkg.Load(rootName)
 
 	return pkg
 }
@@ -97,6 +100,7 @@ func NewPackage(loadPath string, options PackageOptions) *Package {
 			Name:      proto.String("combined"),
 			Functions: make([]*tp.Function, 0),
 			Types:     make([]*tp.Type, 0),
+			Dependencies: make([]string,0),
 		},
 		loaded:   make([]*PackageInfo, 0),
 		Log:      newLog(),

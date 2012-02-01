@@ -203,6 +203,13 @@ func (pkg *Package) findTypeIndex(name string) int {
 }
 
 func (pkg *Package) loadPackageDependency(name string) {
+	
+	for _, dependency := range(pkg.Dependencies) {
+		if name == dependency {
+			pkg.Log.Info("Already loaded dependency:" + name)
+			return
+		}
+	}
 
 	newPath := filepath.Join(pkg.LoadPath, name)
 	_, err := ioutil.ReadDir(newPath)
@@ -223,6 +230,8 @@ func (pkg *Package) loadPackageDependency(name string) {
 	if err == nil {
 		// Directory exists
 		pkg.Load(name)
+		pkg.Log.Info("Added dependency (" + name + ") to " + proto.GetString(pkg.Name) + "'s loaded dependencies")
+		pkg.Dependencies = append(pkg.Dependencies, name)
 	}
 }
 
