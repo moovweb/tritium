@@ -87,10 +87,10 @@ func (m *Mixer) Inspect() {
 	}
 
 	println("\tRoot Package:")
-  if m.Package != nil {
-    fmt.Printf("\t\t -- %v\n", pb.GetString(m.Package.Name) )
-    fmt.Printf("\t\t -- %v\n", m.Package.Types )
-    fmt.Printf("\t\t -- %v\n", m.Package.DependentPackageNames )		
-  }
+	if m.Package != nil {
+		fmt.Printf("\t\t -- Name: %v\n", pb.GetString(m.Package.Name) )
+		fmt.Printf("\t\t -- Types: %v\n", m.Package.Types )
+		fmt.Printf("\t\t -- Dependent packages:  %v\n", m.Package.DependentPackageNames )		
+	}
 
 }
