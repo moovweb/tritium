@@ -1,0 +1,14 @@
+rewriter:
+  host:
+    - matcher: ^m[a-z]*\.{{#GOPERIOD#Domain}}
+      replacement: www.{{#GOPERIOD#Domain}}
+    - matcher: m[a-z]*\.([a-z0-9\-\.]*{{#GOPERIOD#Domain}})
+      replacement: \1
+  link:
+    host: m(?<prefix>[a-z]*)\.[a-z0-9\-\.]*{{#GOPERIOD#Domain}}
+    matcher: (^|\/\/|\"|\')(?!m$prefix\.)(www\.)?([a-z0-9\-\.]*){{#GOPERIOD#Domain}}
+    replacement: \1m$prefix.\3{{#GOPERIOD#Domain}}
+  cookie_domain:
+    matcher: \.?(www\.)?([a-z0-9\-\.]*{{#GOPERIOD#Domain}})
+    replacement: .\2
+    missing_replacement: .{{#GOPERIOD#Domain}}.com

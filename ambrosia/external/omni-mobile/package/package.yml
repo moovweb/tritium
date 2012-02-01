@@ -1,6 +1,3 @@
-name: libxml
+name: omni-mobile
 dependencies:
-  - node
-types:
-  - XMLNode < Node
-  - Attribute
+  - libxml

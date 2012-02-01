@@ -1,0 +1,20 @@
+
+@import "compass/reset";
+
+// Generate a sprite from all .png images in the sprite folder
+// Set the spacing to be 10px apart (remove for no spacing)
+
+// Uncomment the three lines below to create a sprite
+// $sprite-spacing: 10px;
+// @import "sprite/*.png";
+// @include all-sprite-sprites;
+
+
+@import "_mixins.scss";
+@import "_base.scss";
+
+@import "sections/_header.scss";
+@import "sections/_footer.scss";
+
+@import "pages/_home.scss";
+

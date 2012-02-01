@@ -1,0 +1,1 @@
+hermes build external/omni-mobile/ ~/.manhattan

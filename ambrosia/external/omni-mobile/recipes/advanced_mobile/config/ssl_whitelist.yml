@@ -1,0 +1,17 @@
+
+#
+# SSL Whitelist
+# This list is for dev/staging servers which do not have valid certificates, but
+# which need to run through the manhattan staging/production proxy.
+#
+# The list is a list of regular expressions so it can handle infinite qa servers
+# i.e. qa\d+\.example\.com
+#
+# IMPORTANT: Do not add servers to the whitelist which handle real credit card transactions.
+#
+# EXAMPLE:
+#:ssl_whitelist:
+#  - dev\.example\.com
+#  - dev\.qa\d\.example\.com
+#
+:ssl_whitelist: []

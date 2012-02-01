@@ -1,3 +1,3 @@
-:user_defined_functions: false # a bool
+:user_defined_functions: true  # a bool
 :rate_limit: none              # a string 
 :seats: 5                      # A number

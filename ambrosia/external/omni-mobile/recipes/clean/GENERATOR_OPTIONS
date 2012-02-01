@@ -1,0 +1,1 @@
+{:info=>"A completely bare-bones project. Includes almost nothing", :clean=>true, :recipe=>"clean", :project_path=>"/Users/jezewski/Documents/repos/gohattan/src/manhattan-generator/clean", :project_name=>"recipes", :domain=>"{{#GOPERIOD#Domain}}"}
