@@ -33,7 +33,8 @@ func NewMixer(path string) (*Mixer) {
 func (m *Mixer) Write(path string) (outputPath string) {
 
 	name := pb.GetString(m.Name)
-	outputFilename := filepath.Join(path, name + ".mxr")
+	version := pb.GetString(m.Version)
+	outputFilename := filepath.Join(path, name + "-" + version + ".mxr")
 
 	bytes, err := pb.Marshal(m)
 	
@@ -90,7 +91,7 @@ func (m *Mixer) Inspect() {
 	if m.Package != nil {
 		fmt.Printf("\t\t -- Name: %v\n", pb.GetString(m.Package.Name) )
 		fmt.Printf("\t\t -- Types: %v\n", m.Package.Types )
-		fmt.Printf("\t\t -- Dependent packages:  %v\n", m.Package.DependentPackageNames )		
+		fmt.Printf("\t\t -- Dependencies:  %v\n", m.Package.Dependencies )		
 	}
 
 }
