@@ -63,8 +63,6 @@ func (pkg *Package) Merge(otherPackage *tp.Package) {
 
 	//// Reflection would make this code cleaner:
 
-	pkg.Name = otherPackage.Name
-
 	var existingTypeId int
 
 	for _, someType := range otherPackage.Types {
@@ -87,5 +85,5 @@ func (pkg *Package) Merge(otherPackage *tp.Package) {
 	for _, dependency := range otherPackage.Dependencies {
 		pkg.Dependencies = append(pkg.Dependencies, dependency)		
 	}
-
+	pkg.Dependencies = append(pkg.Dependencies, proto.GetString(otherPackage.Name) )
 }
