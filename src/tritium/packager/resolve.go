@@ -9,6 +9,7 @@ import (
 	linker "tritium/linker"
 	parser "tritium/parser"
 	"path/filepath"
+	"os"
 )
 
 func (pkg *Package) resolveDefinition(fun *tp.Function) {
@@ -204,11 +205,9 @@ func (pkg *Package) findTypeIndex(name string) int {
 
 func (pkg *Package) loadPackageDependency(name string) {
 	
-	for _, dependency := range(pkg.Dependencies) {
-		if name == dependency {
-			pkg.Log.Info("Already loaded dependency:" + name)
-			return
-		}
+	loaded := pkg.loadedDependency(name)
+	if loaded {
+		return
 	}
 
 	newPath := filepath.Join(pkg.LoadPath, name)
@@ -235,6 +234,16 @@ func (pkg *Package) loadPackageDependency(name string) {
 	}
 }
 
+func (pkg *Package) loadedDependency(name string) (bool) {
+	for _, dependency := range(pkg.Dependencies) {
+		if name == dependency {
+			pkg.Log.Info("Already loaded dependency:" + name)
+			return true
+		}
+	}	
+	return false
+}
+
 // Not fully functional. Dang it.
 func ReadPackageInfoFile(location string) (info *PackageInfo, error *string) {
 	packageInfo := &PackageInfo{}
@@ -251,6 +260,13 @@ func ReadPackageInfoFile(location string) (info *PackageInfo, error *string) {
 func (pkg *Package) readHeaderFile(location string) {
 	// TODO : plug in new go parser to do this
 	input_file := location + "/headers.tf"
+
+	_, err := os.Open(input_file)
+	
+	if err != nil {
+		pkg.Log.Info("Warning -- found no headers.tf")
+		return
+	}
 
 	stubs := parser.ParseFile(input_file)
 

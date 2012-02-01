@@ -165,6 +165,11 @@ func (pkg *Package) loadFromPath(path string, name string) (err *string) {
 	pkg.Println(path + ":" + name)
 	pkg.Log.Info("\n\n\n\nLoading:%v", path+":"+name)
 
+	loaded := pkg.loadedDependency(name)
+	if loaded {
+		return
+	}
+
 	if pkg.Options["use_tpkg"] {
 		err := pkg.open(path, name)
 		return err
