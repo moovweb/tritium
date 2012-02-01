@@ -1,0 +1,6 @@
+all: install
+build:
+	hermes build external/omni-mobile/ mixers
+install:
+clean:
+	rm -rf mixers
