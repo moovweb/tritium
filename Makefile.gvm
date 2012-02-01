@@ -1,6 +1,6 @@
 all: install
 build:
-	./all.bash
+	./proto/build
 	cd src && gb -b
 clean:
 	cd src && gb -c
