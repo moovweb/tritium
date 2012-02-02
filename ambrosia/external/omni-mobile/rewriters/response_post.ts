@@ -10,8 +10,7 @@ $rewrite_cookie_replacement = "{{.Rewriter.Cookie_Domain.Replacement}}"
 $rewrite_cookie_missing_replacement = "{{.Rewriter.Cookie_Domain.Missing_Replacement}}"
 
 
-log("COOKIE MISSING:")
-log($rewrite_cookie_missing_replacement)
+
 
 
 
