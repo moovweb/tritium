@@ -7,7 +7,7 @@ $rewrite_link_replacement = "{{.Rewriter.Link.Replacement}}"
 $rewrite_cookie_host = "{{.Rewriter.Cookie_Domain.Host}}"
 $rewrite_cookie_matcher = "{{.Rewriter.Cookie_Domain.Matcher}}"
 $rewrite_cookie_replacement = "{{.Rewriter.Cookie_Domain.Replacement}}"
-
+$rewrite_cookie_missing_replacement = "{{.Rewriter.Cookie_Domain.Missing_Replacement}}"
 
 
 
@@ -35,6 +35,10 @@ $rewrite_cookie_matcher {
 	replace("${{.}}", ${{.}}){{end}}
 }
 $rewrite_cookie_replacement {
+  {{range .Rewriter.Cookie_Domain.HostVars}}
+	replace("${{.}}", ${{.}}){{end}}
+}
+$rewrite_cookie_missing_replacement {
   {{range .Rewriter.Cookie_Domain.HostVars}}
 	replace("${{.}}", ${{.}}){{end}}
 }
