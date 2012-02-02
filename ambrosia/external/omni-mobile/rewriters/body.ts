@@ -9,11 +9,7 @@ $rewrite_cookie_matcher = "{{.Rewriter.Cookie_Domain.Matcher}}"
 $rewrite_cookie_replacement = "{{.Rewriter.Cookie_Domain.Replacement}}"
 $cookie_domain_missing_replacement = "{{.Rewriter.Cookie_Domain.Missing_Replacement}}"
 
-
-
-
-
-
+$rewrite_incoming_json = "{{.HostJson}}"
 
 $host {
   replace(regexp($rewrite_link_host))
@@ -23,6 +19,10 @@ $rewrite_link_matcher {
 	replace("${{.}}", ${{.}}){{end}}
 }
 $rewrite_link_replacement {
+  {{range .Rewriter.Link.HostVars}}
+	replace("${{.}}", ${{.}}){{end}}
+}
+$rewrite_incoming_json {
   {{range .Rewriter.Link.HostVars}}
 	replace("${{.}}", ${{.}}){{end}}
 }
