@@ -1,7 +1,7 @@
 all: install
 build:
 install: build
-	export GOHATTAN_DATA=$(JENKINS_HOME)/workspace/tritium/$(label)/build
+	GOHATTAN_DATA=$(JENKINS_HOME)/workspace/tritium/label/$(label)/build
 	hermes build external/omni-mobile/ $(WORKSPACE)/build/mixers
 clean:
 
