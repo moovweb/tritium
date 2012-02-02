@@ -1,4 +1,4 @@
-GOHATTAN_DATA:=$(JENKINS_HOME)/workspace/tritium/label/$(label)/build
+GOHATTAN_DATA:=$(JENKINS_HOME)/workspace/tritium/build
 export GOHATTAN_DATA
 
 all: install
