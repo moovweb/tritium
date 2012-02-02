@@ -1,7 +1,8 @@
+GOHATTAN_DATA := $(JENKINS_HOME)/workspace/tritium/label/$(label)/build
+
 all: install
 build:
 install: build
-	GOHATTAN_DATA=$(JENKINS_HOME)/workspace/tritium/label/$(label)/build
 	hermes build external/omni-mobile/ $(WORKSPACE)/build/mixers
 clean:
 
