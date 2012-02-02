@@ -5,6 +5,8 @@ import(
 	"io/ioutil"
 	"path/filepath"
 	"fmt"
+	"os"
+	"strings"
 )
 
 
@@ -28,6 +30,17 @@ func NewMixer(path string) (*Mixer) {
 	}
 
 
+}
+
+func ResolveMixer(name string) (*Mixer) {
+	path := os.ShellExpand("$GOHATTAN_DATA/mixers/")
+
+	if !strings.Contains(name, ".mxr") {
+		name = name + ".mxr"
+	}
+
+	fullPath := filepath.Join(path, name)
+	return OpenMixer(fullPath)
 }
 
 func (m *Mixer) Write(path string) (outputPath string) {
