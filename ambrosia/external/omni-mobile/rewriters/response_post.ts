@@ -9,8 +9,8 @@ $rewrite_cookie_host = "{{.Rewriter.Cookie_Domain.Host}}"
 $rewrite_cookie_matcher = "{{.Rewriter.Cookie_Domain.Matcher}}"
 $rewrite_cookie_replacement = "{{.Rewriter.Cookie_Domain.Replacement}}"
 $rewrite_cookie_missing_replacement = "{{.Rewriter.Cookie_Domain.Missing_Replacement}}"
-
-
+log("THIS IS THE COOKIE REWRITER")
+log($rewrite_cookie_missing_replacement)
 
 
 
@@ -137,10 +137,17 @@ match($rewrite_cookie_matcher) {
 # find set-cookie headers without a domain and potentially add one
 match($cookie_domain_missing_replacement) {
   not("") {
+		log("IN THE MISSING REPLACEMENT MATCHER")
+		log($rewrite_cookie_missing_replacement)
+
     replace(/^(set-cookie\:(?!.*domain)[^\r\n]+)/i) {
+			log("IN THE MISSING REPLACEMENT MATCHER 2")
       set("$1")
       append("; domain=")
       append($cookie_domain_missing_replacement)
+			log("IN THE MISSING REPLACEMENT MATCHER 3")
+			log($cookie_domain_missing_replacement)
+			log("IN THE MISSING REPLACEMENT MATCHER 4")
     }
   }
 }
