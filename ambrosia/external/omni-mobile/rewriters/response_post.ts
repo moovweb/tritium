@@ -1,3 +1,4 @@
+# ambrosia repo
 $use_gloabl_replace_vars = "true"
 # Rewriters
 $rewrite_link_host = "{{.Rewriter.Link.Host}}"
