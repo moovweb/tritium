@@ -1,4 +1,3 @@
-# ambrosia repo
 $use_gloabl_replace_vars = "true"
 # Rewriters
 $rewrite_link_host = "{{.Rewriter.Link.Host}}"
@@ -39,7 +38,7 @@ $rewrite_cookie_replacement {
   {{range .Rewriter.Cookie_Domain.HostVars}}
 	replace("${{.}}", ${{.}}){{end}}
 }
-$rewrite_cookie_missing_replacement {
+$cookie_domain_missing_replacement {
   {{range .Rewriter.Cookie_Domain.HostVars}}
 	replace("${{.}}", ${{.}}){{end}}
 }
