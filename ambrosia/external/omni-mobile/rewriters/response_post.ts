@@ -135,8 +135,12 @@ match($rewrite_cookie_matcher) {
 }
 
 # find set-cookie headers without a domain and potentially add one
+log("IS HAMPTON RIGHT?")
+log($rewrite_cookie_missing_replacement)
+log("IS HAMPTON RIGHT?")
 match($cookie_domain_missing_replacement) {
   not("") {
+		log("YES IS HAMPTON RIGHT?")
 		log("IN THE MISSING REPLACEMENT MATCHER")
 		log($rewrite_cookie_missing_replacement)
 
@@ -151,6 +155,7 @@ match($cookie_domain_missing_replacement) {
     }
   }
 }
+log("NO!!!")
 
 # important that apply_export_variables be run last so that we don't rewrite
 # cookie domains or locations that have been explicitly set by the user
