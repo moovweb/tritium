@@ -5,5 +5,5 @@ clean:
 	gb -c
 install: build
 	gb -i
-	tritium package --output-path $(CURDIR)/build/packages
+	tritium package --output-path $(WORKSPACE)/build/packages
 
