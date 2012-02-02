@@ -8,9 +8,9 @@ $rewrite_link_replacement = "{{.Rewriter.Link.Replacement}}"
 $rewrite_cookie_host = "{{.Rewriter.Cookie_Domain.Host}}"
 $rewrite_cookie_matcher = "{{.Rewriter.Cookie_Domain.Matcher}}"
 $rewrite_cookie_replacement = "{{.Rewriter.Cookie_Domain.Replacement}}"
-$rewrite_cookie_missing_replacement = "{{.Rewriter.Cookie_Domain.Missing_Replacement}}"
-log("THIS IS THE COOKIE REWRITER")
-log($rewrite_cookie_missing_replacement)
+$cookie_domain_missing_replacement = "{{.Rewriter.Cookie_Domain.Missing_Replacement}}"
+
+
 
 
 
@@ -135,27 +135,15 @@ match($rewrite_cookie_matcher) {
 }
 
 # find set-cookie headers without a domain and potentially add one
-log("IS HAMPTON RIGHT?")
-log($rewrite_cookie_missing_replacement)
-log("IS HAMPTON RIGHT?")
 match($cookie_domain_missing_replacement) {
   not("") {
-		log("YES IS HAMPTON RIGHT?")
-		log("IN THE MISSING REPLACEMENT MATCHER")
-		log($rewrite_cookie_missing_replacement)
-
     replace(/^(set-cookie\:(?!.*domain)[^\r\n]+)/i) {
-			log("IN THE MISSING REPLACEMENT MATCHER 2")
       set("$1")
       append("; domain=")
       append($cookie_domain_missing_replacement)
-			log("IN THE MISSING REPLACEMENT MATCHER 3")
-			log($cookie_domain_missing_replacement)
-			log("IN THE MISSING REPLACEMENT MATCHER 4")
     }
   }
 }
-log("NO!!!")
 
 # important that apply_export_variables be run last so that we don't rewrite
 # cookie domains or locations that have been explicitly set by the user
