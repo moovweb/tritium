@@ -55,7 +55,7 @@ func (m *Mixer) Write(path string) (outputPath string) {
 		panic("Could not marshal mixer (" + name + "), " + err.String())
 	}
 
-	//bytes = crypto.Encrypt(bytes)
+	bytes = Encrypt(bytes)
 
 	ioutil.WriteFile(outputFilename, bytes, uint32(0666) )
 
@@ -70,7 +70,7 @@ func OpenMixer(location string) (m *Mixer) {
 		panic("Could not find mixer file:" + location)
 	}
 
-	//data = crypto.Decrypt(data)
+	data = Decrypt(data)
 
 	thisMixer := &Mixer{}
 	err = pb.Unmarshal(data, thisMixer)
@@ -107,4 +107,30 @@ func (m *Mixer) Inspect() {
 		fmt.Printf("\t\t -- Dependencies:  %v\n", m.Package.Dependencies )		
 	}
 
+}
+
+/* Dummy encryption for now */
+
+func Encrypt(data []byte) []byte{
+	for index, b := range(data) {
+		data[index] = rot13(b)
+	}
+	return data
+}
+
+func Decrypt(data []byte) []byte{
+	for index, b := range(data) {
+		data[index] = rot13(b)
+	}
+	return data
+}
+
+func rot13(b byte) byte {
+    	if 'a' <= b && b <= 'z' {
+    		b = 'a' + ((b-'a')+13)%26
+    	}
+    	if 'A' <= b && b <= 'Z' {
+    		b = 'A' + ((b-'A')+13)%26
+    	}
+    	return b
 }
