@@ -211,6 +211,11 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		node := scope.Value.(xml.Node)
 		xpCtx := xpath.NewXPath(node.Doc())
 		xpath := xpath.CompileXPath(args[0].(string))
+		if xpath == nil {
+			ctx.Logs = append(ctx.Logs, "Invalid XPath used: " + args[0].(string))
+			returnValue = "false"
+			return
+		}
 		nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
 		defer xpCtx.Free()
 		if len(nodeSet) == 0 {
@@ -225,6 +230,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 				ctx.runChildren(ns, ins)
 			}
 		}
+		
 	case "position.Text":
 		returnValue = Positions[args[0].(string)]
 
