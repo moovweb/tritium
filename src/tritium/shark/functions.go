@@ -29,18 +29,19 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		}
 		ctx.Yields = append(ctx.Yields, myYieldBlock)
 
-	case "var.Text":
+	case "var.Text", "var.Text.Text":
 		val := ctx.Env[args[0].(string)]
-		returnValue = val
+		if len(args) == 2 {
+			returnValue = args[1].(string)
+		} else {
+			returnValue = val
+		}
 		if len(ins.Children) > 0 {
-			ts := &Scope{Value: val}
+			ts := &Scope{Value: returnValue}
 			ctx.runChildren(ts, ins)
 			returnValue = ts.Value
 			ctx.Env[args[0].(string)] = returnValue.(string)
 		}
-	case "var.Text.Text":
-		ctx.Env[args[0].(string)] = args[1].(string)
-		returnValue = args[1].(string)
 	case "deprecated.Text":
 		ctx.Log.Info(args[0].(string))
 	case "match.Text":
