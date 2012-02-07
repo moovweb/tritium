@@ -3,9 +3,7 @@ Full EBNF-ish grammar for Tritium. May contain errors.
 Syntactic rules (specified with EBNF):
 --------------------------------------
 
-    script      ->  statement*
-                ->  signature*
-                ->  definition*
+    script      ->  (statement | signature | definition)*
 
     statement   ->  import
                 ->  expression

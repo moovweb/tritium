@@ -103,28 +103,53 @@ func (p *Parser) Parse() *ir.ScriptObject {
 	stmts := ir.ListInstructions()
 	defs := make([]*ir.Function, 0) // Add a new constructor in instruction.go
 
-	switch p.peek().Lexeme {
-	case FUNC:
-		for p.peek().Lexeme != EOF {
-			defs = append(defs, p.definition())
-		}
-		if len(defs) == 0 {
-			defs = nil
-		}
-		script.Functions = defs
-	default:
-		for p.peek().Lexeme != EOF {
-			stmts = append(stmts, p.statement())
-		}
-		line := int32(0)
-		if len(stmts) == 0 {
-			stmts = nil
-		} else {
-			line = *stmts[0].LineNumber
-		}
-		script.Root = ir.MakeBlock(stmts, line)
-	}
-	return script
+  for p.peek().Lexeme != EOF {
+    switch p.peek().Lexeme {
+    case FUNC:
+      defs = append(defs, p.definition())
+    default:
+      stmts = append(stmts, p.statement())
+    }
+  }
+  
+  if len(defs) == 0 {
+    defs = nil
+  }
+  
+  var line int32
+  if len(stmts) == 0 {
+    stmts = nil
+  } else {
+    line = *stmts[0].LineNumber
+  }
+  
+  script.Functions = defs
+  script.Root = ir.MakeBlock(stmts, line)
+  
+  return script
+
+  // switch p.peek().Lexeme {
+  // case FUNC:
+  //  for p.peek().Lexeme != EOF {
+  //    defs = append(defs, p.definition())
+  //  }
+  //  if len(defs) == 0 {
+  //    defs = nil
+  //  }
+  //  script.Functions = defs
+  // default:
+  //  for p.peek().Lexeme != EOF {
+  //    stmts = append(stmts, p.statement())
+  //  }
+  //  line := int32(0)
+  //  if len(stmts) == 0 {
+  //    stmts = nil
+  //  } else {
+  //    line = *stmts[0].LineNumber
+  //  }
+  //  script.Root = ir.MakeBlock(stmts, line)
+  // }
+  // return script
 }
 
 func (p *Parser) statement() (node *ir.Instruction) {

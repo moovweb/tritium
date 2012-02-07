@@ -3,14 +3,17 @@ package parser
 import (
 	"testing"
 	"fmt"
-	//"io/ioutil"
+	"io/ioutil"
 )
 
 func TestBlah(t *testing.T) {
 	fmt.Println("BEGINNING TEST RUN")
+	
+	a, _ := ioutil.ReadFile("instructions.ts")
+	b, _ := ioutil.ReadFile("functions.ts")
 
-	p := MakeParser("instructions.ts")
-	q := MakeParser("functions.ts")
+	p := MakeParser(string(a), "instructions.ts")
+	q := MakeParser(string(b), "instructions.ts")
 
 	script1 := p.Parse()
 	fmt.Println("OUTPUT FOR INSTRUCTIONS:")
