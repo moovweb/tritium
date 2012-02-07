@@ -15,8 +15,8 @@ import (
 func resolveDefinition(pkg *ap.Package, fun *ap.Function) {
 	linkingContext := linker.NewLinkingContext(pkg)
 
-//	pkg.Log.Info("\t -- Resolving --\n")
-//	pkg.Log.Info("\t\t -- function: %v\n", fun)
+	//	pkg.Log.Info("\t -- Resolving --\n")
+	//	pkg.Log.Info("\t\t -- function: %v\n", fun)
 
 	// Re-uses linker's logic to resolve function definitions
 	if proto.GetBool(fun.BuiltIn) == false {
@@ -201,7 +201,7 @@ func (pkg *Package) findTypeIndex(name string) int {
 }
 
 func (pkg *Package) loadPackageDependency(name string) {
-	
+
 	loaded := pkg.loadedDependency(name)
 	if loaded {
 		return
@@ -231,13 +231,13 @@ func (pkg *Package) loadPackageDependency(name string) {
 	}
 }
 
-func (pkg *Package) loadedDependency(name string) (bool) {
-	for _, dependency := range(pkg.Dependencies) {
+func (pkg *Package) loadedDependency(name string) bool {
+	for _, dependency := range pkg.Dependencies {
 		if name == dependency {
 			pkg.Log.Info("Already loaded dependency:" + name)
 			return true
 		}
-	}	
+	}
 	return false
 }
 
@@ -259,7 +259,7 @@ func (pkg *Package) readHeaderFile(location string) {
 	input_file := location + "/headers.tf"
 
 	_, err := os.Open(input_file)
-	
+
 	if err != nil {
 		pkg.Log.Info("Warning -- found no headers.tf")
 		return

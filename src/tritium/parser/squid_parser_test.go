@@ -8,7 +8,7 @@ import (
 
 func TestBlah(t *testing.T) {
 	fmt.Println("BEGINNING TEST RUN")
-	
+
 	a, _ := ioutil.ReadFile("instructions.ts")
 	b, _ := ioutil.ReadFile("functions.ts")
 

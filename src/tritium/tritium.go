@@ -19,7 +19,7 @@ func Compile(file string, rootPackage *ap.Package) (*ap.Transform, os.Error) {
 	defaultPackage := packager.NewPackage(*UserPackagePath, compileOptions)
 	defaultPackage.Merge(rootPackage)
 
-	userPackages, _ := filepath.Glob(filepath.Join(*UserPackagePath, "*"))	
+	userPackages, _ := filepath.Glob(filepath.Join(*UserPackagePath, "*"))
 
 	for _, path := range userPackages {
 		components := strings.Split(path, "/")
@@ -34,13 +34,11 @@ func CompileString(data string, path string, pkg *ap.Package) (*ap.Transform, os
 	return linker.RunStringWithPackage(data, path, pkg)
 }
 
-
-func MakeProjectPackage(functionPath string, rootPackage *ap.Package) (*ap.Package) {
+func MakeProjectPackage(functionPath string, rootPackage *ap.Package) *ap.Package {
 	packager.ReadPackageDefinitions(rootPackage, functionPath)
 
 	return rootPackage
 }
-
 
 var PackagePath *string
 var UserPackagePath *string

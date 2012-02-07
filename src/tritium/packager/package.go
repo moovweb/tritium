@@ -69,7 +69,7 @@ func buildPackage(path string, options PackageOptions) *Package {
 
 	pkg := NewPackage(path, options)
 	rootName := "libxml"
-	
+
 	pkg.Name = proto.String(rootName)
 	pkg.Load(rootName)
 
@@ -99,10 +99,10 @@ func NewPackage(loadPath string, options PackageOptions) *Package {
 
 	return &Package{
 		Package: &tp.Package{
-			Name:      proto.String("combined"),
-			Functions: make([]*tp.Function, 0),
-			Types:     make([]*tp.Type, 0),
-			Dependencies: make([]string,0),
+			Name:         proto.String("combined"),
+			Functions:    make([]*tp.Function, 0),
+			Types:        make([]*tp.Type, 0),
+			Dependencies: make([]string, 0),
 		},
 		loaded:   make([]*PackageInfo, 0),
 		Log:      newLog(),
@@ -185,9 +185,8 @@ func (pkg *Package) loadFromPath(path string, name string) (err *string) {
 	s := time.Nanoseconds()
 	info, err := ReadPackageInfoFile(location)
 	f := time.Nanoseconds()
-	d := float64(f - s) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to read package info: %0.6fs\n", d) 
-
+	d := float64(f-s) / 1000.0 / 1000.0 / 1000.0
+	fmt.Printf("Time to read package info: %0.6fs\n", d)
 
 	if err != nil {
 		return err
@@ -204,9 +203,8 @@ func (pkg *Package) loadFromPath(path string, name string) (err *string) {
 	}
 
 	f = time.Nanoseconds()
-	d = float64(f - s) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to load dependencies: %0.6fs\n", d) 
-
+	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
+	fmt.Printf("Time to load dependencies: %0.6fs\n", d)
 
 	s = time.Nanoseconds()
 	for _, typeName := range info.Types {
@@ -222,27 +220,27 @@ func (pkg *Package) loadFromPath(path string, name string) (err *string) {
 		pkg.Types = append(pkg.Types, typeObj)
 	}
 	f = time.Nanoseconds()
-	d = float64(f - s) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to resolve types: %0.6fs\n", d) 
+	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
+	fmt.Printf("Time to resolve types: %0.6fs\n", d)
 
 	s = time.Nanoseconds()
 	pkg.readHeaderFile(location)
 	f = time.Nanoseconds()
-	d = float64(f - s) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to load dependencies: %0.6fs\n", d) 
+	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
+	fmt.Printf("Time to load dependencies: %0.6fs\n", d)
 
 	s = time.Nanoseconds()
 	entryPoint := filepath.Join(location, "functions.ts")
 	ReadPackageDefinitions(pkg.Package, entryPoint)
 	f = time.Nanoseconds()
-	d = float64(f - s) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to load dependencies: %0.6fs\n", d) 
+	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
+	fmt.Printf("Time to load dependencies: %0.6fs\n", d)
 
 	s = time.Nanoseconds()
 	pkg.inheritFunctions()
 	f = time.Nanoseconds()
-	d = float64(f - s) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to load dependencies: %0.6fs\n", d) 
+	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
+	fmt.Printf("Time to load dependencies: %0.6fs\n", d)
 
 	if pkg.Options["output_tpkg"] {
 		pkg.write()
