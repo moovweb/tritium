@@ -1,7 +1,7 @@
 package packager
 
 import (
-	tp "athena/proto"
+	ap "athena/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	yaml "launchpad.net/goyaml"
 	"io/ioutil"
@@ -12,11 +12,11 @@ import (
 	"os"
 )
 
-func (pkg *Package) resolveDefinition(fun *tp.Function) {
-	linkingContext := linker.NewLinkingContext(pkg.Package)
+func resolveDefinition(pkg *ap.Package, fun *ap.Function) {
+	linkingContext := linker.NewLinkingContext(pkg)
 
-	pkg.Log.Info("\t -- Resolving --\n")
-	pkg.Log.Info("\t\t -- function: %v\n", fun)
+//	pkg.Log.Info("\t -- Resolving --\n")
+//	pkg.Log.Info("\t\t -- function: %v\n", fun)
 
 	// Re-uses linker's logic to resolve function definitions
 	if proto.GetBool(fun.BuiltIn) == false {
@@ -51,12 +51,12 @@ func (pkg *Package) resolveDefinition(fun *tp.Function) {
 
 		//pkg.Log.Info("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
 		scopeTypeId := int(proto.GetInt32(fun.ScopeTypeId))
-		pkg.Log.Info("\t\t -- opening scope type : %v\n", scopeTypeId)
+		//pkg.Log.Info("\t\t -- opening scope type : %v\n", scopeTypeId)
 		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope)
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
 		if fun.Instruction != nil {
-			fun.Instruction.Iterate(func(ins *tp.Instruction) {
-				if *ins.Type == tp.Instruction_FUNCTION_CALL {
+			fun.Instruction.Iterate(func(ins *ap.Instruction) {
+				if *ins.Type == ap.Instruction_FUNCTION_CALL {
 					if proto.GetString(ins.Value) == "yield" {
 						fun.OpensTypeId = ins.YieldTypeId
 					}
@@ -65,7 +65,7 @@ func (pkg *Package) resolveDefinition(fun *tp.Function) {
 		}
 
 	}
-	pkg.Log.Info("\t\t -- done --\n")
+	//pkg.Log.Info("\t\t -- done --\n")
 }
 
 func (pkg *Package) inheritFunctions() {
@@ -79,13 +79,13 @@ func (pkg *Package) inheritFunctions() {
 // - Also, I'm assuming a single depth level of inheritance. I'd have to run this function n times for n levels
 // - Well that should be fine as long as I run it at the end of every package load
 
-func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
+func (pkg *Package) resolveFunctionDescendants(fun *ap.Function) {
 
 	// Check if this function contains any types that have descendants
 	name := fun.Stub(pkg.Package)
 	pkg.Log.Info("Checking for inheritance on function: %v", name)
 
-	newFun := &tp.Function{}
+	newFun := &ap.Function{}
 	inherit := false
 
 	// Iterate over ScopeType, Arg types, return Type, opens Type
@@ -162,25 +162,22 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 	pkg.Log.Info("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
 
 	if inherit {
-		pkg.resolveDefinition(newFun)
+		resolveDefinition(pkg.Package, newFun)
 		pkg.Package.Functions = append(pkg.Package.Functions, newFun)
 
 	}
 
 }
 
-func (pkg *Package) readPackageDefinitions(location string) {
+func ReadPackageDefinitions(pkg *ap.Package, location string) {
 
-	pkg.Println(" -- reading definitions")
-
-	input_file := filepath.Join(location, "functions.ts")
-
-	definitions := parser.ParseFile(input_file)
+	//pkg.Println(" -- reading definitions")
+	definitions := parser.ParseFile(location)
 
 	for _, function := range definitions.Functions {
-		pkg.Log.Info("\t -- function: %v", function)
-		pkg.resolveDefinition(function)
-		pkg.Package.Functions = append(pkg.Package.Functions, function)
+		//pkg.Log.Info("\t -- function: %v", function)
+		resolveDefinition(pkg, function)
+		pkg.Functions = append(pkg.Functions, function)
 	}
 }
 
@@ -280,7 +277,7 @@ func (pkg *Package) readHeaderFile(location string) {
 
 }
 
-func (pkg *Package) resolveHeader(function *tp.Function) {
+func (pkg *Package) resolveHeader(function *ap.Function) {
 
 	returnType := proto.GetString(function.ReturnType)
 	if len(returnType) > 0 {

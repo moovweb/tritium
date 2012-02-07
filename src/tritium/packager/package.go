@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"log4go"
 	"os"
+	"time"
+	"fmt"
 )
 
 type Package struct {
@@ -179,11 +181,19 @@ func (pkg *Package) loadFromPath(path string, name string) (err *string) {
 
 	old_location := pkg.location
 	pkg.location = location
+
+	s := time.Nanoseconds()
 	info, err := ReadPackageInfoFile(location)
+	f := time.Nanoseconds()
+	d := float64(f - s) / 1000.0 / 1000.0 / 1000.0
+	fmt.Printf("Time to read package info: %0.6fs\n", d) 
+
 
 	if err != nil {
 		return err
 	}
+
+	s = time.Nanoseconds()
 
 	if len(info.Dependencies) > 0 {
 
@@ -193,6 +203,12 @@ func (pkg *Package) loadFromPath(path string, name string) (err *string) {
 
 	}
 
+	f = time.Nanoseconds()
+	d = float64(f - s) / 1000.0 / 1000.0 / 1000.0
+	fmt.Printf("Time to load dependencies: %0.6fs\n", d) 
+
+
+	s = time.Nanoseconds()
 	for _, typeName := range info.Types {
 		split := strings.Split(typeName, " < ")
 		typeObj := &tp.Type{}
@@ -205,12 +221,28 @@ func (pkg *Package) loadFromPath(path string, name string) (err *string) {
 		typeObj.Name = proto.String(typeName)
 		pkg.Types = append(pkg.Types, typeObj)
 	}
+	f = time.Nanoseconds()
+	d = float64(f - s) / 1000.0 / 1000.0 / 1000.0
+	fmt.Printf("Time to resolve types: %0.6fs\n", d) 
 
+	s = time.Nanoseconds()
 	pkg.readHeaderFile(location)
+	f = time.Nanoseconds()
+	d = float64(f - s) / 1000.0 / 1000.0 / 1000.0
+	fmt.Printf("Time to load dependencies: %0.6fs\n", d) 
 
-	pkg.readPackageDefinitions(location)
+	s = time.Nanoseconds()
+	entryPoint := filepath.Join(location, "functions.ts")
+	ReadPackageDefinitions(pkg.Package, entryPoint)
+	f = time.Nanoseconds()
+	d = float64(f - s) / 1000.0 / 1000.0 / 1000.0
+	fmt.Printf("Time to load dependencies: %0.6fs\n", d) 
 
+	s = time.Nanoseconds()
 	pkg.inheritFunctions()
+	f = time.Nanoseconds()
+	d = float64(f - s) / 1000.0 / 1000.0 / 1000.0
+	fmt.Printf("Time to load dependencies: %0.6fs\n", d) 
 
 	if pkg.Options["output_tpkg"] {
 		pkg.write()

@@ -77,7 +77,7 @@ func (pkg *Package) Merge(otherPackage *tp.Package) {
 		if proto.GetBool(function.BuiltIn) {
 			pkg.resolveHeader(function)
 		} else {
-			pkg.resolveDefinition(function)
+			resolveDefinition(pkg.Package, function)
 		}
 		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}

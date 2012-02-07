@@ -36,21 +36,9 @@ func CompileString(data string, path string, pkg *ap.Package) (*ap.Transform, os
 
 
 func MakeProjectPackage(functionPath string, rootPackage *ap.Package) (*ap.Package) {
+	packager.ReadPackageDefinitions(rootPackage, functionPath)
 
-	options := packager.PackageOptions{"stdout": false, "output_tpkg": false, "use_tpkg": false}
-
-	defaultPackage := packager.NewPackage(functionPath, options)
-	defaultPackage.Merge(rootPackage)
-
-	userPackages, _ := filepath.Glob(filepath.Join(functionPath, "*"))	
-
-	for _, path := range userPackages {
-		components := strings.Split(path, "/")
-		name := components[len(components)-1]
-		defaultPackage.Load(name)
-	}
-
-	return defaultPackage.Package
+	return rootPackage
 }
 
 
