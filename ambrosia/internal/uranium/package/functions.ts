@@ -67,11 +67,6 @@
 
 ## -- add a config_map() function to set callbacks / icon / button ?
 
-@func XMLNode.map(Text %addresses, Text %descriptions, Text %canvas, Text %callback)  {
-  ur_attribute("callback", callback)
-  map(%addresses, %descriptions, %canvas)
-}
-
 @func XMLNode.map(Text %addresses, Text %descriptions, Text %canvas)  {
   ur_set("map")  
 
@@ -95,6 +90,11 @@
     ur_attribute("map","canvas")
   }
   
+}
+
+@func XMLNode.map(Text %addresses, Text %descriptions, Text %canvas, Text %callback)  {
+  ur_attribute("callback", %callback)
+  map(%addresses, %descriptions, %canvas)
 }
 
 
