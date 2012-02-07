@@ -30,14 +30,19 @@ func Compile(file string, rootPackage *ap.Package) (*ap.Transform, os.Error) {
 	return linker.RunWithPackage(file, defaultPackage.Package)
 }
 
-func CompileString(data string, path string, rootPackage *ap.Package) (*ap.Transform, os.Error) {
+func CompileString(data string, path string, pkg *ap.Package) (*ap.Transform, os.Error) {
+	return linker.RunStringWithPackage(data, path, pkg)
+}
 
-	compileOptions := packager.PackageOptions{"stdout": false, "output_tpkg": false, "use_tpkg": false}
 
-	defaultPackage := packager.NewPackage(*UserPackagePath, compileOptions)
+func MakeProjectPackage(functionPath string, rootPackage *ap.Package) (*ap.Package) {
+
+	options := packager.PackageOptions{"stdout": false, "output_tpkg": false, "use_tpkg": false}
+
+	defaultPackage := packager.NewPackage(functionPath, options)
 	defaultPackage.Merge(rootPackage)
 
-	userPackages, _ := filepath.Glob(filepath.Join(*UserPackagePath, "*"))	
+	userPackages, _ := filepath.Glob(filepath.Join(functionPath, "*"))	
 
 	for _, path := range userPackages {
 		components := strings.Split(path, "/")
@@ -45,8 +50,9 @@ func CompileString(data string, path string, rootPackage *ap.Package) (*ap.Trans
 		defaultPackage.Load(name)
 	}
 
-	return linker.RunStringWithPackage(data, path, defaultPackage.Package)
+	return defaultPackage.Package
 }
+
 
 var PackagePath *string
 var UserPackagePath *string
