@@ -31,8 +31,9 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 
 	case "var.Text", "var.Text.Text":
 		val := ctx.Env[args[0].(string)]
-		if len(args) == 2 {
+		if len(args) > 1 {
 			returnValue = args[1].(string)
+			ctx.Env[args[0].(string)] = returnValue.(string)
 		} else {
 			returnValue = val
 		}
