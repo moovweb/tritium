@@ -165,6 +165,17 @@
    
 }
 
+# This is used to specify the encoding for a page
+@func Text.html(Text %enc) {
+  convert_encoding(%enc, "utf-8")
+  html() {
+    $("//meta[@charset]") {
+      attribute("charset", "utf-8")
+    }
+    yield()
+  }
+}
+
 # POSITIONALS
 # siblings of these are in node, but these use Inner so are here.
 @func XMLNode.insert_at(Position %pos, Text %tag, Text %content) {
