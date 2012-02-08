@@ -9,6 +9,7 @@ import (
 	tp "athena/proto"
 	"libxml/xpath"
 	"rubex"
+	"goconv"
 )
 
 func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
@@ -184,13 +185,19 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			})
 		})
 		returnValue = scope.Value
-	//case "convert_encoding.Text.Text":
-	//	input := scope.Value.(string)
-	//	from  := args[0].(string)
-	//	to    := args[1].(string)
-	//	// DO SHIT HERE
-	//	scope.Value = input
-
+	case "convert_encoding.Text.Text":
+		input := scope.Value.(string)
+		fromCode  := args[0].(string)
+		toCode    := args[1].(string)
+		ic, err := goconv.OpenWithFallback(toCode, fromCode, goconv.KEEP_UNRECOGNIZED)
+		if err == nil {
+			outputBytes, _ := ic.Conv([]byte(input))
+			scope.Value = string(outputBytes)
+			ic.Close()
+		} else {
+			scope.Value = input
+		}
+		returnValue = scope.Value
 	// XML FUNCTIONS
 	case "xml":
 		doc := libxml.XmlParseString(scope.Value.(string))
