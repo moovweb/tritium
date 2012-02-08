@@ -189,7 +189,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		input := scope.Value.(string)
 		fromCode  := args[0].(string)
 		toCode    := args[1].(string)
-		ic, err := goconv.OpenWithFallback(toCode, fromCode, goconv.KEEP_UNRECOGNIZED)
+		ic, err := goconv.OpenWithFallback(fromCode, toCode, goconv.KEEP_UNRECOGNIZED)
 		if err == nil {
 			outputBytes, _ := ic.Conv([]byte(input))
 			scope.Value = string(outputBytes)
