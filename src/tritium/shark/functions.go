@@ -184,6 +184,12 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			})
 		})
 		returnValue = scope.Value
+	//case "convert_encoding.Text.Text":
+	//	input := scope.Value.(string)
+	//	from  := args[0].(string)
+	//	to    := args[1].(string)
+	//	// DO SHIT HERE
+	//	scope.Value = input
 
 	// XML FUNCTIONS
 	case "xml":
