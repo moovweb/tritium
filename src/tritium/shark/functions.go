@@ -213,6 +213,13 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		scope.Value = doc.DumpHTML()
 		returnValue = scope.Value
 		doc.Free()
+	case "html_as_utf8":
+		doc := xml.HtmlParseStringWithOptions(scope.Value.(string), "", "utf-8", xml.DefaultHtmlParseOptions())
+		ns := &Scope{Value: doc}
+		ctx.runChildren(ns, ins)
+		scope.Value = doc.DumpHTML()
+		returnValue = scope.Value
+		doc.Free()
 	case "html_fragment":
 		doc := libxml.HtmlParseFragment(scope.Value.(string))
 		ns := &Scope{Value: doc.RootElement()}
