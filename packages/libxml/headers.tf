@@ -7,6 +7,9 @@
 @func Text.html() Text XMLNode
 
 // Parses the document as HTML and passes you back an XMLNode scope
+@func Text.html_as_utf8() Text XMLNode
+
+// Parses the document as HTML and passes you back an XMLNode scope
 @func Text.html_fragment() Text XMLNode
 
 // Replace's the node's contents with a CDATA block
