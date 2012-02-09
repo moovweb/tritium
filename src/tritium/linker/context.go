@@ -133,6 +133,11 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 					ctx.error(ins, "Numeric local vars can ONLY be Text")
 				}
 			}
+			if ins.Children != nil {
+				for _, child := range ins.Children {
+					ctx.ProcessInstructionWithLocalScope(child, ctx.textType, localScope)
+				}
+			}
 			returnType = ctx.textType
 		} else { // Not numeric.
 			typeId, found := localScope[name]
@@ -140,7 +145,14 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				returnType = typeId
 				if len(ins.Arguments) > 0 {
 					ctx.error(ins, "The local variable %"+name+" has been assigned before and cannot be reassigned!")
+				} else {
+					if ins.Children != nil {
+						for _, child := range ins.Children {
+							returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope)
+						}
+					}
 				}
+				
 			} else {
 				if len(ins.Arguments) > 0 {
 					// We are going to assign something to this variable
@@ -152,11 +164,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				}
 			}
 		}
-		if ins.Children != nil {
-			for _, child := range ins.Children {
-				ctx.ProcessInstructionWithLocalScope(child, ctx.textType, localScope)
-			}
-		}
+		
 	case Instruction_FUNCTION_CALL:
 		stub := proto.GetString(ins.Value)
 		if stub == "yield" {
@@ -164,8 +172,6 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 		}
 		if ins.Arguments != nil {
 			for _, arg := range ins.Arguments {
-				//fmt.Printf("\narg:(%v)\n", arg)
-				//fmt.Printf("localScope: (%v) \n", localScope)
 				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope)
 				if argReturn == -1 {
 					ctx.error(ins, "Invalid argument object" + arg.String())

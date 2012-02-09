@@ -176,7 +176,7 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 		if len(ins.Children) > 0 {
 			ts := &Scope{Value: ctx.vars()[name]}
 			ctx.runChildren(ts, ins)
-			vars[name] = ts.Value.(string)
+			vars[name] = ts.Value
 		}
 		//println("Getting ", name, "as", ctx.LocalVar[name])
 		returnValue = vars[name]
