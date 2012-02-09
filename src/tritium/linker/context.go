@@ -168,7 +168,8 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				//fmt.Printf("localScope: (%v) \n", localScope)
 				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope)
 				if argReturn == -1 {
-					ctx.error(ins, "Invalid argument object"+arg.String())
+					ctx.error(ins, "Invalid argument object" + arg.String())
+					return
 				}
 				stub = stub + "," + ctx.types[argReturn]
 			}
