@@ -9,7 +9,7 @@ import (
 	tp "athena/proto"
 	"libxml/xpath"
 	"rubex"
-	"github.com/zhigangc/goconv"
+	"goconv"
 )
 
 func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
