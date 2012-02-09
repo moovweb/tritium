@@ -168,9 +168,9 @@
 # This is used to specify the encoding for a page
 @func Text.html(Text %enc) {
   convert_encoding(%enc, "utf-8")
-  html() {
-    $("//meta[@charset]") {
-      attribute("charset", "utf-8")
+  html_as_utf8() {
+    $("//meta[contains(@content, 'charset')]") {
+	  attribute("content", "text/html; charset=utf-8")
     }
     yield()
   }
