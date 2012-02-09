@@ -4,5 +4,3 @@ pkg rubex
 pkg gokogiri
 pkg goyaml
 pkg athena
-pkg goconv
-
