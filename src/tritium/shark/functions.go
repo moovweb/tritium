@@ -9,7 +9,7 @@ import (
 	tp "athena/proto"
 	"libxml/xpath"
 	"rubex"
-	"github.com/moovweb/goconv"
+	"goconv"
 )
 
 func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
@@ -127,6 +127,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		ctx.Exports = append(ctx.Exports, val)
 	case "log.Text":
 		ctx.Logs = append(ctx.Logs, args[0].(string))
+		returnValue = args[0].(string)
 
 	// ATOMIC FUNCTIONS
 	case "concat.Text.Text":
@@ -232,15 +233,16 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		xpath := xpath.CompileXPath(args[0].(string))
 		if xpath == nil {
 			ctx.Logs = append(ctx.Logs, "Invalid XPath used: " + args[0].(string))
-			returnValue = "false"
+			returnValue = "0"
 			return
 		}
 		nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
 		defer xpCtx.Free()
+		
 		if len(nodeSet) == 0 {
-			returnValue = "false"
+			returnValue = "0"
 		} else {
-			returnValue = "true"
+			returnValue = fmt.Sprintf("%d", len(nodeSet))
 		}
 
 		for index, node := range nodeSet {
