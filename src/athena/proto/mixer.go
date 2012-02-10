@@ -82,7 +82,7 @@ func OpenMixer(location string) (m *Mixer) {
 	return thisMixer
 }
 
-func (m *Mixer) Inspect() {
+func (m *Mixer) Inspect(printFunctions bool) {
 	fmt.Printf(" \tFeatures: \n\t\t%v\n", m.Features)
 
 	println("\tAssets:")
@@ -105,6 +105,12 @@ func (m *Mixer) Inspect() {
 		fmt.Printf("\t\t -- Name: %v\n", pb.GetString(m.Package.Name) )
 		fmt.Printf("\t\t -- Types: %v\n", m.Package.Types )
 		fmt.Printf("\t\t -- Dependencies:  %v\n", m.Package.Dependencies )		
+		if printFunctions {
+			fmt.Printf("\t\t -- Functions:  %v\n", m.Package.Dependencies )
+			for _, function := range(m.Package.Functions) {
+				fmt.Printf("\t\t\t %v\n", function.Stub(m.Package) )
+			}
+		}
 	}
 
 }
