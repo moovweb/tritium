@@ -206,24 +206,22 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		scope.Value = doc.String()
 		returnValue = scope.Value
 		doc.Free()
-	case "html":
-		doc := libxml.HtmlParseString(scope.Value.(string))
+	case "html.Text.Text":
+		inputEncoding  := args[0].(string)
+		outputEncoding    := args[1].(string)
+		doc := xml.HtmlParseString(scope.Value.(string), inputEncoding)
 		ns := &Scope{Value: doc}
 		ctx.runChildren(ns, ins)
+		doc.SetMetaEncoding(outputEncoding)
 		scope.Value = doc.DumpHTML()
 		returnValue = scope.Value
 		doc.Free()
-	case "html_as_utf8":
-		doc := xml.HtmlParseStringWithOptions(scope.Value.(string), "", "utf-8", xml.DefaultHtmlParseOptions())
-		ns := &Scope{Value: doc}
-		ctx.runChildren(ns, ins)
-		scope.Value = doc.DumpHTML()
-		returnValue = scope.Value
-		doc.Free()
-	case "html_fragment":
-		doc := libxml.HtmlParseFragment(scope.Value.(string))
+	case "html_fragment.Text":
+		inputEncoding  := args[0].(string)
+		doc := xml.HtmlParseFragment(scope.Value.(string), inputEncoding)
 		ns := &Scope{Value: doc.RootElement()}
 		ctx.runChildren(ns, ins)
+		//output is always utf-8 because the content is internal to Doc.
 		scope.Value = ns.Value.(xml.Node).Content()
 		returnValue = scope.Value
 		doc.Free()
@@ -322,7 +320,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "inject_at.Position.Text":
 		node := scope.Value.(xml.Node)
 		position := args[0].(Position)
-		nodeSet := node.Doc().ParseHtmlFragment(args[1].(string))
+		nodeSet := node.Doc().ParseHtmlFragment(args[1].(string), "")
 		for _, newNode := range nodeSet {
 			MoveFunc(newNode, node, position)
 		}
