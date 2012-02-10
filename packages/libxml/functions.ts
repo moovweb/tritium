@@ -167,15 +167,21 @@
 
 # This is used to specify the encoding for a page
 @func Text.html(Text %enc) {
-  html(%enc, "utf-8")
+  html(%enc, "utf-8") {
+    yield()
+  }
 }
 
 @func Text.html() {
-  html("", "utf-8")
+  html("", "utf-8") {
+    yield()
+  } 
 }
 
 @func Text.html_fragment() {
-  html_fragment("")
+  html_fragment("") {
+    yield()
+  }
 }
 
 # POSITIONALS
