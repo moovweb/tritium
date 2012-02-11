@@ -1,15 +1,16 @@
 package shark
 
-import(
+import (
 	"strings"
 	"os"
 	"libxml"
 	"fmt"
 	xml "libxml/tree"
-	tp "tritium/proto"
+	tp "athena/proto"
 	"libxml/xpath"
 	"rubex"
 	"css2xpath" // switch this to github.com/moovweb/css2xpath if you know how to make it work
+	"github.com/moovweb/goconv"
 )
 
 func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
@@ -17,10 +18,10 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	switch fun.Name {
 	case "this":
 		returnValue = scope.Value
-	case "yield": 
+	case "yield":
 		myYieldBlock := ctx.yieldBlock()
-		ctx.Yields = ctx.Yields[:(len(ctx.Yields)-1)]
-		if (ctx.yieldBlock() != nil) {
+		ctx.Yields = ctx.Yields[:(len(ctx.Yields) - 1)]
+		if ctx.yieldBlock() != nil {
 			returnValue = ctx.runChildren(scope, myYieldBlock.Ins)
 			if returnValue == nil {
 				returnValue = "false"
@@ -30,18 +31,20 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		}
 		ctx.Yields = append(ctx.Yields, myYieldBlock)
 
-	case "var.Text":
+	case "var.Text", "var.Text.Text":
 		val := ctx.Env[args[0].(string)]
-		returnValue = val
+		if len(args) > 1 {
+			returnValue = args[1].(string)
+			ctx.Env[args[0].(string)] = returnValue.(string)
+		} else {
+			returnValue = val
+		}
 		if len(ins.Children) > 0 {
-			ts := &Scope{Value: val}
+			ts := &Scope{Value: returnValue}
 			ctx.runChildren(ts, ins)
 			returnValue = ts.Value
 			ctx.Env[args[0].(string)] = returnValue.(string)
 		}
-	case "var.Text.Text":
-		ctx.Env[args[0].(string)] = args[1].(string)
-		returnValue = args[1].(string)
 	case "deprecated.Text":
 		ctx.Log.Info(args[0].(string))
 	case "match.Text":
@@ -52,16 +55,16 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		}
 		ctx.MatchStack = append(ctx.MatchStack, against)
 		ctx.MatchShouldContinue = append(ctx.MatchShouldContinue, true)
-	
+
 		// Run children
 		ctx.runChildren(scope, ins)
-	
+
 		if ctx.matchShouldContinue() {
 			returnValue = "false"
 		} else {
 			returnValue = "true"
 		}
-	
+
 		// Clear
 		ctx.MatchShouldContinue = ctx.MatchShouldContinue[:len(ctx.MatchShouldContinue)-1]
 		ctx.MatchStack = ctx.MatchStack[:len(ctx.MatchStack)-1]
@@ -119,12 +122,13 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "export.Text":
 		val := make([]string, 2)
 		val[0] = args[0].(string)
-		ts := &Scope{Value:""}
+		ts := &Scope{Value: ""}
 		ctx.runChildren(ts, ins)
 		val[1] = ts.Value.(string)
 		ctx.Exports = append(ctx.Exports, val)
 	case "log.Text":
 		ctx.Logs = append(ctx.Logs, args[0].(string))
+		returnValue = args[0].(string)
 
 	// ATOMIC FUNCTIONS
 	case "concat.Text.Text":
@@ -138,9 +142,9 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "upcase.Text":
 		returnValue = strings.ToUpper(args[0].(string))
 		return
-	case "index.XMLNode":
-		returnValue = fmt.Sprintf("%d", scope.Index + 1)
-	
+	case "index.XMLNode", "index.Node":
+		returnValue = fmt.Sprintf("%d", scope.Index+1)
+
 	// TEXT FUNCTIONS
 	case "set.Text":
 		scope.Value = args[0]
@@ -149,7 +153,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "prepend.Text":
 		scope.Value = args[0].(string) + scope.Value.(string)
 	case "replace.Text":
-		ts := &Scope{Value:""}
+		ts := &Scope{Value: ""}
 		ctx.runChildren(ts, ins)
 		scope.Value = strings.Replace(scope.Value.(string), args[0].(string), ts.Value.(string), -1)
 	case "replace.Regexp":
@@ -165,10 +169,10 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 				ctx.vars()[name] = capture
 			}
 
-			replacementScope := &Scope{Value:match}
+			replacementScope := &Scope{Value: match}
 			ctx.runChildren(replacementScope, ins)
 			//println(ins.String())
-		
+
 			//println("Replacement:", replacementScope.Value.(string))
 			innerReplacer := rubex.MustCompile(`[\\$](\d)`)
 			return innerReplacer.GsubFunc(replacementScope.Value.(string), func(_ string, numeric_captures map[string]string) string {
@@ -180,29 +184,48 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 					val = ctx.vars()[capture].(string)
 				}
 				return val
-		    })
+			})
 		})
 		returnValue = scope.Value
-
+	case "convert_encoding.Text.Text":
+		input := scope.Value.(string)
+		fromCode  := args[0].(string)
+		toCode    := args[1].(string)
+		ic, err := goconv.OpenWithFallback(fromCode, toCode, goconv.KEEP_UNRECOGNIZED)
+		if err == nil {
+			outputBytes, _ := ic.Conv([]byte(input))
+			scope.Value = string(outputBytes)
+			ic.Close()
+		} else {
+			scope.Value = input
+		}
+		returnValue = scope.Value
 	// XML FUNCTIONS
 	case "xml":
 		doc := libxml.XmlParseString(scope.Value.(string))
-		ns := &Scope{Value:doc}
+		ns := &Scope{Value: doc}
 		ctx.runChildren(ns, ins)
 		scope.Value = doc.String()
 		returnValue = scope.Value
 		doc.Free()
-	case "html":
-		doc := libxml.HtmlParseString(scope.Value.(string))
-		ns := &Scope{Value:doc}
+	case "html.Text.Text":
+		inputEncoding  := args[0].(string)
+		outputEncoding    := args[1].(string)
+		doc := xml.HtmlParseString(scope.Value.(string), inputEncoding)
+		ns := &Scope{Value: doc}
 		ctx.runChildren(ns, ins)
+		if err := doc.SetMetaEncoding(outputEncoding); err != nil {
+			ctx.Log.Warn("executing html:" + err.String())
+		}
 		scope.Value = doc.DumpHTML()
 		returnValue = scope.Value
 		doc.Free()
-	case "html_fragment":
-		doc := libxml.HtmlParseFragment(scope.Value.(string))
+	case "html_fragment.Text":
+		inputEncoding  := args[0].(string)
+		doc := xml.HtmlParseFragment(scope.Value.(string), inputEncoding)
 		ns := &Scope{Value: doc.RootElement()}
 		ctx.runChildren(ns, ins)
+		//output is always utf-8 because the content is internal to Doc.
 		scope.Value = ns.Value.(xml.Node).Content()
 		returnValue = scope.Value
 		doc.Free()
@@ -211,15 +234,21 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		node := scope.Value.(xml.Node)
 		xpCtx := xpath.NewXPath(node.Doc())
 		xpath := xpath.CompileXPath(args[0].(string))
+		if xpath == nil {
+			ctx.Logs = append(ctx.Logs, "Invalid XPath used: " + args[0].(string))
+			returnValue = "0"
+			return
+		}
 		nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
 		defer xpCtx.Free()
+		
 		if len(nodeSet) == 0 {
-			returnValue = "false"
+			returnValue = "0"
 		} else {
-			returnValue = "true"
+			returnValue = fmt.Sprintf("%d", len(nodeSet))
 		}
 
-		for index, node := range(nodeSet) {
+		for index, node := range nodeSet {
 			if (node != nil) && node.IsLinked() {
 				ns := &Scope{Value: node, Index: index}
 				ctx.runChildren(ns, ins)
@@ -247,13 +276,13 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		}
 	case "position.Text":
 		returnValue = Positions[args[0].(string)]
-	
+
 	// SHARED NODE FUNCTIONS
 	case "remove":
 		scope.Value.(xml.Node).Remove()
 	case "inner", "inner_text", "text":
 		node := scope.Value.(xml.Node)
-		ts := &Scope{Value:node.Content()}
+		ts := &Scope{Value: node.Content()}
 		ctx.runChildren(ts, ins)
 		val := ts.Value.(string)
 		_, ok := node.(*xml.Element)
@@ -263,7 +292,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		returnValue = val
 	case "value":
 		node := scope.Value.(xml.Node)
-		ts := &Scope{Value:node.Content()}
+		ts := &Scope{Value: node.Content()}
 		ctx.runChildren(ts, ins)
 		val := ts.Value.(string)
 		_, ok := node.(*xml.Attribute)
@@ -273,7 +302,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		returnValue = val
 	case "name":
 		node := scope.Value.(xml.Node)
-		ts := &Scope{Value:node.Name()}
+		ts := &Scope{Value: node.Name()}
 		ctx.runChildren(ts, ins)
 		node.SetName(ts.Value.(string))
 		returnValue = ts.Value.(string)
@@ -284,7 +313,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		if isElement {
 			MoveFunc(newNode, node, AFTER)
 		}
-		ns := &Scope{Value:newNode}
+		ns := &Scope{Value: newNode}
 		ctx.runChildren(ns, ins)
 	case "fetch.Text":
 		searchNode := scope.Value.(xml.Node)
@@ -300,6 +329,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			}
 		}
 		xPathObj.Free()
+	case "path":
+		returnValue = scope.Value.(xml.Node).Path()
 
 	// LIBXML FUNCTIONS
 	case "insert_at.Position.Text":
@@ -313,8 +344,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "inject_at.Position.Text":
 		node := scope.Value.(xml.Node)
 		position := args[0].(Position)
-		nodeSet := node.Doc().ParseHtmlFragment(args[1].(string))
-		for _, newNode := range(nodeSet) {
+		nodeSet := node.Doc().ParseHtmlFragment(args[1].(string), "")
+		for _, newNode := range nodeSet {
 			MoveFunc(newNode, node, position)
 		}
 		if len(nodeSet) > 0 {
@@ -363,8 +394,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		_, ok := node.(*xml.Element)
 		if ok == true {
 			attr, _ := node.Attribute(name)
-			
-			as := &Scope{Value:attr}
+
+			as := &Scope{Value: attr}
 			ctx.runChildren(as, ins)
 			if attr.IsLinked() && (attr.Content() == "") {
 				attr.Remove()

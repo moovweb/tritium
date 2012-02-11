@@ -26,6 +26,9 @@
 // Used with match($var, /hi/)
 @func with(Regexp %regexp) Text
 
+// Convert from one encoding to another
+@func Text.convert_encoding(Text %from, Text %to) Text
+
 // Always matches
 @func else() Text
 

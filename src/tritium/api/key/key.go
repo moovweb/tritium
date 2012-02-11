@@ -1,15 +1,15 @@
 package api
 
-import(
+import (
 	"io/ioutil"
 )
 
 type Key struct {
-	Value *[]byte
+	Value     *[]byte
 	validated bool
 }
 
-func NewKey(location *string) (*Key){
+func NewKey(location *string) *Key {
 	var value *[]byte
 
 	if location != nil {
@@ -22,15 +22,13 @@ func NewKey(location *string) (*Key){
 		value = &data
 	}
 
-
 	return &Key{
-  	        Value: value,
-  	        validated: false,
+		Value:     value,
+		validated: false,
 	}
 }
 
-
-func (k *Key)Validate() bool {
+func (k *Key) Validate() bool {
 	if k.validated {
 		return true
 	}
@@ -46,6 +44,5 @@ func (k *Key)Validate() bool {
 		}
 	}
 
-	
 	return false
 }

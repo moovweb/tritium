@@ -3,3 +3,4 @@ pkg log4go
 pkg rubex
 pkg gokogiri
 pkg goyaml
+pkg athena

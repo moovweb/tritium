@@ -1,7 +1,7 @@
 package spec
 
-import(
-	tp "tritium/proto"
+import (
+	tp "athena/proto"
 	"tritium/linker"
 	. "path/filepath"
 	. "io/ioutil"
@@ -9,6 +9,7 @@ import(
 	yaml "launchpad.net/goyaml"
 	"strings"
 	. "fmt"
+	"os"
 )
 
 type Spec struct {
@@ -16,31 +17,33 @@ type Spec struct {
 
 	// Inputs
 	Input string
-	Vars map[string]string
-	
+	Vars  map[string]string
+
 	// Script
 	Script *tp.Transform
-	
+
 	// Expected outputs
-	Output string
+	Output  string
 	Exports [][]string
-	Logs []string
+	Logs    []string
 }
 
-func LoadSpec(dir string, pkg *tp.Package) (*Spec) {
-	//ParseFileSet()
-	return &Spec{
+func LoadSpec(dir string, pkg *tp.Package) (*Spec, os.Error) {
+	script, err := linker.RunWithPackage(Join(dir, "main.ts"), pkg)
+
+	spec := &Spec{
 		Location: dir,
-		Input: loadFile(dir, "input.*"),
-		Vars: loadVars(dir),
-		Script: linker.RunWithPackage(Join(dir, "main.ts"), pkg),
-		Output: loadFile(dir, "output.*"),
-		Exports: loadExports(dir),
-		Logs: loadLogs(dir),
+		Input:    loadFile(dir, "input.*"),
+		Vars:     loadVars(dir),
+		Script:   script,
+		Output:   loadFile(dir, "output.*"),
+		Exports:  loadExports(dir),
+		Logs:     loadLogs(dir),
 	}
+	return spec, err
 }
 
-func loadLogs(dir string) ([]string) {
+func loadLogs(dir string) []string {
 	data := []byte(loadFile(dir, "logs.yml"))
 	logs := make([]string, 0)
 	err := yaml.Unmarshal(data, &logs)
@@ -50,7 +53,7 @@ func loadLogs(dir string) ([]string) {
 	return logs
 }
 
-func loadVars(dir string) (map[string]string) {
+func loadVars(dir string) map[string]string {
 	data := []byte(loadFile(dir, "vars.yml"))
 	vars := make(map[string]string, 0)
 	err := yaml.Unmarshal(data, &vars)
@@ -60,7 +63,7 @@ func loadVars(dir string) (map[string]string) {
 	return vars
 }
 
-func loadExports(dir string) ([][]string) {
+func loadExports(dir string) [][]string {
 	data := []byte(loadFile(dir, "exports.yml"))
 	exports := make([][]string, 0)
 	err := yaml.Unmarshal(data, &exports)
@@ -70,7 +73,7 @@ func loadExports(dir string) ([][]string) {
 	return exports
 }
 
-func loadFile(dir, filename string) (string) {
+func loadFile(dir, filename string) string {
 	list, err := Glob(Join(dir, filename))
 	if err != nil {
 		return ""
@@ -87,17 +90,17 @@ func loadFile(dir, filename string) (string) {
 	return string(data)
 }
 
-func (spec *Spec) Compare(data string, exports [][]string, logs []string) (*Result) {
+func (spec *Spec) Compare(data string, exports [][]string, logs []string) *Result {
 	result := NewResult()
 	result.Merge(spec.compareData(data))
-	result.Merge(spec.compareExports(exports))	
+	result.Merge(spec.compareExports(exports))
 	result.Merge(spec.compareLogs(logs))
 	return result
 }
 
 // TODO : Consolidate these comparisons into an interface
 
-func (spec *Spec) compareData(data string) (*Result) {
+func (spec *Spec) compareData(data string) *Result {
 	result := NewResult()
 	if strings.TrimSpace(spec.Output) != strings.TrimSpace(data) {
 		result.Fail(spec.Location, "Bad Output", data, spec.Output, "Didn't match")
@@ -105,7 +108,7 @@ func (spec *Spec) compareData(data string) (*Result) {
 	return result
 }
 
-func (spec *Spec) compareExports(exports [][]string) (*Result) {
+func (spec *Spec) compareExports(exports [][]string) *Result {
 	exportsResult := NewResult()
 
 	if summarizeExports(spec.Exports) != summarizeExports(exports) {
@@ -115,12 +118,12 @@ func (spec *Spec) compareExports(exports [][]string) (*Result) {
 	return exportsResult
 }
 
-func (spec *Spec) compareLogs(logs []string) (*Result) {
+func (spec *Spec) compareLogs(logs []string) *Result {
 	result := NewResult()
-	
+
 	expectedSummary := summarizeLogs(spec.Logs)
 	outputSummary := summarizeLogs(logs)
-	
+
 	if expectedSummary != outputSummary {
 		result.Fail(spec.Location, "Bad Log Output", outputSummary, expectedSummary, "Didn't match")
 	}
@@ -131,14 +134,14 @@ func summarizeLogs(logs []string) string {
 	return Sprintf("(%v)", strings.Join(logs, ")\n("))
 }
 
-func summarizeExport(export []string) string{
+func summarizeExport(export []string) string {
 	return export[0] + " : " + export[1]
 }
 
 func summarizeExports(exports [][]string) string {
 	var summary string
 	summary += "["
-	for index, export := range(exports){
+	for index, export := range exports {
 		if index == 0 {
 			summary += "\n"
 		}
