@@ -68,19 +68,19 @@ func init() {
 	LexemeName[EOF] = "END OF FILE"
 	LexemeName[ERROR] = "LEXICAL ERROR"
 
-	matcher[STRING], _ = rubex.Compile(`\A"(\\.|[^"\\])*"|\A'(\\.|[^'\\])*'`)
+	matcher[STRING] = rubex.MustCompile(`\A"(\\.|[^"\\])*"|\A'(\\.|[^'\\])*'`)
 
 	// the pattern and options of the regexp matches are in captures 1 and 3
 	//regexpSlashPattern, _ = rubex.Compile(`\A\/((\\.|[^\/\\])*)\/([imxouesn]*)`)
-	regexpSlashPattern, _ = rubex.Compile(`\A/((\\.|[^/\\])*)/([imxouesn]*)`)
-	regexpBackQuotePattern, _ = rubex.Compile("\\A`((\\\\.|[^\\`\\\\])*)`([imxouesn]*)")
-	matcher[POS], _ = rubex.Compile(`\A(top|bottom|before|after)`)
-	matcher[GVAR], _ = rubex.Compile(`\A\$\w+`)
-	matcher[LVAR], _ = rubex.Compile(`\A%\w+`)
-	matcher[KWD], _ = rubex.Compile(`\A[a-zA-Z_:][-\w:.]*:`)
-	matcher[ID], _ = rubex.Compile(`\A\$|\A[_a-z][\w\$]*`)
-	matcher[TYPE], _ = rubex.Compile(`\A[A-Z]\w*`)
-	matcher[PATH], _ = rubex.Compile(`\A[-+.*?:\/\w]+`)
+	regexpSlashPattern = rubex.MustCompile(`\A/((\\.|[^/\\])*)/([imxouesn]*)`)
+	regexpBackQuotePattern = rubex.MustCompile("\\A`((\\\\.|[^\\`\\\\])*)`([imxouesn]*)")
+	matcher[POS] = rubex.MustCompile(`\A(top|bottom|before|after)`)
+	matcher[GVAR] = rubex.MustCompile(`\A\$\w+`)
+	matcher[LVAR] = rubex.MustCompile(`\A%\w+`)
+	matcher[KWD] = rubex.MustCompile(`\A[a-zA-Z_:][-\w:.]*:`)
+	matcher[ID] = rubex.MustCompile(`\A\$|\A[_a-z][\w\$]*`)
+	matcher[TYPE] = rubex.MustCompile(`\A[A-Z]\w*`)
+	matcher[PATH] = rubex.MustCompile(`\A[-+.*?:\/\w]+`)
 
 	// Map parens, braces, etc to their lexemes
 	symbolLexeme = make(map[string]Lexeme, 8)
@@ -92,9 +92,9 @@ func init() {
 	symbolLexeme["."] = DOT
 	symbolLexeme["="] = EQUAL
 	symbolLexeme["+"] = PLUS
-	symbolPattern, _ = rubex.Compile(`\A[\(\)\{\}\,\.=\+]`)
+	symbolPattern = rubex.MustCompile(`\A[\(\)\{\}\,\.=\+]`)
 
-	numberPattern, _ = rubex.Compile(`\A\d+`)
+	numberPattern = rubex.MustCompile(`\A\d+`)
 }
 
 // A token has a type (aka lexeme), a value, and a line number

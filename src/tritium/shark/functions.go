@@ -13,6 +13,10 @@ import (
 	"github.com/moovweb/goconv"
 )
 
+var (
+	InnerReplacer = rubex.MustCompile(`[\\$](\d)`)
+)
+
 func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = ""
 	switch fun.Name {
@@ -174,8 +178,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			//println(ins.String())
 
 			//println("Replacement:", replacementScope.Value.(string))
-			innerReplacer := rubex.MustCompile(`[\\$](\d)`)
-			return innerReplacer.GsubFunc(replacementScope.Value.(string), func(_ string, numeric_captures map[string]string) string {
+			return InnerReplacer.GsubFunc(replacementScope.Value.(string), func(_ string, numeric_captures map[string]string) string {
 				capture := numeric_captures["1"]
 				var val string
 				if usesGlobal {
@@ -241,6 +244,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		}
 		nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
 		defer xpCtx.Free()
+		defer xpath.Free()
 		
 		if len(nodeSet) == 0 {
 			returnValue = "0"
@@ -256,12 +260,18 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		}
 	case "css$.Text.Text":
 	  // TO DO: refactor this so it leverages the preceding case
-	  xpathString := css2xpath.Convert(args[0].(string), css2xpath.LOCAL)
-	  node := scope.Value.(xml.Node)
-	  xpCtx := xpath.NewXPath(node.Doc())
+	 	xpathString := css2xpath.Convert(args[0].(string), css2xpath.LOCAL)
+		node := scope.Value.(xml.Node)
+		xpCtx := xpath.NewXPath(node.Doc())
 		xpath := xpath.CompileXPath(xpathString)
+		if xpath == nil {
+			ctx.Logs = append(ctx.Logs, "Invalid XPath : " + xpathString + "; compile from CSS: " + args[0].(string))
+			returnValue = "false"
+			return
+		}
 		nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
 		defer xpCtx.Free()
+		defer xpath.Free()
 		if len(nodeSet) == 0 {
 			returnValue = "false"
 		} else {
