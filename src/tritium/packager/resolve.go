@@ -172,6 +172,13 @@ func (pkg *Package) resolveFunctionDescendants(fun *ap.Function) {
 func ReadPackageDefinitions(pkg *ap.Package, location string) {
 
 	//pkg.Println(" -- reading definitions")
+	_, err := ioutil.ReadFile(location)
+
+	if err != nil {
+		//pkg.Log.Info("\t -- no user defined functions found")
+		return
+	}
+
 	definitions := parser.ParseFile(location)
 
 	for _, function := range definitions.Functions {
