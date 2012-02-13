@@ -9,8 +9,8 @@ import (
 	tp "athena/proto"
 	"libxml/xpath"
 	"rubex"
-	"css2xpath" // switch this to github.com/moovweb/css2xpath if you know how to make it work
-	"github.com/moovweb/goconv"
+	"css2xpath"
+	"goconv"
 )
 
 var (
