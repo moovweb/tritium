@@ -32,5 +32,10 @@ func FuncStub(pkg *tp.Package, fun *tp.Function) string {
 	if len(args) > 1 {
 		args = args[2:]
 	}
-	return name + "(" + args + ")"
+	returnVal := name + "(" + args + ") " + fun.ReturnTypeString(pkg) + " " 
+	opens := fun.OpensTypeString(pkg)
+	if opens != "Base" {
+		returnVal = returnVal + opens
+	}
+	return returnVal
 }

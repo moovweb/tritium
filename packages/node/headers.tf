@@ -28,10 +28,10 @@
 @func Node.name() Text Text
 
 // Delete the current node
-@func Node.remove() Text
+@func Node.remove() Text Node
 
 // Get the XPath of the current node
-@func Node.path() Text
+@func Node.path() Text Text
 
 // Inject some HTML into the node at the prescribed location
 @func Node.inject(Text %html) Text
