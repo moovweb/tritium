@@ -23,13 +23,6 @@
     }, "s"))
 }
 
-
-@func else() {
-  with(/.?/) {
-    yield()
-  }
-}
-
 @func match(Text %target, Text %comparitor) {
   match(%target) {
     with(%comparitor) {
