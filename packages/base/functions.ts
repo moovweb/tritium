@@ -117,28 +117,3 @@
 @func Text.dump() {
   this()
 }
-
-# TEMPORARY UNTIL THE PARSER HANDLES THIS
-@func concat(Text %a, Text %b, Text %c) {
-  concat(%a, concat(%b, %c))
-}
-@func concat(Text %a, Text %b, Text %c, Text %d) {
-  concat(%a, concat(%b, concat(%c, %d)))
-}
-@func concat(Text %a, Text %b, Text %c, Text %d, Text %e) {
-  concat(%a, concat(%b, concat(%c, concat(%d, %e))))
-}
-
-# TEMPORARY UNTIL THE PARSER HANDLES THIS
-@func log(Text %a, Text %b) {
-  log(concat(%a, %b))
-}
-@func log(Text %a, Text %b, Text %c) {
-  log(concat(%a, concat(%b, %c)))
-}
-@func log(Text %a, Text %b, Text %c, Text %d) {
-  log(concat(%a, concat(%b, concat(%c, %d))))
-}
-@func log(Text %a, Text %b, Text %c, Text %d, Text %e) {
-  log(concat(%a, concat(%b, concat(%c, concat(%d, %e)))))
-}

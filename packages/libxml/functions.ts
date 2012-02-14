@@ -138,10 +138,6 @@
   }
 }
 
-@func XMLNode.dump() {
-  to_text(this())
-}
-
 @func XMLNode.wrap(Text %tag) {
   %node = this()
   insert_at(position("before"), %tag) {

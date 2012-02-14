@@ -157,18 +157,18 @@
     yield()
   }
 }
-@func Node.inject_top(Text %value) {
-  inject_at(position("top"), %value) {
+@func Node.inject_top(Text %html) {
+  inject_at(position("top"), %html) {
     yield()
   }
 }
-@func Node.inject_after(Text %value) {
-  inject_at(position("after"), %value) {
+@func Node.inject_after(Text %html) {
+  inject_at(position("after"), %html) {
     yield()
   }
 }
-@func Node.inject_before(Text %value) {
-  inject_at(position("before"), %value) {
+@func Node.inject_before(Text %html) {
+  inject_at(position("before"), %html) {
     yield()
   }
 }
