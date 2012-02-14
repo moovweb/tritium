@@ -4,6 +4,7 @@ import "os"
 import "tritium/packager"
 //import . "tritium/linker"
 import s "tritium/spec"
+import "tritium/doc"
 
 func show_usage() {
 	println("General purpose Tritium command line interface. Commands are: package, link, test")
@@ -41,6 +42,11 @@ func main() {
 			pkg := packager.NewPackage(packager.DefaultPackagePath, packager.BuildOptions())
 			pkg.Load(name)
 			println(pkg.DebugInfo())
+		} else if command == "doc" {
+			name := os.Args[2]
+			pkg := packager.NewPackage(packager.DefaultPackagePath, packager.BuildOptions())
+			pkg.Load(name)
+			println(doc.Process(pkg.Package))
 		} else if command == "link" {
 			println("Linking files found in the directory:", os.Args[2])
 			//LinkerToBytes(os.Args[2])

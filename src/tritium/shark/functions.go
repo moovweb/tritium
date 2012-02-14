@@ -415,7 +415,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			}
 			returnValue = "true"
 		}
-	case "to_text.XMLNode":
+	case "dump":
 		returnValue = scope.Value.(xml.Node).String()
 
 	default:
