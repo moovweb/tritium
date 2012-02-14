@@ -110,6 +110,13 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 				returnValue = "true"
 			}
 		}
+	case "else":
+		returnValue = "false"
+		if ctx.matchShouldContinue() {
+			ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
+			ctx.runChildren(scope, ins)
+			returnValue = "true"
+		}
 	case "regexp.Text.Text":
 		mode := rubex.ONIG_OPTION_DEFAULT
 		if strings.Index(args[1].(string), "i") >= 0 {
@@ -259,7 +266,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			}
 		}
 	case "css.Text":
-	 returnValue = css2xpath.Convert(args[0].(string), css2xpath.LOCAL)
+		returnValue = css2xpath.Convert(args[0].(string), css2xpath.LOCAL)
 	case "position.Text":
 		returnValue = Positions[args[0].(string)]
 
