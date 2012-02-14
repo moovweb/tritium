@@ -1,4 +1,0 @@
-inner_wrap(@1) {
-  attributes(@2)
-  yield()
-}

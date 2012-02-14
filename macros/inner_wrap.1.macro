@@ -1,7 +1,0 @@
-inner() {
-  prepend("<#{@1}>")
-  append("</#{@1}>")
-}
-select("./*[1]") {
-  yield()
-}

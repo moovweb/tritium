@@ -1,3 +1,0 @@
-insert_javascript_at("bottom", @1, @2) {
-  yield()
-}

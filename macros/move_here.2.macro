@@ -1,4 +1,0 @@
-$(@1) {
-  move(@2, node(1), node(2))
-  yield()
-}

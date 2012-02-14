@@ -1,4 +1,0 @@
-text() {
-  set(@1)
-  yield()
-}

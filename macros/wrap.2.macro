@@ -1,4 +1,0 @@
-insert_at("before", @1, @2) {
-  move("top", node(2), node(1))
-  yield()
-}

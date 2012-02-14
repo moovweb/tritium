@@ -1,4 +1,0 @@
-wrap_text_children(@1) {
-  attributes(@2)
-  yield()
-}

@@ -1,4 +1,0 @@
-insert_at(@1, "script", type: "text/javascript") {
-  cdata(concat("//<![CDATA[\n", @2, "\n//]]>"))
-  yield()
-}

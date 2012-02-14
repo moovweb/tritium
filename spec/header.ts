@@ -1,9 +1,0 @@
-
-
-
-
-
-@func Text.inherit() //Text
-
-
-

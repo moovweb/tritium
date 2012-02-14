@@ -1,4 +1,0 @@
-insert_javascript_at(@1, @2) {
-  attributes(@3)
-  yield()
-}

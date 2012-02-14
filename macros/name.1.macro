@@ -1,4 +1,0 @@
-name() {
-  set(@1)
-  yield()
-}
