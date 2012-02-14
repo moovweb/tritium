@@ -258,32 +258,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 				ctx.runChildren(ns, ins)
 			}
 		}
-	case "css$.Text.Text":
-	  // TO DO: refactor this so it leverages the preceding case
-	 	xpathString := css2xpath.Convert(args[0].(string), css2xpath.LOCAL)
-		node := scope.Value.(xml.Node)
-		xpCtx := xpath.NewXPath(node.Doc())
-		xpath := xpath.CompileXPath(xpathString)
-		if xpath == nil {
-			ctx.Logs = append(ctx.Logs, "Invalid XPath : " + xpathString + "; compile from CSS: " + args[0].(string))
-			returnValue = "false"
-			return
-		}
-		nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
-		defer xpCtx.Free()
-		defer xpath.Free()
-		if len(nodeSet) == 0 {
-			returnValue = "false"
-		} else {
-			returnValue = "true"
-		}
-
-		for index, node := range(nodeSet) {
-			if (node != nil) && node.IsLinked() {
-				ns := &Scope{Value: node, Index: index}
-				ctx.runChildren(ns, ins)
-			}
-		}
+	case "css.Text":
+	 returnValue = css2xpath.Convert(args[0].(string), css2xpath.LOCAL)
 	case "position.Text":
 		returnValue = Positions[args[0].(string)]
 

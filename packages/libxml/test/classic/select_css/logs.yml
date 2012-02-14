@@ -1,1 +1,1 @@
-- ".//body/div"
+- "./descendant-or-self::*/*[self::body]/child::*[self::div]"
