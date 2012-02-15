@@ -106,7 +106,7 @@ func (m *Mixer) Inspect(printFunctions bool) {
 		fmt.Printf("\t\t -- Types: %v\n", m.Package.Types )
 		fmt.Printf("\t\t -- Dependencies:  %v\n", m.Package.Dependencies )		
 		if printFunctions {
-			fmt.Printf("\t\t -- Functions:  %v\n", m.Package.Dependencies )
+			fmt.Printf("\t\t -- Functions (%v):\n", len(m.Package.Functions))
 			for _, function := range(m.Package.Functions) {
 				fmt.Printf("\t\t\t %v\n", function.Stub(m.Package) )
 			}
