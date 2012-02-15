@@ -151,10 +151,10 @@ func (pkg *Package) Load(packageName string) {
 		panic("Package " + packageName + " not approved for use.")
 	}
 
-	err := pkg.loadFromPath(pkg.LoadPath, packageName)
+	err := pkg.LoadFromPath( filepath.Join(pkg.LoadPath, packageName), packageName )
 
 	if err != nil && len(pkg.FallbackPath) != 0 {
-		err = pkg.loadFromPath(pkg.FallbackPath, packageName)
+		err = pkg.LoadFromPath( filepath.Join(pkg.FallbackPath, packageName), packageName )
 	}
 
 	if err != nil {
@@ -163,9 +163,13 @@ func (pkg *Package) Load(packageName string) {
 
 }
 
-func (pkg *Package) loadFromPath(path string, name string) (err *string) {
-	pkg.Println(path + ":" + name)
-	pkg.Log.Info("\n\n\n\nLoading:%v", path+":"+name)
+func (pkg *Package) LoadFromPath(loadPath string, name string) (err *string) {
+	// LoadPath is the full path to the mixer
+	// Since the path won't always end w the name (e.g. user defined function / mixer packages), specify the name as well
+	
+	
+	pkg.Println(loadPath + ":" + name)
+	pkg.Log.Info("\n\n\n\nLoading:%v", loadPath+":"+name)
 
 	loaded := pkg.loadedDependency(name)
 	if loaded {
@@ -173,17 +177,15 @@ func (pkg *Package) loadFromPath(path string, name string) (err *string) {
 	}
 
 	if pkg.Options["use_tpkg"] {
-		err := pkg.open(path, name)
+		err := pkg.Open(loadPath)
 		return err
 	}
 
-	location := filepath.Join(path, name)
-
 	old_location := pkg.location
-	pkg.location = location
+	pkg.location = loadPath
 
 	s := time.Nanoseconds()
-	info, err := ReadPackageInfoFile(location)
+	info, err := ReadPackageInfoFile(pkg.location)
 	f := time.Nanoseconds()
 	d := float64(f-s) / 1000.0 / 1000.0 / 1000.0
 	fmt.Printf("Time to read package info: %0.6fs\n", d)
@@ -224,13 +226,13 @@ func (pkg *Package) loadFromPath(path string, name string) (err *string) {
 	fmt.Printf("Time to resolve types: %0.6fs\n", d)
 
 	s = time.Nanoseconds()
-	pkg.readHeaderFile(location)
+	pkg.readHeaderFile(pkg.location)
 	f = time.Nanoseconds()
 	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
 	fmt.Printf("Time to load dependencies: %0.6fs\n", d)
 
 	s = time.Nanoseconds()
-	entryPoint := filepath.Join(location, "functions.ts")
+	entryPoint := filepath.Join(pkg.location, "functions.ts")
 	ReadPackageDefinitions(pkg.Package, entryPoint)
 	f = time.Nanoseconds()
 	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0

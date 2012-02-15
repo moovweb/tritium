@@ -28,8 +28,8 @@ func (pkg *Package) write() {
 	pkg.Println(" -- output: " + outputFilename)
 }
 
-func (pkg *Package) open(path string, name string) (thisError *string) {
-	tpkg_path := filepath.Join(path, name+".tpkg")
+func (pkg *Package) Open(path string) (thisError *string) {
+	tpkg_path := path +".tpkg"
 	data, err := ioutil.ReadFile(tpkg_path)
 
 	if err != nil {
