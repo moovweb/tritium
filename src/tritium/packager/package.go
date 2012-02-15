@@ -24,7 +24,7 @@ const (
 
 type Package struct {
 	loaded       []*PackageInfo
-	location     string
+//	location     string
 	LoadPath     string
 	FallbackPath string
 	OutputFile   string

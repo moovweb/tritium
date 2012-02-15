@@ -10,8 +10,11 @@ import (
 )
 
 func (pkg *Package) write() {
-	path, name := filepath.Split(pkg.location)
-	outputFilename := filepath.Join(path, name, name+".tpkg")
+//	path, name := filepath.Split(pkg.location)
+//	path, name := filepath.Split(pkg.LoadPath)
+//	outputFilename := filepath.Join(path, name, name+".tpkg")
+  name := proto.GetString( pkg.Name )
+	outputFilename := filepath.Join(pkg.LoadPath, name +".tpkg")
 
 	bytes, err := proto.Marshal(pkg.Package)
 
