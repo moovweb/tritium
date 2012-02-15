@@ -175,7 +175,6 @@ func ReadPackageDefinitions(pkg *ap.Package, location string) {
 
 	if err != nil {
 		//pkg.Log.Info("\t -- no user defined functions found")
-		println("No root functions found!")
 		return
 	}
 
@@ -210,14 +209,13 @@ func (pkg *Package) findTypeIndex(name string) int {
 func (pkg *Package) loadPackageDependency(name string) (*Error){
 
 	loaded := pkg.loadedDependency(name)
+	
 	if loaded {
 		return nil
 	}
 
 	pkg.Load(name)
-	pkg.Log.Info("Added dependency (" + name + ") to " + proto.GetString(pkg.Name) + "'s loaded dependencies")
-	pkg.Dependencies = append(pkg.Dependencies, name)
-	
+		
 	return nil
 }
 

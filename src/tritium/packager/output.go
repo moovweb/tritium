@@ -90,5 +90,8 @@ func (pkg *Package) Merge(otherPackage *tp.Package) {
 	for _, dependency := range otherPackage.Dependencies {
 		pkg.Dependencies = append(pkg.Dependencies, dependency)
 	}
-	pkg.Dependencies = append(pkg.Dependencies, proto.GetString(otherPackage.Name))
+	
+	otherName := proto.GetString(otherPackage.Name)
+	pkg.Dependencies = append(pkg.Dependencies, otherName)
+	pkg.Log.Info("Added dependency (" + otherName + ") to " + proto.GetString(pkg.Name) + "'s loaded dependencies")
 }
