@@ -138,7 +138,7 @@ func newLog() log4go.Logger {
 	pkgLog := make(log4go.Logger)
 	os.Mkdir("tmp", uint32(0777))
 
-	pkgLog.AddFilter("file", log4go.FINE, log4go.NewFileLogWriter("tmp/packager.log", false))
+	pkgLog.AddFilter("file", log4go.DEBUG, log4go.NewFileLogWriter("tmp/packager.log", false))
 	return pkgLog
 }
 
