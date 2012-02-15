@@ -28,11 +28,15 @@ func (pkg *Package) write() {
 	pkg.Println(" -- output: " + outputFilename)
 }
 
-func (pkg *Package) Open(path string) (thisError *Error) {
+func (pkg *Package) LoadFromFile(path string) (thisError *Error) {
 	tpkg_path := path +".tpkg"
+	
+	println("Checking tpkg path:", tpkg_path)
+	
 	data, err := ioutil.ReadFile(tpkg_path)
 
 	if err != nil {
+	  println("No such tpkg!")
 		return &Error{
 		  Code: NOT_FOUND,
 		  Message: "Could not find tpkg file:" + tpkg_path,

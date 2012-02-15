@@ -173,17 +173,6 @@ func (pkg *Package) Load(packageName string) {
 
 }
 
-func (pkg *Package) LoadFromFile(path string) (err *string) {
-  
-  openError := pkg.Open(path)
-
-  if openError != nil && openError.Code != NOT_FOUND {
-    return &openError.Message
-  }
-  
-  return nil
-}
-
 func (pkg *Package) LoadFromPath(loadPath string, name string) (err *string) {
 	// LoadPath is the full path to the mixer
 	// Since the path won't always end w the name (e.g. user defined function / mixer packages), specify the name as well
@@ -199,9 +188,11 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) (err *string) {
 
 	if pkg.Options["use_tpkg"] {
 		err := pkg.LoadFromFile(loadPath)
-    
-    if err != nil {
-      return err
+    if err == nil {
+      println("Loaded tpkg at:", loadPath)
+      return nil
+    } else if err != nil && err.Code != NOT_FOUND {
+      return &err.Message
     }
 
     println("Couldn't find tpkg file at:", loadPath, " ... checking for raw package")
@@ -223,13 +214,24 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) (err *string) {
 
 	s = time.Nanoseconds()
 
+  fmt.Printf("Root types: %v\n:", pkg.Types)
+
 	if len(info.Dependencies) > 0 {
 
 		for _, dependency := range info.Dependencies {
+		  println("\t loading dependency", dependency)
 			pkg.loadPackageDependency(dependency)
 		}
 
 	}
+
+  fmt.Printf("Loaded dependencies: %v\n", pkg.Dependencies)
+  fmt.Printf("Final types: %v\n:", pkg.Types)  
+  fmt.Printf("Final functions:")
+  for _, function := range(pkg.Functions) {
+		fmt.Printf("\t\t\t %v\n", function.Stub(pkg.Package) )
+	}
+	
 
 	f = time.Nanoseconds()
 	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
@@ -256,20 +258,20 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) (err *string) {
 	pkg.readHeaderFile(pkg.location)
 	f = time.Nanoseconds()
 	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to load dependencies: %0.6fs\n", d)
+	fmt.Printf("Time to load header: %0.6fs\n", d)
 
 	s = time.Nanoseconds()
 	entryPoint := filepath.Join(pkg.location, "functions.ts")
 	ReadPackageDefinitions(pkg.Package, entryPoint)
 	f = time.Nanoseconds()
 	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to load dependencies: %0.6fs\n", d)
+	fmt.Printf("Time to load definitions: %0.6fs\n", d)
 
 	s = time.Nanoseconds()
 	pkg.inheritFunctions()
 	f = time.Nanoseconds()
 	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to load dependencies: %0.6fs\n", d)
+	fmt.Printf("Time to resolve inheritances: %0.6fs\n", d)
 
 	if pkg.Options["output_tpkg"] {
 		pkg.write()
