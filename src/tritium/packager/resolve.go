@@ -8,7 +8,6 @@ import (
 	"log"
 	linker "tritium/linker"
 	parser "tritium/parser"
-//	"path/filepath"
 	"os"
 )
 
@@ -207,58 +206,16 @@ func (pkg *Package) findTypeIndex(name string) int {
 	return -1
 }
 
-/*func (pkg *Package) getFallbackPath(name string) (fullPath string, err *Error) {
-  
-}*/
-
 func (pkg *Package) loadPackageDependency(name string) (*Error){
 
 	loaded := pkg.loadedDependency(name)
 	if loaded {
-	  println("Already loaded " + name)
 		return nil
 	}
 
-  // Look for .tpkg files
-/*
-  loadError := pkg.LoadFromFile( filepath.Join(pkg.LoadPath, name) )
-
-  if loadError != nil {
-		pkg.Log.Info("Added dependency (" + name + ") to " + proto.GetString(pkg.Name) + "'s loaded dependencies")
-		pkg.Dependencies = append(pkg.Dependencies, name)
-
-    if loadError.Code != NOT_FOUND {
-      return loadError
-    } 
-  }
-*/
-  // Look for raw packages
-/*
-	newPath := filepath.Join(pkg.LoadPath, name)
-	_, err := ioutil.ReadDir(newPath)
-
-	if err != nil {
-		if len(pkg.FallbackPath) != 0 {
-			newPath = filepath.Join(pkg.FallbackPath, name)
-			_, err = ioutil.ReadDir(newPath)
-		}
-
-		if err != nil {
-		  println("Cannot find fallpack path:" + newPath)
-      return &Error{
-        Code: NOT_FOUND,
-        Message: "Cannot find package at:" + newPath,
-      }
-		}
-
-	}
-*/
-//	if err == nil {
-		// Directory exists
-		pkg.Load(name)
-		pkg.Log.Info("Added dependency (" + name + ") to " + proto.GetString(pkg.Name) + "'s loaded dependencies")
-		pkg.Dependencies = append(pkg.Dependencies, name)
-//	}
+	pkg.Load(name)
+	pkg.Log.Info("Added dependency (" + name + ") to " + proto.GetString(pkg.Name) + "'s loaded dependencies")
+	pkg.Dependencies = append(pkg.Dependencies, name)
 	
 	return nil
 }

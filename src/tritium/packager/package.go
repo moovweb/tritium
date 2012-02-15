@@ -168,12 +168,12 @@ func (pkg *Package) Load(packageName string) {
 	}
 
 	if err != nil {
-		panic(*err)
+		panic(err.Message)
 	}
 
 }
 
-func (pkg *Package) LoadFromPath(loadPath string, name string) (err *string) {
+func (pkg *Package) LoadFromPath(loadPath string, name string) (*Error) {
 	// LoadPath is the full path to the mixer
 	// Since the path won't always end w the name (e.g. user defined function / mixer packages), specify the name as well
 	
@@ -183,20 +183,16 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) (err *string) {
 
 	loaded := pkg.loadedDependency(name)
 	if loaded {
-		return
+		return nil
 	}
 
 	if pkg.Options["use_tpkg"] {
 		err := pkg.LoadFromFile(loadPath)
     if err == nil {
-      println("Loaded tpkg at:", loadPath)
       return nil
     } else if err != nil && err.Code != NOT_FOUND {
-      return &err.Message
+      return err
     }
-
-    println("Couldn't find tpkg file at:", loadPath, " ... checking for raw package")
-
 	}
 
 	old_location := pkg.location
@@ -209,29 +205,19 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) (err *string) {
 	fmt.Printf("Time to read package info: %0.6fs\n", d)
 
 	if err != nil {
-		return err
+		return &Error{
+		  Code: NOT_FOUND,
+		  Message: "Can't find package at: " + pkg.location + " -- missing package info file.",
+		}
 	}
 
 	s = time.Nanoseconds()
 
-  fmt.Printf("Root types: %v\n:", pkg.Types)
-
 	if len(info.Dependencies) > 0 {
-
 		for _, dependency := range info.Dependencies {
-		  println("\t loading dependency", dependency)
 			pkg.loadPackageDependency(dependency)
 		}
-
-	}
-
-  fmt.Printf("Loaded dependencies: %v\n", pkg.Dependencies)
-  fmt.Printf("Final types: %v\n:", pkg.Types)  
-  fmt.Printf("Final functions:")
-  for _, function := range(pkg.Functions) {
-		fmt.Printf("\t\t\t %v\n", function.Stub(pkg.Package) )
-	}
-	
+	}	
 
 	f = time.Nanoseconds()
 	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
