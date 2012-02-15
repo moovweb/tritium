@@ -176,30 +176,38 @@ func (pkg *Package) Load(packageName string) {
 func (pkg *Package) LoadFromPath(loadPath string, name string) (*Error) {
 	// LoadPath is the full path to the mixer
 	// Since the path won't always end w the name (e.g. user defined function / mixer packages), specify the name as well
-	
+	println("Loading from path: " + name + " : "+ loadPath)
 	
 	pkg.Println(loadPath + ":" + name)
 	pkg.Log.Info("\n\n\n\nLoading:%v", loadPath+":"+name)
 
 	loaded := pkg.loadedDependency(name)
 	if loaded {
+	  println("Already loaded:" + name)
 		return nil
 	}
 
 	if pkg.Options["use_tpkg"] {
 		err := pkg.LoadFromFile(loadPath)
     if err == nil {
+      println("Loaded " + name + " from tpkg file")
       return nil
     } else if err != nil && err.Code != NOT_FOUND {
+      println("Error loading from file:" + loadPath)
       return err
     }
 	}
 
-	old_location := pkg.location
-	pkg.location = loadPath
+//  println("\n\n LoadPath 0: " + pkg.location)
+
+//	old_location := pkg.location
+//	pkg.location = loadPath
+	
+//  println("\n\n LoadPath 1: " + pkg.location)	
 
 	s := time.Nanoseconds()
-	info, err := ReadPackageInfoFile(pkg.location)
+//	info, err := ReadPackageInfoFile(pkg.location)
+	info, err := ReadPackageInfoFile(loadPath)
 	f := time.Nanoseconds()
 	d := float64(f-s) / 1000.0 / 1000.0 / 1000.0
 	fmt.Printf("Time to read package info: %0.6fs\n", d)
@@ -207,17 +215,28 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) (*Error) {
 	if err != nil {
 		return &Error{
 		  Code: NOT_FOUND,
-		  Message: "Can't find package at: " + pkg.location + " -- missing package info file.",
+		  Message: "Can't find package at: " + loadPath + " -- missing package info file.",
 		}
 	}
 
 	s = time.Nanoseconds()
+
+//  println("\n\n LoadPath 2: " + pkg.location)
+
+	fmt.Printf("Prior function count: %v\n", len(pkg.Functions) )
 
 	if len(info.Dependencies) > 0 {
 		for _, dependency := range info.Dependencies {
 			pkg.loadPackageDependency(dependency)
 		}
 	}	
+
+	// TODO(SJ) : Kind of lame. Ideally I think we load other packages as whole packages and write a *.Merge method
+//	pkg.location = old_location
+
+	fmt.Printf("Post deps function count: %v\n", len(pkg.Functions) )
+
+//  println("\n\n LoadPath 3: " + pkg.location)
 
 	f = time.Nanoseconds()
 	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
@@ -240,18 +259,29 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) (*Error) {
 	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
 	fmt.Printf("Time to resolve types: %0.6fs\n", d)
 
+//  println("\n\n LoadPath 4: " + pkg.location)
+
 	s = time.Nanoseconds()
-	pkg.readHeaderFile(pkg.location)
+//	pkg.readHeaderFile(pkg.location)
+	pkg.readHeaderFile(loadPath)
 	f = time.Nanoseconds()
 	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
 	fmt.Printf("Time to load header: %0.6fs\n", d)
 
+//  println("\n\n LoadPath 5: " + pkg.location)
+
 	s = time.Nanoseconds()
-	entryPoint := filepath.Join(pkg.location, "functions.ts")
+//	entryPoint := filepath.Join(pkg.location, "functions.ts")
+  entryPoint := filepath.Join(loadPath, "functions.ts")
+	fmt.Printf("Reading root definitions from: %v\n", entryPoint)
 	ReadPackageDefinitions(pkg.Package, entryPoint)
 	f = time.Nanoseconds()
 	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
 	fmt.Printf("Time to load definitions: %0.6fs\n", d)
+
+//  println("\n\n LoadPath 6: " + pkg.location)
+
+	fmt.Printf("Post root definitions - function count: %v\n", len(pkg.Functions) )
 
 	s = time.Nanoseconds()
 	pkg.inheritFunctions()
@@ -265,9 +295,6 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) (*Error) {
 
 	pkg.Println(" -- done")
 	pkg.Log.Close()
-
-	// TODO(SJ) : Kind of lame. Ideally I think we load other packages as whole packages and write a *.Merge method
-	pkg.location = old_location
 
 	return nil
 }

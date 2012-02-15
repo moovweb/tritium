@@ -175,6 +175,7 @@ func ReadPackageDefinitions(pkg *ap.Package, location string) {
 
 	if err != nil {
 		//pkg.Log.Info("\t -- no user defined functions found")
+		println("No root functions found!")
 		return
 	}
 
