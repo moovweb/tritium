@@ -28,13 +28,15 @@ func (pkg *Package) write() {
 	pkg.Println(" -- output: " + outputFilename)
 }
 
-func (pkg *Package) Open(path string) (thisError *string) {
+func (pkg *Package) Open(path string) (thisError *Error) {
 	tpkg_path := path +".tpkg"
 	data, err := ioutil.ReadFile(tpkg_path)
 
 	if err != nil {
-		newError := "Could not find tpkg file:" + tpkg_path
-		return &newError
+		return &Error{
+		  Code: NOT_FOUND,
+		  Message: "Could not find tpkg file:" + tpkg_path,
+		}
 	}
 
 	data = crypto.Decrypt(data)

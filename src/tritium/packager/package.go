@@ -12,6 +12,16 @@ import (
 	"fmt"
 )
 
+type Error struct {
+  Code int
+  Message string
+}
+
+const (
+	NOT_FOUND = iota
+	BUILD_ERROR
+)
+
 type Package struct {
 	loaded       []*PackageInfo
 	location     string
@@ -163,6 +173,17 @@ func (pkg *Package) Load(packageName string) {
 
 }
 
+func (pkg *Package) LoadFromFile(path string) (err *string) {
+  
+  openError := pkg.Open(path)
+
+  if openError != nil && openError.Code != NOT_FOUND {
+    return &openError.Message
+  }
+  
+  return nil
+}
+
 func (pkg *Package) LoadFromPath(loadPath string, name string) (err *string) {
 	// LoadPath is the full path to the mixer
 	// Since the path won't always end w the name (e.g. user defined function / mixer packages), specify the name as well
@@ -177,8 +198,14 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) (err *string) {
 	}
 
 	if pkg.Options["use_tpkg"] {
-		err := pkg.Open(loadPath)
-		return err
+		err := pkg.LoadFromFile(loadPath)
+    
+    if err != nil {
+      return err
+    }
+
+    println("Couldn't find tpkg file at:", loadPath, " ... checking for raw package")
+
 	}
 
 	old_location := pkg.location
