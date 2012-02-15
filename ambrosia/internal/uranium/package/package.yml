@@ -1,3 +1,3 @@
 name: uranium
 dependencies:
-  - XMLNode
+  - libxml
