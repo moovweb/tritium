@@ -19,7 +19,7 @@
 
 # TOGGLER #
 
-@func XMLNode.toggler(Text %button, Text %content) {
+@func XMLNode.ur_toggler(Text %button, Text %content) {
   ur_set("toggler")
   $(%button) {
     ur_component("toggler", "button")
@@ -33,7 +33,7 @@
 
 # TABS #
 
-@func XMLNode.tabs(Text %button, Text %content) {
+@func XMLNode.ur_tabs(Text %button, Text %content) {
   ur_set("tabs")
 
   $(%button) {
@@ -67,7 +67,7 @@
 
 ## -- add a config_map() function to set callbacks / icon / button ?
 
-@func XMLNode.map(Text %addresses, Text %descriptions, Text %canvas)  {
+@func XMLNode.ur_map(Text %addresses, Text %descriptions, Text %canvas)  {
   ur_set("map")  
 
   $(%addresses) {
@@ -92,7 +92,7 @@
   
 }
 
-@func XMLNode.map(Text %addresses, Text %descriptions, Text %canvas, Text %callback)  {
+@func XMLNode.ur_map(Text %addresses, Text %descriptions, Text %canvas, Text %callback)  {
   ur_attribute("callback", %callback)
   map(%addresses, %descriptions, %canvas)
 }
