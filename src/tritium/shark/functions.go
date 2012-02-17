@@ -272,7 +272,9 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 
 	// SHARED NODE FUNCTIONS
 	case "remove":
-		scope.Value.(xml.Node).Remove()
+		node := scope.Value.(xml.Node)
+		node.Remove()
+		node.Free()
 	case "inner", "inner_text", "text":
 		node := scope.Value.(xml.Node)
 		ts := &Scope{Value: node.Content()}
