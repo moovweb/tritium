@@ -162,6 +162,13 @@
 }
 
 # This is used to specify the encoding for a page
+@func Text.html(Text %from_enc, Text %to_enc) {
+  export("Content-Type-Charset", %to_enc)
+  html_doc(%from_enc, %to_enc) {
+    yield()
+  }
+}
+
 @func Text.html(Text %enc) {
   html(%enc, "utf-8") {
     yield()

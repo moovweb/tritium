@@ -218,7 +218,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		scope.Value = doc.String()
 		returnValue = scope.Value
 		doc.Free()
-	case "html.Text.Text":
+	case "html_doc.Text.Text":
 		inputEncoding  := args[0].(string)
 		outputEncoding    := args[1].(string)
 		doc := xml.HtmlParseString(scope.Value.(string), inputEncoding)
