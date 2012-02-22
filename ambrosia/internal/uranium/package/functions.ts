@@ -94,7 +94,7 @@
 
 @func XMLNode.ur_map(Text %addresses, Text %descriptions, Text %canvas, Text %callback)  {
   ur_attribute("callback", %callback)
-  map(%addresses, %descriptions, %canvas)
+  ur_map(%addresses, %descriptions, %canvas)
 }
 
 
