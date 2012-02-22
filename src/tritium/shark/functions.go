@@ -224,9 +224,11 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		doc := xml.HtmlParseString(scope.Value.(string), inputEncoding)
 		ns := &Scope{Value: doc}
 		ctx.runChildren(ns, ins)
+		/*
 		if err := doc.SetMetaEncoding(outputEncoding); err != nil {
-			ctx.Log.Warn("executing html:" + err.String())
+			//ctx.Log.Warn("executing html:" + err.String())
 		}
+		*/
 		scope.Value = doc.DumpHTML()
 		returnValue = scope.Value
 		doc.Free()
