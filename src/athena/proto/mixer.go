@@ -63,7 +63,7 @@ func (m *Mixer) Write(path string) (outputPath string) {
 }
 
 func OpenMixer(location string) (m *Mixer) {
-  println("JOSH DEBUG:", location)
+
 	data, err := ioutil.ReadFile(location)
 
 	if err != nil {
