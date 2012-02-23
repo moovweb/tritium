@@ -261,8 +261,10 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 
 		for index, node := range nodeSet {
 			if (node != nil) && node.IsLinked() {
-				ns := &Scope{Value: node, Index: index}
-				ctx.runChildren(ns, ins)
+				if _, ok := node.(*xml.Element); ok {
+					ns := &Scope{Value: node, Index: index}
+					ctx.runChildren(ns, ins)
+				}
 			}
 		}
 	case "css.Text":
@@ -386,10 +388,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "attribute.Text":
 		node := scope.Value.(xml.Node)
 		name := args[0].(string)
-		_, ok := node.(*xml.Element)
-		if ok == true {
+		if _, ok := node.(*xml.Element); ok {
 			attr, _ := node.Attribute(name)
-
 			as := &Scope{Value: attr}
 			ctx.runChildren(as, ins)
 			if attr.IsLinked() && (attr.Content() == "") {
