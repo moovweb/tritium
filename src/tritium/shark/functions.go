@@ -5,6 +5,7 @@ import (
 	"os"
 	"libxml"
 	"fmt"
+	log "log4go"
 	xml "libxml/tree"
 	tp "athena/proto"
 	"libxml/xpath"
@@ -334,10 +335,16 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		node := scope.Value.(xml.Node)
 		position := args[0].(Position)
 		tagName := args[1].(string)
-		element := node.Doc().NewElement(tagName)
-		MoveFunc(element, node, position)
-		ns := &Scope{Value: element}
-		ctx.runChildren(ns, ins)
+		element, err := node.Doc().NewElement(tagName)
+		if err != nil {
+			log.Error("Problem with insert_at(Pos, '" + tagName + "') - " + err.String())
+			returnValue = "false"
+		} else {
+			MoveFunc(element, node, position)
+			ns := &Scope{Value: element}
+			ctx.runChildren(ns, ins)
+			returnValue = "true"
+		}
 	case "inject_at.Position.Text":
 		node := scope.Value.(xml.Node)
 		position := args[0].(Position)
