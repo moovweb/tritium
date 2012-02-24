@@ -36,8 +36,12 @@ export("asset_host", "{{.Asset_Host}}")
 export("asset_host", $asset_host)
 {{end}}
 
+{{if .Http11}}
+log("Leaving HTTP version alone")
+{{else}}
 # Set request header to HTTP 1.0
 replace(/HTTP\/1\.1/i, "HTTP/1.0")
+{{end}}
 
 # Get method and path
 replace(/\A(\w{3,})\s+(.+)\s+(HTTP\/\d\.\d)/) {
