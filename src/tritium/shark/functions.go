@@ -261,6 +261,9 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		}
 
 		for index, node := range nodeSet {
+			if doc, ok := node.(*xml.Doc); ok {
+				node = doc.RootElement()
+			}
 			if (node != nil) && node.IsLinked() {
 				if _, ok := node.(*xml.Element); ok {
 					ns := &Scope{Value: node, Index: index}
