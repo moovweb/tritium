@@ -283,7 +283,18 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		node := scope.Value.(xml.Node)
 		node.Remove()
 		node.Free()
-	case "inner", "inner_text", "text":
+	case "inner":
+		node := scope.Value.(xml.Node)
+		ts := &Scope{Value: node.Content()}
+		ctx.runChildren(ts, ins)
+		val := ts.Value.(string)
+		elem, ok := node.(*xml.Element)
+		if ok && node.IsLinked() {
+			elem.Clear()
+			elem.AppendHtmlContent(val)
+		}
+		returnValue = val
+	case "inner_text", "text":
 		node := scope.Value.(xml.Node)
 		ts := &Scope{Value: node.Content()}
 		ctx.runChildren(ts, ins)
