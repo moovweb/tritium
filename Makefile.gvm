@@ -7,3 +7,5 @@ clean:
 	rm src/*/*.pb.go
 install:
 	cd src && gb -i
+test:
+	cd src && gb -t
