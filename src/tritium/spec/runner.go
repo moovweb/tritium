@@ -10,6 +10,7 @@ import (
 	l4g "log4go"
 	"os"
 	"runtime/debug"
+	xmlhelp "libxml/help"
 )
 
 func All(directory string) {
@@ -79,6 +80,10 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 		result.Error(dir, err.String())
 	} else {
 		result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
+		if xmlhelp.XmlMemoryAllocation() != 0 {
+			result.Error(dir, Sprintf("Memeory leaks %d!!!", xmlhelp.XmlMemoryAllocation()))
+			xmlhelp.XmlMemoryLeakReport()
+		}
 	}
 	return
 }
