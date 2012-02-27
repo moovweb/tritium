@@ -152,7 +152,7 @@
       %node = node()
       $("../" + %selector) {
         match_not(index(), "1") {
-          move(this(), %node, position("top"))
+          move(this(), %node, position("bottom"))
         }
       }
       yield()

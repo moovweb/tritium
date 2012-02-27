@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<div id="a" parent="true">
+<div id="a">
   <div id="b">
     Im a b
   </div>

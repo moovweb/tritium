@@ -5,4 +5,5 @@ clean:
 	gb -c
 install: build
 	gb -i
-
+test:
+	gb -t
