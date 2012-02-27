@@ -21,7 +21,7 @@ func runWithObjs(objs []*tp.ScriptObject, pkg *tp.Package) (*tp.Transform, os.Er
 	ctx.Link()
 	if ctx.HasErrors() {
 		message := ""
-		for _, msg := range ctx.errors {
+		for _, msg := range ctx.Errors {
 			message = message + "\n" + msg
 		}
 		return nil, os.NewError(message)

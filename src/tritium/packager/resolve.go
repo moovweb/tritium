@@ -52,6 +52,16 @@ func resolveDefinition(pkg *ap.Package, fun *ap.Function) {
 		scopeTypeId := int(proto.GetInt32(fun.ScopeTypeId))
 		//pkg.Log.Info("\t\t -- opening scope type : %v\n", scopeTypeId)
 		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope)
+		
+		if linkingContext.HasErrors() {
+			message := ""
+			for _, msg := range linkingContext.Errors {
+				message = message + "\n" + msg
+			}
+			panic(message)
+		}
+		
+		
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
 		if fun.Instruction != nil {
 			fun.Instruction.Iterate(func(ins *ap.Instruction) {
