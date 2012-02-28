@@ -16,11 +16,15 @@ func (ins *Instruction) Iterate(itFunc func(*Instruction)) {
 
 func (ins *Instruction) IterateAll(itFunc func(*Instruction)) {
 	itFunc(ins)
-	for _, child := range(ins.Arguments) {
-		child.Iterate(itFunc)
+	if ins.Arguments != nil {
+		for _, child := range(ins.Arguments) {
+			child.Iterate(itFunc)
+		}
 	}
-	for _, child := range(ins.Children) {
-		child.Iterate(itFunc)
+	if ins.Children != nil {
+		for _, child := range(ins.Children) {
+			child.Iterate(itFunc)
+		}
 	}
 }
 
