@@ -1,7 +1,7 @@
 package api
 
 import (
-	keys "tritium/api/key"
+	keys "tritium/src/tritium/api/key"
 	"path/filepath"
 	"os"
 )

@@ -1,7 +1,7 @@
 package parser
 
 import (
-	tp "athena/proto"
+	tp "athena/src/athena/proto"
 	//. "exec"
 	//"log"
 	//proto "goprotobuf.googlecode.com/hg/proto"

@@ -1,7 +1,7 @@
 package doc;
 
 import(
-	tp "athena/proto"
+	tp "athena/src/athena/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 )
 

@@ -3,13 +3,13 @@ package shark
 import (
 	"strings"
 	"os"
-	"libxml"
+	"gokogiri/libxml"
 	"fmt"
 	log "log4go"
-	xml "libxml/tree"
-	tp "athena/proto"
-	"libxml/xpath"
-	"rubex"
+	xml "gokogiri/libxml/tree"
+	tp "athena/src/athena/proto"
+	"gokogiri/libxml/xpath"
+	"rubex/lib"
 	"css2xpath"
 	"goconv"
 )
