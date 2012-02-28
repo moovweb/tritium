@@ -2,7 +2,7 @@ package parser
 
 import (
 	"testing"
-	"fmt"
+	//"fmt"
 	"io/ioutil"
 )
 
@@ -17,9 +17,9 @@ func TestBlah(t *testing.T) {
 
 	script1 := p.Parse()
 	//fmt.Println("OUTPUT FOR INSTRUCTIONS:")
-	//fmt.Println(script1.String())
+	script1.String()
 
 	script2 := q.Parse()
 	//fmt.Println("OUTPUT FOR FUNCTIONS:")
-	//fmt.Println(script2.String())
+	script2.String()
 }

@@ -2,7 +2,7 @@ package tokenizer
 
 import (
 	"testing"
-	"fmt"
+	//"fmt"
 	"io/ioutil"
 )
 
@@ -20,6 +20,6 @@ func TestBlah(t *testing.T) {
 	// fmt.Println(tokenizer.Lookahead.Inspect())
 
 	for token := tokenizer.Pop(); token.Lexeme != EOF; token = tokenizer.Pop() {
-		//fmt.Println(token.Inspect())
+		token.Inspect()
 	}
 }
