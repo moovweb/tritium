@@ -1,9 +1,9 @@
 package tritium
 
 import (
-	"tritium/linker"
-	ap "athena/proto"
-	"tritium/packager"
+	"tritium/src/tritium/linker"
+	ap "athena/src/athena/proto"
+	"tritium/src/tritium/packager"
 	"os"
 	"path/filepath"
 	"strings"

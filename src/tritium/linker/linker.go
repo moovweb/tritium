@@ -1,8 +1,8 @@
 package linker
 
 import (
-	tp "athena/proto"
-	parser "tritium/parser"
+	tp "athena/src/athena/proto"
+	parser "tritium/src/tritium/parser"
 	"os"
 )
 
