@@ -6,7 +6,7 @@ import (
 	. "path/filepath"
 	. "io/ioutil"
 	"log"
-	yaml "launchpad.net/goyaml"
+	yaml "goyaml"
 	"strings"
 	. "fmt"
 	"os"
