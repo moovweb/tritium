@@ -392,6 +392,20 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		if ok {
 			elem.SetCDataContent(args[0].(string))
 		}
+	case "remove_text_nodes":
+		elem, ok := scope.Value.(*xml.Element)
+		if ok {
+			node := elem.First()
+			for node != nil {
+				println("loop")
+				_, isTextNode := node.(*xml.Text)
+				nextNode := node.Next()
+				if isTextNode {
+					node.Remove()
+				}
+				node = nextNode
+			}
+		}
 	case "move.XMLNode.XMLNode.Position", "move.Node.Node.Position":
 		//for name, value := range(ctx.LocalVar) {
 		//	println(name, ":", value)

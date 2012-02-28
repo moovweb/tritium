@@ -11,6 +11,7 @@
 
 // Replace's the node's contents with a CDATA block
 @func XMLNode.cdata(Text %contents) Text
+@func XMLNode.remove_text_nodes() Text
 
 // Opens up the entire innerHTML to text modification. Any html you insert WILL get interpreted as actual tags.
 @func XMLNode.inner() Text Text
