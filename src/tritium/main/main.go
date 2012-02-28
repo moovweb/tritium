@@ -1,10 +1,10 @@
 package main
 
 import "os"
-import "tritium/packager"
-//import . "tritium/linker"
-import s "tritium/spec"
-import "tritium/doc"
+import "tritium/src/tritium/packager"
+//import . "tritium/src/tritium/linker"
+import s "tritium/src/tritium/spec"
+import "tritium/src/tritium/doc"
 
 func show_usage() {
 	println("General purpose Tritium command line interface. Commands are: package, link, test")

@@ -1,11 +1,11 @@
 package spec
 
 import (
-	"tritium/packager"
+	"tritium/src/tritium/packager"
 	tp "athena/src/athena/proto"
-	. "tritium"
+	. "tritium/src/tritium"
 	. "path/filepath"
-	"tritium/shark"
+	"tritium/src/tritium/shark"
 	. "fmt"
 	l4g "log4go"
 	"os"
