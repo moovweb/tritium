@@ -1,13 +1,13 @@
 package packager
 
 import (
-	ap "athena/proto"
+	ap "athena/src/athena/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	yaml "launchpad.net/goyaml"
 	"io/ioutil"
 	"log"
-	linker "tritium/linker"
-	parser "tritium/parser"
+	linker "tritium/src/tritium/linker"
+	parser "tritium/src/tritium/parser"
 	"os"
 )
 

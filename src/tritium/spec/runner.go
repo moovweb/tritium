@@ -2,7 +2,7 @@ package spec
 
 import (
 	"tritium/packager"
-	tp "athena/proto"
+	tp "athena/src/athena/proto"
 	. "tritium"
 	. "path/filepath"
 	"tritium/shark"
