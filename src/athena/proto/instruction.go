@@ -16,9 +16,6 @@ func (ins *Instruction) Iterate(itFunc func(*Instruction)) {
 
 func (ins *Instruction) IterateAll(itFunc func(*Instruction)) {
 	itFunc(ins)
-	if ins.Children == nil {
-		return
-	}
 	for _, child := range(ins.Arguments) {
 		child.Iterate(itFunc)
 	}
