@@ -119,17 +119,25 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			returnValue = "true"
 		}
 	case "regexp.Text.Text":
-		mode := rubex.ONIG_OPTION_DEFAULT
-		if strings.Index(args[1].(string), "i") >= 0 {
-			mode = rubex.ONIG_OPTION_IGNORECASE
-		}
-		if strings.Index(args[1].(string), "m") >= 0 {
-			mode = rubex.ONIG_OPTION_MULTILINE
-		}
-		var err os.Error
-		returnValue, err = rubex.NewRegexp(args[0].(string), mode)
-		if err != nil {
-			ctx.Log.Error("Invalid regexp")
+		pattern := args[0].(string) + "/" + args[1].(string)
+		if r := ctx.RegexpCache[pattern]; r != nil {
+			returnValue = r
+		} else {
+			mode := rubex.ONIG_OPTION_DEFAULT
+			if strings.Index(args[1].(string), "i") >= 0 {
+				mode = rubex.ONIG_OPTION_IGNORECASE
+			}
+			if strings.Index(args[1].(string), "m") >= 0 {
+				mode = rubex.ONIG_OPTION_MULTILINE
+			}
+			var err os.Error
+			r, err = rubex.NewRegexp(args[0].(string), mode)
+			if err != nil {
+				ctx.Log.Error("Invalid regexp")
+			}
+			ctx.RegexpCache[pattern] = r
+			returnValue = r
+			println("new regexp:", pattern)
 		}
 	case "export.Text":
 		val := make([]string, 2)
