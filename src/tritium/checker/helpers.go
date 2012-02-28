@@ -1,7 +1,7 @@
 package checker
 
 import(
-	tp "athena/proto"
+	tp "athena/src/athena/proto"
 )
 
 type CheckResult struct {

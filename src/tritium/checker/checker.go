@@ -1,9 +1,9 @@
 package checker
 
 import(
-	tp "athena/proto"
+	tp "athena/src/athena/proto"
 	//log "log4go"
-	"tritium/parser"
+	"tritium/src/tritium/parser"
 )
 
 func CheckFile(path string) (*CheckResult) {
