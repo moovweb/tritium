@@ -154,9 +154,17 @@
     insert_at(position("before"), %tag) {
       %node = node()
       $("../" + %selector) {
-        match_not(index(), "1") {
-          move(this(), %node, position("bottom"))
+        match(name()) {
+          with(%tag) {
+            match_not(index(), "1") {
+              move(this(), %node, position("bottom"))
+            }
+          }
+          else() {
+            move(this(), %node, position("bottom"))
+          }
         }
+        //
       }
       yield()
     }
