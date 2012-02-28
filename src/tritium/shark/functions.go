@@ -137,7 +137,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			}
 			ctx.RegexpCache[pattern] = r
 			returnValue = r
-			println("new regexp:", pattern)
+			//println("new regexp:", pattern)
 		}
 	case "export.Text":
 		val := make([]string, 2)
@@ -291,6 +291,37 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		node := scope.Value.(xml.Node)
 		node.Remove()
 		node.Free()
+	case "remove.Text": //Only for XMLNode
+		elem, _ := scope.Value.(xml.Node)
+
+		xpCtx := xpath.NewXPath(elem.Doc())
+		xpath := xpath.CompileXPath(args[0].(string))
+		if xpath == nil {
+			ctx.Logs = append(ctx.Logs, "Invalid XPath used: " + args[0].(string))
+			returnValue = "0"
+			return
+		}
+		nodeSet := xpCtx.SearchByCompiledXPath(elem, xpath).Slice()
+		defer xpCtx.Free()
+		defer xpath.Free()
+
+		if len(nodeSet) == 0 {
+			returnValue = "0"
+		} else {
+			returnValue = fmt.Sprintf("%d", len(nodeSet))
+		}
+
+		for _, node := range nodeSet {
+			if node != nil {
+				if doc, ok := node.(*xml.Doc); ok {
+					node = doc.RootElement()
+				}
+				if (node != nil) && node.IsLinked() {
+					node.Remove()
+				}
+			}
+		}
+		
 	case "inner":
 		node := scope.Value.(xml.Node)
 		ts := &Scope{Value: node.Content()}
@@ -391,20 +422,6 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		elem, ok := scope.Value.(*xml.Element)
 		if ok {
 			elem.SetCDataContent(args[0].(string))
-		}
-	case "remove_text_nodes":
-		elem, ok := scope.Value.(*xml.Element)
-		if ok {
-			node := elem.First()
-			for node != nil {
-				println("loop")
-				_, isTextNode := node.(*xml.Text)
-				nextNode := node.Next()
-				if isTextNode {
-					node.Remove()
-				}
-				node = nextNode
-			}
 		}
 	case "move.XMLNode.XMLNode.Position", "move.Node.Node.Position":
 		//for name, value := range(ctx.LocalVar) {

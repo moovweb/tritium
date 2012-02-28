@@ -18,6 +18,9 @@
   }
 }
 
+@func XMLNode.remove_text_nodes() {
+  remove("./text()")
+}
 
 @func XMLNode.attribute(Text %name, Text %value) {
   attribute(%name) {
