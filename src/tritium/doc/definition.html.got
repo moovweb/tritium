@@ -1,0 +1,10 @@
+<div>
+  <h3> {{.Name}} </h3>
+
+  <span> <h4> Return Type </h4> {{.ReturnType}} </span>
+  <span> <h4> Yield Type </h4> {{.YieldType}} </span>
+
+  <p> {{.Description}} </p>
+
+
+</div>

@@ -43,10 +43,12 @@ func main() {
 			pkg.Load(name)
 			println(pkg.DebugInfo())
 		} else if command == "doc" {
-			name := os.Args[2]
+/*			name := os.Args[2]
 			pkg := packager.NewPackage(packager.DefaultPackagePath, packager.BuildOptions())
 			pkg.Load(name)
 			println(doc.Process(pkg.Package))
+*/
+			println(doc.Generate())
 		} else if command == "link" {
 			println("Linking files found in the directory:", os.Args[2])
 			//LinkerToBytes(os.Args[2])
