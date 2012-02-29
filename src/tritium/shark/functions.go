@@ -451,6 +451,11 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			}
 			child = childNext
 		}
+	case "equal.XMLNode.XMLNode":
+		returnValue = "false"
+		if args[0] == args[1] {
+			returnValue = "true"
+		}
 
 	// ATTRIBUTE FUNCTIONS
 	case "attribute.Text":

@@ -24,6 +24,9 @@
 
 @func XMLNode.dump() Text
 
+// Returns "true" or "false"
+@func equal(XMLNode %a, XMLNode %b) Text
+
 // Wraps each text child inside the specified tag. Only the text children though!
 @func XMLNode.wrap_text_children(Text %tag_name) Text
 
