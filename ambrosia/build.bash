@@ -5,24 +5,34 @@
 
 export GOHATTAN_DATA="$HOME/.manhattan"
 
+mkdir -p tmp
 ambrosia=`pwd`
+echo ""
 
-mixers=`find internal -d 1`
-
-mkdir -p tmp/mixers
-
-for mixer in $mixers
+for set in "internal external"
 do
-		echo "    Building ... $mixer"
+
+	mixers=`find $set -d 1`
+
+	for mixer in $mixers
+	do
+		echo $mixer
+
 		echo "Building $mixer" > tmp/build.log
-		hermes build $ambrosia $mixer tmp/mixers &> tmp/build.log
-		
+		echo -n "    Building ... "
+
+		#hermes build <mixer lib path> <mixer name> <output dir>
+		hermes build $ambrosia $mixer $mixer &> tmp/build.log
+		echo " done."
+
+		mixerFile=`find $mixer/*.mxr`
+		echo "    Output: $mixerFile"
 		# Hook in tritium test command here. Something like:
-		# tritium test --mixer-path=tmp/mixers/
-		
+		# tritium test --mixer-path=$mixerFile
+
+		echo ""
+	done
+
 done
 
-#mkdir -p tmp/mixers
-#hermes build . omni-mobile tmp/mixers
-
-# Now that I've built each mixer, I can use the mixer and run its tests
+echo "Output build log to tmp/build.log"
