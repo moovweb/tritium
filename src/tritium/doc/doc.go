@@ -7,6 +7,8 @@ import(
 	"fmt"
 	"io/ioutil"
 	"strings"
+	"bytes"
+	"template"
 )
 
 
@@ -44,8 +46,9 @@ func FuncStub(pkg *tp.Package, fun *tp.Function) string {
 	return returnVal
 }
 
-type FunctionInfo struct {
+type FunctionDefinition struct {
 	Name string
+	CallPattern string
 	Description string
 	Stub string
 	ReturnType string
@@ -54,17 +57,49 @@ type FunctionInfo struct {
 	Body string
 }
 
-func (f *FunctionInfo) getID() (string) {
+func (f *FunctionDefinition) getID() (string) {
 	return f.ParentScope + ":" + f.Name
 }
 
-func Generate() (string) {
-	functions := generatePackageDocs("base")
+func Generate(outputFile string){
+//	rootPackage := "libxml"
+	rootPackage := "base"
+	definitions := generatePackageDocs(rootPackage)
 
-	return functions[0].Name
+	docTemplate := template.New(rootPackage)
+	templatePath := "src/tritium/doc/definition.html.got"
+	docTemplate, err := docTemplate.ParseFile(templatePath)
+
+	if err != nil {
+		panic("Couldn't parse template :" + templatePath)
+	}
+	
+	docs := make([]byte,0)
+
+	for _, definition := range(definitions) {
+		var definitionDoc bytes.Buffer
+
+		fmt.Printf("This defn: %v\n", definition)
+
+		err := docTemplate.Execute(&definitionDoc, definition)
+
+		if err != nil {
+			panic(fmt.Sprintf("Error rendering template w defintion: %v\n", definition))
+		}
+
+		definitionBytes := definitionDoc.Bytes()
+		docs = append(docs, definitionBytes...)
+	}
+
+	println("DOCS")
+
+	err = ioutil.WriteFile(outputFile, docs, uint32(0666) )
+	if err != nil {
+		panic("Couldn't write doc file:\n" + err.String())
+	}
 }
 
-func generatePackageDocs(name string) (functions []*FunctionInfo) {
+func generatePackageDocs(name string) (definitions []*FunctionDefinition) {
 	pkg := packager.NewPackage(packager.DefaultPackagePath, packager.BuildOptions())
 	pkg.Load(name)
 
@@ -74,20 +109,27 @@ func generatePackageDocs(name string) (functions []*FunctionInfo) {
 		for _, fun := range(pkg.Functions) {
 
 			if tindex == int(proto.GetInt32(fun.ScopeTypeId)) {
-				function := &FunctionInfo{
+				function := &FunctionDefinition{
 				Name: proto.GetString(fun.Name),
 				Description: "... descriptions coming soon ...",
 				ParentScope: ttypeString,
+				Body: ".",
+				ReturnType: ".",
+				YieldType: ".",
+				Stub: ".",
 				}
 				// Description / Examples will come when we can look at comment nodes
 
 				function.Stub = FuncStub(pkg.Package, fun)
+				segments := strings.Split(function.Stub,")")
 				
+				function.CallPattern = segments[0] + ")"
+
 				function.ReturnType = fun.ReturnTypeString(pkg.Package)
 				function.YieldType = fun.OpensTypeString(pkg.Package)
 
 				function.Body = getBody(name, fun)
-				functions = append(functions, function)
+				definitions = append(definitions, function)
 			}
 		}
 	}
@@ -121,7 +163,7 @@ func getBody(name string, fun *tp.Function) (body string) {
 			return ""
 		}
 	} else {
-		return "[native function]"
+		return "  [native function]"
 	}
 
 
@@ -134,6 +176,5 @@ func getBody(name string, fun *tp.Function) (body string) {
 	lines := strings.Split(string(data), "\n")
 	body = strings.Join(lines[start-1:end+depth], "\n")
 
-	println("BODY:\n" + body + "\n")
 	return
 }

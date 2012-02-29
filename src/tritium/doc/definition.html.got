@@ -1,10 +1,22 @@
 <div>
-  <h3> {{.Name}} </h3>
+  <h3> {{.CallPattern}} </h3>
 
   <span> <h4> Return Type </h4> {{.ReturnType}} </span>
   <span> <h4> Yield Type </h4> {{.YieldType}} </span>
 
   <p> {{.Description}} </p>
 
+  <div data-ur-set='toggler'>
+    <span data-ur-toggler-component='button' data-ur-state='disabled'> 
+      View Source 
+    </span>
+    <pre>
+    <code data-ur-toggler-component='content' data-ur-state='disabled''>
+{{.ParentScope}}.{{.Stub}} { 
+{{.Body}}
+}
+    </code>
+    </pre>
+  </div>
 
 </div>
