@@ -381,6 +381,12 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 				returnValue = node.String()
 			}
 		}
+		if len(ins.Children) > 0 {
+			ts := &Scope{Value: returnValue}
+			ctx.runChildren(ts, ins)
+			returnValue = ts.Value
+		}
+		
 		xPathObj.Free()
 	case "path":
 		returnValue = scope.Value.(xml.Node).Path()
@@ -444,6 +450,11 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 				index++
 			}
 			child = childNext
+		}
+	case "equal.XMLNode.XMLNode", "equal.Node.Node":
+		returnValue = "false"
+		if args[0] == args[1] {
+			returnValue = "true"
 		}
 
 	// ATTRIBUTE FUNCTIONS
