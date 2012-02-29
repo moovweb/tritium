@@ -24,7 +24,7 @@ xml() {
       set("key", "cart_items")
     }
     insert("item", key: "address_html") {
-      inner() {
+      text() {
         set($address)
         prepend("<![CDATA[")
         append("]]>")
