@@ -43,7 +43,10 @@ func All(directory string, options ...string) {
 
 	// TODO : Walk over the results here and print errors. 
 
+	var foundError = false
+
 	for _, error := range globalResult.Errors {
+		foundError = true
 		println("\n=========================================", error.Location, "\n")
 		if error.Panic {
 			Printf(error.Message)
@@ -53,6 +56,10 @@ func All(directory string, options ...string) {
 	}
 	println("\n\n")
 	println("+++TEST COMPLETE+++\n\n")
+
+	if foundError {
+		os.Exit(1)
+	}
 }
 
 func (result *Result) all(directory string, pkg *tp.Package, eng Engine, logger l4g.Logger) {
