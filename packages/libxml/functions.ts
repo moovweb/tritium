@@ -181,13 +181,17 @@
 }
 
 @func Text.html(Text %enc) {
-  html(%enc, "utf-8") {
+  $encoding = %enc
+ 	match($encoding, "") {
+  	$encoding = $guessed_encoding
+  }
+  html($encoding, "utf-8") {
     yield()
   }
 }
 
 @func Text.html() {
-  html("", "utf-8") {
+  html($guessed_encoding, "utf-8") {
     yield()
   } 
 }
