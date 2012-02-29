@@ -151,25 +151,18 @@
 
 @func XMLNode.wrap_together(Text %selector, Text %tag) {
   $(%selector + "[1]") {
-    insert_at(position("before"), %tag) {
-      %node = node()
-      $("../" + %selector) {
-        match(name()) {
-          with(%tag) {
-            match_not(index(), "1") {
-              move(this(), %node, position("bottom"))
-            }
-          }
-          else() {
-            move(this(), %node, position("bottom"))
+    wrap(%tag) {
+      %wrapper = this()
+      $("..") {
+        $(%selector) {
+          match(equal(this(), %wrapper), "false") {
+            move(this(), %wrapper, position("bottom"))
           }
         }
-        //
       }
       yield()
     }
   }
-   
 }
 
 # This is used to specify the encoding for a page
