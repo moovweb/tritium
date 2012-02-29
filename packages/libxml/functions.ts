@@ -197,6 +197,12 @@
 
 # POSITIONALS
 # siblings of these are in node, but these use Inner so are here.
+@func XMLNode.insert_at(Text %pos, Text %tag, Text %content) {
+  insert_at(position(%pos), %tag) {
+    inner(%content)
+    yield()
+  }
+}
 @func XMLNode.insert_at(Position %pos, Text %tag, Text %content) {
   insert_at(%pos, %tag) {
     inner(%content)
