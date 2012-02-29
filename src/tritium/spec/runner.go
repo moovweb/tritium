@@ -12,15 +12,32 @@ import (
 	"runtime/debug"
 )
 
-func All(directory string) {
+func All(directory string, options ...string) {
+
+	var mixerPath string
+	if len(options) == 1 {
+		mixerPath = options[0]
+	}
+
 	logger := make(l4g.Logger)
 	logger.AddFilter("test", l4g.ERROR, l4g.NewConsoleLogWriter())
 	l4g.Global = logger
 	eng := shark.NewEngine(logger)
-	pkg := packager.BuildDefaultPackage()
+
+	var pkg *tp.Package
+		
+	if len(mixerPath) > 0 {
+		// Used when testing in ambrosia
+		mixer := tp.OpenMixer(mixerPath)
+		pkg = mixer.Package
+	} else {
+		bigPackage := packager.BuildDefaultPackage()
+		pkg = bigPackage.Package
+	}
+
 
 	globalResult := NewResult()
-	globalResult.all(directory, pkg.Package, eng, logger)
+	globalResult.all(directory, pkg, eng, logger)
 
 	logger.AddFilter("stdout", l4g.ERROR, l4g.NewConsoleLogWriter())
 

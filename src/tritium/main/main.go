@@ -52,7 +52,14 @@ func main() {
 			//LinkerToBytes(os.Args[2])
 		} else if command == "test" {
 			println("Running tests found in the directory:", os.Args[2])
-			s.All(os.Args[2])
+			if len(os.Args) == 3 {
+				s.All(os.Args[2])
+			} else if len(os.Args) == 4 {
+				s.All(os.Args[2], os.Args[3])
+			} else {
+				println("Usage:\n    tritium test <package_name> <optional_mixer_path>")
+			}
+
 		} else {
 			println("No such command", command)
 			show_usage()
