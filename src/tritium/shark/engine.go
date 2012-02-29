@@ -122,8 +122,13 @@ func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]str
 	return
 }
 
-func (ctx *Ctx) matchShouldContinue() bool {
-	return ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1]
+func (ctx *Ctx) matchShouldContinue() (result bool) {
+	if len(ctx.MatchShouldContinue) > 0 {
+		result = ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1]
+	} else {
+		result = false
+	}
+	return
 }
 func (ctx *Ctx) matchTarget() string {
 	return ctx.MatchStack[len(ctx.MatchStack)-1]
