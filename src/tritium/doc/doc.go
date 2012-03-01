@@ -160,14 +160,17 @@ func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*Fu
 				function.YieldType = fun.OpensTypeString(pkg.Package)
 
 				println("Getting body for function: " + stub + " from package : " + name)
-				ancestralScope := d.findAncestralFunction(stub)
+				ancestralScope, ancestralStub := d.findAncestralFunction(pkg.Package, fun)
 				
 				if ancestralScope != nil {
 					println("Found ancestral function in scope:" + *ancestralScope)
-					ancestralFunction := d.Definitions[*ancestralScope][stub]
-					d.Definitions[*ancestralScope][stub] = nil, false // Delete it
-					if d.Definitions[*ancestralScope][stub] != nil {
+					ancestralFunction := d.Definitions[*ancestralScope][*ancestralStub]
+
+					d.Definitions[*ancestralScope][*ancestralStub] = nil, false // Delete it
+					if d.Definitions[*ancestralScope][*ancestralStub] != nil {
 						panic("Didn't delete ancestral definition")
+					} else {
+						println("Deleted ancestral function: " + *ancestralStub)
 					}
 
 					println("Loading body from package:" + ancestralFunction.PackageName)
@@ -187,15 +190,91 @@ func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*Fu
 	return
 }
 
-func (d *DefinitionList) findAncestralFunction(stub string) (scopeName *string){
+func (d *DefinitionList) findAncestralFunction(pkg *tp.Package, fun *tp.Function) (scopeName *string, ancestralStub *string){
+
+	ancestralStub = ancestralFuncStub(pkg, fun)
+
+	if ancestralStub == nil {
+		return nil, nil
+	}
+
 	for scopeName, scopeType := range(d.Definitions) {
-		if scopeType[stub] != nil && scopeName != "Base" {
-			return &scopeName
+		if scopeType[*ancestralStub] != nil && scopeName != "Base" {
+			return &scopeName, ancestralStub
 		}
 	}
-	return nil
+
+	return 
 }
 
+func ancestralFuncStub(pkg *tp.Package, fun *tp.Function) *string {
+	foundAncestor := false
+
+
+	name := proto.GetString(fun.Name)
+	args := ""
+	for _, arg := range(fun.Args) {
+		argType := proto.GetInt32(arg.TypeId)
+		ancestralArgType := FindAncestralType(pkg, argType)
+
+		if ancestralArgType != -1 {
+			foundAncestor = true
+			argType = ancestralArgType
+		}
+
+		argTypeString := pkg.GetTypeName(argType)
+		
+		argName := argTypeString
+		argName = argName + " %" + proto.GetString(arg.Name)
+		args = args + ", " + argName
+	}
+	if len(args) > 1 {
+		args = args[2:]
+	}
+
+	returnType := proto.GetInt32(fun.ReturnTypeId)
+	ancestralReturnType := FindAncestralType(pkg, returnType)
+
+	if ancestralReturnType != -1 {
+		foundAncestor = true
+		returnType = ancestralReturnType
+	}
+
+	returnTypeString := pkg.GetTypeName(returnType)
+	returnVal := name + "(" + args + ") " + returnTypeString + " " 
+
+	opensType := proto.GetInt32(fun.OpensTypeId)
+	ancestralOpensType := FindAncestralType(pkg, opensType)
+
+	if ancestralOpensType != -1 {
+		foundAncestor = true
+		opensType = ancestralOpensType
+	}
+
+	opensTypeString := pkg.GetTypeName(opensType)
+
+
+	if opensTypeString != "Base" {
+		returnVal = returnVal + opensTypeString
+	}
+
+	if foundAncestor {
+		return &returnVal
+	}
+	return nil
+	
+}
+
+func FindAncestralType(pkg *tp.Package, thisType int32) int32 {	
+	someType := pkg.Types[thisType]
+
+	implements := proto.GetInt32(someType.Implements)
+	if implements != 0 {
+		return implements
+	}
+
+	return -1
+}
 
 func getBody(name string, fun *tp.Function) (body string) {
 	var start int
