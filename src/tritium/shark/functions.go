@@ -278,6 +278,9 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 						ns := &Scope{Value: node, Index: index}
 						ctx.runChildren(ns, ins)
 					}
+					if _, text := node.(*xml.Text); text {
+						ctx.Logs = append(ctx.Logs, "You have just selected a text() node... THIS IS A TERRIBLE IDEA. Please run 'moov check' and sort it out!")
+					}
 				}
 			}
 		}
