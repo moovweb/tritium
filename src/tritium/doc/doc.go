@@ -55,18 +55,42 @@ type FunctionDefinition struct {
 	YieldType string
 	ParentScope string
 	Body string
+	ID string
+	PackageName string
 }
 
-func (f *FunctionDefinition) getID() (string) {
-	return f.ParentScope + ":" + f.Name
+type DefinitionList struct {
+	// Key on parent-scope-type and function-stub
+	Definitions map[string]map[string]*FunctionDefinition
+}
+
+func (f *FunctionDefinition) setID() {
+	f.ID = f.ParentScope + ":" + f.Name
 }
 
 func Generate(outputFile string){
 //	rootPackage := "libxml"
-	rootPackage := "base"
-	definitions := generatePackageDocs(rootPackage)
+	// Need to define packages in order of dependence
+	packages := []string{"base", "node", "libxml"}
 
-	docTemplate := template.New(rootPackage)
+	definitions := &DefinitionList{
+	Definitions: make(map[string]map[string]*FunctionDefinition),
+	}
+
+	for _, packageName := range(packages) {
+		definitions.generatePackageDocs(packageName)
+	}
+
+	docs := RenderDocumentation(definitions)
+
+	err := ioutil.WriteFile(outputFile, docs, uint32(0666) )
+	if err != nil {
+		panic("Couldn't write doc file:\n" + err.String())
+	}
+}
+
+func RenderDocumentation(d *DefinitionList) ([]byte) {
+	docTemplate := template.New("tritium-docs")
 	templatePath := "src/tritium/doc/definition.html.got"
 	docTemplate, err := docTemplate.ParseFile(templatePath)
 
@@ -76,30 +100,29 @@ func Generate(outputFile string){
 	
 	docs := make([]byte,0)
 
-	for _, definition := range(definitions) {
-		var definitionDoc bytes.Buffer
+	for _, scopeType := range(d.Definitions) {
 
-		fmt.Printf("This defn: %v\n", definition)
+		for _, definition := range(scopeType) {
+			var definitionDoc bytes.Buffer
 
-		err := docTemplate.Execute(&definitionDoc, definition)
+			//fmt.Printf("This defn: %v\n", definition)
 
-		if err != nil {
-			panic(fmt.Sprintf("Error rendering template w defintion: %v\n", definition))
+			err := docTemplate.Execute(&definitionDoc, definition)
+
+			if err != nil {
+				panic(fmt.Sprintf("Error rendering template w defintion: %v\n", definition))
+			}
+
+			definitionBytes := definitionDoc.Bytes()
+			docs = append(docs, definitionBytes...)
 		}
 
-		definitionBytes := definitionDoc.Bytes()
-		docs = append(docs, definitionBytes...)
 	}
 
-	println("DOCS")
-
-	err = ioutil.WriteFile(outputFile, docs, uint32(0666) )
-	if err != nil {
-		panic("Couldn't write doc file:\n" + err.String())
-	}
+	return docs
 }
 
-func generatePackageDocs(name string) (definitions []*FunctionDefinition) {
+func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*FunctionDefinition) {
 	pkg := packager.NewPackage(packager.DefaultPackagePath, packager.BuildOptions())
 	pkg.Load(name)
 
@@ -107,8 +130,13 @@ func generatePackageDocs(name string) (definitions []*FunctionDefinition) {
 		ttypeString := proto.GetString(ttype.Name)
 
 		for _, fun := range(pkg.Functions) {
+			stub := FuncStub(pkg.Package, fun)
 
-			if tindex == int(proto.GetInt32(fun.ScopeTypeId)) {
+			// STACK: Im keying on the stub w contains the return/yield types, which won't match across inheritance
+			// If I just use the call pattern ... it might work (although arg types can be inherited too ...)
+
+
+			if tindex == int(proto.GetInt32(fun.ScopeTypeId)) && d.Definitions[ttypeString][stub] == nil{
 				function := &FunctionDefinition{
 				Name: proto.GetString(fun.Name),
 				Description: "... descriptions coming soon ...",
@@ -117,10 +145,13 @@ func generatePackageDocs(name string) (definitions []*FunctionDefinition) {
 				ReturnType: ".",
 				YieldType: ".",
 				Stub: ".",
+				PackageName: name,
 				}
+				function.setID()
+
 				// Description / Examples will come when we can look at comment nodes
 
-				function.Stub = FuncStub(pkg.Package, fun)
+				function.Stub = stub
 				segments := strings.Split(function.Stub,")")
 				
 				function.CallPattern = segments[0] + ")"
@@ -128,14 +159,43 @@ func generatePackageDocs(name string) (definitions []*FunctionDefinition) {
 				function.ReturnType = fun.ReturnTypeString(pkg.Package)
 				function.YieldType = fun.OpensTypeString(pkg.Package)
 
-				function.Body = getBody(name, fun)
-				definitions = append(definitions, function)
+				println("Getting body for function: " + stub + " from package : " + name)
+				ancestralScope := d.findAncestralFunction(stub)
+				
+				if ancestralScope != nil {
+					println("Found ancestral function in scope:" + *ancestralScope)
+					ancestralFunction := d.Definitions[*ancestralScope][stub]
+					d.Definitions[*ancestralScope][stub] = nil, false // Delete it
+					if d.Definitions[*ancestralScope][stub] != nil {
+						panic("Didn't delete ancestral definition")
+					}
+
+					println("Loading body from package:" + ancestralFunction.PackageName)
+					function.Body = getBody(ancestralFunction.PackageName, fun)
+				} else {
+					function.Body = getBody(name, fun)
+				}
+
+				if d.Definitions[ttypeString] == nil {
+					d.Definitions[ttypeString] = make(map[string]*FunctionDefinition)
+				}
+				d.Definitions[ttypeString][stub] = function
 			}
 		}
 	}
 
 	return
 }
+
+func (d *DefinitionList) findAncestralFunction(stub string) (scopeName *string){
+	for scopeName, scopeType := range(d.Definitions) {
+		if scopeType[stub] != nil && scopeName != "Base" {
+			return &scopeName
+		}
+	}
+	return nil
+}
+
 
 func getBody(name string, fun *tp.Function) (body string) {
 	var start int
@@ -160,12 +220,15 @@ func getBody(name string, fun *tp.Function) (body string) {
 			}
 
 		} else {
+			println("")
 			return ""
 		}
 	} else {
+		println("")
 		return "  [native function]"
 	}
 
+	fmt.Printf(" : lines [%d,%d]\n", start, end)
 
 
 	data, err := ioutil.ReadFile("packages/" + name + "/functions.ts")
