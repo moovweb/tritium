@@ -22,7 +22,14 @@ module Tritium
             run_children(ins, text)
             ctx.value.content = text.value
           when :remove
-            ctx.value.remove()
+            if args.size == 0
+              ctx.value.remove()
+            elsif args.size == 1
+              nodeset = ctx.value.xpath(args.first)
+              nodeset.each do |node|
+                node.remove
+              end
+            end
           when :name
             name = Context[ins, ctx.value.name]
             run_children(ins, name)

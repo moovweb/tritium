@@ -8,6 +8,7 @@ PATH
 
 GEM
   remote: http://rubygems.org/
+  remote: http://gems.moovweb.org/
   specs:
     beefcake (0.3.7)
     diff-lcs (1.1.3)

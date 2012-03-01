@@ -305,7 +305,12 @@ Node:
         doc: You can just yield to the block if you want to dynamically set the name. Otherwise, just pass it as the argument
         expansion: true
   remove:
-    doc: Delete the current node
+    doc: Delete the current node (or searches and deletes if you provide an argument xpath)
+    arguments:
+      -
+        name: XPath
+        docs: What you might search for and delete
+        optional: true
   wrap:
     doc: Wrap the currently selected node with a tag and then yield to that new wrapper. Obviously, the contents is the current node.
     arguments:
