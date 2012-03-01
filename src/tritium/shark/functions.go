@@ -3,13 +3,13 @@ package shark
 import (
 	"strings"
 	"os"
-	"libxml"
+	"gokogiri/libxml"
 	"fmt"
 	log "log4go"
-	xml "libxml/tree"
-	tp "athena/proto"
-	"libxml/xpath"
-	"rubex"
+	xml "gokogiri/libxml/tree"
+	tp "athena/src/athena/proto"
+	"gokogiri/libxml/xpath"
+	"rubex/lib"
 	"css2xpath"
 	"goconv"
 )
@@ -119,17 +119,25 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			returnValue = "true"
 		}
 	case "regexp.Text.Text":
-		mode := rubex.ONIG_OPTION_DEFAULT
-		if strings.Index(args[1].(string), "i") >= 0 {
-			mode = rubex.ONIG_OPTION_IGNORECASE
-		}
-		if strings.Index(args[1].(string), "m") >= 0 {
-			mode = rubex.ONIG_OPTION_MULTILINE
-		}
-		var err os.Error
-		returnValue, err = rubex.NewRegexp(args[0].(string), mode)
-		if err != nil {
-			ctx.Log.Error("Invalid regexp")
+		pattern := args[0].(string) + "/" + args[1].(string)
+		if r := ctx.RegexpCache[pattern]; r != nil {
+			returnValue = r
+		} else {
+			mode := rubex.ONIG_OPTION_DEFAULT
+			if strings.Index(args[1].(string), "i") >= 0 {
+				mode = rubex.ONIG_OPTION_IGNORECASE
+			}
+			if strings.Index(args[1].(string), "m") >= 0 {
+				mode = rubex.ONIG_OPTION_MULTILINE
+			}
+			var err os.Error
+			r, err = rubex.NewRegexp(args[0].(string), mode)
+			if err != nil {
+				ctx.Log.Error("Invalid regexp")
+			}
+			ctx.RegexpCache[pattern] = r
+			returnValue = r
+			//println("new regexp:", pattern)
 		}
 	case "export.Text":
 		val := make([]string, 2)
@@ -283,6 +291,37 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		node := scope.Value.(xml.Node)
 		node.Remove()
 		node.Free()
+	case "remove.Text": //Only for XMLNode
+		elem, _ := scope.Value.(xml.Node)
+
+		xpCtx := xpath.NewXPath(elem.Doc())
+		xpath := xpath.CompileXPath(args[0].(string))
+		if xpath == nil {
+			ctx.Logs = append(ctx.Logs, "Invalid XPath used: " + args[0].(string))
+			returnValue = "0"
+			return
+		}
+		nodeSet := xpCtx.SearchByCompiledXPath(elem, xpath).Slice()
+		defer xpCtx.Free()
+		defer xpath.Free()
+
+		if len(nodeSet) == 0 {
+			returnValue = "0"
+		} else {
+			returnValue = fmt.Sprintf("%d", len(nodeSet))
+		}
+
+		for _, node := range nodeSet {
+			if node != nil {
+				if doc, ok := node.(*xml.Doc); ok {
+					node = doc.RootElement()
+				}
+				if (node != nil) && node.IsLinked() {
+					node.Remove()
+				}
+			}
+		}
+		
 	case "inner":
 		node := scope.Value.(xml.Node)
 		ts := &Scope{Value: node.Content()}
@@ -342,6 +381,12 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 				returnValue = node.String()
 			}
 		}
+		if len(ins.Children) > 0 {
+			ts := &Scope{Value: returnValue}
+			ctx.runChildren(ts, ins)
+			returnValue = ts.Value
+		}
+		
 		xPathObj.Free()
 	case "path":
 		returnValue = scope.Value.(xml.Node).Path()
@@ -405,6 +450,11 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 				index++
 			}
 			child = childNext
+		}
+	case "equal.XMLNode.XMLNode", "equal.Node.Node":
+		returnValue = "false"
+		if args[0] == args[1] {
+			returnValue = "true"
 		}
 
 	// ATTRIBUTE FUNCTIONS

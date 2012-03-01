@@ -1,12 +1,12 @@
 package packager
 
 import (
-	tp "athena/proto"
+	tp "athena/src/athena/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	"io/ioutil"
 	"log"
 	"path/filepath"
-	"tritium/crypto"
+	"tritium/src/tritium/crypto"
 )
 
 func (pkg *Package) write() {

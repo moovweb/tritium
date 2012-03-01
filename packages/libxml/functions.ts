@@ -18,6 +18,9 @@
   }
 }
 
+@func XMLNode.remove_text_nodes() {
+  remove("./text()")
+}
 
 @func XMLNode.attribute(Text %name, Text %value) {
   attribute(%name) {
@@ -148,17 +151,18 @@
 
 @func XMLNode.wrap_together(Text %selector, Text %tag) {
   $(%selector + "[1]") {
-    insert_at(position("before"), %tag) {
-      %node = node()
-      $("../" + %selector) {
-        match_not(index(), "1") {
-          move(this(), %node, position("bottom"))
+    wrap(%tag) {
+      %wrapper = this()
+      $("..") {
+        $(%selector) {
+          match(equal(this(), %wrapper), "false") {
+            move(this(), %wrapper, position("bottom"))
+          }
         }
       }
       yield()
     }
   }
-   
 }
 
 # This is used to specify the encoding for a page
@@ -170,13 +174,17 @@
 }
 
 @func Text.html(Text %enc) {
-  html(%enc, "utf-8") {
+  $encoding = %enc
+ 	match($encoding, "") {
+  	$encoding = $guessed_encoding
+  }
+  html($encoding, "utf-8") {
     yield()
   }
 }
 
 @func Text.html() {
-  html("", "utf-8") {
+  html($guessed_encoding, "utf-8") {
     yield()
   } 
 }
@@ -189,6 +197,12 @@
 
 # POSITIONALS
 # siblings of these are in node, but these use Inner so are here.
+@func XMLNode.insert_at(Text %pos, Text %tag, Text %content) {
+  insert_at(position(%pos), %tag) {
+    inner(%content)
+    yield()
+  }
+}
 @func XMLNode.insert_at(Position %pos, Text %tag, Text %content) {
   insert_at(%pos, %tag) {
     inner(%content)

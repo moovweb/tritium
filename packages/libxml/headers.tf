@@ -11,6 +11,7 @@
 
 // Replace's the node's contents with a CDATA block
 @func XMLNode.cdata(Text %contents) Text
+@func XMLNode.remove(Text %xpath_selector) Text
 
 // Opens up the entire innerHTML to text modification. Any html you insert WILL get interpreted as actual tags.
 @func XMLNode.inner() Text Text
@@ -22,6 +23,10 @@
 @func XMLNode.attribute(Text %name) Text Attribute
 
 @func XMLNode.dump() Text
+
+// Returns "true" or "false"
+@func equal(XMLNode %a, XMLNode %b) Text
+@func equal(Node %a, Node %b) Text
 
 // Wraps each text child inside the specified tag. Only the text children though!
 @func XMLNode.wrap_text_children(Text %tag_name) Text

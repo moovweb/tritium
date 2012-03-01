@@ -1,11 +1,11 @@
 package spec
 
 import (
-	"tritium/packager"
-	tp "athena/proto"
-	. "tritium"
+	"tritium/src/tritium/packager"
+	tp "athena/src/athena/proto"
+	. "tritium/src/tritium"
 	. "path/filepath"
-	"tritium/shark"
+	"tritium/src/tritium/shark"
 	. "fmt"
 	l4g "log4go"
 	"os"
@@ -13,21 +13,41 @@ import (
 	xmlhelp "libxml/help"
 )
 
-func All(directory string) {
+func All(directory string, options ...string) {
+
+	var mixerPath string
+	if len(options) == 1 {
+		mixerPath = options[0]
+	}
+
 	logger := make(l4g.Logger)
 	logger.AddFilter("test", l4g.ERROR, l4g.NewConsoleLogWriter())
 	l4g.Global = logger
 	eng := shark.NewEngine(logger)
-	pkg := packager.BuildDefaultPackage()
+
+	var pkg *tp.Package
+		
+	if len(mixerPath) > 0 {
+		// Used when testing in ambrosia
+		mixer := tp.OpenMixer(mixerPath)
+		pkg = mixer.Package
+	} else {
+		bigPackage := packager.BuildDefaultPackage()
+		pkg = bigPackage.Package
+	}
+
 
 	globalResult := NewResult()
-	globalResult.all(directory, pkg.Package, eng, logger)
+	globalResult.all(directory, pkg, eng, logger)
 
 	logger.AddFilter("stdout", l4g.ERROR, l4g.NewConsoleLogWriter())
 
 	// TODO : Walk over the results here and print errors. 
 
+	var foundError = false
+
 	for _, error := range globalResult.Errors {
+		foundError = true
 		println("\n=========================================", error.Location, "\n")
 		if error.Panic {
 			Printf(error.Message)
@@ -37,6 +57,10 @@ func All(directory string) {
 	}
 	println("\n\n")
 	println("+++TEST COMPLETE+++\n\n")
+
+	if foundError {
+		os.Exit(1)
+	}
 }
 
 func (result *Result) all(directory string, pkg *tp.Package, eng Engine, logger l4g.Logger) {

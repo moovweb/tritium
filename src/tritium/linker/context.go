@@ -1,7 +1,7 @@
 package linker
 
 import (
-	. "athena/proto"
+	. "athena/src/athena/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	log "log4go"
 	"fmt"
@@ -15,7 +15,7 @@ type LinkingContext struct {
 	textType int
 	types    []string
 	files    []string
-	errors   []string
+	Errors   []string
 	*Transform
 }
 
@@ -64,7 +64,7 @@ func NewLinkingContext(pkg *Package) *LinkingContext {
 	ctx := &LinkingContext{
 		funList: functionLookup,
 		types:   types,
-		errors:  make([]string, 0),
+		Errors:  make([]string, 0),
 		Transform: &Transform{
 			Pkg: pkg,
 		},
@@ -235,11 +235,11 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 }
 
 func (ctx *LinkingContext) HasErrors() bool {
-	return (len(ctx.errors) > 0)
+	return (len(ctx.Errors) > 0)
 }
 
 func (ctx *LinkingContext) error(obj interface{}, message string) {
-	ctx.errors = append(ctx.errors, message)
+	ctx.Errors = append(ctx.Errors, message)
 	ins, ok := obj.(*Instruction)
 	if ok {
 		ins.IsValid = proto.Bool(false)
