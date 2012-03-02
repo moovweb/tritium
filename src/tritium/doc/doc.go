@@ -190,21 +190,16 @@ func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*Fu
 				function.ReturnType = fun.ReturnTypeString(pkg.Package)
 				function.YieldType = fun.OpensTypeString(pkg.Package)
 
-				println("Getting body for function: " + stub + " from package : " + name)
+				//println("Getting body for function: " + stub + " from package : " + name)
 				ancestralScope, ancestralStub := d.findAncestralFunction(pkg.Package, fun)
 				
 				if ancestralScope != nil {
-					println("Found ancestral function in scope:" + *ancestralScope)
+					//println("Found ancestral function in scope:" + *ancestralScope)
 					ancestralFunction := d.Definitions[*ancestralScope][*ancestralStub]
 
 					d.Definitions[*ancestralScope][*ancestralStub] = nil, false // Delete it
-					if d.Definitions[*ancestralScope][*ancestralStub] != nil {
-						panic("Didn't delete ancestral definition")
-					} else {
-						println("Deleted ancestral function: " + *ancestralStub)
-					}
 
-					println("Loading body from package:" + ancestralFunction.PackageName)
+					//println("Loading body from package:" + ancestralFunction.PackageName)
 					function.Body = getBody(ancestralFunction.PackageName, fun)
 				} else {
 					function.Body = getBody(name, fun)
