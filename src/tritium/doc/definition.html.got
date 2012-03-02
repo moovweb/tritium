@@ -1,8 +1,8 @@
-<div>
+<div id="{{.ID}}">
   <h3> {{.CallPattern}} </h3>
 
-  <span> <h4> Return Type </h4> {{.ReturnType}} </span>
-  <span> <h4> Yield Type </h4> {{.YieldType}} </span>
+  <div class='type'> <span> Return Type: </span> <span> {{.ReturnType}} </span> </div>
+  <div class='type'> <span> Yield Type: </span> <span>{{.YieldType}} </span> </div>
 
   <p> {{.Description}} </p>
 
@@ -10,8 +10,8 @@
     <span data-ur-toggler-component='button' data-ur-state='disabled'> 
       View Source 
     </span>
-    <pre>
-    <code data-ur-toggler-component='content' data-ur-state='disabled''>
+    <pre data-ur-toggler-component='content' data-ur-state='disabled'>
+    <code>
 {{.ParentScope}}.{{.Stub}} { 
 {{.Body}}
 }

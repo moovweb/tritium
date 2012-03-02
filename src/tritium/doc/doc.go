@@ -51,6 +51,7 @@ type FunctionDefinition struct {
 	CallPattern string
 	Description string
 	Stub string
+	ShortStub string
 	ReturnType string
 	YieldType string
 	ParentScope string
@@ -100,7 +101,20 @@ func RenderDocumentation(d *DefinitionList) ([]byte) {
 	
 	docs := make([]byte,0)
 
-	for _, scopeType := range(d.Definitions) {
+	docs = append(docs, []byte("<div id='header'>\n")...)	
+	for scopeName, scopeType := range(d.Definitions) {
+		docs = append(docs, []byte("<h3>" + scopeName + "</h3>\n")...)			
+		for _, definition := range(scopeType) {
+			link := fmt.Sprintf("<a href='#%v'>%v</a>\n", definition.ID, definition.ShortStub)
+			docs = append(docs, []byte(link)...)
+		}
+	}
+	docs = append(docs, []byte("</div>\n")...)
+
+
+	docs = append(docs, []byte("<div id='content'>\n")...)
+	for scopeName, scopeType := range(d.Definitions) {
+		docs = append(docs, []byte("<h2>" + scopeName + "</h2>\n")...)
 
 		for _, definition := range(scopeType) {
 			var definitionDoc bytes.Buffer
@@ -116,10 +130,26 @@ func RenderDocumentation(d *DefinitionList) ([]byte) {
 			definitionBytes := definitionDoc.Bytes()
 			docs = append(docs, definitionBytes...)
 		}
-
 	}
+	docs = append(docs, []byte("</div>\n")...)
 
 	return docs
+}
+
+func ShortFuncStub(pkg *tp.Package, fun *tp.Function) string {
+	name := proto.GetString(fun.Name)
+	args := ""
+	for _, arg := range(fun.Args) {
+		t := pkg.Types[int(proto.GetInt32(arg.TypeId))]
+		argName := proto.GetString(t.Name)
+		argName = argName
+		args = args + ", " + argName
+	}
+	if len(args) > 1 {
+		args = args[2:]
+	}
+	returnVal := name + "(" + args + ")"
+	return returnVal
 }
 
 func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*FunctionDefinition) {
@@ -145,6 +175,7 @@ func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*Fu
 				ReturnType: ".",
 				YieldType: ".",
 				Stub: ".",
+				ShortStub: ShortFuncStub(pkg.Package, fun),
 				PackageName: name,
 				}
 				function.setID()
