@@ -27,5 +27,6 @@ message Instruction {
 		TEXT = 3;
 		LOCAL_VAR = 4;
 		POSITION = 5;
+		COMMENT = 6;
 	}
 }

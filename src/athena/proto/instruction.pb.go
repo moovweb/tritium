@@ -21,6 +21,7 @@ const (
 	Instruction_TEXT          Instruction_InstructionType = 3
 	Instruction_LOCAL_VAR     Instruction_InstructionType = 4
 	Instruction_POSITION      Instruction_InstructionType = 5
+	Instruction_COMMENT       Instruction_InstructionType = 6
 )
 
 var Instruction_InstructionType_name = map[int32]string{
@@ -30,6 +31,7 @@ var Instruction_InstructionType_name = map[int32]string{
 	3: "TEXT",
 	4: "LOCAL_VAR",
 	5: "POSITION",
+	6: "COMMENT",
 }
 var Instruction_InstructionType_value = map[string]int32{
 	"BLOCK":         0,
@@ -38,6 +40,7 @@ var Instruction_InstructionType_value = map[string]int32{
 	"TEXT":          3,
 	"LOCAL_VAR":     4,
 	"POSITION":      5,
+	"COMMENT":       6,
 }
 
 func NewInstruction_InstructionType(x Instruction_InstructionType) *Instruction_InstructionType {

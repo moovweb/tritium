@@ -55,6 +55,14 @@ func MakePosition(pos string, lineNum int32) *Instruction {
   }
 }
 
+func MakeComment(comment string, lineNum int32) *Instruction {
+  return &Instruction {
+    Type: NewInstruction_InstructionType(Instruction_COMMENT),
+    Value: pb.String(comment),
+    LineNumber: pb.Int32(lineNum),
+  }
+}
+
 func MakeImport(path string, lineNum int32) *Instruction {
   return &Instruction {
     Type: NewInstruction_InstructionType(Instruction_IMPORT),
