@@ -78,7 +78,7 @@ func (result *Result) all(directory string, pkg *tp.Package, eng Engine, logger 
 func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result *Result) {
 	result = NewResult()
 	logWriter := NewTestLogWriter()
-	logger["test"] = &l4g.Filter{l4g.WARNING, "test", "", logWriter}
+	logger["test"] = &l4g.Filter{l4g.WARNING, "test", logWriter}
 
 	defer func() {
 		//log.Println("done")  // Println executes normally even in there is a panic
