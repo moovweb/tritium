@@ -47,6 +47,14 @@ func main() {
 			pkg := packager.NewPackage(packager.DefaultPackagePath, packager.BuildOptions())
 			pkg.Load(name)
 			println(doc.Process(pkg.Package))
+		} else if command == "apollo-doc" {
+			if len(os.Args) < 3 {
+				println("Usage: tritium apollo-doc <output-file>")
+				os.Exit(1)
+			}
+			outputFile := os.Args[2]
+		
+			doc.Generate(outputFile)
 		} else if command == "link" {
 			println("Linking files found in the directory:", os.Args[2])
 			//LinkerToBytes(os.Args[2])
