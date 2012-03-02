@@ -412,7 +412,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "inject_at.Position.Text":
 		node := scope.Value.(xml.Node)
 		position := args[0].(Position)
-		nodeSet := node.Doc().ParseHtmlFragment(args[1].(string), "")
+		nodeSet := node.Doc().ParseHtmlFragment(args[1].(string), node.Doc().GetEncoding())
 		for _, newNode := range nodeSet {
 			MoveFunc(newNode, node, position)
 		}
