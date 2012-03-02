@@ -325,15 +325,15 @@ func getBody(name string, fun *tp.Function) (body string) {
 			}
 
 		} else {
-			println("")
+			//println("")
 			return ""
 		}
 	} else {
-		println("")
+		//println("")
 		return "  [native function]"
 	}
 
-	fmt.Printf(" : lines [%d,%d]\n", start, end)
+	//fmt.Printf(" : lines [%d,%d]\n", start, end)
 
 
 	data, err := ioutil.ReadFile("packages/" + name + "/functions.ts")
