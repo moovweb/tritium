@@ -7,5 +7,4 @@ install: build
 	gb -i
 test:
 	gb -t
-	tritium test base
-	tritium test libxml
+	tritium test packages/
