@@ -9,11 +9,11 @@
 }
 
 @func XMLNode.inner_wrap(Text %tag_name) {
-  inner() {
-    prepend(concat("<", concat(%tag_name, ">")))
-    append(concat("</", concat(%tag_name, ">")))
-  }
-  select("./*[1]") {
+  insert_top(%tag_name) {
+    %wrapper = this()
+    $("..") {
+      move_children_to(%wrapper, position("bottom"))
+    }
     yield()
   }
 }

@@ -433,9 +433,6 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			elem.SetCDataContent(args[0].(string))
 		}
 	case "move.XMLNode.XMLNode.Position", "move.Node.Node.Position":
-		//for name, value := range(ctx.LocalVar) {
-		//	println(name, ":", value)
-		//}
 		MoveFunc(args[0].(xml.Node), args[1].(xml.Node), args[2].(Position))
 	case "wrap_text_children.Text":
 		returnValue = "false"
@@ -453,6 +450,20 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 				index++
 			}
 			child = childNext
+		}
+	case "move_children_to.XMLNode.Position", "move_children_to.Node.Position":
+		node := scope.Value.(xml.Node)
+		element, ok := args[0].(*xml.Element)
+		if ok {	
+			child := node.First();
+			for child != nil {
+				newChild := child.Next()
+				if child != element {
+					returnValue = "true"
+					MoveFunc(child, element, args[1].(Position))
+				}
+				child = newChild
+			}
 		}
 	case "equal.XMLNode.XMLNode", "equal.Node.Node":
 		returnValue = "false"

@@ -29,7 +29,8 @@
 @func equal(Node %a, Node %b) Text
 
 // Wraps each text child inside the specified tag. Only the text children though!
-@func XMLNode.wrap_text_children(Text %tag_name) Text
+@func XMLNode.wrap_text_children(Text %tag_name) Text XMLNode
+@func XMLNode.move_children_to(Node %tag_name, Position %pos) Text
 
 // Delete the current attribute
 @func Attribute.remove() Text
