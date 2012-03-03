@@ -5,7 +5,7 @@ import (
 	ir "athena/src/athena/proto"
 	"io/ioutil"
 	"path/filepath"
-	"tritium/src/tritium/tokenizer" // was meant to be in this package
+	. "tritium/src/tritium/tokenizer" // was meant to be in this package
 	"path"
 	"fmt"
 	"strconv"
@@ -513,6 +513,3 @@ func (p *Parser) parameters(funcName string) []*ir.Function_Argument {
 	}
 	return params
 }
-
-
-func main(
