@@ -5,7 +5,7 @@ import (
 	ir "athena/src/athena/proto"
 	"io/ioutil"
 	"path/filepath"
-	. "tritium/src/tritium/tokenizer" // was meant to be in this package
+	"tritium/src/tritium/tokenizer" // was meant to be in this package
 	"path"
 	"fmt"
 	"strconv"
@@ -30,10 +30,17 @@ func (p *Parser) peek() *Token {
 	return p.Lookahead
 }
 
-func (p *Parser) pop() *Token {
-	val := p.Lookahead
-	p.Lookahead = p.Tokenizer.Pop()
-	return val
+func (p *Parser) pop() (val *Token) {
+  for p.Lookahead.Lexeme == COMMENT { p.Lookahead = p.Tokenizer.Pop() }
+  val = p.Lookahead
+  p.Lookahead = p.Tokenizer.PopMaybeComment()
+  return val
+}
+
+func (p *Parser) popMaybeComment() *Token {
+  val := p.Lookahead
+  p.Tokenizer.PopMaybeComment()
+  return val
 }
 
 func (p *Parser) error(msg string) {
@@ -92,7 +99,7 @@ func MakeParser(src, fullpath string) *Parser {
 		Lookahead: nil,
 		counter:   0,
 	}
-	p.pop()
+	p.popMaybeComment()
 	return p
 }
 
@@ -127,29 +134,6 @@ func (p *Parser) Parse() *ir.ScriptObject {
 	script.Root = ir.MakeBlock(stmts, line)
 
 	return script
-
-	// switch p.peek().Lexeme {
-	// case FUNC:
-	//  for p.peek().Lexeme != EOF {
-	//    defs = append(defs, p.definition())
-	//  }
-	//  if len(defs) == 0 {
-	//    defs = nil
-	//  }
-	//  script.Functions = defs
-	// default:
-	//  for p.peek().Lexeme != EOF {
-	//    stmts = append(stmts, p.statement())
-	//  }
-	//  line := int32(0)
-	//  if len(stmts) == 0 {
-	//    stmts = nil
-	//  } else {
-	//    line = *stmts[0].LineNumber
-	//  }
-	//  script.Root = ir.MakeBlock(stmts, line)
-	// }
-	// return script
 }
 
 func (p *Parser) statement() (node *ir.Instruction) {
@@ -159,6 +143,9 @@ func (p *Parser) statement() (node *ir.Instruction) {
 		node = ir.MakeImport(path.Join(p.DirName, token.Value), token.LineNumber)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
+	case COMMENT:
+	  token := p.popMaybeComment()
+	  node = ir.MakeComment(token.Value, token.LineNumber)
 	default:
 		p.error("statement must consist of import or expression")
 	}
@@ -526,3 +513,6 @@ func (p *Parser) parameters(funcName string) []*ir.Function_Argument {
 	}
 	return params
 }
+
+
+func main(

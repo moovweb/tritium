@@ -31,12 +31,14 @@ const (
 	PATH
 	IMPORT
 	READ
+	COMMENT
 	EOF
 	ERROR
+	LEXEME_COUNT
 )
 
-var LexemeName [22]string
-var matcher [22]*rubex.Regexp
+var LexemeName [LEXEME_COUNT]string
+var matcher [LEXEME_COUNT]*rubex.Regexp
 var symbolLexeme map[string]Lexeme
 var symbolPattern *rubex.Regexp
 var numberPattern *rubex.Regexp
@@ -118,7 +120,8 @@ type Tokenizer struct {
 	Source              []byte
 	LineNumber          int32
 	Lookahead           *Token
-	unterminatedComment bool
+	comment             bool // did we last munch a well-formed comment?
+	unterminatedComment bool // did we last munch an unterminated comment?
 }
 
 func (t *Tokenizer) hasPrefix(s string) bool {
@@ -131,28 +134,32 @@ func (t *Tokenizer) discardSpaces() {
 }
 
 // Discard leading text until a newline (or EOF) is found.
-func (t *Tokenizer) discardLine() {
+func (t *Tokenizer) discardLine() (discarded []byte) {
 	var i int
 	for i = 0; i < len(t.Source); i++ {
 		if t.Source[i] == '\n' {
 			break
 		}
 	}
+	discarded = t.Source[:i]
 	t.Source = t.Source[i:]
+	return discarded
 }
 
 // Discard the leading comment in the source text.
-func (t *Tokenizer) discardComment() {
+func (t *Tokenizer) discardComment() (theComment []byte) {
 	if t.hasPrefix("#") || t.hasPrefix("//") {
-		t.discardLine()
+		theComment = t.discardLine()
 	} else if t.hasPrefix("/*") {
-		t.discardBlockComment()
+		theComment = t.discardBlockComment()
 	}
+	t.comment = true
+	return theComment
 }
 
 // Helper for discarding block comments.
 // TO DO: ERROR HANDLING FOR UNTERMINATED COMMENTS
-func (t *Tokenizer) discardBlockComment() {
+func (t *Tokenizer) discardBlockComment() (theComment []byte) {
 	depth, i, length := 1, 2, len(t.Source)
 	error := false
 	for depth > 0 {
@@ -184,11 +191,15 @@ func (t *Tokenizer) discardBlockComment() {
 		}
 		i++
 	}
+	theComment = t.Source[:i]
 	t.Source = t.Source[i:]
 	if error {
 		t.Lookahead = &Token{Lexeme: ERROR, Value: "unterminated comment", ExtraValue: "", LineNumber: t.LineNumber}
 		t.unterminatedComment = true
-	}
+	} else {
+	  t.comment = true
+  }
+  return theComment
 }
 
 // Discard all leading whitespace and comments from the source text. Need to
@@ -322,7 +333,7 @@ func (t *Tokenizer) munch() *Token {
 */
 
 func MakeTokenizer(src []byte) *Tokenizer {
-	t := Tokenizer{Source: src, Lookahead: nil, LineNumber: 1, unterminatedComment: false}
+	t := Tokenizer{Source: src, Lookahead: nil, LineNumber: 1, comment: false, unterminatedComment: false}
 	t.Pop()
 	return &t
 }
@@ -331,9 +342,14 @@ func (t *Tokenizer) Peek() *Token {
 	return t.Lookahead
 }
 
+// this version skips over comments
 func (t *Tokenizer) Pop() *Token {
 	val := t.Lookahead
+	
+	// may leave a comment or an 'unterminated comment' error in Lookahead
 	t.discardWhitespaceAndComments()
+	
+	// will leave an error, but clobber a comment -- the desired behavior
 	if !t.unterminatedComment {
 		t.Lookahead = t.munch()
 	} else {
@@ -341,3 +357,44 @@ func (t *Tokenizer) Pop() *Token {
 	}
 	return val
 }
+
+// this version keeps comments
+func (t *Tokenizer) PopMaybeComment() *Token {
+  val := t.Lookahead
+  
+  // may leave a comment or an 'unterminated comment' error in Lookahead
+  t.discardWhitespaceAndComments()
+  
+  if t.unterminatedComment {
+    t.unterminatedComment = false
+  } else if t.comment {
+    t.comment = false
+  } else {
+    t.Lookahead = t.munch()
+  }
+  
+  return val
+}
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
