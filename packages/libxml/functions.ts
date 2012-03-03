@@ -189,8 +189,21 @@
   } 
 }
 
+@func Text.html_fragment(Text %enc) {
+  $encoding = %enc
+  match($encoding, "") {
+    $encoding = $guessed_encoding
+  }
+
+  log("Using encoding:" + $encoding)
+  html_fragment($encoding) {
+    yield()
+  }
+}
+
 @func Text.html_fragment() {
-  html_fragment("") {
+  log("Using guessed encoding:" + $guessed_encoding)
+  html_fragment($guessed_encoding) {
     yield()
   }
 }
