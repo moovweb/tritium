@@ -7,4 +7,4 @@ install: build
 	gb -i
 test:
 	gb -t
-	tritium test packages/
+	./tritium/src/main/tritium test packages/
