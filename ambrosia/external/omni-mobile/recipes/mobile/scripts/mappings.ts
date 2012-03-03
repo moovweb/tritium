@@ -24,6 +24,7 @@ match($status) {
         // Include a log with every import to make it simple to know what scripts are running
         log("--> Importing pages/homes.ts in mappings.ts")
         @import pages/home.ts
+        
       }
       else() {
         log("--> Importing pages/not_homes.ts in mappings.ts")

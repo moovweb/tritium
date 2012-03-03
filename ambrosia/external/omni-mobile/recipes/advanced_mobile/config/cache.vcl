@@ -51,7 +51,7 @@ sub vcl_recv {
   */
 
   if (req.http.host ~ "^mstage.qaserver.{{#GOPERIOD#Domain}}$") {
-    set req.backend = recipes_appv01;
+    set req.backend = bin_appv01;
     set req.http.X-QA = "true";
   }
 
@@ -121,8 +121,15 @@ sub vcl_hash {
 sub vcl_error {
   set obj.http.Content-Type = "text/html; charset=utf-8";
   synthetic{"
-    <!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01//EN' 'http://www.w3.org/TR/html4/strict.dtd'>
-    <html>An Unknown error has occured.<br>We have been notified</html>
+  <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+  <html>
+  <head>
+  <title>Something went wrong</title>
+  </head>
+  <body>
+  <style>body {background-color: #eee;} div {padding:10px;} #coming-soon {font-size: 30px;} #explanation {font-size: 15px;}</style><div id='coming-soon'>Looks like something went wrong here!</div><div id='explanation'>We're currently experiencing a technical issue. Please try to refresh the page or visit us on our <a href='www.{{#GOPERIOD#Domain}}' desktop site</a>. We apologize for the inconvenience.</div>
+  </body>
+  </html>
   "};
   return (deliver);
 }

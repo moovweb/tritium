@@ -24,6 +24,11 @@ match($status) {
         // Include a log with every import to make it simple to know what scripts are running
         log("--> Importing pages/homes.ts in mappings.ts")
         @import pages/home.ts
+        
+          # Uncomment the line below to set the variable that is used
+          # in the mw_analytics.ts file and embed a custom tag for this page
+          # $mw_analytics = "project_name_home"
+        
       }
       else() {
         log("--> Importing pages/not_homes.ts in mappings.ts")

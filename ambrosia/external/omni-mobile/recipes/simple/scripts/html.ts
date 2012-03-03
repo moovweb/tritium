@@ -4,9 +4,7 @@ $("/html") {
 
   # Strip out comments and links
   # PASSTHROUGH: To passthrough comments and links, delete the 3 lines below
-  $(".//comment()|.//link|.//style") {
-    remove()
-  }
+  remove(".//comment()|.//link|.//style")
 
   # Add our meta tags
   $("./head") {
@@ -76,6 +74,8 @@ $("/html") {
   @import sections/footer.ts
 
   @import mappings.ts
+
+
 
 
 }

@@ -4,9 +4,7 @@ $("/html") {
 
   # Strip out comments and links
   # PASSTHROUGH: To passthrough comments and links, delete the 3 lines below
-  $(".//comment()|.//link|.//style") {
-    remove()
-  }
+  remove(".//comment()|.//link|.//style")
 
   # Remove only existing meta tags for which we will add our own
   $(".//meta[@name='viewport']|.//meta[@name='format-detection']") {
@@ -98,5 +96,10 @@ $("/html") {
   $("//script[@src and (not(@data-mw_keep) or @data-mw_keep='false')]") {
     remove()
   }
+
+
+  # Include mw_analytics file to track the mobile site
+  @import mw_analytics.ts
+
 
 }

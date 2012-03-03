@@ -1,5 +1,5 @@
 
 # Put the project name here, and pick some ports that are not yet in use on the jenkins box
-:project_name: recipes
+:project_name: bin
 :proxy_port: 9001
 :asset_port: 8001

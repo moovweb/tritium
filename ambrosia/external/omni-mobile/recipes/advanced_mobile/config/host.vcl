@@ -1,5 +1,5 @@
 
-backend recipes_appv01 {
+backend bin_appv01 {
   .host = "127.0.0.1";
   .port = "9991";
   .probe = {
