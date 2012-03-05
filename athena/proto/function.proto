@@ -4,6 +4,7 @@ import "instruction.proto";
 
 message Function {
 	optional string name = 1;
+        optional string description = 11;
 
 	// Linked
 	optional int32 scope_type_id = 2;
