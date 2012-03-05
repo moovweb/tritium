@@ -231,11 +231,11 @@ func unquote(chars []byte) string {
 	var converted []byte
 	if chars[0] == '\'' {
 		converted = bytes.Replace(chars, []byte(`\'`), []byte(`'`), -1)
-		converted = bytes.Replace(chars, []byte(`"`), []byte(`\"`), -1)
+		converted = bytes.Replace(converted, []byte(`"`), []byte(`\"`), -1)
 		converted[0] = '"'
 		converted[len(converted)-1] = '"'
 	} else {
-		converted = chars
+		converted = bytes.Replace(chars, []byte(`\'`), []byte(`'`), -1)		
 	}
 	val, _ := strconv.Unquote(string(converted))
 	return val
