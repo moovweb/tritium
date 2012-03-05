@@ -70,7 +70,6 @@ func (f *FunctionDefinition) setID() {
 }
 
 func Generate(outputFile string){
-//	rootPackage := "libxml"
 	// Need to define packages in order of dependence
 	packages := []string{"base", "node", "libxml"}
 
@@ -153,7 +152,9 @@ func ShortFuncStub(pkg *tp.Package, fun *tp.Function) string {
 }
 
 func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*FunctionDefinition) {
-	pkg := packager.NewPackage(packager.DefaultPackagePath, packager.BuildOptions())
+	options := packager.BuildOptions()
+	options["generate_docs"] = true
+	pkg := packager.NewPackage(packager.DefaultPackagePath, options)
 	pkg.Load(name)
 
 	for tindex, ttype := range(pkg.Types) {
@@ -162,14 +163,11 @@ func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*Fu
 		for _, fun := range(pkg.Functions) {
 			stub := FuncStub(pkg.Package, fun)
 
-			// STACK: Im keying on the stub w contains the return/yield types, which won't match across inheritance
-			// If I just use the call pattern ... it might work (although arg types can be inherited too ...)
-
-
 			if tindex == int(proto.GetInt32(fun.ScopeTypeId)) && d.Definitions[ttypeString][stub] == nil{
+
 				function := &FunctionDefinition{
 				Name: proto.GetString(fun.Name),
-				Description: "... descriptions coming soon ...",
+				Description: "",
 				ParentScope: ttypeString,
 				Body: ".",
 				ReturnType: ".",
@@ -179,6 +177,11 @@ func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*Fu
 				PackageName: name,
 				}
 				function.setID()
+				description := proto.GetString(fun.Description)
+
+				if len(description) > 0 {
+					function.Description = description
+				}
 
 				// Description / Examples will come when we can look at comment nodes
 
