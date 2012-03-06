@@ -91,7 +91,7 @@ func Generate(outputFile string){
 
 func RenderDocumentation(d *DefinitionList) ([]byte) {
 	docTemplate := template.New("tritium-docs")
-	templatePath := "src/tritium/doc/definition.html.got"
+	templatePath := "src/tritium/doc/definition.haml.got"
 	docTemplate, err := docTemplate.ParseFile(templatePath)
 
 	if err != nil {
