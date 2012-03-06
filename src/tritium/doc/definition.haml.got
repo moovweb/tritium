@@ -17,7 +17,8 @@
     %div(data-ur-set='toggler')
       %span(data-ur-toggler-component='button' data-ur-state='disabled') View Source
       %pre(data-ur-toggler-component='content' data-ur-state='disabled')
-        :markdown
-              {{.ParentScope}}.{{.Stub}} {
-              {{.Body}}
-              }
+        %code
+          :plain
+            {{.ParentScope}}.{{.Stub}} {
+            {{.Body}}
+            }

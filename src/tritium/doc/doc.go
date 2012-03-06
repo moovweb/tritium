@@ -214,7 +214,7 @@ func (d *DefinitionList) generatePackageDocs(name string) {
 				}
 
 				// Hacky ... I need a way to specify the indent level for the body text to play nice w haml:
-				function.Body = strings.Join(strings.Split(function.Body,"\n"), "\n              ")
+				function.Body = strings.Join(strings.Split(function.Body,"\n"), "\n            ")
 
 				if d.Definitions[ttypeString] == nil {
 					d.Definitions[ttypeString] = make(map[string]*FunctionDefinition)
