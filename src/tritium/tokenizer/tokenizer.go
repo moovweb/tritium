@@ -237,7 +237,10 @@ func unquote(chars []byte) string {
 	} else {
 		converted = bytes.Replace(chars, []byte(`\'`), []byte(`'`), -1)		
 	}
-	val, _ := strconv.Unquote(string(converted))
+	val, err := strconv.Unquote(string(converted))
+	if err != nil {
+	  panic("Tokenizing error: bad escape sequence in string literal " + string(converted))
+  }
 	return val
 }
 
