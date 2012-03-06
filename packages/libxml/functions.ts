@@ -1,9 +1,9 @@
-
-@func XMLNode.add_class(Text %class) {
 "
 This is the documentation for XMLNode.add_class()
 Allows you to set variables. Equivalent to `$`.
 "
+
+@func XMLNode.add_class(Text %class) {
 
 
   attribute("class") {

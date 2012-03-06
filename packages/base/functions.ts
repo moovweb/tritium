@@ -1,5 +1,6 @@
 
 @func export(Text %key, Text %value) {
+"The %log_message is printed out to the console."
   export(%key) {
     set(%value)
     yield()

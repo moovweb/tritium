@@ -1,5 +1,7 @@
 // Looks up a global variable
+"Allows you to set variables. Equivalent to `$`."
 @func var(Text %name) Text Text
+"Allows you to set variables. Equivalent to `$`."
 @func var(Text %name, Text %value) Text Text
 
 // If given a block, it returns the time-to-execute as a string (time units vary by implementation)
