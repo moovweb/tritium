@@ -100,7 +100,7 @@ func RenderDocumentation(d *DefinitionList) ([]byte) {
 	
 	docs := make([]byte,0)
 
-	offset := "    "
+	offset := "  "
 	docs = append(docs, []byte("%div#header\n")...)	
 	for scopeName, scopeType := range(d.Definitions) {
 		docs = append(docs, []byte(offset + "%h3 " + scopeName + "\n")...)			
@@ -200,6 +200,9 @@ func (d *DefinitionList) generatePackageDocs(name string) {
 				} else {
 					function.Body = getBody(name, fun)
 				}
+
+				// Hacky ... I need a way to specify the indent level for the body text to play nice w haml:
+				function.Body = strings.Join(strings.Split(function.Body,"\n"), "\n              ")
 
 				if d.Definitions[ttypeString] == nil {
 					d.Definitions[ttypeString] = make(map[string]*FunctionDefinition)

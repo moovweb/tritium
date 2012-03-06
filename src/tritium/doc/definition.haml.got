@@ -1,24 +1,20 @@
-%div#{{.ID}}
+  %div(id='{{.ID}}')
     %h3 {{.CallPattern}}
-
+  
     .type
-        %span Return Type:
-        %span {{.ReturnType}}
-
+      %span Return Type:
+      %span {{.ReturnType}}
+  
     .type
-        %span Yield Type:
-        %span {{.YieldType}}
-
-    %p 
-       :markdown
-           {{.Description}}
-
-
+      %span Yield Type:
+      %span {{.YieldType}}
+  
+    %p
+    
     %div(data-ur-set='toggler')
-        %span(data-ur-toggler-component='button' data-ur-state='disabled') View Source
-        %pre(data-ur-toggler-component='content' data-ur-state='disabled')
-            %code
-                :plain
-                    {{.ParentScope}}.{{.Stub}} {
-                    {{.Body}}
-                    }
+      %span(data-ur-toggler-component='button' data-ur-state='disabled') View Source
+      %pre(data-ur-toggler-component='content' data-ur-state='disabled')
+        :markdown
+              {{.ParentScope}}.{{.Stub}} {
+              {{.Body}}
+              }
