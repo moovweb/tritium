@@ -1,8 +1,9 @@
 
 @func XMLNode.add_class(Text %class) {
-  "
-    This is the documentation for XMLNode.add_class()
-  "
+"
+This is the documentation for XMLNode.add_class()
+Allows you to set variables. Equivalent to `$`.
+"
 
 
   attribute("class") {
@@ -15,9 +16,6 @@
 }
 
 @func XMLNode.inner_wrap(Text %tag_name) {
-  "
-    This is the documentation for XMLNode.inner_wrap()
-  "
 
   insert_top(%tag_name) {
     %wrapper = this()

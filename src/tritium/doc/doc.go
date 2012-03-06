@@ -9,6 +9,7 @@ import(
 	"strings"
 	"bytes"
 	"template"
+	md "github.com/russross/blackfriday"
 )
 
 
@@ -180,7 +181,7 @@ func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*Fu
 				description := proto.GetString(fun.Description)
 
 				if len(description) > 0 {
-					function.Description = description
+					function.Description = string(md.MarkdownBasic([]byte(description)))
 				}
 
 				// Description / Examples will come when we can look at comment nodes
@@ -312,7 +313,12 @@ func getBody(name string, fun *tp.Function) (body string) {
 
 	if fun.Instruction != nil {
 		if len(fun.Instruction.Children) > 0 {
-			start = int(proto.GetInt32(fun.Instruction.Children[0].LineNumber))
+			for _, instruction := range(fun.Instruction.Children) {
+				if *instruction.Type != tp.Instruction_TEXT {
+					start = int(proto.GetInt32(instruction.LineNumber))
+					break
+				}
+			}
 
 			done := false
 			thisInstruction := fun.Instruction.Children[len(fun.Instruction.Children)-1]
@@ -328,16 +334,11 @@ func getBody(name string, fun *tp.Function) (body string) {
 			}
 
 		} else {
-			//println("")
 			return ""
 		}
 	} else {
-		//println("")
 		return "  [native function]"
 	}
-
-	//fmt.Printf(" : lines [%d,%d]\n", start, end)
-
 
 	data, err := ioutil.ReadFile("packages/" + name + "/functions.ts")
 	if err != nil {
