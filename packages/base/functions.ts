@@ -1,6 +1,5 @@
 
 @func export(Text %key, Text %value) {
-"The %log_message is printed out to the console."
   export(%key) {
     set(%value)
     yield()
@@ -8,7 +7,7 @@
 }
 
 @func regexp(Text %exp) {
-  regexp(%exp, "")
+  regexp(%exp, "")" Only used in Functions "
 }
 
 @func asset(Text %name) {
@@ -24,6 +23,7 @@
     }, "s"))
 }
 
+"If only one string is to be matched, it can be placed after the target."
 @func match(Text %target, Text %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -32,6 +32,7 @@
   }
 }
 
+"If only one string is to be matched, it can be placed after the target."
 @func match(Text %target, Regexp %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -40,6 +41,7 @@
   }
 }
 
+"The opposite of `match()`."
 @func match_not(Text %target, Text %comparitor) {
   match(%target) {
     not(%comparitor) {
@@ -48,6 +50,7 @@
   }
 }
 
+"The opposite of `match()`."
 @func match_not(Text %target, Regexp %comparitor) {
   match(%target) {
     not(%comparitor) {
