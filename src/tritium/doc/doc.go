@@ -168,12 +168,7 @@ func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*Fu
 
 				function := &FunctionDefinition{
 				Name: proto.GetString(fun.Name),
-				Description: "",
 				ParentScope: ttypeString,
-				Body: ".",
-				ReturnType: ".",
-				YieldType: ".",
-				Stub: ".",
 				ShortStub: ShortFuncStub(pkg.Package, fun),
 				PackageName: name,
 				}
