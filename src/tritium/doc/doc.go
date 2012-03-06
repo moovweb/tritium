@@ -9,7 +9,6 @@ import(
 	"strings"
 	"bytes"
 	"template"
-	md "github.com/russross/blackfriday"
 )
 
 
@@ -152,7 +151,7 @@ func ShortFuncStub(pkg *tp.Package, fun *tp.Function) string {
 	return returnVal
 }
 
-func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*FunctionDefinition) {
+func (d *DefinitionList) generatePackageDocs(name string) {
 	options := packager.BuildOptions()
 	options["generate_docs"] = true
 	pkg := packager.NewPackage(packager.DefaultPackagePath, options)
@@ -176,7 +175,7 @@ func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*Fu
 				description := proto.GetString(fun.Description)
 
 				if len(description) > 0 {
-					function.Description = string(md.MarkdownBasic([]byte(description)))
+					function.Description = description
 				}
 
 				// Description / Examples will come when we can look at comment nodes
