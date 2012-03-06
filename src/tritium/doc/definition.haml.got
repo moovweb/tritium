@@ -1,4 +1,4 @@
-#{{.ID}}
+%div#{{.ID}}
     %h3 {{.CallPattern}}
 
     .type
@@ -9,7 +9,9 @@
         %span Yield Type:
         %span {{.YieldType}}
 
-    %p {{.Description}}
+    %p 
+       :markdown
+           {{.Description}}
 
 
     %div(data-ur-set='toggler')

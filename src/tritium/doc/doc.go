@@ -100,20 +100,19 @@ func RenderDocumentation(d *DefinitionList) ([]byte) {
 	
 	docs := make([]byte,0)
 
-	docs = append(docs, []byte("<div id='header'>\n")...)	
+	offset := "    "
+	docs = append(docs, []byte("%div#header\n")...)	
 	for scopeName, scopeType := range(d.Definitions) {
-		docs = append(docs, []byte("<h3>" + scopeName + "</h3>\n")...)			
+		docs = append(docs, []byte(offset + "%h3 " + scopeName + "\n")...)			
 		for _, definition := range(scopeType) {
-			link := fmt.Sprintf("<a href='#%v'>%v</a>\n", definition.ID, definition.ShortStub)
+			link := fmt.Sprintf(offset + "%%a(href='#%v') %v\n", definition.ID, definition.ShortStub)
 			docs = append(docs, []byte(link)...)
 		}
 	}
-	docs = append(docs, []byte("</div>\n")...)
 
-
-	docs = append(docs, []byte("<div id='content'>\n")...)
+	docs = append(docs, []byte("%div#content\n")...)
 	for scopeName, scopeType := range(d.Definitions) {
-		docs = append(docs, []byte("<h2>" + scopeName + "</h2>\n")...)
+		docs = append(docs, []byte(offset + "%h2 " + scopeName + "\n")...)
 
 		for _, definition := range(scopeType) {
 			var definitionDoc bytes.Buffer
@@ -130,7 +129,6 @@ func RenderDocumentation(d *DefinitionList) ([]byte) {
 			docs = append(docs, definitionBytes...)
 		}
 	}
-	docs = append(docs, []byte("</div>\n")...)
 
 	return docs
 }
