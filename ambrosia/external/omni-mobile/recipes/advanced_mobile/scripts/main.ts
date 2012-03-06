@@ -4,6 +4,7 @@
 
 @import robots.ts
 
+@import device_detection.ts
 
 match($content_type) {
   with(/html/) {
