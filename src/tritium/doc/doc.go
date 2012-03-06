@@ -173,7 +173,19 @@ func (d *DefinitionList) generatePackageDocs(name string) {
 				description := proto.GetString(fun.Description)
 
 				if len(description) > 0 {
-					function.Description = description
+					lines := make([]string, 0)
+
+					// Trim the description. Haml doesn't like extra new lines
+					for _, line := range(strings.Split(description,"\n")) {
+						if len(strings.TrimLeft(line, " \r\n")) > 0 {
+							lines = append(lines, line)
+						}
+					}
+
+					//function.Description = description
+
+					// Hacky ... I need a way to specify the indent level to play nice w haml:
+					function.Description = strings.Join(lines, "\n        ")
 				}
 
 				// Description / Examples will come when we can look at comment nodes
