@@ -9,6 +9,7 @@ import(
 	"strings"
 	"bytes"
 	"template"
+	"sort"
 )
 
 
@@ -102,19 +103,29 @@ func RenderDocumentation(d *DefinitionList) ([]byte) {
 
 	offset := "  "
 	docs = append(docs, []byte("%div#header\n")...)	
-	for scopeName, scopeType := range(d.Definitions) {
+
+	sortedScopes, sortedDefinitions := d.SortKeys()
+
+	for _, scopeName := range(sortedScopes) {
+		definitions := d.Definitions[scopeName]
+
 		docs = append(docs, []byte(offset + "%h3 " + scopeName + "\n")...)			
-		for _, definition := range(scopeType) {
+
+		for _, definitionKey := range(sortedDefinitions[scopeName]) {
+			definition := definitions[definitionKey]
 			link := fmt.Sprintf(offset + "%%a(href='#%v') %v\n", definition.ID, definition.ShortStub)
 			docs = append(docs, []byte(link)...)
 		}
 	}
 
 	docs = append(docs, []byte("%div#content\n")...)
-	for scopeName, scopeType := range(d.Definitions) {
-		docs = append(docs, []byte(offset + "%h2 " + scopeName + "\n")...)
 
-		for _, definition := range(scopeType) {
+	for _, scopeName := range(sortedScopes) {
+		docs = append(docs, []byte(offset + "%h2 " + scopeName + "\n")...)
+		definitions := d.Definitions[scopeName]
+
+		for _, definitionKey := range(sortedDefinitions[scopeName]) {
+			definition := definitions[definitionKey]
 			var definitionDoc bytes.Buffer
 
 			//fmt.Printf("This defn: %v\n", definition)
@@ -354,6 +365,37 @@ func getBody(name string, fun *tp.Function) (body string) {
 
 	lines := strings.Split(string(data), "\n")
 	body = strings.Join(lines[start-1:end+depth], "\n")
+
+	return
+}
+
+
+func (dl *DefinitionList) SortKeys() (sortedScopes []string, sortedDefinitions map[string][]string) {
+
+	sortedScopes = make([]string,len(dl.Definitions))
+	sortedDefinitions = make(map[string][]string)
+
+	index := 0
+	for scopeName, _ := range(dl.Definitions) {
+		sortedScopes[index] = scopeName
+		index += 1
+	}
+	
+	sort.Strings(sortedScopes)
+
+	for _, scopeName := range(sortedScopes) {
+		scopeDefinitions := dl.Definitions[scopeName]
+		sortedScopeDefinitions := make([]string, len(scopeDefinitions))
+
+		index := 0
+		for definitionKey, _ := range(scopeDefinitions) {
+			sortedScopeDefinitions[index] = definitionKey
+			index += 1
+		}
+		
+		sort.Strings(sortedScopeDefinitions)
+		sortedDefinitions[scopeName] = sortedScopeDefinitions	
+	}
 
 	return
 }
