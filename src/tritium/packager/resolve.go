@@ -212,7 +212,7 @@ func (pkg *Package) findTypeIndex(name string) int {
 		}
 	}
 
-	log.Panic("Bad type load order, type", name, "unknown")
+	log.Panic("Bad type load order, type ", name, " unknown")
 	return -1
 }
 

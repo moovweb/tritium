@@ -278,6 +278,9 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 						ns := &Scope{Value: node, Index: index}
 						ctx.runChildren(ns, ins)
 					}
+					if _, text := node.(*xml.Text); text {
+						ctx.Logs = append(ctx.Logs, "You have just selected a text() node... THIS IS A TERRIBLE IDEA. Please run 'moov check' and sort it out!")
+					}
 				}
 			}
 		}
@@ -409,7 +412,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "inject_at.Position.Text":
 		node := scope.Value.(xml.Node)
 		position := args[0].(Position)
-		nodeSet := node.Doc().ParseHtmlFragment(args[1].(string), "")
+		nodeSet := node.Doc().ParseHtmlFragment(args[1].(string), node.Doc().GetEncoding())
 		for _, newNode := range nodeSet {
 			MoveFunc(newNode, node, position)
 		}
@@ -430,9 +433,6 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			elem.SetCDataContent(args[0].(string))
 		}
 	case "move.XMLNode.XMLNode.Position", "move.Node.Node.Position":
-		//for name, value := range(ctx.LocalVar) {
-		//	println(name, ":", value)
-		//}
 		MoveFunc(args[0].(xml.Node), args[1].(xml.Node), args[2].(Position))
 	case "wrap_text_children.Text":
 		returnValue = "false"
@@ -450,6 +450,20 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 				index++
 			}
 			child = childNext
+		}
+	case "move_children_to.XMLNode.Position", "move_children_to.Node.Position":
+		node := scope.Value.(xml.Node)
+		element, ok := args[0].(*xml.Element)
+		if ok {	
+			child := node.First();
+			for child != nil {
+				newChild := child.Next()
+				if child != element {
+					returnValue = "true"
+					MoveFunc(child, element, args[1].(Position))
+				}
+				child = newChild
+			}
 		}
 	case "equal.XMLNode.XMLNode", "equal.Node.Node":
 		returnValue = "false"

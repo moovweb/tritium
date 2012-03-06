@@ -3,18 +3,20 @@ package checker
 import(
 	tp "athena/src/athena/proto"
 	proto "goprotobuf.googlecode.com/hg/proto"
-	. "strings"
+	//. "strings"
+	. "rubex/lib"
 )
 
 func (result *CheckResult) CheckForSelectText(script *tp.ScriptObject) {
+	tester := MustCompile("([^\\[\\(^]|^)(text|comment)\\(\\)")
 	iterate(script, func (ins *tp.Instruction) {
 		if *ins.Type == tp.Instruction_FUNCTION_CALL {
 			name := proto.GetString(ins.Value)
 			if name == "$" || name == "select" {
 				xpathIns := ins.Arguments[0] 
 				xpath := proto.GetString(xpathIns.Value)
-				if HasSuffix(xpath, "text()") {
-					result.AddWarning(script, ins, "Shouldn't use '/text()' in a select() XPath.")
+				if tester.Match([]byte(xpath)) {
+					result.AddWarning(script, ins, "Shouldn't use comment()/text() in '" + xpath + "'")
 				}
 			}
 		}
