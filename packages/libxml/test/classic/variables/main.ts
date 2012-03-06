@@ -15,7 +15,9 @@ xml()  {
   }
 
   var("fifth", "worked")
-  match(var("first"), "\^o\$") {
+  # shouldn't be legal anymore
+  # match(var("first"), "\^o\$") {
+  match(var("first"), /^o$/) {
     var("fifth", "failed");
   }
 
