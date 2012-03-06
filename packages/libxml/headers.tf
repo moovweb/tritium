@@ -1,42 +1,43 @@
+" Converts a CSS-selector (%selector) to XPath. "
 @func css(Text %selector) Text Text
 
-// Parses the document as XML and passes you back an XMLNode scope
+" Parses the document as XML and passes you back an XMLNode scope "
 @func Text.xml() Text XMLNode
 
-// Parses the document as HTML and passes you back an XMLNode scope
+" Parses the document as HTML and passes you back an XMLNode scope "
 @func Text.html_doc(Text %input_encoding, Text %output_encoding) Text XMLNode
 
-// Parses the document as HTML and passes you back an XMLNode scope
+" Parses the document as HTML and passes you back an XMLNode scope "
 @func Text.html_fragment(Text %input_encoding) Text XMLNode
 
-// Replace's the node's contents with a CDATA block
+" Replace's the node's contents with a CDATA block "
 @func XMLNode.cdata(Text %contents) Text
 @func XMLNode.remove(Text %xpath_selector) Text
 
-// Opens up the entire innerHTML to text modification. Any html you insert WILL get interpreted as actual tags.
+" Opens up the entire innerHTML to text modification. Any html you insert WILL get interpreted as actual tags. "
 @func XMLNode.inner() Text Text
 
-// Main alias for XMLNode.text()
+" Main alias for XMLNode.text() "
 @func XMLNode.inner_text() Text Text
 
-// Creates or opens the attribute named. Returns the value()
+" Creates or opens the attribute named. Returns the value() "
 @func XMLNode.attribute(Text %name) Text Attribute
 
 @func XMLNode.dump() Text
 
-// Returns "true" or "false"
+" Returns \"true\" or \"false\" "
 @func equal(XMLNode %a, XMLNode %b) Text
 @func equal(Node %a, Node %b) Text
 
-// Wraps each text child inside the specified tag. Only the text children though!
+" Wraps each text child inside the specified tag. Only the text children though! "
 @func XMLNode.wrap_text_children(Text %tag_name) Text XMLNode
 @func XMLNode.move_children_to(Node %tag_name, Position %pos) Text
 
-// Delete the current attribute
+" Delete the current attribute "
 @func Attribute.remove() Text
 
-// Allow us to edit the value (key="value") part of the attribute
+" Allow us to edit the value (key=\"value\") part of the attribute "
 @func Attribute.value() Text Text
 
-// Allow us to edit the key (key="value") part of the attribute
+" Allow us to edit the key (key=\"value\") part of the attribute "
 @func Attribute.name() Text Text

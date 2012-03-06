@@ -1,7 +1,4 @@
-"
-This is the documentation for XMLNode.add_class()
-Allows you to set variables. Equivalent to `$`.
-"
+"Adds a class (specified by %class) to the currently-selected node."
 
 @func XMLNode.add_class(Text %class) {
 
@@ -15,6 +12,8 @@ Allows you to set variables. Equivalent to `$`.
   }
 }
 
+"Wraps the *contents* of the currently-selected node in the tag defined by %tag. (Compare this to `wrap()`, which wraps the currently-selected node, not its contents.)"
+
 @func XMLNode.inner_wrap(Text %tag_name) {
 
   insert_top(%tag_name) {
@@ -26,9 +25,12 @@ Allows you to set variables. Equivalent to `$`.
   }
 }
 
+"Removes any children text nodes."
 @func XMLNode.remove_text_nodes() {
   remove("./text()")
 }
+
+"Allows you to set the value (%value) for the attribute you are selecting with %name - e.g.  `attribute(\"class\", \"one\")` sets the class as 'one'."
 
 @func XMLNode.attribute(Text %name, Text %value) {
   attribute(%name) {
@@ -39,6 +41,21 @@ Allows you to set variables. Equivalent to `$`.
   }
 }
 
+"Changes the value of the currently-selected attribute to that specified by %value. 
+
+In these cases, the following Tritium is identical:
+
+    attribute(\"class\") {
+      value(\"whee\")
+    }
+
+    attribute(\"class\") {
+      value() {
+        set(\"whee\")
+      }
+    }
+
+"
 @func Attribute.value(Text %value) {
   value() {
     set(%value)
@@ -46,12 +63,16 @@ Allows you to set variables. Equivalent to `$`.
   }
 }
 
+"Changes the name of the currently-selected attribute to that specified by %name."
+
 @func Attribute.name(Text %name) {
   name() { 
     set(%name) 
     yield()
   }
 }
+
+"Similar to `asset()`, but references a Sass stylesheet specifically."
 
 @func sass(Text %filename) {
   asset(concat("stylesheets/.css/", concat(%filename, ".css"))) {
@@ -66,6 +87,8 @@ Allows you to set variables. Equivalent to `$`.
 }
 
 # Used to be a helper function, just pass through and should work the same
+"Allows mass-attribute setting."
+
 @func XMLNode.attributes() {
   yield()
 }
@@ -82,6 +105,8 @@ Allows you to set variables. Equivalent to `$`.
     yield()
   }
 }
+
+"Searches for `<img>` and `<script>` tags and ensures a domain is in their path."
 
 @func XMLNode.absolutize() {
   # Absolutize IMG and SCRIPT SRCs
@@ -128,11 +153,15 @@ Allows you to set variables. Equivalent to `$`.
   }
 }
 
+"Inserts javascript (specified by %js) in a script tag within the currently-selected node."
+
 @func XMLNode.insert_javascript(Text %js) {
   insert_javascript_at(position(), %js) {
     yield()
   }
 }
+
+"Opens the insides of the node to text modification - anything within the node will be overwritten by what is put in %html."
 
 @func XMLNode.inner(Text %html) {
   inner() {
@@ -140,6 +169,8 @@ Allows you to set variables. Equivalent to `$`.
     yield() 
   } 
 }
+
+"Wraps the selected node in the tag defined by %tag, then yields to the new tag."
 
 @func XMLNode.wrap(Text %tag) {
   %parent_node = this()
@@ -149,6 +180,8 @@ Allows you to set variables. Equivalent to `$`.
   }
 }
 
+# @HC - This seems like a duplicate:
+
 @func XMLNode.wrap(Text %tag) {
   %node = this()
   insert_at(position("before"), %tag) {
@@ -156,6 +189,8 @@ Allows you to set variables. Equivalent to `$`.
     yield()
   }
 }
+
+"Wraps the selected nodes (defined by %selector) in a tag specified by %tag."
 
 @func XMLNode.wrap_together(Text %selector, Text %tag) {
   $(%selector + "[1]") {
@@ -197,6 +232,8 @@ Allows you to set variables. Equivalent to `$`.
   } 
 }
 
+"Parses a frament of the document (i.e. the output doesn't start with `<html>`)."
+
 @func Text.html_fragment() {
   html_fragment("") {
     yield()
@@ -205,42 +242,62 @@ Allows you to set variables. Equivalent to `$`.
 
 # POSITIONALS
 # siblings of these are in node, but these use Inner so are here.
+
+
 @func XMLNode.insert_at(Text %pos, Text %tag, Text %content) {
   insert_at(position(%pos), %tag) {
     inner(%content)
     yield()
   }
 }
+
+"Inserts a tag as above, but at a position specified by %pos (relative to the currently-selected node)."
+
 @func XMLNode.insert_at(Position %pos, Text %tag, Text %content) {
   insert_at(%pos, %tag) {
     inner(%content)
     yield()
   }
 }
+
+"Inserts the tag (specified by %tag) into the currently-selected node."
+
 @func XMLNode.insert(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
     inner(%inner)
     yield()
   }
 }
+
+"Inserts a tag with content as above, but to the bottom of the currently-selected node."
+
 @func XMLNode.insert_bottom(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
     inner(%inner)
     yield()
   }
 }
+
+"Inserts a tag as above, but to the top of the currently-selected node."
+
 @func XMLNode.insert_top(Text %tag, Text %inner) {
   insert_at(position("top"), %tag) {
     inner(%inner)
     yield()
   }
 }
+
+"Inserts a tag as above, but after the currently-selected node."
+
 @func XMLNode.insert_after(Text %tag, Text %inner) {
   insert_at(position("after"), %tag) {
     inner(%inner)
     yield()
   }
 }
+
+"Inserts a tag as above, but before the currently-selected node."
+
 @func XMLNode.insert_before(Text %tag, Text %inner) {
   insert_at(position("before"), %tag) {
     inner(%inner)
