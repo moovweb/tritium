@@ -5,6 +5,7 @@ import (
 	"rubex/lib"
 	"strconv"
 	"fmt"
+	"strings"
 )
 
 // Type tags so we know what kind of token we have
@@ -259,6 +260,11 @@ func (t *Tokenizer) munch() *Token {
 	} else if t.hasPrefix("'") || t.hasPrefix("\"") {
 		if c := matcher[STRING].Find(src); len(c) > 0 {
 			unquoted := unquote(c)
+
+			// Increment line count by the number of lines the string literal spans
+			lines := len(strings.Split(string(c),"\n"))-1
+			t.LineNumber += int32(lines)
+
 			return t.popToken(STRING, unquoted, len(c))
 		} else {
 			return t.popError("unterminated string literal")

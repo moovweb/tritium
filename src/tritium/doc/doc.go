@@ -9,6 +9,7 @@ import(
 	"strings"
 	"bytes"
 	"template"
+	"sort"
 )
 
 
@@ -70,7 +71,6 @@ func (f *FunctionDefinition) setID() {
 }
 
 func Generate(outputFile string){
-//	rootPackage := "libxml"
 	// Need to define packages in order of dependence
 	packages := []string{"base", "node", "libxml"}
 
@@ -92,7 +92,7 @@ func Generate(outputFile string){
 
 func RenderDocumentation(d *DefinitionList) ([]byte) {
 	docTemplate := template.New("tritium-docs")
-	templatePath := "src/tritium/doc/definition.html.got"
+	templatePath := "src/tritium/doc/definition.haml.got"
 	docTemplate, err := docTemplate.ParseFile(templatePath)
 
 	if err != nil {
@@ -101,22 +101,31 @@ func RenderDocumentation(d *DefinitionList) ([]byte) {
 	
 	docs := make([]byte,0)
 
-	docs = append(docs, []byte("<div id='header'>\n")...)	
-	for scopeName, scopeType := range(d.Definitions) {
-		docs = append(docs, []byte("<h3>" + scopeName + "</h3>\n")...)			
-		for _, definition := range(scopeType) {
-			link := fmt.Sprintf("<a href='#%v'>%v</a>\n", definition.ID, definition.ShortStub)
+	offset := "  "
+	docs = append(docs, []byte("%div#header\n")...)	
+
+	sortedScopes, sortedDefinitions := d.SortKeys()
+
+	for _, scopeName := range(sortedScopes) {
+		definitions := d.Definitions[scopeName]
+
+		docs = append(docs, []byte(offset + "%h3 " + scopeName + "\n")...)			
+
+		for _, definitionKey := range(sortedDefinitions[scopeName]) {
+			definition := definitions[definitionKey]
+			link := fmt.Sprintf(offset + "%%a(href='#%v') %v\n", definition.ID, definition.ShortStub)
 			docs = append(docs, []byte(link)...)
 		}
 	}
-	docs = append(docs, []byte("</div>\n")...)
 
+	docs = append(docs, []byte("%div#content\n")...)
 
-	docs = append(docs, []byte("<div id='content'>\n")...)
-	for scopeName, scopeType := range(d.Definitions) {
-		docs = append(docs, []byte("<h2>" + scopeName + "</h2>\n")...)
+	for _, scopeName := range(sortedScopes) {
+		docs = append(docs, []byte(offset + "%h2 " + scopeName + "\n")...)
+		definitions := d.Definitions[scopeName]
 
-		for _, definition := range(scopeType) {
+		for _, definitionKey := range(sortedDefinitions[scopeName]) {
+			definition := definitions[definitionKey]
 			var definitionDoc bytes.Buffer
 
 			//fmt.Printf("This defn: %v\n", definition)
@@ -131,7 +140,6 @@ func RenderDocumentation(d *DefinitionList) ([]byte) {
 			docs = append(docs, definitionBytes...)
 		}
 	}
-	docs = append(docs, []byte("</div>\n")...)
 
 	return docs
 }
@@ -152,8 +160,10 @@ func ShortFuncStub(pkg *tp.Package, fun *tp.Function) string {
 	return returnVal
 }
 
-func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*FunctionDefinition) {
-	pkg := packager.NewPackage(packager.DefaultPackagePath, packager.BuildOptions())
+func (d *DefinitionList) generatePackageDocs(name string) {
+	options := packager.BuildOptions()
+	options["generate_docs"] = true
+	pkg := packager.NewPackage(packager.DefaultPackagePath, options)
 	pkg.Load(name)
 
 	for tindex, ttype := range(pkg.Types) {
@@ -162,23 +172,32 @@ func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*Fu
 		for _, fun := range(pkg.Functions) {
 			stub := FuncStub(pkg.Package, fun)
 
-			// STACK: Im keying on the stub w contains the return/yield types, which won't match across inheritance
-			// If I just use the call pattern ... it might work (although arg types can be inherited too ...)
-
-
 			if tindex == int(proto.GetInt32(fun.ScopeTypeId)) && d.Definitions[ttypeString][stub] == nil{
+
 				function := &FunctionDefinition{
 				Name: proto.GetString(fun.Name),
-				Description: "... descriptions coming soon ...",
 				ParentScope: ttypeString,
-				Body: ".",
-				ReturnType: ".",
-				YieldType: ".",
-				Stub: ".",
 				ShortStub: ShortFuncStub(pkg.Package, fun),
 				PackageName: name,
 				}
 				function.setID()
+				description := proto.GetString(fun.Description)
+
+				if len(description) > 0 {
+					lines := make([]string, 0)
+
+					// Trim the description. Haml doesn't like extra new lines
+					for _, line := range(strings.Split(description,"\n")) {
+						if len(strings.TrimLeft(line, " \r\n")) > 0 {
+							lines = append(lines, line)
+						}
+					}
+
+					//function.Description = description
+
+					// Hacky ... I need a way to specify the indent level to play nice w haml:
+					function.Description = strings.Join(lines, "\n        ")
+				}
 
 				// Description / Examples will come when we can look at comment nodes
 
@@ -204,6 +223,9 @@ func (d *DefinitionList) generatePackageDocs(name string) { //(definitions []*Fu
 				} else {
 					function.Body = getBody(name, fun)
 				}
+
+				// Hacky ... I need a way to specify the indent level for the body text to play nice w haml:
+				function.Body = strings.Join(strings.Split(function.Body,"\n"), "\n            ")
 
 				if d.Definitions[ttypeString] == nil {
 					d.Definitions[ttypeString] = make(map[string]*FunctionDefinition)
@@ -309,7 +331,12 @@ func getBody(name string, fun *tp.Function) (body string) {
 
 	if fun.Instruction != nil {
 		if len(fun.Instruction.Children) > 0 {
-			start = int(proto.GetInt32(fun.Instruction.Children[0].LineNumber))
+			for _, instruction := range(fun.Instruction.Children) {
+				if *instruction.Type != tp.Instruction_TEXT {
+					start = int(proto.GetInt32(instruction.LineNumber))
+					break
+				}
+			}
 
 			done := false
 			thisInstruction := fun.Instruction.Children[len(fun.Instruction.Children)-1]
@@ -325,16 +352,11 @@ func getBody(name string, fun *tp.Function) (body string) {
 			}
 
 		} else {
-			//println("")
 			return ""
 		}
 	} else {
-		//println("")
 		return "  [native function]"
 	}
-
-	//fmt.Printf(" : lines [%d,%d]\n", start, end)
-
 
 	data, err := ioutil.ReadFile("packages/" + name + "/functions.ts")
 	if err != nil {
@@ -343,6 +365,37 @@ func getBody(name string, fun *tp.Function) (body string) {
 
 	lines := strings.Split(string(data), "\n")
 	body = strings.Join(lines[start-1:end+depth], "\n")
+
+	return
+}
+
+
+func (dl *DefinitionList) SortKeys() (sortedScopes []string, sortedDefinitions map[string][]string) {
+
+	sortedScopes = make([]string,len(dl.Definitions))
+	sortedDefinitions = make(map[string][]string)
+
+	index := 0
+	for scopeName, _ := range(dl.Definitions) {
+		sortedScopes[index] = scopeName
+		index += 1
+	}
+	
+	sort.Strings(sortedScopes)
+
+	for _, scopeName := range(sortedScopes) {
+		scopeDefinitions := dl.Definitions[scopeName]
+		sortedScopeDefinitions := make([]string, len(scopeDefinitions))
+
+		index := 0
+		for definitionKey, _ := range(scopeDefinitions) {
+			sortedScopeDefinitions[index] = definitionKey
+			index += 1
+		}
+		
+		sort.Strings(sortedScopeDefinitions)
+		sortedDefinitions[scopeName] = sortedScopeDefinitions	
+	}
 
 	return
 }
