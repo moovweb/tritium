@@ -1,3 +1,4 @@
+" This is a the way that we have Tritium communicate variables back to its execution environment. That sounds complicated, but in most uses of Tritium, it would be something like export(\"Content-Type\", \"application/js\") to tell the app to change the content-type. Look at the reference for your server for more information on what you can export. "
 
 @func export(Text %key, Text %value) {
   export(%key) {
@@ -7,15 +8,17 @@
 }
 
 @func regexp(Text %exp) {
-  regexp(%exp, "")" Only used in Functions "
+  regexp(%exp, "")
 }
 
+"Allows reference to the assets folder without hard-coding a path. For example, `asset(\"images/icon.png\")`."
 @func asset(Text %name) {
   concat($asset_host, %name) {
     yield()
   }
 }
 
+"Prints the time a block took to run."
 @func bm(Text %name) {
   log(concat(%name, ": ", 
     time() {
