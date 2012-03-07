@@ -10,7 +10,7 @@
 " Parses the document as HTML and passes you back an XMLNode scope. "
 @func Text.html_fragment(Text %input_encoding) Text XMLNode
 
-" Replace's the node's contents with a CDATA block. "
+" Replaces the node's contents with a CDATA block. "
 @func XMLNode.cdata(Text %contents) Text
 @func XMLNode.remove(Text %xpath_selector) Text
 

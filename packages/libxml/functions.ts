@@ -350,6 +350,8 @@ In these cases, the following Tritium is identical:
 
 ### DEPRECATED ####
 
+"Deprecated"
+
 @func asset(Text %name, Text %type) {
   deprecated("Please use asset('path/to/asset.jpg')")
   match(%type) {
