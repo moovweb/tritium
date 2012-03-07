@@ -1,4 +1,4 @@
-"Adds a class (specified by %class) to the currently-selected node."
+"Adds a class (specified by **%class**) to the currently-selected node. Also adds a space to prevent overwriting of any over classes."
 
 @func XMLNode.add_class(Text %class) {
 
@@ -12,7 +12,7 @@
   }
 }
 
-"Wraps the *contents* of the currently-selected node in the tag defined by %tag. (Compare this to `wrap()`, which wraps the currently-selected node, not its contents.)"
+"Wraps the *contents* of the currently-selected node in the tag defined by **%tag**. (Compare this to `wrap()`, which wraps the currently-selected node, not its contents.)"
 
 @func XMLNode.inner_wrap(Text %tag_name) {
 
@@ -30,7 +30,7 @@
   remove("./text()")
 }
 
-"Allows you to set the value (%value) for the attribute you are selecting with %name - e.g.  `attribute(\"class\", \"one\")` sets the class as 'one'."
+"Allows you to set the value (**%value**) for the attribute you are selecting with **%name** - e.g.  `attribute(\"class\", \"one\")` sets the class as 'one'."
 
 @func XMLNode.attribute(Text %name, Text %value) {
   attribute(%name) {
@@ -41,21 +41,7 @@
   }
 }
 
-"Changes the value of the currently-selected attribute to that specified by %value. 
-
-In these cases, the following Tritium is identical:
-
-    attribute(\"class\") {
-      value(\"whee\")
-    }
-
-    attribute(\"class\") {
-      value() {
-        set(\"whee\")
-      }
-    }
-
-"
+"Changes the value of the currently-selected attribute to that specified by **%value**."
 @func Attribute.value(Text %value) {
   value() {
     set(%value)
@@ -63,7 +49,20 @@ In these cases, the following Tritium is identical:
   }
 }
 
-"Changes the name of the currently-selected attribute to that specified by %name."
+"Changes the name of the currently-selected attribute to that specified by **%name**.
+
+In these cases, the following Tritium is identical:
+
+    attribute(\"class\") {
+      name(\"whee\")
+    }
+
+    attribute(\"class\") {
+      name() {
+        set(\"whee\")
+      }
+    }
+"
 
 @func Attribute.name(Text %name) {
   name() { 
@@ -93,11 +92,15 @@ In these cases, the following Tritium is identical:
   yield()
 }
 
+" Opens the current node for text modificaiton. "
+
 @func XMLNode.text() {
   inner_text() {
     yield()
   }
 }
+
+"Opens the current node for text modification, replacing everything inside with the **%value**. (Essentially, the same as `text() { set(Text %value) }`.)"
 
 @func XMLNode.text(Text %value) {
   text() {
@@ -145,6 +148,8 @@ In these cases, the following Tritium is identical:
   }
 }
 
+"Inserts javascript (specified by **%js**) in a script tag within the currently-selected node at the position specified by **%pos**."
+
 @func XMLNode.insert_javascript_at(Position %pos, Text %js) {
   insert_at(%pos, "script") {
     attribute("type", "text/javascript")
@@ -153,7 +158,7 @@ In these cases, the following Tritium is identical:
   }
 }
 
-"Inserts javascript (specified by %js) in a script tag within the currently-selected node."
+"Inserts javascript (specified by **%js**) in a script tag within the currently-selected node."
 
 @func XMLNode.insert_javascript(Text %js) {
   insert_javascript_at(position(), %js) {
@@ -161,7 +166,7 @@ In these cases, the following Tritium is identical:
   }
 }
 
-"Opens the insides of the node to text modification - anything within the node will be overwritten by what is put in %html."
+"Opens the insides of the node to text modification - anything within the node will be overwritten by what is put in **%html**."
 
 @func XMLNode.inner(Text %html) {
   inner() {
@@ -170,7 +175,7 @@ In these cases, the following Tritium is identical:
   } 
 }
 
-"Wraps the selected node in the tag defined by %tag, then yields to the new tag."
+"Wraps the selected node in the tag defined by **%tag**, then yields to the new tag."
 
 @func XMLNode.wrap(Text %tag) {
   %parent_node = this()
@@ -190,7 +195,7 @@ In these cases, the following Tritium is identical:
   }
 }
 
-"Wraps the selected nodes (defined by %selector) in a tag specified by %tag."
+"Wraps the selected nodes (defined by **%selector**) in a tag specified by **%tag**."
 
 @func XMLNode.wrap_together(Text %selector, Text %tag) {
   $(%selector + "[1]") {
@@ -209,12 +214,16 @@ In these cases, the following Tritium is identical:
 }
 
 # This is used to specify the encoding for a page
+"Parses the document into HTML."
+
 @func Text.html(Text %from_enc, Text %to_enc) {
   export("Content-Type-Charset", %to_enc)
   html_doc(%from_enc, %to_enc) {
     yield()
   }
 }
+
+"Parses the document into HTML."
 
 @func Text.html(Text %enc) {
   $encoding = %enc
@@ -225,6 +234,8 @@ In these cases, the following Tritium is identical:
     yield()
   }
 }
+
+"Parses the document into HTML."
 
 @func Text.html() {
   html($guessed_encoding, "utf-8") {
@@ -251,16 +262,16 @@ In these cases, the following Tritium is identical:
   }
 }
 
-"Inserts a tag as above, but at a position specified by %pos (relative to the currently-selected node)."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node)."
 
-@func XMLNode.insert_at(Position %pos, Text %tag, Text %content) {
+@func XMLNode.insert_at(Position %pos, Text %tag, Text %inner) {
   insert_at(%pos, %tag) {
     inner(%content)
     yield()
   }
 }
 
-"Inserts the tag (specified by %tag) into the currently-selected node."
+"Inserts the tag (specified by **%tag**) with content (**%inner**) into the currently-selected node."
 
 @func XMLNode.insert(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
@@ -269,7 +280,7 @@ In these cases, the following Tritium is identical:
   }
 }
 
-"Inserts a tag with content as above, but to the bottom of the currently-selected node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at the bottom of the currently-selected node."
 
 @func XMLNode.insert_bottom(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
@@ -278,7 +289,7 @@ In these cases, the following Tritium is identical:
   }
 }
 
-"Inserts a tag as above, but to the top of the currently-selected node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at the top of the currently-selected node."
 
 @func XMLNode.insert_top(Text %tag, Text %inner) {
   insert_at(position("top"), %tag) {
@@ -287,7 +298,7 @@ In these cases, the following Tritium is identical:
   }
 }
 
-"Inserts a tag as above, but after the currently-selected node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) after the currently-selected node."
 
 @func XMLNode.insert_after(Text %tag, Text %inner) {
   insert_at(position("after"), %tag) {
@@ -296,7 +307,7 @@ In these cases, the following Tritium is identical:
   }
 }
 
-"Inserts a tag as above, but before the currently-selected node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) before the currently-selected node."
 
 @func XMLNode.insert_before(Text %tag, Text %inner) {
   insert_at(position("before"), %tag) {
@@ -305,22 +316,32 @@ In these cases, the following Tritium is identical:
   }
 }
 
+"Inserts javascript (specified by **%js**) in a script tag at the bottom of the currently-selected node."
 
 @func XMLNode.insert_javascript_bottom(Text %js) {
   insert_javascript_at(position("bottom"), %js) {
     yield()
   }
 }
+
+"Inserts javascript (specified by **%js**) in a script tag at the top of the currently-selected node."
+
 @func XMLNode.insert_javascript_top(Text %js) {
   insert_javascript_at(position("top"), %js) {
     yield()
   }
 }
+
+"Inserts javascript (specified by **%js**) in a script tag after the currently-selected node."
+
 @func XMLNode.insert_javascript_after(Text %js) {
   insert_javascript_at(position("after"), %js) {
     yield()
   }
 }
+
+"Inserts javascript (specified by **%js**) in a script tag after the currently-selected node."
+
 @func XMLNode.insert_javascript_before(Text %js) {
   insert_javascript_at(position("before"), %js) {
     yield()
