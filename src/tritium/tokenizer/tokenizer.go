@@ -3,7 +3,6 @@ package tokenizer
 import (
 	"bytes"
 	"rubex/lib"
-	"strconv"
 	"fmt"
 )
 
@@ -227,24 +226,30 @@ func (t *Tokenizer) popError(message string) *Token {
 // Helper for unquoting strings. The main difficulty is that Go strings are
 // exclusively double-quoted, so single-quoted strings need to be converted
 // before being passed to strconv.Unquote(...).
-func (t *Tokenizer) unquote(chars []byte) (string, bool) {
-	var converted []byte
-	if chars[0] == '\'' {
-		converted = bytes.Replace(chars, []byte(`\'`), []byte(`'`), -1)
-		converted = bytes.Replace(converted, []byte(`"`), []byte(`\"`), -1)
-		converted[0] = '"'
-		converted[len(converted)-1] = '"'
-	} else {
-		converted = bytes.Replace(chars, []byte(`\'`), []byte(`'`), -1)		
-	}
-	val, err := strconv.Unquote(string(converted))
-	erroneous := false
-	if err != nil {
-	  erroneous = true
-    // panic("Tokenizing error: bad escape sequence in string literal " + string(converted) + " in " + )
+func unquote(chars []byte) (string, bool) {
+	chars = chars[1:len(chars)-1]
+	converted := make([]byte, 0)
+	for i := 0; i < len(chars); i++ {
+	  if chars[i] == '\\' {
+	    i++
+	    switch chars[i] {
+        case 'n': converted = append(converted, '\n')
+        case 't': converted = append(converted, '\t')
+        case 'b': converted = append(converted, '\b')
+        case 'r': converted = append(converted, '\r')
+        case 'f': converted = append(converted, '\f')
+        case 'v': converted = append(converted, '\v')
+        case 'a': converted = append(converted, '\a')
+        case '\\': converted = append(converted, '\\')
+        default: converted = append(converted, chars[i])
+      }
+    } else {
+      converted = append(converted, chars[i])
+    }
   }
-	return val, erroneous
+  return string(converted), false
 }
+
 
 // The heart of the tokenizer. This function tries to munch off a token from
 // the head of the source text.
@@ -260,7 +265,7 @@ func (t *Tokenizer) munch() *Token {
 		return t.popToken(STRING, c, len(c))
 	} else if t.hasPrefix("'") || t.hasPrefix("\"") {
 		if c := matcher[STRING].Find(src); len(c) > 0 {
-			unquoted, err := t.unquote(c)
+			unquoted, err := unquote(c)
 			if !err {
         return t.popToken(STRING, unquoted, len(c))
       } else {
@@ -313,7 +318,7 @@ func (t *Tokenizer) munch() *Token {
 			t.Source = t.Source[len(c):]
 		} else if c := matcher[STRING].Find(t.Source); len(c) > 0 {
 		  var err bool;
-			tok.Value, err = t.unquote(c)
+			tok.Value, err = unquote(c)
 			if err {
 			  tok = t.popError("illegal escape sequences in import path")
 		  }
