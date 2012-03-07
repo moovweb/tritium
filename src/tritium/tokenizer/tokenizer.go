@@ -227,7 +227,7 @@ func (t *Tokenizer) popError(message string) *Token {
 // Helper for unquoting strings. The main difficulty is that Go strings are
 // exclusively double-quoted, so single-quoted strings need to be converted
 // before being passed to strconv.Unquote(...).
-func unquote(chars []byte) string {
+func (t *Tokenizer) unquote(chars []byte) (string, bool) {
 	var converted []byte
 	if chars[0] == '\'' {
 		converted = bytes.Replace(chars, []byte(`\'`), []byte(`'`), -1)
@@ -238,10 +238,12 @@ func unquote(chars []byte) string {
 		converted = bytes.Replace(chars, []byte(`\'`), []byte(`'`), -1)		
 	}
 	val, err := strconv.Unquote(string(converted))
+	erroneous := false
 	if err != nil {
-	  panic("Tokenizing error: bad escape sequence in string literal " + string(converted))
+	  erroneous = true
+    // panic("Tokenizing error: bad escape sequence in string literal " + string(converted) + " in " + )
   }
-	return val
+	return val, erroneous
 }
 
 // The heart of the tokenizer. This function tries to munch off a token from
@@ -258,8 +260,12 @@ func (t *Tokenizer) munch() *Token {
 		return t.popToken(STRING, c, len(c))
 	} else if t.hasPrefix("'") || t.hasPrefix("\"") {
 		if c := matcher[STRING].Find(src); len(c) > 0 {
-			unquoted := unquote(c)
-			return t.popToken(STRING, unquoted, len(c))
+			unquoted, err := t.unquote(c)
+			if !err {
+        return t.popToken(STRING, unquoted, len(c))
+      } else {
+        return t.popError("illegal escape sequence in string literal")
+      }
 		} else {
 			return t.popError("unterminated string literal")
 		}
@@ -306,7 +312,11 @@ func (t *Tokenizer) munch() *Token {
 			tok.Value = c
 			t.Source = t.Source[len(c):]
 		} else if c := matcher[STRING].Find(t.Source); len(c) > 0 {
-			tok.Value = unquote(c)
+		  var err bool;
+			tok.Value, err = t.unquote(c)
+			if err {
+			  tok = t.popError("illegal escape sequences in import path")
+		  }
 			t.Source = t.Source[len(c):]
 		} else {
 			tok = t.popError("malformed import")
