@@ -1,4 +1,4 @@
-" This is a the way that we have Tritium communicate variables back to its execution environment. That sounds complicated, but in most uses of Tritium, it would be something like export(\"Content-Type\", \"application/js\") to tell the app to change the content-type. Look at the reference for your server for more information on what you can export. "
+" This is a the way that we have Tritium communicate variables back to its execution environment. For example,  `export(\"Content-Type\", \"application/js\")` to change the content-type. "
 
 @func export(Text %key, Text %value) {
   export(%key) {
@@ -6,6 +6,8 @@
     yield()
   }
 }
+
+"Parses regular expressions - so `/a/` is equivalent to `regexp(\"a\")`. (Use hard-coded regex if you can. This is much slower than hard-coding regex.)  "
 
 @func regexp(Text %exp) {
   regexp(%exp, "")
@@ -62,12 +64,14 @@
   }
 }
 
-
+"Similar to `remove()`, but works in the text scope."
 @func Text.clear() {
   set("") {
     yield()
   }
 }
+
+"Opens the current node for text modification. "
 
 @func Text.text() {
   this() {
@@ -75,12 +79,16 @@
   }
 }
 
+"Replaces the regular expression specified by **%search** with the text **%with**. "
+
 @func Text.replace(Regexp %search, Text %with) {
   replace(%search) {
     set(%with)
     yield()
   }
 }
+
+"Replaces the text specified by **%search** with the text **%with**. "
 
 @func Text.replace(Text %search, Text %with) {
   replace(%search) {
