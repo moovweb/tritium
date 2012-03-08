@@ -1,3 +1,4 @@
+" This is a the way that we have Tritium communicate variables back to its execution environment. For example,  `export(\"Content-Type\", \"application/js\")` to change the content-type. "
 
 @func export(Text %key, Text %value) {
   export(%key) {
@@ -6,16 +7,20 @@
   }
 }
 
+"Parses regular expressions - so `/a/` is equivalent to `regexp(\"a\")`. (Use hard-coded regex if you can. This is much slower than hard-coding regex.)  "
+
 @func regexp(Text %exp) {
   regexp(%exp, "")
 }
 
+"Allows reference to the assets folder without hard-coding a path. For example, `asset(\"images/icon.png\")`."
 @func asset(Text %name) {
   concat($asset_host, %name) {
     yield()
   }
 }
 
+"Prints the time a block took to run."
 @func bm(Text %name) {
   log(concat(%name, ": ", 
     time() {
@@ -23,6 +28,7 @@
     }, "s"))
 }
 
+"If only one string is to be matched, it can be placed after the target."
 @func match(Text %target, Text %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -31,6 +37,7 @@
   }
 }
 
+"If only one string is to be matched, it can be placed after the target."
 @func match(Text %target, Regexp %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -39,6 +46,7 @@
   }
 }
 
+"The opposite of `match()`."
 @func match_not(Text %target, Text %comparitor) {
   match(%target) {
     not(%comparitor) {
@@ -47,6 +55,7 @@
   }
 }
 
+"The opposite of `match()`."
 @func match_not(Text %target, Regexp %comparitor) {
   match(%target) {
     not(%comparitor) {
@@ -55,12 +64,14 @@
   }
 }
 
-
+"Similar to `remove()`, but works in the text scope."
 @func Text.clear() {
   set("") {
     yield()
   }
 }
+
+"Opens the current node for text modification. "
 
 @func Text.text() {
   this() {
@@ -68,12 +79,16 @@
   }
 }
 
+"Replaces the regular expression specified by **%search** with the text **%with**. "
+
 @func Text.replace(Regexp %search, Text %with) {
   replace(%search) {
     set(%with)
     yield()
   }
 }
+
+"Replaces the text specified by **%search** with the text **%with**. "
 
 @func Text.replace(Text %search, Text %with) {
   replace(%search) {

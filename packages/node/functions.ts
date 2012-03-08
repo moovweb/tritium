@@ -1,3 +1,5 @@
+" Searches the tree and selects all nodes matching **%xpath**. "
+
 @func Node.$(Text %xpath) {
   select(%xpath) {
     yield()
@@ -20,12 +22,16 @@
   }
 }
 
+" Renames the current node to the tag specified by **%value** (e.g. changes a `div` to a `span`). "
+
 @func Node.name(Text %value) {
   name() {
     set(%value)
     yield()
   }
 }
+
+" Copies the node specified by **%xpath** to the currently-selected node, at the position **%pos**. "
 
 @func Node.copy_here(Text %xpath, Position %pos) {
   %calling_node = this()
@@ -38,11 +44,15 @@
   }
 }
 
+" Copies the node specified by **%xpath** to the currently-selected node, at the position **%pos**. "
+
 @func Node.copy_here(Text %xpath, Text %pos) {
   copy_here(%xpath, position(%pos)) {
     yield() 
   }
 }
+
+" Copies the node specified by **%xpath** to the currently-selected node. "
 
 @func Node.copy_here(Text %xpath) {
   copy_here(%xpath, position()) {
@@ -50,6 +60,8 @@
   } 
 }
 
+
+" Copies the currently-selected node to the node specified by **%xpath**, at the position **%pos**. "
 // Copy some shit
 @func Node.copy_to(Text %xpath, Position %pos) {
   dup() {
@@ -61,11 +73,16 @@
   }
   
 }
+
+" Copies the currently-selected node to the node specified by **%xpath**, at the position **%pos**. "
+
 @func Node.copy_to(Text %xpath, Text %pos) {
   copy_to(%xpath, position(%pos)) {
     yield()
   } 
 }
+
+" Copies the currently-selected node to the node specified by **%xpath**. "
 
 @func Node.copy_to(Text %xpath) {
   copy_to(%xpath, position()) {
@@ -73,12 +90,16 @@
   } 
 }
 
+" Injects HTML (specified by **%html**) into the current node. "
+
 @func Node.inject(Text %html) {
   inject_at("bottom", %html) {
     yield() 
   } 
 }
-    
+
+" Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos**. "
+
 @func Node.move_to(Text %xpath, Position %pos) {
   %parent_node = this()
   $(%xpath) {
@@ -87,17 +108,23 @@
   }
 }
 
+" Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos**. "
+
 @func Node.move_to(Text %xpath, Text %pos) {
   move_to(%xpath, position(%pos)) {
     yield()
   }
 }
 
+" Moves the currently-selected node to the node specified by **%xpath**. "
+
 @func Node.move_to(Text %xpath) {
   move_to(%xpath, position()) {
     yield()
   }
 }
+
+" Moves the node specified by **%xpath** to the currently-selected node, at the position **%pos**. "
 
 @func Node.move_here(Text %where, Position %pos) {
   %parent = this()
@@ -107,11 +134,15 @@
   }
 }
 
+" Moves the node specified by **%xpath** to the currently-selected node, at the position **%pos**. "
+
 @func Node.move_here(Text %where, Text %pos) {
   move_here(%where, position(%pos)) {
     yield()
   }
 }
+
+" Moves the node specified by **%xpath** to the currently-selected node. "
 
 @func Node.move_here(Text %where) {
   move_here(%where, position("bottom")) {
@@ -121,52 +152,80 @@
 
 # DIRECTIONALS... UGH.
 
+" Inserts a tag (specified by **%tag**) in the currently-selected node. "
+
 @func Node.insert(Text %tag) {
   insert_at(position(), %tag) {
     yield()
   }
 }
+
+" Inserts a tag (specified by **%tag**) at the bottom of the currently-selected node."
+
 @func Node.insert_bottom(Text %tag) {
   insert_at(position(), %tag) {
     yield()
   }
 }
+
+" Inserts a tag (specified by **%tag**) at the top of the currently-selected node."
+
 @func Node.insert_top(Text %tag) {
   insert_at(position("top"), %tag) {
     yield()
   }
 }
+
+"Inserts a tag (specified by **%tag**) after the currently-selected node."
+
 @func Node.insert_after(Text %tag) {
   insert_at(position("after"), %tag) {
     yield()
   }
 }
+
+" Inserts a tag (specified by **%tag**) before the currently-selected node. "
+
 @func Node.insert_before(Text %tag) {
   insert_at(position("before"), %tag) {
     yield()
   }
 }
 
+" Injects HTML (specified by **%html**) into the current node. "
+
 @func Node.inject(Text %html) {
   inject_at(position("bottom"), %html) {
     yield()
   }
 }
+
+" Injects HTML (specified by **%html**) at the bottom of the current node. "
+
 @func Node.inject_bottom(Text %html) {
   inject_at(position("bottom"), %html) {
     yield()
   }
 }
+
+" Injects HTML (specified by **%html**) at the top of the current node. "
+
 @func Node.inject_top(Text %html) {
   inject_at(position("top"), %html) {
     yield()
   }
 }
+
+" Injects HTML (specified by **%html**) after the current node. "
+
 @func Node.inject_after(Text %html) {
   inject_at(position("after"), %html) {
     yield()
   }
 }
+
+" Injects HTML (specified by **%html**) before the current node. "
+
 @func Node.inject_before(Text %html) {
   inject_at(position("before"), %html) {
     yield()

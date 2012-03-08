@@ -29,7 +29,7 @@ type Package struct {
 	OutputFile   string
 	Log          log4go.Logger
 	*tp.Package
-	Options PackageOptions
+	Options      PackageOptions
 }
 
 type PackageInfo struct {
@@ -241,8 +241,14 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) (*Error) {
 	fmt.Printf("Time to load header: %0.6fs\n", d)
 
 	s = time.Nanoseconds()
-  entryPoint := filepath.Join(loadPath, "functions.ts")
+	entryPoint := filepath.Join(loadPath, "functions.ts")
+
 	ReadPackageDefinitions(pkg.Package, entryPoint)
+
+	if pkg.Options["generate_docs"] {
+		pkg.CollectFunctionDocs()
+	}
+
 	f = time.Nanoseconds()
 	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
 	fmt.Printf("Time to load definitions: %0.6fs\n", d)
