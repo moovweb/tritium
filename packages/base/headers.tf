@@ -49,7 +49,7 @@
 " Concatenates two (or more) strings. Equivalent to `\"a\" + \"b\"`. "
 @func concat(Text %a, Text %b) Text Text
 
-" " This is a the way that we have Tritium communicate variables back to its execution environment. For example,  `export(\"Content-Type\", \"application/js\")` to change the content-type. "
+" This is a the way that we have Tritium communicate variables back to its execution environment. For example,  `export(\"Content-Type\", \"application/js\")` to change the content-type. "
 @func export(Text %key_name) Text Text
 
 " Returns **%input_string** in ALL CAPS "

@@ -18,7 +18,7 @@
       %span(data-ur-toggler-component='button' data-ur-state='disabled') View Source
       %pre(data-ur-toggler-component='content' data-ur-state='disabled')
         %code
-          :plain
+          :preserve
             {{.ParentScope}}.{{.Stub}} {
             {{.Body}}
             }

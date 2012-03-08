@@ -266,7 +266,7 @@ In these cases, the following Tritium is identical:
 
 @func XMLNode.insert_at(Position %pos, Text %tag, Text %inner) {
   insert_at(%pos, %tag) {
-    inner(%content)
+    inner(%inner)
     yield()
   }
 }
