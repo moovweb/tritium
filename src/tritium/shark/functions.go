@@ -3,22 +3,20 @@ package shark
 import (
 	"strings"
 	"os"
-	"gokogiri/libxml"
+	"gokogiri/html"
+	"gokogiri/xml"
+	"gokogiri/xpath"
 	"fmt"
 	log "log4go"
-	xml "gokogiri/libxml/tree"
 	tp "athena/src/athena/proto"
-	"gokogiri/libxml/xpath"
 	"rubex/lib"
 	"css2xpath"
 	"goconv"
 )
 
-var (
-	InnerReplacer = rubex.MustCompile(`[\\$](\d)`)
-)
-
 func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	InnerReplacer := ctx.RegexpCache[`[\\$](\d)`]
+
 	returnValue = ""
 	switch fun.Name {
 	case "this":
@@ -221,74 +219,91 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		returnValue = scope.Value
 	// XML FUNCTIONS
 	case "xml":
-		doc := libxml.XmlParseString(scope.Value.(string))
+		doc, err := xml.ParseWithBuffer(scope.Value.([]byte), xml.DefaultEncodingBytes, nil, xml.DefaultParseOption, xml.DefaultEncodingBytes, ctx.OutputBuffer)
+		if err != nil {
+			ctx.Log.Error("xml err: %s", err.String())
+			returnValue = "false"
+			return
+		}
 		ns := &Scope{Value: doc}
 		ctx.runChildren(ns, ins)
-		scope.Value = doc.String()
-		returnValue = scope.Value
+		output := doc.ToXml(nil)
+		scope.Value = output
+		returnValue = string(output)
 		doc.Free()
 	case "html_doc.Text.Text":
 		inputEncoding  := args[0].(string)
+		inputEncodingBytes := []byte(inputEncoding)
 		outputEncoding    := args[1].(string)
-		doc := xml.HtmlParseString(scope.Value.(string), inputEncoding)
+		outputEncodingBytes := []byte(outputEncoding)
+		input := scope.Value.([]byte)
+		doc, err := html.ParseWithBuffer(input, inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes, ctx.OutputBuffer)
+		if err != nil {
+			ctx.Log.Error("html_doc err: %s", err.String())
+			returnValue = "false"
+			return
+		}
 		ns := &Scope{Value: doc}
 		ctx.runChildren(ns, ins)
 		if err := doc.SetMetaEncoding(outputEncoding); err != nil {
 			//ctx.Log.Warn("executing html:" + err.String())
 		}
-		scope.Value = doc.DumpHTML()
-		returnValue = scope.Value
+		output := doc.ToHtml(nil)
+		scope.Value = output
+		returnValue = string(output)
 		doc.Free()
 	case "html_fragment.Text":
 		inputEncoding  := args[0].(string)
-		doc := xml.HtmlParseFragment(scope.Value.(string), inputEncoding)
-		ns := &Scope{Value: doc.RootElement()}
+		inputEncodingBytes := []byte(inputEncoding)
+		input := scope.Value.([]byte)
+		fragment, err := html.ParseFragment(input, inputEncodingBytes, nil, html.DefaultParseOption, html.DefaultEncodingBytes, ctx.OutputBuffer)
+		if err != nil {
+			ctx.Log.Error("html_fragment err: %s", err.String())
+			returnValue = "false"
+			return
+		}
+		ns := &Scope{Value: fragment}
 		ctx.runChildren(ns, ins)
 		//output is always utf-8 because the content is internal to Doc.
-		scope.Value = ns.Value.(xml.Node).Content()
+		scope.Value = ns.Value.(*xml.DocumentFragment).Content()
 		returnValue = scope.Value
-		doc.Free()
+		fragment.Node.MyDocument().Free()
 	case "select.Text":
 		// TODO reuse XPath object
 		node := scope.Value.(xml.Node)
-		xpCtx := xpath.NewXPath(node.Doc())
-		if xpCtx == nil {
-			ctx.Logs = append(ctx.Logs, "cannot create new xpath context")
-			returnValue = "0"
+
+		xpathStr := args[0].(string)
+		expr := ctx.XPathCache[xpathStr]
+		if expr == nil {
+			expr = xpath.Compile(xpathStr)
+			if expr == nil {
+				ctx.Log.Error("unable to compile xpath: %s", expr)
+				returnValue = "false"
+				return
+			}
+			ctx.XPathCache[xpathStr] = expr
+		}
+		nodes, err := node.Search(expr)
+		if err != nil {
+			ctx.Log.Error("select err: %s", err.String())
+			returnValue = "false"
 			return
 		}
-		defer xpCtx.Free()
 
-		xpath := xpath.CompileXPath(args[0].(string))
-		if xpath == nil {
-			ctx.Logs = append(ctx.Logs, "Invalid XPath used: " + args[0].(string))
-			returnValue = "0"
-			return
-		}
-		defer xpath.Free()
-		
-		nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
-
-		
-		if len(nodeSet) == 0 {
+		if len(nodes) == 0 {
 			returnValue = "0"
 		} else {
-			returnValue = fmt.Sprintf("%d", len(nodeSet))
+			returnValue = fmt.Sprintf("%d", len(nodes))
 		}
 
-		for index, node := range nodeSet {
-			if node != nil {
-				if doc, ok := node.(*xml.Doc); ok {
-					node = doc.RootElement()
-				}
-				if (node != nil) && node.IsLinked() {
-					if _, ok := node.(*xml.Element); ok {
-						ns := &Scope{Value: node, Index: index}
-						ctx.runChildren(ns, ins)
-					}
-					if _, text := node.(*xml.Text); text {
-						ctx.Logs = append(ctx.Logs, "You have just selected a text() node... THIS IS A TERRIBLE IDEA. Please run 'moov check' and sort it out!")
-					}
+		for index, node := range nodes {
+			if node != nil && node.IsValid() {
+				t := node.NodeType()
+				if t == xml.XML_ELEMENT_NODE {
+					ns := &Scope{Value: node, Index: index}
+					ctx.runChildren(ns, ins)
+				} else if t == xml.XML_TEXT_NODE {
+					ctx.Logs = append(ctx.Logs, "You have just selected a text() node... THIS IS A TERRIBLE IDEA. Please run 'moov check' and sort it out!")
 				}
 			}
 		}
@@ -301,42 +316,36 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "remove":
 		node := scope.Value.(xml.Node)
 		node.Remove()
-		node.Free()
 	case "remove.Text": //Only for XMLNode
-		elem, _ := scope.Value.(xml.Node)
+		node := scope.Value.(xml.Node)
 
-		xpCtx := xpath.NewXPath(elem.Doc())
-		if xpCtx == nil {
-			ctx.Logs = append(ctx.Logs, "cannot create new xpath context")
-			returnValue = "0"
+		xpathStr := args[0].(string)
+		expr := ctx.XPathCache[xpathStr]
+		if expr == nil {
+			expr = xpath.Compile(xpathStr)
+			if expr == nil {
+				ctx.Log.Error("unable to compile xpath: %s", expr)
+				returnValue = "false"
+				return
+			}
+			ctx.XPathCache[xpathStr] = expr
+		}
+		nodes, err := node.Search(expr)
+		if err != nil {
+			ctx.Log.Error("select err: %s", err.String())
+			returnValue = "false"
 			return
 		}
-		defer xpCtx.Free()
 
-		xpath := xpath.CompileXPath(args[0].(string))
-		if xpath == nil {
-			ctx.Logs = append(ctx.Logs, "Invalid XPath used: " + args[0].(string))
-			returnValue = "0"
-			return
-		}
-		defer xpath.Free()
-		
-		nodeSet := xpCtx.SearchByCompiledXPath(elem, xpath).Slice()
-
-		if len(nodeSet) == 0 {
+		if len(nodes) == 0 {
 			returnValue = "0"
 		} else {
-			returnValue = fmt.Sprintf("%d", len(nodeSet))
+			returnValue = fmt.Sprintf("%d", len(nodes))
 		}
 
-		for _, node := range nodeSet {
+		for _, node := range nodes {
 			if node != nil {
-				if doc, ok := node.(*xml.Doc); ok {
-					node = doc.RootElement()
-				}
-				if (node != nil) && node.IsLinked() {
-					node.Remove()
-				}
+				node.Remove()
 			}
 		}
 		
@@ -345,30 +354,23 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		ts := &Scope{Value: node.Content()}
 		ctx.runChildren(ts, ins)
 		val := ts.Value.(string)
-		elem, ok := node.(*xml.Element)
-		if ok && node.IsLinked() {
-			elem.Clear()
-			elem.AppendHtmlContent(val)
-		}
+		node.SetInnerHtml(val)
 		returnValue = val
 	case "inner_text", "text":
 		node := scope.Value.(xml.Node)
 		ts := &Scope{Value: node.Content()}
 		ctx.runChildren(ts, ins)
 		val := ts.Value.(string)
-		_, ok := node.(*xml.Element)
-		if ok && node.IsLinked() {
-			node.SetContent(val)
-		}
+		node.SetContent(val)
 		returnValue = val
 	case "value":
 		node := scope.Value.(xml.Node)
 		ts := &Scope{Value: node.Content()}
 		ctx.runChildren(ts, ins)
 		val := ts.Value.(string)
-		_, ok := node.(*xml.Attribute)
-		if ok && node.IsLinked() {
-			node.SetContent(val)
+		attr, ok := node.(*xml.AttributeNode)
+		if ok {
+			attr.SetValue(val)
 		}
 		returnValue = val
 	case "name":
@@ -379,20 +381,30 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		returnValue = ts.Value.(string)
 	case "dup":
 		node := scope.Value.(xml.Node)
-		newNode := node.Duplicate()
-		_, isElement := node.(*xml.Element)
-		if isElement {
+		newNode := node.Duplicate(1)
+		if newNode.NodeType() == xml.XML_ELEMENT_NODE {
 			MoveFunc(newNode, node, AFTER)
 		}
 		ns := &Scope{Value: newNode}
 		ctx.runChildren(ns, ins)
 	case "fetch.Text":
-		searchNode := scope.Value.(xml.Node)
-		xPathObj := xpath.NewXPath(searchNode.Doc())
-		nodeSet := xPathObj.Search(searchNode, args[0].(string))
-		if nodeSet.Size() > 0 {
-			node := nodeSet.First()
-			attr, ok := node.(*xml.Attribute)
+		node := scope.Value.(xml.Node)
+		xpathStr := args[0].(string)
+		expr := ctx.XPathCache[xpathStr]
+		if expr == nil {
+			expr = xpath.Compile(xpathStr)
+			if expr == nil {
+				ctx.Log.Error("unable to compile xpath: %s", expr)
+				returnValue = "false"
+				return
+			}
+			ctx.XPathCache[xpathStr] = expr
+		}
+		nodes, err := node.Search(expr)
+
+		if len(nodes) > 0 {
+			node := nodes[0]
+			attr, ok := node.(*xml.AttributeNode)
 			if ok {
 				returnValue = attr.Content()
 			} else {
@@ -404,8 +416,6 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			ctx.runChildren(ts, ins)
 			returnValue = ts.Value
 		}
-		
-		xPathObj.Free()
 	case "path":
 		returnValue = scope.Value.(xml.Node).Path()
 
@@ -414,16 +424,11 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		node := scope.Value.(xml.Node)
 		position := args[0].(Position)
 		tagName := args[1].(string)
-		element, err := node.Doc().NewElement(tagName)
-		if err != nil {
-			log.Error("Problem with insert_at(Pos, '" + tagName + "') - " + err.String())
-			returnValue = "false"
-		} else {
-			MoveFunc(element, node, position)
-			ns := &Scope{Value: element}
-			ctx.runChildren(ns, ins)
-			returnValue = "true"
-		}
+		element, err := node.MyDocument().CreateElementNode(tagName)
+		MoveFunc(element, node, position)
+		ns := &Scope{Value: element}
+		ctx.runChildren(ns, ins)
+		returnValue = "true"
 	case "inject_at.Position.Text":
 		node := scope.Value.(xml.Node)
 		position := args[0].(Position)

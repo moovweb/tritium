@@ -5,5 +5,5 @@ import (
 )
 
 type Engine interface {
-	Run(transform *tp.Transform, input string, vars map[string]string) (data string, exports [][]string, logs []string)
+	Run(transform *tp.Transform, input []byte, vars map[string]string) (output []byte, exports [][]string, logs []string)
 }
