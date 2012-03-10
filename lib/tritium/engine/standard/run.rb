@@ -45,7 +45,7 @@ module Tritium
           elsif ins.is_a?(Tritium::Parser::Instructions::InlineBlock)
             run_children(ins, ctx)
           elsif ins.is_a?(Tritium::Parser::Instructions::Literal)
-            ins.value || ""
+            ins.value.dup || ""
           elsif ins.is_a?(Tritium::Parser::Instructions::Reference)
             @env[ins.name.to_s] || ""
           end
