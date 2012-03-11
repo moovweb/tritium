@@ -4,7 +4,7 @@ build:
 	cd src && gb -b
 clean:
 	cd src && gb -c
-	rm src/*/*.pb.go
+	rm -f src/*/*.pb.go
 install:
 	cd src && gb -i
 test:
