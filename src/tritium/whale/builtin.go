@@ -1,11 +1,16 @@
-package shark
+package whale
 
 import tp "athena/src/athena/proto"
 
 type builtInFunc func(*Ctx, *Scope, *tp.Instruction, []interface{}) interface{}
 
-var builtInFunctions = make(map[string]builtInFunc)
+var builtInFunctions map[string]builtInFunc
 
+func init() {
+
+	builtInFunctions = make(map[string]builtInFunc)
+
+}
 func initBuiltInFunctions() {
 	builtInFunctions["yield"] = yield_
 	builtInFunctions["var_Text"] = var_Text

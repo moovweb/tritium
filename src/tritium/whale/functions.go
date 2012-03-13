@@ -1,4 +1,4 @@
-package shark
+package whale
 
 import (
 	"strings"

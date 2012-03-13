@@ -98,7 +98,7 @@ func (ctx *Ctx) UsePackage(pkg *tp.Package) {
 	}
 }
 
-func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]string) (data string, exports [][]string, logs []string) {
+func (eng *Shark) OldRun(transform *tp.Transform, input string, vars map[string]string) (data string, exports [][]string, logs []string) {
 	ctx := &Ctx{
 		Shark:               eng,
 		Exports:             make([][]string, 0),
@@ -119,6 +119,10 @@ func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]str
 	data = scope.Value.(string)
 	exports = ctx.Exports
 	logs = ctx.Logs
+	return
+}
+
+func (eng *Shark) Run(transform *tp.Transform, input []byte, vars map[string]string) (data []byte, exports [][]string, logs []string) {
 	return
 }
 

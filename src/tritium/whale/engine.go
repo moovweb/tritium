@@ -1,4 +1,4 @@
-package shark
+package whale
 
 import (
 	tp "athena/src/athena/proto"
@@ -28,7 +28,7 @@ var Positions = map[string]Position{
 	"below":  BOTTOM,
 }
 
-type Shark struct {
+type Whale struct {
 	RegexpCache   map[string]*rubex.Regexp
 	XPathCache    map[string]*xpath.Expression
 	Log           l4g.Logger
@@ -45,7 +45,7 @@ type Ctx struct {
 	MatchStack          []string
 	MatchShouldContinue []bool
 	Yields              []*YieldBlock
-	*Shark
+	*Whale
 	*tp.Transform
 
 	// Debug info
@@ -70,8 +70,8 @@ type Scope struct {
 
 const OutputBufferSize = 500 * 1024 //500KB
 
-func NewEngine(logger l4g.Logger) *Shark {
-	e := &Shark{
+func NewEngine(logger l4g.Logger) *Whale {
+	e := &Whale{
 		RegexpCache:   make(map[string]*rubex.Regexp),
 		XPathCache:    make(map[string]*xpath.Expression),
 		Log:           logger,
@@ -81,9 +81,9 @@ func NewEngine(logger l4g.Logger) *Shark {
 	return e
 }
 
-func (eng *Shark) Run(transform *tp.Transform, input []byte, vars map[string]string) (output []byte, exports [][]string, logs []string) {
+func (eng *Whale) Run(transform *tp.Transform, input []byte, vars map[string]string) (output []byte, exports [][]string, logs []string) {
 	ctx := &Ctx{
-		Shark:               eng,
+		Whale:               eng,
 		Exports:             make([][]string, 0),
 		Logs:                make([]string, 0),
 		Env:                 vars,

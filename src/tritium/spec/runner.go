@@ -25,7 +25,7 @@ func All(directory string, options ...string) {
 	eng := shark.NewEngine(logger)
 
 	var pkg *tp.Package
-		
+
 	if len(mixerPath) > 0 {
 		// Used when testing in ambrosia
 		mixer := tp.OpenMixer(mixerPath)
@@ -34,7 +34,6 @@ func All(directory string, options ...string) {
 		bigPackage := packager.BuildDefaultPackage()
 		pkg = bigPackage.Package
 	}
-
 
 	globalResult := NewResult()
 	globalResult.all(directory, pkg, eng, logger)
@@ -102,7 +101,7 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 	if err != nil {
 		result.Error(dir, err.String())
 	} else {
-		result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
+		result.Merge(spec.Compare(eng.OldRun(spec.Script, spec.Input, spec.Vars)))
 	}
 	return
 }
