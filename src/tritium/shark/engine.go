@@ -3,9 +3,8 @@ package shark
 import (
 	tp "athena/src/athena/proto"
 	"rubex/lib"
-	"gokogiri/xpath"
-	"gokogiri/xml"
-	"gokogiri/html"
+	"gokogiri/libxml/xpath"
+	xml "gokogiri/libxml/tree"
 	l4g "log4go"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	"fmt"
@@ -35,7 +34,6 @@ type Shark struct {
 	RegexpCache map[string]*rubex.Regexp
 	XPathCache  map[string]*xpath.Expression
 	Log         l4g.Logger
-	OutputBuffer  []byte
 }
 
 type Ctx struct {
@@ -70,16 +68,12 @@ type Scope struct {
 	Index int
 }
 
-const OutputBufferSize = 500*1024 //500KB
-
 func NewEngine(logger l4g.Logger) *Shark {
 	e := &Shark{
 		RegexpCache: make(map[string]*rubex.Regexp),
 		XPathCache:  make(map[string]*xpath.Expression),
 		Log:         logger,
-		OutputBuffer: make([]byte, OutputBufferSize),
 	}
-	e.RegexpCache[`[\\$](\d)`] = rubex.MustCompile(`[\\$](\d)`)
 	return e
 }
 
@@ -104,7 +98,7 @@ func (ctx *Ctx) UsePackage(pkg *tp.Package) {
 	}
 }
 
-func (eng *Shark) Run(transform *tp.Transform, input []byte, vars map[string]string) (output []byte, exports [][]string, logs []string) {
+func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]string) (data string, exports [][]string, logs []string) {
 	ctx := &Ctx{
 		Shark:               eng,
 		Exports:             make([][]string, 0),
@@ -122,7 +116,7 @@ func (eng *Shark) Run(transform *tp.Transform, input []byte, vars map[string]str
 	obj := transform.Objects[0]
 	ctx.filename = proto.GetString(obj.Name)
 	ctx.runInstruction(scope, obj.Root)
-	output = scope.Value.([]byte)
+	data = scope.Value.(string)
 	exports = ctx.Exports
 	logs = ctx.Logs
 	return
@@ -244,17 +238,12 @@ func (ctx *Ctx) runChildren(scope *Scope, ins *tp.Instruction) (returnValue inte
 func MoveFunc(what, where xml.Node, position Position) {
 	switch position {
 	case BOTTOM:
-		where.AddChild(what)
+		where.AppendChildNode(what)
 	case TOP:
-		firstChild := where.FirstChild()
-		if firstChild == nil {
-			where.AddChild(what)
-		} else {
-			firstChild.InsertBefore(what)
-		}
+		where.PrependChildNode(what)
 	case BEFORE:
-		where.InsertBefore(what)
+		where.AddNodeBefore(what)
 	case AFTER:
-		where.InsertAfter(what)
+		where.AddNodeAfter(what)
 	}
 }
