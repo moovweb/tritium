@@ -1,0 +1,33 @@
+<script type="text/javascript">
+try {
+var productNAPage = "",
+suppressReviews = "false";
+var bvtoken = MACYS.util.Cookie.get("BazaarVoiceToken","GCs");
+//bvtoken=bvtoken.substring(0,bvtoken.length-1);
+$BV.configure("global", {
+userToken: bvtoken,
+productId: '531726',
+submissionUI: 'LIGHTBOX',
+submissionContainerUrl: window.location.href,
+allowSamePageSubmission: true,
+doLogin: function(callback, success_url) {
+MACYS.util.Cookie.set("FORWARDPAGE_KEY",success_url);
+window.location = 'https://www.macys.com/signin/index.ognc?fromPage=pdpReviews';
+},
+doShowContent: function(app, dc, sub, sr) {
+if (suppressReviews !== 'true' && app == "PRR") {
+MACYS.pdp.showReviewsTab();
+} else if (productNAPage !== 'true' && app == "QA") {
+MACYS.pdp.showQATab();
+}
+}
+});
+if (suppressReviews !== 'true') {
+$BV.ui('rr', 'show_reviews', {
+});
+}
+$BV.ui("qa", "show_questions", {
+subjectType: 'product'
+});
+} catch ( e ) { }
+</script>
