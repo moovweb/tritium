@@ -1,73 +1,77 @@
-// Looks up a global variable
+
+" Allows you to set global variables. Equivalent to `$`."
 @func var(Text %name) Text Text
+" Allows you to set global variables. Equivalent to `$`."
 @func var(Text %name, Text %value) Text Text
 
-// If given a block, it returns the time-to-execute as a string (time units vary by implementation)
+" Returns the time-to-execute (time units vary by implementation). "
 @func time() Text
 
-// Opens up a matcher case
+" Specifies a target (specified by **%target**, e.g. `$path`) to be searched. To be used in conjunction with `with()`."
 @func match(Text %match_target) Text
 
-// Writes out a string to the console and debug log
+" Writes out a string (**%log_message**) to the console and debug log "
 @func log(Text %log_message) Text Text
 
-// Used to denote when a function is deprecated
+" Returns the warning **%message** when a function is deprecated. Mostly useful when defining functions. "
 @func deprecated(Text %message) Text Text
 
-// Used with match($var) {not('hi')}
+" Used with `match()` as an opposite of `with()`. For example, `match($var) {not('hi')}`. "
 @func not(Text %text) Text
 
-// Used with match($var) {not(/hi/)}
+" Used with `match()` as an opposite of `with()`. For example, `match($var) {not('hi')}`. "
 @func not(Regexp %regexp) Text
 
-// Used with match($var, 'hi')
+" Used with `match()`. Allows the match function to specify what is being matched. For example: `match($path) { with(\"something\") }`."
 @func with(Text %text) Text
 
-// Used with match($var, /hi/)
+" Used with `match()`. Allows the match function to specify what is being matched. For example: `match($path) { with(\"something\") }`."
 @func with(Regexp %regexp) Text
 
-// Convert from one encoding to another
+" Convert from one encoding to another. (If you want a list of encodings, you can run `iconv -l` on your command line.) "
 @func Text.convert_encoding(Text %from, Text %to) Text
 
-// Always matches
+" Completes the sudo-logic of `with()`, allowing the specification of an alternative."
 @func else() Text
 
-// Only used in Functions
-
+" Only used within functions  - enables functions within the scope of the current function to be performed. "
 @func yield() Text
-// Note : I had to add a return type to the above stub to make it parse correctly. H says all things should havae return types, so this should be OK
+
+" Only used within functions - enables functions within the scope of the current function to be performed. "
 @func Text.yield() Text
 
-// Returns the current text value
+" Returns the current text value "
 @func Text.this() Text
 
-// Any value passed into this function will return a regex --- ready for fancy replace() or match() usage. NOTE! Use hard-coded regex if you can. This is much slower than hard-coding regex!
+" Parses regular expressions - so `/a/` is equivalent to `regexp(\"a\")`. (Use hard-coded regex if you can. This is much slower than hard-coding regex.) The **%options** text allows [Ruby modifiers](http://www.regular-expressions.info/ruby.html) to be included. "
 @func regexp(Text %expression, Text %options) Regexp Text
 
-// A function for concatenating strings. Can accept 2 or more args
+" Concatenates two (or more) strings. Equivalent to `\"a\" + \"b\"`. "
 @func concat(Text %a, Text %b) Text Text
 
-// This is a the way that we have Tritium communicate variables back to its execution environment. That sounds complicated, but in most uses of Tritium, it would be something like export("Content-Type", "application/js") to tell the app to change the content-type. Look at the reference for your server for more information on what you can export.
+" This is a the way that we have Tritium communicate variables back to its execution environment. For example,  `export(\"Content-Type\", \"application/js\")` to change the content-type. "
 @func export(Text %key_name) Text Text
 
-// Returns the input argument in ALL CAPS
+" Returns **%input_string** in ALL CAPS "
 @func upcase(Text %input_string) Text
 
-// Returns the input argument in lower case
+" Returns **%input_string** in lower case "
 @func downcase(Text %input_string) Text
 
-// Returns the current text scope as a string. Useful to pass the current Text as an argument
+" Returns the current text scope as a string. Useful to pass the current Text as an argument. "
 @func Text.text() Text Text
 
-// Replace the entire current text with what you pass in
+" Replaces the entire current text with what you pass in "
 @func Text.set(Text %value) Text
 
-// Replace all instances of the first argument with the second argument. This yields to a Text scope that allows you to set the Replacement string. Very powerful stuff. Look at the examples.
+" Replaces all instances of the regular expression **%search**. This yields to a Text scope that allows you to set the replacement string using `with()`. "
 @func Text.replace(Regexp %search) Text Text
+
+" Replaces all instances of the text **%search**. This yields to a Text scope that allows you to set the replacement string using `with()`. "
 @func Text.replace(Text %search) Text Text
 
-// Prepend the string to the front of the text area
+" Adds **%text_to_prepend** to the beginning of the text. "
 @func Text.prepend(Text %text_to_prepend) Text
 
-// Append the string to the front of the text area
+" Adds **%text_to_append** to the end of the text. "
 @func Text.append(Text %text_to_append) Text

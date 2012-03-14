@@ -77,8 +77,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		returnValue = "false"
 		if ctx.matchShouldContinue() {
 			if args[0].(string) == ctx.matchTarget() {
-				ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
 				ctx.runChildren(scope, ins)
+				ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
 				returnValue = "true"
 			}
 		}
@@ -87,8 +87,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		if ctx.matchShouldContinue() {
 			//println(matcher.MatchAgainst, matchWith)
 			if (args[0].(*rubex.Regexp)).Match([]uint8(ctx.matchTarget())) {
-				ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
 				ctx.runChildren(scope, ins)
+				ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
 				returnValue = "true"
 			}
 		}
@@ -252,15 +252,23 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		// TODO reuse XPath object
 		node := scope.Value.(xml.Node)
 		xpCtx := xpath.NewXPath(node.Doc())
+		if xpCtx == nil {
+			ctx.Logs = append(ctx.Logs, "cannot create new xpath context")
+			returnValue = "0"
+			return
+		}
+		defer xpCtx.Free()
+
 		xpath := xpath.CompileXPath(args[0].(string))
 		if xpath == nil {
 			ctx.Logs = append(ctx.Logs, "Invalid XPath used: " + args[0].(string))
 			returnValue = "0"
 			return
 		}
-		nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
-		defer xpCtx.Free()
 		defer xpath.Free()
+		
+		nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
+
 		
 		if len(nodeSet) == 0 {
 			returnValue = "0"
@@ -298,15 +306,22 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		elem, _ := scope.Value.(xml.Node)
 
 		xpCtx := xpath.NewXPath(elem.Doc())
+		if xpCtx == nil {
+			ctx.Logs = append(ctx.Logs, "cannot create new xpath context")
+			returnValue = "0"
+			return
+		}
+		defer xpCtx.Free()
+
 		xpath := xpath.CompileXPath(args[0].(string))
 		if xpath == nil {
 			ctx.Logs = append(ctx.Logs, "Invalid XPath used: " + args[0].(string))
 			returnValue = "0"
 			return
 		}
-		nodeSet := xpCtx.SearchByCompiledXPath(elem, xpath).Slice()
-		defer xpCtx.Free()
 		defer xpath.Free()
+		
+		nodeSet := xpCtx.SearchByCompiledXPath(elem, xpath).Slice()
 
 		if len(nodeSet) == 0 {
 			returnValue = "0"

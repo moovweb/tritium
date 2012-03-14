@@ -15,7 +15,7 @@ xml()  {
   }
 
   var("fifth", "worked")
-  match(var("first"), "\^o\$") {
+  match(var("first"), "^o$") {
     var("fifth", "failed");
   }
 

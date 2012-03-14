@@ -107,6 +107,18 @@ func (p *Parser) Parse() *ir.ScriptObject {
 		switch p.peek().Lexeme {
 		case FUNC:
 			defs = append(defs, p.definition())
+			
+			if len(stmts) > 0 {
+				previousStatement := stmts[len(stmts)-1]
+				if *previousStatement.Type == ir.Instruction_TEXT {
+					defs[len(defs)-1].Description = previousStatement.Value
+					if len(stmts) > 1 {						
+						stmts = stmts[:len(stmts)-2]
+					} else if len(stmts) == 1 {
+						stmts = stmts[0:0]
+					}
+				}
+			}
 		default:
 			stmts = append(stmts, p.statement())
 		}
