@@ -14,6 +14,11 @@ import (
 	"goconv"
 )
 
+func this_(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	returnValue = scope.Value
+	return
+}
+
 func yield_(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	myYieldBlock := ctx.yieldBlock()
 	ctx.Yields = ctx.Yields[:(len(ctx.Yields) - 1)]
@@ -431,6 +436,24 @@ func value(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (ret
 	returnValue = val
 	return
 }
+
+func move_XMLNode_XMLNode_Position(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}){
+	MoveFunc(args[0].(xml.Node), args[1].(xml.Node), args[2].(Position))
+	return
+}
+
+func inner(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}){
+	node := scope.Value.(xml.Node)
+	ts := &Scope{Value: node.Content()}
+	ctx.runChildren(ts, ins)
+	val := ts.Value.([]byte)
+	println("val:", string(val))
+	node.SetInnerHtml(val)
+	returnValue = val
+	return
+}
+
+
 /*
 
 
