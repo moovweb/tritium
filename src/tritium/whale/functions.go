@@ -350,7 +350,7 @@ func select_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}
 	if expr == nil {
 		expr = xpath.Compile(xpathStr)
 		if expr == nil {
-			ctx.Log.Error("unable to compile xpath: %s", expr)
+			ctx.Logs = append(ctx.Logs, "Invalid XPath used: "+xpathStr)
 			returnValue = "false"
 			return
 		}
@@ -386,6 +386,42 @@ func select_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}
 func remove_(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	node.Remove()
+	return
+}
+
+func remove_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+
+	xpathStr := args[0].(string)
+	expr := ctx.XPathCache[xpathStr]
+	if expr == nil {
+		expr = xpath.Compile(xpathStr)
+		if expr == nil {
+			ctx.Logs = append(ctx.Logs, "Invalid XPath used: "+xpathStr)
+			returnValue = "0"
+			return
+		}
+		ctx.XPathCache[xpathStr] = expr
+	}
+	nodes, err := node.Search(expr)
+	if err != nil {
+		ctx.Log.Error("select err: %s", err.String())
+		returnValue = "false"
+		return
+	}
+
+	if len(nodes) == 0 {
+		returnValue = "0"
+	} else {
+		returnValue = fmt.Sprintf("%d", len(nodes))
+	}
+
+	for _, node := range nodes {
+		if node != nil {
+			node.Remove()
+		}
+	}
+
 	return
 }
 
@@ -437,23 +473,56 @@ func value(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (ret
 	return
 }
 
-func move_XMLNode_XMLNode_Position(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}){
+func move_XMLNode_XMLNode_Position(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	MoveFunc(args[0].(xml.Node), args[1].(xml.Node), args[2].(Position))
 	return
 }
 
-func inner(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}){
+func inner(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	ts := &Scope{Value: node.Content()}
 	ctx.runChildren(ts, ins)
 	val := ts.Value.([]byte)
-	println("val:", string(val))
 	node.SetInnerHtml(val)
 	returnValue = val
 	return
 }
 
+func equal_XMLNode_XMLNode(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	returnValue = "false"
+	node1 := args[0].(xml.Node)
+	node2 := args[1].(xml.Node)
+	if node1.NodePtr() == node2.NodePtr() {
+		returnValue = "true"
+	}
+	return
+}
 
+func move_children_to_XMLNode_Position(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	destNode := args[0].(xml.Node)
+	if destNode.NodeType() == xml.XML_ELEMENT_NODE {
+		child := node.FirstChild()
+		for child != nil {
+			nextChild := child.NextSibling()
+			if child.NodePtr() != destNode.NodePtr() {
+				returnValue = "true"
+				MoveFunc(child, destNode, args[1].(Position))
+			}
+			child = nextChild
+		}
+	}
+	return
+}
+
+func name(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	ts := &Scope{Value: node.Name()}
+	ctx.runChildren(ts, ins)
+	node.SetName(ts.Value.(string))
+	returnValue = ts.Value.(string)
+	return
+}
 /*
 
 
@@ -521,12 +590,7 @@ func inner(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (ret
 			attr.SetValue(val)
 		}
 		returnValue = val
-	case "name":
-		node := scope.Value.(xml.Node)
-		ts := &Scope{Value: node.Name()}
-		ctx.runChildren(ts, ins)
-		node.SetName(ts.Value.(string))
-		returnValue = ts.Value.(string)
+
 	case "dup":
 		node := scope.Value.(xml.Node)
 		newNode := node.Duplicate(1)
@@ -620,20 +684,7 @@ func inner(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (ret
 			}
 			child = childNext
 		}
-	case "move_children_to.XMLNode.Position", "move_children_to.Node.Position":
-		node := scope.Value.(xml.Node)
-		element, ok := args[0].(*xml.Element)
-		if ok {
-			child := node.First()
-			for child != nil {
-				newChild := child.Next()
-				if child != element {
-					returnValue = "true"
-					MoveFunc(child, element, args[1].(Position))
-				}
-				child = newChild
-			}
-		}
+
 	case "equal.XMLNode.XMLNode", "equal.Node.Node":
 		returnValue = "false"
 		if args[0] == args[1] {

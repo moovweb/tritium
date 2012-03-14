@@ -19,7 +19,6 @@ func init() {
 	builtInFunctions["select.Text"] = select_Text
 	builtInFunctions["export.Text"] = export_Text
 	builtInFunctions["set.Text"] = set_Text
-	builtInFunctions["remove"] = remove_
 	builtInFunctions["concat.Text.Text"] = concat_Text_Text
 	builtInFunctions["var.Text"] = var_Text
 	builtInFunctions["var.Text.Text"] = var_Text_Text
@@ -30,4 +29,18 @@ func init() {
 	builtInFunctions["move.XMLNode.XMLNode.Position"] = move_XMLNode_XMLNode_Position
 	builtInFunctions["move.Node.Node.Position"] = move_XMLNode_XMLNode_Position
 	builtInFunctions["inner"] = inner
+	builtInFunctions["html_doc.Text.Text"] = html_doc_Text_Text
+	builtInFunctions["match.Text"] = match_Text
+	builtInFunctions["with.Text"] = with_Text
+	builtInFunctions["remove.Text"] = remove_Text
+	builtInFunctions["remove"] = remove_
+
+	builtInFunctions["log.Text"] = log_Text
+
+	builtInFunctions["equal.XMLNode.XMLNode"] = equal_XMLNode_XMLNode
+	builtInFunctions["equal.Node.Node"] = equal_XMLNode_XMLNode
+	builtInFunctions["move_children_to.Node.Position"] = move_children_to_XMLNode_Position
+	builtInFunctions["move_children_to.XMLNode.Position"] = move_children_to_XMLNode_Position
+
+	builtInFunctions["name"] = name
 }
