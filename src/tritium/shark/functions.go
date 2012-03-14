@@ -23,6 +23,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	switch fun.Name {
 	case "this":
 		returnValue = scope.Value
+		println("this:", returnValue.(xml.Node).String())
 	case "yield":
 		myYieldBlock := ctx.yieldBlock()
 		ctx.Yields = ctx.Yields[:(len(ctx.Yields) - 1)]
@@ -448,6 +449,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			elem.SetCDataContent(args[0].(string))
 		}
 	case "move.XMLNode.XMLNode.Position", "move.Node.Node.Position":
+		println("what", args[0].(xml.Node).String())
+		println("where", args[1].(xml.Node).String())
 		MoveFunc(args[0].(xml.Node), args[1].(xml.Node), args[2].(Position))
 	case "wrap_text_children.Text":
 		returnValue = "false"

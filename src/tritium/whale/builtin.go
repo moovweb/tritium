@@ -9,6 +9,7 @@ var builtInFunctions map[string]builtInFunc
 func init() {
 	builtInFunctions = make(map[string]builtInFunc)
 
+	builtInFunctions["this"] = this_
 	builtInFunctions["yield"] = yield_
 	builtInFunctions["var_Text"] = var_Text
 	builtInFunctions["var_Text_Text"] = var_Text_Text
@@ -26,4 +27,7 @@ func init() {
 	builtInFunctions["insert_at.Position.Text"] = insert_at_Position_Text
 	builtInFunctions["attribute.Text"] = attribute_Text
 	builtInFunctions["value"] = value
+	builtInFunctions["move.XMLNode.XMLNode.Position"] = move_XMLNode_XMLNode_Position
+	builtInFunctions["move.Node.Node.Position"] = move_XMLNode_XMLNode_Position
+	builtInFunctions["inner"] = inner
 }
