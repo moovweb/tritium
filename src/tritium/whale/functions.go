@@ -10,7 +10,7 @@ import (
 	//log "log4go"
 	tp "athena/src/athena/proto"
 	"rubex/lib"
-	//"css2xpath"
+	"css2xpath"
 	"goconv"
 )
 
@@ -95,7 +95,7 @@ func with_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) 
 	return
 }
 
-func with_Regex(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func with_Regexp(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
 	if ctx.matchShouldContinue() {
 		//println(matcher.MatchAgainst, matchWith)
@@ -120,7 +120,7 @@ func not_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (
 	return
 }
 
-func not_Regex(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func not_Regexp(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
 	if ctx.matchShouldContinue() {
 		//println(matcher.MatchAgainst, matchWith)
@@ -217,7 +217,7 @@ func prepend_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{
 	return
 }
 
-func index_XmlNode(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func index_XMLNode(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = fmt.Sprintf("%d", scope.Index+1)
 	return
 }
@@ -451,6 +451,7 @@ func attribute_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interfac
 		attr = node.Attribute(name)
 	}
 	if attr != nil {
+		println("attr", attr.String())
 		as := &Scope{Value: attr}
 		ctx.runChildren(as, ins)
 		if attr.Value() == "" {
@@ -465,6 +466,7 @@ func value(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (ret
 	node := scope.Value.(xml.Node)
 	ts := &Scope{Value: node.Content()}
 	ctx.runChildren(ts, ins)
+
 	val := ts.Value.([]byte)
 	if attr, ok := node.(*xml.AttributeNode); ok {
 		attr.SetValue(val)
@@ -523,173 +525,137 @@ func name(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (retu
 	returnValue = ts.Value.(string)
 	return
 }
-/*
 
+func text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	ts := &Scope{Value: node.Content()}
+	ctx.runChildren(ts, ins)
+	val := ts.Value.(string)
+	node.SetContent(val)
+	returnValue = val
+	return
+}
 
-	case "css.Text":
-		returnValue = css2xpath.Convert(args[0].(string), css2xpath.LOCAL)
-	case "position.Text":
-		returnValue = Positions[args[0].(string)]
+func dup(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	newNode := node.Duplicate(1)
+	if newNode.NodeType() == xml.XML_ELEMENT_NODE {
+		MoveFunc(newNode, node, AFTER)
+	}
+	ns := &Scope{Value: newNode}
+	ctx.runChildren(ns, ins)
+	return
+}
 
-	// SHARED NODE FUNCTIONS
-
-	case "remove.Text": //Only for XMLNode
-		node := scope.Value.(xml.Node)
-
-		xpathStr := args[0].(string)
-		expr := ctx.XPathCache[xpathStr]
+func fetch_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	xpathStr := args[0].(string)
+	expr := ctx.XPathCache[xpathStr]
+	if expr == nil {
+		expr = xpath.Compile(xpathStr)
 		if expr == nil {
-			expr = xpath.Compile(xpathStr)
-			if expr == nil {
-				ctx.Log.Error("unable to compile xpath: %s", expr)
-				returnValue = "false"
-				return
-			}
-			ctx.XPathCache[xpathStr] = expr
-		}
-		nodes, err := node.Search(expr)
-		if err != nil {
-			ctx.Log.Error("select err: %s", err.String())
+			ctx.Logs = append(ctx.Logs, "Invalid XPath used: "+xpathStr)
 			returnValue = "false"
 			return
 		}
+		ctx.XPathCache[xpathStr] = expr
+	}
+	nodes, err := node.Search(expr)
 
-		if len(nodes) == 0 {
-			returnValue = "0"
+	if err == nil && len(nodes) > 0 {
+		node := nodes[0]
+		if node.NodeType() == xml.XML_ATTRIBUTE_NODE {
+			returnValue = node.Content()
 		} else {
-			returnValue = fmt.Sprintf("%d", len(nodes))
+			returnValue = node.String()
 		}
-
-		for _, node := range nodes {
-			if node != nil {
-				node.Remove()
-			}
-		}
-
-	case "inner":
-		node := scope.Value.(xml.Node)
-		ts := &Scope{Value: node.Content()}
+	}
+	if len(ins.Children) > 0 {
+		ts := &Scope{Value: returnValue}
 		ctx.runChildren(ts, ins)
-		val := ts.Value.(string)
-		node.SetInnerHtml(val)
-		returnValue = val
-	case "inner_text", "text":
-		node := scope.Value.(xml.Node)
-		ts := &Scope{Value: node.Content()}
-		ctx.runChildren(ts, ins)
-		val := ts.Value.(string)
-		node.SetContent(val)
-		returnValue = val
-	case "value":
-		node := scope.Value.(xml.Node)
-		ts := &Scope{Value: node.Content()}
-		ctx.runChildren(ts, ins)
-		val := ts.Value.(string)
-		attr, ok := node.(*xml.AttributeNode)
-		if ok {
-			attr.SetValue(val)
-		}
-		returnValue = val
+		returnValue = ts.Value
+	}
+	return
+}
 
-	case "dup":
-		node := scope.Value.(xml.Node)
-		newNode := node.Duplicate(1)
-		if newNode.NodeType() == xml.XML_ELEMENT_NODE {
-			MoveFunc(newNode, node, AFTER)
-		}
-		ns := &Scope{Value: newNode}
-		ctx.runChildren(ns, ins)
-	case "fetch.Text":
-		node := scope.Value.(xml.Node)
-		xpathStr := args[0].(string)
-		expr := ctx.XPathCache[xpathStr]
-		if expr == nil {
-			expr = xpath.Compile(xpathStr)
-			if expr == nil {
-				ctx.Log.Error("unable to compile xpath: %s", expr)
-				returnValue = "false"
-				return
-			}
-			ctx.XPathCache[xpathStr] = expr
-		}
-		nodes, err := node.Search(expr)
+func deprecated_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	ctx.Log.Info(args[0].(string))
+	return
+}
 
-		if len(nodes) > 0 {
-			node := nodes[0]
-			attr, ok := node.(*xml.AttributeNode)
-			if ok {
-				returnValue = attr.Content()
-			} else {
-				returnValue = node.String()
+func cdata_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	if node.NodeType() == xml.XML_ELEMENT_NODE {
+		content := args[0].(string)
+		cdata := node.MyDocument().CreateCData(content)
+		first := node.FirstChild()
+		if first != nil {
+			node.ResetChildren()
+		}
+		node.AddChild(cdata)
+	}
+	return
+}
+
+func inject_at_Position_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	position := args[0].(Position)
+	input := args[1].([]byte)
+
+	nodes, err := node.Coerce(input)
+	if err == nil {
+		for _, n := range nodes {
+			if position == BEFORE {
+				node.InsertBefore(n)
+			} else if position == AFTER {
+				node.InsertAfter(n)
+			} else if position == TOP {
+				node.InsertBegin(n)
+			} else if position == BOTTOM {
+				node.InsertEnd(n)
 			}
 		}
-		if len(ins.Children) > 0 {
-			ts := &Scope{Value: returnValue}
-			ctx.runChildren(ts, ins)
-			returnValue = ts.Value
-		}
-	case "path":
-		returnValue = scope.Value.(xml.Node).Path()
-
-	// LIBXML FUNCTIONS
-	case "insert_at.Position.Text":
-		node := scope.Value.(xml.Node)
-		position := args[0].(Position)
-		tagName := args[1].(string)
-		element := node.MyDocument().CreateElementNode(tagName)
-		MoveFunc(element, node, position)
-		ns := &Scope{Value: element}
-		ctx.runChildren(ns, ins)
-		returnValue = "true"
-	case "inject_at.Position.Text":
-		node := scope.Value.(xml.Node)
-		position := args[0].(Position)
-		input := args[1].(string)
-		nodeSet := node.MyDocument().ParseHtmlFragment(input, node.Doc().GetEncoding())
-		for _, newNode := range nodeSet {
-			MoveFunc(newNode, node, position)
-		}
-		if len(nodeSet) > 0 {
-			element, ok := nodeSet[0].(*xml.Element)
-			if ok {
-				// successfully ran scope
-				returnValue = "true"
-				ns := &Scope{Value: element}
-				ctx.runChildren(ns, ins)
-			}
-		} else {
-			returnValue = "false"
-		}
-	case "cdata.Text":
-		elem, ok := scope.Value.(*xml.Element)
-		if ok {
-			elem.SetCDataContent(args[0].(string))
-		}
-	case "move.XMLNode.XMLNode.Position", "move.Node.Node.Position":
-		MoveFunc(args[0].(xml.Node), args[1].(xml.Node), args[2].(Position))
-	case "wrap_text_children.Text":
-		returnValue = "false"
-		child := scope.Value.(xml.Node).First()
-		index := 0
-		tagName := args[0].(string)
-		for child != nil {
-			text, ok := child.(*xml.Text)
-			childNext := child.Next()
-			if ok {
-				returnValue = "true"
-				wrap := text.Wrap(tagName)
-				ns := &Scope{wrap, index}
-				ctx.runChildren(ns, ins)
-				index++
-			}
-			child = childNext
-		}
-
-	case "equal.XMLNode.XMLNode", "equal.Node.Node":
-		returnValue = "false"
-		if args[0] == args[1] {
+	}
+	if len(nodes) > 0 {
+		first := nodes[0]
+		if first.NodeType() == xml.XML_ELEMENT_NODE {
+			// successfully ran scope
 			returnValue = "true"
+			ns := &Scope{Value: first}
+			ctx.runChildren(ns, ins)
 		}
+	} else {
+		returnValue = "false"
+	}
+	return
+}
+
+func path(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	returnValue = scope.Value.(xml.Node).Path()
+	return
+}
+
+func css_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	returnValue = css2xpath.Convert(args[0].(string), css2xpath.LOCAL)
+	return
+}
+
+func wrap_text_children_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	returnValue = "false"
+	node := scope.Value.(xml.Node)
+	if textNodes, err := node.Search("./text()"); err == nil {
+		tagName := args[0].(string)
+		tag := fmt.Sprintf("<%s />", tagName)
+		for index, textNode := range textNodes {
+			textNode.Wrap(tag)
+			ns := &Scope{textNode, index}
+			ctx.runChildren(ns, ins)
+		}
+	}
+	return
+}
+
+/*
 
 	// ATTRIBUTE FUNCTIONS
 	case "attribute.Text":

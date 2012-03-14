@@ -43,4 +43,38 @@ func init() {
 	builtInFunctions["move_children_to.XMLNode.Position"] = move_children_to_XMLNode_Position
 
 	builtInFunctions["name"] = name
+
+	builtInFunctions["append.Text"] = append_Text
+	builtInFunctions["html_fragment.Text"] = html_fragment_Text
+
+	builtInFunctions["regexp.Text.Text"] = regexp_Text_Text
+	builtInFunctions["replace.Regexp"] = replace_Regexp
+	builtInFunctions["inner_text"] = text
+	builtInFunctions["text"] = text
+
+	builtInFunctions["dup"] = dup
+	builtInFunctions["with.Regexp"] = with_Regexp
+
+	builtInFunctions["replace.Text"] = replace_Text
+
+	builtInFunctions["fetch.Text"] = fetch_Text
+
+	builtInFunctions["prepend.Text"] = prepend_Text
+
+	builtInFunctions["deprecated.Text"] = deprecated_Text
+
+	builtInFunctions["index.XMLNode"] = index_XMLNode
+	builtInFunctions["index.Node"] = index_XMLNode
+
+	builtInFunctions["cdata.Text"] = cdata_Text
+
+	builtInFunctions["else"] = else_
+
+	builtInFunctions["inject_at.Position.Text"] = inject_at_Position_Text
+
+	builtInFunctions["not.Text"] = not_Text
+	builtInFunctions["not.Regexp"] = not_Regexp
+	builtInFunctions["path"] = path
+	builtInFunctions["css.Text"] = css_Text
+	builtInFunctions["wrap_text_children.Text"] = wrap_text_children_Text
 }
