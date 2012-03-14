@@ -404,13 +404,31 @@ func insert_at_Position_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args [
 func attribute_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	name := args[0].(string)
-	if _, ok := node.(*xml.Element); ok {
-		attr, _ := node.Attribute(name)
+	attr := node.Attribute(name)
+	if attr == nil {
+		node.SetAttr(name, "")
+		attr = node.Attribute(name)
+	}
+	if attr != nil {
 		as := &Scope{Value: attr}
 		ctx.runChildren(as, ins)
-		attr.Remove()
+		if attr.Value() == "" {
+			attr.Remove()
+		}
 		returnValue = "true"
 	}
+	return
+}
+
+func value(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	ts := &Scope{Value: node.Content()}
+	ctx.runChildren(ts, ins)
+	val := ts.Value.([]byte)
+	if attr, ok := node.(*xml.AttributeNode); ok {
+		attr.SetValue(val)
+	}
+	returnValue = val
 	return
 }
 /*

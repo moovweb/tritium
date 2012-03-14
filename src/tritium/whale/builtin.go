@@ -25,4 +25,5 @@ func init() {
 	builtInFunctions["position.Text"] = position_Text
 	builtInFunctions["insert_at.Position.Text"] = insert_at_Position_Text
 	builtInFunctions["attribute.Text"] = attribute_Text
+	builtInFunctions["value"] = value
 }
