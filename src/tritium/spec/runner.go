@@ -5,7 +5,8 @@ import (
 	tp "athena/src/athena/proto"
 	. "tritium/src/tritium"
 	. "path/filepath"
-	"tritium/src/tritium/shark"
+	"tritium/src/tritium/whale"
+	//"tritium/src/tritium/shark"
 	. "fmt"
 	l4g "log4go"
 	"os"
@@ -22,7 +23,8 @@ func All(directory string, options ...string) {
 	logger := make(l4g.Logger)
 	logger.AddFilter("test", l4g.ERROR, l4g.NewConsoleLogWriter())
 	l4g.Global = logger
-	eng := shark.NewEngine(logger)
+	//oldEng := shark.NewEngine(logger)
+	eng := whale.NewEngine(logger)
 
 	var pkg *tp.Package
 
@@ -88,7 +90,6 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 			} else {
 				logger.Error(dir + " === " + x.(string) + "\n\n" + string(debug.Stack()))
 			}
-
 		}
 		for _, rec := range logWriter.Logs {
 			//println("HAZ LOGS")
@@ -101,7 +102,7 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 	if err != nil {
 		result.Error(dir, err.String())
 	} else {
-		result.Merge(spec.Compare(eng.OldRun(spec.Script, spec.Input, spec.Vars)))
+		result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
 	}
 	return
 }

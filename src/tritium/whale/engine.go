@@ -105,6 +105,10 @@ func (eng *Whale) Run(transform *tp.Transform, input []byte, vars map[string]str
 	return
 }
 
+func (eng *Whale) OldRun(transform *tp.Transform, input string, vars map[string]string) (output string, exports [][]string, logs []string) {
+	return
+}
+
 func (ctx *Ctx) runChildren(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
 	for _, child := range ins.Children {
 		returnValue = ctx.runInstruction(scope, child)
@@ -135,7 +139,6 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 	if proto.GetBool(ins.IsValid) == false {
 		panic("Invalid instruction. Should have stopped before linking!")
 	}
-
 	returnValue = ""
 	switch *ins.Type {
 	case tp.Instruction_BLOCK:
@@ -167,7 +170,12 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 			args[i] = ctx.runInstruction(scope, argIns)
 		}
 		if proto.GetBool(fun.BuiltIn) {
-			returnValue = builtInFunctions[fun.Name](ctx, scope, ins, args)
+			if f := builtInFunctions[fun.Name]; f != nil {
+				returnValue = f(ctx, scope, ins, args)
+			} else {
+				println("cannot find function:", fun.Name)
+				panic("missing function: " + fun.Name)
+			}
 		} else {
 			// We are using a user-defined function
 			//println("Resetting localvar")

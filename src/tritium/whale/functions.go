@@ -164,9 +164,9 @@ func regexp_Text_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interf
 func export_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	val := make([]string, 2)
 	val[0] = args[0].(string)
-	ts := &Scope{Value: ""}
+	ts := &Scope{Value: nil}
 	ctx.runChildren(ts, ins)
-	val[1] = ts.Value.(string)
+	val[1] = string(ts.Value.([]byte))
 	ctx.Exports = append(ctx.Exports, val)
 	return
 }
@@ -198,7 +198,7 @@ func upcase_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}
 }
 
 func set_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	scope.Value = args[0]
+	scope.Value = []byte(args[0].(string))
 	return
 }
 
@@ -279,7 +279,7 @@ func convert_encoding_Text_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, arg
 }
 
 func xml_Text_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	doc, err := xml.ParseWithBuffer(scope.Value.([]byte), xml.DefaultEncodingBytes, nil, xml.DefaultParseOption, xml.DefaultEncodingBytes, ctx.OutputBuffer)
+	doc, err := xml.ParseWithBuffer(scope.Value.([]byte), nil, nil, xml.DefaultParseOption, nil, ctx.OutputBuffer)
 	if err != nil {
 		ctx.Log.Error("xml err: %s", err.String())
 		returnValue = "false"
@@ -378,6 +378,41 @@ func select_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}
 	return
 }
 
+func remove_(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	node.Remove()
+	return
+}
+
+func position_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	returnValue = Positions[args[0].(string)]
+	return
+}
+
+func insert_at_Position_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	position := args[0].(Position)
+	tagName := args[1].(string)
+	element := node.MyDocument().CreateElementNode(tagName)
+	MoveFunc(element, node, position)
+	ns := &Scope{Value: element}
+	ctx.runChildren(ns, ins)
+	returnValue = "true"
+	return
+}
+
+func attribute_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	name := args[0].(string)
+	if _, ok := node.(*xml.Element); ok {
+		attr, _ := node.Attribute(name)
+		as := &Scope{Value: attr}
+		ctx.runChildren(as, ins)
+		attr.Remove()
+		returnValue = "true"
+	}
+	return
+}
 /*
 
 
@@ -387,9 +422,7 @@ func select_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}
 		returnValue = Positions[args[0].(string)]
 
 	// SHARED NODE FUNCTIONS
-	case "remove":
-		node := scope.Value.(xml.Node)
-		node.Remove()
+
 	case "remove.Text": //Only for XMLNode
 		node := scope.Value.(xml.Node)
 

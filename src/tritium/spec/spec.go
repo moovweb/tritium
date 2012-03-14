@@ -7,6 +7,7 @@ import (
 	. "io/ioutil"
 	"log"
 	yaml "goyaml"
+	"bytes"
 	"strings"
 	. "fmt"
 	"os"
@@ -17,14 +18,14 @@ type Spec struct {
 	Location string
 
 	// Inputs
-	Input string
+	Input []byte
 	Vars  map[string]string
 
 	// Script
 	Script *tp.Transform
 
 	// Expected outputs
-	Output  string
+	Output  []byte
 	Exports [][]string
 	Logs    []string
 }
@@ -82,24 +83,24 @@ func loadExports(dir string) [][]string {
 	return exports
 }
 
-func loadFile(dir, filename string) string {
+func loadFile(dir, filename string) []byte {
 	list, err := Glob(Join(dir, filename))
 	if err != nil {
-		return ""
+		return nil
 		//log.Panic(err)
 	}
 	if len(list) == 0 {
 		//println("Found nothing", Join(dir, filename))
-		return ""
+		return nil
 	}
 	data, err := ReadFile(list[0])
 	if err != nil {
-		return ""
+		return nil
 	}
-	return string(data)
+	return data
 }
 
-func (spec *Spec) Compare(data string, exports [][]string, logs []string) *Result {
+func (spec *Spec) Compare(data []byte, exports [][]string, logs []string) *Result {
 	result := NewResult()
 	result.Merge(spec.compareData(data))
 	result.Merge(spec.compareExports(exports))
@@ -109,10 +110,10 @@ func (spec *Spec) Compare(data string, exports [][]string, logs []string) *Resul
 
 // TODO : Consolidate these comparisons into an interface
 
-func (spec *Spec) compareData(data string) *Result {
+func (spec *Spec) compareData(data []byte) *Result {
 	result := NewResult()
-	if strings.TrimSpace(spec.Output) != strings.TrimSpace(data) {
-		result.Fail(spec.Location, "Bad Output", data, spec.Output, "Didn't match")
+	if string(bytes.TrimSpace(spec.Output)) != string(bytes.TrimSpace(data)) {
+		result.Fail(spec.Location, "Bad Output", string(data), string(spec.Output), "Didn't match")
 	}
 	return result
 }
