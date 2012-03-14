@@ -105,10 +105,6 @@ func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[strin
 	return
 }
 
-func (eng *Whale) OldRun(transform *tp.Transform, input string, vars map[string]string) (output string, exports [][]string, logs []string) {
-	return
-}
-
 func (ctx *Ctx) runChildren(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
 	for _, child := range ins.Children {
 		returnValue = ctx.runInstruction(scope, child)
@@ -173,7 +169,6 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 			if f := builtInFunctions[fun.Name]; f != nil {
 				returnValue = f(ctx, scope, ins, args)
 			} else {
-				println("cannot find function:", fun.Name)
 				panic("missing function: " + fun.Name)
 			}
 		} else {
@@ -189,10 +184,10 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 				Vars: vars,
 			}
 			// PUSH!
-			ctx.Yields = append(ctx.Yields, yieldBlock)
+			ctx.pushYieldBlock(yieldBlock)
 			returnValue = ctx.runChildren(scope, fun.Instruction)
 			// POP!
-			ctx.Yields = ctx.Yields[:(len(ctx.Yields) - 1)]
+			ctx.popYieldBlock()
 		}
 	}
 

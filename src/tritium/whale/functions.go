@@ -8,21 +8,22 @@ import (
 	"gokogiri/xpath"
 	"fmt"
 	//log "log4go"
+	//proto "goprotobuf.googlecode.com/hg/proto"
 	tp "athena/src/athena/proto"
 	"rubex/lib"
 	"css2xpath"
 	"goconv"
 )
 
+//The string value of me
 func this_(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = scope.Value
 	return
 }
 
 func yield_(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	myYieldBlock := ctx.yieldBlock()
-	ctx.Yields = ctx.Yields[:(len(ctx.Yields) - 1)]
-	if ctx.yieldBlock() != nil {
+	myYieldBlock := ctx.popYieldBlock()
+	if ctx.hasYieldBlock() {
 		returnValue = ctx.runChildren(scope, myYieldBlock.Ins)
 		if returnValue == nil {
 			returnValue = "false"
@@ -30,7 +31,7 @@ func yield_(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (re
 	} else {
 		ctx.Log.Error("yield() failure")
 	}
-	ctx.Yields = append(ctx.Yields, myYieldBlock)
+	ctx.pushYieldBlock(myYieldBlock)
 	return
 }
 
@@ -344,7 +345,6 @@ func html_fragment_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []inte
 
 func select_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
-
 	xpathStr := args[0].(string)
 	expr := ctx.XPathCache[xpathStr]
 	if expr == nil {
@@ -451,7 +451,6 @@ func attribute_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interfac
 		attr = node.Attribute(name)
 	}
 	if attr != nil {
-		println("attr", attr.String())
 		as := &Scope{Value: attr}
 		ctx.runChildren(as, ins)
 		if attr.Value() == "" {

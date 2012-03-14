@@ -20,12 +20,37 @@ func (ctx *Ctx) matchTarget() string {
 	return ctx.MatchStack[len(ctx.MatchStack)-1]
 }
 
-func (ctx *Ctx) yieldBlock() *YieldBlock {
-	return ctx.Yields[(len(ctx.Yields) - 1)]
+func (ctx *Ctx) pushYieldBlock(b *YieldBlock) {
+	ctx.Yields = append(ctx.Yields, b)
+}
+
+func (ctx *Ctx) popYieldBlock() (b *YieldBlock) {
+	num := len(ctx.Yields)
+	if num > 0 {
+		b = ctx.Yields[num-1]
+		ctx.Yields = ctx.Yields[:num-1]
+	}
+	return
+}
+
+func (ctx *Ctx) hasYieldBlock() bool {
+	return len(ctx.Yields) > 0
+}
+
+func (ctx *Ctx) topYieldBlock() (b *YieldBlock) {
+	num := len(ctx.Yields)
+	if num > 0 {
+		b = ctx.Yields[num-1]
+	}
+	return
 }
 
 func (ctx *Ctx) vars() map[string]interface{} {
-	return ctx.yieldBlock().Vars
+	b := ctx.topYieldBlock()
+	if b != nil {
+		return b.Vars
+	}
+	return nil
 }
 
 func (ctx *Ctx) fileAndLine(ins *tp.Instruction) string {
