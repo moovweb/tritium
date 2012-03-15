@@ -267,8 +267,12 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		}
 		defer xpath.Free()
 		
-		nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
-
+		nodeSetData := xpCtx.SearchByCompiledXPath(node, xpath)
+		if nodeSetData == nil {
+			returnValue = "0"
+			return
+		}
+		nodeSet := nodeSetData.Slice()
 		
 		if len(nodeSet) == 0 {
 			returnValue = "0"
