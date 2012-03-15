@@ -98,7 +98,7 @@ func (ctx *Ctx) UsePackage(pkg *tp.Package) {
 	}
 }
 
-func (eng *Shark) Run(transform *tp.Transform, input interface{}, vars map[string]string) (data []byte, exports [][]string, logs []string) {
+func (eng *Shark) Run(transform *tp.Transform, input interface{}, vars map[string]string) (data string, exports [][]string, logs []string) {
 	ctx := &Ctx{
 		Shark:               eng,
 		Exports:             make([][]string, 0),
@@ -123,8 +123,7 @@ func (eng *Shark) Run(transform *tp.Transform, input interface{}, vars map[strin
 	obj := transform.Objects[0]
 	ctx.filename = proto.GetString(obj.Name)
 	ctx.runInstruction(scope, obj.Root)
-	dataString := scope.Value.(string)
-	data = []byte(dataString)
+	data = scope.Value.(string)
 	exports = ctx.Exports
 	logs = ctx.Logs
 	return

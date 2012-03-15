@@ -81,7 +81,7 @@ func NewEngine(logger l4g.Logger) *Whale {
 	return e
 }
 
-func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output []byte, exports [][]string, logs []string) {
+func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output string, exports [][]string, logs []string) {
 	ctx := &Ctx{
 		Whale:               eng,
 		Exports:             make([][]string, 0),
@@ -95,11 +95,11 @@ func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[strin
 	}
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
-	scope := &Scope{Value: input.([]byte)}
+	scope := &Scope{Value: input.(string)}
 	obj := transform.Objects[0]
 	ctx.filename = proto.GetString(obj.Name)
 	ctx.runInstruction(scope, obj.Root)
-	output = scope.Value.([]byte)
+	output = scope.Value.(string)
 	exports = ctx.Exports
 	logs = ctx.Logs
 	return

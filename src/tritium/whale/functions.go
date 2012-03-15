@@ -172,7 +172,7 @@ func export_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}
 	val[0] = args[0].(string)
 	ts := &Scope{Value: nil}
 	ctx.runChildren(ts, ins)
-	val[1] = string(ts.Value.([]byte))
+	val[1] = ts.Value.(string)
 	ctx.Exports = append(ctx.Exports, val)
 	return
 }
@@ -204,7 +204,7 @@ func upcase_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}
 }
 
 func set_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	scope.Value = []byte(args[0].(string))
+	scope.Value = args[0].(string)
 	return
 }
 
@@ -285,7 +285,8 @@ func convert_encoding_Text_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, arg
 }
 
 func xml_Text_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	doc, err := xml.ParseWithBuffer(scope.Value.([]byte), nil, nil, xml.DefaultParseOption, nil, ctx.OutputBuffer)
+	input := scope.Value.(string)
+	doc, err := xml.ParseWithBuffer([]byte(input), nil, nil, xml.DefaultParseOption, nil, ctx.OutputBuffer)
 	if err != nil {
 		ctx.Log.Error("xml err: %s", err.String())
 		returnValue = "false"
@@ -293,9 +294,8 @@ func xml_Text_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface
 	}
 	ns := &Scope{Value: doc}
 	ctx.runChildren(ns, ins)
-	output := doc.ToXml(nil)
-	scope.Value = output
-	returnValue = string(output)
+	scope.Value = doc.String()
+	returnValue = scope.Value
 	doc.Free()
 	return
 }
@@ -305,8 +305,8 @@ func html_doc_Text_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []inte
 	inputEncodingBytes := []byte(inputEncoding)
 	outputEncoding := args[1].(string)
 	outputEncodingBytes := []byte(outputEncoding)
-	input := scope.Value.([]byte)
-	doc, err := html.ParseWithBuffer(input, inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes, ctx.OutputBuffer)
+	input := scope.Value.(string)
+	doc, err := html.ParseWithBuffer([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes, ctx.OutputBuffer)
 	if err != nil {
 		ctx.Log.Error("html_doc err: %s", err.String())
 		returnValue = "false"
@@ -317,9 +317,8 @@ func html_doc_Text_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []inte
 	if err := doc.SetMetaEncoding(outputEncoding); err != nil {
 		//ctx.Log.Warn("executing html:" + err.String())
 	}
-	output := doc.ToHtml(nil)
-	scope.Value = output
-	returnValue = string(output)
+	scope.Value = doc.String()
+	returnValue = scope.Value
 	doc.Free()
 	return
 }
@@ -327,8 +326,8 @@ func html_doc_Text_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []inte
 func html_fragment_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
-	input := scope.Value.([]byte)
-	fragment, err := html.ParseFragment(input, inputEncodingBytes, nil, html.DefaultParseOption, html.DefaultEncodingBytes, ctx.OutputBuffer)
+	input := scope.Value.(string)
+	fragment, err := html.ParseFragment([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, html.DefaultEncodingBytes, ctx.OutputBuffer)
 	if err != nil {
 		ctx.Log.Error("html_fragment err: %s", err.String())
 		returnValue = "false"
@@ -466,7 +465,7 @@ func value(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (ret
 	ts := &Scope{Value: node.Content()}
 	ctx.runChildren(ts, ins)
 
-	val := ts.Value.([]byte)
+	val := ts.Value.(string)
 	if attr, ok := node.(*xml.AttributeNode); ok {
 		attr.SetValue(val)
 	}
@@ -483,7 +482,7 @@ func inner(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (ret
 	node := scope.Value.(xml.Node)
 	ts := &Scope{Value: node.Content()}
 	ctx.runChildren(ts, ins)
-	val := ts.Value.([]byte)
+	val := ts.Value.(string)
 	node.SetInnerHtml(val)
 	returnValue = val
 	return
@@ -599,7 +598,7 @@ func cdata_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{})
 func inject_at_Position_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	position := args[0].(Position)
-	input := args[1].([]byte)
+	input := args[1].(string)
 
 	nodes, err := node.Coerce(input)
 	if err == nil {
