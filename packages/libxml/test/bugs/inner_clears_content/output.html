@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <script type="text/javascript">
 try {
 var productNAPage = "",
@@ -15,7 +15,7 @@ submissionContainerUrl: window.location.href,
 allowSamePageSubmission: true,
 doLogin: function(callback, success_url) {
 MACYS.util.Cookie.set("FORWARDPAGE_KEY",success_url);
-window.location = 'https://www.macys.com/signin/index.ognc?fromPage=pdpReviews';
+window.location = 'https://mlocal.macys.com/signin/index.ognc?fromPage=pdpReviews';
 },
 doShowContent: function(app, dc, sub, sr) {
 if (suppressReviews !== 'true' && app == "PRR") {
