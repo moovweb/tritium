@@ -2,7 +2,7 @@ package whale
 
 import tp "athena/src/athena/proto"
 
-type builtInFunc func(*Ctx, *Scope, *tp.Instruction, []interface{}) interface{}
+type builtInFunc func(EngineContext, *Scope, *tp.Instruction, []interface{}) interface{}
 
 var builtInFunctions map[string]builtInFunc
 

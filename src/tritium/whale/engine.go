@@ -2,12 +2,9 @@ package whale
 
 import (
 	tp "athena/src/athena/proto"
+	"log4go"
 	"rubex/lib"
 	"gokogiri/xpath"
-	//"gokogiri/html"
-	l4g "log4go"
-	proto "goprotobuf.googlecode.com/hg/proto"
-	"os"
 )
 
 type Position int
@@ -28,31 +25,6 @@ var Positions = map[string]Position{
 	"below":  BOTTOM,
 }
 
-type Whale struct {
-	RegexpCache   map[string]*rubex.Regexp
-	XPathCache    map[string]*xpath.Expression
-	Log           l4g.Logger
-	OutputBuffer  []byte
-	InnerReplacer *rubex.Regexp
-}
-
-type Ctx struct {
-	Functions           []*Function
-	Types               []string
-	Exports             [][]string
-	Logs                []string
-	Env                 map[string]string
-	MatchStack          []string
-	MatchShouldContinue []bool
-	Yields              []*YieldBlock
-	*Whale
-	*tp.Transform
-
-	// Debug info
-	Filename string
-	HadError bool
-}
-
 type YieldBlock struct {
 	Ins  *tp.Instruction
 	Vars map[string]interface{}
@@ -68,139 +40,33 @@ type Scope struct {
 	Index int
 }
 
-const OutputBufferSize = 500 * 1024 //500KB
+type EngineContext interface {
+	RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{})
+	ShouldContinue() bool
+	MatchTarget() string
+	PushYieldBlock(*YieldBlock)
+	PopYieldBlock() *YieldBlock
+	HasYieldBlock() bool
+	TopYieldBlock() *YieldBlock
 
-func NewEngine(logger l4g.Logger) *Whale {
-	e := &Whale{
-		RegexpCache:   make(map[string]*rubex.Regexp),
-		XPathCache:    make(map[string]*xpath.Expression),
-		Log:           logger,
-		OutputBuffer:  make([]byte, OutputBufferSize),
-		InnerReplacer: rubex.MustCompile(`[\\$](\d)`),
-	}
-	return e
-}
+	FileAndLine(*tp.Instruction) string
+	UsePackage(*tp.Package)
+	Logger() log4go.Logger
 
-func NewCtx(eng *Whale, vars map[string]string, transform *tp.Transform) (ctx *Ctx) {
-	ctx = &Ctx{
-		Whale:               eng,
-		Exports:             make([][]string, 0),
-		Logs:                make([]string, 0),
-		Env:                 vars,
-		Transform:           transform,
-		MatchStack:          make([]string, 0),
-		MatchShouldContinue: make([]bool, 0),
-		Yields:              make([]*YieldBlock, 0),
-		HadError:            false,
-	}
-	return
-}
+	PushMatchStack(string)
+	PopMatchStack() string
+	PushShouldContinueStack(bool)
+	PopShouldContinueStack() bool
+	SetShouldContinue(bool)
+	GetRegexp(string, string) *rubex.Regexp
+	GetXpathExpr(string) *xpath.Expression
+	AddExport([]string)
+	AddLog(string)
+	SetEnv(string, string)
+	GetEnv(string) string
 
-func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output string, exports [][]string, logs []string) {
-	ctx := NewCtx(eng, vars, transform)
-	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
-	ctx.UsePackage(transform.Pkg)
-	scope := &Scope{Value: input.(string)}
-	obj := transform.Objects[0]
-	ctx.Filename = proto.GetString(obj.Name)
-	ctx.RunInstruction(scope, obj.Root)
-	output = scope.Value.(string)
-	exports = ctx.Exports
-	logs = ctx.Logs
-	return
-}
-
-func (ctx *Ctx) RunChildren(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
-	for _, child := range ins.Children {
-		returnValue = ctx.RunInstruction(scope, child)
-	}
-	return
-}
-
-func (ctx *Ctx) RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
-	defer func() {
-		if x := recover(); x != nil {
-			err, ok := x.(os.Error)
-			errString := ""
-			if ok {
-				errString = err.String()
-			} else {
-				errString = x.(string)
-			}
-			if ctx.HadError == false {
-				ctx.HadError = true
-				errString = errString + "\n" + ins.Type.String() + " " + proto.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
-			}
-			errString = errString + ctx.FileAndLine(ins) + "\n"
-			panic(errString)
-		}
-	}()
-
-	// If our object is invalid, then skip it
-	if proto.GetBool(ins.IsValid) == false {
-		panic("Invalid instruction. Should have stopped before linking!")
-	}
-	indent := ""
-	for i := 0; i < len(ctx.Yields); i++ {
-		indent += "\t"
-	}
-
-	returnValue = ""
-	switch *ins.Type {
-	case tp.Instruction_BLOCK:
-		returnValue = ctx.RunChildren(scope, ins)
-	case tp.Instruction_TEXT:
-		returnValue = proto.GetString(ins.Value)
-	case tp.Instruction_LOCAL_VAR:
-		name := proto.GetString(ins.Value)
-		vars := ctx.Vars()
-		if len(ins.Arguments) > 0 {
-			vars[name] = ctx.RunInstruction(scope, ins.Arguments[0])
-		}
-		if len(ins.Children) > 0 {
-			ts := &Scope{Value: ctx.Vars()[name]}
-			ctx.RunChildren(ts, ins)
-			vars[name] = ts.Value
-		}
-		returnValue = vars[name]
-	case tp.Instruction_IMPORT:
-		obj := ctx.Objects[int(proto.GetInt32(ins.ObjectId))]
-		curFile := ctx.Filename
-		ctx.Filename = proto.GetString(obj.Name)
-		ctx.RunChildren(scope, obj.Root)
-		ctx.Filename = curFile
-	case tp.Instruction_FUNCTION_CALL:
-		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]
-		args := make([]interface{}, len(ins.Arguments))
-		for i, argIns := range ins.Arguments {
-			args[i] = ctx.RunInstruction(scope, argIns)
-		}
-
-		if proto.GetBool(fun.BuiltIn) {
-			if f := builtInFunctions[fun.Name]; f != nil {
-				returnValue = f(ctx, scope, ins, args)
-			} else {
-				panic("missing function: " + fun.Name)
-			}
-		} else {
-			// We are using a user-defined function
-			//println("Resetting localvar")
-			// Setup the new local var
-			vars := make(map[string]interface{}, len(args))
-			for i, arg := range fun.Args {
-				vars[proto.GetString(arg.Name)] = args[i]
-			}
-			yieldBlock := &YieldBlock{
-				Ins:  ins,
-				Vars: vars,
-			}
-			// PUSH!
-			ctx.PushYieldBlock(yieldBlock)
-			returnValue = ctx.RunChildren(scope, fun.Instruction)
-			// POP!
-			ctx.PopYieldBlock()
-		}
-	}
-
-	return
+	SetVar(string, interface{})
+	GetVar(string) interface{}
+	GetInnerReplacer() *rubex.Regexp
+	GetOutputBuffer() []byte
 }
