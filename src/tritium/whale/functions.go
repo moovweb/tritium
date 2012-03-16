@@ -334,9 +334,7 @@ func html_fragment_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []inte
 		return
 	}
 	ns := &Scope{Value: fragment}
-	println("before running children in html_fragment, frag:\n", fragment, fragment.String(), "\n")
 	ctx.runChildren(ns, ins)
-	println("after running children in html_fragment, frag:\n", fragment.String(), "\n")
 	//output is always utf-8 because the content is internal to Doc.
 	scope.Value = ns.Value.(*xml.DocumentFragment).String()
 	returnValue = scope.Value
@@ -482,15 +480,10 @@ func move_XMLNode_XMLNode_Position(ctx *Ctx, scope *Scope, ins *tp.Instruction, 
 
 func inner(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
-	println("node in inner:", node)
-	println("in inner:", node.String())
 	ts := &Scope{Value: node.Content()}
 	ctx.runChildren(ts, ins)
 	val := ts.Value.(string)
-	println("calling setinnerhtnl")
 	node.SetInnerHtml(val)
-	println("node in inner:", node)
-	println("done")
 	returnValue = val
 	return
 }
@@ -610,15 +603,7 @@ func inject_at_Position_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args [
 	nodes, err := node.Coerce(input)
 	if err == nil {
 		for _, n := range nodes {
-			if position == BEFORE {
-				node.InsertBefore(n)
-			} else if position == AFTER {
-				node.InsertAfter(n)
-			} else if position == TOP {
-				node.InsertBegin(n)
-			} else if position == BOTTOM {
-				node.InsertEnd(n)
-			}
+			MoveFunc(n, node, position)			
 		}
 	}
 	if len(nodes) > 0 {
