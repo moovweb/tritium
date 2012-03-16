@@ -22,16 +22,16 @@ func this_(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (ret
 }
 
 func yield_(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	myYieldBlock := ctx.popYieldBlock()
-	if ctx.hasYieldBlock() {
-		returnValue = ctx.runChildren(scope, myYieldBlock.Ins)
+	myYieldBlock := ctx.PopYieldBlock()
+	if ctx.HasYieldBlock() {
+		returnValue = ctx.RunChildren(scope, myYieldBlock.Ins)
 		if returnValue == nil {
 			returnValue = "false"
 		}
 	} else {
 		ctx.Log.Error("yield() failure")
 	}
-	ctx.pushYieldBlock(myYieldBlock)
+	ctx.PushYieldBlock(myYieldBlock)
 	return
 }
 
@@ -40,7 +40,7 @@ func var_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (
 	returnValue = val
 	if len(ins.Children) > 0 {
 		ts := &Scope{Value: returnValue}
-		ctx.runChildren(ts, ins)
+		ctx.RunChildren(ts, ins)
 		returnValue = ts.Value
 		ctx.Env[args[0].(string)] = returnValue.(string)
 	}
@@ -53,7 +53,7 @@ func var_Text_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface
 
 	if len(ins.Children) > 0 {
 		ts := &Scope{Value: returnValue}
-		ctx.runChildren(ts, ins)
+		ctx.RunChildren(ts, ins)
 		returnValue = ts.Value
 		ctx.Env[args[0].(string)] = returnValue.(string)
 	}
@@ -70,9 +70,9 @@ func match_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{})
 	ctx.MatchShouldContinue = append(ctx.MatchShouldContinue, true)
 
 	// Run children
-	ctx.runChildren(scope, ins)
+	ctx.RunChildren(scope, ins)
 
-	if ctx.matchShouldContinue() {
+	if ctx.ShouldContinue() {
 		returnValue = "false"
 	} else {
 		returnValue = "true"
@@ -86,10 +86,10 @@ func match_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{})
 
 func with_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
-	if ctx.matchShouldContinue() {
-		if args[0].(string) == ctx.matchTarget() {
+	if ctx.ShouldContinue() {
+		if args[0].(string) == ctx.MatchTarget() {
 			ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
-			ctx.runChildren(scope, ins)
+			ctx.RunChildren(scope, ins)
 			returnValue = "true"
 		}
 	}
@@ -98,11 +98,11 @@ func with_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) 
 
 func with_Regexp(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
-	if ctx.matchShouldContinue() {
+	if ctx.ShouldContinue() {
 		//println(matcher.MatchAgainst, matchWith)
-		if (args[0].(*rubex.Regexp)).Match([]uint8(ctx.matchTarget())) {
+		if (args[0].(*rubex.Regexp)).Match([]uint8(ctx.MatchTarget())) {
 			ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
-			ctx.runChildren(scope, ins)
+			ctx.RunChildren(scope, ins)
 			returnValue = "true"
 		}
 	}
@@ -111,10 +111,10 @@ func with_Regexp(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}
 
 func not_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
-	if ctx.matchShouldContinue() {
-		if args[0].(string) != ctx.matchTarget() {
+	if ctx.ShouldContinue() {
+		if args[0].(string) != ctx.MatchTarget() {
 			ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
-			ctx.runChildren(scope, ins)
+			ctx.RunChildren(scope, ins)
 			returnValue = "true"
 		}
 	}
@@ -123,11 +123,11 @@ func not_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (
 
 func not_Regexp(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
-	if ctx.matchShouldContinue() {
+	if ctx.ShouldContinue() {
 		//println(matcher.MatchAgainst, matchWith)
-		if !(args[0].(*rubex.Regexp)).Match([]uint8(ctx.matchTarget())) {
+		if !(args[0].(*rubex.Regexp)).Match([]uint8(ctx.MatchTarget())) {
 			ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
-			ctx.runChildren(scope, ins)
+			ctx.RunChildren(scope, ins)
 			returnValue = "true"
 		}
 	}
@@ -136,9 +136,9 @@ func not_Regexp(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{})
 
 func else_(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
-	if ctx.matchShouldContinue() {
+	if ctx.ShouldContinue() {
 		ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
-		ctx.runChildren(scope, ins)
+		ctx.RunChildren(scope, ins)
 		returnValue = "true"
 	}
 	return
@@ -171,7 +171,7 @@ func export_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}
 	val := make([]string, 2)
 	val[0] = args[0].(string)
 	ts := &Scope{Value: nil}
-	ctx.runChildren(ts, ins)
+	ctx.RunChildren(ts, ins)
 	val[1] = ts.Value.(string)
 	ctx.Exports = append(ctx.Exports, val)
 	return
@@ -230,7 +230,7 @@ func index_Node(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{})
 
 func replace_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	ts := &Scope{Value: ""}
-	ctx.runChildren(ts, ins)
+	ctx.RunChildren(ts, ins)
 	scope.Value = strings.Replace(scope.Value.(string), args[0].(string), ts.Value.(string), -1)
 	return
 }
@@ -245,11 +245,11 @@ func replace_Regexp(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interfac
 				//println("setting $", name, "to", capture)
 				ctx.Env[name] = capture
 			}
-			ctx.vars()[name] = capture
+			ctx.Vars()[name] = capture
 		}
 
 		replacementScope := &Scope{Value: match}
-		ctx.runChildren(replacementScope, ins)
+		ctx.RunChildren(replacementScope, ins)
 		//println(ins.String())
 
 		//println("Replacement:", replacementScope.Value.(string))
@@ -259,7 +259,7 @@ func replace_Regexp(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interfac
 			if usesGlobal {
 				val = ctx.Env[capture]
 			} else {
-				val = ctx.vars()[capture].(string)
+				val = ctx.Vars()[capture].(string)
 			}
 			return val
 		})
@@ -293,7 +293,7 @@ func xml_Text_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface
 		return
 	}
 	ns := &Scope{Value: doc}
-	ctx.runChildren(ns, ins)
+	ctx.RunChildren(ns, ins)
 	scope.Value = doc.String()
 	returnValue = scope.Value
 	doc.Free()
@@ -313,7 +313,7 @@ func html_doc_Text_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []inte
 		return
 	}
 	ns := &Scope{Value: doc}
-	ctx.runChildren(ns, ins)
+	ctx.RunChildren(ns, ins)
 	if err := doc.SetMetaEncoding(outputEncoding); err != nil {
 		//ctx.Log.Warn("executing html:" + err.String())
 	}
@@ -334,7 +334,7 @@ func html_fragment_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []inte
 		return
 	}
 	ns := &Scope{Value: fragment}
-	ctx.runChildren(ns, ins)
+	ctx.RunChildren(ns, ins)
 	//output is always utf-8 because the content is internal to Doc.
 	scope.Value = ns.Value.(*xml.DocumentFragment).String()
 	returnValue = scope.Value
@@ -373,7 +373,7 @@ func select_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}
 			t := node.NodeType()
 			if t == xml.XML_ELEMENT_NODE {
 				ns := &Scope{Value: node, Index: index}
-				ctx.runChildren(ns, ins)
+				ctx.RunChildren(ns, ins)
 			} else if t == xml.XML_TEXT_NODE {
 				ctx.Logs = append(ctx.Logs, "You have just selected a text() node... THIS IS A TERRIBLE IDEA. Please run 'moov check' and sort it out!")
 			}
@@ -436,7 +436,7 @@ func insert_at_Position_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args [
 	element := node.MyDocument().CreateElementNode(tagName)
 	MoveFunc(element, node, position)
 	ns := &Scope{Value: element}
-	ctx.runChildren(ns, ins)
+	ctx.RunChildren(ns, ins)
 	returnValue = "true"
 	return
 }
@@ -451,7 +451,7 @@ func attribute_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interfac
 	}
 	if attr != nil {
 		as := &Scope{Value: attr}
-		ctx.runChildren(as, ins)
+		ctx.RunChildren(as, ins)
 		if attr.Value() == "" {
 			attr.Remove()
 		}
@@ -463,7 +463,7 @@ func attribute_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interfac
 func value(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	ts := &Scope{Value: node.Content()}
-	ctx.runChildren(ts, ins)
+	ctx.RunChildren(ts, ins)
 
 	val := ts.Value.(string)
 	if attr, ok := node.(*xml.AttributeNode); ok {
@@ -481,7 +481,7 @@ func move_XMLNode_XMLNode_Position(ctx *Ctx, scope *Scope, ins *tp.Instruction, 
 func inner(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	ts := &Scope{Value: node.Content()}
-	ctx.runChildren(ts, ins)
+	ctx.RunChildren(ts, ins)
 	val := ts.Value.(string)
 	node.SetInnerHtml(val)
 	returnValue = val
@@ -518,7 +518,7 @@ func move_children_to_XMLNode_Position(ctx *Ctx, scope *Scope, ins *tp.Instructi
 func name(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	ts := &Scope{Value: node.Name()}
-	ctx.runChildren(ts, ins)
+	ctx.RunChildren(ts, ins)
 	node.SetName(ts.Value.(string))
 	returnValue = ts.Value.(string)
 	return
@@ -527,7 +527,7 @@ func name(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (retu
 func text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	ts := &Scope{Value: node.Content()}
-	ctx.runChildren(ts, ins)
+	ctx.RunChildren(ts, ins)
 	val := ts.Value.(string)
 	node.SetContent(val)
 	returnValue = val
@@ -541,7 +541,7 @@ func dup(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (retur
 		MoveFunc(newNode, node, AFTER)
 	}
 	ns := &Scope{Value: newNode}
-	ctx.runChildren(ns, ins)
+	ctx.RunChildren(ns, ins)
 	return
 }
 
@@ -570,7 +570,7 @@ func fetch_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{})
 	}
 	if len(ins.Children) > 0 {
 		ts := &Scope{Value: returnValue}
-		ctx.runChildren(ts, ins)
+		ctx.RunChildren(ts, ins)
 		returnValue = ts.Value
 	}
 	return
@@ -603,7 +603,7 @@ func inject_at_Position_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args [
 	nodes, err := node.Coerce(input)
 	if err == nil {
 		for _, n := range nodes {
-			MoveFunc(n, node, position)			
+			MoveFunc(n, node, position)
 		}
 	}
 	if len(nodes) > 0 {
@@ -612,7 +612,7 @@ func inject_at_Position_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args [
 			// successfully ran scope
 			returnValue = "true"
 			ns := &Scope{Value: first}
-			ctx.runChildren(ns, ins)
+			ctx.RunChildren(ns, ins)
 		}
 	} else {
 		returnValue = "false"
@@ -639,7 +639,7 @@ func wrap_text_children_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args [
 		for index, textNode := range textNodes {
 			textNode.Wrap(tag)
 			ns := &Scope{textNode, index}
-			ctx.runChildren(ns, ins)
+			ctx.RunChildren(ns, ins)
 		}
 	}
 	return

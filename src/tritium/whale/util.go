@@ -7,7 +7,7 @@ import (
 	proto "goprotobuf.googlecode.com/hg/proto"
 )
 
-func (ctx *Ctx) matchShouldContinue() (result bool) {
+func (ctx *Ctx) ShouldContinue() (result bool) {
 	if len(ctx.MatchShouldContinue) > 0 {
 		result = ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1]
 	} else {
@@ -16,15 +16,15 @@ func (ctx *Ctx) matchShouldContinue() (result bool) {
 	return
 }
 
-func (ctx *Ctx) matchTarget() string {
+func (ctx *Ctx) MatchTarget() string {
 	return ctx.MatchStack[len(ctx.MatchStack)-1]
 }
 
-func (ctx *Ctx) pushYieldBlock(b *YieldBlock) {
+func (ctx *Ctx) PushYieldBlock(b *YieldBlock) {
 	ctx.Yields = append(ctx.Yields, b)
 }
 
-func (ctx *Ctx) popYieldBlock() (b *YieldBlock) {
+func (ctx *Ctx) PopYieldBlock() (b *YieldBlock) {
 	num := len(ctx.Yields)
 	if num > 0 {
 		b = ctx.Yields[num-1]
@@ -33,11 +33,11 @@ func (ctx *Ctx) popYieldBlock() (b *YieldBlock) {
 	return
 }
 
-func (ctx *Ctx) hasYieldBlock() bool {
+func (ctx *Ctx) HasYieldBlock() bool {
 	return len(ctx.Yields) > 0
 }
 
-func (ctx *Ctx) topYieldBlock() (b *YieldBlock) {
+func (ctx *Ctx) TopYieldBlock() (b *YieldBlock) {
 	num := len(ctx.Yields)
 	if num > 0 {
 		b = ctx.Yields[num-1]
@@ -45,17 +45,17 @@ func (ctx *Ctx) topYieldBlock() (b *YieldBlock) {
 	return
 }
 
-func (ctx *Ctx) vars() map[string]interface{} {
-	b := ctx.topYieldBlock()
+func (ctx *Ctx) Vars() map[string]interface{} {
+	b := ctx.TopYieldBlock()
 	if b != nil {
 		return b.Vars
 	}
 	return nil
 }
 
-func (ctx *Ctx) fileAndLine(ins *tp.Instruction) string {
+func (ctx *Ctx) FileAndLine(ins *tp.Instruction) string {
 	lineNum := fmt.Sprintf("%d", proto.GetInt32(ins.LineNumber))
-	return (ctx.filename + ":" + lineNum)
+	return (ctx.Filename + ":" + lineNum)
 }
 
 func MoveFunc(what, where xml.Node, position Position) {

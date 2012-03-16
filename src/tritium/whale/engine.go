@@ -8,7 +8,6 @@ import (
 	l4g "log4go"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	"os"
-	"fmt"
 )
 
 type Position int
@@ -50,8 +49,8 @@ type Ctx struct {
 	*tp.Transform
 
 	// Debug info
-	filename string
-	hadError bool
+	Filename string
+	HadError bool
 }
 
 type YieldBlock struct {
@@ -82,8 +81,8 @@ func NewEngine(logger l4g.Logger) *Whale {
 	return e
 }
 
-func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output string, exports [][]string, logs []string) {
-	ctx := &Ctx{
+func NewCtx(eng *Whale, vars map[string]string, transform *tp.Transform) (ctx *Ctx) {
+	ctx = &Ctx{
 		Whale:               eng,
 		Exports:             make([][]string, 0),
 		Logs:                make([]string, 0),
@@ -92,28 +91,33 @@ func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[strin
 		MatchStack:          make([]string, 0),
 		MatchShouldContinue: make([]bool, 0),
 		Yields:              make([]*YieldBlock, 0),
-		hadError:            false,
+		HadError:            false,
 	}
+	return
+}
+
+func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output string, exports [][]string, logs []string) {
+	ctx := NewCtx(eng, vars, transform)
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
 	scope := &Scope{Value: input.(string)}
 	obj := transform.Objects[0]
-	ctx.filename = proto.GetString(obj.Name)
-	ctx.runInstruction(scope, obj.Root)
+	ctx.Filename = proto.GetString(obj.Name)
+	ctx.RunInstruction(scope, obj.Root)
 	output = scope.Value.(string)
 	exports = ctx.Exports
 	logs = ctx.Logs
 	return
 }
 
-func (ctx *Ctx) runChildren(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
+func (ctx *Ctx) RunChildren(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
 	for _, child := range ins.Children {
-		returnValue = ctx.runInstruction(scope, child)
+		returnValue = ctx.RunInstruction(scope, child)
 	}
 	return
 }
 
-func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
+func (ctx *Ctx) RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
 	defer func() {
 		if x := recover(); x != nil {
 			err, ok := x.(os.Error)
@@ -123,11 +127,11 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 			} else {
 				errString = x.(string)
 			}
-			if ctx.hadError == false {
-				ctx.hadError = true
+			if ctx.HadError == false {
+				ctx.HadError = true
 				errString = errString + "\n" + ins.Type.String() + " " + proto.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
 			}
-			errString = errString + ctx.fileAndLine(ins) + "\n"
+			errString = errString + ctx.FileAndLine(ins) + "\n"
 			panic(errString)
 		}
 	}()
@@ -144,45 +148,33 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 	returnValue = ""
 	switch *ins.Type {
 	case tp.Instruction_BLOCK:
-		returnValue = ctx.runChildren(scope, ins)
+		returnValue = ctx.RunChildren(scope, ins)
 	case tp.Instruction_TEXT:
 		returnValue = proto.GetString(ins.Value)
 	case tp.Instruction_LOCAL_VAR:
 		name := proto.GetString(ins.Value)
-		vars := ctx.vars()
+		vars := ctx.Vars()
 		if len(ins.Arguments) > 0 {
-			vars[name] = ctx.runInstruction(scope, ins.Arguments[0])
+			vars[name] = ctx.RunInstruction(scope, ins.Arguments[0])
 		}
-		fmt.Printf("%s %%%s: %v\n", indent, name, vars[name])
 		if len(ins.Children) > 0 {
-			ts := &Scope{Value: ctx.vars()[name]}
-			ctx.runChildren(ts, ins)
+			ts := &Scope{Value: ctx.Vars()[name]}
+			ctx.RunChildren(ts, ins)
 			vars[name] = ts.Value
 		}
-		fmt.Printf("%s return: %v\n", indent, vars[name])
 		returnValue = vars[name]
 	case tp.Instruction_IMPORT:
 		obj := ctx.Objects[int(proto.GetInt32(ins.ObjectId))]
-		curFile := ctx.filename
-		ctx.filename = proto.GetString(obj.Name)
-		ctx.runChildren(scope, obj.Root)
-		ctx.filename = curFile
+		curFile := ctx.Filename
+		ctx.Filename = proto.GetString(obj.Name)
+		ctx.RunChildren(scope, obj.Root)
+		ctx.Filename = curFile
 	case tp.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]
 		args := make([]interface{}, len(ins.Arguments))
 		for i, argIns := range ins.Arguments {
-			args[i] = ctx.runInstruction(scope, argIns)
+			args[i] = ctx.RunInstruction(scope, argIns)
 		}
-		debugInfo := fmt.Sprintf("calling %s(", fun.Name)
-
-		for index, v := range args {
-			debugInfo += fmt.Sprintf("%q", v)
-			if index < len(args)-1 {
-				debugInfo += ", "
-			}
-		}
-		debugInfo += ")\n"
-		fmt.Printf("%s %s", indent, debugInfo)
 
 		if proto.GetBool(fun.BuiltIn) {
 			if f := builtInFunctions[fun.Name]; f != nil {
@@ -203,15 +195,11 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 				Vars: vars,
 			}
 			// PUSH!
-			ctx.pushYieldBlock(yieldBlock)
-			returnValue = ctx.runChildren(scope, fun.Instruction)
+			ctx.PushYieldBlock(yieldBlock)
+			returnValue = ctx.RunChildren(scope, fun.Instruction)
 			// POP!
-			ctx.popYieldBlock()
+			ctx.PopYieldBlock()
 		}
-
-		fmt.Printf("%s ctx.Value: %v\n", indent, scope.Value)
-		fmt.Printf("%s returns: %v\n", indent, returnValue)
-		fmt.Printf("%s %s done\n\n", indent, fun.Name)
 	}
 
 	return

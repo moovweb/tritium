@@ -78,3 +78,7 @@ func init() {
 	builtInFunctions["css.Text"] = css_Text
 	builtInFunctions["wrap_text_children.Text"] = wrap_text_children_Text
 }
+
+func LookupBuiltIn(name string) builtInFunc {
+	return builtInFunctions[name]
+}

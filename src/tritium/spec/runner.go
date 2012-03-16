@@ -6,6 +6,7 @@ import (
 	. "tritium/src/tritium"
 	. "path/filepath"
 	"tritium/src/tritium/whale"
+	"tritium/src/tritium/lamprey"
 	"tritium/src/tritium/shark"
 	. "fmt"
 	l4g "log4go"
@@ -13,7 +14,7 @@ import (
 	"runtime/debug"
 )
 
-func All(useWhale bool, directory string, options ...string) {
+func All(command string, directory string, options ...string) {
 
 	var mixerPath string
 	if len(options) == 1 {
@@ -24,9 +25,11 @@ func All(useWhale bool, directory string, options ...string) {
 	logger.AddFilter("test", l4g.ERROR, l4g.NewConsoleLogWriter())
 	l4g.Global = logger
 	var eng Engine
-	if useWhale {
+	if command == "test" {
 		eng = whale.NewEngine(logger)
-	} else {
+	} else if command == "debug" {
+		eng = lamprey.NewEngine(logger)
+	} else if command == "old_test" {
 		eng = shark.NewEngine(logger)
 	}
 
