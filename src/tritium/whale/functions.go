@@ -334,9 +334,11 @@ func html_fragment_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []inte
 		return
 	}
 	ns := &Scope{Value: fragment}
+	println("before running children in html_fragment, frag:\n", fragment, fragment.String(), "\n")
 	ctx.runChildren(ns, ins)
+	println("after running children in html_fragment, frag:\n", fragment.String(), "\n")
 	//output is always utf-8 because the content is internal to Doc.
-	scope.Value = ns.Value.(*xml.DocumentFragment).Content()
+	scope.Value = ns.Value.(*xml.DocumentFragment).String()
 	returnValue = scope.Value
 	fragment.Node.MyDocument().Free()
 	return
@@ -480,10 +482,15 @@ func move_XMLNode_XMLNode_Position(ctx *Ctx, scope *Scope, ins *tp.Instruction, 
 
 func inner(ctx *Ctx, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
+	println("node in inner:", node)
+	println("in inner:", node.String())
 	ts := &Scope{Value: node.Content()}
 	ctx.runChildren(ts, ins)
 	val := ts.Value.(string)
+	println("calling setinnerhtnl")
 	node.SetInnerHtml(val)
+	println("node in inner:", node)
+	println("done")
 	returnValue = val
 	return
 }
@@ -652,29 +659,3 @@ func wrap_text_children_Text(ctx *Ctx, scope *Scope, ins *tp.Instruction, args [
 	}
 	return
 }
-
-/*
-
-	// ATTRIBUTE FUNCTIONS
-	case "attribute.Text":
-		node := scope.Value.(xml.Node)
-		name := args[0].(string)
-		if _, ok := node.(*xml.Element); ok {
-			attr, _ := node.Attribute(name)
-			as := &Scope{Value: attr}
-			ctx.runChildren(as, ins)
-			if attr.IsLinked() && (attr.Content() == "") {
-				attr.Remove()
-			}
-			if !attr.IsLinked() {
-				attr.Free()
-			}
-			returnValue = "true"
-		}
-	case "dump":
-		returnValue = scope.Value.(xml.Node).String()
-
-	default:
-		ctx.Log.Error("Must implement " + fun.Name)
-	}
-*/

@@ -8,6 +8,7 @@ import (
 	l4g "log4go"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	"os"
+	"fmt"
 )
 
 type Position int
@@ -135,6 +136,11 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 	if proto.GetBool(ins.IsValid) == false {
 		panic("Invalid instruction. Should have stopped before linking!")
 	}
+	indent := ""
+	for i := 0; i < len(ctx.Yields); i++ {
+		indent += "\t"
+	}
+
 	returnValue = ""
 	switch *ins.Type {
 	case tp.Instruction_BLOCK:
@@ -147,11 +153,13 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 		if len(ins.Arguments) > 0 {
 			vars[name] = ctx.runInstruction(scope, ins.Arguments[0])
 		}
+		fmt.Printf("%s %%%s: %v\n", indent, name, vars[name])
 		if len(ins.Children) > 0 {
 			ts := &Scope{Value: ctx.vars()[name]}
 			ctx.runChildren(ts, ins)
 			vars[name] = ts.Value
 		}
+		fmt.Printf("%s return: %v\n", indent, vars[name])
 		returnValue = vars[name]
 	case tp.Instruction_IMPORT:
 		obj := ctx.Objects[int(proto.GetInt32(ins.ObjectId))]
@@ -165,6 +173,17 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 		for i, argIns := range ins.Arguments {
 			args[i] = ctx.runInstruction(scope, argIns)
 		}
+		debugInfo := fmt.Sprintf("calling %s(", fun.Name)
+
+		for index, v := range args {
+			debugInfo += fmt.Sprintf("%q", v)
+			if index < len(args)-1 {
+				debugInfo += ", "
+			}
+		}
+		debugInfo += ")\n"
+		fmt.Printf("%s %s", indent, debugInfo)
+
 		if proto.GetBool(fun.BuiltIn) {
 			if f := builtInFunctions[fun.Name]; f != nil {
 				returnValue = f(ctx, scope, ins, args)
@@ -189,6 +208,10 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 			// POP!
 			ctx.popYieldBlock()
 		}
+
+		fmt.Printf("%s ctx.Value: %v\n", indent, scope.Value)
+		fmt.Printf("%s returns: %v\n", indent, returnValue)
+		fmt.Printf("%s %s done\n\n", indent, fun.Name)
 	}
 
 	return
