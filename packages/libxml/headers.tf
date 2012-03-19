@@ -20,7 +20,7 @@
 " Similar to `dump()`, but only converts the indside of the currently-selected node to text. "
 @func XMLNode.inner_text() Text Text
 
-" Opens the attribute you select with **name** (e.g. `attribute(\"class\" opens the class for modification). "
+" Opens the attribute you select with **name** (e.g. `attribute(\"class\")` opens the class for modification). "
 @func XMLNode.attribute(Text %name) Text Attribute
 
 " Outputs the current node as text. "
