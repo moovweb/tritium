@@ -51,6 +51,7 @@ type Ctx struct {
 	// Debug info
 	filename string
 	hadError bool
+	InnerReplacer       *rubex.Regexp
 }
 
 type YieldBlock struct {
@@ -109,6 +110,7 @@ func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]str
 		MatchShouldContinue: make([]bool, 0),
 		Yields:              make([]*YieldBlock, 0),
 		hadError:            false,
+		InnerReplacer:       rubex.MustCompile("[\\\\$](\\d)"),
 	}
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)

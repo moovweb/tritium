@@ -14,10 +14,6 @@ import (
 	"goconv"
 )
 
-var (
-	InnerReplacer = rubex.MustCompile(`[\\$](\d)`)
-)
-
 func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = ""
 	switch fun.Name {
@@ -194,7 +190,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			//println(ins.String())
 
 			//println("Replacement:", replacementScope.Value.(string))
-			return InnerReplacer.GsubFunc(replacementScope.Value.(string), func(_ string, numeric_captures map[string]string) string {
+			return ctx.InnerReplacer.GsubFunc(replacementScope.Value.(string), func(_ string, numeric_captures map[string]string) string {
 				capture := numeric_captures["1"]
 				var val string
 				if usesGlobal {
