@@ -51,18 +51,7 @@
 
 "Changes the name of the currently-selected attribute to that specified by **%name**.
 
-In these cases, the following Tritium is identical:
-
-    attribute(\"class\") {
-      name(\"whee\")
-    }
-
-    attribute(\"class\") {
-      name() {
-        set(\"whee\")
-      }
-    }
-"
+Functionally equivalent to `name() { set(%name) }`."
 
 @func Attribute.name(Text %name) {
   name() { 
