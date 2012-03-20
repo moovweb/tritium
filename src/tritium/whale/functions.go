@@ -499,7 +499,6 @@ func move_XMLNode_XMLNode_Position(ctx EngineContext, scope *Scope, ins *tp.Inst
 func inner(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	ts := &Scope{Value: node.InnerHtml()}
-
 	for _, child := range ins.Children {
 		ctx.RunInstruction(ts, child)
 	}
@@ -554,7 +553,6 @@ func text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface
 		ctx.RunInstruction(ts, child)
 	}
 	val := ts.Value.(string)
-	println("calling text", val)
 	node.SetContent(val)
 	returnValue = val
 	return
@@ -567,9 +565,7 @@ func inner_text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []int
 		ctx.RunInstruction(ts, child)
 	}
 	val := ts.Value.(string)
-	println("calling inner_text", val)
 	node.SetInnerHtml(val)
-	println("node", node.String())
 	returnValue = val
 	return
 }
