@@ -49,7 +49,7 @@ func init() {
 
 	builtInFunctions["regexp.Text.Text"] = regexp_Text_Text
 	builtInFunctions["replace.Regexp"] = replace_Regexp
-	builtInFunctions["inner_text"] = inner_text
+	builtInFunctions["inner_text"] = text
 	builtInFunctions["text"] = text
 
 	builtInFunctions["dup"] = dup
@@ -77,6 +77,9 @@ func init() {
 	builtInFunctions["path"] = path
 	builtInFunctions["css.Text"] = css_Text
 	builtInFunctions["wrap_text_children.Text"] = wrap_text_children_Text
+	builtInFunctions["convert_encoding.Text.Text"] = convert_encoding_Text_Text
+	builtInFunctions["downcase.Text"] = downcase_Text
+	builtInFunctions["upcase.Text"] = upcase_Text
 }
 
 func LookupBuiltIn(name string) builtInFunc {
