@@ -123,7 +123,7 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 		if len(ins.Children) > 0 {
 			ts := &Scope{Value: ctx.Vars()[name]}
 			for _, child := range ins.Children {
-				ctx.RunInstruction(scope, child)
+				ctx.RunInstruction(ts, child)
 			}
 			vars[name] = ts.Value
 		}
