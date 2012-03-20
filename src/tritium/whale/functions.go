@@ -381,6 +381,10 @@ func select_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	for index, node := range nodes {
 		if node != nil && node.IsValid() {
 			t := node.NodeType()
+			if t == xml.XML_DOCUMENT_NODE || t == xml.XML_HTML_DOCUMENT_NODE {
+				node = node.MyDocument().Root()
+				t = node.NodeType()
+			}
 			if t == xml.XML_ELEMENT_NODE {
 				ns := &Scope{Value: node, Index: index}
 				for _, child := range ins.Children {
@@ -494,7 +498,7 @@ func move_XMLNode_XMLNode_Position(ctx EngineContext, scope *Scope, ins *tp.Inst
 
 func inner(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
-	ts := &Scope{Value: node.Content()}
+	ts := &Scope{Value: node.InnerHtml()}
 
 	for _, child := range ins.Children {
 		ctx.RunInstruction(ts, child)
@@ -550,7 +554,22 @@ func text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface
 		ctx.RunInstruction(ts, child)
 	}
 	val := ts.Value.(string)
+	println("calling text", val)
 	node.SetContent(val)
+	returnValue = val
+	return
+}
+
+func inner_text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	ts := &Scope{Value: node.Content()}
+	for _, child := range ins.Children {
+		ctx.RunInstruction(ts, child)
+	}
+	val := ts.Value.(string)
+	println("calling inner_text", val)
+	node.SetInnerHtml(val)
+	println("node", node.String())
 	returnValue = val
 	return
 }
@@ -660,7 +679,7 @@ func wrap_text_children_Text(ctx EngineContext, scope *Scope, ins *tp.Instructio
 		tag := fmt.Sprintf("<%s />", tagName)
 		for index, textNode := range textNodes {
 			textNode.Wrap(tag)
-			ns := &Scope{textNode, index}
+			ns := &Scope{textNode.Parent(), index}
 			for _, child := range ins.Children {
 				ctx.RunInstruction(ns, child)
 			}

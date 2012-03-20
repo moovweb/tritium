@@ -49,7 +49,7 @@ func init() {
 
 	builtInFunctions["regexp.Text.Text"] = regexp_Text_Text
 	builtInFunctions["replace.Regexp"] = replace_Regexp
-	builtInFunctions["inner_text"] = text
+	builtInFunctions["inner_text"] = inner_text
 	builtInFunctions["text"] = text
 
 	builtInFunctions["dup"] = dup

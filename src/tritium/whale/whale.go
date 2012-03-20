@@ -257,7 +257,8 @@ func (ctx *WhaleContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 		if strings.Index(options, "m") >= 0 {
 			mode = rubex.ONIG_OPTION_MULTILINE
 		}
-		r, err := rubex.NewRegexp(pattern, mode)
+		var err os.Error
+		r, err = rubex.NewRegexp(pattern, mode)
 		if err == nil {
 			ctx.RegexpCache[sig] = r
 		}
