@@ -396,7 +396,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			if ok {
 				returnValue = attr.Content()
 			} else {
-				returnValue = node.String()
+				returnValue = node.DumpHTML()
 			}
 		}
 		if len(ins.Children) > 0 {

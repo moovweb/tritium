@@ -3,7 +3,11 @@
 
 html() {
   $("html/body/div"){  
-    attribute("href", fetch("text()")) {
+    $value = fetch("text()")
+
+    #log("VALUE:" + $value)
+    
+    attribute("href", $value) {
       value() {
         replace(/\s+/, "")
         prepend("tel:")
