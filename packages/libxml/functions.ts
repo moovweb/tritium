@@ -238,6 +238,7 @@ Functionally equivalent to `name() { set(%name) }`."
   html_fragment($guessed_encoding) {
     yield()
   }
+  export("Content-Type-Charset","utf-8")   # Right now we always output in utf-8, so set the response header appropriately
 }
 
 # POSITIONALS
