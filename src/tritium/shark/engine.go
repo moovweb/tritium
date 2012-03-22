@@ -3,8 +3,8 @@ package shark
 import (
 	tp "athena/src/athena/proto"
 	"rubex/lib"
-	"gokogiri0/libxml/xpath"
-	xml "gokogiri0/libxml/tree"
+	"gokogiri/libxml/xpath"
+	xml "gokogiri/libxml/tree"
 	l4g "log4go"
 	proto "goprotobuf.googlecode.com/hg/proto"
 	"fmt"
