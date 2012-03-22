@@ -94,10 +94,10 @@ func with_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []inte
 	returnValue = "false"
 	if ctx.ShouldContinue() {
 		if args[0].(string) == ctx.MatchTarget() {
-			ctx.SetShouldContinue(false)
 			for _, child := range ins.Children {
 				ctx.RunInstruction(scope, child)
 			}
+			ctx.SetShouldContinue(false)
 			returnValue = "true"
 		}
 	}
@@ -109,10 +109,10 @@ func with_Regexp(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	if ctx.ShouldContinue() {
 		//println(matcher.MatchAgainst, matchWith)
 		if (args[0].(*rubex.Regexp)).Match([]uint8(ctx.MatchTarget())) {
-			ctx.SetShouldContinue(false)
 			for _, child := range ins.Children {
 				ctx.RunInstruction(scope, child)
 			}
+			ctx.SetShouldContinue(false)
 			returnValue = "true"
 		}
 	}
@@ -591,15 +591,11 @@ func fetch_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []int
 		returnValue = "false"
 		return
 	}
-	nodes, err := node.Search(expr)
 
+	nodes, err := node.Search(expr)
 	if err == nil && len(nodes) > 0 {
 		node := nodes[0]
-		if node.NodeType() == xml.XML_ATTRIBUTE_NODE {
-			returnValue = node.Content()
-		} else {
-			returnValue = node.String()
-		}
+		returnValue = node.String()
 	}
 	if len(ins.Children) > 0 {
 		ts := &Scope{Value: returnValue}
@@ -607,6 +603,8 @@ func fetch_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []int
 			ctx.RunInstruction(ts, child)
 		}
 		returnValue = ts.Value
+	} else if returnValue == nil {
+		returnValue = ""
 	}
 	return
 }

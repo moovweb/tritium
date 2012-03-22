@@ -303,3 +303,17 @@ func (pkg *Package) resolveHeader(function *ap.Function) {
 		}
 	}
 }
+
+func (pkg *Package) CollectFunctionDocs() {	
+	for _, function := range(pkg.Package.Functions) {
+		if function.Instruction == nil {
+			continue
+		}
+
+		for _, instruction := range(function.Instruction.Children) {
+			if *instruction.Type == ap.Instruction_TEXT {
+				function.Description = instruction.Value
+			}
+		}
+	}	
+}

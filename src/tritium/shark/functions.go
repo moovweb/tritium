@@ -77,8 +77,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		returnValue = "false"
 		if ctx.matchShouldContinue() {
 			if args[0].(string) == ctx.matchTarget() {
-				ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
 				ctx.runChildren(scope, ins)
+				ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
 				returnValue = "true"
 			}
 		}
@@ -87,8 +87,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		if ctx.matchShouldContinue() {
 			//println(matcher.MatchAgainst, matchWith)
 			if (args[0].(*rubex.Regexp)).Match([]uint8(ctx.matchTarget())) {
-				ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
 				ctx.runChildren(scope, ins)
+				ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1] = false
 				returnValue = "true"
 			}
 		}
@@ -395,7 +395,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			if ok {
 				returnValue = attr.Content()
 			} else {
-				returnValue = node.String()
+				returnValue = node.DumpHTML()
 			}
 		}
 		if len(ins.Children) > 0 {
