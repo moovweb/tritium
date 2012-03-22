@@ -292,7 +292,7 @@ func convert_encoding_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruc
 
 func xml_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	input := scope.Value.(string)
-	doc, err := xml.ParseWithBuffer([]byte(input), nil, nil, xml.DefaultParseOption, nil, ctx.GetOutputBuffer())
+	doc, err := xml.Parse([]byte(input), nil, nil, xml.DefaultParseOption, nil)
 	if err != nil {
 		ctx.Logger().Error("xml err: %s", err.String())
 		returnValue = "false"
@@ -316,7 +316,7 @@ func html_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, ar
 	outputEncoding := args[1].(string)
 	outputEncodingBytes := []byte(outputEncoding)
 	input := scope.Value.(string)
-	doc, err := html.ParseWithBuffer([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes, ctx.GetOutputBuffer())
+	doc, err := html.Parse([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
 	if err != nil {
 		ctx.Logger().Error("html_doc err: %s", err.String())
 		returnValue = "false"
@@ -340,7 +340,7 @@ func html_fragment_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, ar
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
 	input := scope.Value.(string)
-	fragment, err := html.ParseFragment([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, html.DefaultEncodingBytes, ctx.GetOutputBuffer())
+	fragment, err := html.ParseFragment([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, html.DefaultEncodingBytes)
 	if err != nil {
 		ctx.Logger().Error("html_fragment err: %s", err.String())
 		returnValue = "false"
@@ -620,7 +620,7 @@ func cdata_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []int
 	node := scope.Value.(xml.Node)
 	if node.NodeType() == xml.XML_ELEMENT_NODE {
 		content := args[0].(string)
-		cdata := node.MyDocument().CreateCData(content)
+		cdata := node.MyDocument().CreateCDataNode(content)
 		first := node.FirstChild()
 		if first != nil {
 			node.ResetChildren()
