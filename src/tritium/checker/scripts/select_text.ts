@@ -14,7 +14,10 @@ html() {
   $("./a | ./comment() | script()") //warn
   $("script() | comment()") //warn
   $("./br|./comment()") //warn
-  
+  move_here("text()") //warn  
+  move_to("text()") //warn  
+  move("text()", "a", "top") //warn  
+  move("a", "text()", "bottom") //warn  
   
   var("text()") 
   $("//script[contains(text())]")

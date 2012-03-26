@@ -12,11 +12,13 @@ func (result *CheckResult) CheckForSelectText(script *tp.ScriptObject) {
 	iterate(script, func (ins *tp.Instruction) {
 		if *ins.Type == tp.Instruction_FUNCTION_CALL {
 			name := proto.GetString(ins.Value)
-			if name == "$" || name == "select" {
-				xpathIns := ins.Arguments[0] 
-				xpath := proto.GetString(xpathIns.Value)
-				if tester.Match([]byte(xpath)) {
-					result.AddWarning(script, ins, "Shouldn't use comment()/text() in '" + xpath + "'")
+			if name == "$" || name == "select" || name == "move_here" || name == "move_to" || name == "move" {
+
+				for _, arg := range(ins.Arguments) {				 
+					xpath := proto.GetString(arg.Value)
+					if tester.Match([]byte(xpath)) {
+						result.AddWarning(script, ins, "Shouldn't use comment()/text() in '" + xpath + "'")
+					}
 				}
 			}
 		}
