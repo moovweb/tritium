@@ -2,7 +2,6 @@ package checker
 
 import(
 	t "testing"
-	. "fmt"
 )
 
 func TestCleanChecker(t *t.T) {
@@ -14,8 +13,9 @@ func TestCleanChecker(t *t.T) {
 
 func TestSelectTextChecker(t *t.T) {
 	result := CheckFile("scripts/select_text.ts")
-	if len(result.Warnings) != 14 {
-		t.Error("Should have thrown 14 warnings only gave " + Sprintf("%d", len(result.Warnings)))
+	count := 18
+	if len(result.Warnings) != count {
+		t.Errorf("Should have thrown %v warnings only gave %d\n", count, len(result.Warnings))
 		for _, warn := range(result.Warnings) {
 			t.Error(warn.String())
 		}
