@@ -8,7 +8,7 @@ import(
 )
 
 func (result *CheckResult) CheckForSelectText(script *tp.ScriptObject) {
-	tester := MustCompile("([^\\[\\(^]|^)(text|comment)\\(\\)")
+	tester := MustCompile("([^\\[\\(^]|^)(text|comment)\\(\\)([^=]|$)")
 	iterate(script, func (ins *tp.Instruction) {
 		if *ins.Type == tp.Instruction_FUNCTION_CALL {
 			name := proto.GetString(ins.Value)
