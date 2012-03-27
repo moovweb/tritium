@@ -10,47 +10,42 @@ import "fmt"
 import "hermes/src/hermes"
 import "hermes/src/hermes/api"
 import "tritium/src/tritium/spec"
+import "os"
 
+func RunTest(path string) (result *spec.Result) {
+	result = spec.NewResult()
+	
 
-func RunTest(path string, t *testing.T) {
-	println("Running ... " + path)
 	logger := log4go.NewDefaultLogger(log4go.INFO)
 	dataPath, err := hermes.GetDataPath()
 
 	if err != nil {
-		t.Errorf("Couldn't find data path: %v\n", err.String())
-		t.FailNow()
+		result.Error(path, fmt.Sprintf("Couldn't find data path: %v\n", err.String()))
+		return
 	}
 
 	session := api.NewDefaultSession(dataPath, "", logger)
 	mixer, _, err := session.LoadMixerByFullName("omni-mobile", "")
 	
 	if err != nil {
-		t.Errorf("Couldn't load mixer: %v\n", err.String())
-		t.FailNow()
+		result.Error(path, fmt.Sprintf("Couldn't load mixer: %v\n", err.String()))
+		return
 	}
 	
 	var pkg *tp.Package	
 	pkg = mixer.Package
 
-	fmt.Printf("Loaded mixer")
-
 	spec, err := spec.LoadSpec(path, pkg)
 	
 	if err != nil {
-		t.Errorf("Error loading test spec:\n%v\n", err.String())
+		result.Error(path, fmt.Sprintf("Error loading test spec:\n%v\n", err.String()))
+		return
 	}
 
-
 	eng := whale.NewEngine(logger)
-	output, exports, logs := eng.Run(spec.Script, spec.Input, spec.Vars)
+	result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
 
-	fmt.Printf("RESULT: %v :: %v :: %v\n", output, exports, logs)
-}
-
-func Test1(t *testing.T) {
-	all, _ := filepath.Glob("main.ts")
-	println(len(all))
+	return
 }
 
 func GatherTests(directory string) (tests []string) {
@@ -79,13 +74,14 @@ func relativeDirectory(directoryFromRoot string) (directory string, ok bool){
 
 	directory = filepath.Join(file, "../../../../", directoryFromRoot)
 
-	println("Directory:" + directory)
+	println("Running tests in : " + directory)
 
 	return
 }
 
 func RunTestSuite(directoryFromRoot string, t *testing.T) {
 	directory, ok := relativeDirectory(directoryFromRoot)
+	globalResult := spec.NewResult()
 
 	if !ok {
 		t.Error("Couldn't resolve root directory")
@@ -95,6 +91,27 @@ func RunTestSuite(directoryFromRoot string, t *testing.T) {
 	testPaths := GatherTests(directory)
 
 	for _, testPath := range(testPaths) {
-		RunTest(testPath, t)
+		testResult := RunTest(testPath)
+		print(testResult.CharStatus())
+		globalResult.Merge( testResult )
 	}
+
+	var foundError = false
+
+	for _, error := range globalResult.Errors {
+		foundError = true
+		println("\n=========================================", error.Location, "\n")
+		if error.Panic {
+			fmt.Printf(error.Message)
+		} else {
+			fmt.Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", error.Name, error.Message, error.Got, error.Expected)
+		}
+	}
+	println("\n\n")
+	println("+++ TEST COMPLETE +++\n\n")
+
+	if foundError {
+		os.Exit(1)
+	}
+
 }
