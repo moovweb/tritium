@@ -115,10 +115,8 @@ func RunTestSuite(directoryFromRoot string, t *testing.T) {
 		globalResult.Merge( testResult )
 	}
 
-	var foundError = false
-
 	for _, error := range globalResult.Errors {
-		foundError = true
+		t.Fail()
 		println("\n=========================================", error.Location, "\n")
 		if error.Panic {
 			fmt.Printf(error.Message)
@@ -126,11 +124,6 @@ func RunTestSuite(directoryFromRoot string, t *testing.T) {
 			fmt.Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", error.Name, error.Message, error.Got, error.Expected)
 		}
 	}
-	println("\n\n")
-	println("+++ TEST COMPLETE +++\n\n")
-
-	if foundError {
-		os.Exit(1)
-	}
+	fmt.Printf("\n+++ Finished test suite(%v) +++\n\n", directoryFromRoot)
 
 }
