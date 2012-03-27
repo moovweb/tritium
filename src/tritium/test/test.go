@@ -12,6 +12,8 @@ import "tritium/src/tritium"
 import yaml "goyaml"
 import "log4go"
 import "os"
+import "runtime"
+import "fmt"
 
 func LoadMixer(path string) (pkg *tp.Package) {
 	if len(path) > 0 {
@@ -57,6 +59,7 @@ func LoadVars(path string) (vars map[string]string) {
 }
 
 func RunTest(path string, t *testing.T) {
+	println("Running ... " + path)
 	mixerPaths, err := filepath.Glob("$HOME/.manhattan/mixer/*.mxr")
 	mixerPath := ""
 	if err == nil && len(mixerPaths) > 0 {
@@ -64,12 +67,18 @@ func RunTest(path string, t *testing.T) {
 	}
 	pkg := LoadMixer(mixerPath)
 
+	fmt.Printf("Loaded mixer")
+
 	funcPaths, err := filepath.Glob(filepath.Join(path, "functions.ts"))
 	if err == nil && len(funcPaths) > 0 {
 		pkg = LoadUserFunctions(funcPaths[0], pkg)
 	}
 
+	fmt.Printf("Loaded user defined functions")
+
 	scriptPaths, err := filepath.Glob(filepath.Join(path, "main.ts"))
+
+	fmt.Printf("Loaded tritium script")
 
 	var script *tp.Transform
 	if err == nil && len(scriptPaths) > 0 {
@@ -93,10 +102,48 @@ func Test1(t *testing.T) {
 	println(len(all))
 }
 
+func GatherTests(directory string) (tests []string) {
+	_, err := filepath.Glob(filepath.Join(directory, "main.ts"))
 
+	if err == nil {
+		tests = append(tests, directory)
+	}
 
-/*
-func RunBench(b *testing.B) {
+	subdirs, _ := filepath.Glob(filepath.Join(directory, "*"))
 
+	for _, subdir := range subdirs {
+		tests = append(tests, GatherTests(subdir)...)
+		//result.all(subdir, pkg, eng, logger)
+	}
+
+	return
 }
-*/
+
+func relativeDirectory(directoryFromRoot string) (directory string, ok bool){
+	_, file, _, ok := runtime.Caller(0)
+
+	if !ok {
+		return
+	}
+
+	directory = filepath.Join(file, "../../../../", directoryFromRoot)
+
+	println("Directory:" + directory)
+
+	return
+}
+
+func RunTestSuite(directoryFromRoot string, t *testing.T) {
+	directory, ok := relativeDirectory(directoryFromRoot)
+
+	if !ok {
+		t.Error("Couldn't resolve root directory")
+		t.FailNow()
+	}
+
+	testPaths := GatherTests(directory)
+
+	for _, testPath := range(testPaths) {
+		RunTest(testPath, t)
+	}
+}
