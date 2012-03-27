@@ -17,7 +17,7 @@ func RunTest(path string) (result *spec.Result) {
 	result = spec.NewResult()
 	
 	logger := make(log4go.Logger)
-	l4g.Global = logger
+	log4go.Global = logger
 
 	logWriter := spec.NewTestLogWriter()
 	logger["test"] = &log4go.Filter{log4go.WARNING, "test", logWriter}
