@@ -59,7 +59,6 @@ func GatherTests(directory string) (tests []string) {
 
 	for _, subdir := range subdirs {
 		tests = append(tests, GatherTests(subdir)...)
-		//result.all(subdir, pkg, eng, logger)
 	}
 
 	return
