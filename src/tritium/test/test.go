@@ -1,17 +1,10 @@
 package test
 
 import "path/filepath"
-// import "io/ioutil"
-// import "log"
 import tp "athena/src/athena/proto"
 import "tritium/src/tritium/whale"
 import "testing"
-// import "tritium/src/tritium/packager"
-//import "tritium/src/tritium/linker"
-//import "tritium/src/tritium"
-// import yaml "goyaml"
 import "log4go"
-// import "os"
 import "runtime"
 import "fmt"
 import "hermes/src/hermes"
