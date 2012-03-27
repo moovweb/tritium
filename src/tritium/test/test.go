@@ -6,6 +6,7 @@ import "tritium/src/tritium/whale"
 import "testing"
 import "log4go"
 import "runtime"
+import "runtime/debug"
 import "fmt"
 import "hermes/src/hermes"
 import "hermes/src/hermes/api"
@@ -15,8 +16,25 @@ import "os"
 func RunTest(path string) (result *spec.Result) {
 	result = spec.NewResult()
 	
+	logger := make(log4go.Logger)
+	logWriter := spec.NewTestLogWriter()
+	logger["test"] = &log4go.Filter{log4go.WARNING, "test", logWriter}
 
-	logger := log4go.NewDefaultLogger(log4go.INFO)
+	defer func() {
+		if x := recover(); x != nil {
+			err, ok := x.(os.Error)
+			if ok {
+				logger.Error(path + " === " + err.String() + "\n\n" + string(debug.Stack()))
+			} else {
+				logger.Error(path + " === " + x.(string) + "\n\n" + string(debug.Stack()))
+			}
+		}
+		for _, rec := range logWriter.Logs {
+			error := log4go.FormatLogRecord("[%D %T] [%L] (%S) %M", rec)
+			result.Error(path, error)
+		}
+	}()
+
 	dataPath, err := hermes.GetDataPath()
 
 	if err != nil {
