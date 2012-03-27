@@ -1,100 +1,58 @@
 package test
 
 import "path/filepath"
-import "io/ioutil"
-import "log"
+// import "io/ioutil"
+// import "log"
 import tp "athena/src/athena/proto"
 import "tritium/src/tritium/whale"
 import "testing"
-import "tritium/src/tritium/packager"
-import "tritium/src/tritium/linker"
-import "tritium/src/tritium"
-import yaml "goyaml"
+// import "tritium/src/tritium/packager"
+//import "tritium/src/tritium/linker"
+//import "tritium/src/tritium"
+// import yaml "goyaml"
 import "log4go"
-import "os"
+// import "os"
 import "runtime"
 import "fmt"
+import "hermes/src/hermes"
+import "hermes/src/hermes/api"
+import "tritium/src/tritium/spec"
 
-func LoadMixer(path string) (pkg *tp.Package) {
-	if len(path) > 0 {
-		// Used when testing in ambrosia
-		mixer := tp.OpenMixer(path)
-		pkg = mixer.Package
-	} else {
-		bigPackage := packager.BuildDefaultPackage()
-		pkg = bigPackage.Package
-	}
-	return
-}
-
-func LoadUserFunctions(path string, pkg *tp.Package) (newPkg *tp.Package) {
-	if len(path) > 0 {
-		newPkg = tritium.MakeProjectPackage(path, pkg)
-	}
-	return
-}
-
-func LoadFile(dir, filename string) (data []byte, err os.Error) {
-	list, err := filepath.Glob(filepath.Join(dir, filename))
-	if err != nil {
-		return
-	}
-	if len(list) == 0 {
-		return
-	}
-	data, err = ioutil.ReadFile(list[0])
-	return
-}
-
-func LoadVars(path string) (vars map[string]string) {
-	data, err := LoadFile(path, "vars.yml")
-	if err == nil {
-		vars = make(map[string]string, 0)
-		err = yaml.Unmarshal(data, &vars)
-	}
-	if err != nil {
-		log.Fatal(err)
-	}
-	return
-}
 
 func RunTest(path string, t *testing.T) {
 	println("Running ... " + path)
-	mixerPaths, err := filepath.Glob("$HOME/.manhattan/mixer/*.mxr")
-	mixerPath := ""
-	if err == nil && len(mixerPaths) > 0 {
-		mixerPath = mixerPaths[0]
+	logger := log4go.NewDefaultLogger(log4go.INFO)
+	dataPath, err := hermes.GetDataPath()
+
+	if err != nil {
+		t.Errorf("Couldn't find data path: %v\n", err.String())
+		t.FailNow()
 	}
-	pkg := LoadMixer(mixerPath)
+
+	session := api.NewDefaultSession(dataPath, "", logger)
+	mixer, _, err := session.LoadMixerByFullName("omni-mobile", "")
+	
+	if err != nil {
+		t.Errorf("Couldn't load mixer: %v\n", err.String())
+		t.FailNow()
+	}
+	
+	var pkg *tp.Package	
+	pkg = mixer.Package
 
 	fmt.Printf("Loaded mixer")
 
-	funcPaths, err := filepath.Glob(filepath.Join(path, "functions.ts"))
-	if err == nil && len(funcPaths) > 0 {
-		pkg = LoadUserFunctions(funcPaths[0], pkg)
-	}
-
-	fmt.Printf("Loaded user defined functions")
-
-	scriptPaths, err := filepath.Glob(filepath.Join(path, "main.ts"))
-
-	fmt.Printf("Loaded tritium script")
-
-	var script *tp.Transform
-	if err == nil && len(scriptPaths) > 0 {
-		script, err = linker.RunWithPackage(filepath.Join(path, "main.ts"), pkg)
-	}
+	spec, err := spec.LoadSpec(path, pkg)
+	
 	if err != nil {
-		log.Fatal("cannot load main.ts: %v", err)
+		t.Errorf("Error loading test spec:\n%v\n", err.String())
 	}
 
-	
-	input, err := LoadFile(path, "input.*")
-	vars := LoadVars(path)
-	
-	logger := log4go.NewDefaultLogger(log4go.INFO)
+
 	eng := whale.NewEngine(logger)
-	eng.Run(script, input, vars)
+	output, exports, logs := eng.Run(spec.Script, spec.Input, spec.Vars)
+
+	fmt.Printf("RESULT: %v :: %v :: %v\n", output, exports, logs)
 }
 
 func Test1(t *testing.T) {
