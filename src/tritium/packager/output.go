@@ -2,19 +2,20 @@ package packager
 
 import (
 	tp "athena/src/athena/proto"
-	proto "goprotobuf.googlecode.com/hg/proto"
+	proto "code.google.com/p/goprotobuf/proto"
 	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	"tritium/src/tritium/crypto"
 )
 
 func (pkg *Package) write() {
-//	path, name := filepath.Split(pkg.location)
-//	path, name := filepath.Split(pkg.LoadPath)
-//	outputFilename := filepath.Join(path, name, name+".tpkg")
-  name := proto.GetString( pkg.Name )
-	outputFilename := filepath.Join(pkg.LoadPath, name +".tpkg")
+	//	path, name := filepath.Split(pkg.location)
+	//	path, name := filepath.Split(pkg.LoadPath)
+	//	outputFilename := filepath.Join(path, name, name+".tpkg")
+	name := proto.GetString(pkg.Name)
+	outputFilename := filepath.Join(pkg.LoadPath, name+".tpkg")
 
 	bytes, err := proto.Marshal(pkg.Package)
 
@@ -25,20 +26,20 @@ func (pkg *Package) write() {
 
 	bytes = crypto.Encrypt(bytes)
 
-	ioutil.WriteFile(outputFilename, bytes, uint32(0666))
+	ioutil.WriteFile(outputFilename, bytes, os.FileMode(0666))
 	pkg.OutputFile = outputFilename
 
 	pkg.Println(" -- output: " + outputFilename)
 }
 
 func (pkg *Package) LoadFromFile(path string) (thisError *Error) {
-	tpkg_path := path +".tpkg"	
+	tpkg_path := path + ".tpkg"
 	data, err := ioutil.ReadFile(tpkg_path)
 
 	if err != nil {
 		return &Error{
-		  Code: NOT_FOUND,
-		  Message: "Could not find tpkg file:" + tpkg_path,
+			Code:    NOT_FOUND,
+			Message: "Could not find tpkg file:" + tpkg_path,
 		}
 	}
 
@@ -90,7 +91,7 @@ func (pkg *Package) Merge(otherPackage *tp.Package) {
 	for _, dependency := range otherPackage.Dependencies {
 		pkg.Dependencies = append(pkg.Dependencies, dependency)
 	}
-	
+
 	otherName := proto.GetString(otherPackage.Name)
 	pkg.Dependencies = append(pkg.Dependencies, otherName)
 	pkg.Log.Info("Added dependency (" + otherName + ") to " + proto.GetString(pkg.Name) + "'s loaded dependencies")

@@ -1,17 +1,16 @@
 package shark
 
 import (
-	"strings"
-	"os"
-	"gokogiri/libxml"
-	"fmt"
-	log "log4go"
-	xml "gokogiri/libxml/tree"
 	tp "athena/src/athena/proto"
-	"gokogiri/libxml/xpath"
-	"rubex/lib"
 	"css2xpath"
+	"fmt"
 	"goconv"
+	"gokogiri/libxml"
+	xml "gokogiri/libxml/tree"
+	"gokogiri/libxml/xpath"
+	log "log4go"
+	"rubex/lib"
+	"strings"
 )
 
 var (
@@ -130,7 +129,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			if strings.Index(args[1].(string), "m") >= 0 {
 				mode = rubex.ONIG_OPTION_MULTILINE
 			}
-			var err os.Error
+			var err error
 			r, err = rubex.NewRegexp(args[0].(string), mode)
 			if err != nil {
 				ctx.Log.Error("Invalid regexp")
@@ -415,7 +414,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		tagName := args[1].(string)
 		element, err := node.Doc().NewElement(tagName)
 		if err != nil {
-			log.Error("Problem with insert_at(Pos, '" + tagName + "') - " + err.String())
+			log.Error("Problem with insert_at(Pos, '" + tagName + "') - " + err.Error())
 			returnValue = "false"
 		} else {
 			MoveFunc(element, node, position)

@@ -3,7 +3,7 @@ package main
 import "os"
 import "tritium/src/tritium/packager"
 //import . "tritium/src/tritium/linker"
-import s "tritium/src/tritium/spec"
+//import s "tritium/src/tritium/spec"
 import "tritium/src/tritium/doc"
 
 func show_usage() {
@@ -58,6 +58,7 @@ func main() {
 		} else if command == "link" {
 			println("Linking files found in the directory:", os.Args[2])
 			//LinkerToBytes(os.Args[2])
+/*
 		} else if command == "test" {
 			println("Running tests found in the directory:", os.Args[2])
 			if len(os.Args) == 3 {
@@ -67,7 +68,6 @@ func main() {
 			} else {
 				println("Usage:\n    tritium test <package_name> <optional_mixer_path>")
 			}
-
 		} else if command == "debug" {
 			println("Running tests found in the directory:", os.Args[2])
 			if len(os.Args) == 3 {
@@ -77,7 +77,6 @@ func main() {
 			} else {
 				println("Usage:\n    tritium test <package_name> <optional_mixer_path>")
 			}
-
 		} else if command == "old_test" {
 			println("Running tests found in the directory:", os.Args[2])
 			if len(os.Args) == 3 {
@@ -87,7 +86,7 @@ func main() {
 			} else {
 				println("Usage:\n    tritium test <package_name> <optional_mixer_path>")
 			}
-
+*/
 		} else {
 			println("No such command", command)
 			show_usage()

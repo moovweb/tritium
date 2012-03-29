@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"goprotobuf.googlecode.com/hg/proto"
+	"code.google.com/p/goprotobuf/proto"
 	ir "athena/src/athena/proto"
 	"io/ioutil"
 	"path/filepath"

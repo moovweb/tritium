@@ -8,7 +8,7 @@ import (
 	//log "log4go"
 	//proto "goprotobuf.googlecode.com/hg/proto"
 	tp "athena/src/athena/proto"
-	"rubex/lib"
+	"rubex"
 	"css2xpath"
 	"goconv"
 )
@@ -294,7 +294,7 @@ func xml_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []
 	input := scope.Value.(string)
 	doc, err := xml.Parse([]byte(input), nil, nil, xml.DefaultParseOption, nil)
 	if err != nil {
-		ctx.Logger().Error("xml err: %s", err.String())
+		ctx.Logger().Error("xml err: %s", err.Error())
 		returnValue = "false"
 		return
 	}
@@ -318,7 +318,7 @@ func html_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, ar
 	input := scope.Value.(string)
 	doc, err := html.Parse([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
 	if err != nil {
-		ctx.Logger().Error("html_doc err: %s", err.String())
+		ctx.Logger().Error("html_doc err: %s", err.Error())
 		returnValue = "false"
 		return
 	}
@@ -328,7 +328,7 @@ func html_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, ar
 		ctx.RunInstruction(ns, child)
 	}
 	if err := doc.SetMetaEncoding(outputEncoding); err != nil {
-		//ctx.Log.Warn("executing html:" + err.String())
+		//ctx.Log.Warn("executing html:" + err.Error())
 	}
 	scope.Value = doc.String()
 	returnValue = scope.Value
@@ -342,7 +342,7 @@ func html_fragment_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, ar
 	input := scope.Value.(string)
 	fragment, err := html.ParseFragment([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, html.DefaultEncodingBytes)
 	if err != nil {
-		ctx.Logger().Error("html_fragment err: %s", err.String())
+		ctx.Logger().Error("html_fragment err: %s", err.Error())
 		returnValue = "false"
 		return
 	}
@@ -367,7 +367,7 @@ func select_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	}
 	nodes, err := node.Search(expr)
 	if err != nil {
-		ctx.Logger().Error("select err: %s", err.String())
+		ctx.Logger().Error("select err: %s", err.Error())
 		returnValue = "false"
 		return
 	}
@@ -416,7 +416,7 @@ func remove_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 
 	nodes, err := node.Search(expr)
 	if err != nil {
-		ctx.Logger().Error("select err: %s", err.String())
+		ctx.Logger().Error("select err: %s", err.Error())
 		returnValue = "false"
 		return
 	}

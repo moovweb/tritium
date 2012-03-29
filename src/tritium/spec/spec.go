@@ -2,15 +2,14 @@ package spec
 
 import (
 	tp "athena/src/athena/proto"
-	"tritium/src/tritium/linker"
-	. "path/filepath"
+	yaml "goyaml"
 	. "io/ioutil"
 	"log"
-	yaml "goyaml"
+	. "path/filepath"
+	"tritium/src/tritium/linker"
 	//"bytes"
-	"strings"
 	. "fmt"
-	"os"
+	"strings"
 	"tritium/src/tritium"
 )
 
@@ -30,7 +29,7 @@ type Spec struct {
 	Logs    []string
 }
 
-func LoadSpec(dir string, pkg *tp.Package) (*Spec, os.Error) {
+func LoadSpec(dir string, pkg *tp.Package) (*Spec, error) {
 	// If there are functions defined in the test, load them
 	customFunctions, _ := Glob(Join(dir, "functions.ts"))
 
