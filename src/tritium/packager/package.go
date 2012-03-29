@@ -3,7 +3,6 @@ package packager
 import (
 	tp "athena/src/athena/proto"
 	proto "code.google.com/p/goprotobuf/proto"
-	"fmt"
 	"log4go"
 	"os"
 	"path/filepath"
@@ -197,7 +196,7 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 	info, err := ReadPackageInfoFile(loadPath)
 	f := time.Now()
 	d := float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to read package info: %0.6fs\n", d)
+	pkg.Log.Info("Time to read package info: %0.6fs\n", d)
 
 	if err != nil {
 		return &Error{
@@ -215,7 +214,7 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 
 	f = time.Now()
 	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to load dependencies: %0.6fs\n", d)
+	pkg.Log.Info("Time to load dependencies: %0.6fs\n", d)
 
 	s = time.Now()
 	for _, typeName := range info.Types {
@@ -232,13 +231,13 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 	}
 	f = time.Now()
 	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to resolve types: %0.6fs\n", d)
+	pkg.Log.Info("Time to resolve types: %0.6fs\n", d)
 
 	s = time.Now()
 	pkg.readHeaderFile(loadPath)
 	f = time.Now()
 	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to load header: %0.6fs\n", d)
+	pkg.Log.Info("Time to load header: %0.6fs\n", d)
 
 	s = time.Now()
 	entryPoint := filepath.Join(loadPath, "functions.ts")
@@ -251,13 +250,13 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 
 	f = time.Now()
 	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to load definitions: %0.6fs\n", d)
+	pkg.Log.Info("Time to load definitions: %0.6fs\n", d)
 
 	s = time.Now()
 	pkg.inheritFunctions()
 	f = time.Now()
 	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to resolve inheritances: %0.6fs\n", d)
+	pkg.Log.Info("Time to resolve inheritances: %0.6fs\n", d)
 
 	if pkg.Options["output_tpkg"] {
 		pkg.write()
