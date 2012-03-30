@@ -1,3 +1,4 @@
+$use_global_replace_vars = "true"
 set("Location: blah")
 
 replace(/^(location\:\s*)([^\r\n]*)/i) {
