@@ -7,6 +7,7 @@ import (
 	. "io/ioutil"
 	"log"
 	yaml "goyaml"
+	//"bytes"
 	"strings"
 	. "fmt"
 	"os"
@@ -42,10 +43,10 @@ func LoadSpec(dir string, pkg *tp.Package) (*Spec, os.Error) {
 
 	spec := &Spec{
 		Location: dir,
-		Input:    loadFile(dir, "input.*"),
+		Input:    string(loadFile(dir, "input.*")),
 		Vars:     loadVars(dir),
 		Script:   script,
-		Output:   loadFile(dir, "output.*"),
+		Output:   string(loadFile(dir, "output.*")),
 		Exports:  loadExports(dir),
 		Logs:     loadLogs(dir),
 	}
@@ -82,21 +83,21 @@ func loadExports(dir string) [][]string {
 	return exports
 }
 
-func loadFile(dir, filename string) string {
+func loadFile(dir, filename string) []byte {
 	list, err := Glob(Join(dir, filename))
 	if err != nil {
-		return ""
+		return nil
 		//log.Panic(err)
 	}
 	if len(list) == 0 {
 		//println("Found nothing", Join(dir, filename))
-		return ""
+		return nil
 	}
 	data, err := ReadFile(list[0])
 	if err != nil {
-		return ""
+		return nil
 	}
-	return string(data)
+	return data
 }
 
 func (spec *Spec) Compare(data string, exports [][]string, logs []string) *Result {

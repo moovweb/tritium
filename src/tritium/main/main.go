@@ -53,7 +53,7 @@ func main() {
 				os.Exit(1)
 			}
 			outputFile := os.Args[2]
-		
+
 			doc.Generate(outputFile)
 		} else if command == "link" {
 			println("Linking files found in the directory:", os.Args[2])
@@ -61,9 +61,29 @@ func main() {
 		} else if command == "test" {
 			println("Running tests found in the directory:", os.Args[2])
 			if len(os.Args) == 3 {
-				s.All(os.Args[2])
+				s.All(command, os.Args[2])
 			} else if len(os.Args) == 4 {
-				s.All(os.Args[2], os.Args[3])
+				s.All(command, os.Args[2], os.Args[3])
+			} else {
+				println("Usage:\n    tritium test <package_name> <optional_mixer_path>")
+			}
+
+		} else if command == "debug" {
+			println("Running tests found in the directory:", os.Args[2])
+			if len(os.Args) == 3 {
+				s.All(command, os.Args[2])
+			} else if len(os.Args) == 4 {
+				s.All(command, os.Args[2], os.Args[3])
+			} else {
+				println("Usage:\n    tritium test <package_name> <optional_mixer_path>")
+			}
+
+		} else if command == "old_test" {
+			println("Running tests found in the directory:", os.Args[2])
+			if len(os.Args) == 3 {
+				s.All(command, os.Args[2])
+			} else if len(os.Args) == 4 {
+				s.All(command, os.Args[2], os.Args[3])
 			} else {
 				println("Usage:\n    tritium test <package_name> <optional_mixer_path>")
 			}

@@ -98,7 +98,7 @@ func (ctx *Ctx) UsePackage(pkg *tp.Package) {
 	}
 }
 
-func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]string) (data string, exports [][]string, logs []string) {
+func (eng *Shark) Run(transform *tp.Transform, input interface{}, vars map[string]string) (data string, exports [][]string, logs []string) {
 	ctx := &Ctx{
 		Shark:               eng,
 		Exports:             make([][]string, 0),
@@ -110,9 +110,16 @@ func (eng *Shark) Run(transform *tp.Transform, input string, vars map[string]str
 		Yields:              make([]*YieldBlock, 0),
 		hadError:            false,
 	}
+
+	var inputString string
+	if inputBytes, ok := input.([]byte); ok {
+		inputString = string(inputBytes)
+	} else {
+		inputString = input.(string)
+	}
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
-	scope := &Scope{Value: input}
+	scope := &Scope{Value: inputString}
 	obj := transform.Objects[0]
 	ctx.filename = proto.GetString(obj.Name)
 	ctx.runInstruction(scope, obj.Root)

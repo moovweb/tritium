@@ -5,6 +5,8 @@ import (
 	tp "athena/src/athena/proto"
 	. "tritium/src/tritium"
 	. "path/filepath"
+	"tritium/src/tritium/whale"
+	"tritium/src/tritium/lamprey"
 	"tritium/src/tritium/shark"
 	. "fmt"
 	l4g "log4go"
@@ -13,7 +15,7 @@ import (
 	xmlhelp "libxml/help"
 )
 
-func All(directory string, options ...string) {
+func All(command string, directory string, options ...string) {
 
 	var mixerPath string
 	if len(options) == 1 {
@@ -23,10 +25,17 @@ func All(directory string, options ...string) {
 	logger := make(l4g.Logger)
 	logger.AddFilter("test", l4g.ERROR, l4g.NewConsoleLogWriter())
 	l4g.Global = logger
-	eng := shark.NewEngine(logger)
+	var eng Engine
+	if command == "test" {
+		eng = whale.NewEngine(logger)
+	} else if command == "debug" {
+		eng = lamprey.NewEngine(logger)
+	} else if command == "old_test" {
+		eng = shark.NewEngine(logger)
+	}
 
 	var pkg *tp.Package
-		
+
 	if len(mixerPath) > 0 {
 		// Used when testing in ambrosia
 		mixer := tp.OpenMixer(mixerPath)
@@ -35,7 +44,6 @@ func All(directory string, options ...string) {
 		bigPackage := packager.BuildDefaultPackage()
 		pkg = bigPackage.Package
 	}
-
 
 	globalResult := NewResult()
 	globalResult.all(directory, pkg, eng, logger)
@@ -90,7 +98,6 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 			} else {
 				logger.Error(dir + " === " + x.(string) + "\n\n" + string(debug.Stack()))
 			}
-
 		}
 		for _, rec := range logWriter.Logs {
 			//println("HAZ LOGS")

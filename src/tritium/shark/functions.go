@@ -208,8 +208,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		returnValue = scope.Value
 	case "convert_encoding.Text.Text":
 		input := scope.Value.(string)
-		fromCode  := args[0].(string)
-		toCode    := args[1].(string)
+		fromCode := args[0].(string)
+		toCode := args[1].(string)
 		ic, err := goconv.OpenWithFallback(fromCode, toCode, goconv.KEEP_UNRECOGNIZED)
 		if err == nil {
 			outputBytes, _ := ic.Conv([]byte(input))
@@ -228,8 +228,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		returnValue = scope.Value
 		doc.Free()
 	case "html_doc.Text.Text":
-		inputEncoding  := args[0].(string)
-		outputEncoding    := args[1].(string)
+		inputEncoding := args[0].(string)
+		outputEncoding := args[1].(string)
 		doc := xml.HtmlParseString(scope.Value.(string), inputEncoding)
 		ns := &Scope{Value: doc}
 		ctx.runChildren(ns, ins)
@@ -240,7 +240,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 		returnValue = scope.Value
 		doc.Free()
 	case "html_fragment.Text":
-		inputEncoding  := args[0].(string)
+		inputEncoding := args[0].(string)
 		doc := xml.HtmlParseFragment(scope.Value.(string), inputEncoding)
 		ns := &Scope{Value: doc.RootElement()}
 		ctx.runChildren(ns, ins)
@@ -261,15 +261,14 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 
 		xpath := xpath.CompileXPath(args[0].(string))
 		if xpath == nil {
-			ctx.Logs = append(ctx.Logs, "Invalid XPath used: " + args[0].(string))
+			ctx.Logs = append(ctx.Logs, "Invalid XPath used: "+args[0].(string))
 			returnValue = "0"
 			return
 		}
 		defer xpath.Free()
-		
+
 		nodeSet := xpCtx.SearchByCompiledXPath(node, xpath).Slice()
 
-		
 		if len(nodeSet) == 0 {
 			returnValue = "0"
 		} else {
@@ -315,12 +314,12 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 
 		xpath := xpath.CompileXPath(args[0].(string))
 		if xpath == nil {
-			ctx.Logs = append(ctx.Logs, "Invalid XPath used: " + args[0].(string))
+			ctx.Logs = append(ctx.Logs, "Invalid XPath used: "+args[0].(string))
 			returnValue = "0"
 			return
 		}
 		defer xpath.Free()
-		
+
 		nodeSet := xpCtx.SearchByCompiledXPath(elem, xpath).Slice()
 
 		if len(nodeSet) == 0 {
@@ -339,7 +338,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 				}
 			}
 		}
-		
+
 	case "inner":
 		node := scope.Value.(xml.Node)
 		ts := &Scope{Value: node.Content()}
@@ -396,7 +395,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			if ok {
 				returnValue = attr.Content()
 			} else {
-				returnValue = node.String()
+				returnValue = node.DumpHTML()
 			}
 		}
 		if len(ins.Children) > 0 {
@@ -404,7 +403,7 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 			ctx.runChildren(ts, ins)
 			returnValue = ts.Value
 		}
-		
+
 		xPathObj.Free()
 	case "path":
 		returnValue = scope.Value.(xml.Node).Path()
@@ -469,8 +468,8 @@ func (ctx *Ctx) runBuiltIn(fun *Function, scope *Scope, ins *tp.Instruction, arg
 	case "move_children_to.XMLNode.Position", "move_children_to.Node.Position":
 		node := scope.Value.(xml.Node)
 		element, ok := args[0].(*xml.Element)
-		if ok {	
-			child := node.First();
+		if ok {
+			child := node.First()
 			for child != nil {
 				newChild := child.Next()
 				if child != element {
