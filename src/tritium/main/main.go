@@ -3,6 +3,7 @@ package main
 import "os"
 import "tritium/src/tritium/packager"
 import "tritium/src/tritium/doc"
+import "tritium/src/tritium/test"
 
 func show_usage() {
 	println("General purpose Tritium command line interface. Commands are: package, link, test")
@@ -56,6 +57,17 @@ func main() {
 		} else if command == "link" {
 			println("Linking files found in the directory:", os.Args[2])
 			//LinkerToBytes(os.Args[2])
+		} else if command == "test" {
+			println("Running tests found in the directory:", os.Args[2])
+			if len(os.Args) == 3 {
+//				s.All(command, os.Args[2])
+				test.RunCustomZ(os.Args[2])
+			} else if len(os.Args) == 4 {
+//				s.All(command, os.Args[2], os.Args[3])
+			} else {
+				println("Usage:\n    tritium test <package_name> <optional_mixer_path>")
+			}
+
 		} else {
 			println("No such command", command)
 			show_usage()
