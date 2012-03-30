@@ -1,4 +1,4 @@
-$use_gloabl_replace_vars = "true"
+$use_global_replace_vars = "true"
 #       !!! WARNING THIS FILE IS GENERATED AND PROJECT SPECIFIC !!!
 #
 # This script inspects the response header for relevant headers. The resulting
