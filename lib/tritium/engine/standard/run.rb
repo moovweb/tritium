@@ -47,7 +47,7 @@ module Tritium
           elsif ins.is_a?(Tritium::Parser::Instructions::Literal)
             ins.value.dup || ""
           elsif ins.is_a?(Tritium::Parser::Instructions::Reference)
-            @env[ins.name.to_s] || ""
+            @env[ins.name.to_s].dup || ""
           end
         ensure
           @stack.pop
