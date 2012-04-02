@@ -2,13 +2,12 @@ package whale
 
 import (
 	tp "athena/src/athena/proto"
-	"rubex/lib"
-	l4g "log4go"
-	proto "goprotobuf.googlecode.com/hg/proto"
-	"os"
+	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
-	"strings"
 	"gokogiri/xpath"
+	l4g "log4go"
+	"rubex"
+	"strings"
 )
 
 type Whale struct {
@@ -81,10 +80,10 @@ func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[strin
 func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
 	defer func() {
 		if x := recover(); x != nil {
-			err, ok := x.(os.Error)
+			err, ok := x.(error)
 			errString := ""
 			if ok {
-				errString = err.String()
+				errString = err.Error()
 			} else {
 				errString = x.(string)
 			}
@@ -257,7 +256,7 @@ func (ctx *WhaleContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 		if strings.Index(options, "m") >= 0 {
 			mode = rubex.ONIG_OPTION_MULTILINE
 		}
-		var err os.Error
+		var err error
 		r, err = rubex.NewRegexp(pattern, mode)
 		if err == nil {
 			ctx.RegexpCache[sig] = r

@@ -2,11 +2,10 @@ package lamprey
 
 import (
 	tp "athena/src/athena/proto"
-	l4g "log4go"
-	proto "goprotobuf.googlecode.com/hg/proto"
-	"tritium/src/tritium/whale"
-	"os"
+	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
+	l4g "log4go"
+	"tritium/src/tritium/whale"
 )
 
 type Lamprey struct {
@@ -52,10 +51,10 @@ func (ctx *Ctx) RunChildren(scope *whale.Scope, ins *tp.Instruction) (returnValu
 func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnValue interface{}) {
 	defer func() {
 		if x := recover(); x != nil {
-			err, ok := x.(os.Error)
+			err, ok := x.(error)
 			errString := ""
 			if ok {
-				errString = err.String()
+				errString = err.Error()
 			} else {
 				errString = x.(string)
 			}

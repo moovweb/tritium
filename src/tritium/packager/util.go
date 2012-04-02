@@ -1,7 +1,7 @@
 package packager
 
 import (
-	proto "goprotobuf.googlecode.com/hg/proto"
+	proto "code.google.com/p/goprotobuf/proto"
 	"log"
 )
 

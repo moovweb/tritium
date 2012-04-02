@@ -3,7 +3,7 @@ package whale
 import (
 	tp "athena/src/athena/proto"
 	"log4go"
-	"rubex/lib"
+	"rubex"
 	"gokogiri/xpath"
 )
 

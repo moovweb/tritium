@@ -2,7 +2,7 @@ package linker
 
 import (
 	. "athena/src/athena/proto"
-	proto "goprotobuf.googlecode.com/hg/proto"
+	proto "code.google.com/p/goprotobuf/proto"
 	log "log4go"
 	"fmt"
 )

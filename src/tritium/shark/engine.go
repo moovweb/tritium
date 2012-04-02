@@ -2,13 +2,13 @@ package shark
 
 import (
 	tp "athena/src/athena/proto"
-	"rubex/lib"
-	"gokogiri/libxml/xpath"
-	xml "gokogiri/libxml/tree"
-	l4g "log4go"
-	proto "goprotobuf.googlecode.com/hg/proto"
+	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
-	"os"
+	xml "gokogiri/libxml/tree"
+	"gokogiri/libxml/xpath"
+	l4g "log4go"
+	"rubex"
+
 	//"runtime/debug"
 )
 
@@ -151,10 +151,10 @@ func (ctx *Ctx) runInstruction(scope *Scope, ins *tp.Instruction) (returnValue i
 
 	defer func() {
 		if x := recover(); x != nil {
-			err, ok := x.(os.Error)
+			err, ok := x.(error)
 			errString := ""
 			if ok {
-				errString = err.String()
+				errString = err.Error()
 			} else {
 				errString = x.(string)
 			}

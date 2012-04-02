@@ -1,15 +1,14 @@
 package tritium
 
 import (
-	"tritium/src/tritium/linker"
 	ap "athena/src/athena/proto"
-	"tritium/src/tritium/packager"
-	"os"
 	"path/filepath"
 	"strings"
+	"tritium/src/tritium/linker"
+	"tritium/src/tritium/packager"
 )
 
-func Compile(file string, rootPackage *ap.Package) (*ap.Transform, os.Error) {
+func Compile(file string, rootPackage *ap.Package) (*ap.Transform, error) {
 
 	// TODO(SJ) : Make a copy constructor from a raw ap.Package object
 	//	-- the path here should be optional since I'm passing in the ap.Package
@@ -30,7 +29,7 @@ func Compile(file string, rootPackage *ap.Package) (*ap.Transform, os.Error) {
 	return linker.RunWithPackage(file, defaultPackage.Package)
 }
 
-func CompileString(data string, path string, pkg *ap.Package) (*ap.Transform, os.Error) {
+func CompileString(data string, path string, pkg *ap.Package) (*ap.Transform, error) {
 	return linker.RunStringWithPackage(data, path, pkg)
 }
 
