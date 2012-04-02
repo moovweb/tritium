@@ -13,16 +13,17 @@ func TestLibXML(t *testing.T) {
 }
 
 
-var tests []*testing.InternalTest
-
-func init() {
+/*
+func testList() (tests []*testing.InternalTest) {
 	tests = make([]*testing.InternalTest, 0)
 	tests = append(tests, &testing.InternalTest{Name: "Base", F: TestBase})
 	tests = append(tests, &testing.InternalTest{Name: "LibXML", F: TestLibXML})
+	return
 }
+*/
 
 //func FindTest(pattern string, str string) (bool, os.Error) {}
-
+/*
 var matchPat string
 var matchRe *regexp.Regexp
 
@@ -44,4 +45,4 @@ func RunCustomZ(path string) {
 func RunCustom(path string) {
 	t := *testing.T
 	RunTestSuite(path, t)
-}
+}*/

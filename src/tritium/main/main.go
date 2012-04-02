@@ -61,7 +61,7 @@ func main() {
 			println("Running tests found in the directory:", os.Args[2])
 			if len(os.Args) == 3 {
 //				s.All(command, os.Args[2])
-				test.RunCustomZ(os.Args[2])
+				test.RunCustomSuite(os.Args[2])
 			} else if len(os.Args) == 4 {
 //				s.All(command, os.Args[2], os.Args[3])
 			} else {
