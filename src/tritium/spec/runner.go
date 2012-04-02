@@ -12,7 +12,7 @@ import (
 	l4g "log4go"
 	"os"
 	"runtime/debug"
-	xmlhelp "libxml/help"
+	xmlhelp "gokogiri/libxml/help"
 )
 
 func All(command string, directory string, options ...string) {
