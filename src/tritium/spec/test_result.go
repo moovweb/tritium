@@ -1,6 +1,6 @@
 package spec
 
-type error struct {
+type tError struct {
 	Location string
 	Name     string
 	Got      string
@@ -9,7 +9,7 @@ type error struct {
 	Panic    bool
 }
 type Result struct {
-	Errors   []*error
+	Errors   []*tError
 	hadPanic bool
 }
 
@@ -20,7 +20,7 @@ func (r *Result) Merge(n *Result) {
 }
 func NewResult() *Result {
 	return &Result{
-		Errors: make([]*error, 0),
+		Errors: make([]*tError, 0),
 	}
 }
 
@@ -39,7 +39,7 @@ func (r *Result) CharStatus() string {
 }
 
 func (r *Result) Error(loc, message string) {
-	e := &error{
+	e := &tError{
 		Location: loc,
 		Message:  message,
 		Panic:    true,
@@ -48,7 +48,7 @@ func (r *Result) Error(loc, message string) {
 	r.Errors = append(r.Errors, e)
 }
 func (r *Result) Fail(location, named, got, expected, message string) {
-	e := &error{
+	e := &tError{
 		Location: location,
 		Name:     named,
 		Got:      got,
