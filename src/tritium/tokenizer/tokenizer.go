@@ -2,7 +2,7 @@ package tokenizer
 
 import (
 	"bytes"
-	"rubex"
+	"rubex/lib"
 	"fmt"
 	"strings"
 )
