@@ -1,14 +1,21 @@
 package test
 
-import "testing"
+import (
+	"testing"
+	"regexp"
+	"fmt"
+	ap "athena/src/athena/proto"
+	"tritium/src/tritium/packager"
+)
+
 
 func RunCustomSuite(path string) {
 	test := func(t *testing.T) {
 		RunTestSuite(path, t)
 	}
 
-	tests = []testing.InternalTest{test}
-	benches, examples = initialize()
+	tests := []testing.InternalTest{testing.InternalTest{Name: "CustomTest",F: test,}}
+	benches, examples := initialize()
 
 	testing.Main(matchString, tests, benches, examples)
 }
@@ -16,11 +23,19 @@ func RunCustomSuite(path string) {
 
 //func initialize() ([]testing.InternalTest, []testing.InternalBenchmark, []testing.InternalExample) {
 func initialize() ([]testing.InternalBenchmark, []testing.InternalExample) {
+
 //	tests := make([]testing.InternalTest, 0)
 //	tests = append(tests, testing.InternalTest{Name: "MyThing", F: TestMyThing})
 
 //	return testList(), make([]testing.InternalBenchmark,0), make([]testing.InternalExample,0)
 	return make([]testing.InternalBenchmark,0), make([]testing.InternalExample,0)
+}
+
+var pkg *ap.Package
+
+func initializePackage() {
+	tpkg := packager.BuildDefaultPackage()
+	pkg = tpkg.Package
 }
 
 
@@ -29,7 +44,7 @@ var matchRe *regexp.Regexp
 
 
 // func myMatchString(pat, str string) (result bool, err os.Error) { // go60.3
-func myMatchString(pat, str string) (result bool, err error) { //go1
+func matchString(pat, str string) (result bool, err error) { //go1
 	fmt.Printf("Pat : (%v), string: (%v)\n", pat, str)
 
 	if matchRe == nil || matchPat != pat {

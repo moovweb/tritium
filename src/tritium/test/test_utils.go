@@ -1,7 +1,6 @@
 package test
 
 import "path/filepath"
-import ap "athena/src/athena/proto"
 import "tritium/src/tritium/whale"
 import "testing"
 import "log4go"
@@ -9,12 +8,10 @@ import "runtime"
 import "runtime/debug"
 import "fmt"
 import "tritium/src/tritium/spec"
-import "tritium/src/tritium/packager"
-import "os"
 
 func RunTest(path string) (result *spec.Result) {
 	result = spec.NewResult()
-	
+
 	logger := make(log4go.Logger)
 	log4go.Global = logger
 
@@ -23,9 +20,9 @@ func RunTest(path string) (result *spec.Result) {
 
 	defer func() {
 		if x := recover(); x != nil {
-			err, ok := x.(os.Error)
+			err, ok := x.(error)
 			if ok {
-				logger.Error(path + " === " + err.String() + "\n\n" + string(debug.Stack()))
+				logger.Error(path + " === " + err.Error() + "\n\n" + string(debug.Stack()))
 			} else {
 				logger.Error(path + " === " + x.(string) + "\n\n" + string(debug.Stack()))
 			}
@@ -35,15 +32,11 @@ func RunTest(path string) (result *spec.Result) {
 			result.Error(path, error)
 		}
 	}()
-	
-	var pkg *ap.Package	
-	tpkg := packager.BuildDefaultPackage()
-	pkg = tpkg.Package
 
 	spec, err := spec.LoadSpec(path, pkg)
-	
+
 	if err != nil {
-		result.Error(path, fmt.Sprintf("Error loading test spec:\n%v\n", err.String()))
+		result.Error(path, fmt.Sprintf("Error loading test spec:\n%v\n", err.Error()))
 		return
 	}
 
@@ -69,7 +62,7 @@ func GatherTests(directory string) (tests []string) {
 	return
 }
 
-func relativeDirectory(directoryFromRoot string) (directory string, ok bool){
+func relativeDirectory(directoryFromRoot string) (directory string, ok bool) {
 	_, file, _, ok := runtime.Caller(0)
 
 	if !ok {
@@ -86,6 +79,7 @@ func relativeDirectory(directoryFromRoot string) (directory string, ok bool){
 func RunTestSuite(directoryFromRoot string, t *testing.T) {
 	directory, ok := relativeDirectory(directoryFromRoot)
 	globalResult := spec.NewResult()
+	initializePackage()
 
 	if !ok {
 		t.Error("Couldn't resolve root directory")
@@ -94,10 +88,10 @@ func RunTestSuite(directoryFromRoot string, t *testing.T) {
 
 	testPaths := GatherTests(directory)
 
-	for _, testPath := range(testPaths) {
+	for _, testPath := range testPaths {
 		testResult := RunTest(testPath)
 		print(testResult.CharStatus())
-		globalResult.Merge( testResult )
+		globalResult.Merge(testResult)
 	}
 
 	for _, error := range globalResult.Errors {
