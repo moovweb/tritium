@@ -6,6 +6,7 @@ import(
 	"path/filepath"
 	"strings"
 	"os"
+	"fmt"
 	)
 
 type FileList struct {
@@ -33,7 +34,20 @@ func CollectFiles(dir string) ([]*File){
 	return fileList.Files
 }
 
+func (fl *FileList) Unpack(verbose bool) (err os.Error) {
+	for _, file := range(fl.Files) {
+		path, err := file.Write(fl.RootDirectory)
 
+		if err != nil {
+			return
+		}
+
+		if verbose {
+			fmt.Printf("* %v\n", path)
+		}
+	}
+	return
+}
 
 func (fl *FileList) buildFile(path string) (*File) {
 
@@ -57,14 +71,16 @@ func (fl *FileList) buildFile(path string) (*File) {
 	return file
 }
 
-func (f *File) Write(dir string) {
-	absolutePath := filepath.Join(dir, pb.GetString(f.Path) )
+func (f *File) Write(dir string) (absolutePath string, err os.Error) {
+	absolutePath = filepath.Join(dir, pb.GetString(f.Path) )
 
-	err := ioutil.WriteFile( absolutePath, f.Data[0], uint32(0777) )
+	err = ioutil.WriteFile( absolutePath, f.Data[0], uint32(0644) )
 
 	if err != nil {
-		panic("Couldn't write file (" + absolutePath + "):" + err.String() )
+		err = os.NewError("Couldn't write file (" + absolutePath + "):" + err.String() )
 	}
+
+	return
 }
 
 func relativePath(parentDirectory string, path string) (string) {

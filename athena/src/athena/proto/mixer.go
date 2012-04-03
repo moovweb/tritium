@@ -101,34 +101,45 @@ func (m *Mixer) Inspect(printFunctions bool) {
 	}
 
 	println("\tRoot Package:")
-	fmt.Printf(m.packageSummary())
+	fmt.Printf(m.packageSummary(printFunctions))
 }
 
 func (m *Mixer) Unpack(path string) {
-	m.Assets.Unpack(path)
-	m.Recipes.Unpack(path)
-	m.Rewriters.Unpack(path)
+	m.unpackFiles(filepath.Join(path, "assets"), m.Assets)
+//	m.Recipes.Unpack(path)
+//	m.Rewriters.Unpack(path)
 
-	summary := m.packageSummary(path)	
+	summary := m.packageSummary(true)	
 
 	dir, _ := filepath.Split(path)
-	err := ioutil.WriteFile(filepath.Join(summary, "package-summary.txt"), uint32(0644))
+	err := ioutil.WriteFile(filepath.Join(dir, "package-summary.txt"), []byte(summary), uint32(0644))
 
 	if err != nil {
 		fmt.Printf("Warning : Couldn't write package summary")
 	}
 }
 
-func (m *Mixer) packageSummary() string {
+func (m *Mixer) unpackFiles(path string, files []*File) (err os.Error) {
+	fl := &FileList{
+	RootDirectory: path,
+	Files: files,
+	}
+
+	err = fl.Unpack(true)
+
+	return
+}
+
+func (m *Mixer) packageSummary(printFunctions bool) string {
 	summary := ""
-    if m.Package != nil {
-		fmt.Sprintf("\t\t -- Name: %v\n", pb.GetString(m.Package.Name) )
-		fmt.Sprintf("\t\t -- Types: %v\n", m.Package.Types )
-		fmt.Sprintf("\t\t -- Dependencies:  %v\n", m.Package.Dependencies )		
+	if m.Package != nil {
+		summary += fmt.Sprintf("\t\t -- Name: %v\n", pb.GetString(m.Package.Name) )
+		summary += fmt.Sprintf("\t\t -- Types: %v\n", m.Package.Types )
+		summary += fmt.Sprintf("\t\t -- Dependencies:  %v\n", m.Package.Dependencies )		
 		if printFunctions {
-			fmt.Sprintf("\t\t -- Functions (%v):\n", len(m.Package.Functions))
+			summary += fmt.Sprintf("\t\t -- Functions (%v):\n", len(m.Package.Functions))
 			for _, function := range(m.Package.Functions) {
-				fmt.Sprintf("\t\t\t %v\n", function.Stub(m.Package) )
+				summary += fmt.Sprintf("\t\t\t %v\n", function.Stub(m.Package) )
 			}
 		}
 	}
