@@ -1,11 +1,9 @@
 package test
 
 import (
+	"flag"
 	"testing"
-	"regexp"
-	"fmt"
 )
-
 
 func TestCustomSuite(path string) {
 	test := func(t *testing.T) {
@@ -33,9 +31,9 @@ func BenchmarkCustomSuite(path string) {
 
 	_, _, examples := initialize()
 
-	fmt.Printf("Benchmarks: %v\n", benches)
-
-	testing.Main(matchString, tests, benches, examples)
+	flag.Set("test.bench", ".*") // IMPORTANT : The testing internals check that this flag is set
+	
+	testing.Main(matchString, tests, benches, examples)	
 }
 
 
@@ -43,17 +41,7 @@ func initialize() ([]testing.InternalTest, []testing.InternalBenchmark, []testin
 	return make([]testing.InternalTest,0), make([]testing.InternalBenchmark,0), make([]testing.InternalExample,0)
 }
 
-var matchPat string
-var matchRe *regexp.Regexp
 
 func matchString(pat, str string) (result bool, err error) { //go1
-	if matchRe == nil || matchPat != pat {
-		matchRe, err = regexp.Compile(".*")
-		if err != nil {
-			return
-		}
-	}
-	result = matchRe.MatchString(str)
-
 	return true, nil
 }
