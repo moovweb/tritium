@@ -75,16 +75,12 @@ func relativeDirectory(directoryFromRoot string) (directory string, ok bool) {
 
 	directory = filepath.Join(file, "../../../../", directoryFromRoot)
 
-	println("Running tests in : " + directory)
-
 	return
 }
 
 var pkg *ap.Package
 
 func initializePackage() {
-	print("Building default package...")
-//	tpkg := packager.BuildDefaultPackage()
 	packagesPath, ok := relativeDirectory("packages")
 
 	if !ok {
@@ -92,7 +88,6 @@ func initializePackage() {
 	}
 
 	tpkg := packager.LoadDefaultPackage(&packagesPath)
-	println("built!")
 	pkg = tpkg.Package
 }
 

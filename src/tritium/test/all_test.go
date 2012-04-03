@@ -11,10 +11,10 @@ func TestLibXML(t *testing.T) {
 	RunTestSuite("packages/libxml", t)
 }
 
-func BenchmarkBase(t *testing.T) {
-	RunTestSuite("packages/base", t)
+func BenchmarkBase(b *testing.B) {
+	RunBenchmarkSuite("packages/base", b)
 }
 
-func BenchmarkLibXML(t *testing.T) {
-	RunTestSuite("packages/libxml", t)
+func BenchmarkLibXML(b *testing.B) {
+	RunBenchmarkSuite("packages/libxml", b)
 }

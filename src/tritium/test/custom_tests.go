@@ -3,6 +3,7 @@ package test
 import (
 	"testing"
 	"regexp"
+	"fmt"
 )
 
 
@@ -18,12 +19,21 @@ func TestCustomSuite(path string) {
 }
 
 func BenchmarkCustomSuite(path string) {
-	test := func(b *testing.B) {
+	benchmark := func(b *testing.B) {
 		RunBenchmarkSuite(path, b)
 	}
 
-	benches := []testing.InternalBenchmark{testing.InternalBenchmark{Name: "CustomBenchmark(" + path + ")",F: test,}}
-	tests, _, examples := initialize()
+	benches := []testing.InternalBenchmark{testing.InternalBenchmark{Name: "CustomBenchmark(" + path + ")", F: benchmark,}}
+
+	test := func(t *testing.T) {
+		RunTestSuite(path, t)
+	}
+
+	tests := []testing.InternalTest{testing.InternalTest{Name: "CustomTest(" + path + ")",F: test,}}
+
+	_, _, examples := initialize()
+
+	fmt.Printf("Benchmarks: %v\n", benches)
 
 	testing.Main(matchString, tests, benches, examples)
 }
