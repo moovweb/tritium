@@ -4,8 +4,6 @@ import (
 	"testing"
 	"regexp"
 	"fmt"
-	ap "athena/src/athena/proto"
-	"tritium/src/tritium/packager"
 )
 
 
@@ -29,13 +27,6 @@ func initialize() ([]testing.InternalBenchmark, []testing.InternalExample) {
 
 //	return testList(), make([]testing.InternalBenchmark,0), make([]testing.InternalExample,0)
 	return make([]testing.InternalBenchmark,0), make([]testing.InternalExample,0)
-}
-
-var pkg *ap.Package
-
-func initializePackage() {
-	tpkg := packager.BuildDefaultPackage()
-	pkg = tpkg.Package
 }
 
 

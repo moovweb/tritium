@@ -8,6 +8,10 @@ import "runtime"
 import "runtime/debug"
 import "fmt"
 import "tritium/src/tritium/spec"
+import ap "athena/src/athena/proto"
+import "tritium/src/tritium/packager"
+
+
 
 func RunTest(path string) (result *spec.Result) {
 	result = spec.NewResult()
@@ -47,9 +51,9 @@ func RunTest(path string) (result *spec.Result) {
 }
 
 func GatherTests(directory string) (tests []string) {
-	_, err := filepath.Glob(filepath.Join(directory, "main.ts"))
+	matches, err := filepath.Glob(filepath.Join(directory, "main.ts"))
 
-	if err == nil {
+	if err == nil && matches != nil{
 		tests = append(tests, directory)
 	}
 
@@ -75,6 +79,24 @@ func relativeDirectory(directoryFromRoot string) (directory string, ok bool) {
 
 	return
 }
+
+var pkg *ap.Package
+
+func initializePackage() {
+	print("Building default package...")
+//	tpkg := packager.BuildDefaultPackage()
+	packagesPath, ok := relativeDirectory("packages")
+
+	if !ok {
+		panic("Can't find root tritium directory to build default package")
+	}
+
+	tpkg := packager.LoadDefaultPackage(&packagesPath)
+	println("built!")
+	pkg = tpkg.Package
+}
+
+
 
 func RunTestSuite(directoryFromRoot string, t *testing.T) {
 	directory, ok := relativeDirectory(directoryFromRoot)
