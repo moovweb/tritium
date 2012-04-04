@@ -115,6 +115,13 @@ func (m *Mixer) Unpack(path string) {
 		panic(err)
 	}
 
+	for _, recipe := range(m.Recipes) {
+		err = m.unpackFiles(filepath.Join(path, "recipes", pb.GetString(recipe.Name)), recipe.Files)
+		if err != nil {
+			panic(err)
+		}
+	}
+
 //	m.Recipes.Unpack(path)
 //	m.Rewriters.Unpack(path)
 
