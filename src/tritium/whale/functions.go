@@ -689,11 +689,8 @@ func detect_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args 
 	cd, err := icu4go.NewCharsetDetector()
 	if err == nil {
 		encoding := cd.GuessCharset([]byte(input))
-		println("encoding:", encoding)
 		returnValue = encoding
 		cd.Free()
-	} else {
-		println("failed to create cd")
 	}
 	return
 }
