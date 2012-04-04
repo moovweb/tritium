@@ -12,6 +12,7 @@ import (
 	"css2xpath"
 	"goconv"
 	"icu4go"
+	"strconv"
 )
 
 //The string value of me
@@ -692,5 +693,11 @@ func detect_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args 
 		returnValue = encoding
 		cd.Free()
 	}
+	return
+}
+
+func text_length(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	input := scope.Value.(string)
+	returnValue = strconv.Itoa(len(input))
 	return
 }
