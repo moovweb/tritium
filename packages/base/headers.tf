@@ -31,6 +31,9 @@
 " Convert from one encoding to another. (If you want a list of encodings, you can run `iconv -l` on your command line.) "
 @func Text.convert_encoding(Text %from, Text %to) Text
 
+" Detect encoding from the input "
+@func Text.detect_encoding() Text
+
 " Completes the sudo-logic of `with()`, allowing the specification of an alternative."
 @func else() Text
 

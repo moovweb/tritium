@@ -11,6 +11,7 @@ import (
 	"rubex/lib"
 	"css2xpath"
 	"goconv"
+	"icu4go"
 )
 
 //The string value of me
@@ -678,6 +679,21 @@ func wrap_text_children_Text(ctx EngineContext, scope *Scope, ins *tp.Instructio
 				ctx.RunInstruction(ns, child)
 			}
 		}
+	}
+	return
+}
+
+func detect_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	returnValue = ""
+	input := scope.Value.(string)
+	cd, err := icu4go.NewCharsetDetector()
+	if err == nil {
+		encoding := cd.GuessCharset([]byte(input))
+		println("encoding:", encoding)
+		returnValue = encoding
+		cd.Free()
+	} else {
+		println("failed to create cd")
 	}
 	return
 }
