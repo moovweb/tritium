@@ -1,0 +1,5 @@
+for d in $( ls packages/libxml/test/classic/ ) ; do tritium test packages/libxml/test/classic/$d ; done
+
+or
+
+for d in $( ls -d */ ) ; do tritium test $d ; done
