@@ -129,6 +129,9 @@ func (eng *Shark) Run(transform *tp.Transform, input interface{}, vars map[strin
 	return
 }
 
+func (eng *Shark) Free() {
+}
+
 func (ctx *Ctx) matchShouldContinue() (result bool) {
 	if len(ctx.MatchShouldContinue) > 0 {
 		result = ctx.MatchShouldContinue[len(ctx.MatchShouldContinue)-1]

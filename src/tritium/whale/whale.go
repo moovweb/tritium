@@ -64,6 +64,25 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform) (
 	return
 }
 
+func (eng *Whale) Free() {
+	if eng.InnerReplacer != nil {
+		eng.InnerReplacer.Free()
+		eng.InnerReplacer = nil
+	}
+	if eng.RegexpCache != nil {
+		for _, reg := range eng.RegexpCache {
+			reg.Free()
+		}
+		eng.RegexpCache = nil
+	}
+	if eng.XPathCache != nil {
+		for _, xpath := range eng.XPathCache {
+			xpath.Free()
+		}
+		eng.XPathCache = nil
+	}
+}
+
 func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output string, exports [][]string, logs []string) {
 	ctx := NewEngineCtx(eng, vars, transform)
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
