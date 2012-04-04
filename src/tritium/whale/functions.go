@@ -692,7 +692,7 @@ func detect_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args 
 	cd, err := icu4go.NewCharsetDetector()
 	if err == nil {
 		encoding := cd.GuessCharset([]byte(input))
-		returnValue = encoding
+		returnValue = strings.ToLower(encoding)
 		cd.Free()
 	}
 	return
