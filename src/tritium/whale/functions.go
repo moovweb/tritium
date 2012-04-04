@@ -338,11 +338,13 @@ func html_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, ar
 	return
 }
 
-func html_fragment_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func html_fragment_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
+	outputEncoding := args[1].(string)
+	outputEncodingBytes := []byte(outputEncoding)
 	input := scope.Value.(string)
-	fragment, err := html.ParseFragment([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, html.DefaultEncodingBytes)
+	fragment, err := html.ParseFragment([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
 	if err != nil {
 		ctx.Logger().Error("html_fragment err: %s", err.String())
 		returnValue = "false"

@@ -206,20 +206,16 @@ Functionally equivalent to `name() { set(%name) }`."
 "Parses the document into HTML."
 
 @func Text.html(Text %from_enc, Text %to_enc) {
-  export("Content-Type-Charset", %to_enc)
   html_doc(%from_enc, %to_enc) {
     yield()
   }
+  export("Content-Type-Charset", %to_enc)
 }
 
 "Parses the document into HTML."
 
 @func Text.html(Text %enc) {
-  $encoding = %enc
- 	match($encoding, "") {
-  	$encoding = $guessed_encoding
-  }
-  html($encoding, "utf-8") {
+  html(%enc, %enc) {
     yield()
   }
 }
@@ -227,18 +223,32 @@ Functionally equivalent to `name() { set(%name) }`."
 "Parses the document into HTML."
 
 @func Text.html() {
-  html($guessed_encoding, "utf-8") {
+  $encoding = detect_encoding()
+  html($encoding, $encoding) {
     yield()
   } 
 }
 
 "Parses a frament of the document (i.e. the output doesn't start with `<html>`)."
 
-@func Text.html_fragment() {
-  html_fragment($guessed_encoding) {
+@func Text.html_fragment(Text %from_enc, Text %to_enc) {
+  html_fragment_doc(%from_enc, %to_enc) {
     yield()
   }
-  export("Content-Type-Charset","utf-8")   # Right now we always output in utf-8, so set the response header appropriately
+  export("Content-Type-Charset", %to_enc)   # Right now we always output in utf-8, so set the response header appropriately
+}
+
+@func Text.html_fragment(Text %enc) {
+  html_fragment(%enc, %enc) {
+    yield()
+  }
+}
+
+@func Text.html_fragment() {
+  $encoding = detect_encoding()
+  html_fragment($encoding, $encoding) {
+    yield()
+  }
 }
 
 # POSITIONALS

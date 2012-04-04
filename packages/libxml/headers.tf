@@ -8,7 +8,7 @@
 @func Text.html_doc(Text %input_encoding, Text %output_encoding) Text XMLNode
 
 " Parses the document as HTML and passes you back an XMLNode scope. "
-@func Text.html_fragment(Text %input_encoding) Text XMLNode
+@func Text.html_fragment_doc(Text %input_encoding, Text %output_encoding) Text XMLNode
 
 " Replaces the node's contents with a CDATA block. "
 @func XMLNode.cdata(Text %contents) Text

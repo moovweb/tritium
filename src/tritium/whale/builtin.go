@@ -45,7 +45,7 @@ func init() {
 	builtInFunctions["name"] = name
 
 	builtInFunctions["append.Text"] = append_Text
-	builtInFunctions["html_fragment.Text"] = html_fragment_Text
+	builtInFunctions["html_fragment_doc.Text.Text"] = html_fragment_doc_Text_Text
 
 	builtInFunctions["regexp.Text.Text"] = regexp_Text_Text
 	builtInFunctions["replace.Regexp"] = replace_Regexp
