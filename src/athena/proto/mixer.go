@@ -105,36 +105,39 @@ func (m *Mixer) Inspect(printFunctions bool) {
 }
 
 func (m *Mixer) Unpack(path string) {
-	err := os.MkdirAll(path, uint32(0755))
+	fullPath := filepath.Join(path, pb.GetString(m.Name) + "-" + pb.GetString(m.Version))
+	err := os.MkdirAll(fullPath, uint32(0755))
 	if err != nil {
 		panic(err.String())
 	}
 
-	err = m.unpackFiles(filepath.Join(path, "assets"), m.Assets)
+	err = m.unpackFiles(filepath.Join(fullPath, "assets"), m.Assets)
 	if err != nil {
 		panic(err)
 	}
 
 	for _, recipe := range(m.Recipes) {
-		err = m.unpackFiles(filepath.Join(path, "recipes", pb.GetString(recipe.Name)), recipe.Files)
+		err = m.unpackFiles(filepath.Join(fullPath, "recipes", pb.GetString(recipe.Name)), recipe.Files)
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	err = m.unpackFiles(filepath.Join(path, "rewriters"), m.Rewriters)
+	err = m.unpackFiles(filepath.Join(fullPath, "rewriters"), m.Rewriters)
 	if err != nil {
 		panic(err)
 	}
 
 	summary := m.packageSummary(true)	
-
-	dir, _ := filepath.Split(path)
-	err = ioutil.WriteFile(filepath.Join(dir, "package-summary.txt"), []byte(summary), uint32(0644))
+	packageFile := filepath.Join(fullPath, "package-summary.txt")
+	
+	err = ioutil.WriteFile(packageFile, []byte(summary), uint32(0644))
 
 	if err != nil {
 		fmt.Printf("Warning : Couldn't write package summary")
 	}
+
+	fmt.Printf("* %v\n", packageFile)
 }
 
 func (m *Mixer) unpackFiles(path string, files []*File) (err os.Error) {
