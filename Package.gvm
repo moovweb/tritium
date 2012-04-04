@@ -1,5 +1,6 @@
 :source git@github.com:moovweb
 pkg log4go
+pkg icu4go
 pkg rubex
 pkg gokogiri
 pkg goyaml
