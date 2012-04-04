@@ -122,8 +122,10 @@ func (m *Mixer) Unpack(path string) {
 		}
 	}
 
-//	m.Recipes.Unpack(path)
-//	m.Rewriters.Unpack(path)
+	err = m.unpackFiles(filepath.Join(path, "rewriters"), m.Rewriters)
+	if err != nil {
+		panic(err)
+	}
 
 	summary := m.packageSummary(true)	
 
