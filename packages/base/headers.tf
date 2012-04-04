@@ -35,7 +35,7 @@
 @func Text.detect_encoding() Text
 
 " length of the input "
-@func Text.length(Text %input) Text
+@func length(Text %input) Text
 
 " Completes the sudo-logic of `with()`, allowing the specification of an alternative."
 @func else() Text
