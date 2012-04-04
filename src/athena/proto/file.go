@@ -36,14 +36,22 @@ func CollectFiles(dir string) ([]*File){
 
 func (fl *FileList) Unpack(verbose bool) (err os.Error) {
 	for _, file := range(fl.Files) {
-		path, err := file.Write(fl.RootDirectory)
+		absolutePath := file.AbsolutePath(fl.RootDirectory)
+		path, _ := filepath.Split(absolutePath)
+		err = os.MkdirAll(path, uint32(0755))
+
+		if err != nil {
+			panic(err.String())
+		}
+
+		err = file.Write(fl.RootDirectory)
 
 		if err != nil {
 			return
 		}
 
 		if verbose {
-			fmt.Printf("* %v\n", path)
+			fmt.Printf("* %v\n", absolutePath)
 		}
 	}
 	return
@@ -71,8 +79,12 @@ func (fl *FileList) buildFile(path string) (*File) {
 	return file
 }
 
-func (f *File) Write(dir string) (absolutePath string, err os.Error) {
-	absolutePath = filepath.Join(dir, pb.GetString(f.Path) )
+func (f *File) AbsolutePath(dir string) string {
+	return filepath.Join(dir, pb.GetString(f.Path))
+}
+
+func (f *File) Write(dir string) (err os.Error) {
+	absolutePath := f.AbsolutePath(dir)
 
 	err = ioutil.WriteFile( absolutePath, f.Data[0], uint32(0644) )
 
