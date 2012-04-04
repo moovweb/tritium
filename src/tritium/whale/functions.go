@@ -696,8 +696,8 @@ func detect_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args 
 	return
 }
 
-func text_length(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	input := scope.Value.(string)
+func length_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	input := args[0].(string)
 	returnValue = strconv.Itoa(len(input))
 	return
 }

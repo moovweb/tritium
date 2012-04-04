@@ -81,7 +81,7 @@ func init() {
 	builtInFunctions["downcase.Text"] = downcase_Text
 	builtInFunctions["upcase.Text"] = upcase_Text
 	builtInFunctions["detect_encoding"] = detect_encoding
-	builtInFunctions["length"] = text_length
+	builtInFunctions["length.Text"] = length_Text
 }
 
 func LookupBuiltIn(name string) builtInFunc {
