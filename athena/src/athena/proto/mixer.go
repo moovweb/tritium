@@ -105,14 +105,23 @@ func (m *Mixer) Inspect(printFunctions bool) {
 }
 
 func (m *Mixer) Unpack(path string) {
-	m.unpackFiles(filepath.Join(path, "assets"), m.Assets)
+	err := os.MkdirAll(path, uint32(0755))
+	if err != nil {
+		panic(err.String())
+	}
+
+	err = m.unpackFiles(filepath.Join(path, "assets"), m.Assets)
+	if err != nil {
+		panic(err)
+	}
+
 //	m.Recipes.Unpack(path)
 //	m.Rewriters.Unpack(path)
 
 	summary := m.packageSummary(true)	
 
 	dir, _ := filepath.Split(path)
-	err := ioutil.WriteFile(filepath.Join(dir, "package-summary.txt"), []byte(summary), uint32(0644))
+	err = ioutil.WriteFile(filepath.Join(dir, "package-summary.txt"), []byte(summary), uint32(0644))
 
 	if err != nil {
 		fmt.Printf("Warning : Couldn't write package summary")
