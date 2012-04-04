@@ -13,6 +13,7 @@ import (
 	"os"
 	"runtime/debug"
 	xmlhelp "gokogiri/libxml/help"
+	"fmt"
 )
 
 func All(command string, directory string, options ...string) {
@@ -69,6 +70,12 @@ func All(command string, directory string, options ...string) {
 	if foundError {
 		os.Exit(1)
 	}
+	eng.Free()
+	xmlhelp.XmlCleanUpParser()
+	if xmlhelp.XmlMemoryAllocation() != 0 {
+		fmt.Printf("Memeory leaks %d!!!", xmlhelp.XmlMemoryAllocation())
+		xmlhelp.XmlMemoryLeakReport()
+	}
 }
 
 func (result *Result) all(directory string, pkg *tp.Package, eng Engine, logger l4g.Logger) {
@@ -111,10 +118,6 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 		result.Error(dir, err.String())
 	} else {
 		result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
-		if xmlhelp.XmlMemoryAllocation() != 0 {
-			result.Error(dir, Sprintf("Memeory leaks %d!!!", xmlhelp.XmlMemoryAllocation()))
-			xmlhelp.XmlMemoryLeakReport()
-		}
 	}
 	return
 }
