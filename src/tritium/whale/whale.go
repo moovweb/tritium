@@ -12,11 +12,12 @@ import (
 )
 
 type Whale struct {
-	RegexpCache   map[string]*rubex.Regexp
-	XPathCache    map[string]*xpath.Expression
-	Log           l4g.Logger
-	OutputBuffer  []byte
-	InnerReplacer *rubex.Regexp
+	RegexpCache       map[string]*rubex.Regexp
+	XPathCache        map[string]*xpath.Expression
+	Log               l4g.Logger
+	OutputBuffer      []byte
+	InnerReplacer     *rubex.Regexp
+	HeaderContentType *rubex.Regexp
 }
 
 type WhaleContext struct {
@@ -40,11 +41,12 @@ const OutputBufferSize = 500 * 1024 //500KB
 
 func NewEngine(logger l4g.Logger) *Whale {
 	e := &Whale{
-		RegexpCache:   make(map[string]*rubex.Regexp),
-		XPathCache:    make(map[string]*xpath.Expression),
-		Log:           logger,
-		OutputBuffer:  make([]byte, OutputBufferSize),
-		InnerReplacer: rubex.MustCompile(`[\\$](\d)`),
+		RegexpCache:       make(map[string]*rubex.Regexp),
+		XPathCache:        make(map[string]*xpath.Expression),
+		Log:               logger,
+		OutputBuffer:      make([]byte, OutputBufferSize),
+		InnerReplacer:     rubex.MustCompile(`[\\$](\d)`),
+		HeaderContentType: rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
 	}
 	return e
 }
@@ -68,6 +70,10 @@ func (eng *Whale) Free() {
 	if eng.InnerReplacer != nil {
 		eng.InnerReplacer.Free()
 		eng.InnerReplacer = nil
+	}
+	if eng.HeaderContentType != nil {
+		eng.HeaderContentType.Free()
+		eng.HeaderContentType = nil
 	}
 	if eng.RegexpCache != nil {
 		for _, reg := range eng.RegexpCache {
@@ -332,6 +338,11 @@ func (ctx *WhaleContext) GetVar(key string) (val interface{}) {
 
 func (ctx *WhaleContext) GetInnerReplacer() (r *rubex.Regexp) {
 	r = ctx.InnerReplacer
+	return
+}
+
+func (ctx *WhaleContext) GetHeaderContentTypeRegex() (r *rubex.Regexp) {
+	r = ctx.HeaderContentType
 	return
 }
 

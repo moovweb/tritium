@@ -68,5 +68,6 @@ type EngineContext interface {
 	SetVar(string, interface{})
 	GetVar(string) interface{}
 	GetInnerReplacer() *rubex.Regexp
+	GetHeaderContentTypeRegex() *rubex.Regexp
 	GetOutputBuffer() []byte
 }
