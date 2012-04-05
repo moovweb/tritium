@@ -37,7 +37,8 @@ export("asset_host", $asset_host)
 {{end}}
 
 {{if .Http11}}
-log("Leaving HTTP version alone")
+# Set request header to HTTP 1.1
+replace(/HTTP\/1\.0/i, "HTTP/1.1")
 {{else}}
 # Set request header to HTTP 1.0
 replace(/HTTP\/1\.1/i, "HTTP/1.0")
