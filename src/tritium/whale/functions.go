@@ -686,15 +686,47 @@ func wrap_text_children_Text(ctx EngineContext, scope *Scope, ins *tp.Instructio
 	return
 }
 
-func detect_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func guess_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = ""
 	input := scope.Value.(string)
+
+	//get the content type from the html header if exisits
+	reg := ctx.GetHeaderContentTypeRegex()
+	//
+	matches := reg.FindStringSubmatch(input)
+	contentTypeInHtmlHeader := ""
+	if len(matches) == 2 {
+		contentTypeInHtmlHeader = matches[1]
+	}
+	contentTypeInResponseHeader := ctx.GetEnv("content_type")
+
+	charsetInHtmlHeader := GetCharsetFromContentType(contentTypeInHtmlHeader)
+	charsetInResponseHeader := GetCharsetFromContentType(contentTypeInResponseHeader)
+
+	//both the html response header and the meta tag point to the same charset
+	//we should trust it
+	if len(charsetInHtmlHeader) > 0 && charsetInHtmlHeader == charsetInResponseHeader {
+		returnValue = charsetInHtmlHeader
+		return
+	}
+
+	//use icu to detect if they differ
 	cd, err := icu4go.NewCharsetDetector()
+	charsetDetected := ""
 	if err == nil {
-		encoding := cd.GuessCharset([]byte(input))
-		returnValue = strings.ToLower(encoding)
+		charsetDetected = cd.GuessCharset([]byte(input))
+		charsetDetected = strings.ToLower(charsetDetected)
 		cd.Free()
 	}
+
+	if len(charsetDetected) > 0 {
+		returnValue = charsetDetected
+	} else if len(charsetInHtmlHeader) > 0 {
+		returnValue = charsetInHtmlHeader
+	} else {
+		returnValue = charsetInResponseHeader
+	}
+
 	return
 }
 

@@ -1,2 +1,2 @@
-$encoding = detect_encoding()
+$encoding = guess_encoding()
 log($encoding)

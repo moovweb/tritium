@@ -80,7 +80,7 @@ func init() {
 	builtInFunctions["convert_encoding.Text.Text"] = convert_encoding_Text_Text
 	builtInFunctions["downcase.Text"] = downcase_Text
 	builtInFunctions["upcase.Text"] = upcase_Text
-	builtInFunctions["detect_encoding"] = detect_encoding
+	builtInFunctions["guess_encoding"] = guess_encoding
 	builtInFunctions["length.Text"] = length_Text
 }
 

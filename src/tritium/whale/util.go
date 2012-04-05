@@ -2,6 +2,7 @@ package whale
 
 import (
 	"gokogiri/xml"
+	"strings"
 )
 
 func MoveFunc(what, where xml.Node, position Position) {
@@ -20,4 +21,16 @@ func MoveFunc(what, where xml.Node, position Position) {
 	case AFTER:
 		where.InsertAfter(what)
 	}
+}
+
+const separator = "charset="
+
+func GetCharsetFromContentType(ct string) string {
+	t := strings.TrimSpace(ct)
+	t = strings.ToLower(t)
+	items := strings.SplitN(t, separator, 2)
+	if len(items) == 2 {
+		return items[1]
+	}
+	return ""
 }
