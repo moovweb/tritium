@@ -686,7 +686,7 @@ func wrap_text_children_Text(ctx EngineContext, scope *Scope, ins *tp.Instructio
 	return
 }
 
-func detect_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func guess_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = ""
 	input := scope.Value.(string)
 	cd, err := icu4go.NewCharsetDetector()

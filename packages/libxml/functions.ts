@@ -223,7 +223,7 @@ Functionally equivalent to `name() { set(%name) }`."
 "Parses the document into HTML."
 
 @func Text.html() {
-  $encoding = detect_encoding()
+  $encoding = guess_encoding()
   html($encoding, $encoding) {
     yield()
   } 
@@ -245,7 +245,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 @func Text.html_fragment() {
-  $encoding = detect_encoding()
+  $encoding = guess_encoding()
   html_fragment($encoding, $encoding) {
     yield()
   }
