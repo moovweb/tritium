@@ -702,7 +702,8 @@ func guess_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 
 	charsetInHtmlHeader := GetCharsetFromContentType(contentTypeInHtmlHeader)
 	charsetInResponseHeader := GetCharsetFromContentType(contentTypeInResponseHeader)
-
+	ctx.SetEnv("charset_in_html_header", charsetInHtmlHeader)
+	ctx.SetEnv("charset_in_response_header", charsetInResponseHeader)
 	//both the html response header and the meta tag point to the same charset
 	//we should trust it
 	if len(charsetInHtmlHeader) > 0 && charsetInHtmlHeader == charsetInResponseHeader {
@@ -716,6 +717,7 @@ func guess_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 	if err == nil {
 		charsetDetected = cd.GuessCharset([]byte(input))
 		charsetDetected = strings.ToLower(charsetDetected)
+		ctx.SetEnv("charset_detected", charsetDetected)
 		cd.Free()
 	}
 
