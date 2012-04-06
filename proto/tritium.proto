@@ -9,6 +9,4 @@ message Transform {
 	required Package pkg = 2;
 }
 
-message Slug {
-	repeated Transform transformers = 1;
-}
+
