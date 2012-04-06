@@ -1,32 +1,32 @@
 package proto
 
-import(
+import (
 	pb "goprotobuf.googlecode.com/hg/proto"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
 	"os"
 	"fmt"
-	)
+)
 
 type FileList struct {
 	RootDirectory string
-	Files []*File
+	Files         []*File
 }
 
 func (fl *FileList) VisitDir(path string, f *os.FileInfo) bool {
 	return true
 }
 
-func (fl *FileList)  VisitFile(path string, f *os.FileInfo) {
+func (fl *FileList) VisitFile(path string, f *os.FileInfo) {
 	file := fl.buildFile(path)
-	fl.Files = append( fl.Files, file )
+	fl.Files = append(fl.Files, file)
 }
 
-func CollectFiles(dir string) ([]*File){
+func CollectFiles(dir string) []*File {
 	fileList := &FileList{
-	RootDirectory: dir,
-	Files: make([]*File,0),
+		RootDirectory: dir,
+		Files:         make([]*File, 0),
 	}
 
 	filepath.Walk(dir, fileList, nil)
@@ -35,7 +35,7 @@ func CollectFiles(dir string) ([]*File){
 }
 
 func (fl *FileList) Unpack(verbose bool) (err os.Error) {
-	for _, file := range(fl.Files) {
+	for _, file := range fl.Files {
 		absolutePath := file.AbsolutePath(fl.RootDirectory)
 		path, _ := filepath.Split(absolutePath)
 		err = os.MkdirAll(path, uint32(0755))
@@ -57,23 +57,22 @@ func (fl *FileList) Unpack(verbose bool) (err os.Error) {
 	return
 }
 
-func (fl *FileList) buildFile(path string) (*File) {
+func (fl *FileList) buildFile(path string) *File {
 
 	data, err := ioutil.ReadFile(path)
 
 	if err != nil {
-		panic("Could not read file (" + path + "):" + err.String() )
+		panic("Could not read file (" + path + "):" + err.String())
 	}
 
-	pdata := make([][]uint8,0)
+	pdata := make([][]uint8, 0)
 	pdata = append(pdata, data)
-
 
 	path = relativePath(fl.RootDirectory, path)
 
 	file := &File{
-	Path: pb.String(path),
-	Data: pdata,
+		Path: pb.String(path),
+		Data: pdata,
 	}
 
 	return file
@@ -86,16 +85,16 @@ func (f *File) AbsolutePath(dir string) string {
 func (f *File) Write(dir string) (err os.Error) {
 	absolutePath := f.AbsolutePath(dir)
 
-	err = ioutil.WriteFile( absolutePath, f.Data[0], uint32(0644) )
+	err = ioutil.WriteFile(absolutePath, f.Data[0], uint32(0644))
 
 	if err != nil {
-		err = os.NewError("Couldn't write file (" + absolutePath + "):" + err.String() )
+		err = os.NewError("Couldn't write file (" + absolutePath + "):" + err.String())
 	}
 
 	return
 }
 
-func relativePath(parentDirectory string, path string) (string) {
+func relativePath(parentDirectory string, path string) string {
 	cleanedParentPath := filepath.Clean(parentDirectory)
 	relativePath := strings.Replace(path, cleanedParentPath, "", 1)
 	return relativePath
