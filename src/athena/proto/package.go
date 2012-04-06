@@ -1,12 +1,12 @@
 package proto
 
-import(
+import (
 	"log"
 	pb "goprotobuf.googlecode.com/hg/proto"
 )
 
-func (pkg *Package) GetTypeId(name string) (int) {
-	for id, typ := range(pkg.Types) {
+func (pkg *Package) GetTypeId(name string) int {
+	for id, typ := range pkg.Types {
 		if pb.GetString(typ.Name) == name {
 			return id
 		}
@@ -14,11 +14,11 @@ func (pkg *Package) GetTypeId(name string) (int) {
 	return -1
 }
 
-func (pkg *Package) GetTypeName(id int32) (string) {
+func (pkg *Package) GetTypeName(id int32) string {
 	return pb.GetString(pkg.Types[id].Name)
 }
 
-func (pkg *Package) GetProtoTypeId(name *string) (*int32) {
+func (pkg *Package) GetProtoTypeId(name *string) *int32 {
 	scopeTypeId := 0
 
 	typeName := pb.GetString(name)
@@ -35,8 +35,8 @@ func (pkg *Package) GetProtoTypeId(name *string) (*int32) {
 }
 
 // TODO(SJ) : This should really return a list of descendants
-func (pkg *Package) FindDescendantType(thisType int32) int {	
-	for index, someType := range(pkg.Types) {
+func (pkg *Package) FindDescendantType(thisType int32) int {
+	for index, someType := range pkg.Types {
 		implements := pb.GetInt32(someType.Implements)
 		if implements == thisType && implements != 0 {
 			// The implements field defaults to 0. Base doesn't implement Base. Text doesn't implement Base
