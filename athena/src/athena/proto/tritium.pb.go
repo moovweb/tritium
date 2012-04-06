@@ -21,13 +21,5 @@ type Transform struct {
 func (this *Transform) Reset()         { *this = Transform{} }
 func (this *Transform) String() string { return proto1.CompactTextString(this) }
 
-type Slug struct {
-	Transformers     []*Transform `protobuf:"bytes,1,rep,name=transformers" json:"transformers,omitempty"`
-	XXX_unrecognized []byte       `json:",omitempty"`
-}
-
-func (this *Slug) Reset()         { *this = Slug{} }
-func (this *Slug) String() string { return proto1.CompactTextString(this) }
-
 func init() {
 }
