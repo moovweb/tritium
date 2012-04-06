@@ -171,6 +171,9 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 		if proto.GetBool(fun.BuiltIn) {
 			if f := builtInFunctions[fun.Name]; f != nil {
 				returnValue = f(ctx, scope, ins, args)
+				if returnValue == nil {
+					returnValue = ""
+				}
 			} else {
 				panic("missing function: " + fun.Name)
 			}
