@@ -7,4 +7,3 @@ install: build
 	gb -i
 test:
 	gb -t
-	tritium package --output-path=$(GOHATTAN_DATA)/packages/libxml
