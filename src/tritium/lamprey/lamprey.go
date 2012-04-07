@@ -114,6 +114,7 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 	case tp.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]
 		fmt.Printf("%s%s\n", indent, fun.Name)
+		fmt.Printf("%sscope.Value berfore loading vars:\n%v\n", indent, scope.Value)
 		args := make([]interface{}, len(ins.Arguments))
 		for i, argIns := range ins.Arguments {
 			args[i] = ctx.RunInstruction(scope, argIns)
@@ -128,6 +129,7 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 		}
 		debugInfo += ")\n"
 		fmt.Printf("%s%s", indent, debugInfo)
+		fmt.Printf("%sscope.Value before calling:\n%v\n", indent, scope.Value)
 
 		if proto.GetBool(fun.BuiltIn) {
 			if f := whale.LookupBuiltIn(fun.Name); f != nil {
