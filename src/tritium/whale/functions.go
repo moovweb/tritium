@@ -601,14 +601,15 @@ func fetch_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []int
 		node := nodes[0]
 		returnValue = node.String()
 	}
+	if returnValue == nil {
+		returnValue = ""
+	}
 	if len(ins.Children) > 0 {
 		ts := &Scope{Value: returnValue}
 		for _, child := range ins.Children {
 			ctx.RunInstruction(ts, child)
 		}
 		returnValue = ts.Value
-	} else if returnValue == nil {
-		returnValue = ""
 	}
 	return
 }
