@@ -53,9 +53,8 @@ func var_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []inter
 }
 
 func var_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	ctx.SetEnv(args[0].(string), args[1].(string))
 	returnValue = args[1].(string)
-	ctx.SetEnv(args[0].(string), returnValue.(string))
-
 	if len(ins.Children) > 0 {
 		ts := &Scope{Value: returnValue}
 		for _, child := range ins.Children {
@@ -172,7 +171,7 @@ func regexp_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args
 func export_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	val := make([]string, 2)
 	val[0] = args[0].(string)
-	ts := &Scope{Value: nil}
+	ts := &Scope{Value: ""}
 	for _, child := range ins.Children {
 		ctx.RunInstruction(ts, child)
 	}
@@ -300,6 +299,13 @@ func xml_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []
 		returnValue = "false"
 		return
 	}
+
+	if doc == nil {
+		ctx.Logger().Error("xml err: nil doc")
+		returnValue = "false"
+		return
+	}
+
 	ns := &Scope{Value: doc}
 
 	for _, child := range ins.Children {
@@ -321,6 +327,11 @@ func html_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, ar
 	doc, err := html.Parse([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
 	if err != nil {
 		ctx.Logger().Error("html_doc err: %s", err.String())
+		returnValue = "false"
+		return
+	}
+	if doc == nil {
+		ctx.Logger().Error("html_doc err: nil doc")
 		returnValue = "false"
 		return
 	}
@@ -347,6 +358,11 @@ func html_fragment_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instru
 	fragment, err := html.ParseFragment([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
 	if err != nil {
 		ctx.Logger().Error("html_fragment err: %s", err.String())
+		returnValue = "false"
+		return
+	}
+	if fragment == nil {
+		ctx.Logger().Error("html_fragment err: nil fragment")
 		returnValue = "false"
 		return
 	}
@@ -678,7 +694,11 @@ func wrap_text_children_Text(ctx EngineContext, scope *Scope, ins *tp.Instructio
 		tag := fmt.Sprintf("<%s />", tagName)
 		for index, textNode := range textNodes {
 			textNode.Wrap(tag)
-			ns := &Scope{textNode.Parent(), index}
+			parent := textNode.Parent()
+			if parent == nil {
+				continue
+			}
+			ns := &Scope{parent, index}
 			for _, child := range ins.Children {
 				ctx.RunInstruction(ns, child)
 			}
