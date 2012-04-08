@@ -10,8 +10,8 @@ message TritiumTest {
 		required string key = 1;
 		required string value = 2;
 	}
-	repeated Hash env = 4;
-	repeated Hash exports = 5;
+	repeated Hash env_proto = 4;
+	repeated Hash exports_proto = 5;
 	repeated string logs = 6;
 	optional Transform transformer = 7;
 }
