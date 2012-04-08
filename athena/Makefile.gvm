@@ -8,4 +8,4 @@ clean:
 install:
 	cd src && gb -i
 test:
-	cd src && gb -t
+	cd src && gb -t --testargs "-test.v"
