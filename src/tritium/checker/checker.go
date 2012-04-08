@@ -2,18 +2,19 @@ package checker
 
 import(
 	tp "athena/src/athena/proto"
-	//log "log4go"
+	. "log4go"
 	"tritium/src/tritium/parser"
 )
 
-func CheckFile(path string) (*CheckResult) {
+func CheckFile(path string, logger Logger) (*CheckResult) {
 	objs := parser.ParseFileSet(path)
-	return CheckBeforeLinking(objs)
+	return CheckBeforeLinking(objs, logger)
 }
 
-func CheckBeforeLinking(scripts []*tp.ScriptObject) (*CheckResult) {
+func CheckBeforeLinking(scripts []*tp.ScriptObject, logger Logger) (*CheckResult) {
 	result := &CheckResult{
 		Warnings: make([]*Warning, 0),
+		Logger: logger,
 	}
 	for _, script := range(scripts) {
 		result.CheckForSelectText(script)
