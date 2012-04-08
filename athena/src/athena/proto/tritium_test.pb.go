@@ -19,7 +19,7 @@ type TritiumTest struct {
 	Env              []*TritiumTest_Hash `protobuf:"bytes,4,rep,name=env" json:"env,omitempty"`
 	Exports          []*TritiumTest_Hash `protobuf:"bytes,5,rep,name=exports" json:"exports,omitempty"`
 	Logs             []string            `protobuf:"bytes,6,rep,name=logs" json:"logs,omitempty"`
-	Transformer      *Transform          `protobuf:"bytes,7,req,name=transformer" json:"transformer,omitempty"`
+	Transformer      *Transform          `protobuf:"bytes,7,opt,name=transformer" json:"transformer,omitempty"`
 	XXX_unrecognized []byte              `json:",omitempty"`
 }
 

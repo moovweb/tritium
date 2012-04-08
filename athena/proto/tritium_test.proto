@@ -13,5 +13,5 @@ message TritiumTest {
 	repeated Hash env = 4;
 	repeated Hash exports = 5;
 	repeated string logs = 6;
-	required Transform transformer = 7;
+	optional Transform transformer = 7;
 }
