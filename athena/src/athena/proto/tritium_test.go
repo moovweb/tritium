@@ -51,7 +51,7 @@ func NewTritiumTestFromFolder(filename string) (test *TritiumTest, err os.Error)
 		return
 	}
 	
-	input_file := filepath.Join(path, "input.ts")
+	input_file := filepath.Join(path, "input.txt")
 	input_file_raw, err = ioutil.WriteFile(input_file, []byte(pb.GetString(test.Input)), 0644)
 	if err != nil {
 		return
@@ -85,7 +85,7 @@ func (test *TritiumTest) WriteFolder(path string) (err os.Error) {
 		return
 	}
 	
-	input_file := filepath.Join(path, "input.ts")
+	input_file := filepath.Join(path, "input.txt")
 	err = ioutil.WriteFile(input_file, []byte(pb.GetString(test.Input)), 0644)
 	if err != nil {
 		return
