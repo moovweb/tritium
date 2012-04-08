@@ -3,6 +3,7 @@ package proto
 import (
 	"os"
 	"io/ioutil"
+	"path/filepath"
 	pb "goprotobuf.googlecode.com/hg/proto"
 )
 
@@ -39,35 +40,32 @@ func (test *TritiumTest) WriteFile(filename string) (err os.Error) {
 	return
 }
 
-func NewTritiumTestFromFolder(filename string) (test *TritiumTest, err os.Error) {
-	err = ioutil.ReadFile("input.ts")
-	if err != nil {
-		return
-	}
-	
-	input_script := filepath.Join(path, "input.ts")
-	input_script_raw, err := ioutil.ReadFile(input_script)
+func NewTritiumTestFromFolder(path string) (test *TritiumTest, err os.Error) {
+	script_file := filepath.Join(path, "input.ts")
+	script, err := ioutil.ReadFile(script_file)
 	if err != nil {
 		return
 	}
 	
 	input_file := filepath.Join(path, "input.txt")
-	input_file_raw, err = ioutil.WriteFile(input_file, []byte(pb.GetString(test.Input)), 0644)
+	input, err := ioutil.ReadFile(input_file)
 	if err != nil {
 		return
 	}
 
 	output_file := filepath.Join(path, "output.txt")
-	output_file_raw, err = ioutil.WriteFile(output_file, []byte(pb.GetString(test.Output)), 0644)
+	output, err := ioutil.ReadFile(output_file)
 	if err != nil {
 		return
 	}
 
 	test = &TritiumTest{
-		Script:		   pb.String(script),
-		Input:         pb.String(name),
-		Output:        pb.String(version),
-		Transformers:  make([]*Transform, 1),
+		Script:		   pb.String(string(script)),
+		Input:         pb.String(string(input)),
+		Output:        pb.String(string(output)),
+		Env:		   []*TritiumTest_Hash{},
+		Exports:       []*TritiumTest_Hash{},
+		Logs:		   []string{},
 	}
 
 	return
