@@ -1,0 +1,16 @@
+package proto;
+
+import "tritium.proto";
+
+message TritiumTest {
+	required string input = 1;
+	required string output = 2;
+	message Hash {
+		required string key = 1;
+		required string value = 2;
+	}
+	repeated Hash env = 3;
+	repeated Hash exports = 4;
+	repeated string logs = 5;
+	required Transform transformer = 6;
+}
