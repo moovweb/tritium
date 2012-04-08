@@ -13,12 +13,13 @@ var _ = math.Inf
 var _ os.Error
 
 type TritiumTest struct {
-	Input            *string             `protobuf:"bytes,1,req,name=input" json:"input,omitempty"`
-	Output           *string             `protobuf:"bytes,2,req,name=output" json:"output,omitempty"`
-	Env              []*TritiumTest_Hash `protobuf:"bytes,3,rep,name=env" json:"env,omitempty"`
-	Exports          []*TritiumTest_Hash `protobuf:"bytes,4,rep,name=exports" json:"exports,omitempty"`
-	Logs             []string            `protobuf:"bytes,5,rep,name=logs" json:"logs,omitempty"`
-	Transformer      *Transform          `protobuf:"bytes,6,req,name=transformer" json:"transformer,omitempty"`
+	Script           *string             `protobuf:"bytes,1,req,name=script" json:"script,omitempty"`
+	Input            *string             `protobuf:"bytes,2,req,name=input" json:"input,omitempty"`
+	Output           *string             `protobuf:"bytes,3,req,name=output" json:"output,omitempty"`
+	Env              []*TritiumTest_Hash `protobuf:"bytes,4,rep,name=env" json:"env,omitempty"`
+	Exports          []*TritiumTest_Hash `protobuf:"bytes,5,rep,name=exports" json:"exports,omitempty"`
+	Logs             []string            `protobuf:"bytes,6,rep,name=logs" json:"logs,omitempty"`
+	Transformer      *Transform          `protobuf:"bytes,7,req,name=transformer" json:"transformer,omitempty"`
 	XXX_unrecognized []byte              `json:",omitempty"`
 }
 
