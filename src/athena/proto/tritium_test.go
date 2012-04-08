@@ -39,23 +39,60 @@ func (test *TritiumTest) WriteFile(filename string) (err os.Error) {
 	return
 }
 
+func NewTritiumTestFromFolder(filename string) (test *TritiumTest, err os.Error) {
+	err = ioutil.ReadFile("input.ts")
+	if err != nil {
+		return
+	}
+	
+	input_script := filepath.Join(path, "input.ts")
+	input_script_raw, err := ioutil.ReadFile(input_script)
+	if err != nil {
+		return
+	}
+	
+	input_file := filepath.Join(path, "input.ts")
+	input_file_raw, err = ioutil.WriteFile(input_file, []byte(pb.GetString(test.Input)), 0644)
+	if err != nil {
+		return
+	}
+
+	output_file := filepath.Join(path, "output.txt")
+	output_file_raw, err = ioutil.WriteFile(output_file, []byte(pb.GetString(test.Output)), 0644)
+	if err != nil {
+		return
+	}
+
+	test = &TritiumTest{
+		Script:		   pb.String(script),
+		Input:         pb.String(name),
+		Output:        pb.String(version),
+		Transformers:  make([]*Transform, 1),
+	}
+
+	return
+}
+
 func (test *TritiumTest) WriteFolder(path string) (err os.Error) {
 	err = os.MkdirAll(path, 0755)
 	if err != nil {
 		return
 	}
 
-	err = ioutil.WriteFile("input.ts", []byte(pb.GetString(test.Script)), 0644)
+	input_script := filepath.Join(path, "input.ts")
+	err = ioutil.WriteFile(input_script, []byte(pb.GetString(test.Script)), 0644)
 	if err != nil {
 		return
 	}
 	
-	err = ioutil.WriteFile("input.txt", []byte(pb.GetString(test.Input)), 0644)
+	input_file := filepath.Join(path, "input.ts")
+	err = ioutil.WriteFile(input_file, []byte(pb.GetString(test.Input)), 0644)
 	if err != nil {
 		return
 	}
 
-	err = ioutil.WriteFile("output.txt", []byte(pb.GetString(test.Output)), 0644)
+	output_file := filepath.Join(path, "output.txt")
+	err = ioutil.WriteFile(output_file, []byte(pb.GetString(test.Output)), 0644)
 	if err != nil {
 		return
 	}
