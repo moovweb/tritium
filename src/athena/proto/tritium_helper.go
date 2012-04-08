@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	pb "goprotobuf.googlecode.com/hg/proto"
+	yaml "goyaml"
 )
 
 func NewTritiumTestFromFile(filename string) (test *TritiumTest, err os.Error) {
@@ -40,35 +41,85 @@ func (test *TritiumTest) WriteFile(filename string) (err os.Error) {
 	return
 }
 
+func (test *TritiumTest) Env() (env map[string]string) {
+	env = map[string]string{}
+	for _, hash := range test.EnvProto {
+		env[pb.GetString(hash.Key)] = pb.GetString(hash.Value)
+	}
+	return
+}
+
+func (test *TritiumTest) Exports() (exports [][]string) {
+	exports = make([][]string, len(test.ExportsProto))
+	for n, hash := range test.ExportsProto {
+		exports[n] = []string{pb.GetString(hash.Key), pb.GetString(hash.Value)}
+	}
+	return
+}
+
+func (test *TritiumTest) SetEnv(env map[string]string) {
+	th := make([]*TritiumTest_Hash, len(env))
+	i := 0
+	for key, value := range env {
+		th[i] = &TritiumTest_Hash{Key: pb.String(key), Value: pb.String(value)}
+		i++
+	}
+	test.EnvProto = th
+}
+
+func (test *TritiumTest) SetExports(exports [][]string) {
+	th := make([]*TritiumTest_Hash, len(exports))
+	for n, export := range exports {
+		th[n] = &TritiumTest_Hash{Key: pb.String(export[0]), Value: pb.String(export[1])}
+	}
+	test.ExportsProto = th
+}
+
 func NewTritiumTestFromFolder(path string) (test *TritiumTest, err os.Error) {
-	script_file := filepath.Join(path, "input.ts")
-	script, err := ioutil.ReadFile(script_file)
+	script, err := ioutil.ReadFile(filepath.Join(path, "input.ts"))
 	if err != nil {
-		return
+		script = []byte("")
 	}
 	
-	input_file := filepath.Join(path, "input.txt")
-	input, err := ioutil.ReadFile(input_file)
+	input, err := ioutil.ReadFile(filepath.Join(path, "input.http"))
 	if err != nil {
-		return
+		input = []byte("")
 	}
 
-	output_file := filepath.Join(path, "output.txt")
-	output, err := ioutil.ReadFile(output_file)
+	output, err := ioutil.ReadFile(filepath.Join(path, "output.http"))
 	if err != nil {
-		return
+		output = []byte("")
+	}
+
+	env := make(map[string]string, 0)
+	data, err := ioutil.ReadFile(filepath.Join(path, "vars.yml"))
+	if err == nil {
+		err = yaml.Unmarshal(data, &env)
+		if err != nil {
+			return
+		}
+	}
+
+	exports := make([][]string, 0)
+	data, err = ioutil.ReadFile(filepath.Join(path, "exports.yml"))
+	if err == nil {
+		err = yaml.Unmarshal(data, &exports)
+		if err != nil {
+			return
+		}
 	}
 
 	test = &TritiumTest{
 		Script:		   pb.String(string(script)),
 		Input:         pb.String(string(input)),
 		Output:        pb.String(string(output)),
-		Env:		   []*TritiumTest_Hash{},
-		Exports:       []*TritiumTest_Hash{},
 		Logs:		   []string{},
 	}
 
-	return
+	test.SetEnv(env)
+	test.SetExports(exports)
+
+	return test, nil
 }
 
 func (test *TritiumTest) WriteFolder(path string) (err os.Error) {
