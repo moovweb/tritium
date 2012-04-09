@@ -194,7 +194,7 @@ match($body, "true") {
         append($Location)
       }
       match($found, "false") {
-        replace(/(\A[^\r\n]+\s+)200/, "\\1302")
+        replace(/(\A[^\r\n]+\s+)\d{3}/, "\\1302")
         append("\r\nLocation: ")
         append($Location)
       }
