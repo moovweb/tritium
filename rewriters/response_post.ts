@@ -84,7 +84,7 @@ match($body, "true") {
   # the content length to zero if it doesn't see a content-length
   # header. So here we ensure that one exists.
   match($fixed_length, "false") {
-    append("\r\nContent-Length:")
+    append("\r\nContent-Length: ")
     append($body_length)
   }
 }
