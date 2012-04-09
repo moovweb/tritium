@@ -11,6 +11,10 @@ $cookie_domain_missing_replacement = "{{.Rewriter.Cookie_Domain.Missing_Replacem
 
 $rewrite_incoming_json = "{{.HostJson}}"
 
+$rewrite_incoming_json {
+  replace("$secure", $secure)
+}
+
 $host {
   replace(regexp($rewrite_link_host))
 }
