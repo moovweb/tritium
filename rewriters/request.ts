@@ -56,18 +56,15 @@ replace(/\s+^x\-moov\-secure[^\r\n]*/i) {
   $secure = "true"
 }
 export("secure", $secure)
+# Get the user-agent header
+replace(/^user-agent\:\s*([^\r\n]*)/i) {
+  export("user_agent", $1)
+}
 {{if .User_Agent }}
 # Rewrite the user agent
 replace(/^(user-agent\:\s*)([^\r\n]*)/i) {
   set("$1")
   append("{{.User_Agent}}")
-  # Reset the export (Not sure if this is what we want)
-  export("user_agent", "{{.User_Agent}}")
-}
-{{else}}
-# Get the user-agent header
-replace(/^user-agent\:\s*([^\r\n]*)/i) {
-  export("user_agent", $1)
 }
 {{end}}
 
