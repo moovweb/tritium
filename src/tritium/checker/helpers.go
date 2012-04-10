@@ -2,14 +2,20 @@ package checker
 
 import(
 	tp "athena/src/athena/proto"
+	. "log4go"
 )
 
 type CheckResult struct {
 	Warnings []*Warning
+	Logger Logger
 }
 
 func (r *CheckResult)AddWarning(obj *tp.ScriptObject, ins *tp.Instruction, message string) {
-	r.Warnings = append(r.Warnings, NewWarning(obj, ins, message))
+	warning := NewWarning(obj, ins, message)
+	if r.Logger != nil {
+		r.Logger.Warn(warning.String())
+	}
+	r.Warnings = append(r.Warnings, warning)
 }
 
 func iterate(script *tp.ScriptObject, itFunc func(*tp.Instruction)) {

@@ -34,6 +34,19 @@ func CompileString(data string, path string, pkg *ap.Package) (*ap.Transform, os
 	return linker.RunStringWithPackage(data, path, pkg)
 }
 
+//******************************************************************************
+// "...add a big comment saying its a stop gap till go1/new testing framework 
+// support" - Sean
+//******************************************************************************
+func CompileTest(test *ap.TritiumTest, path string, pkg *ap.Package) (err os.Error) {
+	test_transform, err := linker.RunStringWithPackage(*test.Script, path, pkg)
+	if err != nil {
+		return err
+	}
+	test.Transformer = test_transform
+	return
+}
+
 func MakeProjectPackage(functionPath string, rootPackage *ap.Package) *ap.Package {
 	packager.ReadPackageDefinitions(rootPackage, functionPath)
 
