@@ -382,8 +382,7 @@ func select_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	xpathStr := args[0].(string)
 	expr := ctx.GetXpathExpr(xpathStr)
 	if expr == nil {
-		returnValue = "false"
-		return
+		panic(fmt.Sprintf("xpath error: " + xpathStr))
 	}
 	nodes, err := node.Search(expr)
 	if err != nil {
