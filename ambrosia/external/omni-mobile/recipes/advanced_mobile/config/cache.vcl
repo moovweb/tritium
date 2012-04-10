@@ -50,8 +50,8 @@ sub vcl_recv {
   }
   */
 
-  if (req.http.host ~ "^mstage.qaserver.{{#GOPERIOD#Domain}}$") {
-    set req.backend = bin_appv01;
+  if (req.http.host ~ "^mstage") {
+    set req.backend = manhattan-generator_appv01;
     set req.http.X-QA = "true";
   }
 

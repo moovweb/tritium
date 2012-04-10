@@ -2,10 +2,14 @@
 
 # If you need to modify the HTML/XML as raw text before its parsed... do it here!
 
+
+
+
 @import robots.ts
 
 
 @import device_detection.ts
+
 
 match($content_type) {
   with(/html/) {
@@ -13,7 +17,7 @@ match($content_type) {
       
       
       
-      # @import html.ts
+      @import html.ts
     }
   }
   
@@ -25,4 +29,7 @@ match($content_type) {
     log(concat("Passing through ", $content_type, " unmodified"))
   }
 }
+
+
+
 

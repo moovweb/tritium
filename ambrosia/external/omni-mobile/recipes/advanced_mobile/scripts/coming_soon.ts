@@ -15,12 +15,18 @@ $("/html") {
     }
     insert_bottom("div", concat("Mobile ", $source_host, " Coming Soon!"), id: "coming-soon")
     insert_bottom("div", "We're currently in the process of building an <b>amazing</b> mobile experience. Please check back soon.", id: "explanation")
+    $cookie_domain = concat($source_host, "")
+    $cookie_domain {
+      value() {
+        replace(/^(w+\d+\.)?/, ".")
+      }
+    }
     # desktop link
      insert_bottom("div", class: "mw_footer_link_box", id: "mw_desktop_link_config"){
        attribute("matcher", $rewrite_incoming_matcher)
        attribute("replacement", $rewrite_incoming_replacement)
        attribute("cookie_hours", "0")
-       attribute("cookie_domain", ".zgallerie.com")
+       attribute("cookie_domain", $cookie_domain)
        attribute("rewriter_json", $rewrite_incoming_json)
        # adding desktop site link
        insert_top("a", class: "mw_desktop_link", id: "mw_desktop_link"){

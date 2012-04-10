@@ -61,8 +61,8 @@ cookie_domain:
     expected: .{{#GOPERIOD#Domain}}
   - host: m.{{#GOPERIOD#Domain}}
     test: muay.{{#GOPERIOD#Domain}}
-    expected: .muay.{{#GOPERIOD#Domain}}
+    expected: .{{#GOPERIOD#Domain}}
   - host: m.{{#GOPERIOD#Domain}}
     test: .thai.{{#GOPERIOD#Domain}}
-    expected: .thai.{{#GOPERIOD#Domain}}
+    expected: .{{#GOPERIOD#Domain}}
 

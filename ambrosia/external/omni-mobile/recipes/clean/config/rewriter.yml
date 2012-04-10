@@ -9,6 +9,6 @@ rewriter:
     matcher: (^|\/\/|\"|\')(?!m$prefix\.)(www\.)?([a-z0-9\-\.]*){{#GOPERIOD#Domain}}
     replacement: \1m$prefix.\3{{#GOPERIOD#Domain}}
   cookie_domain:
-    matcher: \.?(www\.)?([a-z0-9\-\.]*{{#GOPERIOD#Domain}})
-    replacement: .\2
+    matcher: \.?(www\.)?([a-z0-9\-\.]*({{#GOPERIOD#Domain}}))
+    replacement: .\3
 

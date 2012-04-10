@@ -2,16 +2,23 @@
 
 # If you need to modify the HTML/XML as raw text before its parsed... do it here!
 
+
+  # Rewrite the xmlns facebook nodes before Nokogiri clobbers them
+  replace(/fb:/, "fbn_")
+
+
+
 @import robots.ts
 
+
 @import device_detection.ts
+
 
 match($content_type) {
   with(/html/) {
     html() {
       
       
-      set("Coming Soon")
       
       # This file is meant to be used while the site is being built 
       # and the project might be in the production environment. This will help to 
@@ -22,10 +29,8 @@ match($content_type) {
       # Comment out the line below once you begin working
       @import coming_soon.ts
       
-      # Uncomment out the line below once you begin working
       
-      
-      # @import html.ts
+      @import html.ts
     }
   }
   
@@ -37,4 +42,10 @@ match($content_type) {
     log(concat("Passing through ", $content_type, " unmodified"))
   }
 }
+
+
+  # Rewrite the xmlns facebook nodes to restore them
+  replace(/fbn_/, "fb:") 
+
+
 
