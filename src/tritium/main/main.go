@@ -20,8 +20,7 @@ func main() {
 			if len(os.Args) > 3 {
 				if os.Args[2] == "--name" {
 					// Build the package specified by the path
-					path := os.Args[2]
-
+					path := os.Args[3]
 					pkg := packager.NewPackage(packager.DefaultPackagePath, packager.BuildOptions())
 					pkg.Load(path)
 					//pkg.SerializedOutput()

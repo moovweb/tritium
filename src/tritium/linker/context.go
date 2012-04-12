@@ -114,7 +114,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 		//println(proto.GetInt32(ins.LineNumber))
 		importId, ok := ctx.objMap[importValue]
 		if ok != true {
-			ctx.error(ins, "Invalid import "+ins.String())
+			ctx.error(ins, "Invalid import %q", ins.String())
 
 		}
 		// Make sure this object is linked with the right scopeType
@@ -144,7 +144,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			if found {
 				returnType = typeId
 				if len(ins.Arguments) > 0 {
-					ctx.error(ins, "The local variable %"+name+" has been assigned before and cannot be reassigned!")
+					ctx.error(ins, "The local variable %%%q has been assigned before and cannot be reassigned!", name)
 				} else {
 					if ins.Children != nil {
 						for _, child := range ins.Children {
@@ -160,7 +160,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 					localScope[name] = returnType
 				} else {
 					println(ins.String())
-					ctx.error(ins, "I've never seen the variable %"+name+" before! Please assign a value before usage.")
+					ctx.error(ins, "I've never seen the variable %%%q before! Please assign a value before usage.", name)
 				}
 			}
 		}
@@ -174,7 +174,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			for _, arg := range ins.Arguments {
 				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope)
 				if argReturn == -1 {
-					ctx.error(ins, "Invalid argument object" + arg.String())
+					ctx.error(ins, "Invalid argument object %q", arg.String())
 					return
 				}
 				stub = stub + "," + ctx.types[argReturn]
@@ -193,7 +193,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			} else {
 				fileName = "in package"
 			}
-			ctx.error(ins, "No such function found: "+ctx.types[scopeType]+"."+stub+" in file "+fileName+":"+fmt.Sprintf("%d", proto.GetInt32(ins.LineNumber)))
+			ctx.error(ins, "No such function found: %s.%s in file %s:%d", ctx.types[scopeType], stub, fileName, proto.GetInt32(ins.LineNumber))
 		} else {
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
@@ -238,7 +238,8 @@ func (ctx *LinkingContext) HasErrors() bool {
 	return (len(ctx.Errors) > 0)
 }
 
-func (ctx *LinkingContext) error(obj interface{}, message string) {
+func (ctx *LinkingContext) error(obj interface{}, format string, data ...interface{}) {
+	message := fmt.Sprintf(format, data...)
 	ctx.Errors = append(ctx.Errors, message)
 	ins, ok := obj.(*Instruction)
 	if ok {
