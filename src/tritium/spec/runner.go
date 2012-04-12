@@ -96,7 +96,8 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 	defer func() {
 		//log.Println("done")  // Println executes normally even in there is a panic
 		if x := recover(); x != nil {
-			if err, ok := x.(error); ok {
+			err, ok := x.(error)
+			if ok {
 				logger.Error(dir + " === " + err.Error() + "\n\n" + string(debug.Stack()))
 			} else {
 				logger.Error(dir + " === " + x.(string) + "\n\n" + string(debug.Stack()))
