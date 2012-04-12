@@ -1,12 +1,13 @@
 package proto
 
 import (
-	pb "goprotobuf.googlecode.com/hg/proto"
+	pb "code.google.com/p/goprotobuf/proto"
+	"errors"
+	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
-	"os"
-	"fmt"
 )
 
 type FileList struct {
@@ -14,11 +15,11 @@ type FileList struct {
 	Files         []*File
 }
 
-func (fl *FileList) VisitDir(path string, f *os.FileInfo) bool {
+func (fl *FileList) VisitDir(path string, f os.FileInfo) bool {
 	return true
 }
 
-func (fl *FileList) VisitFile(path string, f *os.FileInfo) {
+func (fl *FileList) VisitFile(path string, f os.FileInfo) {
 	file := fl.buildFile(path)
 	fl.Files = append(fl.Files, file)
 }
@@ -29,19 +30,31 @@ func CollectFiles(dir string) []*File {
 		Files:         make([]*File, 0),
 	}
 
-	filepath.Walk(dir, fileList, nil)
+	markFn := func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() {
+		    return filepath.SkipDir
+		}
+		if err != nil {
+		    return err
+		}
+		file := fileList.buildFile(path)
+		fileList.Files = append(fileList.Files, file)
+		return nil
+	}
+
+	filepath.Walk(dir, markFn)
 
 	return fileList.Files
 }
 
-func (fl *FileList) Unpack(verbose bool) (err os.Error) {
+func (fl *FileList) Unpack(verbose bool) (err error) {
 	for _, file := range fl.Files {
 		absolutePath := file.AbsolutePath(fl.RootDirectory)
 		path, _ := filepath.Split(absolutePath)
-		err = os.MkdirAll(path, uint32(0755))
+		err = os.MkdirAll(path, 0755)
 
 		if err != nil {
-			panic(err.String())
+			panic(err.Error())
 		}
 
 		err = file.Write(fl.RootDirectory)
@@ -62,7 +75,7 @@ func (fl *FileList) buildFile(path string) *File {
 	data, err := ioutil.ReadFile(path)
 
 	if err != nil {
-		panic("Could not read file (" + path + "):" + err.String())
+		panic("Could not read file (" + path + "):" + err.Error())
 	}
 
 	pdata := make([][]uint8, 0)
@@ -82,13 +95,13 @@ func (f *File) AbsolutePath(dir string) string {
 	return filepath.Join(dir, pb.GetString(f.Path))
 }
 
-func (f *File) Write(dir string) (err os.Error) {
+func (f *File) Write(dir string) (err error) {
 	absolutePath := f.AbsolutePath(dir)
 
-	err = ioutil.WriteFile(absolutePath, f.Data[0], uint32(0644))
+	err = ioutil.WriteFile(absolutePath, f.Data[0], 0644)
 
 	if err != nil {
-		err = os.NewError("Couldn't write file (" + absolutePath + "):" + err.String())
+		err = errors.New("Couldn't write file (" + absolutePath + "):" + err.Error())
 	}
 
 	return

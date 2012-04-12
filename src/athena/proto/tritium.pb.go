@@ -3,14 +3,13 @@
 
 package proto
 
-import proto1 "goprotobuf.googlecode.com/hg/proto"
+import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
-import "os"
 
 // Reference proto, math & os imports to suppress error if they are not otherwise used.
 var _ = proto1.GetString
 var _ = math.Inf
-var _ os.Error
+var _ error
 
 type Transform struct {
 	Objects          []*ScriptObject `protobuf:"bytes,1,rep,name=objects" json:"objects,omitempty"`

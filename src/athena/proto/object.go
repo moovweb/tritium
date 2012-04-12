@@ -1,7 +1,7 @@
 package proto
 
 import (
-	pb "goprotobuf.googlecode.com/hg/proto"
+	pb "code.google.com/p/goprotobuf/proto"
 )
 
 func (obj *ScriptObject) Imports() []string {

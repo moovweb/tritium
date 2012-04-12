@@ -1,8 +1,8 @@
 package proto
 
 import (
+	pb "code.google.com/p/goprotobuf/proto"
 	"log"
-	pb "goprotobuf.googlecode.com/hg/proto"
 )
 
 func (pkg *Package) GetTypeId(name string) int {

@@ -1,6 +1,6 @@
 package proto
 
-import pb "goprotobuf.googlecode.com/hg/proto"
+import pb "code.google.com/p/goprotobuf/proto"
 
 func (fun *Function) Stub(pkg *Package) string {
 	name := pb.GetString(fun.Name)
