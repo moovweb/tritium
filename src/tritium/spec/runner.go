@@ -52,13 +52,13 @@ func All(command string, directory string, options ...string) {
 
 	var foundError = false
 
-	for _, error := range globalResult.Errors {
+	for _, err := range globalResult.Errors {
 		foundError = true
-		println("\n=========================================", error.Location, "\n")
-		if error.Panic {
-			Printf(error.Message)
+		println("\n=========================================", err.Location, "\n")
+		if err.Panic {
+			Printf(err.Message)
 		} else {
-			Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", error.Name, error.Message, error.Got, error.Expected)
+			Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", err.Name, err.Message, err.Got, err.Expected)
 		}
 	}
 	println("\n\n")
@@ -68,10 +68,10 @@ func All(command string, directory string, options ...string) {
 		os.Exit(1)
 	}
 	eng.Free()
-	xmlhelp.XmlCleanUpParser()
-	if xmlhelp.XmlMemoryAllocation() != 0 {
-		fmt.Printf("Memeory leaks %d!!!", xmlhelp.XmlMemoryAllocation())
-		xmlhelp.XmlMemoryLeakReport()
+	xmlhelp.LibxmlCleanUpParser()
+	if xmlhelp.LibxmlGetMemoryAllocation() != 0 {
+		fmt.Printf("Memeory leaks %d!!!", xmlhelp.LibxmlGetMemoryAllocation())
+		xmlhelp.LibxmlReportMemoryLeak()
 	}
 }
 
@@ -105,8 +105,8 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 		}
 		for _, rec := range logWriter.Logs {
 			//println("HAZ LOGS")
-			error := l4g.FormatLogRecord("[%D %T] [%L] (%S) %M", rec)
-			result.Error(dir, error)
+			err := l4g.FormatLogRecord("[%D %T] [%L] (%S) %M", rec)
+			result.Error(dir, err)
 		}
 		print(result.CharStatus())
 	}()
