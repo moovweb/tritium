@@ -82,7 +82,7 @@ func Generate(outputFile string) {
 
 	docs := RenderDocumentation(definitions)
 
-	err := ioutil.WriteFile(outputFile, docs, uint32(0666))
+	err := ioutil.WriteFile(outputFile, docs, 0666)
 	if err != nil {
 		panic("Couldn't write doc file:\n" + err.String())
 	}
