@@ -84,7 +84,7 @@ func Generate(outputFile string) {
 
 	err := ioutil.WriteFile(outputFile, docs, 0666)
 	if err != nil {
-		panic("Couldn't write doc file:\n" + err.String())
+		panic("Couldn't write doc file:\n" + err.Error())
 	}
 }
 
