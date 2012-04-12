@@ -1,13 +1,13 @@
 package proto
 
 import (
-	"os"
+	pb "code.google.com/p/goprotobuf/proto"
+	"errors"
 	"io/ioutil"
-	"http"
-	pb "goprotobuf.googlecode.com/hg/proto"
+	"net/http"
 )
 
-func NewSlug(name string, version string, stages int) (slug *Slug, err os.Error) {
+func NewSlug(name string, version string, stages int) (slug *Slug, err error) {
 	slug = &Slug{
 		Name:         pb.String(name),
 		Version:      pb.String(version),
@@ -17,7 +17,7 @@ func NewSlug(name string, version string, stages int) (slug *Slug, err os.Error)
 	return
 }
 
-func NewSlugFromFile(filename string) (slug *Slug, err os.Error) {
+func NewSlugFromFile(filename string) (slug *Slug, err error) {
 	var data []byte
 
 	data, err = ioutil.ReadFile(filename)
@@ -34,28 +34,28 @@ func NewSlugFromFile(filename string) (slug *Slug, err os.Error) {
 	return
 }
 
-func NewSlugFromURL(url string) (slug *Slug, err os.Error) {
+func NewSlugFromURL(url string) (slug *Slug, err error) {
 	var data []byte
 	var resp *http.Response
 
 	resp, err = http.Get(url)
 	if resp.StatusCode != 200 {
-		err = os.NewError("Couldn't load slug from " + url)
+		err = errors.New("Couldn't load slug from " + url)
 		return
 	}
 	if err != nil {
 		return
 	}
-	
+
 	data, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 	if len(data) == 0 {
-		err = os.NewError("Received blank slug")
+		err = errors.New("Received blank slug")
 		return
 	}
-	
+
 	slug = &Slug{}
 	err = pb.Unmarshal(data, slug)
 	if err != nil {
@@ -65,7 +65,7 @@ func NewSlugFromURL(url string) (slug *Slug, err os.Error) {
 	return
 }
 
-func (slug *Slug) WriteFile(filename string) (err os.Error) {
+func (slug *Slug) WriteFile(filename string) (err error) {
 	var data []byte
 
 	data, err = pb.Marshal(slug)

@@ -1,14 +1,14 @@
 package proto
 
 import (
-	"os"
-	"io/ioutil"
-	"path/filepath"
-	pb "goprotobuf.googlecode.com/hg/proto"
+	pb "code.google.com/p/goprotobuf/proto"
 	yaml "goyaml"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 )
 
-func NewTritiumTestFromFile(filename string) (test *TritiumTest, err os.Error) {
+func NewTritiumTestFromFile(filename string) (test *TritiumTest, err error) {
 	var data []byte
 
 	data, err = ioutil.ReadFile(filename)
@@ -25,7 +25,7 @@ func NewTritiumTestFromFile(filename string) (test *TritiumTest, err os.Error) {
 	return
 }
 
-func (test *TritiumTest) WriteFile(filename string) (err os.Error) {
+func (test *TritiumTest) WriteFile(filename string) (err error) {
 	var data []byte
 
 	data, err = pb.Marshal(test)
@@ -75,12 +75,12 @@ func (test *TritiumTest) SetExports(exports [][]string) {
 	test.ExportsProto = th
 }
 
-func NewTritiumTestFromFolder(path string) (test *TritiumTest, err os.Error) {
+func NewTritiumTestFromFolder(path string) (test *TritiumTest, err error) {
 	script, err := ioutil.ReadFile(filepath.Join(path, "input.ts"))
 	if err != nil {
 		script = []byte("")
 	}
-	
+
 	input, err := ioutil.ReadFile(filepath.Join(path, "input.http"))
 	if err != nil {
 		input = []byte("")
@@ -110,10 +110,10 @@ func NewTritiumTestFromFolder(path string) (test *TritiumTest, err os.Error) {
 	}
 
 	test = &TritiumTest{
-		Script:		   pb.String(string(script)),
-		Input:         pb.String(string(input)),
-		Output:        pb.String(string(output)),
-		Logs:		   []string{},
+		Script: pb.String(string(script)),
+		Input:  pb.String(string(input)),
+		Output: pb.String(string(output)),
+		Logs:   []string{},
 	}
 
 	test.SetEnv(env)
@@ -122,7 +122,7 @@ func NewTritiumTestFromFolder(path string) (test *TritiumTest, err os.Error) {
 	return test, nil
 }
 
-func (test *TritiumTest) WriteFolder(path string) (err os.Error) {
+func (test *TritiumTest) WriteFolder(path string) (err error) {
 	err = os.MkdirAll(path, 0755)
 	if err != nil {
 		return
@@ -133,7 +133,7 @@ func (test *TritiumTest) WriteFolder(path string) (err os.Error) {
 	if err != nil {
 		return
 	}
-	
+
 	input_file := filepath.Join(path, "input.txt")
 	err = ioutil.WriteFile(input_file, []byte(pb.GetString(test.Input)), 0644)
 	if err != nil {

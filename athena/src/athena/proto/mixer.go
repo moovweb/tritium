@@ -1,11 +1,11 @@
 package proto
 
 import (
-	pb "goprotobuf.googlecode.com/hg/proto"
-	"io/ioutil"
-	"path/filepath"
+	pb "code.google.com/p/goprotobuf/proto"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -13,7 +13,7 @@ func NewMixer(path string) *Mixer {
 	version, err := ioutil.ReadFile(path + "/VERSION")
 
 	if err != nil {
-		panic("Couldn't find a version for mixer:" + path + ":" + err.String())
+		panic("Couldn't find a version for mixer:" + path + ":" + err.Error())
 	}
 
 	_, name := filepath.Split(path)
@@ -31,7 +31,7 @@ func NewMixer(path string) *Mixer {
 }
 
 func ResolveMixer(name string) *Mixer {
-	path := os.ShellExpand("$GOHATTAN_DATA/mixers/")
+	path := os.ExpandEnv("$GOHATTAN_DATA/mixers/")
 
 	if !strings.Contains(name, ".mxr") {
 		name = name + ".mxr"
@@ -50,12 +50,12 @@ func (m *Mixer) Write(path string) (outputPath string) {
 	bytes, err := pb.Marshal(m)
 
 	if err != nil {
-		panic("Could not marshal mixer (" + name + "), " + err.String())
+		panic("Could not marshal mixer (" + name + "), " + err.Error())
 	}
 
 	bytes = Encrypt(bytes)
 
-	ioutil.WriteFile(outputFilename, bytes, uint32(0666))
+	ioutil.WriteFile(outputFilename, bytes, 0644)
 
 	return outputFilename
 }
@@ -104,9 +104,9 @@ func (m *Mixer) Inspect(printFunctions bool) {
 
 func (m *Mixer) Unpack(path string) {
 	fullPath := filepath.Join(path, pb.GetString(m.Name)+"-"+pb.GetString(m.Version))
-	err := os.MkdirAll(fullPath, uint32(0755))
+	err := os.MkdirAll(fullPath, 0755)
 	if err != nil {
-		panic(err.String())
+		panic(err.Error())
 	}
 
 	err = m.unpackFiles(filepath.Join(fullPath, "assets"), m.Assets)
@@ -129,7 +129,7 @@ func (m *Mixer) Unpack(path string) {
 	summary := m.packageSummary(true)
 	packageFile := filepath.Join(fullPath, "package-summary.txt")
 
-	err = ioutil.WriteFile(packageFile, []byte(summary), uint32(0644))
+	err = ioutil.WriteFile(packageFile, []byte(summary), 0644)
 
 	if err != nil {
 		fmt.Printf("Warning : Couldn't write package summary")
@@ -138,7 +138,7 @@ func (m *Mixer) Unpack(path string) {
 	fmt.Printf("* %v\n", packageFile)
 }
 
-func (m *Mixer) unpackFiles(path string, files []*File) (err os.Error) {
+func (m *Mixer) unpackFiles(path string, files []*File) (err error) {
 	fl := &FileList{
 		RootDirectory: path,
 		Files:         files,
