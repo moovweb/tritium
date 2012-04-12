@@ -9,6 +9,7 @@ import (
 	linker "tritium/src/tritium/linker"
 	parser "tritium/src/tritium/parser"
 	"os"
+	"path/filepath"
 )
 
 func resolveDefinition(pkg *ap.Package, fun *ap.Function) {
@@ -254,11 +255,9 @@ func ReadPackageInfoFile(location string) (info *PackageInfo, error *string) {
 
 func (pkg *Package) readHeaderFile(location string) {
 	// TODO : plug in new go parser to do this
-	input_file := location + "/headers.tf"
+	input_file := filepath.Join(location, "headers.tf")
 
-	_, err := os.Open(input_file)
-
-	if err != nil {
+	if _, err := os.Open(input_file); err != nil {
 		pkg.Log.Info("Warning -- found no headers.tf")
 		return
 	}
