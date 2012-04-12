@@ -2,9 +2,9 @@ package linker
 
 import (
 	. "athena/src/athena/proto"
-	proto "goprotobuf.googlecode.com/hg/proto"
-	log "log4go"
+	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
+	log "log4go"
 )
 
 type FuncMap map[string]int
@@ -152,7 +152,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 						}
 					}
 				}
-				
+
 			} else {
 				if len(ins.Arguments) > 0 {
 					// We are going to assign something to this variable
@@ -164,7 +164,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				}
 			}
 		}
-		
+
 	case Instruction_FUNCTION_CALL:
 		stub := proto.GetString(ins.Value)
 		if stub == "yield" {

@@ -1,22 +1,22 @@
 package checker
 
-import(
+import (
 	tp "athena/src/athena/proto"
-	proto "goprotobuf.googlecode.com/hg/proto"
+	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
 	. "strings"
 )
 
 type Warning struct {
-	Message string
-	FilePath string
+	Message    string
+	FilePath   string
 	LineNumber string
 }
 
 func NewWarning(obj *tp.ScriptObject, ins *tp.Instruction, message string) (w *Warning) {
 	w = &Warning{
-		Message: message,
-		FilePath: proto.GetString(obj.Name),
+		Message:    message,
+		FilePath:   proto.GetString(obj.Name),
 		LineNumber: fmt.Sprintf("%d", proto.GetInt32(ins.LineNumber)),
 	}
 	return
@@ -25,7 +25,7 @@ func NewWarning(obj *tp.ScriptObject, ins *tp.Instruction, message string) (w *W
 func (w *Warning) File() string {
 	parts := Split(w.FilePath, "/")
 	if len(parts) > 2 {
-		return parts[len(parts) - 2] + "/" + parts[len(parts) - 1]
+		return parts[len(parts)-2] + "/" + parts[len(parts)-1]
 	}
 	return w.FilePath
 }

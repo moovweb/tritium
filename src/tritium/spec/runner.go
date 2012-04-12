@@ -1,19 +1,18 @@
 package spec
 
 import (
-	"tritium/src/tritium/packager"
 	tp "athena/src/athena/proto"
-	. "tritium/src/tritium"
-	. "path/filepath"
-	"tritium/src/tritium/whale"
-	"tritium/src/tritium/lamprey"
-	"tritium/src/tritium/shark"
 	. "fmt"
+	"fmt"
+	xmlhelp "gokogiri/help"
 	l4g "log4go"
 	"os"
+	. "path/filepath"
 	"runtime/debug"
-	xmlhelp "gokogiri/libxml/help"
-	"fmt"
+	. "tritium/src/tritium"
+	"tritium/src/tritium/lamprey"
+	"tritium/src/tritium/packager"
+	"tritium/src/tritium/whale"
 )
 
 func All(command string, directory string, options ...string) {
@@ -31,8 +30,6 @@ func All(command string, directory string, options ...string) {
 		eng = whale.NewEngine(logger)
 	} else if command == "debug" {
 		eng = lamprey.NewEngine(logger)
-	} else if command == "old_test" {
-		eng = shark.NewEngine(logger)
 	}
 
 	var pkg *tp.Package
@@ -99,9 +96,9 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 	defer func() {
 		//log.Println("done")  // Println executes normally even in there is a panic
 		if x := recover(); x != nil {
-			err, ok := x.(os.Error)
+			err, ok := x.(error)
 			if ok {
-				logger.Error(dir + " === " + err.String() + "\n\n" + string(debug.Stack()))
+				logger.Error(dir + " === " + err.Error() + "\n\n" + string(debug.Stack()))
 			} else {
 				logger.Error(dir + " === " + x.(string) + "\n\n" + string(debug.Stack()))
 			}
@@ -115,7 +112,7 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 	}()
 	spec, err := LoadSpec(dir, pkg)
 	if err != nil {
-		result.Error(dir, err.String())
+		result.Error(dir, err.Error())
 	} else {
 		result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
 	}

@@ -1,14 +1,14 @@
 package parser
 
 import (
-	"goprotobuf.googlecode.com/hg/proto"
 	ir "athena/src/athena/proto"
-	"io/ioutil"
-	"path/filepath"
-	. "tritium/src/tritium/tokenizer" // was meant to be in this package
-	"path"
+	"code.google.com/p/goprotobuf/proto"
 	"fmt"
+	"io/ioutil"
+	"path"
+	"path/filepath"
 	"strconv"
+	. "tritium/src/tritium/tokenizer" // was meant to be in this package
 )
 
 type Parser struct {
@@ -107,12 +107,12 @@ func (p *Parser) Parse() *ir.ScriptObject {
 		switch p.peek().Lexeme {
 		case FUNC:
 			defs = append(defs, p.definition())
-			
+
 			if len(stmts) > 0 {
 				previousStatement := stmts[len(stmts)-1]
 				if *previousStatement.Type == ir.Instruction_TEXT {
 					defs[len(defs)-1].Description = previousStatement.Value
-					if len(stmts) > 1 {						
+					if len(stmts) > 1 {
 						stmts = stmts[:len(stmts)-2]
 					} else if len(stmts) == 1 {
 						stmts = stmts[0:0]
