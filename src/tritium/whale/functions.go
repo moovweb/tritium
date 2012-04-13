@@ -400,6 +400,9 @@ func select_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 
 	for index, node := range nodes {
 		if node != nil && node.IsValid() {
+			if !node.IsValid() {
+				continue
+			}
 			t := node.NodeType()
 			if t == xml.XML_DOCUMENT_NODE || t == xml.XML_HTML_DOCUMENT_NODE {
 				node = node.MyDocument().Root()
