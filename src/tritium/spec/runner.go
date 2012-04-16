@@ -76,16 +76,24 @@ func All(command string, directory string, options ...string) {
 }
 
 func (result *Result) all(directory string, pkg *tp.Package, eng Engine, logger l4g.Logger) {
-	_, err := Glob(Join(directory, "main.ts"))
-
-	if err == nil {
+	paths, err := Glob(Join(directory, "main.ts"))
+	if err == nil && len(paths) == 1 {
 		newResult := RunSpec(directory, pkg, eng, logger)
 		result.Merge(newResult)
 	}
+
 	subdirs, _ := Glob(Join(directory, "*"))
 	for _, subdir := range subdirs {
+		fi, err := os.Stat(subdir)
+		if err != nil {
+			continue
+		}
+		if !fi.IsDir() {
+			continue
+		}
 		result.all(subdir, pkg, eng, logger)
 	}
+
 }
 
 func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result *Result) {
