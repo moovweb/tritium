@@ -8,7 +8,7 @@ import (
 	//log "log4go"
 	//proto "goprotobuf.googlecode.com/hg/proto"
 	tp "athena/src/athena/proto"
-	"rubex"
+	"rubex/lib"
 	"css2xpath"
 	"goconv"
 	"icu4go"

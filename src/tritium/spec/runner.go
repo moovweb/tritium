@@ -110,6 +110,7 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 		}
 		print(result.CharStatus())
 	}()
+
 	spec, err := LoadSpec(dir, pkg)
 	if err != nil {
 		result.Error(dir, err.Error())

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"gokogiri/xpath"
 	l4g "log4go"
-	"rubex"
+	"rubex/lib"
 	"strings"
 )
 

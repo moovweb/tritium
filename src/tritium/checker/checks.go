@@ -4,7 +4,7 @@ import (
 	tp "athena/src/athena/proto"
 	proto "code.google.com/p/goprotobuf/proto"
 	//. "strings"
-	. "rubex"
+	. "rubex/lib"
 )
 
 func (result *CheckResult) CheckForSelectText(script *tp.ScriptObject) {
