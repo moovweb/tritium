@@ -732,6 +732,14 @@ func guess_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 		return
 	}
 
+	// Allow the user to disable charset detection
+	if ctx.GetEnv("disable_charset_detection") == "true" {
+		if len(charsetInHtmlHeader) > 0 {
+			returnValue = charsetInHtmlHeader
+		}
+		return charsetInResponseHeader
+	}
+
 	//use icu to detect if they differ
 	cd, err := icu4go.NewCharsetDetector()
 	charsetDetected := ""
