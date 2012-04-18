@@ -31,6 +31,11 @@ func CollectFiles(dir string) []*File {
 	}
 
 	markFn := func(path string, info os.FileInfo, err error) error {
+
+		if info == nil {
+      return filepath.SkipDir
+		}
+
 		if info.IsDir() {
 		    return filepath.SkipDir
 		}
