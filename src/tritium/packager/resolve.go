@@ -2,14 +2,14 @@ package packager
 
 import (
 	ap "athena/src/athena/proto"
-	proto "goprotobuf.googlecode.com/hg/proto"
+	proto "code.google.com/p/goprotobuf/proto"
 	yaml "goyaml"
 	"io/ioutil"
 	"log"
-	linker "tritium/src/tritium/linker"
-	parser "tritium/src/tritium/parser"
 	"os"
 	"path/filepath"
+	linker "tritium/src/tritium/linker"
+	parser "tritium/src/tritium/parser"
 )
 
 func resolveDefinition(pkg *ap.Package, fun *ap.Function) {
@@ -53,7 +53,7 @@ func resolveDefinition(pkg *ap.Package, fun *ap.Function) {
 		scopeTypeId := int(proto.GetInt32(fun.ScopeTypeId))
 		//pkg.Log.Info("\t\t -- opening scope type : %v\n", scopeTypeId)
 		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope)
-		
+
 		if linkingContext.HasErrors() {
 			message := ""
 			for _, msg := range linkingContext.Errors {
@@ -61,8 +61,7 @@ func resolveDefinition(pkg *ap.Package, fun *ap.Function) {
 			}
 			panic(message)
 		}
-		
-		
+
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
 		if fun.Instruction != nil {
 			fun.Instruction.Iterate(func(ins *ap.Instruction) {
@@ -217,16 +216,16 @@ func (pkg *Package) findTypeIndex(name string) int {
 	return -1
 }
 
-func (pkg *Package) loadPackageDependency(name string) (*Error){
+func (pkg *Package) loadPackageDependency(name string) *Error {
 
 	loaded := pkg.loadedDependency(name)
-	
+
 	if loaded {
 		return nil
 	}
 
 	pkg.Load(name)
-		
+
 	return nil
 }
 
@@ -303,16 +302,16 @@ func (pkg *Package) resolveHeader(function *ap.Function) {
 	}
 }
 
-func (pkg *Package) CollectFunctionDocs() {	
-	for _, function := range(pkg.Package.Functions) {
+func (pkg *Package) CollectFunctionDocs() {
+	for _, function := range pkg.Package.Functions {
 		if function.Instruction == nil {
 			continue
 		}
 
-		for _, instruction := range(function.Instruction.Children) {
+		for _, instruction := range function.Instruction.Children {
 			if *instruction.Type == ap.Instruction_TEXT {
 				function.Description = instruction.Value
 			}
 		}
-	}	
+	}
 }
