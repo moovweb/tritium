@@ -2,19 +2,19 @@ package packager
 
 import (
 	tp "athena/src/athena/proto"
-	proto "goprotobuf.googlecode.com/hg/proto"
-	api "tritium/src/tritium/api"
-	"strings"
-	"path/filepath"
+	proto "code.google.com/p/goprotobuf/proto"
+	"fmt"
 	"log4go"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
-	"fmt"
+	api "tritium/src/tritium/api"
 )
 
 type Error struct {
-  Code int
-  Message string
+	Code    int
+	Message string
 }
 
 const (
@@ -29,7 +29,7 @@ type Package struct {
 	OutputFile   string
 	Log          log4go.Logger
 	*tp.Package
-	Options      PackageOptions
+	Options PackageOptions
 }
 
 type PackageInfo struct {
@@ -54,9 +54,9 @@ func OutputDefaultPackage(path string) (pkg *Package, newFilePath string) {
 	_, err := os.Stat(path)
 
 	if err != nil {
-		creationErr := os.MkdirAll(path, uint32(0777))
+		creationErr := os.MkdirAll(path, os.FileMode(0777))
 		if creationErr != nil {
-			panic("Could not make path(" + path + "). Error:" + creationErr.String())
+			panic("Could not make path(" + path + "). Error:" + creationErr.Error())
 		}
 	}
 
@@ -145,7 +145,7 @@ func NewUserPackage(loadPath *string, fallbackPath *string) *Package {
 
 func newLog() log4go.Logger {
 	pkgLog := make(log4go.Logger)
-	os.Mkdir("tmp", uint32(0777))
+	os.Mkdir("tmp", os.FileMode(0777))
 
 	pkgLog.AddFilter("file", log4go.DEBUG, log4go.NewFileLogWriter("tmp/packager.log", false))
 	return pkgLog
@@ -160,10 +160,10 @@ func (pkg *Package) Load(packageName string) {
 		panic("Package " + packageName + " not approved for use.")
 	}
 
-	err := pkg.LoadFromPath( filepath.Join(pkg.LoadPath, packageName), packageName )
+	err := pkg.LoadFromPath(filepath.Join(pkg.LoadPath, packageName), packageName)
 
 	if err != nil && len(pkg.FallbackPath) != 0 {
-		err = pkg.LoadFromPath( filepath.Join(pkg.FallbackPath, packageName), packageName )
+		err = pkg.LoadFromPath(filepath.Join(pkg.FallbackPath, packageName), packageName)
 	}
 
 	if err != nil {
@@ -172,10 +172,10 @@ func (pkg *Package) Load(packageName string) {
 
 }
 
-func (pkg *Package) LoadFromPath(loadPath string, name string) (*Error) {
+func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 	// LoadPath is the full path to the mixer
 	// Since the path won't always end w the name (e.g. user defined function / mixer packages), specify the name as well
-		
+
 	pkg.Println(loadPath + ":" + name)
 	pkg.Log.Info("\n\n\n\nLoading:%v", loadPath+":"+name)
 
@@ -186,38 +186,38 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) (*Error) {
 
 	if pkg.Options["use_tpkg"] {
 		err := pkg.LoadFromFile(loadPath)
-    if err == nil {
-      return nil
-    } else if err != nil && err.Code != NOT_FOUND {
-      return err
-    }
+		if err == nil {
+			return nil
+		} else if err != nil && err.Code != NOT_FOUND {
+			return err
+		}
 	}
 
-	s := time.Nanoseconds()
+	s := time.Now()
 	info, err := ReadPackageInfoFile(loadPath)
-	f := time.Nanoseconds()
-	d := float64(f-s) / 1000.0 / 1000.0 / 1000.0
+	f := time.Now()
+	d := float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
 	fmt.Printf("Time to read package info: %0.6fs\n", d)
 
 	if err != nil {
 		return &Error{
-		  Code: NOT_FOUND,
-		  Message: "Can't find package at: " + loadPath + " -- missing package info file.",
+			Code:    NOT_FOUND,
+			Message: "Can't find package at: " + loadPath + " -- missing package info file.",
 		}
 	}
 
-	s = time.Nanoseconds()	
+	s = time.Now()
 	if len(info.Dependencies) > 0 {
 		for _, dependency := range info.Dependencies {
 			pkg.loadPackageDependency(dependency)
 		}
-	}	
+	}
 
-	f = time.Nanoseconds()
-	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
+	f = time.Now()
+	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
 	fmt.Printf("Time to load dependencies: %0.6fs\n", d)
 
-	s = time.Nanoseconds()
+	s = time.Now()
 	for _, typeName := range info.Types {
 		split := strings.Split(typeName, " < ")
 		typeObj := &tp.Type{}
@@ -230,17 +230,17 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) (*Error) {
 		typeObj.Name = proto.String(typeName)
 		pkg.Types = append(pkg.Types, typeObj)
 	}
-	f = time.Nanoseconds()
-	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
+	f = time.Now()
+	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
 	fmt.Printf("Time to resolve types: %0.6fs\n", d)
 
-	s = time.Nanoseconds()
+	s = time.Now()
 	pkg.readHeaderFile(loadPath)
-	f = time.Nanoseconds()
-	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
+	f = time.Now()
+	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
 	fmt.Printf("Time to load header: %0.6fs\n", d)
 
-	s = time.Nanoseconds()
+	s = time.Now()
 	entryPoint := filepath.Join(loadPath, "functions.ts")
 
 	ReadPackageDefinitions(pkg.Package, entryPoint)
@@ -249,14 +249,14 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) (*Error) {
 		pkg.CollectFunctionDocs()
 	}
 
-	f = time.Nanoseconds()
-	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
+	f = time.Now()
+	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
 	fmt.Printf("Time to load definitions: %0.6fs\n", d)
 
-	s = time.Nanoseconds()
+	s = time.Now()
 	pkg.inheritFunctions()
-	f = time.Nanoseconds()
-	d = float64(f-s) / 1000.0 / 1000.0 / 1000.0
+	f = time.Now()
+	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
 	fmt.Printf("Time to resolve inheritances: %0.6fs\n", d)
 
 	if pkg.Options["output_tpkg"] {

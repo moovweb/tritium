@@ -228,29 +228,37 @@ func (t *Tokenizer) popError(message string) *Token {
 // exclusively double-quoted, so single-quoted strings need to be converted
 // before being passed to strconv.Unquote(...).
 func unquote(chars []byte) (string, bool) {
-	chars = chars[1:len(chars)-1]
+	chars = chars[1 : len(chars)-1]
 	converted := make([]byte, 0)
 	for i := 0; i < len(chars); i++ {
-	  if chars[i] == '\\' {
-	    i++
-	    switch chars[i] {
-        case 'n': converted = append(converted, '\n')
-        case 't': converted = append(converted, '\t')
-        case 'b': converted = append(converted, '\b')
-        case 'r': converted = append(converted, '\r')
-        case 'f': converted = append(converted, '\f')
-        case 'v': converted = append(converted, '\v')
-        case 'a': converted = append(converted, '\a')
-        case '\\': converted = append(converted, '\\')
-        default: converted = append(converted, chars[i])
-      }
-    } else {
-      converted = append(converted, chars[i])
-    }
-  }
-  return string(converted), false
+		if chars[i] == '\\' {
+			i++
+			switch chars[i] {
+			case 'n':
+				converted = append(converted, '\n')
+			case 't':
+				converted = append(converted, '\t')
+			case 'b':
+				converted = append(converted, '\b')
+			case 'r':
+				converted = append(converted, '\r')
+			case 'f':
+				converted = append(converted, '\f')
+			case 'v':
+				converted = append(converted, '\v')
+			case 'a':
+				converted = append(converted, '\a')
+			case '\\':
+				converted = append(converted, '\\')
+			default:
+				converted = append(converted, chars[i])
+			}
+		} else {
+			converted = append(converted, chars[i])
+		}
+	}
+	return string(converted), false
 }
-
 
 // The heart of the tokenizer. This function tries to munch off a token from
 // the head of the source text.
@@ -269,11 +277,11 @@ func (t *Tokenizer) munch() *Token {
 			unquoted, err := unquote(c)
 
 			if err {
-			  return t.popError("Couldn't unquote string literal")
+				return t.popError("Couldn't unquote string literal")
 			}
 
 			// Increment line count by the number of lines the string literal spans
-			lines := len(strings.Split(string(c),"\n"))-1
+			lines := len(strings.Split(string(c), "\n")) - 1
 			t.LineNumber += int32(lines)
 
 			return t.popToken(STRING, unquoted, len(c))
@@ -323,11 +331,11 @@ func (t *Tokenizer) munch() *Token {
 			tok.Value = c
 			t.Source = t.Source[len(c):]
 		} else if c := matcher[STRING].Find(t.Source); len(c) > 0 {
-		  var err bool;
+			var err bool
 			tok.Value, err = unquote(c)
 			if err {
-			  tok = t.popError("illegal escape sequences in import path")
-		  }
+				tok = t.popError("illegal escape sequences in import path")
+			}
 			t.Source = t.Source[len(c):]
 		} else {
 			tok = t.popError("malformed import")

@@ -1,19 +1,18 @@
 package spec
 
 import (
-	"tritium/src/tritium/packager"
 	tp "athena/src/athena/proto"
-	. "tritium/src/tritium"
-	. "path/filepath"
-	"tritium/src/tritium/whale"
-	"tritium/src/tritium/lamprey"
-	"tritium/src/tritium/shark"
 	. "fmt"
+	"fmt"
+	xmlhelp "gokogiri/help"
 	l4g "log4go"
 	"os"
+	. "path/filepath"
 	"runtime/debug"
-	xmlhelp "gokogiri/libxml/help"
-	"fmt"
+	. "tritium/src/tritium"
+	"tritium/src/tritium/lamprey"
+	"tritium/src/tritium/packager"
+	"tritium/src/tritium/whale"
 )
 
 func All(command string, directory string, options ...string) {
@@ -31,8 +30,6 @@ func All(command string, directory string, options ...string) {
 		eng = whale.NewEngine(logger)
 	} else if command == "debug" {
 		eng = lamprey.NewEngine(logger)
-	} else if command == "old_test" {
-		eng = shark.NewEngine(logger)
 	}
 
 	var pkg *tp.Package
@@ -55,13 +52,13 @@ func All(command string, directory string, options ...string) {
 
 	var foundError = false
 
-	for _, error := range globalResult.Errors {
+	for _, err := range globalResult.Errors {
 		foundError = true
-		println("\n=========================================", error.Location, "\n")
-		if error.Panic {
-			Printf(error.Message)
+		println("\n=========================================", err.Location, "\n")
+		if err.Panic {
+			Printf(err.Message)
 		} else {
-			Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", error.Name, error.Message, error.Got, error.Expected)
+			Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", err.Name, err.Message, err.Got, err.Expected)
 		}
 	}
 	println("\n\n")
@@ -71,24 +68,32 @@ func All(command string, directory string, options ...string) {
 		os.Exit(1)
 	}
 	eng.Free()
-	xmlhelp.XmlCleanUpParser()
-	if xmlhelp.XmlMemoryAllocation() != 0 {
-		fmt.Printf("Memeory leaks %d!!!", xmlhelp.XmlMemoryAllocation())
-		xmlhelp.XmlMemoryLeakReport()
+	xmlhelp.LibxmlCleanUpParser()
+	if xmlhelp.LibxmlGetMemoryAllocation() != 0 {
+		fmt.Printf("Memeory leaks %d!!!", xmlhelp.LibxmlGetMemoryAllocation())
+		xmlhelp.LibxmlReportMemoryLeak()
 	}
 }
 
 func (result *Result) all(directory string, pkg *tp.Package, eng Engine, logger l4g.Logger) {
-	_, err := Glob(Join(directory, "main.ts"))
-
-	if err == nil {
+	paths, err := Glob(Join(directory, "main.ts"))
+	if err == nil && len(paths) == 1 {
 		newResult := RunSpec(directory, pkg, eng, logger)
 		result.Merge(newResult)
 	}
+
 	subdirs, _ := Glob(Join(directory, "*"))
 	for _, subdir := range subdirs {
+		fi, err := os.Stat(subdir)
+		if err != nil {
+			continue
+		}
+		if !fi.IsDir() {
+			continue
+		}
 		result.all(subdir, pkg, eng, logger)
 	}
+
 }
 
 func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result *Result) {
@@ -99,23 +104,24 @@ func RunSpec(dir string, pkg *tp.Package, eng Engine, logger l4g.Logger) (result
 	defer func() {
 		//log.Println("done")  // Println executes normally even in there is a panic
 		if x := recover(); x != nil {
-			err, ok := x.(os.Error)
+			err, ok := x.(error)
 			if ok {
-				logger.Error(dir + " === " + err.String() + "\n\n" + string(debug.Stack()))
+				logger.Error(dir + " === " + err.Error() + "\n\n" + string(debug.Stack()))
 			} else {
 				logger.Error(dir + " === " + x.(string) + "\n\n" + string(debug.Stack()))
 			}
 		}
 		for _, rec := range logWriter.Logs {
 			//println("HAZ LOGS")
-			error := l4g.FormatLogRecord("[%D %T] [%L] (%S) %M", rec)
-			result.Error(dir, error)
+			err := l4g.FormatLogRecord("[%D %T] [%L] (%S) %M", rec)
+			result.Error(dir, err)
 		}
 		print(result.CharStatus())
 	}()
+
 	spec, err := LoadSpec(dir, pkg)
 	if err != nil {
-		result.Error(dir, err.String())
+		result.Error(dir, err.Error())
 	} else {
 		result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
 	}
