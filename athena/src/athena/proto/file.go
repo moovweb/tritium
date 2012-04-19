@@ -33,17 +33,19 @@ func CollectFiles(dir string) []*File {
 	markFn := func(path string, info os.FileInfo, err error) error {
 
 		if info == nil {
-      return filepath.SkipDir
+			return nil
 		}
 
 		if info.IsDir() {
-		    return filepath.SkipDir
+				return nil
 		}
+
 		if err != nil {
 		    return err
 		}
 		file := fileList.buildFile(path)
 		fileList.Files = append(fileList.Files, file)
+
 		return nil
 	}
 
