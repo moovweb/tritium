@@ -50,7 +50,7 @@ replace(/^content\-type\:\s+([^\r\n]*)/i) {
 
 # Get the redirect location header
 replace(/^location\:\s+([^\r\n]*)/i) {
-    export("location", $1)
+    export("Location", $1)
 }
 
 replace(/([a-zA-Z0-9\-]*): ([^\r\n]*)/) {
