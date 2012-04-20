@@ -100,7 +100,12 @@
 @func Text.rewrite(Text %type) {
   # Wrote this when the parser was a little funky. This can be much
   # prettier with some nice lvar usage
+    log("REWRITE")  
   replace(regexp(var(concat(concat("rewrite_", %type), "_matcher")))) {
+    log("$1:" + $1)
+    log("$2:" + $2)
+    log("$3:" + $3)        
+    log("repl:", var(concat(concat("rewrite_", %type), "_replacement")))
     set(var(concat(concat("rewrite_", %type), "_replacement")))
   }
 }
