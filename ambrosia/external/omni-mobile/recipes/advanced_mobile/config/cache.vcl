@@ -51,7 +51,7 @@ sub vcl_recv {
   */
 
   if (req.http.host ~ "^mstage") {
-    set req.backend = manhattan-generator_appv01;
+    set req.backend = {{#GOPERIOD#ProjectName}}_appv01;
     set req.http.X-QA = "true";
   }
 
