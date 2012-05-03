@@ -3,7 +3,7 @@ package checker
 import(
 	tp "athena"
 	. "log4go"
-	"tritium/src/tritium/parser"
+	"tritium/parser"
 )
 
 func CheckFile(path string, logger Logger) (*CheckResult) {
