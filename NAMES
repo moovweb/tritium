@@ -1,5 +1,0 @@
-ts, Script, txt
-to, ScriptObject, bin
-tb, Tritium Transformation Ready-to-run, bin
-slug, BlitzSlug, bin
-slug.gz, BlitzSlug, gz(bin)

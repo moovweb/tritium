@@ -1,9 +1,0 @@
-all: install
-build:
-	gb -bg
-clean:
-	gb -c
-install: build
-	gb -i
-test:
-	gb -t
