@@ -4,7 +4,7 @@ import (
 	tp "athena"
 	. "fmt"
 	"fmt"
-	xmlhelp "github.com/moovweb/gokogiri/help"
+	xmlhelp "gokogiri/help"
 	l4g "log4go"
 	"os"
 	. "path/filepath"

@@ -2,8 +2,8 @@ package whale
 
 import (
 	"strings"
-	"github.com/moovweb/gokogiri/html"
-	"github.com/moovweb/gokogiri/xml"
+	"gokogiri/html"
+	"gokogiri/xml"
 	"fmt"
 	//log "log4go"
 	//proto "goprotobuf.googlecode.com/hg/proto"
