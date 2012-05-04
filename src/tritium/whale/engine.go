@@ -4,7 +4,7 @@ import (
 	tp "athena/src/athena/proto"
 	"log4go"
 	"rubex/lib"
-	"git@github.com:moovweb/gokogiri/xpath"
+	"github.com/moovweb/gokogiri/xpath"
 )
 
 type Position int
