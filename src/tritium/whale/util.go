@@ -1,7 +1,7 @@
 package whale
 
 import (
-	"gokogiri/xml"
+	"git@github.com:moovweb/gokogiri/xml"
 	"strings"
 )
 

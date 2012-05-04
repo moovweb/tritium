@@ -4,7 +4,7 @@ import (
 	tp "athena/src/athena/proto"
 	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
-	"gokogiri/xpath"
+	"git@github.com:moovweb/gokogiri/xpath"
 	l4g "log4go"
 	"rubex/lib"
 	"strings"
