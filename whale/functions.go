@@ -9,7 +9,7 @@ import (
 	//proto "goprotobuf.googlecode.com/hg/proto"
 	tp "athena"
 	"rubex"
-	"css2xpath"
+	"gokogiri/css"
 	"goconv"
 	"icu4go"
 	"strconv"
@@ -682,7 +682,7 @@ func path(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface
 }
 
 func css_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	returnValue = css2xpath.Convert(args[0].(string), css2xpath.LOCAL)
+	returnValue = css.Convert(args[0].(string), css.LOCAL)
 	return
 }
 
