@@ -2,7 +2,7 @@ package hermes
 
 import(
 	proto "code.google.com/p/goprotobuf/proto"
-	"tritium/src/tritium/packager"
+	"tritium/packager"
 	"path/filepath"
 )
 

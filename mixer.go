@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strings"
-	tp "tritium/src/tritium/packager"
+	tp "tritium/packager"
 )
 
 type Mixer struct {
