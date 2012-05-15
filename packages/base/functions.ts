@@ -105,6 +105,11 @@
   }
 }
 
+@func Text.length() {
+  $input = this()
+  length($input)
+}
+
 # TEMPORARY UNTIL I STOP CRYING
 @func Text.index() { 
   deprecated("You can only use index() in a Node scope")

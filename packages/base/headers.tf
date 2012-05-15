@@ -31,6 +31,12 @@
 " Convert from one encoding to another. (If you want a list of encodings, you can run `iconv -l` on your command line.) "
 @func Text.convert_encoding(Text %from, Text %to) Text
 
+" Guess the encoding from the input, the response header and html meta tag"
+@func Text.guess_encoding() Text
+
+" length of the input "
+@func length(Text %input) Text
+
 " Completes the sudo-logic of `with()`, allowing the specification of an alternative."
 @func else() Text
 

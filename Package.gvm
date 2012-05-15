@@ -1,8 +1,0 @@
-:source git@github.com:moovweb
-pkg log4go
-pkg rubex
-pkg gokogiri
-pkg goyaml
-pkg athena
-pkg css2xpath
-pkg goconv
