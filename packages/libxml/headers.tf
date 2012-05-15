@@ -30,7 +30,7 @@
 @func equal(XMLNode %a, XMLNode %b) Text
 @func equal(Node %a, Node %b) Text
 
-" Wraps each *text* child inside the specified tag. "
+" Wraps the first *text* child inside the specified tag. "
 @func XMLNode.wrap_text_children(Text %tag_name) Text XMLNode
 @func XMLNode.move_children_to(Node %tag_name, Position %pos) Text
 
