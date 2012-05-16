@@ -17,7 +17,7 @@
 " Opens up the insides of the node to text modification. "
 @func XMLNode.inner() Text Text
 
-" Similar to `dump()`, but only converts the indside of the currently-selected node to text. "
+" Similar to `dump()`, but only converts the inside of the currently-selected node to text. "
 @func XMLNode.inner_text() Text Text
 
 " Opens the attribute you select with **name** (e.g. `attribute(\"class\")` opens the class for modification). "
@@ -30,7 +30,7 @@
 @func equal(XMLNode %a, XMLNode %b) Text
 @func equal(Node %a, Node %b) Text
 
-" Wraps each *text* child inside the specified tag. "
+" Wraps the first *text* child inside the specified tag. "
 @func XMLNode.wrap_text_children(Text %tag_name) Text XMLNode
 @func XMLNode.move_children_to(Node %tag_name, Position %pos) Text
 
