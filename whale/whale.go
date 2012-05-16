@@ -5,7 +5,7 @@ import (
 	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"gokogiri/xpath"
-	l4g "log4go"
+	"golog"
 	"rubex"
 	"strings"
 )
@@ -13,7 +13,7 @@ import (
 type Whale struct {
 	RegexpCache       map[string]*rubex.Regexp
 	XPathCache        map[string]*xpath.Expression
-	Log               l4g.Logger
+	Log               *golog.Logger
 	OutputBuffer      []byte
 	InnerReplacer     *rubex.Regexp
 	HeaderContentType *rubex.Regexp
@@ -38,7 +38,7 @@ type WhaleContext struct {
 
 const OutputBufferSize = 500 * 1024 //500KB
 
-func NewEngine(logger l4g.Logger) *Whale {
+func NewEngine(logger *golog.Logger) *Whale {
 	e := &Whale{
 		RegexpCache:       make(map[string]*rubex.Regexp),
 		XPathCache:        make(map[string]*xpath.Expression),
@@ -353,7 +353,7 @@ func (ctx *WhaleContext) GetOutputBuffer() (b []byte) {
 	return
 }
 
-func (ctx *WhaleContext) Logger() (logger l4g.Logger) {
+func (ctx *WhaleContext) Logger() (logger *golog.Logger) {
 	logger = ctx.Log
 	return
 }

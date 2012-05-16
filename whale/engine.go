@@ -2,9 +2,9 @@ package whale
 
 import (
 	tp "athena"
-	"log4go"
-	"rubex"
 	"gokogiri/xpath"
+	"golog"
+	"rubex"
 )
 
 type Position int
@@ -51,7 +51,7 @@ type EngineContext interface {
 
 	FileAndLine(*tp.Instruction) string
 	UsePackage(*tp.Package)
-	Logger() log4go.Logger
+	Logger() *golog.Logger
 
 	PushMatchStack(string)
 	PopMatchStack() string

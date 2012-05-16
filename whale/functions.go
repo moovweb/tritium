@@ -1,18 +1,16 @@
 package whale
 
 import (
-	"strings"
+	tp "athena"
+	"fmt"
+	"goconv"
+	"gokogiri/css"
 	"gokogiri/html"
 	"gokogiri/xml"
-	"fmt"
-	//log "log4go"
-	//proto "goprotobuf.googlecode.com/hg/proto"
-	tp "athena"
-	"rubex"
-	"gokogiri/css"
-	"goconv"
 	"icu4go"
+	"rubex"
 	"strconv"
+	"strings"
 )
 
 //The string value of me
