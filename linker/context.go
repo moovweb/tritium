@@ -4,7 +4,7 @@ import (
 	. "athena"
 	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
-	log "log4go"
+	"log"
 )
 
 type FuncMap map[string]int
@@ -186,7 +186,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			for funcName, _ := range ctx.funList[scopeType] {
 				message = message + funcName + "\n"
 			}
-			log.Debug(message)
+			log.Printf("%s\n", message)
 			fileName := ""
 			if len(ctx.files) > 0 {
 				fileName = ctx.files[(len(ctx.files) - 1)]
@@ -245,5 +245,5 @@ func (ctx *LinkingContext) error(obj interface{}, format string, data ...interfa
 	if ok {
 		ins.IsValid = proto.Bool(false)
 	}
-	log.Error(message)
+	log.Printf("%s\n", message)
 }
