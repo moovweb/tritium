@@ -1,10 +1,10 @@
 package test
 
-import "log4go"
 import "tritium/whale"
 import "testing"
 import "fmt"
 import "tritium/spec"
+import "golog"
 
 func RunBenchmarkSuite(directoryFromRoot string, b *testing.B) {
 	b.StopTimer()
@@ -24,11 +24,8 @@ func RunBenchmarkSuite(directoryFromRoot string, b *testing.B) {
 }
 
 func RunBenchmark(path string, b *testing.B) {
-	logger := make(log4go.Logger)
-	log4go.Global = logger
-
-	logWriter := spec.NewTestLogWriter()
-	logger["test"] = &log4go.Filter{log4go.WARNING, "test", logWriter}
+	logger := golog.NewLogger("tritium")
+	logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO))
 
 	spec, err := spec.LoadSpec(path, pkg)
 
