@@ -5,7 +5,6 @@ import (
 	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"gokogiri/xpath"
-	"gokogiri/xml"
 	l4g "log4go"
 	"rubex"
 	"strings"
@@ -90,8 +89,8 @@ func (eng *Whale) Free() {
 }
 
 func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output string, exports [][]string, logs []string) {
-	xml.SearchCount = 0
-	xml.SearchTime = 0
+	// xml.SearchCount = 0
+	// xml.SearchTime = 0
 	ctx := NewEngineCtx(eng, vars, transform)
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
@@ -103,10 +102,10 @@ func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[strin
 	exports = ctx.Exports
 	logs = ctx.Logs
 
-	fmt.Println("\n******** AARON'S PROFILING DATA ********")
-	fmt.Println("Number of searches:\t", xml.SearchCount)
-	fmt.Println("μsecs spent searching:\t", xml.SearchTime)
-	fmt.Println("****************************************\n")
+	// fmt.Println("\n******** AARON'S PROFILING DATA ********")
+	// fmt.Println("Number of searches:\t", xml.SearchCount)
+	// fmt.Println("μsecs spent searching:\t", xml.SearchTime)
+	// fmt.Println("****************************************\n")
 
 	return
 }
