@@ -65,7 +65,13 @@ func main() {
 			} else {
 				println("Usage:\n    tritium test <package_name> <optional_mixer_path>")
 			}
-
+		} else if command == "benchmark" {
+			println("Bencmarking tests found in the directory:", os.Args[2])
+			if len(os.Args) == 3 {
+				test.BenchmarkCustomSuite(os.Args[2])
+			} else {
+				println("Usage:\n    tritium benchmark <path_to_tests_from_root>")
+			}
 		} else if command == "debug" {
 			println("Running tests found in the directory:", os.Args[2])
 			if len(os.Args) == 3 {
