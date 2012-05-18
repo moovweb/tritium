@@ -13,6 +13,9 @@ import (
 	"goconv"
 	"icu4go"
 	"strconv"
+	"strings"
+
+	"time"
 )
 
 //The string value of me
@@ -708,6 +711,8 @@ func wrap_text_children_Text(ctx EngineContext, scope *Scope, ins *tp.Instructio
 }
 
 func guess_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	startTime := time.Now().UnixNano()
+
 	returnValue = ""
 	input := scope.Value.(string)
 
@@ -729,6 +734,7 @@ func guess_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 	//we should trust it
 	if len(charsetInHtmlHeader) > 0 && charsetInHtmlHeader == charsetInResponseHeader {
 		returnValue = charsetInHtmlHeader
+		fmt.Println("guess_encoding took: ", (time.Now().UnixNano() - startTime)/1000)
 		return
 	}
 
@@ -737,6 +743,7 @@ func guess_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 		if len(charsetInHtmlHeader) > 0 {
 			returnValue = charsetInHtmlHeader
 		}
+		fmt.Println("guess_encoding took: ", (time.Now().UnixNano() - startTime)/1000)
 		return charsetInResponseHeader
 	}
 
@@ -757,7 +764,7 @@ func guess_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 	} else {
 		returnValue = charsetInResponseHeader
 	}
-
+	fmt.Println("guess_encoding took: ", (time.Now().UnixNano() - startTime)/1000)
 	return
 }
 
