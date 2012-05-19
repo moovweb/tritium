@@ -295,7 +295,11 @@ func (ctx *WhaleContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 		var err error
 		r, err = rubex.NewRegexp(pattern, mode)
 		if err == nil {
-			ctx.RegexpCache[sig] = r
+			 ctx.RegexpCache[sig] = r
+		}
+		r2, err2 := rubex.NewRegexp(pattern, mode)
+		if err2 == nil {
+			 r2.Free()
 		}
 	}
 	return
@@ -306,9 +310,14 @@ func (ctx *WhaleContext) GetXpathExpr(p string) (e *xpath.Expression) {
 	if e == nil {
 		e = xpath.Compile(p)
 		if e != nil {
-			ctx.XPathCache[p] = e
+		  ctx.XPathCache[p] = e
 		} else {
 			ctx.AddLog("Invalid XPath used: " + p)
+		}
+
+		e2 := xpath.Compile(p)
+		if e2 != nil {
+		  e2.Free()
 		}
 	}
 	return
