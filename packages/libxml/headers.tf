@@ -14,7 +14,7 @@
 @func XMLNode.cdata(Text %contents) Text
 @func XMLNode.remove(Text %xpath_selector) Text
 
-" Opens up the insides of the node to text modification. "
+" Opens up the insides of the node to text modification. Used for nodes containing text and other XML elements. For text-only nodes, use `text()`."
 @func XMLNode.inner() Text Text
 
 " Similar to `dump()`, but only converts the inside of the currently-selected node to text. "
