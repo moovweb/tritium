@@ -4,7 +4,7 @@ import (
 	tp "athena"
 	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
-	l4g "log4go"
+	"golog"
 	"tritium/whale"
 )
 
@@ -18,7 +18,7 @@ type Ctx struct {
 	level int
 }
 
-func NewEngine(logger l4g.Logger) *Lamprey {
+func NewEngine(logger *golog.Logger) *Lamprey {
 	e := &Lamprey{}
 	e.Whale = whale.NewEngine(logger)
 	return e
