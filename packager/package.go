@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-	api "tritium/api"
 )
 
 type Error struct {
@@ -152,13 +151,6 @@ func newLog() log4go.Logger {
 }
 
 func (pkg *Package) Load(packageName string) {
-
-	user := api.FetchSessionUser()
-	approved := user.RequestFeature("package:" + packageName)
-
-	if !approved {
-		panic("Package " + packageName + " not approved for use.")
-	}
 
 	err := pkg.LoadFromPath(filepath.Join(pkg.LoadPath, packageName), packageName)
 

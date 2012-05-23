@@ -71,7 +71,7 @@
   }
 }
 
-"Opens the current node for text modification. "
+"Opens the current node for text modification. Should be used when the current node contains text *only*. For other cases, use `inner()`."
 
 @func Text.text() {
   this() {
