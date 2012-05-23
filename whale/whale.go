@@ -7,16 +7,17 @@ import (
 	"gokogiri/xpath"
 	"golog"
 	"rubex"
+	"runtime"
 	"strings"
 )
 
 type Whale struct {
-	RegexpCache       map[string]*rubex.Regexp
-	XPathCache        map[string]*xpath.Expression
-	Log               *golog.Logger
-	OutputBuffer      []byte
-	InnerReplacer     *rubex.Regexp
-	HeaderContentType *rubex.Regexp
+	//RegexpCache       map[string]*rubex.Regexp
+	//XPathCache        map[string]*xpath.Expression
+	Log *golog.Logger
+	//OutputBuffer      []byte
+	//InnerReplacer     *rubex.Regexp
+	//HeaderContentType *rubex.Regexp
 }
 
 type WhaleContext struct {
@@ -40,12 +41,12 @@ const OutputBufferSize = 500 * 1024 //500KB
 
 func NewEngine(logger *golog.Logger) *Whale {
 	e := &Whale{
-		RegexpCache:       make(map[string]*rubex.Regexp),
-		XPathCache:        make(map[string]*xpath.Expression),
-		Log:               logger,
-		OutputBuffer:      make([]byte, OutputBufferSize),
-		InnerReplacer:     rubex.MustCompile(`[\\$](\d)`),
-		HeaderContentType: rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
+		//RegexpCache:       make(map[string]*rubex.Regexp),
+		//XPathCache:        make(map[string]*xpath.Expression),
+		Log: logger,
+		//OutputBuffer:      make([]byte, OutputBufferSize),
+		//InnerReplacer:     rubex.MustCompile(`[\\$](\d)`),
+		//HeaderContentType: rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
 	}
 	return e
 }
@@ -66,26 +67,28 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform) (
 }
 
 func (eng *Whale) Free() {
-	if eng.InnerReplacer != nil {
-		eng.InnerReplacer.Free()
-		eng.InnerReplacer = nil
-	}
-	if eng.HeaderContentType != nil {
-		eng.HeaderContentType.Free()
-		eng.HeaderContentType = nil
-	}
-	if eng.RegexpCache != nil {
-		for _, reg := range eng.RegexpCache {
-			reg.Free()
+	/*
+		if eng.InnerReplacer != nil {
+			eng.InnerReplacer.Free()
+			eng.InnerReplacer = nil
 		}
-		eng.RegexpCache = nil
-	}
-	if eng.XPathCache != nil {
-		for _, xpath := range eng.XPathCache {
-			xpath.Free()
+		if eng.HeaderContentType != nil {
+			eng.HeaderContentType.Free()
+			eng.HeaderContentType = nil
 		}
-		eng.XPathCache = nil
-	}
+		if eng.RegexpCache != nil {
+			for _, reg := range eng.RegexpCache {
+				reg.Free()
+			}
+			eng.RegexpCache = nil
+		}
+		if eng.XPathCache != nil {
+			for _, xpath := range eng.XPathCache {
+				xpath.Free()
+			}
+			eng.XPathCache = nil
+		}
+	*/
 }
 
 func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output string, exports [][]string, logs []string) {
@@ -274,35 +277,50 @@ func (ctx *WhaleContext) UsePackage(pkg *tp.Package) {
 }
 
 func (ctx *WhaleContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
-	sig := pattern + "/" + options
-	r = ctx.RegexpCache[sig]
-	if r == nil {
-		mode := rubex.ONIG_OPTION_DEFAULT
-		if strings.Index(options, "i") >= 0 {
-			mode = rubex.ONIG_OPTION_IGNORECASE
-		}
-		if strings.Index(options, "m") >= 0 {
-			mode = rubex.ONIG_OPTION_MULTILINE
-		}
-		var err error
-		r, err = rubex.NewRegexp(pattern, mode)
-		if err == nil {
-			ctx.RegexpCache[sig] = r
-		}
+	//sig := pattern + "/" + options
+	/*
+		r = ctx.RegexpCache[sig]
+		if r == nil {
+	*/
+	mode := rubex.ONIG_OPTION_DEFAULT
+	if strings.Index(options, "i") >= 0 {
+		mode = rubex.ONIG_OPTION_IGNORECASE
 	}
+	if strings.Index(options, "m") >= 0 {
+		mode = rubex.ONIG_OPTION_MULTILINE
+	}
+	var err error
+	r, err = rubex.NewRegexp(pattern, mode)
+	if err != nil {
+		return nil
+	}
+	/*
+			if err == nil {
+				ctx.RegexpCache[sig] = r
+			}
+		}
+	*/
+	runtime.SetFinalizer(r, (*rubex.Regexp).Free)
 	return
 }
 
 func (ctx *WhaleContext) GetXpathExpr(p string) (e *xpath.Expression) {
-	e = ctx.XPathCache[p]
-	if e == nil {
-		e = xpath.Compile(p)
+	/*
+		e = ctx.XPathCache[p]
+		if e == nil {
+	*/
+	e = xpath.Compile(p)
+	/*
 		if e != nil {
 			ctx.XPathCache[p] = e
 		} else {
-			ctx.AddLog("Invalid XPath used: " + p)
-		}
+	*/
+	if e == nil {
+		ctx.AddLog("Invalid XPath used: " + p)
+	} else {
+		runtime.SetFinalizer(e, (*xpath.Expression).Free)
 	}
+	//}
 	return
 }
 
@@ -339,17 +357,21 @@ func (ctx *WhaleContext) GetVar(key string) (val interface{}) {
 }
 
 func (ctx *WhaleContext) GetInnerReplacer() (r *rubex.Regexp) {
-	r = ctx.InnerReplacer
+	//r = ctx.InnerReplacer
+	r = rubex.MustCompile(`[\\$](\d)`)
+	runtime.SetFinalizer(r, (*rubex.Regexp).Free)
 	return
 }
 
 func (ctx *WhaleContext) GetHeaderContentTypeRegex() (r *rubex.Regexp) {
-	r = ctx.HeaderContentType
+	//r = ctx.HeaderContentType
+	r = rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE)
+	runtime.SetFinalizer(r, (*rubex.Regexp).Free)
 	return
 }
 
 func (ctx *WhaleContext) GetOutputBuffer() (b []byte) {
-	b = ctx.OutputBuffer
+	//b = ctx.OutputBuffer
 	return
 }
 
