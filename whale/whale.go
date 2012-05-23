@@ -7,7 +7,6 @@ import (
 	"gokogiri/xpath"
 	"golog"
 	"rubex"
-	"runtime"
 	"strings"
 )
 
@@ -300,7 +299,6 @@ func (ctx *WhaleContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 			}
 		}
 	*/
-	runtime.SetFinalizer(r, (*rubex.Regexp).Free)
 	return
 }
 
@@ -317,8 +315,6 @@ func (ctx *WhaleContext) GetXpathExpr(p string) (e *xpath.Expression) {
 	*/
 	if e == nil {
 		ctx.AddLog("Invalid XPath used: " + p)
-	} else {
-		runtime.SetFinalizer(e, (*xpath.Expression).Free)
 	}
 	//}
 	return
@@ -359,14 +355,12 @@ func (ctx *WhaleContext) GetVar(key string) (val interface{}) {
 func (ctx *WhaleContext) GetInnerReplacer() (r *rubex.Regexp) {
 	//r = ctx.InnerReplacer
 	r = rubex.MustCompile(`[\\$](\d)`)
-	runtime.SetFinalizer(r, (*rubex.Regexp).Free)
 	return
 }
 
 func (ctx *WhaleContext) GetHeaderContentTypeRegex() (r *rubex.Regexp) {
 	//r = ctx.HeaderContentType
 	r = rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE)
-	runtime.SetFinalizer(r, (*rubex.Regexp).Free)
 	return
 }
 
