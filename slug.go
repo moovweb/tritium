@@ -39,11 +39,12 @@ func NewSlugFromURL(url string) (slug *Slug, err error) {
 	var resp *http.Response
 
 	resp, err = http.Get(url)
-	if resp.StatusCode != 200 {
-		err = errors.New("Couldn't load slug from " + url)
+	if err != nil {
 		return
 	}
-	if err != nil {
+
+	if resp.StatusCode != 200 {
+		err = errors.New("Couldn't load slug from " + url)
 		return
 	}
 
