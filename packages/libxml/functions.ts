@@ -109,6 +109,7 @@ Functionally equivalent to `name() { set(%name) }`."
 "Searches for nodes matching `%xpath` and ensures a domain is in the path of the `%attribute`"
 
 @func XMLNode.absolutize(Text %xpath, Text %attribute) {
+
   # Absolutize IMG and SCRIPT SRCs
   var("slash_path") {
     # the 'slash_path' is the path of this page without anything following it's last slash
@@ -117,22 +118,25 @@ Functionally equivalent to `name() { set(%name) }`."
     # turn empty string into a single slash because this is the only thing separating the host from the path relative path
     replace(/^$/, "/")
   }
-  
+
   $(%xpath) {
+    var("url", fetch(concat("./@", %attribute)))      
+
     # skip URLs which: are empty, have a host (//www.example.com), or have a protocol (http:// or mailto:)
-    match($src, /^(?![a-z]+\:)(?!\/\/)(?!$)/) {
+    match($url, /^(?![a-z]+\:)(?!\/\/)(?!$)/) {
       attribute(%attribute) {
         value() {
-          match($src) {
+          match($url) {
             with(/^\//) {
               # host-relative URL: just add the host
-              prepend($host)
+              prepend($source_host)
               prepend("//")
             }
             else() {
+              # TODO: I need a test case for this clause. I'm not sure what kind of path its trying to accomodate
               # path-relative URL: add the host and the path
               prepend($slash_path)
-              prepend($host)
+              prepend($source_host)
               prepend("//")
             }
           }
@@ -142,6 +146,7 @@ Functionally equivalent to `name() { set(%name) }`."
     yield()
   }
 }
+
 
 "Searches for nodes matching `%xpath` and ensures a domain is in their `src` path."
 
