@@ -25,7 +25,7 @@ func RunBenchmarkSuite(directoryFromRoot string, b *testing.B) {
 
 func RunBenchmark(path string, b *testing.B) {
 	logger := golog.NewLogger("tritium")
-	logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO))
+	logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO, true))
 
 	spec, err := spec.LoadSpec(path, pkg)
 
