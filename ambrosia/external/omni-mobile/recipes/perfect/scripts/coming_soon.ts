@@ -17,9 +17,7 @@ $("/html") {
     insert_bottom("div", "We're currently in the process of building an <b>amazing</b> mobile experience. Please check back soon.", id: "explanation")
     $cookie_domain = concat($source_host, "")
     $cookie_domain {
-      value() {
-        replace(/^(w+\d+\.)?/, ".")
-      }
+      replace(/^(w+\d+\.)?/, ".")
     }
     # desktop link
      insert_bottom("div", class: "mw_footer_link_box", id: "mw_desktop_link_config"){

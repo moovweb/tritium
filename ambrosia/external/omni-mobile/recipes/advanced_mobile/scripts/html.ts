@@ -24,6 +24,12 @@ $("/html") {
     insert("link", rel: "stylesheet", type: "text/css", href: sass($device_stylesheet))
     insert("link", rel: "shortcut icon", href: asset("images/favicon.ico"))
     insert("link", rel: "apple-touch-icon", href: asset("images/apple-touch-icon.png"))
+    # Add AJAX rewrite config
+    insert("meta", "top") {
+      attribute("id", "mw_link_passthrough_config")
+      attribute("rewrite_link_matcher", $rewrite_link_matcher)
+      attribute("rewrite_link_replacement", $rewrite_link_replacement)
+    }
   }
   $rewriter_url = "false"
   $("./body") {
@@ -53,12 +59,6 @@ $("/html") {
       }
     }
 
-    # Add AJAX rewrite config
-    insert("div") {
-      attribute("id", "mw_link_passthrough_config")
-      attribute("rewrite_link_matcher", $rewrite_link_matcher_str)
-      attribute("rewrite_link_replacement", $rewrite_link_replacement)
-    }
   }
 
   # Absolutize IMG and SCRIPT SRCs
