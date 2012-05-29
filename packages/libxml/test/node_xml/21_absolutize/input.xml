@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <script src='/path/to/foo.js'></script>
+    <script src='/path/to/bar.js'></script>
+  </head>
+  <body>
+    <img src='/path/to/image.jpg'></img>
+    <img src='http://mlocal.mydomain.com/path/to/image.jpg'></img>
+
+    <script src='/path/to/baz.js'></script>
+    <script src='http://some.cdn.com/path/to/baz.js'></script>    
+
+    <a href='/some/relative/link'>click me</a>
+  </body>
+</html>
