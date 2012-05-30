@@ -16,11 +16,13 @@ func NewMixer(path string) *Mixer {
 		panic("Couldn't find a version for mixer:" + path + ":" + err.Error())
 	}
 
+	versionStr := strings.TrimSpace(string(version))
+
 	_, name := filepath.Split(path)
 
 	return &Mixer{
 		Name:      pb.String(name),
-		Version:   pb.String(string(version)),
+		Version:   pb.String(versionStr),
 		Assets:    make([]*File, 0),
 		Features:  make([]*Feature, 0),
 		Recipes:   make([]*Recipe, 0),
