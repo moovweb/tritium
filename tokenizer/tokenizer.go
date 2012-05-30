@@ -78,7 +78,7 @@ func init() {
 	matcher[GVAR] = rubex.MustCompile(`\A\$\w+`)
 	matcher[LVAR] = rubex.MustCompile(`\A%\w+`)
 	matcher[KWD] = rubex.MustCompile(`\A[a-zA-Z_:][-\w:.]*:`)
-	matcher[ID] = rubex.MustCompile(`\A\$|\A[_a-z][\w\$]*`)
+	matcher[ID] = rubex.MustCompile(`\A\$+|\A[_a-z][\w\$]*`)
 	matcher[TYPE] = rubex.MustCompile(`\A[A-Z]\w*`)
 	matcher[PATH] = rubex.MustCompile(`\A[-+.*?:\/\w]+`)
 

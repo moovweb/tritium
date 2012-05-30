@@ -321,6 +321,7 @@ func (ctx *WhaleContext) AddExport(exports []string) {
 }
 
 func (ctx *WhaleContext) AddLog(log string) {
+	ctx.Log.Info("TRITIUM: " + log)
 	ctx.Logs = append(ctx.Logs, log)
 }
 
