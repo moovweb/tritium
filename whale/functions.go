@@ -11,6 +11,7 @@ import (
 	"rubex"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 )
 
 //The string value of me
@@ -747,20 +748,27 @@ func guess_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 		ctx.SetEnv("charset_detected", charsetDetected)
 		cd.Free()
 	}
-
+	var charsetDetermined string
 	if len(charsetDetected) > 0 {
-		returnValue = charsetDetected
+		charsetDetermined = charsetDetected
 	} else if len(charsetInHtmlHeader) > 0 {
-		returnValue = charsetInHtmlHeader
+		charsetDetermined = charsetInHtmlHeader
 	} else {
-		returnValue = charsetInResponseHeader
+		charsetDetermined = charsetInResponseHeader
 	}
-
+	ctx.SetEnv("charset_determined", charsetDetermined)
+	returnValue = charsetDetermined
 	return
 }
 
 func length_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	input := args[0].(string)
-	returnValue = strconv.Itoa(len(input))
+	var length int
+	if ctx.GetEnv("charset_determined") == "utf-8" || ctx.GetEnv("charset_determined") == "utf8" {
+		length = utf8.RuneCountInString(input)
+	} else {
+		length = len(input)
+	}
+	returnValue = strconv.Itoa(length)
 	return
 }
