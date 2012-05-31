@@ -13,7 +13,7 @@ match($status) {
 
   with(/302/) {
     log("--> STATUS: 302")
-    // redirect: just let it go through
+    # redirect: just let it go through
   }
 
   with(/200/) {
@@ -34,11 +34,11 @@ match($status) {
         log("--> Importing pages/not_homes.ts in mappings.ts")
         //@import pages/not_home.ts
       }
-    } //$path
-  } //200
+    } # $path
+  } # 200
 
   else() {
-    // not 200 or 302 response status
+    # not 200 or 302 response status
     @import pages/error.ts
   }
 

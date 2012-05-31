@@ -3,8 +3,8 @@
 # If you need to modify the HTML/XML as raw text before its parsed... do it here!
 
 
-  # Rewrite the xmlns facebook nodes before Nokogiri clobbers them
-  replace(/fb:/, "fbn_")
+# Rewrite the xmlns facebook nodes before Nokogiri clobbers them
+replace(/fb:/, "fbn_")
 
 
 
@@ -44,8 +44,8 @@ match($content_type) {
 }
 
 
-  # Rewrite the xmlns facebook nodes to restore them
-  replace(/fbn_/, "fb:") 
+# Rewrite the xmlns facebook nodes to restore them
+replace(/fbn_/, "fb:") 
 
 
 

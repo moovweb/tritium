@@ -1,20 +1,49 @@
 
 @import "compass/reset";
 
-// Generate a sprite from all .png images in the sprite folder
+
+@import "compass";
+
+
+
 // Set the spacing to be 10px apart (remove for no spacing)
+$icons-spacing: 10px;
 
-// Uncomment the three lines below to create a sprite
-// $sprite-spacing: 10px;
-// @import "sprite/*.png";
-// @include all-sprite-sprites;
+// Change the location of an icon in your sprite
+// Format is $foldername-iconname-position (example below)
+// $icons-plus-position: 100%;
+
+// Generate a sprite from all .png images in the sprite folder
+// Uncomment the two lines below to create a sprite
+//@import "icons/*.png";
+//@include all-icons-sprites;
+
+// make sure to update this list with all sprited icons that will be retina (ex below)
+// $all-icons-sprites: facebook twitter youtube minus plus;
+
+// Needed for retina sized sprites
+//@import "globals/_retina.scss";
+//@include retina-sprites($icons-sprites, $all-icons-sprites, (minus 100%) (plus 100%));
+
+// Normal sized sprites
+@import "globals/_icons.scss";
 
 
-@import "_lib.scss";
-@import "_base.scss";
 
+// Lib file contains all the global mixins and classes
+@import "globals/_lib.scss";
+
+// Base file contains all the global styles
+@import "globals/_base.scss";
+
+// File for global Uranium stylings
+@import "globals/_uranium.scss";
+
+// Header & Footer
 @import "sections/_header.scss";
 @import "sections/_footer.scss";
 
+// Pages
 @import "pages/_home.scss";
+
 

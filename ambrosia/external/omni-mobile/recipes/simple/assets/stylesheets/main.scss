@@ -1,11 +1,25 @@
 
 @import "compass/reset";
 
-@import "_lib.scss";
-@import "_base.scss";
 
+@import "compass";
+
+
+
+// Lib file contains all the global mixins and classes
+@import "globals/_lib.scss";
+
+// Base file contains all the global styles
+@import "globals/_base.scss";
+
+// File for global Uranium stylings
+@import "globals/_uranium.scss";
+
+// Header & Footer
 @import "sections/_header.scss";
 @import "sections/_footer.scss";
 
+// Pages
 @import "pages/_home.scss";
+
 

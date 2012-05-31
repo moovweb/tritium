@@ -44,17 +44,7 @@ sub vcl_recv {
    * (3) X-Moov-Secure requests are not cacheable
    * (4) Set the QA backend server to <customer>_appv01 which has a fixed IP
    * (5) Set the X-Mob-Type header based on user agent
-   * (6) requests for assets are cacheable   
-   */
-  
-  // Cache all assets
-  if (req.url ~ "\.(png|gif|jpeg|jpg|ico|swf|css|js)(\?[a-z0-9%&]+)?$") {
-    unset req.http.Cookie;
-  }  
-  if (req.http.Content-Type ~ "png|gif|jpeg|jpg|ico|swf|css|javascript") {
-    unset req.http.Cookie;
-  }  
-  
+   */    
   
   // Set the X-Mob-Type based on the user agent
   set req.http.X-Mob-Type = "1";
