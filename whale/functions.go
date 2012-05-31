@@ -775,12 +775,11 @@ func length_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 }
 
 func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	start := time.Now().UnixNano()
+	start := time.Now()
 	for _, child := range ins.Children {
 		ctx.RunInstruction(scope, child)
 	}
-	duration := time.Now().UnixNano() - start
-	// I only seem to get 6 significant digits, so output in microseconds
-	returnValue = strconv.FormatInt(duration/1000, 10) + "µs"
+	duration := time.Since(start)
+	returnValue = strconv.FormatFloat(duration.Seconds(), 'f', 6, 64)
 	return
 }
