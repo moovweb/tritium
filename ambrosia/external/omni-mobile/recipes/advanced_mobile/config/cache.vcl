@@ -2,11 +2,15 @@
 /*
  * Default Cache.vcl
  *
- * If you don't want to cache anything, you are all set.
- * If you do want to cache some things, you will have to modify this file.
- * As a starting point you can simply remove the first 'return (pass);' line from 
- * 'vcl_fetch'. This will enable some reasonable caching rules.
+ * By default, any responses with Cache-Control set correctly are cached.
+ *
+ * If you don't want to cache anything, you need to update vcl_fetch and
+ * comment out some lines so return(pass) is always called.
+ *
+ * If you do want to cache with more granularity, read up on Varnish 
+ * configurations and modify this file CAREFULLY.
  */
+
 sub vcl_fetch {
   /*
    * Default Varnish logic EXCEPT:
@@ -19,7 +23,10 @@ sub vcl_fetch {
   // Copy the X-Mob-Type type from the request header into the response header
   set beresp.http.X-Mob-Type = req.http.X-Mob-Type;
 
-  if (beresp.http.Cache-Control ~ "public") {
+   // This caches any response w max-age in the Cache-Control header
+   // for the duration specified in the header. We expect assets to have these headers set.
+   // Comment out the 4 lines below if you don't want to cache anything
+   if (beresp.http.Cache-Control ~ "(public|max\-age)") {
     remove beresp.http.Set-Cookie;
     return (deliver);
   }
