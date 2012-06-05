@@ -9,6 +9,7 @@ var builtInFunctions map[string]builtInFunc
 func init() {
 	builtInFunctions = make(map[string]builtInFunc)
 
+	builtInFunctions["time"] = time_
 	builtInFunctions["this"] = this_
 	builtInFunctions["yield"] = yield_
 	builtInFunctions["var_Text"] = var_Text

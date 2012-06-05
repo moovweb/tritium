@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"unicode/utf8"
+	"time"
 )
 
 //The string value of me
@@ -770,5 +771,16 @@ func length_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 		length = len(input)
 	}
 	returnValue = strconv.Itoa(length)
+	return
+}
+
+func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	start := time.Now().UnixNano()
+	for _, child := range ins.Children {
+		ctx.RunInstruction(scope, child)
+	}
+	duration := time.Now().UnixNano() - start
+	// I only seem to get 6 significant digits, so output in microseconds
+	returnValue = strconv.FormatInt(duration/1000, 10) + "µs"
 	return
 }
