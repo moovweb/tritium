@@ -47,29 +47,35 @@ func LoadDefaultPackage(path *string) *Package {
 	return buildPackage(*path, nil)
 }
 
-func OutputDefaultPackage(path string) (pkg *Package, newFilePath string) {
-	pkg = BuildDefaultPackage()
-
-	_, err := os.Stat(path)
-
+func OutputPackage(pkgPath, outPath string) (pkg *Package, newFilePath string) {
+	pkg = BuildPackage(pkgPath)
+	
+	_, err := os.Stat(outPath)
 	if err != nil {
-		creationErr := os.MkdirAll(path, os.FileMode(0777))
+		creationErr := os.MkdirAll(outPath, os.FileMode(0777))
 		if creationErr != nil {
-			panic("Could not make path(" + path + "). Error:" + creationErr.Error())
+			panic("Could not make path(" + outPath + "). Error: " + creationErr.Error())
 		}
 	}
 
 	_, name := filepath.Split(pkg.OutputFile)
-	newOutputFile := filepath.Join(path, name)
-
+	newOutputFile := filepath.Join(outPath, name)
 	os.Rename(pkg.OutputFile, newOutputFile)
 
 	return pkg, newOutputFile
 }
 
-func BuildDefaultPackage() *Package {
+func OutputDefaultPackage(path string) (pkg *Package, newFilePath string) {
+	return OutputPackage(DefaultPackagePath, path)
+}
+
+func BuildPackage(path string) *Package {
 	options := BuildOptions()
-	return buildPackage(DefaultPackagePath, options)
+	return buildPackage(path, options)
+}
+
+func BuildDefaultPackage() *Package {
+	return BuildPackage(DefaultPackagePath)
 }
 
 func buildPackage(path string, options PackageOptions) *Package {
