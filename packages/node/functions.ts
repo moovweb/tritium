@@ -22,7 +22,7 @@
   }
 }
 
-" Renames the current node to the tag specified by **%value** (e.g. changes a `div` to a `span`). "
+" Renames the current node to the tag specified by **%value**. For example, `name(\"span\")`. "
 
 @func Node.name(Text %value) {
   name() {
@@ -90,7 +90,7 @@
   } 
 }
 
-" Injects HTML (specified by **%html**) into the current node. "
+" Injects HTML (specified by **%html**) into the current node. For example, `inject(\"file.html\")`. "
 
 @func Node.inject(Text %html) {
   inject_at("bottom", %html) {
@@ -192,7 +192,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) into the current node. "
+" Injects HTML (specified by **%html**) into the current node. For example, `inject(\"file.html\")`."
 
 @func Node.inject(Text %html) {
   inject_at(position("bottom"), %html) {
@@ -200,7 +200,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) at the bottom of the current node. "
+" Injects HTML (specified by **%html**) at the bottom of the current node. For example, `inject_bottom(\"file.html\")`."
 
 @func Node.inject_bottom(Text %html) {
   inject_at(position("bottom"), %html) {
@@ -208,7 +208,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) at the top of the current node. "
+" Injects HTML (specified by **%html**) at the top of the current node. For example, `inject_top(\"file.html\")`."
 
 @func Node.inject_top(Text %html) {
   inject_at(position("top"), %html) {
@@ -216,7 +216,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) after the current node. "
+" Injects HTML (specified by **%html**) after the current node. For example, `inject_after(\"file.html\")`."
 
 @func Node.inject_after(Text %html) {
   inject_at(position("after"), %html) {
@@ -224,7 +224,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) before the current node. "
+" Injects HTML (specified by **%html**) before the current node. For example, `inject_before(\"file.html\")`."
 
 @func Node.inject_before(Text %html) {
   inject_at(position("before"), %html) {

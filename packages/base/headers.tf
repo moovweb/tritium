@@ -7,10 +7,10 @@
 " Returns the time-to-execute (time units vary by implementation). "
 @func time() Text
 
-" Specifies a target (specified by **%target**, e.g. `$path`) to be searched. To be used in conjunction with `with()`."
+" Specifies a target (specified by **%target**) to be searched. To be used in conjunction with `with()`. For example, `match($path) { with(/product/) }`."
 @func match(Text %match_target) Text
 
-" Writes out a string (**%log_message**) to the console and debug log "
+" Writes out a string (**%log_message**) to the console and debug log. For example `log(\"Importing home-page\")`. "
 @func log(Text %log_message) Text Text
 
 " Returns the warning **%message** when a function is deprecated. Mostly useful when defining functions. "
@@ -25,7 +25,7 @@
 " Used with `match()`. Allows the match function to specify what is being matched. For example: `match($path) { with(\"something\") }`."
 @func with(Text %text) Text
 
-" Used with `match()`. Allows the match function to specify what is being matched. For example: `match($path) { with(\"something\") }`."
+" Used with `match()`. Allows the match function to specify what is being matched. For example: `match($path) { with(/something/) }`."
 @func with(Regexp %regexp) Text
 
 " Convert from one encoding to another. (If you want a list of encodings, you can run `iconv -l` on your command line.) "
@@ -37,7 +37,7 @@
 " length of the input "
 @func length(Text %input) Text
 
-" Completes the sudo-logic of `with()`, allowing the specification of an alternative."
+" Completes the pseudo-logic of `with()`, allowing the specification of an alternative."
 @func else() Text
 
 " Only used within functions  - enables functions within the scope of the current function to be performed. "
@@ -52,7 +52,7 @@
 " Parses regular expressions - so `/a/` is equivalent to `regexp(\"a\")`. (Use hard-coded regex if you can. This is much slower than hard-coding regex.) The **%options** text allows [Ruby modifiers](http://www.regular-expressions.info/ruby.html) to be included. "
 @func regexp(Text %expression, Text %options) Regexp Text
 
-" Concatenates two (or more) strings. Equivalent to `\"a\" + \"b\"`. "
+" Concatenates two (or more) strings. For example, `` is equivalent to `\"a\" + \"b\"`. "
 @func concat(Text %a, Text %b) Text Text
 
 " This is a the way that we have Tritium communicate variables back to its execution environment. For example,  `export(\"Content-Type\", \"application/js\")` to change the content-type. "
@@ -67,13 +67,13 @@
 " Returns the current text scope as a string. Useful to pass the current Text as an argument. "
 @func Text.text() Text Text
 
-" Replaces the entire current text with what you pass in "
+" Replaces the entire current text with what you pass in. For example, `set(\"one\")`. "
 @func Text.set(Text %value) Text
 
-" Replaces all instances of the regular expression **%search**. This yields to a Text scope that allows you to set the replacement string using `with()`. "
+" Replaces all instances of the regular expression **%search**. This yields to a Text scope that allows you to set the replacement string using `with()`. For example `replace(/bad/) { with(\"good\") }`."
 @func Text.replace(Regexp %search) Text Text
 
-" Replaces all instances of the text **%search**. This yields to a Text scope that allows you to set the replacement string using `with()`. "
+" Replaces all instances of the text **%search**. This yields to a Text scope that allows you to set the replacement string using `with()`. For example `replace(\"bad\") { with(\"good\") }`."
 @func Text.replace(Text %search) Text Text
 
 " Adds **%text_to_prepend** to the beginning of the text. "

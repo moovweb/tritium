@@ -1,5 +1,5 @@
 
-" Returns the index of the last node scoped "
+" Returns the index of the last node scoped.  "
 @func index(Node %node) Text
 
 " Selects an element to pass it to a function. "
@@ -8,10 +8,10 @@
 " Returns the current node "
 @func Node.this() Node Node
 
-" Specifies the position of a node (e.g. `top` or `bottom`). "
+" Specifies the position of a node (e.g. `position(\"top\")` or `\"bottom\"`). "
 @func position(Text %position) Position
 
-" Opens a scope for specifying the position of a node (e.g. `top` or `bottom`). "
+" Opens a scope for specifying the position of a node (e.g. `\"top\"` or `\"bottom\"`). For example, `position() { set(\"top\") }`. "
 @func position() Position
 
 " Searches the tree and selects all nodes matching **%xpath_selector**. "
@@ -26,7 +26,7 @@
 " Copies the node and yields to it "
 @func Node.dup() Node Node
 
-" Opens a scope to rename the current node (e.g. `name() { set(\"div\") }`). "
+" Opens a scope to rename the current node. For example, `name() { set(\"div\") }`. "
 @func Node.name() Text Text
 
 " Deletes the current node. "
@@ -35,17 +35,17 @@
 " Returns the XPath of the current node. "
 @func Node.path() Text Text
 
-" Injects HTML (specified by **%html**) into the current node. "
+" Injects HTML (specified by **%html**) into the current node. For example, `inject(\"file.html\")`."
 @func Node.inject(Text %html) Text
 
-" Createa a new node (specified by **%tag_name**) and inserts it at the location specified by **%pos**. "
+" Creates a new node (specified by **%tag_name**) and inserts it at the location specified by **%pos**. For example, `insert_at(\"top\", \"div\")`. "
 @func Node.insert_at(Position %pos, Text %tag_name) Text
 
-" Injects HTML (specified by **%html**) into the current node at the location specified by **%pos**. "
+" Injects HTML (specified by **%html**) into the current node at the location specified by **%pos**. For example, `inject_at(\"top\", \"file.html\")`."
 @func Node.inject_at(Position %pos, Text %html) Text
 
-" Injects HTML (specified by **%html**) into the current node at the location specified by **%pos**. "
+" Injects HTML (specified by **%html**) into the current node at the location specified by **%pos**. For example, `inject_at(\"top\", \"file.html\")`."
 @func Node.inject_at(Text %pos, Text %html) Text
 
-" Replaces the current value "
+" Replaces the current value with the one specified by %value. For example, `name() { set(\"div\") }`. "
 @func Node.set(Text %value) Text

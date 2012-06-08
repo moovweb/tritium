@@ -30,7 +30,7 @@
   remove("./text()")
 }
 
-"Allows you to set the value (**%value**) for the attribute you are selecting with **%name** - e.g.  `attribute(\"class\", \"one\")` sets the class as 'one'."
+"Allows you to set the value (**%value**) for the attribute you are selecting with **%name**. For example, `attribute(\"class\", \"one\")` sets the class as 'one'."
 
 @func XMLNode.attribute(Text %name, Text %value) {
   attribute(%name) {
@@ -41,7 +41,7 @@
   }
 }
 
-"Changes the value of the currently-selected attribute to that specified by **%value**."
+"Changes the value of the currently-selected attribute to that specified by **%value**. For example, `attribute(\"href\") { value(\"link\")}`."
 @func Attribute.value(Text %value) {
   value() {
     set(%value)
@@ -49,7 +49,7 @@
   }
 }
 
-"Changes the name of the currently-selected attribute to that specified by **%name**.
+"Changes the name of the currently-selected attribute to that specified by **%name**. For example, `attribute(\"href\") { name(\"src\") }`.
 
 Functionally equivalent to `name() { set(%name) }`."
 
@@ -60,7 +60,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Similar to `asset()`, but references a Sass stylesheet specifically."
+"Similar to `asset()`, but references a Sass stylesheet specifically. For example, `sass(\"main.scss\")`."
 
 @func sass(Text %filename) {
   asset(concat("stylesheets/.css/", concat(%filename, ".css"))) {
@@ -184,7 +184,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Wraps the selected nodes (defined by **%selector**) in a tag specified by **%tag**."
+"Wraps the selected node (defined by **%selector**) in a tag specified by **%tag**. For example `wrap_together(\"./span\", \"div\")` will wrap all span children of the current node in a div. Using XPath to select a particular child (e.g. `./span[1]`) will wrap that child plus its direct sibling of the same node type."
 
 @func XMLNode.wrap_together(Text %selector, Text %tag) {
   $(%selector + "[1]") {
@@ -262,7 +262,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node)."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node). For example `insert_at(\"top\", \"div\", \"Some text\")`."
 
 @func XMLNode.insert_at(Position %pos, Text %tag, Text %inner) {
   insert_at(%pos, %tag) {
