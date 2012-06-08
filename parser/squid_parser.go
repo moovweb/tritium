@@ -83,7 +83,7 @@ func (p *Parser) error(msg string) {
 
 func MakeParser(src, fullpath string) *Parser {
 	fullpath, _ = filepath.Abs(fullpath)
-	d, f := path.Split(fullpath)
+	d, f := filepath.Split(fullpath)
 	p := &Parser{
 		Tokenizer: MakeTokenizer([]byte(src)),
 		FileName:  f,
