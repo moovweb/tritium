@@ -23,7 +23,7 @@ func All(command string, directory string, options ...string) {
 	}
 
 	logger := golog.NewLogger("tritium")
-	logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO))
+	logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO, true))
 	var eng Engine
 	if command == "test" {
 		eng = whale.NewEngine(logger)

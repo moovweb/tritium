@@ -17,7 +17,7 @@ func RunTest(path string) (result *spec.Result) {
 	result = spec.NewResult()
 
 	logger := golog.NewLogger("tritium")
-	logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO))
+	logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO, true))
 
   /*** TODO(SJ) : Reintegrate w new log system. We need to catch errors when running tests
 	defer func() {

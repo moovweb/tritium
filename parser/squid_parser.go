@@ -5,7 +5,6 @@ import (
 	"code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"io/ioutil"
-	"path"
 	"path/filepath"
 	"strconv"
 	. "tritium/tokenizer" // was meant to be in this package
@@ -83,7 +82,7 @@ func (p *Parser) error(msg string) {
 
 func MakeParser(src, fullpath string) *Parser {
 	fullpath, _ = filepath.Abs(fullpath)
-	d, f := path.Split(fullpath)
+	d, f := filepath.Split(fullpath)
 	p := &Parser{
 		Tokenizer: MakeTokenizer([]byte(src)),
 		FileName:  f,
@@ -168,7 +167,7 @@ func (p *Parser) statement() (node *ir.Instruction) {
 	switch p.peek().Lexeme {
 	case IMPORT:
 		token := p.pop() // pop the "@import" token (includes importee)
-		node = ir.MakeImport(path.Join(p.DirName, token.Value), token.LineNumber)
+		node = ir.MakeImport(filepath.Join(p.DirName, token.Value), token.LineNumber)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	default:
@@ -253,7 +252,7 @@ func (p *Parser) read() (node *ir.Instruction) {
 		p.error("unterminated argument list in read")
 	}
 	p.pop() // pop the rparen
-	contents, err := ioutil.ReadFile(path.Join(p.DirName, readPath))
+	contents, err := ioutil.ReadFile(filepath.Join(p.DirName, readPath))
 	if err != nil { // can't use p.error because it's not a syntax error
 		msg := fmt.Sprintf("%s:%d -- read could not open %s", p.FileName, readLineNo, readPath)
 		panic(msg)

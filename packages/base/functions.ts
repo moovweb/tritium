@@ -25,7 +25,7 @@
   log(concat(%name, ": ", 
     time() {
       yield()
-    }, "s"))
+    }))
 }
 
 "If only one string is to be matched, it can be placed after the target. For example `match($path, \"product\")`."

@@ -11,12 +11,12 @@ import (
 )
 
 type Whale struct {
-	RegexpCache       map[string]*rubex.Regexp
-	XPathCache        map[string]*xpath.Expression
-	Log               *golog.Logger
-	OutputBuffer      []byte
-	InnerReplacer     *rubex.Regexp
-	HeaderContentType *rubex.Regexp
+	//RegexpCache       map[string]*rubex.Regexp
+	//XPathCache        map[string]*xpath.Expression
+	Log *golog.Logger
+	//OutputBuffer      []byte
+	//InnerReplacer     *rubex.Regexp
+	//HeaderContentType *rubex.Regexp
 }
 
 type WhaleContext struct {
@@ -32,20 +32,24 @@ type WhaleContext struct {
 	*tp.Transform
 
 	// Debug info
-	Filename string
-	HadError bool
+	Filename          string
+	HadError          bool
+	RegexpCache       map[string]*rubex.Regexp
+	XPathCache        map[string]*xpath.Expression
+	InnerReplacer     *rubex.Regexp
+	HeaderContentType *rubex.Regexp
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
 
 func NewEngine(logger *golog.Logger) *Whale {
 	e := &Whale{
-		RegexpCache:       make(map[string]*rubex.Regexp),
-		XPathCache:        make(map[string]*xpath.Expression),
-		Log:               logger,
-		OutputBuffer:      make([]byte, OutputBufferSize),
-		InnerReplacer:     rubex.MustCompile(`[\\$](\d)`),
-		HeaderContentType: rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
+		//RegexpCache:       make(map[string]*rubex.Regexp),
+		//XPathCache:        make(map[string]*xpath.Expression),
+		Log: logger,
+		//OutputBuffer:      make([]byte, OutputBufferSize),
+		//InnerReplacer:     rubex.MustCompile(`[\\$](\d)`),
+		//HeaderContentType: rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
 	}
 	return e
 }
@@ -61,31 +65,37 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform) (
 		MatchShouldContinueStack: make([]bool, 0),
 		Yields:                   make([]*YieldBlock, 0),
 		HadError:                 false,
+		RegexpCache:              make(map[string]*rubex.Regexp),
+		XPathCache:               make(map[string]*xpath.Expression),
+		InnerReplacer:            rubex.MustCompile(`[\\$](\d)`),
+		HeaderContentType:        rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
 	}
 	return
 }
 
 func (eng *Whale) Free() {
-	if eng.InnerReplacer != nil {
-		eng.InnerReplacer.Free()
-		eng.InnerReplacer = nil
-	}
-	if eng.HeaderContentType != nil {
-		eng.HeaderContentType.Free()
-		eng.HeaderContentType = nil
-	}
-	if eng.RegexpCache != nil {
-		for _, reg := range eng.RegexpCache {
-			reg.Free()
+	/*
+		if eng.InnerReplacer != nil {
+			eng.InnerReplacer.Free()
+			eng.InnerReplacer = nil
 		}
-		eng.RegexpCache = nil
-	}
-	if eng.XPathCache != nil {
-		for _, xpath := range eng.XPathCache {
-			xpath.Free()
+		if eng.HeaderContentType != nil {
+			eng.HeaderContentType.Free()
+			eng.HeaderContentType = nil
 		}
-		eng.XPathCache = nil
-	}
+		if eng.RegexpCache != nil {
+			for _, reg := range eng.RegexpCache {
+				reg.Free()
+			}
+			eng.RegexpCache = nil
+		}
+		if eng.XPathCache != nil {
+			for _, xpath := range eng.XPathCache {
+				xpath.Free()
+			}
+			eng.XPathCache = nil
+		}
+	*/
 }
 
 func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output string, exports [][]string, logs []string) {
@@ -311,6 +321,7 @@ func (ctx *WhaleContext) AddExport(exports []string) {
 }
 
 func (ctx *WhaleContext) AddLog(log string) {
+	ctx.Log.Info("TRITIUM: " + log)
 	ctx.Logs = append(ctx.Logs, log)
 }
 
@@ -340,16 +351,18 @@ func (ctx *WhaleContext) GetVar(key string) (val interface{}) {
 
 func (ctx *WhaleContext) GetInnerReplacer() (r *rubex.Regexp) {
 	r = ctx.InnerReplacer
+	//r = rubex.MustCompile(`[\\$](\d)`)
 	return
 }
 
 func (ctx *WhaleContext) GetHeaderContentTypeRegex() (r *rubex.Regexp) {
 	r = ctx.HeaderContentType
+	//r = rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE)
 	return
 }
 
 func (ctx *WhaleContext) GetOutputBuffer() (b []byte) {
-	b = ctx.OutputBuffer
+	//b = ctx.OutputBuffer
 	return
 }
 

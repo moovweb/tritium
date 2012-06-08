@@ -4,7 +4,7 @@ import (
 	tp "athena"
 	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
-	"log4go"
+	"golog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -26,7 +26,7 @@ type Package struct {
 	LoadPath     string
 	FallbackPath string
 	OutputFile   string
-	Log          log4go.Logger
+	Log          *golog.Logger
 	*tp.Package
 	Options PackageOptions
 }
@@ -47,29 +47,35 @@ func LoadDefaultPackage(path *string) *Package {
 	return buildPackage(*path, nil)
 }
 
-func OutputDefaultPackage(path string) (pkg *Package, newFilePath string) {
-	pkg = BuildDefaultPackage()
-
-	_, err := os.Stat(path)
-
+func OutputPackage(pkgPath, outPath string) (pkg *Package, newFilePath string) {
+	pkg = BuildPackage(pkgPath)
+	
+	_, err := os.Stat(outPath)
 	if err != nil {
-		creationErr := os.MkdirAll(path, os.FileMode(0777))
+		creationErr := os.MkdirAll(outPath, os.FileMode(0777))
 		if creationErr != nil {
-			panic("Could not make path(" + path + "). Error:" + creationErr.Error())
+			panic("Could not make path(" + outPath + "). Error: " + creationErr.Error())
 		}
 	}
 
 	_, name := filepath.Split(pkg.OutputFile)
-	newOutputFile := filepath.Join(path, name)
-
+	newOutputFile := filepath.Join(outPath, name)
 	os.Rename(pkg.OutputFile, newOutputFile)
 
 	return pkg, newOutputFile
 }
 
-func BuildDefaultPackage() *Package {
+func OutputDefaultPackage(path string) (pkg *Package, newFilePath string) {
+	return OutputPackage(DefaultPackagePath, path)
+}
+
+func BuildPackage(path string) *Package {
 	options := BuildOptions()
-	return buildPackage(DefaultPackagePath, options)
+	return buildPackage(path, options)
+}
+
+func BuildDefaultPackage() *Package {
+	return BuildPackage(DefaultPackagePath)
 }
 
 func buildPackage(path string, options PackageOptions) *Package {
@@ -142,11 +148,12 @@ func NewUserPackage(loadPath *string, fallbackPath *string) *Package {
 	return userPackage
 }
 
-func newLog() log4go.Logger {
-	pkgLog := make(log4go.Logger)
+func newLog() *golog.Logger {
+	pkgLog := golog.NewLogger("tritium")
 	os.Mkdir("tmp", os.FileMode(0777))
-
-	pkgLog.AddFilter("file", log4go.DEBUG, log4go.NewFileLogWriter("tmp/packager.log", false))
+	//TODO should handle err here
+	fileProcessor, _ := golog.NewFileProcessor(golog.LOG_DEBUG, "tmp/packager.log")
+	pkgLog.AddProcessor("file", fileProcessor)
 	return pkgLog
 }
 

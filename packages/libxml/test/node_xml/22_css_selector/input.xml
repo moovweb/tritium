@@ -1,0 +1,11 @@
+<html>
+  <body>
+    <div id='foo'>
+      <a class='bar'>click me</a>
+      <a class='bar'>click me</a>
+      <div>
+        Something
+      </div>
+    </div>
+  </body>
+</html>

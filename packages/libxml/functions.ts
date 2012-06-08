@@ -1,3 +1,11 @@
+"Convenience function for selecting w css"
+
+@func XMLNode.$$(Text %css_selector) {
+  $(css(%css_selector)) {
+    yield()
+  }
+}
+
 "Adds a class (specified by **%class**) to the currently-selected node. Also adds a space to prevent overwriting of any over classes."
 
 @func XMLNode.add_class(Text %class) {
@@ -98,9 +106,10 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Searches for `<img>` and `<script>` tags and ensures a domain is in their path."
+"Searches for nodes matching `%xpath` and ensures a domain is in the path of the `%attribute`"
 
-@func XMLNode.absolutize() {
+@func XMLNode.absolutize(Text %xpath, Text %attribute) {
+
   # Absolutize IMG and SCRIPT SRCs
   var("slash_path") {
     # the 'slash_path' is the path of this page without anything following it's last slash
@@ -109,30 +118,48 @@ Functionally equivalent to `name() { set(%name) }`."
     # turn empty string into a single slash because this is the only thing separating the host from the path relative path
     replace(/^$/, "/")
   }
-  
 
-  $(".//img|.//script") {
-    #var("src", fetch("./@src"))
+  $(%xpath) {
+    var("url", fetch(concat("./@", %attribute)))      
+
     # skip URLs which: are empty, have a host (//www.example.com), or have a protocol (http:// or mailto:)
-    match($src, /^(?![a-z]+\:)(?!\/\/)(?!$)/) {
-      attribute("src") {
+    match($url, /^(?![a-z]+\:)(?!\/\/)(?!$)/) {
+      attribute(%attribute) {
         value() {
-          match($src) {
+          match($url) {
             with(/^\//) {
               # host-relative URL: just add the host
-              prepend($host)
+              prepend($source_host)
               prepend("//")
             }
             else() {
+              # TODO: I need a test case for this clause. I'm not sure what kind of path its trying to accomodate
               # path-relative URL: add the host and the path
               prepend($slash_path)
-              prepend($host)
+              prepend($source_host)
               prepend("//")
             }
           }
         }
       }
     }
+    yield()
+  }
+}
+
+
+"Searches for nodes matching `%xpath` and ensures a domain is in their `src` path."
+
+@func XMLNode.absolutize(Text %xpath) {
+  absolutize(%xpath, "src") {
+    yield()
+  }
+}
+
+"Searches for `<img>` and `<script>` tags and ensures a domain is in their `src` path."
+
+@func XMLNode.absolutize() {
+  absolutize(".//img|.//script") {
     yield()
   }
 }
