@@ -17,7 +17,7 @@ source $HOME/gobuilds/tools/jenkins-env.sh
 echo $BUILD_NUMBER > $WORKSPACE/JENKINS
 
 # Link the clibs so that we can compile our projects against them.
-[ ! -d $MOOV_HOME/clibs ] && ln -s $CLIBS_HOME $MOOV_HOME/clibs
+[ ! -d $MOOV_HOME/clibs ] && ln -s -f $CLIBS_HOME $MOOV_HOME/clibs
 
 # Build tritium since we'll use it to create the lib package
 $TOOLS_DIR/build.py tritium/tritium $GIT_BRANCH
