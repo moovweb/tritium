@@ -172,3 +172,15 @@ replace(/(\?|&)?x\-moov\-[^\s\r\n\&]+(\&)?/i) {
     }
   }
 }
+
+# Export all remaining X-* headers
+replace(/\s+^(x[\-\w]*)\s*\:\s*([^\r\n]*)/i) {
+	$name = $1
+	$value = $2
+	
+	$name {
+		replace(/\-/,"_")
+	}
+	
+	var(downcase($name),$value)
+}
