@@ -6,20 +6,20 @@ package proto
 import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
-// Reference proto, math & os imports to suppress error if they are not otherwise used.
+// Reference proto and math imports to suppress error if they are not otherwise used.
 var _ = proto1.GetString
 var _ = math.Inf
-var _ error
 
 type Slug struct {
 	Name             *string      `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
 	Version          *string      `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
 	Transformers     []*Transform `protobuf:"bytes,3,rep,name=transformers" json:"transformers,omitempty"`
-	XXX_unrecognized []byte       `json:",omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
 }
 
 func (this *Slug) Reset()         { *this = Slug{} }
 func (this *Slug) String() string { return proto1.CompactTextString(this) }
+func (*Slug) ProtoMessage()       {}
 
 func init() {
 }

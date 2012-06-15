@@ -6,19 +6,19 @@ package proto
 import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
-// Reference proto, math & os imports to suppress error if they are not otherwise used.
+// Reference proto and math imports to suppress error if they are not otherwise used.
 var _ = proto1.GetString
 var _ = math.Inf
-var _ error
 
 type Rewriter struct {
 	Name             *string `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
 	Templates        []*File `protobuf:"bytes,2,rep,name=templates" json:"templates,omitempty"`
-	XXX_unrecognized []byte  `json:",omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (this *Rewriter) Reset()         { *this = Rewriter{} }
 func (this *Rewriter) String() string { return proto1.CompactTextString(this) }
+func (*Rewriter) ProtoMessage()       {}
 
 func init() {
 }

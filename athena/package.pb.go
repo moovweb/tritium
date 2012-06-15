@@ -6,30 +6,31 @@ package proto
 import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
-// Reference proto, math & os imports to suppress error if they are not otherwise used.
+// Reference proto and math imports to suppress error if they are not otherwise used.
 var _ = proto1.GetString
 var _ = math.Inf
-var _ error
 
 type Type struct {
 	Name             *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	Implements       *int32  `protobuf:"varint,2,opt,name=implements" json:"implements,omitempty"`
-	XXX_unrecognized []byte  `json:",omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (this *Type) Reset()         { *this = Type{} }
 func (this *Type) String() string { return proto1.CompactTextString(this) }
+func (*Type) ProtoMessage()       {}
 
 type Package struct {
 	Name             *string     `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	Functions        []*Function `protobuf:"bytes,2,rep,name=functions" json:"functions,omitempty"`
 	Types            []*Type     `protobuf:"bytes,3,rep,name=types" json:"types,omitempty"`
 	Dependencies     []string    `protobuf:"bytes,4,rep,name=dependencies" json:"dependencies,omitempty"`
-	XXX_unrecognized []byte      `json:",omitempty"`
+	XXX_unrecognized []byte      `json:"-"`
 }
 
 func (this *Package) Reset()         { *this = Package{} }
 func (this *Package) String() string { return proto1.CompactTextString(this) }
+func (*Package) ProtoMessage()       {}
 
 func init() {
 }

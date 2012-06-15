@@ -6,10 +6,9 @@ package proto
 import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
-// Reference proto, math & os imports to suppress error if they are not otherwise used.
+// Reference proto and math imports to suppress error if they are not otherwise used.
 var _ = proto1.GetString
 var _ = math.Inf
-var _ error
 
 type TritiumTest struct {
 	Script           *string             `protobuf:"bytes,1,req,name=script" json:"script,omitempty"`
@@ -19,20 +18,22 @@ type TritiumTest struct {
 	ExportsProto     []*TritiumTest_Hash `protobuf:"bytes,5,rep,name=exports_proto" json:"exports_proto,omitempty"`
 	Logs             []string            `protobuf:"bytes,6,rep,name=logs" json:"logs,omitempty"`
 	Transformer      *Transform          `protobuf:"bytes,7,opt,name=transformer" json:"transformer,omitempty"`
-	XXX_unrecognized []byte              `json:",omitempty"`
+	XXX_unrecognized []byte              `json:"-"`
 }
 
 func (this *TritiumTest) Reset()         { *this = TritiumTest{} }
 func (this *TritiumTest) String() string { return proto1.CompactTextString(this) }
+func (*TritiumTest) ProtoMessage()       {}
 
 type TritiumTest_Hash struct {
 	Key              *string `protobuf:"bytes,1,req,name=key" json:"key,omitempty"`
 	Value            *string `protobuf:"bytes,2,req,name=value" json:"value,omitempty"`
-	XXX_unrecognized []byte  `json:",omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (this *TritiumTest_Hash) Reset()         { *this = TritiumTest_Hash{} }
 func (this *TritiumTest_Hash) String() string { return proto1.CompactTextString(this) }
+func (*TritiumTest_Hash) ProtoMessage()       {}
 
 func init() {
 }

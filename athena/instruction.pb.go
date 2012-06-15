@@ -6,10 +6,9 @@ package proto
 import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
-// Reference proto, math & os imports to suppress error if they are not otherwise used.
+// Reference proto and math imports to suppress error if they are not otherwise used.
 var _ = proto1.GetString
 var _ = math.Inf
-var _ error
 
 type Instruction_InstructionType int32
 
@@ -42,9 +41,15 @@ var Instruction_InstructionType_value = map[string]int32{
 	"COMMENT":       6,
 }
 
+// NewInstruction_InstructionType is deprecated. Use x.Enum() instead.
 func NewInstruction_InstructionType(x Instruction_InstructionType) *Instruction_InstructionType {
 	e := Instruction_InstructionType(x)
 	return &e
+}
+func (x Instruction_InstructionType) Enum() *Instruction_InstructionType {
+	p := new(Instruction_InstructionType)
+	*p = x
+	return p
 }
 func (x Instruction_InstructionType) String() string {
 	return proto1.EnumName(Instruction_InstructionType_name, int32(x))
@@ -60,11 +65,12 @@ type Instruction struct {
 	LineNumber       *int32                       `protobuf:"varint,7,opt,name=line_number" json:"line_number,omitempty"`
 	YieldTypeId      *int32                       `protobuf:"varint,8,opt,name=yield_type_id" json:"yield_type_id,omitempty"`
 	IsValid          *bool                        `protobuf:"varint,9,opt,name=is_valid" json:"is_valid,omitempty"`
-	XXX_unrecognized []byte                       `json:",omitempty"`
+	XXX_unrecognized []byte                       `json:"-"`
 }
 
 func (this *Instruction) Reset()         { *this = Instruction{} }
 func (this *Instruction) String() string { return proto1.CompactTextString(this) }
+func (*Instruction) ProtoMessage()       {}
 
 func init() {
 	proto1.RegisterEnum("proto.Instruction_InstructionType", Instruction_InstructionType_name, Instruction_InstructionType_value)
