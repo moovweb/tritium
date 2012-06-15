@@ -6,10 +6,9 @@ package proto
 import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
-// Reference proto, math & os imports to suppress error if they are not otherwise used.
+// Reference proto and math imports to suppress error if they are not otherwise used.
 var _ = proto1.GetString
 var _ = math.Inf
-var _ error
 
 type Function struct {
 	Name             *string              `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
@@ -23,29 +22,32 @@ type Function struct {
 	BuiltIn          *bool                `protobuf:"varint,5,opt,name=built_in" json:"built_in,omitempty"`
 	Args             []*Function_Argument `protobuf:"bytes,6,rep,name=args" json:"args,omitempty"`
 	Instruction      *Instruction         `protobuf:"bytes,7,opt,name=instruction" json:"instruction,omitempty"`
-	XXX_unrecognized []byte               `json:",omitempty"`
+	XXX_unrecognized []byte               `json:"-"`
 }
 
 func (this *Function) Reset()         { *this = Function{} }
 func (this *Function) String() string { return proto1.CompactTextString(this) }
+func (*Function) ProtoMessage()       {}
 
 type Function_Argument struct {
 	TypeId           *int32  `protobuf:"varint,1,opt,name=type_id" json:"type_id,omitempty"`
 	TypeString       *string `protobuf:"bytes,2,opt,name=type_string" json:"type_string,omitempty"`
 	Name             *string `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	XXX_unrecognized []byte  `json:",omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (this *Function_Argument) Reset()         { *this = Function_Argument{} }
 func (this *Function_Argument) String() string { return proto1.CompactTextString(this) }
+func (*Function_Argument) ProtoMessage()       {}
 
 type FunctionArray struct {
 	Functions        []*Function `protobuf:"bytes,1,rep,name=functions" json:"functions,omitempty"`
-	XXX_unrecognized []byte      `json:",omitempty"`
+	XXX_unrecognized []byte      `json:"-"`
 }
 
 func (this *FunctionArray) Reset()         { *this = FunctionArray{} }
 func (this *FunctionArray) String() string { return proto1.CompactTextString(this) }
+func (*FunctionArray) ProtoMessage()       {}
 
 func init() {
 }

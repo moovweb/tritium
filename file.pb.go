@@ -6,19 +6,19 @@ package proto
 import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
-// Reference proto, math & os imports to suppress error if they are not otherwise used.
+// Reference proto and math imports to suppress error if they are not otherwise used.
 var _ = proto1.GetString
 var _ = math.Inf
-var _ error
 
 type File struct {
 	Path             *string  `protobuf:"bytes,1,req,name=path" json:"path,omitempty"`
 	Data             [][]byte `protobuf:"bytes,2,rep,name=data" json:"data,omitempty"`
-	XXX_unrecognized []byte   `json:",omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (this *File) Reset()         { *this = File{} }
 func (this *File) String() string { return proto1.CompactTextString(this) }
+func (*File) ProtoMessage()       {}
 
 func init() {
 }
