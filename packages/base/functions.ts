@@ -25,10 +25,10 @@
   log(concat(%name, ": ", 
     time() {
       yield()
-    }, "s"))
+    }))
 }
 
-"If only one string is to be matched, it can be placed after the target."
+"If only one string is to be matched, it can be placed after the target. For example `match($path, \"product\")`."
 @func match(Text %target, Text %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -37,7 +37,7 @@
   }
 }
 
-"If only one string is to be matched, it can be placed after the target."
+"If only one string is to be matched, it can be placed after the target. For example, `match($path, /product/)`."
 @func match(Text %target, Regexp %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -79,7 +79,7 @@
   }
 }
 
-"Replaces the regular expression specified by **%search** with the text **%with**. "
+"Replaces the regular expression specified by **%search** with the text **%with**. For example, `replace(/bad/, \"good\")`. "
 
 @func Text.replace(Regexp %search, Text %with) {
   replace(%search) {
@@ -88,7 +88,7 @@
   }
 }
 
-"Replaces the text specified by **%search** with the text **%with**. "
+"Replaces the text specified by **%search** with the text **%with**. For example, `replace(\"bad\", \"good\")`. "
 
 @func Text.replace(Text %search, Text %with) {
   replace(%search) {

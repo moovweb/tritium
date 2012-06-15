@@ -34,7 +34,7 @@
 @func XMLNode.wrap_text_children(Text %tag_name) Text XMLNode
 @func XMLNode.move_children_to(Node %tag_name, Position %pos) Text
 
-" Removes the currently-selected attribute. "
+" Removes the currently-selected attribute. For example `attribute(\"href\") { remove() } `. "
 @func Attribute.remove() Text
 
 " Opens the value scope, enabling it to be changed using `set()`. "
