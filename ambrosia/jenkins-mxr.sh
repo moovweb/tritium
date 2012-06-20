@@ -18,6 +18,7 @@ echo $BUILD_NUMBER > $WORKSPACE/JENKINS
 
 # Link the clibs so that we can compile our projects against them.
 [ ! -d $MOOV_HOME/clibs ] && ln -s -f $CLIBS_HOME $MOOV_HOME/clibs
+export LD_LIBRARY_PATH=$MOOV_HOME/clibs/lib
 
 # Build tritium since we'll use it to create the lib package
 $TOOLS_DIR/build.py tritium/tritium $GIT_BRANCH
