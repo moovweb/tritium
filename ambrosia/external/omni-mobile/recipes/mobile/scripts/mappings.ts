@@ -20,7 +20,7 @@ match($status) {
     log("--> STATUS: 200")
 
     match($path) {
-      with(/home/) {
+      with(/home/i) {
         // Include a log with every import to make it simple to know what scripts are running
         log("--> Importing pages/homes.ts in mappings.ts")
         @import pages/home.ts
