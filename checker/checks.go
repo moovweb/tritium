@@ -46,3 +46,19 @@ func (result *CheckResult) CheckForNotMisuse(script *tp.ScriptObject) {
 
 	})
 }
+
+func (result *CheckResult) CheckForLocationExport(script *tp.ScriptObject) {
+	iterate(script, func(ins *tp.Instruction) {
+		if *ins.Type == tp.Instruction_FUNCTION_CALL {
+			name := proto.GetString(ins.Value)
+			if name == "export" {
+				if ins.Arguments != nil {
+					if proto.GetString(ins.Arguments[0].Value) == "location" {
+						result.AddWarning(script, ins, "Incorrect export of location! Use \"Location\" not \"location\"")
+					}
+				}				
+			}
+		}
+	})
+}
+

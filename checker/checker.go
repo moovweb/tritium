@@ -19,6 +19,7 @@ func CheckBeforeLinking(scripts []*tp.ScriptObject, logger *golog.Logger) *Check
 	for _, script := range scripts {
 		result.CheckForSelectText(script)
 		result.CheckForNotMisuse(script)
+		result.CheckForLocationExport(script)
 	}
 	return result
 }
