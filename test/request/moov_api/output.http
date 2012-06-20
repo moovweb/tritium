@@ -1,0 +1,6 @@
+GET / HTTP/1.0
+User-Agent: Wget/1.12 (linux-gnu)
+Accept: */*
+Host: MODmlocal.www.belk.comMOD
+Connection: close
+Via: 1.0 moovweb

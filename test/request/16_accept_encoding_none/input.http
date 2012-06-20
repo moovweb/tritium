@@ -1,0 +1,2 @@
+GET / HTTP/1.0
+Accept-Encoding: all, kinds, of, crazy, compressions

@@ -1,0 +1,21 @@
+-
+ - asset_host
+ - ""
+-
+ - method
+ - GET
+-
+ - path
+ - /
+-
+ - secure
+ - "false"
+-
+ - user_agent
+ - Wget/1.12 (linux-gnu)
+-
+ - host
+ - mlocal.www.belk.com
+-
+ - source_host
+ - MODmlocal.www.belk.comMOD

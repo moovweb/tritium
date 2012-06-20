@@ -1,0 +1,4 @@
+HTTP/1.0 200 OK
+Set-Cookie: name=value;domain=.example.com;path=/home
+Connection: close
+Vary: Accept-Encoding

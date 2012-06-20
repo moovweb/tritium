@@ -1,0 +1,12 @@
+-
+ - asset_host
+ - ""
+-
+ - method
+ - GET
+-
+ - path
+ - /
+-
+ - secure
+ - "true"

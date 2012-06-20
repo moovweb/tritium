@@ -1,0 +1,3 @@
+GET /?x=y&x-moov-whatever=a&abc=a%20b%20c-whatnot!,ok HTTP/1.1
+Host: example.com
+Connection: keep-alive

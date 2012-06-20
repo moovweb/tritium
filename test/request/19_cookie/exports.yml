@@ -1,0 +1,16 @@
+-
+ - asset_host
+ - ""
+-
+ - method
+ - GET
+-
+ - path
+ - /
+-
+ - secure
+ - "false"
+-
+ - cookie
+ - "name=value; name2=value2"
+
