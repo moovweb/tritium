@@ -33,7 +33,7 @@ export GOHATTAN_DATA=$WORKSPACE/.manhattan
 [ ! -d $GOHATTAN_DATA ] && mkdir -p $GOHATTAN_DATA
 
 # Generate the mixer using data.py, we don't want the keys though, so avoid those.
-LD_LIBRARY_PATH=$MOOV_HOME/clibs/lib python -u $TOOLS_DIR/data.py . $MIXER_NAME --nokeys
+python -u $TOOLS_DIR/data.py . $MIXER_NAME --nokeys
 [ $? != 0 ] && exit 1
 
 [ ! -d $MASTER_MIXERS ] && mkdir -p $MASTER_MIXERS
