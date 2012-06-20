@@ -43,23 +43,25 @@ func ResolveMixer(name string) *Mixer {
 	return OpenMixer(fullPath)
 }
 
-func (m *Mixer) Write(path string) (outputPath string) {
+func (m *Mixer) Write(path string) (outputPath string, err error) {
 
 	name := pb.GetString(m.Name)
 	version := pb.GetString(m.Version)
-	outputFilename := filepath.Join(path, name+"-"+version+".mxr")
+	outputPath = filepath.Join(path, name+"-"+version+".mxr")
 
 	bytes, err := pb.Marshal(m)
-
 	if err != nil {
-		panic("Could not marshal mixer (" + name + "), " + err.Error())
+		return
 	}
 
 	bytes = Encrypt(bytes)
 
-	ioutil.WriteFile(outputFilename, bytes, 0644)
+	err = ioutil.WriteFile(outputPath, bytes, 0644)
+	if err != nil {
+		return
+	}
 
-	return outputFilename
+	return
 }
 
 func OpenMixer(location string) (m *Mixer) {
