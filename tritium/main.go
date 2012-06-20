@@ -11,7 +11,7 @@ import "tritium/test"
 func show_usage() {
 	fmt.Println("General purpose Tritium command line interface. Commands are: package, link, test")
 	fmt.Println("\tpackage:\n\t\ttritium package --name <pkg_name>\n\t\tOr\n\t\tpackage --output-path <path>")
-	fmt.Println("\te.g.\n\t\ttritium --output-path ~/.manhattan/packages")
+	fmt.Println("\te.g.\n\t\ttritium package --output-path ~/.manhattan/packages")
 }
 
 func main() {
