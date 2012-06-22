@@ -26,9 +26,11 @@ FILENAME="$MIXER_NAME-$VERSION.mxr"
 NOSAKA_SERVER="filesrv@nosakafs01-int"
 NOSAKA_FILEPATH="/opt/nosaka/mixer"
 scp "$MASTER_MIXERS/$FILENAME" "$NOSAKA_SERVER:$NOSAKA_FILEPATH/$FILENAME"
+[ $? != 0 ] && exit 1
 
 APOLLO_URL="http://apollo.moovweb.com/sdk/versions/register?"
 curl "$APOLLO_URL?version=$VERSION&product=$MIXER_NAME"
+[ $? != 0 ] && exit 1
 
 #  We need this echo here in order to end our script with a exit status of zero
 echo "Obligatory redundant acknowledgment of succesful deployment process, ya!"
