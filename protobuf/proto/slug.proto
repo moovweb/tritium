@@ -1,9 +1,0 @@
-package proto;
-
-import "tritium.proto";
-
-message Slug {
-	required string name = 1;
-	required string version = 2;
-	repeated Transform transformers = 3;
-}
