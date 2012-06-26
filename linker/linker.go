@@ -1,7 +1,7 @@
 package linker
 
 import (
-	tp "athena"
+	tp "tritium/proto"
 	"errors"
 	parser "tritium/parser"
 )

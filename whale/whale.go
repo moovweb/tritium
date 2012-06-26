@@ -1,7 +1,7 @@
 package whale
 
 import (
-	tp "athena"
+	tp "tritium/proto"
 	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"gokogiri/xpath"

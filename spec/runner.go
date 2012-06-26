@@ -1,7 +1,7 @@
 package spec
 
 import (
-	tp "athena"
+	tp "tritium/proto"
 	. "fmt"
 	"fmt"
 	xmlhelp "gokogiri/help"

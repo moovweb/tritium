@@ -1,13 +1,9 @@
 package parser
 
 import (
-	tp "athena"
-	//. "exec"
-	//"log"
-	//proto "goprotobuf.googlecode.com/hg/proto"
+	tp "tritium/proto"
 	"io/ioutil"
 	"path/filepath"
-	//. "strings"
 )
 
 func ParseFile(file string) *tp.ScriptObject {

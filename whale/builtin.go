@@ -1,6 +1,6 @@
 package whale
 
-import tp "athena"
+import tp "tritium/proto"
 
 type builtInFunc func(EngineContext, *Scope, *tp.Instruction, []interface{}) interface{}
 

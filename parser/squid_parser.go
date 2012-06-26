@@ -1,7 +1,7 @@
 package parser
 
 import (
-	ir "athena"
+	tp "tritium/proto"
 	"code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"io/ioutil"
@@ -95,12 +95,12 @@ func MakeParser(src, fullpath string) *Parser {
 	return p
 }
 
-func (p *Parser) Parse() *ir.ScriptObject {
-	script := new(ir.ScriptObject)
+func (p *Parser) Parse() *tp.ScriptObject {
+	script := new(tp.ScriptObject)
 	script.Name = proto.String(p.FullPath)
 
-	stmts := ir.ListInstructions()
-	defs := make([]*ir.Function, 0) // Add a new constructor in instruction.go
+	stmts := tp.ListInstructions()
+	defs := make([]*tp.Function, 0) // Add a new constructor in instruction.go
 
 	for p.peek().Lexeme != EOF {
 		switch p.peek().Lexeme {
@@ -109,7 +109,7 @@ func (p *Parser) Parse() *ir.ScriptObject {
 
 			if len(stmts) > 0 {
 				previousStatement := stmts[len(stmts)-1]
-				if *previousStatement.Type == ir.Instruction_TEXT {
+				if *previousStatement.Type == tp.Instruction_TEXT {
 					defs[len(defs)-1].Description = previousStatement.Value
 					if len(stmts) > 1 {
 						stmts = stmts[:len(stmts)-2]
@@ -135,7 +135,7 @@ func (p *Parser) Parse() *ir.ScriptObject {
 	}
 
 	script.Functions = defs
-	script.Root = ir.MakeBlock(stmts, line)
+	script.Root = tp.MakeBlock(stmts, line)
 
 	return script
 
@@ -158,16 +158,16 @@ func (p *Parser) Parse() *ir.ScriptObject {
 	//  } else {
 	//    line = *stmts[0].LineNumber
 	//  }
-	//  script.Root = ir.MakeBlock(stmts, line)
+	//  script.Root = tp.MakeBlock(stmts, line)
 	// }
 	// return script
 }
 
-func (p *Parser) statement() (node *ir.Instruction) {
+func (p *Parser) statement() (node *tp.Instruction) {
 	switch p.peek().Lexeme {
 	case IMPORT:
 		token := p.pop() // pop the "@import" token (includes importee)
-		node = ir.MakeImport(filepath.Join(p.DirName, token.Value), token.LineNumber)
+		node = tp.MakeImport(filepath.Join(p.DirName, token.Value), token.LineNumber)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	default:
@@ -176,9 +176,9 @@ func (p *Parser) statement() (node *ir.Instruction) {
 	return node
 }
 
-func (p *Parser) expression() (node *ir.Instruction) {
+func (p *Parser) expression() (node *tp.Instruction) {
 	node = p.term()
-	rest := ir.ListInstructions()
+	rest := tp.ListInstructions()
 	for p.peek().Lexeme == PLUS {
 		p.pop() // pop the plus sign
 		switch p.peek().Lexeme {
@@ -189,12 +189,12 @@ func (p *Parser) expression() (node *ir.Instruction) {
 		}
 	}
 	if len(rest) > 0 {
-		node = ir.FoldLeft("concat", node, rest)
+		node = tp.FoldLeft("concat", node, rest)
 	}
 	return node
 }
 
-func (p *Parser) term() (node *ir.Instruction) {
+func (p *Parser) term() (node *tp.Instruction) {
 	switch p.peek().Lexeme {
 	case STRING, REGEXP, POS:
 		node = p.literal()
@@ -220,24 +220,24 @@ func (p *Parser) term() (node *ir.Instruction) {
 	return node
 }
 
-func (p *Parser) literal() (node *ir.Instruction) {
+func (p *Parser) literal() (node *tp.Instruction) {
 	token := p.pop()
 	switch token.Lexeme {
 	case STRING:
-		node = ir.MakeText(token.Value, token.LineNumber)
+		node = tp.MakeText(token.Value, token.LineNumber)
 	case REGEXP:
-		node = ir.MakeFunctionCall("regexp",
-			ir.ListInstructions(ir.MakeText(token.Value, token.LineNumber),
-				ir.MakeText(token.ExtraValue, token.LineNumber)),
+		node = tp.MakeFunctionCall("regexp",
+			tp.ListInstructions(tp.MakeText(token.Value, token.LineNumber),
+				tp.MakeText(token.ExtraValue, token.LineNumber)),
 			nil,
 			token.LineNumber)
 	case POS:
-		node = ir.MakePosition(token.Value, token.LineNumber)
+		node = tp.MakePosition(token.Value, token.LineNumber)
 	}
 	return node
 }
 
-func (p *Parser) read() (node *ir.Instruction) {
+func (p *Parser) read() (node *tp.Instruction) {
 	p.pop() // pop the "read" keyword
 	readLineNo := p.peek().LineNumber
 	if p.peek().Lexeme != LPAREN {
@@ -257,11 +257,11 @@ func (p *Parser) read() (node *ir.Instruction) {
 		msg := fmt.Sprintf("%s:%d -- read could not open %s", p.FileName, readLineNo, readPath)
 		panic(msg)
 	}
-	node = ir.MakeText(string(contents), readLineNo)
+	node = tp.MakeText(string(contents), readLineNo)
 	return node
 }
 
-func (p *Parser) call() (node *ir.Instruction) {
+func (p *Parser) call() (node *tp.Instruction) {
 	funcName := p.pop().Value // grab the function name
 	funcLineNo := p.peek().LineNumber
 	if p.peek().Lexeme != LPAREN {
@@ -275,13 +275,13 @@ func (p *Parser) call() (node *ir.Instruction) {
 	// TO DO: integrate this block for better variadic concat/log expansions
 	// if funcName == "concat" && numArgs > 2 {
 	//   // expand variadic concat into nested binary concats
-	//   lhs := ir.FoldLeft("concat", ords[0], ords[1:numArgs-1])
+	//   lhs := tp.FoldLeft("concat", ords[0], ords[1:numArgs-1])
 	//   rhs := ords[numArgs-1]
-	//   node = ir.MakeFunctionCall("concat", ir.ListInstructions(lhs,rhs), block, funcLineNo)
+	//   node = tp.MakeFunctionCall("concat", tp.ListInstructions(lhs,rhs), block, funcLineNo)
 	// } else if funcName == "log" && numArgs > 1 {
 	//   // expand variadic log into composition of log and concat
-	//   cats := ir.FoldLeft("concat", ords[0], ords[1:])
-	//   node = ir.MakeFunctionCall("log", ir.ListInstructions(cats), block, funcLineNo)
+	//   cats := tp.FoldLeft("concat", ords[0], ords[1:])
+	//   node = tp.MakeFunctionCall("log", tp.ListInstructions(cats), block, funcLineNo)
 	// }
 
 	// this will never happen because p.arguments() only returns when it encounters an rparen
@@ -289,7 +289,7 @@ func (p *Parser) call() (node *ir.Instruction) {
 		p.error("unterminated argument list in call to " + funcName)
 	}
 	p.pop() // pop the rparen
-	var block []*ir.Instruction
+	var block []*tp.Instruction
 	if p.peek().Lexeme == LBRACE {
 		block = p.block()
 	}
@@ -297,23 +297,23 @@ func (p *Parser) call() (node *ir.Instruction) {
 	// Expand keyword args
 	if kwdnames != nil && kwdvals != nil {
 		kwdToGensym := make(map[string]string, len(kwdnames))
-		outer := ir.ListInstructions()
+		outer := tp.ListInstructions()
 		for i, k := range kwdnames {
 			tempname := p.gensym()
-			tempvar := ir.MakeFunctionCall("var",
-				ir.ListInstructions(ir.MakeText(tempname, funcLineNo),
+			tempvar := tp.MakeFunctionCall("var",
+				tp.ListInstructions(tp.MakeText(tempname, funcLineNo),
 					kwdvals[i]),
 				nil, funcLineNo)
 			outer = append(outer, tempvar)
 			kwdToGensym[k] = tempname
 		}
-		inner := ir.ListInstructions()
+		inner := tp.ListInstructions()
 		for _, k := range kwdnames {
-			getter := ir.MakeFunctionCall("var",
-				ir.ListInstructions(ir.MakeText(kwdToGensym[k], funcLineNo)),
+			getter := tp.MakeFunctionCall("var",
+				tp.ListInstructions(tp.MakeText(kwdToGensym[k], funcLineNo)),
 				nil, funcLineNo)
-			setter := ir.MakeFunctionCall("set",
-				ir.ListInstructions(ir.MakeText(k, funcLineNo), getter),
+			setter := tp.MakeFunctionCall("set",
+				tp.ListInstructions(tp.MakeText(k, funcLineNo), getter),
 				nil, funcLineNo)
 			inner = append(inner, setter)
 		}
@@ -322,27 +322,27 @@ func (p *Parser) call() (node *ir.Instruction) {
 				inner = append(inner, v)
 			}
 		}
-		theCall := ir.MakeFunctionCall(funcName, ords, inner, funcLineNo)
+		theCall := tp.MakeFunctionCall(funcName, ords, inner, funcLineNo)
 		outer = append(outer, theCall)
-		node = ir.MakeBlock(outer, funcLineNo)
+		node = tp.MakeBlock(outer, funcLineNo)
 
 	} else if funcName == "concat" && numArgs > 2 {
 		// expand variadic concat into nested binary concats
-		lhs := ir.FoldLeft("concat", ords[0], ords[1:numArgs-1])
+		lhs := tp.FoldLeft("concat", ords[0], ords[1:numArgs-1])
 		rhs := ords[numArgs-1]
-		node = ir.MakeFunctionCall("concat", ir.ListInstructions(lhs, rhs), block, funcLineNo)
+		node = tp.MakeFunctionCall("concat", tp.ListInstructions(lhs, rhs), block, funcLineNo)
 	} else if funcName == "log" && numArgs > 1 {
 		// expand variadic log into composition of log and concat
-		cats := ir.FoldLeft("concat", ords[0], ords[1:])
-		node = ir.MakeFunctionCall("log", ir.ListInstructions(cats), block, funcLineNo)
+		cats := tp.FoldLeft("concat", ords[0], ords[1:])
+		node = tp.MakeFunctionCall("log", tp.ListInstructions(cats), block, funcLineNo)
 	} else {
-		node = ir.MakeFunctionCall(funcName, ords, block, funcLineNo)
+		node = tp.MakeFunctionCall(funcName, ords, block, funcLineNo)
 	}
 	return node
 }
 
-func (p *Parser) arguments(funcName string) (ords []*ir.Instruction, kwdnames []string, kwdvals []*ir.Instruction) {
-	ords, kwdnames, kwdvals = make([]*ir.Instruction, 0), make([]string, 0), make([]*ir.Instruction, 0)
+func (p *Parser) arguments(funcName string) (ords []*tp.Instruction, kwdnames []string, kwdvals []*tp.Instruction) {
+	ords, kwdnames, kwdvals = make([]*tp.Instruction, 0), make([]string, 0), make([]*tp.Instruction, 0)
 	counter := 0
 	for p.peek().Lexeme != RPAREN {
 		if counter > 0 {
@@ -381,7 +381,7 @@ func (p *Parser) arguments(funcName string) (ords []*ir.Instruction, kwdnames []
 	return ords, kwdnames, kwdvals
 }
 
-func (p *Parser) cast() (node *ir.Instruction) {
+func (p *Parser) cast() (node *tp.Instruction) {
 	typeName := p.pop().Value // grab the function name
 	typeLineNo := p.peek().LineNumber
 	if p.peek().Lexeme != LPAREN {
@@ -393,24 +393,24 @@ func (p *Parser) cast() (node *ir.Instruction) {
 		p.error("single argument to " + typeName + " typecast is missing closing parenthesis")
 	}
 	p.pop() // pop the rparen
-	var block []*ir.Instruction
+	var block []*tp.Instruction
 	if p.peek().Lexeme == LBRACE {
 		block = p.block()
 	}
 
-	node = ir.MakeFunctionCall(typeName, ir.ListInstructions(expr), block, typeLineNo)
+	node = tp.MakeFunctionCall(typeName, tp.ListInstructions(expr), block, typeLineNo)
 	return node
 }
 
-func (p *Parser) variable() (node *ir.Instruction) {
+func (p *Parser) variable() (node *tp.Instruction) {
 	token := p.pop()
 	lexeme, name, lineNo := token.Lexeme, token.Value, token.LineNumber
 	sigil := "$"
 	if lexeme == LVAR {
 		sigil = "%"
 	}
-	var val *ir.Instruction
-	var block []*ir.Instruction
+	var val *tp.Instruction
+	var block []*tp.Instruction
 	if p.peek().Lexeme == EQUAL {
 		p.pop() // pop the equal sign
 		switch p.peek().Lexeme {
@@ -424,19 +424,19 @@ func (p *Parser) variable() (node *ir.Instruction) {
 		block = p.block()
 	}
 	if lexeme == LVAR {
-		node = ir.MakeLocalVar(name, val, block, lineNo)
+		node = tp.MakeLocalVar(name, val, block, lineNo)
 	} else {
-		args := ir.ListInstructions(ir.MakeText(name, lineNo))
+		args := tp.ListInstructions(tp.MakeText(name, lineNo))
 		if val != nil {
 			args = append(args, val)
 		}
-		node = ir.MakeFunctionCall("var", args, block, lineNo)
+		node = tp.MakeFunctionCall("var", args, block, lineNo)
 	}
 	return node
 }
 
-func (p *Parser) block() (stmts []*ir.Instruction) {
-	stmts = ir.ListInstructions()
+func (p *Parser) block() (stmts []*tp.Instruction) {
+	stmts = tp.ListInstructions()
 	p.pop() // pop the lbrace
 	for p.peek().Lexeme != RBRACE {
 		stmts = append(stmts, p.statement())
@@ -448,9 +448,9 @@ func (p *Parser) block() (stmts []*ir.Instruction) {
 	return stmts
 }
 
-func (p *Parser) definition() *ir.Function {
+func (p *Parser) definition() *tp.Function {
 	isSignature := false
-	node := new(ir.Function)
+	node := new(tp.Function)
 
 	p.pop() // pop the "@func" keyword
 	contextType := ""
@@ -504,16 +504,16 @@ func (p *Parser) definition() *ir.Function {
 	if p.peek().Lexeme != LBRACE {
 		p.error("definition for " + funcName + " is missing a body")
 	}
-	funcBody := &ir.Instruction{
-		Type:     ir.NewInstruction_InstructionType(ir.Instruction_BLOCK),
+	funcBody := &tp.Instruction{
+		Type:     tp.NewInstruction_InstructionType(tp.Instruction_BLOCK),
 		Children: p.block(),
 	}
 	node.Instruction = funcBody
 	return node
 }
 
-func (p *Parser) parameters(funcName string) []*ir.Function_Argument {
-	params := make([]*ir.Function_Argument, 0)
+func (p *Parser) parameters(funcName string) []*tp.Function_Argument {
+	params := make([]*tp.Function_Argument, 0)
 	counter := 0
 	for p.peek().Lexeme != RPAREN {
 		if counter > 0 {
@@ -525,7 +525,7 @@ func (p *Parser) parameters(funcName string) []*ir.Function_Argument {
 		if p.peek().Lexeme != TYPE {
 			p.error("parameter for " + funcName + " is missing a type")
 		}
-		param := &ir.Function_Argument{
+		param := &tp.Function_Argument{
 			TypeString: proto.String(p.pop().Value),
 		}
 		if p.peek().Lexeme != LVAR {

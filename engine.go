@@ -1,7 +1,7 @@
 package tritium
 
 import (
-	tp "athena"
+	tp "tritium/proto"
 )
 
 type Engine interface {

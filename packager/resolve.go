@@ -1,7 +1,7 @@
 package packager
 
 import (
-	ap "athena"
+	tp "tritium/proto"
 	proto "code.google.com/p/goprotobuf/proto"
 	yaml "goyaml"
 	"io/ioutil"
@@ -12,7 +12,7 @@ import (
 	parser "tritium/parser"
 )
 
-func resolveDefinition(pkg *ap.Package, fun *ap.Function) {
+func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
 	linkingContext := linker.NewLinkingContext(pkg)
 
 	//	pkg.Log.Info("\t -- Resolving --\n")
@@ -64,8 +64,8 @@ func resolveDefinition(pkg *ap.Package, fun *ap.Function) {
 
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
 		if fun.Instruction != nil {
-			fun.Instruction.Iterate(func(ins *ap.Instruction) {
-				if *ins.Type == ap.Instruction_FUNCTION_CALL {
+			fun.Instruction.Iterate(func(ins *tp.Instruction) {
+				if *ins.Type == tp.Instruction_FUNCTION_CALL {
 					if proto.GetString(ins.Value) == "yield" {
 						fun.OpensTypeId = ins.YieldTypeId
 					}
@@ -88,13 +88,13 @@ func (pkg *Package) inheritFunctions() {
 // - Also, I'm assuming a single depth level of inheritance. I'd have to run this function n times for n levels
 // - Well that should be fine as long as I run it at the end of every package load
 
-func (pkg *Package) resolveFunctionDescendants(fun *ap.Function) {
+func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 	// Check if this function contains any types that have descendants
 	name := fun.Stub(pkg.Package)
 	pkg.Log.Info("Checking for inheritance on function: %v", name)
 
-	newFun := &ap.Function{}
+	newFun := &tp.Function{}
 	inherit := false
 
 	// Iterate over ScopeType, Arg types, return Type, opens Type
@@ -178,7 +178,7 @@ func (pkg *Package) resolveFunctionDescendants(fun *ap.Function) {
 
 }
 
-func ReadPackageDefinitions(pkg *ap.Package, location string) {
+func ReadPackageDefinitions(pkg *tp.Package, location string) {
 
 	//pkg.Println(" -- reading definitions")
 	_, err := ioutil.ReadFile(location)
@@ -273,7 +273,7 @@ func (pkg *Package) readHeaderFile(location string) {
 
 }
 
-func (pkg *Package) resolveHeader(function *ap.Function) {
+func (pkg *Package) resolveHeader(function *tp.Function) {
 
 	returnType := proto.GetString(function.ReturnType)
 	if len(returnType) > 0 {
@@ -309,7 +309,7 @@ func (pkg *Package) CollectFunctionDocs() {
 		}
 
 		for _, instruction := range function.Instruction.Children {
-			if *instruction.Type == ap.Instruction_TEXT {
+			if *instruction.Type == tp.Instruction_TEXT {
 				function.Description = instruction.Value
 			}
 		}

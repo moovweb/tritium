@@ -1,7 +1,7 @@
 package doc
 
 import (
-	tp "athena"
+	tp "tritium/proto"
 	"bytes"
 	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"

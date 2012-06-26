@@ -1,17 +1,17 @@
-package tritium
+package transform
 
 import (
-	ap "athena"
+	tp "tritium/proto"
 	"path/filepath"
 	"strings"
 	"tritium/linker"
 	"tritium/packager"
 )
 
-func Compile(file string, rootPackage *ap.Package) (*ap.Transform, error) {
+func Compile(file string, rootPackage *tp.Package) (*tp.Transform, error) {
 
-	// TODO(SJ) : Make a copy constructor from a raw ap.Package object
-	//	-- the path here should be optional since I'm passing in the ap.Package
+	// TODO(SJ) : Make a copy constructor from a raw tp.Package object
+	//	-- the path here should be optional since I'm passing in the tp.Package
 
 	compileOptions := packager.PackageOptions{"stdout": false, "output_tpkg": false, "use_tpkg": false}
 
@@ -29,7 +29,7 @@ func Compile(file string, rootPackage *ap.Package) (*ap.Transform, error) {
 	return linker.RunWithPackage(file, defaultPackage.Package)
 }
 
-func CompileString(data string, path string, pkg *ap.Package) (*ap.Transform, error) {
+func CompileString(data string, path string, pkg *tp.Package) (*tp.Transform, error) {
 	return linker.RunStringWithPackage(data, path, pkg)
 }
 
@@ -37,7 +37,7 @@ func CompileString(data string, path string, pkg *ap.Package) (*ap.Transform, er
 // "...add a big comment saying its a stop gap till go1/new testing framework 
 // support" - Sean
 //******************************************************************************
-func CompileTest(test *ap.TritiumTest, path string, pkg *ap.Package) (err error) {
+func CompileTest(test *tp.TritiumTest, path string, pkg *tp.Package) (err error) {
 	test_transform, err := linker.RunStringWithPackage(*test.Script, path, pkg)
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func CompileTest(test *ap.TritiumTest, path string, pkg *ap.Package) (err error)
 	return
 }
 
-func MakeProjectPackage(functionPath string, rootPackage *ap.Package) *ap.Package {
+func MakeProjectPackage(functionPath string, rootPackage *tp.Package) *tp.Package {
 	packager.ReadPackageDefinitions(rootPackage, functionPath)
 
 	return rootPackage

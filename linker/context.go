@@ -1,7 +1,7 @@
 package linker
 
 import (
-	. "athena"
+	tp "tritium/proto"
 	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"log"
@@ -16,12 +16,12 @@ type LinkingContext struct {
 	types    []string
 	files    []string
 	Errors   []string
-	*Transform
+	*tp.Transform
 }
 
 type LocalDef map[string]int
 
-func NewObjectLinkingContext(pkg *Package, objs []*ScriptObject) *LinkingContext {
+func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject) *LinkingContext {
 	// Setup object lookup map!
 	objScriptLookup := make(map[string]int, len(objs))
 	for index, obj := range objs {
@@ -33,7 +33,7 @@ func NewObjectLinkingContext(pkg *Package, objs []*ScriptObject) *LinkingContext
 	return ctx
 }
 
-func NewLinkingContext(pkg *Package) *LinkingContext {
+func NewLinkingContext(pkg *tp.Package) *LinkingContext {
 	// Setup the function map!
 	functionLookup := make([]FuncMap, len(pkg.Types))
 	types := make([]string, len(pkg.Types))
@@ -65,7 +65,7 @@ func NewLinkingContext(pkg *Package) *LinkingContext {
 		funList: functionLookup,
 		types:   types,
 		Errors:  make([]string, 0),
-		Transform: &Transform{
+		Transform: &tp.Transform{
 			Pkg: pkg,
 		},
 	}
@@ -98,16 +98,16 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 	}
 }
 
-func (ctx *LinkingContext) ProcessInstruction(ins *Instruction, scopeType int) (returnType int) {
+func (ctx *LinkingContext) ProcessInstruction(ins *tp.Instruction, scopeType int) (returnType int) {
 	localScope := make(LocalDef, 0)
 	return ctx.ProcessInstructionWithLocalScope(ins, scopeType, localScope)
 }
 
-func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, scopeType int, localScope LocalDef) (returnType int) {
+func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction, scopeType int, localScope LocalDef) (returnType int) {
 	returnType = -1
 	ins.IsValid = proto.Bool(true)
 	switch *ins.Type {
-	case Instruction_IMPORT:
+	case tp.Instruction_IMPORT:
 		// set its import_id and blank the value field
 		importValue := proto.GetString(ins.Value)
 		//println("import: ", importValue)
@@ -123,7 +123,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 		ins.ObjectId = proto.Int(importId)
 		ins.Value = nil
 		//println("after", ins.String())
-	case Instruction_LOCAL_VAR:
+	case tp.Instruction_LOCAL_VAR:
 		name := proto.GetString(ins.Value)
 		if name == "1" || name == "2" || name == "3" || name == "4" || name == "5" || name == "6" || name == "7" {
 			if len(ins.Arguments) > 0 {
@@ -165,7 +165,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 			}
 		}
 
-	case Instruction_FUNCTION_CALL:
+	case tp.Instruction_FUNCTION_CALL:
 		stub := proto.GetString(ins.Value)
 		if stub == "yield" {
 			ins.YieldTypeId = proto.Int32(int32(scopeType))
@@ -222,9 +222,9 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *Instruction, sc
 				}
 			}
 		}
-	case Instruction_TEXT:
+	case tp.Instruction_TEXT:
 		returnType = ctx.textType
-	case Instruction_BLOCK:
+	case tp.Instruction_BLOCK:
 		if ins.Children != nil {
 			for _, child := range ins.Children {
 				returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope)
@@ -241,7 +241,7 @@ func (ctx *LinkingContext) HasErrors() bool {
 func (ctx *LinkingContext) error(obj interface{}, format string, data ...interface{}) {
 	message := fmt.Sprintf(format, data...)
 	ctx.Errors = append(ctx.Errors, message)
-	ins, ok := obj.(*Instruction)
+	ins, ok := obj.(*tp.Instruction)
 	if ok {
 		ins.IsValid = proto.Bool(false)
 	}

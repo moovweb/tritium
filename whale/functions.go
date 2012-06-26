@@ -1,7 +1,7 @@
 package whale
 
 import (
-	tp "athena"
+	tp "tritium/proto"
 	"fmt"
 	"goconv"
 	"gokogiri/css"

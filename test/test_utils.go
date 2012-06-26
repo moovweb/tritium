@@ -8,7 +8,7 @@ import "testing"
 import "runtime"
 import "fmt"
 import "tritium/spec"
-import ap "athena"
+import tp "tritium/proto"
 import "tritium/packager"
 import "golog"
 
@@ -77,7 +77,7 @@ func relativeDirectory(directoryFromRoot string) (directory string, ok bool) {
 	return
 }
 
-var pkg *ap.Package
+var pkg *tp.Package
 
 func initializePackage() {
 	packagesPath, ok := relativeDirectory("packages")
