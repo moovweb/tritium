@@ -34,7 +34,7 @@ func LoadSpec(dir string, pkg *tp.Package) (*Spec, error) {
 
 	if len(customFunctions) == 1 {
 		functionsFile := customFunctions[0]
-		pkg = transform.MakeProjectPackage(functionsFile, pkg)
+		transform.LoadFunctions(functionsFile, pkg)
 	}
 
 	script, err := linker.RunWithPackage(Join(dir, "main.ts"), pkg)
