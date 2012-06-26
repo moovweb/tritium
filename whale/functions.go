@@ -275,6 +275,29 @@ func replace_Regexp(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 	return
 }
 
+func capture_Regexp(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	regexp := args[0].(*rubex.Regexp)
+	scope.Value = regexp.GsubFunc(scope.Value.(string), func(match string, captures map[string]string) string {
+		usesGlobal := (ctx.GetEnv("use_global_replace_vars") == "true")
+
+		for name, capture := range captures {
+			if usesGlobal {
+				ctx.SetEnv(name, capture)
+			}
+			ctx.SetVar(name, capture)
+		}
+
+		replacementScope := &Scope{Value: match}
+		for _, child := range ins.Children {
+			ctx.RunInstruction(replacementScope, child)
+		}
+
+		return replacementScope.Value.(string)
+	})
+	returnValue = scope.Value
+	return
+}
+
 func convert_encoding_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	input := scope.Value.(string)
 	fromCode := args[0].(string)

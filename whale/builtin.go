@@ -50,6 +50,7 @@ func init() {
 
 	builtInFunctions["regexp.Text.Text"] = regexp_Text_Text
 	builtInFunctions["replace.Regexp"] = replace_Regexp
+	builtInFunctions["capture.Regexp"] = capture_Regexp
 	builtInFunctions["inner_text"] = text
 	builtInFunctions["text"] = text
 

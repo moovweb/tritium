@@ -81,3 +81,7 @@
 
 " Adds **%text_to_append** to the end of the text. "
 @func Text.append(Text %text_to_append) Text
+
+" Captures all instances of the regular expression **%search**. "
+@func Text.capture(Regexp %search) Text Text
+
