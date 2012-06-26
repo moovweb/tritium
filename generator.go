@@ -14,7 +14,7 @@ import "path/filepath"
 import "manhattan/project/options"
 import "manhattan/project"
 import "rubex"
-import ap "athena"
+import tp "tritium/proto"
 import proto "code.google.com/p/goprotobuf/proto"
 
 func runTemplate(name string, rawTemplate []byte, options options.Options, project *project.Project) ([]byte, error) {
@@ -33,7 +33,7 @@ func runTemplate(name string, rawTemplate []byte, options options.Options, proje
 	return buf.Bytes(), nil
 }
 
-func Generate(options options.Options, project *project.Project, mixer *ap.Mixer) (map[string][]byte, error) {
+func Generate(options options.Options, project *project.Project, mixer *tp.Mixer) (map[string][]byte, error) {
 	// HACKY
 	type TempRewriter struct {
 		ToBeReplacedWithmatcher     string
@@ -87,7 +87,7 @@ func Generate(options options.Options, project *project.Project, mixer *ap.Mixer
 	return renderedSegments, finalError
 }
 
-func getRawTemplate(segmentName string, mixer *ap.Mixer) (rawTemplate []uint8, err error) {
+func getRawTemplate(segmentName string, mixer *tp.Mixer) (rawTemplate []uint8, err error) {
 
 	for _, segment := range mixer.Rewriters {
 		_, thisName := filepath.Split(proto.GetString(segment.Path))

@@ -2,8 +2,7 @@ package generator
 
 import packager "tritium/packager"
 import whale "tritium/whale"
-import ap "athena"
-import "tritium"
+import tp "tritium/proto"
 import "manhattan/project"
 import "golog"
 import "text/template"
@@ -14,6 +13,7 @@ import "fmt"
 import "testing"
 import "path/filepath"
 import pb "code.google.com/p/goprotobuf/proto"
+import "tritium/linker"
 
 type GeneratorTestError struct {
 	msg string
@@ -83,6 +83,20 @@ func generateRewriter(test_type string, test_name string) (string, *GeneratorTes
 	return string(buf.Bytes()), nil
 }
 
+//******************************************************************************
+// "...add a big comment saying its a stop gap till go1/new testing framework 
+// support" - Sean
+//******************************************************************************
+func CompileTest(test *tp.TritiumTest, path string, pkg *tp.Package) (err error) {
+	test_transform, err := linker.RunStringWithPackage(*test.Script, path, pkg)
+	if err != nil {
+		return err
+	}
+	test.Transformer = test_transform
+	return
+}
+
+
 func runTest(test_type string, test_name string, pkg *packager.Package) (err *GeneratorTestError) {
 	fmt.Print(" * ", test_name+"...")
 
@@ -91,14 +105,14 @@ func runTest(test_type string, test_name string, pkg *packager.Package) (err *Ge
 		return err
 	}
 
-	test, oserr := ap.NewTritiumTestFromFolder(filepath.Join(TEST_DIR, test_type, test_name))
+	test, oserr := tp.NewTritiumTestFromFolder(filepath.Join(TEST_DIR, test_type, test_name))
 	if oserr != nil {
 		return NewGeneratorTestError("Failed to create TritiumTest object", oserr)
 	}
 
 	test.Script = pb.String(test_script)
 
-	oserr = tritium.CompileTest(test, "/", pkg.Package)
+	oserr = CompileTest(test, "/", pkg.Package)
 	if oserr != nil {
 		return NewGeneratorTestError("Failed to compile TritiumTest object", oserr)
 	}
