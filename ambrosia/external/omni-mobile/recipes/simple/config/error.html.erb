@@ -1,0 +1,31 @@
+<!-- Error Template
+Any time your project errors, this page will be sent to the user.
+NOTE:
+ - Dont know what a '.erb' file is? Dont worry about it. Its just an HTML file with
+placeholders for the message and the stacktrace. They look like this: <%= message %>.
+ - In development, the 'message' and the 'stacktrace' will be shown.
+ - In production, only 'message' will be shown. 'stacktrace' will be "".
+ - Avoid referencing assets. Speed is much more important than looks on this page.
+ - Delete this comment after reading.
+-->
+<html>
+<head>
+<style type='text/css'>
+body {
+  font-family: sans-serif;
+}
+</style>
+</head>
+<body>
+<div style='font-size: 18px; padding: 10px; background-color: pink; border: blue;'>
+Edit <b>config/error.html.erb</b> in your project folder to change this error template!
+</div>
+<br/>
+<h1>Ugly Error Page!</h1>
+<h2><%= message %></h2>
+<div style='color: #333; line-height: 25px; padding: 8px; border: 1px solid green; background-color: beige;'>
+<%= stacktrace %>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+
+$body_background: #eee;
+$text_color:      #222;
+$link_color:      #369;
+$font_size:       12px;
+
+body {
+  background: $body_background;
+  color: $text_color;
+  font-size: $font_size;
+}
+
+a, a:hover, a:visited {
+  text: $link_color;
+}
+
+
+// Define all heights and widths of sprite below
+// Sprite class is the name of the <sprite folder>-<icon name>
+// ie. sprite/foo.png will result in .sprite-foo
+

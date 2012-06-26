@@ -1,0 +1,17 @@
+lib/*.ts
+.rvmrc
+tmp/
+log/
+*.swp
+.sass-cache
+.DS_Store
+config/default.vcl
+JENKINS
+BUILD_VERSION
+*~
+project.gemspec
+assets/javascript/.remote/
+
+assets/javascript/main.js
+
+*.css

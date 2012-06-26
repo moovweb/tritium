@@ -1,0 +1,8 @@
+package proto;
+
+import "file.proto";
+
+message Recipe {
+        required string name = 1;
+        repeated File files = 2;
+}

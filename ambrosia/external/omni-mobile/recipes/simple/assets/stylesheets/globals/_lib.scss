@@ -1,0 +1,369 @@
+
+
+// This file should only contain SCSS mixins
+// and site-wide variables
+
+/*************************************************************************/
+/*************************************************************************/
+/************************* COMMON VARIABLES ******************************/
+/*************************************************************************/
+/*************************************************************************/
+
+// Standard Spacing (padding or margin)
+$spacing:  10px;
+
+//colors
+$body_background: #fff;
+
+$color1: #5d257d; // purple
+$color2: #3160aa; // blue
+$color3: #c7c7c7; // grey
+$color4: #efefef; // light grey
+
+$error_color: #ee2a24;
+
+// gradients
+$grad1: linear-gradient(top, #fff 0%, #f2f2f2 100%);    // grey gradient
+$grad3: linear-gradient(top, #940086 0%, #6b007f 100%); // purple gradient for box2 (Find Event Box)
+$grad4: linear-gradient(top, #7e2583 0%, #531f6b 100%); // dark purple gradient for btn1
+$grad5: linear-gradient(top, #d6d6d6 0%, #e7e7e7 100%);
+$grad6: linear-gradient(top, #535188 0%, #706293 50%, #4d4079 50%, #7654ad 100%); //gradient for the countdown numbers
+
+// borders
+$border1: 1px solid $color3;
+$border2: 1px dotted $color3;
+$border3: 1px solid #aaa; // border around buttons or boxes
+
+// Font sizes
+$font_size: 13px;
+$emp_size: 11px;
+
+$h1_size: 22px;
+$h2_size: 16px;
+$h3_size: 16px;
+
+// Font colors
+$h1_color: $color1;
+$h2_color: $color1;
+$h3_color: $color2;
+
+
+/*************************************************************************/
+/*************************************************************************/
+/******************************** MIXINS *********************************/
+/*************************************************************************/
+/*************************************************************************/
+
+
+// Headings
+@mixin h1 {
+  font-size: $h1_size;
+  font-weight: bold;
+  padding: 10px;
+  color: $h1_color;
+}
+
+@mixin h2 {
+  font-size: $h2_size;
+  font-weight: bold;
+  padding: 10px;
+  color: $h2_color;
+}
+
+@mixin h3 {
+  font-size: $h3_size;
+  font-weight: bold;
+  padding: 10px;
+  color: $h3_color;
+}
+
+.mw_h1 {
+  @include h1;
+}
+
+.mw_h2 {
+  @include h2;
+}
+
+.mw_h3 {
+  @include h3;
+}
+
+
+/*  ##################
+    ###### BARS ######
+    ##################  */
+
+// Bars and Accordions
+@mixin bar_inner_base {
+  display: block;
+  font-size: 2_size;
+  line-height: 1;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 10px;
+}
+
+// title bars
+@mixin tbar1 {
+  @include bar_inner_base;
+  background-color: #390b72;
+}
+
+.mw_tbar1 {
+  @include tbar1;
+}
+
+@mixin bar1 {
+  @include bar_inner_base;
+  @include background($grad1);
+  color: $color2;
+  font-size: 16px;
+  border: 1px solid #e1e1e1;
+  overflow:hidden;
+  @include display-box;
+  @include box-sizing(border-box);
+
+  &[data-ur-state="disabled"] > div:last-of-type {
+    @extend .icons-plus;
+  }
+
+  &[data-ur-state="enabled"] > div:last-of-type {
+    @extend .icons-minus;
+  }
+
+  div:first-of-type {
+    @include box-flex(1);
+  }
+
+  div:last-of-type {
+    display: block;
+    margin-top: -2px;
+  }
+}
+
+@mixin bar2 {
+  @include bar_inner_base;
+  @include background($grad5);
+  border: 1px solid #e1e1e1;
+  color: $color2;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+@mixin bar3 {
+  @include bar_inner_base;
+  background-color: $color4;
+  color: #666;
+  font-size: 13px;
+  font-weight: bold;
+  border: 1px solid #d7d7d7;
+}
+
+@mixin bar4 {
+  @include bar_inner_base;
+  border: 1px solid #e1e1e1;
+  border-radius: 3px;
+  font-size: 16px;
+  background-color: #2B0073;
+  color: #fff;
+  font-weight: bold;
+}
+
+@mixin bar5 {
+  @include bar_inner_base;
+  background-color: #efefef;
+} // this will be the 'title bar' on an accordian box
+
+@mixin bar6 {
+  @include bar_inner_base;
+  color: $color2;
+  font-size: 16px;
+  padding: 10px;
+  overflow: hidden;
+  @include display-box;
+  @include box-sizing(border-box);
+
+  &[data-ur-state="disabled"] > div:last-of-type {
+    @extend .icons-plus;
+  } // close div for plus
+
+  &[data-ur-state="enabled"] > div:last-of-type {
+    @extend .icons-minus;
+  } // close div for minus
+
+  div:first-of-type {
+    @include box-flex(1);
+  }
+  div:last-of-type {
+    display: block;
+    margin-top: -2px;
+  } // close div (for icon)
+} // this will be the first level bar on an accordian box
+
+
+.mw_bar1 {
+  @include bar1;
+}
+
+.mw_bar2 {
+  @include bar2;
+}
+
+.mw_bar3 {
+  @include bar3;
+}
+
+.mw_bar4 {
+  @include bar4;
+}
+
+.mw_bar5 {
+  @include bar5;
+}
+
+.mw_bar6 {
+  @include bar6;
+}
+
+/*  #####################
+    ###### BUTTONS ######
+    #####################  */
+
+@mixin btn1 {
+  @include background($grad4);
+  @include box-shadow(0 1px 2px #999, inset 0 1px 0 0px #9E5CA2);
+  border: 1px solid #421955;
+  border-radius: 3px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 20px;
+  display: block;
+}
+
+@mixin btn2 {
+  @include background($grad5);
+  @include box-shadow(0 1px 2px #999, inset 0 1px 0 0px #fff);
+  border-left: $border3;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  color: #666;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 5px 10px;
+  margin-top: 2px;
+} // Find Event Button
+
+@mixin btn3 {
+  @include background($grad5);
+  @include box-shadow(0 1px 2px #999, inset 0 1px 0 0px #fff);
+  border: $border3;
+  border-radius: 3px;
+  text-shadow: 0 -1px 0px #333;
+  color: #666;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.mw_btn1 {
+  @include btn1;
+}
+
+.mw_btn2 {
+  @include btn2;
+}
+
+// boxes
+
+@mixin box1 {
+  color: #3167b3;
+  background-color: #f0f0f0;
+  border: 1px solid #D7D7D7;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+@mixin box2 {
+  padding: 13px;
+  @include background($grad3);
+  form {
+    @include display-box;
+    @include box-sizing(border-box);
+
+    .mw_text_input {
+      @include box-flex(1);
+      @include border-radius(0px);
+      @include border-left-radius(3px);
+      display: block;
+      margin-top: 1px;
+      margin-right: 0px;
+      height: 20px;
+    } // mw_text_input
+  } // close form
+}
+
+.mw_box1 {
+  @include box1;
+}
+
+.mw_box2 {
+  @include box2;
+}
+
+
+
+/*************************************************************************/
+/*************************************************************************/
+/*************** START STYLES APPLIED TO MOOVWEB ELEMENTS ****************/
+/*************************************************************************/
+/*************************************************************************/
+
+// Test class for identifying selections
+.mw_testing {
+  border: 4px solid purple !important;
+  background: #555;
+  overflow: hidden;
+  margin: 2px 0;
+}
+
+// Form Styles
+.mw_row {
+  padding:0px 10px 5px 10px;
+  overflow: hidden;
+}
+
+// Margin
+.mw_margin {
+  margin: $spacing;
+}
+
+// Center
+.mw_center {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+// This class can be applied in tritium, to hide what only scss can't do for you.
+.mw_hide {
+  display: none;
+}
+
+@mixin margin-lr($margin) {
+  margin-left: $margin;
+  margin-right: $margin;
+}
+
+@mixin padding-lr($padding) {
+  padding-left: $padding;
+  padding-right: $padding;
+}
+
+@mixin padding-tb($padding) {
+  padding-top: $padding;
+  padding-bottom: $padding;
+}
+
+
+
