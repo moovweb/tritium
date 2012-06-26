@@ -1,6 +1,0 @@
-matchers:
-  User-Agent:
-    default:
-      regex: .*
-      vars: &default
-        device_stylesheet: main

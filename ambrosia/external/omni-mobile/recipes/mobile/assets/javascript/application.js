@@ -1,2 +1,0 @@
-
-/* Default JS */
