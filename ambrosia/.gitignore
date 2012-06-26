@@ -1,0 +1,4 @@
+.DS_Store
+*/*/*.mxr
+tmp
+*/*/tests.log

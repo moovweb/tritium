@@ -1,0 +1,43 @@
+matchers:
+  User-Agent:
+    default:
+      regex: .*
+      vars: &default
+        device_stylesheet: main
+
+    webkit: 
+      regex: WebKit
+      vars: &webkit
+        <<: *default
+        device_stylesheet: devices/webkit
+
+    iphone: 
+      regex: iPhone
+      vars: &iphone
+        <<: *default
+        device_stylesheet: devices/iphone
+
+    ipad:
+      regex: iPad
+      vars:
+        <<: *webkit
+        device_stylesheet: devices/ipad
+
+    webos:
+      regex: webOS
+      vars:
+        <<: *webkit
+        device_stylesheet: devices/webos
+        
+    android:
+      regex: Android
+      vars:
+        <<: *webkit
+        device_stylesheet: devices/android
+
+    blackberry:
+      regex: Blackberry
+      vars:
+        <<: *default
+        device_stylesheet: devices/blackberry
+
