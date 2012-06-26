@@ -25,9 +25,5 @@ func CompileTest(test *tp.TritiumTest, path string, pkg *tp.Package) (err error)
 
 func MakeProjectPackage(functionPath string, rootPackage *tp.Package) *tp.Package {
 	packager.ReadPackageDefinitions(rootPackage, functionPath)
-
 	return rootPackage
 }
-
-var PackagePath *string
-var UserPackagePath *string
