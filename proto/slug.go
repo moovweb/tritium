@@ -2,9 +2,7 @@ package proto
 
 import (
 	pb "code.google.com/p/goprotobuf/proto"
-	"errors"
 	"io/ioutil"
-	"net/http"
 )
 
 func NewSlug(name string, version string, stages int) (slug *Slug, err error) {

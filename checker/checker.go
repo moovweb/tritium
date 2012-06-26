@@ -1,7 +1,7 @@
 package checker
 
 import (
-	tp "athena"
+	tp "tritium/proto"
 	"golog"
 	"tritium/parser"
 )
