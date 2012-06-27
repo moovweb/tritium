@@ -11,9 +11,9 @@ var _ = proto1.GetString
 var _ = math.Inf
 
 type File struct {
-	Path             *string  `protobuf:"bytes,1,req,name=path" json:"path,omitempty"`
-	Data             [][]byte `protobuf:"bytes,2,rep,name=data" json:"data,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	Path             *string `protobuf:"bytes,1,req,name=path" json:"path,omitempty"`
+	Data             []byte  `protobuf:"bytes,2,req,name=data" json:"data,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (this *File) Reset()         { *this = File{} }
