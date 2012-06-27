@@ -3,6 +3,7 @@ package transform
 import (
 	tp "tritium/proto"
 	"tritium/packager"
+	"tritium/linker"
 )
 
 func CompileString(data string, path string, pkg *tp.Package) (*tp.Transform, error) {
