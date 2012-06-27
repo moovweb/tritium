@@ -92,7 +92,7 @@ func getRawTemplate(segmentName string, mixer *tp.Mixer) (rawTemplate []uint8, e
 	for _, segment := range mixer.Rewriters {
 		_, thisName := filepath.Split(proto.GetString(segment.Path))
 		if thisName == segmentName {
-			return segment.Data[0], nil
+			return segment.Data, nil
 		}
 	}
 
