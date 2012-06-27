@@ -20,6 +20,7 @@ type Mixer struct {
 
 func (this *Mixer) Reset()         { *this = Mixer{} }
 func (this *Mixer) String() string { return proto1.CompactTextString(this) }
+func (*Mixer) ProtoMessage()       {}
 
 func init() {
 }

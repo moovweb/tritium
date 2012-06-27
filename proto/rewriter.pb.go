@@ -18,6 +18,7 @@ type Rewriter struct {
 
 func (this *Rewriter) Reset()         { *this = Rewriter{} }
 func (this *Rewriter) String() string { return proto1.CompactTextString(this) }
+func (*Rewriter) ProtoMessage()       {}
 
 func init() {
 }

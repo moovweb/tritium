@@ -70,6 +70,7 @@ type Instruction struct {
 
 func (this *Instruction) Reset()         { *this = Instruction{} }
 func (this *Instruction) String() string { return proto1.CompactTextString(this) }
+func (*Instruction) ProtoMessage()       {}
 
 func init() {
 	proto1.RegisterEnum("proto.Instruction_InstructionType", Instruction_InstructionType_name, Instruction_InstructionType_value)

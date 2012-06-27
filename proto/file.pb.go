@@ -18,6 +18,7 @@ type File struct {
 
 func (this *File) Reset()         { *this = File{} }
 func (this *File) String() string { return proto1.CompactTextString(this) }
+func (*File) ProtoMessage()       {}
 
 func init() {
 }
