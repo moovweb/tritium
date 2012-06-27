@@ -1,8 +1,8 @@
-package hermes
+package packager
 
 // TODO(SJ): add hooks to check features here
 import (
-	ap "athena"
+	tp "tritium/proto"
 	proto "code.google.com/p/goprotobuf/proto"
 	"errors"
 	"fmt"
@@ -10,15 +10,14 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strings"
-	tp "tritium/packager"
 )
 
 type Mixer struct {
-	*ap.Mixer
+	*tp.Mixer
 	LibraryPath    string
 	DefinitionPath string
 	DataPath       string
-	RootPackage    *tp.Package // I need to keep the tritium Package around for its methods until I'm done resolving it
+	RootPackage    *Package // I need to keep the tritium Package around for its methods until I'm done resolving it
 }
 
 var SubPaths [3]string
@@ -36,7 +35,7 @@ func BuildMixer(buildPath string, name string, dataPath string) *Mixer {
 
 	path := *rawPath
 
-	raw_mixer := ap.NewMixer(filepath.Clean(path))
+	raw_mixer := tp.NewMixer(filepath.Clean(path))
 	mixer := &Mixer{
 		Mixer:          raw_mixer,
 		LibraryPath:    buildPath,
@@ -44,17 +43,8 @@ func BuildMixer(buildPath string, name string, dataPath string) *Mixer {
 		DataPath:       dataPath,
 	}
 
-	featuresConfig := filepath.Join(path, "/features.yml")
-	mixer.Features = BuildFeaturesList(featuresConfig)
-
-	assetsDirectory := filepath.Join(path, "/assets")
-	mixer.Assets = ap.CollectFiles(assetsDirectory)
-
-	recipesDirectory := filepath.Join(path, "/recipes")
-	mixer.Recipes = BuildRecipes(recipesDirectory)
-
 	rewritersDirectory := filepath.Join(path, "/rewriters")
-	mixer.Rewriters = ap.CollectFiles(rewritersDirectory)
+	mixer.Rewriters = tp.CollectFiles(rewritersDirectory)
 
 	packageDirectory := filepath.Join(path, "/package")
 	mixer.RootPackage = NewRootPackage(packageDirectory, proto.GetString(mixer.Name), dataPath)
@@ -68,7 +58,7 @@ func BuildMixer(buildPath string, name string, dataPath string) *Mixer {
 		// Now that we're done resolving, slice off the members! (Ouch)
 		mixer.Package = mixer.RootPackage.Package
 
-	} else if error.Code != tp.NOT_FOUND {
+	} else if error.Code != NOT_FOUND {
 		//TODO : Put this into a debug log
 		panic(error.Message)
 	}
@@ -109,7 +99,7 @@ func (m *Mixer) loadDependentMixer(buildPath string, name string) {
 
 	if strings.HasSuffix(name, ".mxr") {
 		newMixer = &Mixer{
-			Mixer: ap.OpenMixer(filepath.Join(buildPath, name)),
+			Mixer: tp.OpenMixer(filepath.Join(buildPath, name)),
 		}
 	} else {
 		newMixer = BuildMixer(buildPath, name, m.DataPath)
@@ -120,28 +110,6 @@ func (m *Mixer) loadDependentMixer(buildPath string, name string) {
 
 func (m *Mixer) Merge(otherMixer *Mixer) {
 	// TODO(SJ) : Make sure there are no name collision in the following unions
-
-	m.Assets = append(m.Assets, otherMixer.Assets...)
-	m.Recipes = append(m.Recipes, otherMixer.Recipes...)
-
-	// Make sure there aren't any collisions when joining features:
-	// -- Do we want a way to cast / override features ?
-
-	for _, otherFeature := range otherMixer.Features {
-		name := proto.GetString(otherFeature.Name)
-		thisFeature, err := m.GetFeature(name)
-
-		if err == nil {
-			equal := CompareFeatures(thisFeature, otherFeature)
-			if !equal {
-				panic(fmt.Sprintf("Cannot merge conflicting features: %v <--> %v\n", thisFeature, otherFeature))
-			}
-		} else {
-			m.Features = append(m.Features, otherFeature)
-		}
-
-	}
-
 	if len(otherMixer.Rewriters) > 0 {
 
 		if len(m.Rewriters) > 0 {
@@ -158,35 +126,6 @@ func (m *Mixer) Merge(otherMixer *Mixer) {
 
 	//	m.RootPackage.Dependencies = append(m.RootPackage.Dependencies, proto.GetString(otherMixer.Name) )
 
-}
-
-func (m *Mixer) GetFeature(name string) (*ap.Feature, error) {
-
-	for _, feature := range m.Features {
-		if proto.GetString(feature.Name) == name {
-			return feature, nil
-		}
-	}
-
-	return nil, errors.New("No such feature found")
-}
-
-func CompareFeatures(a *ap.Feature, b *ap.Feature) bool {
-	aValue := proto.GetString(a.State.Value)
-	bValue := proto.GetString(a.State.Value)
-
-	if aValue != bValue {
-		return false
-	} else {
-		aType := proto.GetString(a.State.Type)
-		bType := proto.GetString(a.State.Type)
-
-		if aType == bType {
-			return true
-		}
-	}
-
-	return false
 }
 
 // In the future, I'll have to search by version too
