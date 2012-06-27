@@ -1,0 +1,18 @@
+-
+ - asset_host
+ - ""
+-
+ - method
+ - GET
+-
+ - path
+ - /
+-
+ - secure
+ - "false"
+-
+ - host
+ - mlocal.example.com
+-
+ - source_host
+ - www.example.com

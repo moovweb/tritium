@@ -1,0 +1,3 @@
+GET / HTTP/1.0
+X-Varnish-Custom1: false
+X-Varnish-anotherValue: text/html

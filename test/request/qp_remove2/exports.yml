@@ -1,0 +1,18 @@
+-
+ - asset_host
+ - ""
+-
+ - method
+ - GET
+-
+ - path
+ - /path?x-moov-whatever-yeah&a=b
+-
+ - secure
+ - "false"
+-
+ - host
+ - example.com
+-
+ - source_host
+ - MODexample.comMOD

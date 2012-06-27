@@ -1,0 +1,3 @@
+GET / HTTP/1.0
+Connection: close
+Via: 1.0 moovweb

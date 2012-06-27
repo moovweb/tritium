@@ -1,0 +1,21 @@
+-
+ - asset_host
+ - ""
+-
+ - method
+ - GET
+-
+ - path
+ - /tips/internet/internet/inttip/inttip.htm
+-
+ - secure
+ - "false"
+-
+ - user_agent
+ - Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; en-US; rv:1.9.1.17) Gecko/20110121 Firefox/3.5.17
+-
+ - host
+ - www.fraud.org
+-
+ - source_host
+ - MODwww.fraud.orgMOD

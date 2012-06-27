@@ -1,0 +1,15 @@
+-
+ - asset_host
+ - ""
+-
+ - method
+ - GET
+-
+ - path
+ - /
+-
+ - secure
+ - "false"
+-
+ - user_agent
+ - some agent 1.0
