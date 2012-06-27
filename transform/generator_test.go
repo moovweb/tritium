@@ -1,4 +1,4 @@
-package generator
+package transform
 
 import packager "tritium/packager"
 import whale "tritium/whale"

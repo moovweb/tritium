@@ -1,5 +1,5 @@
 //Generator is used to create Tritium templates from an Osaka project.
-package generator
+package transform
 
 import (
 	"errors"
