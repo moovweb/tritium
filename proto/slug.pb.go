@@ -19,6 +19,7 @@ type Slug struct {
 
 func (this *Slug) Reset()         { *this = Slug{} }
 func (this *Slug) String() string { return proto1.CompactTextString(this) }
+func (*Slug) ProtoMessage()       {}
 
 func init() {
 }

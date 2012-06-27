@@ -18,6 +18,7 @@ type Transform struct {
 
 func (this *Transform) Reset()         { *this = Transform{} }
 func (this *Transform) String() string { return proto1.CompactTextString(this) }
+func (*Transform) ProtoMessage()       {}
 
 func init() {
 }

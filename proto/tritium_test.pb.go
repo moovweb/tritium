@@ -23,6 +23,7 @@ type TritiumTest struct {
 
 func (this *TritiumTest) Reset()         { *this = TritiumTest{} }
 func (this *TritiumTest) String() string { return proto1.CompactTextString(this) }
+func (*TritiumTest) ProtoMessage()       {}
 
 type TritiumTest_Hash struct {
 	Key              *string `protobuf:"bytes,1,req,name=key" json:"key,omitempty"`
@@ -32,6 +33,7 @@ type TritiumTest_Hash struct {
 
 func (this *TritiumTest_Hash) Reset()         { *this = TritiumTest_Hash{} }
 func (this *TritiumTest_Hash) String() string { return proto1.CompactTextString(this) }
+func (*TritiumTest_Hash) ProtoMessage()       {}
 
 func init() {
 }

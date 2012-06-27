@@ -21,6 +21,7 @@ type ScriptObject struct {
 
 func (this *ScriptObject) Reset()         { *this = ScriptObject{} }
 func (this *ScriptObject) String() string { return proto1.CompactTextString(this) }
+func (*ScriptObject) ProtoMessage()       {}
 
 const Default_ScriptObject_Name string = "main"
 
