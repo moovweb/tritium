@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strings"
+	"os"
 )
 
 type Mixer struct {
@@ -24,6 +25,23 @@ var SubPaths [3]string
 
 func init() {
 	SubPaths = [3]string{"external", "internal", ""}
+}
+
+func GetDataPath() (path string, err error) {
+	path = os.ExpandEnv("$GOHATTAN_DATA")
+
+	if path == "" {
+		defaultPath := os.ExpandEnv("$HOME/.manhattan")
+		_, err := ioutil.ReadDir(defaultPath)
+
+		if err != nil {
+			return "", errors.New("Data path ($GOHATTAN_DATA) not set and default path ~/.manhattan doesn't exist.")
+		} else {
+			path = defaultPath
+		}
+	}
+
+	return
 }
 
 func BuildMixer(buildPath string, name string, dataPath string) *Mixer {
