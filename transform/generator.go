@@ -13,12 +13,11 @@ import (
 import (
 	proto "code.google.com/p/goprotobuf/proto"
 	"manhattan/project"
-	"manhattan/project/options"
 	"rubex"
 	tp "tritium/proto"
 )
 
-func runTemplate(name string, rawTemplate []byte, options options.Options, project *project.Project) ([]byte, error) {
+func runTemplate(name string, rawTemplate []byte, project *project.Project) ([]byte, error) {
 	segmentTemplate := template.New(name)
 	request, err := segmentTemplate.Parse(string(rawTemplate))
 
@@ -34,7 +33,7 @@ func runTemplate(name string, rawTemplate []byte, options options.Options, proje
 	return buf.Bytes(), nil
 }
 
-func Generate(options options.Options, project *project.Project, mixer *tp.Mixer) (map[string][]byte, error) {
+func Generate(project *project.Project, mixer *tp.Mixer) (map[string][]byte, error) {
 	// HACKY
 	type TempRewriter struct {
 		ToBeReplacedWithmatcher     string
@@ -75,7 +74,7 @@ func Generate(options options.Options, project *project.Project, mixer *tp.Mixer
 			panic(err)
 		}
 
-		renderedSegment, err := runTemplate(segment, rawTemplate, options, project)
+		renderedSegment, err := runTemplate(segment, rawTemplate, project)
 
 		if err != nil {
 			// Should really return an array of errors
