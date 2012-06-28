@@ -2,20 +2,21 @@
 package transform
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"path/filepath"
 	"text/template"
 )
-import "bytes"
 
-import "fmt"
-import "encoding/json"
-import "path/filepath"
-
-import "manhattan/project/options"
-import "manhattan/project"
-import "rubex"
-import tp "tritium/proto"
-import proto "code.google.com/p/goprotobuf/proto"
+import (
+	proto "code.google.com/p/goprotobuf/proto"
+	"manhattan/project"
+	"manhattan/project/options"
+	"rubex"
+	tp "tritium/proto"
+)
 
 func runTemplate(name string, rawTemplate []byte, options options.Options, project *project.Project) ([]byte, error) {
 	segmentTemplate := template.New(name)
