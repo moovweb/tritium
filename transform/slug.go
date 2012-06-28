@@ -1,10 +1,16 @@
 package transform
 
-import tp "tritium/proto"
-import pb "code.google.com/p/goprotobuf/proto"
-import "net/http"
-import "errors"
-import "io/ioutil"
+import (
+	"errors"
+	"io/ioutil"
+	"net/http"
+	"path/filepath"
+)
+import (
+	pb "code.google.com/p/goprotobuf/proto"
+	"manhattan/project"
+	tp "tritium/proto"
+)
 
 func NewSlugFromFile(filename string) (slug *tp.Slug, err error) {
 	var data []byte
@@ -53,4 +59,38 @@ func NewSlugFromURL(url string) (slug *tp.Slug, err error) {
 	}
 
 	return
+}
+
+var defaultRewriters = [...]string{
+	"requests.ts",
+	"response_pre.ts",
+	"body.ts",
+	"response_post.ts"}
+
+func NewSlugFromProject(proj *project.Project, mixerPath string) (*tp.Slug, error) {
+	mxr := tp.OpenMixer(mixerPath)
+	rewriters, err := Generate(proj, mxr)
+	if err != nil {
+		return nil, err
+	}
+
+	slug, err := tp.NewSlug(proj.Name, proj.Version, len(defaultRewriters))
+	if err != nil {
+		return nil, err
+	}
+
+	userPackagePath := filepath.Join(proj.Path, "functions", "main.ts")
+	LoadFunctions(userPackagePath, mxr.Package)
+
+	for i, name := range defaultRewriters {
+		filename := filepath.Join(proj.ScriptPath, name)
+		if rewriters[name] == nil {
+			return nil, errors.New("Couldn't load rewriter: " + name)
+		}
+		slug.Transformers[i], err = CompileString(string(rewriters[name]), filename, mxr.Package)
+		if err != nil {
+			return nil, errors.New("Failed to create " + name + " transformer: " + err.Error())
+		}
+	}
+	return slug, nil
 }

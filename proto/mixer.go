@@ -10,7 +10,7 @@ import (
 )
 
 func NewMixer(path string) *Mixer {
-	version, err := ioutil.ReadFile(path + "/VERSION")
+	version, err := ioutil.ReadFile(filepath.Join(path, "VERSION"))
 
 	if err != nil {
 		panic("Couldn't find a version for mixer:" + path + ":" + err.Error())
