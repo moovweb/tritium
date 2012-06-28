@@ -4,11 +4,9 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
-	"path/filepath"
 )
 import (
 	pb "code.google.com/p/goprotobuf/proto"
-	"manhattan/project"
 	tp "tritium/proto"
 )
 
