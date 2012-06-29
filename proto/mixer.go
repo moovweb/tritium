@@ -10,7 +10,7 @@ import (
 
 import (
 	pb "code.google.com/p/goprotobuf/proto"
-	"manhattan/util/crypto"
+	"tritium/crypto"
 )
 
 func NewMixer(path string) *Mixer {
