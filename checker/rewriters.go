@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 )
 
 import (
@@ -87,7 +88,10 @@ func run_tests(test_type string, engine *whale.Whale, transformer *proto.Transfo
 		env["host"] = t.Host
 		http_cmd := create_cmd(t)
 		logger.Debug("\n===Original Command===\n" + http_cmd + "\n========================\nEnvironment: " + fmt.Sprintln(env))
-		result, exports, _ := engine.Run(transformer, http_cmd, env)
+
+		// Temporarily just try to create a really large timeout.
+		timeout := time.Now().Add(time.Duration(1) * time.Minute)
+		result, exports, _ := engine.Run(transformer, http_cmd, env, timeout)
 		logger.Debug("\n==Results after transform==\n" + result + "\n==========================")
 		logger.Debug("Exports:  " + fmt.Sprintln(exports))
 		passed := check_cmd(t, result)
