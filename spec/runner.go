@@ -16,6 +16,7 @@ import (
 	"tritium/packager"
 	tp "tritium/proto"
 	"tritium/whale"
+	"time"
 )
 
 func All(command string, directory string, options ...string) {
@@ -122,7 +123,8 @@ func RunSpec(dir string, pkg *tp.Package, eng tritium.Engine, logger *golog.Logg
 	if err != nil {
 		result.Error(dir, err.Error())
 	} else {
-		result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
+		d, _ := time.ParseDuration("1m")
+		result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars, time.Now().Add(d))))
 	}
 	return
 }

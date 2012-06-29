@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"golog"
 	"tritium/whale"
+	"time"
 )
 
 type Lamprey struct {
@@ -24,9 +25,9 @@ func NewEngine(logger *golog.Logger) *Lamprey {
 	return e
 }
 
-func (eng *Lamprey) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output string, exports [][]string, logs []string) {
+func (eng *Lamprey) Run(transform *tp.Transform, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
 	ctx := &Ctx{Lamprey: eng}
-	ctx.WhaleContext = whale.NewEngineCtx(eng.Whale, vars, transform)
+	ctx.WhaleContext = whale.NewEngineCtx(eng.Whale, vars, transform, deadline)
 
 	ctx.Yields = append(ctx.Yields, &whale.YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
