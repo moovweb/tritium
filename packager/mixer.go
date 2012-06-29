@@ -2,15 +2,18 @@ package packager
 
 // TODO(SJ): add hooks to check features here
 import (
-	tp "tritium/proto"
-	proto "code.google.com/p/goprotobuf/proto"
 	"errors"
 	"fmt"
-	yaml "goyaml"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
-	"os"
+)
+
+import (
+	"butler"
+	proto "code.google.com/p/goprotobuf/proto"
+	yaml "goyaml"
+	tp "tritium/proto"
 )
 
 type Mixer struct {
@@ -25,23 +28,6 @@ var SubPaths [3]string
 
 func init() {
 	SubPaths = [3]string{"external", "internal", ""}
-}
-
-func GetDataPath() (path string, err error) {
-	path = os.ExpandEnv("$GOHATTAN_DATA")
-
-	if path == "" {
-		defaultPath := os.ExpandEnv("$HOME/.manhattan")
-		_, err := ioutil.ReadDir(defaultPath)
-
-		if err != nil {
-			return "", errors.New("Data path ($GOHATTAN_DATA) not set and default path ~/.manhattan doesn't exist.")
-		} else {
-			path = defaultPath
-		}
-	}
-
-	return
 }
 
 func BuildMixer(buildPath string, name string, dataPath string) *Mixer {
@@ -116,8 +102,13 @@ func (m *Mixer) loadDependentMixer(buildPath string, name string) {
 	var newMixer *Mixer
 
 	if strings.HasSuffix(name, ".mxr") {
+		mxr, err := butler.GetMixerFromFile(name)
+		if err != nil {
+			panic("Couldn't resolve mixer: " + name)
+		}
+
 		newMixer = &Mixer{
-			Mixer: tp.OpenMixer(filepath.Join(buildPath, name)),
+			Mixer: mxr,
 		}
 	} else {
 		newMixer = BuildMixer(buildPath, name, m.DataPath)

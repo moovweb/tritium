@@ -1,17 +1,20 @@
 package spec
 
 import (
-	tp "tritium/proto"
-	. "fmt"
 	"fmt"
+	"os"
+	"path/filepath"
+)
+
+import (
+	"butler"
 	xmlhelp "gokogiri/help"
 	"golog"
-	"os"
-	. "path/filepath"
 	"runtime/debug"
-	. "tritium"
+	"tritium"
 	"tritium/lamprey"
 	"tritium/packager"
+	tp "tritium/proto"
 	"tritium/whale"
 )
 
@@ -19,12 +22,14 @@ func All(command string, directory string, options ...string) {
 
 	var mixerPath string
 	if len(options) == 1 {
-		mixerPath = options[0]
+		//TODO: Instead of the mixer path, we should pass in just the name
+		//and the version.
+		mixerPath = filepath.Base(options[0])
 	}
 
 	logger := golog.NewLogger("tritium")
 	logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO, true))
-	var eng Engine
+	var eng tritium.Engine
 	if command == "test" {
 		eng = whale.NewEngine(logger)
 	} else if command == "debug" {
@@ -35,7 +40,11 @@ func All(command string, directory string, options ...string) {
 
 	if len(mixerPath) > 0 {
 		// Used when testing in ambrosia
-		mixer := tp.OpenMixer(mixerPath)
+		mixer, err := butler.GetMixerFromFile(mixerPath)
+		if err != nil {
+			panic("Error, could not load mixer: " + mixerPath)
+		}
+
 		pkg = mixer.Package
 	} else {
 		bigPackage := packager.BuildDefaultPackage()
@@ -53,9 +62,9 @@ func All(command string, directory string, options ...string) {
 		foundError = true
 		println("\n=========================================", err.Location, "\n")
 		if err.Panic {
-			Printf(err.Message)
+			fmt.Printf(err.Message)
 		} else {
-			Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", err.Name, err.Message, err.Got, err.Expected)
+			fmt.Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", err.Name, err.Message, err.Got, err.Expected)
 		}
 	}
 	println("\n\n")
@@ -72,14 +81,14 @@ func All(command string, directory string, options ...string) {
 	}
 }
 
-func (result *Result) all(directory string, pkg *tp.Package, eng Engine, logger *golog.Logger) {
-	paths, err := Glob(Join(directory, "main.ts"))
+func (result *Result) all(directory string, pkg *tp.Package, eng tritium.Engine, logger *golog.Logger) {
+	paths, err := filepath.Glob(filepath.Join(directory, "main.ts"))
 	if err == nil && len(paths) == 1 {
 		newResult := RunSpec(directory, pkg, eng, logger)
 		result.Merge(newResult)
 	}
 
-	subdirs, _ := Glob(Join(directory, "*"))
+	subdirs, _ := filepath.Glob(filepath.Join(directory, "*"))
 	for _, subdir := range subdirs {
 		fi, err := os.Stat(subdir)
 		if err != nil {
@@ -93,7 +102,7 @@ func (result *Result) all(directory string, pkg *tp.Package, eng Engine, logger 
 
 }
 
-func RunSpec(dir string, pkg *tp.Package, eng Engine, logger *golog.Logger) (result *Result) {
+func RunSpec(dir string, pkg *tp.Package, eng tritium.Engine, logger *golog.Logger) (result *Result) {
 	result = NewResult()
 
 	defer func() {
