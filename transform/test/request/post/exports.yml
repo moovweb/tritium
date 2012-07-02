@@ -1,0 +1,24 @@
+-
+ - asset_host
+ - ""
+-
+ - method
+ - POST
+-
+ - path
+ - /login
+-
+ - secure
+ - "false"
+-
+ - user_agent
+ - Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; en-US; rv:1.9.1.17) Gecko/20110121 Firefox/3.5.17
+-
+ - cookie
+ - cl_b=126729899192059858; cl_def_lang=en; cl_def_hp=sfbay
+-
+ - host
+ - accounts.craigslist.org
+-
+ - source_host
+ - MODaccounts.craigslist.orgMOD

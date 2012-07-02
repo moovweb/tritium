@@ -1,0 +1,4 @@
+GET /colors?blue=green&red=purple&yellow=12345 HTTP/1.0
+Host: MODexample.comMOD
+Connection: close
+Via: 1.0 moovweb

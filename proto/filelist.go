@@ -84,14 +84,11 @@ func (fl *FileList) buildFile(path string) *File {
 		panic("Could not read file (" + path + "):" + err.Error())
 	}
 
-	pdata := make([][]uint8, 0)
-	pdata = append(pdata, data)
-
 	path = relativePath(fl.RootDirectory, path)
 
 	file := &File{
 		Path: pb.String(path),
-		Data: pdata,
+		Data: data,
 	}
 
 	return file

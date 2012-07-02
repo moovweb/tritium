@@ -8,6 +8,7 @@ import (
 	"golog"
 	"rubex"
 	"strings"
+	"time"
 )
 
 type Whale struct {
@@ -38,6 +39,8 @@ type WhaleContext struct {
 	XPathCache        map[string]*xpath.Expression
 	InnerReplacer     *rubex.Regexp
 	HeaderContentType *rubex.Regexp
+	
+	Deadline          time.Time
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -54,7 +57,7 @@ func NewEngine(logger *golog.Logger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform) (ctx *WhaleContext) {
+func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, deadline time.Time) (ctx *WhaleContext) {
 	ctx = &WhaleContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
@@ -69,6 +72,7 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform) (
 		XPathCache:               make(map[string]*xpath.Expression),
 		InnerReplacer:            rubex.MustCompile(`[\\$](\d)`),
 		HeaderContentType:        rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
+		Deadline:                 deadline,
 	}
 	return
 }
@@ -98,8 +102,8 @@ func (eng *Whale) Free() {
 	*/
 }
 
-func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output string, exports [][]string, logs []string) {
-	ctx := NewEngineCtx(eng, vars, transform)
+func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
+	ctx := NewEngineCtx(eng, vars, transform, deadline)
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
 	scope := &Scope{Value: input.(string)}
@@ -130,6 +134,10 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 			panic(errString)
 		}
 	}()
+	
+	if time.Now().After(ctx.Deadline) {
+		panic("engine timeout")
+	}
 
 	// If our object is invalid, then skip it
 	if proto.GetBool(ins.IsValid) == false {

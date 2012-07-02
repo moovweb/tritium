@@ -18,6 +18,7 @@ type Type struct {
 
 func (this *Type) Reset()         { *this = Type{} }
 func (this *Type) String() string { return proto1.CompactTextString(this) }
+func (*Type) ProtoMessage()       {}
 
 type Package struct {
 	Name             *string     `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
@@ -29,6 +30,7 @@ type Package struct {
 
 func (this *Package) Reset()         { *this = Package{} }
 func (this *Package) String() string { return proto1.CompactTextString(this) }
+func (*Package) ProtoMessage()       {}
 
 func init() {
 }

@@ -27,6 +27,7 @@ type Function struct {
 
 func (this *Function) Reset()         { *this = Function{} }
 func (this *Function) String() string { return proto1.CompactTextString(this) }
+func (*Function) ProtoMessage()       {}
 
 type Function_Argument struct {
 	TypeId           *int32  `protobuf:"varint,1,opt,name=type_id" json:"type_id,omitempty"`
@@ -37,6 +38,7 @@ type Function_Argument struct {
 
 func (this *Function_Argument) Reset()         { *this = Function_Argument{} }
 func (this *Function_Argument) String() string { return proto1.CompactTextString(this) }
+func (*Function_Argument) ProtoMessage()       {}
 
 type FunctionArray struct {
 	Functions        []*Function `protobuf:"bytes,1,rep,name=functions" json:"functions,omitempty"`
@@ -45,6 +47,7 @@ type FunctionArray struct {
 
 func (this *FunctionArray) Reset()         { *this = FunctionArray{} }
 func (this *FunctionArray) String() string { return proto1.CompactTextString(this) }
+func (*FunctionArray) ProtoMessage()       {}
 
 func init() {
 }

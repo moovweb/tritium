@@ -5,6 +5,7 @@ import "testing"
 import "fmt"
 import "tritium/spec"
 import "golog"
+import "time"
 
 func RunBenchmarkSuite(directoryFromRoot string, b *testing.B) {
 	b.StopTimer()
@@ -36,8 +37,9 @@ func RunBenchmark(path string, b *testing.B) {
 	eng := whale.NewEngine(logger)
 
 	b.StartTimer()
+	d, _ := time.ParseDuration("1m")
 	
 	for i := 0; i < b.N; i++ {
-		eng.Run(spec.Script, spec.Input, spec.Vars)
+		eng.Run(spec.Script, spec.Input, spec.Vars, time.Now().Add(d))
 	}
 }

@@ -1,0 +1,4 @@
+HTTP/1.0 200 OK
+Location: http://m.example.com
+Connection: close
+Vary: Accept-Encoding

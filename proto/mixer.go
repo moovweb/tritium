@@ -1,7 +1,6 @@
 package proto
 
 import (
-	pb "code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -9,8 +8,13 @@ import (
 	"strings"
 )
 
+import (
+	pb "code.google.com/p/goprotobuf/proto"
+	"tritium/crypto"
+)
+
 func NewMixer(path string) *Mixer {
-	version, err := ioutil.ReadFile(path + "/VERSION")
+	version, err := ioutil.ReadFile(filepath.Join(path, "VERSION"))
 
 	if err != nil {
 		panic("Couldn't find a version for mixer:" + path + ":" + err.Error())
@@ -26,18 +30,6 @@ func NewMixer(path string) *Mixer {
 		Rewriters: make([]*File, 0),
 		Package:   nil,
 	}
-
-}
-
-func ResolveMixer(name string) *Mixer {
-	path := os.ExpandEnv("$GOHATTAN_DATA/mixers/")
-
-	if !strings.Contains(name, ".mxr") {
-		name = name + ".mxr"
-	}
-
-	fullPath := filepath.Join(path, name)
-	return OpenMixer(fullPath)
 }
 
 func (m *Mixer) Write(path string) (outputPath string, err error) {
@@ -51,7 +43,7 @@ func (m *Mixer) Write(path string) (outputPath string, err error) {
 		return
 	}
 
-	bytes = Encrypt(bytes)
+	bytes = crypto.Encrypt(bytes)
 
 	err = ioutil.WriteFile(outputPath, bytes, 0644)
 	if err != nil {
@@ -59,26 +51,6 @@ func (m *Mixer) Write(path string) (outputPath string, err error) {
 	}
 
 	return
-}
-
-func OpenMixer(location string) (m *Mixer) {
-
-	data, err := ioutil.ReadFile(location)
-
-	if err != nil {
-		panic("Could not find mixer file:" + location)
-	}
-
-	data = Decrypt(data)
-
-	thisMixer := &Mixer{}
-	err = pb.Unmarshal(data, thisMixer)
-
-	if err != nil {
-		panic("Error unmarshalling mixer at:" + location)
-	}
-
-	return thisMixer
 }
 
 func (m *Mixer) Inspect(printFunctions bool) {
@@ -140,30 +112,4 @@ func (m *Mixer) packageSummary(printFunctions bool) string {
 		}
 	}
 	return summary
-}
-
-/* Dummy encryption for now */
-
-func Encrypt(data []byte) []byte {
-	for index, b := range data {
-		data[index] = rot13(b)
-	}
-	return data
-}
-
-func Decrypt(data []byte) []byte {
-	for index, b := range data {
-		data[index] = rot13(b)
-	}
-	return data
-}
-
-func rot13(b byte) byte {
-	if 'a' <= b && b <= 'z' {
-		b = 'a' + ((b-'a')+13)%26
-	}
-	if 'A' <= b && b <= 'Z' {
-		b = 'A' + ((b-'A')+13)%26
-	}
-	return b
 }

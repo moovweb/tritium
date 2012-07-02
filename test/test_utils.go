@@ -11,6 +11,7 @@ import "tritium/spec"
 import tp "tritium/proto"
 import "tritium/packager"
 import "golog"
+import "time"
 
 
 func RunTest(path string) (result *spec.Result) {
@@ -44,7 +45,8 @@ func RunTest(path string) (result *spec.Result) {
 	}
 
 	eng := whale.NewEngine(logger)
-	result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
+	d, _ := time.ParseDuration("1m")
+	result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars, time.Now().Add(d))))
 
 	return
 }

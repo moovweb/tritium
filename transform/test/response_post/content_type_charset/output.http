@@ -1,0 +1,5 @@
+GET / HTTP/1.0
+Content-Type: text/html; charset=piglatin
+Connection: close
+Content-Length: 
+Vary: Accept-Encoding

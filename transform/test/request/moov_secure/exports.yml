@@ -1,0 +1,21 @@
+-
+ - asset_host
+ - ""
+-
+ - method
+ - GET
+-
+ - path
+ - /AST/Misc/Belk_Stores/Global_Navigation/Shopping_Bag.jsp
+-
+ - secure
+ - "true"
+-
+ - user_agent
+ - Mozilla/5.0 (X11; U; Linux x86_64; en-US) AppleWebKit/534.3 (KHTML, like Gecko) Chrome/6.0.472.51 Safari/534.3
+-
+ - host
+ - www.mlocal.belk.com
+-
+ - source_host
+ - MODwww.mlocal.belk.comMOD

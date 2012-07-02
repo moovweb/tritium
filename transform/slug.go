@@ -1,10 +1,14 @@
 package transform
 
-import tp "tritium/proto"
-import pb "code.google.com/p/goprotobuf/proto"
-import "net/http"
-import "errors"
-import "io/ioutil"
+import (
+	"errors"
+	"io/ioutil"
+	"net/http"
+)
+import (
+	pb "code.google.com/p/goprotobuf/proto"
+	tp "tritium/proto"
+)
 
 func NewSlugFromFile(filename string) (slug *tp.Slug, err error) {
 	var data []byte

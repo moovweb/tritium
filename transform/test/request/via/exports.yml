@@ -1,0 +1,21 @@
+-
+ - asset_host
+ - ""
+-
+ - method
+ - GET
+-
+ - path
+ - /faq/
+-
+ - secure
+ - "false"
+-
+ - via
+ - 1.0 fred, 1.1 nowhere.com (Apache/1.1)
+-
+ - host
+ - m.www.example.com
+-
+ - source_host
+ - MODm.www.example.comMOD
