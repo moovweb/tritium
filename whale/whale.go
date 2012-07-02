@@ -8,6 +8,7 @@ import (
 	"golog"
 	"rubex"
 	"strings"
+	"time"
 )
 
 type Whale struct {
@@ -98,17 +99,40 @@ func (eng *Whale) Free() {
 	*/
 }
 
+var (
+	BeforeSum time.Duration
+	BeforeCount time.Duration
+
+	RunSum time.Duration
+	RunCount time.Duration
+
+	AfterSum time.Duration
+	AfterCount time.Duration
+)
+
 func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output string, exports [][]string, logs []string) {
+
+	startTime := time.Now()
 	ctx := NewEngineCtx(eng, vars, transform)
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
 	scope := &Scope{Value: input.(string)}
 	obj := transform.Objects[0]
 	ctx.Filename = proto.GetString(obj.Name)
+	BeforeSum += time.Since(startTime)
+	BeforeCount++
+
+	startTime = time.Now()
 	ctx.RunInstruction(scope, obj.Root)
+	RunSum += time.Since(startTime)
+	RunCount++
+
+	startTime = time.Now()
 	output = scope.Value.(string)
 	exports = ctx.Exports
 	logs = ctx.Logs
+	AfterSum += time.Since(startTime)
+	AfterCount++
 	return
 }
 
