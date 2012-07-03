@@ -1,23 +1,26 @@
 package doc
 
 import (
-	tp "tritium/proto"
 	"bytes"
-	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"io/ioutil"
 	"sort"
 	"strings"
 	"text/template"
+)
+
+import (
+	"butler/null"
 	"tritium/packager"
+	tp "tritium/proto"
 )
 
 func Process(pkg *tp.Package) string {
 	for tindex, ttype := range pkg.Types {
-		ttypeString := proto.GetString(ttype.Name)
+		ttypeString := null.GetString(ttype.Name)
 		println()
 		for _, fun := range pkg.Functions {
-			if tindex == int(proto.GetInt32(fun.ScopeTypeId)) {
+			if tindex == int(null.GetInt32(fun.ScopeTypeId)) {
 				println(ttypeString + "." + FuncStub(pkg, fun))
 			}
 		}
@@ -26,12 +29,12 @@ func Process(pkg *tp.Package) string {
 }
 
 func FuncStub(pkg *tp.Package, fun *tp.Function) string {
-	name := proto.GetString(fun.Name)
+	name := null.GetString(fun.Name)
 	args := ""
 	for _, arg := range fun.Args {
-		t := pkg.Types[int(proto.GetInt32(arg.TypeId))]
-		argName := proto.GetString(t.Name)
-		argName = argName + " %" + proto.GetString(arg.Name)
+		t := pkg.Types[int(null.GetInt32(arg.TypeId))]
+		argName := null.GetString(t.Name)
+		argName = argName + " %" + null.GetString(arg.Name)
 		args = args + ", " + argName
 	}
 	if len(args) > 1 {
@@ -143,11 +146,11 @@ func RenderDocumentation(d *DefinitionList) []byte {
 }
 
 func ShortFuncStub(pkg *tp.Package, fun *tp.Function) string {
-	name := proto.GetString(fun.Name)
+	name := null.GetString(fun.Name)
 	args := ""
 	for _, arg := range fun.Args {
-		t := pkg.Types[int(proto.GetInt32(arg.TypeId))]
-		argName := proto.GetString(t.Name)
+		t := pkg.Types[int(null.GetInt32(arg.TypeId))]
+		argName := null.GetString(t.Name)
 		argName = argName
 		args = args + ", " + argName
 	}
@@ -165,21 +168,21 @@ func (d *DefinitionList) generatePackageDocs(name string) {
 	pkg.Load(name)
 
 	for tindex, ttype := range pkg.Types {
-		ttypeString := proto.GetString(ttype.Name)
+		ttypeString := null.GetString(ttype.Name)
 
 		for _, fun := range pkg.Functions {
 			stub := FuncStub(pkg.Package, fun)
 
-			if tindex == int(proto.GetInt32(fun.ScopeTypeId)) && d.Definitions[ttypeString][stub] == nil {
+			if tindex == int(null.GetInt32(fun.ScopeTypeId)) && d.Definitions[ttypeString][stub] == nil {
 
 				function := &FunctionDefinition{
-					Name:        proto.GetString(fun.Name),
+					Name:        null.GetString(fun.Name),
 					ParentScope: ttypeString,
 					ShortStub:   ShortFuncStub(pkg.Package, fun),
 					PackageName: name,
 				}
 				function.setID()
-				description := proto.GetString(fun.Description)
+				description := null.GetString(fun.Description)
 
 				if len(description) > 0 {
 					lines := make([]string, 0)
@@ -256,10 +259,10 @@ func (d *DefinitionList) findAncestralFunction(pkg *tp.Package, fun *tp.Function
 func ancestralFuncStub(pkg *tp.Package, fun *tp.Function) *string {
 	foundAncestor := false
 
-	name := proto.GetString(fun.Name)
+	name := null.GetString(fun.Name)
 	args := ""
 	for _, arg := range fun.Args {
-		argType := proto.GetInt32(arg.TypeId)
+		argType := null.GetInt32(arg.TypeId)
 		ancestralArgType := FindAncestralType(pkg, argType)
 
 		if ancestralArgType != -1 {
@@ -270,14 +273,14 @@ func ancestralFuncStub(pkg *tp.Package, fun *tp.Function) *string {
 		argTypeString := pkg.GetTypeName(argType)
 
 		argName := argTypeString
-		argName = argName + " %" + proto.GetString(arg.Name)
+		argName = argName + " %" + null.GetString(arg.Name)
 		args = args + ", " + argName
 	}
 	if len(args) > 1 {
 		args = args[2:]
 	}
 
-	returnType := proto.GetInt32(fun.ReturnTypeId)
+	returnType := null.GetInt32(fun.ReturnTypeId)
 	ancestralReturnType := FindAncestralType(pkg, returnType)
 
 	if ancestralReturnType != -1 {
@@ -288,7 +291,7 @@ func ancestralFuncStub(pkg *tp.Package, fun *tp.Function) *string {
 	returnTypeString := pkg.GetTypeName(returnType)
 	returnVal := name + "(" + args + ") " + returnTypeString + " "
 
-	opensType := proto.GetInt32(fun.OpensTypeId)
+	opensType := null.GetInt32(fun.OpensTypeId)
 	ancestralOpensType := FindAncestralType(pkg, opensType)
 
 	if ancestralOpensType != -1 {
@@ -312,7 +315,7 @@ func ancestralFuncStub(pkg *tp.Package, fun *tp.Function) *string {
 func FindAncestralType(pkg *tp.Package, thisType int32) int32 {
 	someType := pkg.Types[thisType]
 
-	implements := proto.GetInt32(someType.Implements)
+	implements := null.GetInt32(someType.Implements)
 	if implements != 0 {
 		return implements
 	}
@@ -329,7 +332,7 @@ func getBody(name string, fun *tp.Function) (body string) {
 		if len(fun.Instruction.Children) > 0 {
 			for _, instruction := range fun.Instruction.Children {
 				if *instruction.Type != tp.Instruction_TEXT {
-					start = int(proto.GetInt32(instruction.LineNumber))
+					start = int(null.GetInt32(instruction.LineNumber))
 					break
 				}
 			}
@@ -343,7 +346,7 @@ func getBody(name string, fun *tp.Function) (body string) {
 					depth += 1
 				} else {
 					done = true
-					end = int(proto.GetInt32(thisInstruction.LineNumber))
+					end = int(null.GetInt32(thisInstruction.LineNumber))
 				}
 			}
 
