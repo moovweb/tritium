@@ -9,8 +9,8 @@ import (
 )
 
 import (
+	"butler/crypto"
 	pb "code.google.com/p/goprotobuf/proto"
-	"tritium/crypto"
 )
 
 func NewMixer(path string) *Mixer {
