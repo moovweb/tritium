@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 import (
 	pb "code.google.com/p/goprotobuf/proto"
@@ -27,11 +28,20 @@ func NewSlugFromFile(filename string) (slug *tp.Slug, err error) {
 	return
 }
 
-func NewSlugFromURL(url string) (slug *tp.Slug, err error) {
+func NewSlugFromURL(url string, timestamp time.Time) (slug *tp.Slug, err error) {
 	var data []byte
 	var resp *http.Response
 
-	resp, err = http.Get(url)
+	client := &http.Client{}
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return
+	}
+
+	req.Header.Add("If-Modified-Since", timestamp.Format(time.RFC1123))
+
+	resp, err = client.Do(req)
 	if err != nil {
 		return
 	}
