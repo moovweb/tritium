@@ -1,13 +1,15 @@
 package packager
 
 import (
-	tp "tritium/proto"
-	proto "code.google.com/p/goprotobuf/proto"
 	"io/ioutil"
-	"log"
-	"path/filepath"
-	"tritium/crypto"
 	"os"
+	"path/filepath"
+)
+
+import (
+	"butler/crypto"
+	proto "code.google.com/p/goprotobuf/proto"
+	tp "tritium/proto"
 )
 
 func (pkg *Package) write() {
@@ -20,8 +22,7 @@ func (pkg *Package) write() {
 	bytes, err := proto.Marshal(pkg.Package)
 
 	if err != nil {
-		println("Could not marshal package:", name)
-		log.Panic(err)
+		panic("Could not marshal package: " + name + " (" + err.Error() + ")")
 	}
 
 	bytes = crypto.Encrypt(bytes)
