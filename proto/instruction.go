@@ -1,6 +1,7 @@
 package proto
 
 import (
+	"butler/null"
 	pb "code.google.com/p/goprotobuf/proto"
 )
 
@@ -105,7 +106,7 @@ func MakeBlock(children []*Instruction, lineNum int32) *Instruction {
 }
 
 func (ins *Instruction) GetFunction(pkg *Package) *Function {
-	funId := pb.GetInt32(ins.FunctionId)
+	funId := null.GetInt32(ins.FunctionId)
 	return pkg.Functions[int(funId)]
 }
 

@@ -10,6 +10,7 @@ import (
 
 import (
 	"butler/crypto"
+	"butler/null"
 	pb "code.google.com/p/goprotobuf/proto"
 )
 
@@ -34,8 +35,8 @@ func NewMixer(path string) *Mixer {
 
 func (m *Mixer) Write(path string) (outputPath string, err error) {
 
-	name := pb.GetString(m.Name)
-	version := pb.GetString(m.Version)
+	name := null.GetString(m.Name)
+	version := null.GetString(m.Version)
 	outputPath = filepath.Join(path, name+"-"+version+".mxr")
 
 	bytes, err := pb.Marshal(m)
@@ -56,7 +57,7 @@ func (m *Mixer) Write(path string) (outputPath string, err error) {
 func (m *Mixer) Inspect(printFunctions bool) {
 	println("\tRewriters:")
 	for _, rewriter := range m.Rewriters {
-		fmt.Printf("\t\t -- %v\n", pb.GetString(rewriter.Path))
+		fmt.Printf("\t\t -- %v\n", null.GetString(rewriter.Path))
 	}
 
 	println("\tRoot Package:")
@@ -64,7 +65,7 @@ func (m *Mixer) Inspect(printFunctions bool) {
 }
 
 func (m *Mixer) Unpack(path string) {
-	fullPath := filepath.Join(path, pb.GetString(m.Name)+"-"+pb.GetString(m.Version))
+	fullPath := filepath.Join(path, null.GetString(m.Name)+"-"+null.GetString(m.Version))
 	err := os.MkdirAll(fullPath, 0755)
 	if err != nil {
 		panic(err.Error())
@@ -101,7 +102,7 @@ func (m *Mixer) unpackFiles(path string, files []*File) (err error) {
 func (m *Mixer) packageSummary(printFunctions bool) string {
 	summary := ""
 	if m.Package != nil {
-		summary += fmt.Sprintf("\t\t -- Name: %v\n", pb.GetString(m.Package.Name))
+		summary += fmt.Sprintf("\t\t -- Name: %v\n", null.GetString(m.Package.Name))
 		summary += fmt.Sprintf("\t\t -- Types: %v\n", m.Package.Types)
 		summary += fmt.Sprintf("\t\t -- Dependencies:  %v\n", m.Package.Dependencies)
 		if printFunctions {

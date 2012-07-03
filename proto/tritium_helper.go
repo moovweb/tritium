@@ -1,11 +1,15 @@
 package proto
 
 import (
-	pb "code.google.com/p/goprotobuf/proto"
-	yaml "goyaml"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+)
+
+import (
+	"butler/null"
+	pb "code.google.com/p/goprotobuf/proto"
+	yaml "goyaml"
 )
 
 func NewTritiumTestFromFile(filename string) (test *TritiumTest, err error) {
@@ -44,7 +48,7 @@ func (test *TritiumTest) WriteFile(filename string) (err error) {
 func (test *TritiumTest) Env() (env map[string]string) {
 	env = map[string]string{}
 	for _, hash := range test.EnvProto {
-		env[pb.GetString(hash.Key)] = pb.GetString(hash.Value)
+		env[null.GetString(hash.Key)] = null.GetString(hash.Value)
 	}
 	return
 }
@@ -52,7 +56,7 @@ func (test *TritiumTest) Env() (env map[string]string) {
 func (test *TritiumTest) Exports() (exports [][]string) {
 	exports = make([][]string, len(test.ExportsProto))
 	for n, hash := range test.ExportsProto {
-		exports[n] = []string{pb.GetString(hash.Key), pb.GetString(hash.Value)}
+		exports[n] = []string{null.GetString(hash.Key), null.GetString(hash.Value)}
 	}
 	return
 }
@@ -129,19 +133,19 @@ func (test *TritiumTest) WriteFolder(path string) (err error) {
 	}
 
 	input_script := filepath.Join(path, "input.ts")
-	err = ioutil.WriteFile(input_script, []byte(pb.GetString(test.Script)), 0644)
+	err = ioutil.WriteFile(input_script, []byte(null.GetString(test.Script)), 0644)
 	if err != nil {
 		return
 	}
 
 	input_file := filepath.Join(path, "input.txt")
-	err = ioutil.WriteFile(input_file, []byte(pb.GetString(test.Input)), 0644)
+	err = ioutil.WriteFile(input_file, []byte(null.GetString(test.Input)), 0644)
 	if err != nil {
 		return
 	}
 
 	output_file := filepath.Join(path, "output.txt")
-	err = ioutil.WriteFile(output_file, []byte(pb.GetString(test.Output)), 0644)
+	err = ioutil.WriteFile(output_file, []byte(null.GetString(test.Output)), 0644)
 	if err != nil {
 		return
 	}

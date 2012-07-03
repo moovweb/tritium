@@ -1,10 +1,14 @@
 package linker
 
 import (
-	tp "tritium/proto"
-	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"log"
+)
+
+import (
+	"butler/null"
+	proto "code.google.com/p/goprotobuf/proto"
+	tp "tritium/proto"
 )
 
 type FuncMap map[string]int
@@ -25,7 +29,7 @@ func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject) *LinkingC
 	// Setup object lookup map!
 	objScriptLookup := make(map[string]int, len(objs))
 	for index, obj := range objs {
-		objScriptLookup[proto.GetString(obj.Name)] = index
+		objScriptLookup[null.GetString(obj.Name)] = index
 	}
 	ctx := NewLinkingContext(pkg)
 	ctx.objMap = objScriptLookup
@@ -40,20 +44,20 @@ func NewLinkingContext(pkg *tp.Package) *LinkingContext {
 
 	for typeId, typeObj := range pkg.Types {
 		funcMap := make(FuncMap)
-		types[typeId] = proto.GetString(typeObj.Name)
-		//println("Type:",proto.GetString(typeObj.Name))
-		//println("Implements:", proto.GetInt32(typeObj.Implements))
-		implements := functionLookup[proto.GetInt32(typeObj.Implements)]
+		types[typeId] = null.GetString(typeObj.Name)
+		//println("Type:",null.GetString(typeObj.Name))
+		//println("Implements:", null.GetInt32(typeObj.Implements))
+		implements := functionLookup[null.GetInt32(typeObj.Implements)]
 		for index, fun := range pkg.Functions {
 			stub := fun.Stub(pkg)
 
-			funScopeId := proto.GetInt32(fun.ScopeTypeId)
+			funScopeId := null.GetInt32(fun.ScopeTypeId)
 			inherited := false
 			if implements != nil {
 				_, inherited = implements[stub]
 			}
 			if (funScopeId == int32(typeId)) || inherited {
-				//println(proto.GetString(typeObj.Name), ":", stub)
+				//println(null.GetString(typeObj.Name), ":", stub)
 				funcMap[stub] = index
 			}
 		}
@@ -84,15 +88,15 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 	obj := ctx.Objects[objId]
 	//println("link object", objId)
 	//println(obj.String())
-	if proto.GetBool(obj.Linked) == false {
-		//println("Linking", proto.GetString(obj.Name))
+	if null.GetBool(obj.Linked) == false {
+		//println("Linking", null.GetString(obj.Name))
 		obj.ScopeTypeId = proto.Int(scopeType)
 		obj.Linked = proto.Bool(true)
-		ctx.files = append(ctx.files, proto.GetString(obj.Name))
+		ctx.files = append(ctx.files, null.GetString(obj.Name))
 		ctx.ProcessInstruction(obj.Root, scopeType)
 		ctx.files = ctx.files[:(len(ctx.files) - 1)]
 	} else {
-		if scopeType != int(proto.GetInt32(obj.ScopeTypeId)) {
+		if scopeType != int(null.GetInt32(obj.ScopeTypeId)) {
 			ctx.error("script", "Imported a script in two different scopes! Not processing second import.")
 		}
 	}
@@ -109,9 +113,9 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 	switch *ins.Type {
 	case tp.Instruction_IMPORT:
 		// set its import_id and blank the value field
-		importValue := proto.GetString(ins.Value)
+		importValue := null.GetString(ins.Value)
 		//println("import: ", importValue)
-		//println(proto.GetInt32(ins.LineNumber))
+		//println(null.GetInt32(ins.LineNumber))
 		importId, ok := ctx.objMap[importValue]
 		if ok != true {
 			ctx.error(ins, "Invalid import %q", ins.String())
@@ -124,7 +128,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		ins.Value = nil
 		//println("after", ins.String())
 	case tp.Instruction_LOCAL_VAR:
-		name := proto.GetString(ins.Value)
+		name := null.GetString(ins.Value)
 		if name == "1" || name == "2" || name == "3" || name == "4" || name == "5" || name == "6" || name == "7" {
 			if len(ins.Arguments) > 0 {
 				// We are going to assign something to this variable
@@ -166,7 +170,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		}
 
 	case tp.Instruction_FUNCTION_CALL:
-		stub := proto.GetString(ins.Value)
+		stub := null.GetString(ins.Value)
 		if stub == "yield" {
 			ins.YieldTypeId = proto.Int32(int32(scopeType))
 		}
@@ -193,12 +197,12 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			} else {
 				fileName = "in package"
 			}
-			ctx.error(ins, "No such function found: %s.%s in file %s:%d", ctx.types[scopeType], stub, fileName, proto.GetInt32(ins.LineNumber))
+			ctx.error(ins, "No such function found: %s.%s in file %s:%d", ctx.types[scopeType], stub, fileName, null.GetInt32(ins.LineNumber))
 		} else {
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
-			returnType = int(proto.GetInt32(fun.ReturnTypeId))
-			opensScopeType := int(proto.GetInt32(fun.OpensTypeId))
+			returnType = int(null.GetInt32(fun.ReturnTypeId))
+			opensScopeType := int(null.GetInt32(fun.OpensTypeId))
 			if opensScopeType == 0 {
 				// If we're a Base scope, don't mess with texas!
 				opensScopeType = scopeType
