@@ -10,9 +10,12 @@ import "bytes"
 import "io/ioutil"
 import "os"
 import "fmt"
+import "time"
 import "testing"
 import "path/filepath"
 import pb "code.google.com/p/goprotobuf/proto"
+import "butler/null"
+import "butler"
 import "tritium/linker"
 
 type GeneratorTestError struct {
@@ -39,7 +42,7 @@ const TEMPLATE_DIR = "templates"
 func init() {
 	TRITIUM_PATH = os.Getenv("TRITIUM_PATH")
 	if TRITIUM_PATH == "" {
-		TRITIUM_PATH = os.ExpandEnv("$HOME/.manhattan/")
+		TRITIUM_PATH = butler.GetDataPath()
 	}
 }
 
@@ -70,7 +73,7 @@ func generateRewriter(test_type string, test_name string) (string, *GeneratorTes
 		return "", NewGeneratorTestError("Failed to parse "+test_type+" template", err)
 	}
 
-	proj, err := project.New(filepath.Join(TEST_DIR, test_type, test_name))
+	proj, err := project.New(test_name, filepath.Join(TEST_DIR, test_type, test_name))
 	if err != nil {
 		return "", NewGeneratorTestError("Failed to load project", err)
 	}
@@ -95,7 +98,6 @@ func CompileTest(test *tp.TritiumTest, path string, pkg *tp.Package) (err error)
 	test.Transformer = test_transform
 	return
 }
-
 
 func runTest(test_type string, test_name string, pkg *packager.Package) (err *GeneratorTestError) {
 	fmt.Print(" * ", test_name+"...")
@@ -129,10 +131,11 @@ func runTest(test_type string, test_name string, pkg *packager.Package) (err *Ge
 	logger.AddProcessor("console", consoleProc)
 
 	e := whale.NewEngine(logger)
-	result, result_exports, _ := e.Run(test.Transformer, string(pb.GetString(test.Input)), test.Env())
+	deadline := time.Now().Add(time.Duration(1) * time.Minute)
+	result, result_exports, _ := e.Run(test.Transformer, string(null.GetString(test.Input)), test.Env(), deadline)
 
-	if result != string(pb.GetString(test.Output)) {
-		err := NewGeneratorTestError("Expected:\n["+string(pb.GetString(test.Output))+"]\nGOT:\n["+result+"]", nil)
+	if result != string(null.GetString(test.Output)) {
+		err := NewGeneratorTestError("Expected:\n["+string(null.GetString(test.Output))+"]\nGOT:\n["+result+"]", nil)
 		return NewGeneratorTestError("Output doesn't match", err)
 	}
 
