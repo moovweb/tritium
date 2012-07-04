@@ -46,6 +46,10 @@ func NewSlugFromURL(url string, timestamp time.Time) (slug *tp.Slug, err error) 
 		return
 	}
 
+	if resp.StatusCode == 304 {
+		return
+	}
+
 	if resp.StatusCode != 200 {
 		err = errors.New("Couldn't load slug from " + url)
 		return
