@@ -11,10 +11,9 @@ var _ = proto1.GetString
 var _ = math.Inf
 
 type Slug struct {
-	Customer         *string      `protobuf:"bytes,1,req,name=customer" json:"customer,omitempty"`
-	Project          *string      `protobuf:"bytes,2,req,name=project" json:"project,omitempty"`
-	Version          *string      `protobuf:"bytes,3,req,name=version" json:"version,omitempty"`
-	Transformers     []*Transform `protobuf:"bytes,4,rep,name=transformers" json:"transformers,omitempty"`
+	Name             *string      `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
+	Version          *string      `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
+	Transformers     []*Transform `protobuf:"bytes,3,rep,name=transformers" json:"transformers,omitempty"`
 	XXX_unrecognized []byte       `json:"-"`
 }
 
