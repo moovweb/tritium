@@ -1,12 +1,16 @@
 package proto
 
 import (
-	pb "code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
+)
+
+import (
+	"butler/null"
+	pb "code.google.com/p/goprotobuf/proto"
 )
 
 type FileList struct {
@@ -36,11 +40,11 @@ func CollectFiles(dir string) []*File {
 		}
 
 		if info.IsDir() {
-				return nil
+			return nil
 		}
 
 		if err != nil {
-		    return err
+			return err
 		}
 		file := fileList.buildFile(path)
 		fileList.Files = append(fileList.Files, file)
@@ -95,7 +99,7 @@ func (fl *FileList) buildFile(path string) *File {
 }
 
 func (f *File) AbsolutePath(dir string) string {
-	return filepath.Join(dir, pb.GetString(f.Path))
+	return filepath.Join(dir, null.GetString(f.Path))
 }
 
 func relativePath(parentDirectory string, path string) string {

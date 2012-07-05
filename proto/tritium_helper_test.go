@@ -1,7 +1,7 @@
 package proto
 
 import "testing"
-import proto "code.google.com/p/goprotobuf/proto"
+import "butler/null"
 
 func TestNewTritiumTestFromFolder(t *testing.T) {
 	_, err := NewTritiumTestFromFolder("test")
@@ -28,7 +28,7 @@ func TestNewTritiumTestFromFile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if proto.GetString(test.Script) != "#test\n" {
+	if null.GetString(test.Script) != "#test\n" {
 		t.Fatal("Didn't get expected script back")
 	}
 }

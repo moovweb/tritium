@@ -11,6 +11,7 @@ import (
 
 import (
 	"butler"
+	"butler/null"
 	proto "code.google.com/p/goprotobuf/proto"
 	yaml "goyaml"
 	tp "tritium/proto"
@@ -51,11 +52,11 @@ func BuildMixer(buildPath string, name string, dataPath string) *Mixer {
 	mixer.Rewriters = tp.CollectFiles(rewritersDirectory)
 
 	packageDirectory := filepath.Join(path, "/package")
-	mixer.RootPackage = NewRootPackage(packageDirectory, proto.GetString(mixer.Name), dataPath)
+	mixer.RootPackage = NewRootPackage(packageDirectory, null.GetString(mixer.Name), dataPath)
 
 	mixer.loadDependentMixers()
 
-	error := BuildRootPackage(mixer.RootPackage, packageDirectory, proto.GetString(mixer.Name))
+	error := BuildRootPackage(mixer.RootPackage, packageDirectory, null.GetString(mixer.Name))
 
 	if error == nil {
 		//mixer.RootPackage = pkg
@@ -71,7 +72,7 @@ func BuildMixer(buildPath string, name string, dataPath string) *Mixer {
 	buildNumber, err := ioutil.ReadFile(versionFile)
 
 	if err == nil {
-		mixer.Version = proto.String(proto.GetString(mixer.Version) + "." + strings.Trim(string(buildNumber), "\n\r "))
+		mixer.Version = proto.String(null.GetString(mixer.Version) + "." + strings.Trim(string(buildNumber), "\n\r "))
 	}
 
 	return mixer
@@ -122,8 +123,8 @@ func (m *Mixer) Merge(otherMixer *Mixer) {
 	if len(otherMixer.Rewriters) > 0 {
 
 		if len(m.Rewriters) > 0 {
-			thisName := proto.GetString(m.Name)
-			otherName := proto.GetString(otherMixer.Name)
+			thisName := null.GetString(m.Name)
+			otherName := null.GetString(otherMixer.Name)
 			panic(fmt.Sprintf("Duplicate sets of rewriters. Mixer (%v) and mixer (%v) both define rewriters.", thisName, otherName))
 		}
 
@@ -133,7 +134,7 @@ func (m *Mixer) Merge(otherMixer *Mixer) {
 	// Merge only exists on (tritium) packager.Package
 	m.RootPackage.Merge(otherMixer.Package)
 
-	//	m.RootPackage.Dependencies = append(m.RootPackage.Dependencies, proto.GetString(otherMixer.Name) )
+	//	m.RootPackage.Dependencies = append(m.RootPackage.Dependencies, null.GetString(otherMixer.Name) )
 
 }
 

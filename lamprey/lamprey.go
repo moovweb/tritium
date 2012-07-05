@@ -1,12 +1,15 @@
 package lamprey
 
 import (
-	tp "tritium/proto"
-	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
-	"golog"
-	"tritium/whale"
 	"time"
+)
+
+import (
+	"butler/null"
+	"golog"
+	tp "tritium/proto"
+	"tritium/whale"
 )
 
 type Lamprey struct {
@@ -33,7 +36,7 @@ func (eng *Lamprey) Run(transform *tp.Transform, input interface{}, vars map[str
 	ctx.UsePackage(transform.Pkg)
 	scope := &whale.Scope{Value: input.(string)}
 	obj := transform.Objects[0]
-	ctx.Filename = proto.GetString(obj.Name)
+	ctx.Filename = null.GetString(obj.Name)
 	ctx.level = 0
 	ctx.RunInstruction(scope, obj.Root)
 	output = scope.Value.(string)
@@ -61,7 +64,7 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 			}
 			if ctx.HadError == false {
 				ctx.HadError = true
-				errString = errString + "\n" + ins.Type.String() + " " + proto.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
+				errString = errString + "\n" + ins.Type.String() + " " + null.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
 			}
 			errString = errString + ctx.FileAndLine(ins) + "\n"
 			panic(errString)
@@ -69,7 +72,7 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 	}()
 
 	// If our object is invalid, then skip it
-	if proto.GetBool(ins.IsValid) == false {
+	if null.GetBool(ins.IsValid) == false {
 		panic("Invalid instruction. Should have stopped before linking!")
 	}
 	indent := ""
@@ -87,11 +90,11 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 		fmt.Printf("%sInstruction block returns: %v\n", indent, returnValue)
 	case tp.Instruction_TEXT:
 		fmt.Printf("%sInstruction text\n", indent)
-		returnValue = proto.GetString(ins.Value)
+		returnValue = null.GetString(ins.Value)
 		fmt.Printf("%sInstruction text returns: %v\n", indent, returnValue)
 	case tp.Instruction_LOCAL_VAR:
 		fmt.Printf("%sEval local var\n", indent)
-		name := proto.GetString(ins.Value)
+		name := null.GetString(ins.Value)
 		vars := ctx.Vars()
 		if len(ins.Arguments) > 0 {
 			vars[name] = ctx.RunInstruction(scope, ins.Arguments[0])
@@ -105,14 +108,14 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 		fmt.Printf("%sreturn: %v\n", indent, vars[name])
 		returnValue = vars[name]
 	case tp.Instruction_IMPORT:
-		obj := ctx.Objects[int(proto.GetInt32(ins.ObjectId))]
+		obj := ctx.Objects[int(null.GetInt32(ins.ObjectId))]
 		curFile := ctx.Filename
-		ctx.Filename = proto.GetString(obj.Name)
+		ctx.Filename = null.GetString(obj.Name)
 		ctx.RunChildren(scope, obj.Root)
 		ctx.Filename = curFile
 		fmt.Printf("%sImport: %q\n", indent, ctx.Filename)
 	case tp.Instruction_FUNCTION_CALL:
-		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]
+		fun := ctx.Functions[int(null.GetInt32(ins.FunctionId))]
 		fmt.Printf("%s%s\n", indent, fun.Name)
 		fmt.Printf("%sscope.Value berfore loading vars:\n%v\n", indent, scope.Value)
 		args := make([]interface{}, len(ins.Arguments))
@@ -131,7 +134,7 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 		fmt.Printf("%s%s", indent, debugInfo)
 		fmt.Printf("%sscope.Value before calling:\n%v\n", indent, scope.Value)
 
-		if proto.GetBool(fun.BuiltIn) {
+		if null.GetBool(fun.BuiltIn) {
 			if f := whale.LookupBuiltIn(fun.Name); f != nil {
 				returnValue = f(ctx, scope, ins, args)
 			} else {
@@ -143,7 +146,7 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 			// Setup the new local var
 			vars := make(map[string]interface{}, len(args))
 			for i, arg := range fun.Args {
-				vars[proto.GetString(arg.Name)] = args[i]
+				vars[null.GetString(arg.Name)] = args[i]
 			}
 			yieldBlock := &whale.YieldBlock{
 				Ins:  ins,

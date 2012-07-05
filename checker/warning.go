@@ -1,10 +1,10 @@
 package checker
 
 import (
-	tp "tritium/proto"
-	proto "code.google.com/p/goprotobuf/proto"
+	"butler/null"
 	"fmt"
 	. "strings"
+	tp "tritium/proto"
 )
 
 type Warning struct {
@@ -16,8 +16,8 @@ type Warning struct {
 func NewWarning(obj *tp.ScriptObject, ins *tp.Instruction, message string) (w *Warning) {
 	w = &Warning{
 		Message:    message,
-		FilePath:   proto.GetString(obj.Name),
-		LineNumber: fmt.Sprintf("%d", proto.GetInt32(ins.LineNumber)),
+		FilePath:   null.GetString(obj.Name),
+		LineNumber: fmt.Sprintf("%d", null.GetInt32(ins.LineNumber)),
 	}
 	return
 }

@@ -1,15 +1,19 @@
 package packager
 
 import (
-	tp "tritium/proto"
-	proto "code.google.com/p/goprotobuf/proto"
-	yaml "goyaml"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+)
+
+import (
+	"butler/null"
+	proto "code.google.com/p/goprotobuf/proto"
+	yaml "goyaml"
 	linker "tritium/linker"
 	parser "tritium/parser"
+	tp "tritium/proto"
 )
 
 func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
@@ -19,8 +23,8 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
 	//	pkg.Log.Info("\t\t -- function: %v\n", fun)
 
 	// Re-uses linker's logic to resolve function definitions
-	if proto.GetBool(fun.BuiltIn) == false {
-		typeName := proto.GetString(fun.ScopeType)
+	if null.GetBool(fun.BuiltIn) == false {
+		typeName := null.GetString(fun.ScopeType)
 
 		if len(typeName) != 0 {
 			// When I pass in functions from the inheritance resolver, they're typeId is already set
@@ -39,18 +43,18 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
 				// Similar deal. Input functions from inheritance resolution already have ids set
 
 				arg.TypeId = pkg.GetProtoTypeId(arg.TypeString)
-				//println("Processing %", proto.GetString(arg.Name))
-				argTypeId = pkg.GetTypeId(proto.GetString(arg.TypeString))
+				//println("Processing %", null.GetString(arg.Name))
+				argTypeId = pkg.GetTypeId(null.GetString(arg.TypeString))
 				arg.TypeString = nil
 			} else {
-				argTypeId = int(proto.GetInt32(arg.TypeId))
+				argTypeId = int(null.GetInt32(arg.TypeId))
 			}
 
-			localScope[proto.GetString(arg.Name)] = argTypeId
+			localScope[null.GetString(arg.Name)] = argTypeId
 		}
 
-		//pkg.Log.Info("Some insitruction: %v, %s", fun.Instruction, proto.GetString(fun.Name) )
-		scopeTypeId := int(proto.GetInt32(fun.ScopeTypeId))
+		//pkg.Log.Info("Some insitruction: %v, %s", fun.Instruction, null.GetString(fun.Name) )
+		scopeTypeId := int(null.GetInt32(fun.ScopeTypeId))
 		//pkg.Log.Info("\t\t -- opening scope type : %v\n", scopeTypeId)
 		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope)
 
@@ -66,7 +70,7 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
 		if fun.Instruction != nil {
 			fun.Instruction.Iterate(func(ins *tp.Instruction) {
 				if *ins.Type == tp.Instruction_FUNCTION_CALL {
-					if proto.GetString(ins.Value) == "yield" {
+					if null.GetString(ins.Value) == "yield" {
 						fun.OpensTypeId = ins.YieldTypeId
 					}
 				}
@@ -101,12 +105,12 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 	// ScopeType
 
-	thisTypeId := proto.GetInt32(fun.ScopeTypeId)
+	thisTypeId := null.GetInt32(fun.ScopeTypeId)
 	newType := pkg.Package.FindDescendantType(thisTypeId)
 
 	if newType != -1 {
 		if !inherit {
-			pkg.Log.Info("\t -- ScopeType : Found ancestral type. Cloning function %v\n", proto.GetString(fun.Name))
+			pkg.Log.Info("\t -- ScopeType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
 			newFun = fun.Clone()
 			// pkg.Log.Info("\t -- New fun: %v", newFun)
 			inherit = true
@@ -117,12 +121,12 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 	// ReturnType
 
-	thisTypeId = proto.GetInt32(fun.ReturnTypeId)
+	thisTypeId = null.GetInt32(fun.ReturnTypeId)
 	newType = pkg.Package.FindDescendantType(thisTypeId)
 
 	if newType != -1 {
 		if !inherit {
-			pkg.Log.Info("\t -- ReturnType : Found ancestral type. Cloning function %v\n", proto.GetString(fun.Name))
+			pkg.Log.Info("\t -- ReturnType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
 			newFun = fun.Clone()
 			// pkg.Log.Info("\t -- New fun: %v", newFun)
 			inherit = true
@@ -133,13 +137,13 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 	// OpensType
 
-	thisTypeId = proto.GetInt32(fun.OpensTypeId)
+	thisTypeId = null.GetInt32(fun.OpensTypeId)
 	newType = pkg.Package.FindDescendantType(thisTypeId)
 
 	if newType != -1 {
 
 		if !inherit {
-			pkg.Log.Info("\t -- OpensType : Found ancestral type. Cloning function %v\n", proto.GetString(fun.Name))
+			pkg.Log.Info("\t -- OpensType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
 			newFun = fun.Clone()
 			// pkg.Log.Info("\t -- New fun: %v", newFun)
 			inherit = true
@@ -151,13 +155,13 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 	// Arguments
 
 	for index, arg := range fun.Args {
-		thisTypeId = proto.GetInt32(arg.TypeId)
+		thisTypeId = null.GetInt32(arg.TypeId)
 		newType = pkg.Package.FindDescendantType(thisTypeId)
 
 		if newType != -1 {
 
 			if !inherit {
-				pkg.Log.Info("\t -- ArgType : Found ancestral type. Cloning function %v\n", proto.GetString(fun.Name))
+				pkg.Log.Info("\t -- ArgType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
 				newFun = fun.Clone()
 				// pkg.Log.Info("\t -- New fun: %v", newFun)
 				inherit = true
@@ -207,7 +211,7 @@ func (pkg *Package) Marshal() []byte {
 
 func (pkg *Package) findTypeIndex(name string) int {
 	for index, typeObj := range pkg.Types {
-		if name == proto.GetString(typeObj.Name) {
+		if name == null.GetString(typeObj.Name) {
 			return index
 		}
 	}
@@ -275,26 +279,26 @@ func (pkg *Package) readHeaderFile(location string) {
 
 func (pkg *Package) resolveHeader(function *tp.Function) {
 
-	returnType := proto.GetString(function.ReturnType)
+	returnType := null.GetString(function.ReturnType)
 	if len(returnType) > 0 {
 		function.ReturnTypeId = proto.Int32(int32(pkg.findTypeIndex(returnType)))
 		function.ReturnType = nil
 	}
 
-	scopeType := proto.GetString(function.ScopeType)
+	scopeType := null.GetString(function.ScopeType)
 	if len(scopeType) > 0 {
 		function.ScopeTypeId = proto.Int32(int32(pkg.findTypeIndex(scopeType)))
 		function.ScopeType = nil
 	}
 
-	opensType := proto.GetString(function.OpensType)
+	opensType := null.GetString(function.OpensType)
 	if len(opensType) > 0 {
 		function.OpensTypeId = proto.Int32(int32(pkg.findTypeIndex(opensType)))
 		function.OpensType = nil
 	}
 
 	for _, arg := range function.Args {
-		typeName := proto.GetString(arg.TypeString)
+		typeName := null.GetString(arg.TypeString)
 		if len(typeName) > 0 {
 			arg.TypeId = proto.Int32(int32(pkg.findTypeIndex(typeName)))
 			arg.TypeString = nil

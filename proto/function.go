@@ -1,15 +1,16 @@
 package proto
 
 import pb "code.google.com/p/goprotobuf/proto"
+import "butler/null"
 
 func (fun *Function) Stub(pkg *Package) string {
-	name := pb.GetString(fun.Name)
+	name := null.GetString(fun.Name)
 	args := ""
 	for _, arg := range fun.Args {
-		argName := pb.GetString(arg.TypeString)
+		argName := null.GetString(arg.TypeString)
 		if argName == "" {
-			t := pkg.Types[int(pb.GetInt32(arg.TypeId))]
-			argName = pb.GetString(t.Name)
+			t := pkg.Types[int(null.GetInt32(arg.TypeId))]
+			argName = null.GetString(t.Name)
 		}
 		args = args + "," + argName
 	}
@@ -24,7 +25,7 @@ func (fun *Function) Clone() *Function {
 	bytes, err := pb.Marshal(fun)
 
 	if err != nil {
-		panic("Couldn't clone function" + pb.GetString(fun.Name))
+		panic("Couldn't clone function" + null.GetString(fun.Name))
 	}
 
 	newFun := &Function{}
@@ -34,16 +35,16 @@ func (fun *Function) Clone() *Function {
 }
 
 func (fun *Function) NameString() string {
-	return pb.GetString(fun.Name)
+	return null.GetString(fun.Name)
 }
 func (fun *Function) ReturnTypeString(pkg *Package) string {
-	return pkg.GetTypeName(pb.GetInt32(fun.ReturnTypeId))
+	return pkg.GetTypeName(null.GetInt32(fun.ReturnTypeId))
 }
 func (fun *Function) ScopeTypeString(pkg *Package) string {
-	return pkg.GetTypeName(pb.GetInt32(fun.ScopeTypeId))
+	return pkg.GetTypeName(null.GetInt32(fun.ScopeTypeId))
 }
 func (fun *Function) OpensTypeString(pkg *Package) string {
-	return pkg.GetTypeName(pb.GetInt32(fun.OpensTypeId))
+	return pkg.GetTypeName(null.GetInt32(fun.OpensTypeId))
 }
 
 func (fun *Function) DebugInfo(pkg *Package) string {
@@ -54,9 +55,9 @@ func (fun *Function) DebugInfo(pkg *Package) string {
 
 	args := ""
 	for _, arg := range fun.Args {
-		argName := pb.GetString(arg.TypeString)
+		argName := null.GetString(arg.TypeString)
 		if argName == "" {
-			argName = pkg.GetTypeName(pb.GetInt32(arg.TypeId))
+			argName = pkg.GetTypeName(null.GetInt32(arg.TypeId))
 		}
 		args = args + "," + argName
 	}
