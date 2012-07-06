@@ -52,7 +52,7 @@ func (m *Mixer) Write(path string) (outputPath string, err error) {
 		return
 	}
 
-	err = ioutil.WriteFile(outputPath, bytes, 0644)
+	err = ioutil.WriteFile(outputPath, bytes, fileutil.FILE_PERMS)
 	if err != nil {
 		return
 	}
