@@ -812,10 +812,12 @@ func rewrite_to_upstream_Text(ctx EngineContext, scope *Scope, ins *tp.Instructi
 	//rewrite_type := args[0].(string)
 	from_proxy := scope.Value.(string)
 	rrules := ctx.GetRewriteRules()
-	for _, rr := range(rrules) {
-		if from_proxy == *rr.From {
-			returnValue = *rr.To
-			return
+	if len(rrules) > 0 {
+		for _, rr := range(rrules) {
+			if from_proxy == *rr.From {
+				returnValue = *rr.To
+				return
+			}
 		}
 	}
 	panic("no matching rule to rewrite '" + from_proxy + "' to upstream")
@@ -825,10 +827,12 @@ func rewrite_to_proxy_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction,
 	//rewrite_type := args[0].(string)
 	from_upstream := scope.Value.(string)
 	rrules := ctx.GetRewriteRules()
-	for _, rr := range(rrules) {
-		if from_upstream == *rr.To {
-			returnValue = *rr.From
-			return
+	if len(rrules) > 0 {
+		for _, rr := range(rrules) {
+			if from_upstream == *rr.To {
+				returnValue = *rr.From
+				return
+			}
 		}
 	}
 	panic("no matching rule to rewrite '" + from_upstream + "' to proxy")
