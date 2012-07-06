@@ -505,7 +505,7 @@ func (p *Parser) definition() *tp.Function {
 		p.error("definition for " + funcName + " is missing a body")
 	}
 	funcBody := &tp.Instruction{
-		Type:     tp.NewInstruction_InstructionType(tp.Instruction_BLOCK),
+		Type:     tp.Instruction_BLOCK.Enum(),
 		Children: p.block(),
 	}
 	node.Instruction = funcBody
