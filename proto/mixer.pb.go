@@ -7,7 +7,7 @@ import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
 // Reference proto and math imports to suppress error if they are not otherwise used.
-var _ = proto1.GetString
+var _ = proto1.Marshal
 var _ = math.Inf
 
 type Mixer struct {
@@ -21,6 +21,27 @@ type Mixer struct {
 func (this *Mixer) Reset()         { *this = Mixer{} }
 func (this *Mixer) String() string { return proto1.CompactTextString(this) }
 func (*Mixer) ProtoMessage()       {}
+
+func (this *Mixer) GetName() string {
+	if this != nil && this.Name != nil {
+		return *this.Name
+	}
+	return ""
+}
+
+func (this *Mixer) GetVersion() string {
+	if this != nil && this.Version != nil {
+		return *this.Version
+	}
+	return ""
+}
+
+func (this *Mixer) GetPackage() *Package {
+	if this != nil {
+		return this.Package
+	}
+	return nil
+}
 
 func init() {
 }

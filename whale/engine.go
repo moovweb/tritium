@@ -70,4 +70,5 @@ type EngineContext interface {
 	GetInnerReplacer() *rubex.Regexp
 	GetHeaderContentTypeRegex() *rubex.Regexp
 	//	GetOutputBuffer() []byte
+	GetRewriteRules() []*tp.RewriteRule
 }

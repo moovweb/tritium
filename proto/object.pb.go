@@ -7,7 +7,7 @@ import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
 // Reference proto and math imports to suppress error if they are not otherwise used.
-var _ = proto1.GetString
+var _ = proto1.Marshal
 var _ = math.Inf
 
 type ScriptObject struct {
@@ -24,6 +24,34 @@ func (this *ScriptObject) String() string { return proto1.CompactTextString(this
 func (*ScriptObject) ProtoMessage()       {}
 
 const Default_ScriptObject_Name string = "main"
+
+func (this *ScriptObject) GetName() string {
+	if this != nil && this.Name != nil {
+		return *this.Name
+	}
+	return Default_ScriptObject_Name
+}
+
+func (this *ScriptObject) GetRoot() *Instruction {
+	if this != nil {
+		return this.Root
+	}
+	return nil
+}
+
+func (this *ScriptObject) GetScopeTypeId() int32 {
+	if this != nil && this.ScopeTypeId != nil {
+		return *this.ScopeTypeId
+	}
+	return 0
+}
+
+func (this *ScriptObject) GetLinked() bool {
+	if this != nil && this.Linked != nil {
+		return *this.Linked
+	}
+	return false
+}
 
 func init() {
 }

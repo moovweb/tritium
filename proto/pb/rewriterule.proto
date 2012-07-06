@@ -1,0 +1,6 @@
+package proto;
+
+message RewriteRule {
+	optional string from = 1;
+	optional string to = 2;
+}

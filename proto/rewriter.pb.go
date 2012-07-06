@@ -7,7 +7,7 @@ import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
 // Reference proto and math imports to suppress error if they are not otherwise used.
-var _ = proto1.GetString
+var _ = proto1.Marshal
 var _ = math.Inf
 
 type Rewriter struct {
@@ -19,6 +19,13 @@ type Rewriter struct {
 func (this *Rewriter) Reset()         { *this = Rewriter{} }
 func (this *Rewriter) String() string { return proto1.CompactTextString(this) }
 func (*Rewriter) ProtoMessage()       {}
+
+func (this *Rewriter) GetName() string {
+	if this != nil && this.Name != nil {
+		return *this.Name
+	}
+	return ""
+}
 
 func init() {
 }

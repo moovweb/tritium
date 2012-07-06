@@ -798,12 +798,39 @@ func length_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 }
 
 func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	start := time.Now().UnixNano()
+	start := time.Now()
 	for _, child := range ins.Children {
 		ctx.RunInstruction(scope, child)
 	}
-	duration := time.Now().UnixNano() - start
+	duration := time.Since(start)
 	// I only seem to get 6 significant digits, so output in microseconds
-	returnValue = strconv.FormatInt(duration/1000, 10) + "µs"
+	returnValue = strconv.FormatInt(duration.Nanoseconds()/1000, 10) + "µs"
+	return
+}
+
+func rewrite_to_upstream_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	//rewrite_type := args[0].(string)
+	from_proxy := scope.Value.(string)
+	rrules := ctx.GetRewriteRules()
+	for _, rr := range(rrules) {
+		if from_proxy == *rr.From {
+			returnValue = *rr.To
+			return
+		}
+	}
+	panic("no matching rule to rewrite '" + from_proxy + "' to upstream")
+}
+
+func rewrite_to_proxy_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	//rewrite_type := args[0].(string)
+	from_upstream := scope.Value.(string)
+	rrules := ctx.GetRewriteRules()
+	for _, rr := range(rrules) {
+		if from_upstream == *rr.To {
+			returnValue = *rr.From
+			return
+		}
+	}
+	panic("no matching rule to rewrite '" + from_upstream + "' to proxy")
 	return
 }

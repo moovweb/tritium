@@ -28,9 +28,9 @@ func NewEngine(logger *golog.Logger) *Lamprey {
 	return e
 }
 
-func (eng *Lamprey) Run(transform *tp.Transform, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
+func (eng *Lamprey) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
 	ctx := &Ctx{Lamprey: eng}
-	ctx.WhaleContext = whale.NewEngineCtx(eng.Whale, vars, transform, deadline)
+	ctx.WhaleContext = whale.NewEngineCtx(eng.Whale, vars, transform, rrules, deadline)
 
 	ctx.Yields = append(ctx.Yields, &whale.YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)

@@ -7,7 +7,7 @@ import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
 // Reference proto and math imports to suppress error if they are not otherwise used.
-var _ = proto1.GetString
+var _ = proto1.Marshal
 var _ = math.Inf
 
 type File struct {
@@ -19,6 +19,20 @@ type File struct {
 func (this *File) Reset()         { *this = File{} }
 func (this *File) String() string { return proto1.CompactTextString(this) }
 func (*File) ProtoMessage()       {}
+
+func (this *File) GetPath() string {
+	if this != nil && this.Path != nil {
+		return *this.Path
+	}
+	return ""
+}
+
+func (this *File) GetData() []byte {
+	if this != nil {
+		return this.Data
+	}
+	return nil
+}
 
 func init() {
 }

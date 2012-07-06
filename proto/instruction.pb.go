@@ -7,7 +7,7 @@ import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
 // Reference proto and math imports to suppress error if they are not otherwise used.
-var _ = proto1.GetString
+var _ = proto1.Marshal
 var _ = math.Inf
 
 type Instruction_InstructionType int32
@@ -41,11 +41,6 @@ var Instruction_InstructionType_value = map[string]int32{
 	"COMMENT":       6,
 }
 
-// NewInstruction_InstructionType is deprecated. Use x.Enum() instead.
-func NewInstruction_InstructionType(x Instruction_InstructionType) *Instruction_InstructionType {
-	e := Instruction_InstructionType(x)
-	return &e
-}
 func (x Instruction_InstructionType) Enum() *Instruction_InstructionType {
 	p := new(Instruction_InstructionType)
 	*p = x
@@ -71,6 +66,55 @@ type Instruction struct {
 func (this *Instruction) Reset()         { *this = Instruction{} }
 func (this *Instruction) String() string { return proto1.CompactTextString(this) }
 func (*Instruction) ProtoMessage()       {}
+
+func (this *Instruction) GetType() Instruction_InstructionType {
+	if this != nil && this.Type != nil {
+		return *this.Type
+	}
+	return 0
+}
+
+func (this *Instruction) GetValue() string {
+	if this != nil && this.Value != nil {
+		return *this.Value
+	}
+	return ""
+}
+
+func (this *Instruction) GetObjectId() int32 {
+	if this != nil && this.ObjectId != nil {
+		return *this.ObjectId
+	}
+	return 0
+}
+
+func (this *Instruction) GetFunctionId() int32 {
+	if this != nil && this.FunctionId != nil {
+		return *this.FunctionId
+	}
+	return 0
+}
+
+func (this *Instruction) GetLineNumber() int32 {
+	if this != nil && this.LineNumber != nil {
+		return *this.LineNumber
+	}
+	return 0
+}
+
+func (this *Instruction) GetYieldTypeId() int32 {
+	if this != nil && this.YieldTypeId != nil {
+		return *this.YieldTypeId
+	}
+	return 0
+}
+
+func (this *Instruction) GetIsValid() bool {
+	if this != nil && this.IsValid != nil {
+		return *this.IsValid
+	}
+	return false
+}
 
 func init() {
 	proto1.RegisterEnum("proto.Instruction_InstructionType", Instruction_InstructionType_name, Instruction_InstructionType_value)

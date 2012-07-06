@@ -7,7 +7,7 @@ import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
 // Reference proto and math imports to suppress error if they are not otherwise used.
-var _ = proto1.GetString
+var _ = proto1.Marshal
 var _ = math.Inf
 
 type TritiumTest struct {
@@ -25,6 +25,34 @@ func (this *TritiumTest) Reset()         { *this = TritiumTest{} }
 func (this *TritiumTest) String() string { return proto1.CompactTextString(this) }
 func (*TritiumTest) ProtoMessage()       {}
 
+func (this *TritiumTest) GetScript() string {
+	if this != nil && this.Script != nil {
+		return *this.Script
+	}
+	return ""
+}
+
+func (this *TritiumTest) GetInput() string {
+	if this != nil && this.Input != nil {
+		return *this.Input
+	}
+	return ""
+}
+
+func (this *TritiumTest) GetOutput() string {
+	if this != nil && this.Output != nil {
+		return *this.Output
+	}
+	return ""
+}
+
+func (this *TritiumTest) GetTransformer() *Transform {
+	if this != nil {
+		return this.Transformer
+	}
+	return nil
+}
+
 type TritiumTest_Hash struct {
 	Key              *string `protobuf:"bytes,1,req,name=key" json:"key,omitempty"`
 	Value            *string `protobuf:"bytes,2,req,name=value" json:"value,omitempty"`
@@ -34,6 +62,20 @@ type TritiumTest_Hash struct {
 func (this *TritiumTest_Hash) Reset()         { *this = TritiumTest_Hash{} }
 func (this *TritiumTest_Hash) String() string { return proto1.CompactTextString(this) }
 func (*TritiumTest_Hash) ProtoMessage()       {}
+
+func (this *TritiumTest_Hash) GetKey() string {
+	if this != nil && this.Key != nil {
+		return *this.Key
+	}
+	return ""
+}
+
+func (this *TritiumTest_Hash) GetValue() string {
+	if this != nil && this.Value != nil {
+		return *this.Value
+	}
+	return ""
+}
 
 func init() {
 }
