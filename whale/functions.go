@@ -811,30 +811,33 @@ func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interfac
 func rewrite_to_upstream_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	//rewrite_type := args[0].(string)
 	from_proxy := scope.Value.(string)
+	println("search from_proxy", from_proxy)
 	rrules := ctx.GetRewriteRules()
 	if len(rrules) > 0 {
 		for _, rr := range(rrules) {
 			if from_proxy == *rr.From {
 				returnValue = *rr.To
+				scope.Value = *rr.To
 				return
 			}
 		}
 	}
-	panic("no matching rule to rewrite '" + from_proxy + "' to upstream")
+	return
 }
 
 func rewrite_to_proxy_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	//rewrite_type := args[0].(string)
 	from_upstream := scope.Value.(string)
+	println("search from_upstream", from_upstream)
 	rrules := ctx.GetRewriteRules()
 	if len(rrules) > 0 {
 		for _, rr := range(rrules) {
 			if from_upstream == *rr.To {
 				returnValue = *rr.From
+				scope.Value = *rr.From
 				return
 			}
 		}
 	}
-	panic("no matching rule to rewrite '" + from_upstream + "' to proxy")
 	return
 }
