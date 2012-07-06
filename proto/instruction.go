@@ -42,7 +42,7 @@ func FoldLeft(funcName string, base *Instruction, seq []*Instruction) (acc *Inst
 
 func MakeText(text string, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       NewInstruction_InstructionType(Instruction_TEXT),
+		Type:       Instruction_TEXT.Enum(),
 		Value:      pb.String(text),
 		LineNumber: pb.Int32(lineNum),
 	}
@@ -50,7 +50,7 @@ func MakeText(text string, lineNum int32) *Instruction {
 
 func MakePosition(pos string, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       NewInstruction_InstructionType(Instruction_POSITION),
+		Type:       Instruction_POSITION.Enum(),
 		Value:      pb.String(pos),
 		LineNumber: pb.Int32(lineNum),
 	}
@@ -58,7 +58,7 @@ func MakePosition(pos string, lineNum int32) *Instruction {
 
 func MakeComment(comment string, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       NewInstruction_InstructionType(Instruction_COMMENT),
+		Type:       Instruction_COMMENT.Enum(),
 		Value:      pb.String(comment),
 		LineNumber: pb.Int32(lineNum),
 	}
@@ -66,7 +66,7 @@ func MakeComment(comment string, lineNum int32) *Instruction {
 
 func MakeImport(path string, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       NewInstruction_InstructionType(Instruction_IMPORT),
+		Type:       Instruction_IMPORT.Enum(),
 		Value:      pb.String(path),
 		LineNumber: pb.Int32(lineNum),
 	}
@@ -74,7 +74,7 @@ func MakeImport(path string, lineNum int32) *Instruction {
 
 func MakeLocalVar(name string, val *Instruction, block []*Instruction, lineNum int32) *Instruction {
 	node := &Instruction{
-		Type:       NewInstruction_InstructionType(Instruction_LOCAL_VAR),
+		Type:       Instruction_LOCAL_VAR.Enum(),
 		Value:      pb.String(name),
 		Children:   block,
 		LineNumber: pb.Int32(lineNum),
@@ -89,7 +89,7 @@ func MakeLocalVar(name string, val *Instruction, block []*Instruction, lineNum i
 
 func MakeFunctionCall(name string, args []*Instruction, block []*Instruction, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       NewInstruction_InstructionType(Instruction_FUNCTION_CALL),
+		Type:       Instruction_FUNCTION_CALL.Enum(),
 		Value:      pb.String(name),
 		Arguments:  args,
 		Children:   block,
@@ -99,7 +99,7 @@ func MakeFunctionCall(name string, args []*Instruction, block []*Instruction, li
 
 func MakeBlock(children []*Instruction, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       NewInstruction_InstructionType(Instruction_BLOCK),
+		Type:       Instruction_BLOCK.Enum(),
 		Children:   children,
 		LineNumber: pb.Int32(lineNum),
 	}
