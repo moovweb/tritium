@@ -821,16 +821,19 @@ func rewrite_to_upstream_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Inst
 	rrules := ctx.GetRewriteRules()
 	if len(rrules) > 0 {
 		for _, rr := range(rrules) {
+			if *rr.Direction == tp.RewriteRule_UPSTREAM_TO_PROXY {
+				continue
+			}
 			if len(from_proxy_secure) > 0 {
-				if from_proxy_secure == *rr.From {
-					returnValue = *rr.To
-					scope.Value = *rr.To
+				if from_proxy_secure == *rr.Proxy {
+					returnValue = *rr.Upstream
+					scope.Value = *rr.Upstream
 					return
 				}
 			}
-			if from_proxy == *rr.From {
-				returnValue = *rr.To
-				scope.Value = *rr.To
+			if from_proxy == *rr.Proxy {
+				returnValue = *rr.Upstream
+				scope.Value = *rr.Upstream
 				return
 			}
 		}
@@ -851,16 +854,19 @@ func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruc
 	rrules := ctx.GetRewriteRules()
 	if len(rrules) > 0 {
 		for _, rr := range(rrules) {
+			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
+				continue
+			}
 			if len(from_upstream_secure) >0 {
-				if from_upstream_secure == *rr.To {
-					returnValue = *rr.From
-					scope.Value = *rr.From
+				if from_upstream_secure == *rr.Upstream {
+					returnValue = *rr.Proxy
+					scope.Value = *rr.Proxy
 					return
 				}
 			}
-			if from_upstream == *rr.To {
-				returnValue = *rr.From
-				scope.Value = *rr.From
+			if from_upstream == *rr.Upstream {
+				returnValue = *rr.Proxy
+				scope.Value = *rr.Proxy
 				return
 			}
 		}

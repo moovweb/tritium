@@ -1,6 +1,13 @@
 package proto;
 
 message RewriteRule {
-	optional string from = 1;
-	optional string to = 2;
+	optional string proxy = 1;
+	optional string upstream = 2;
+	optional RuleDirection direction = 3  [default=BIDIRECTIONAL];
+
+	enum RuleDirection {
+		BIDIRECTIONAL = 0;
+		PROXY_TO_UPSTREAM = 1;
+		UPSTREAM_TO_PROXY = 2;
+	}
 }
