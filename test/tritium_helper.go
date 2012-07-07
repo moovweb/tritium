@@ -1,4 +1,4 @@
-package proto
+package test
 
 import (
 	"io/ioutil"
@@ -7,48 +7,30 @@ import (
 )
 
 import (
-	"butler/null"
-	pb "code.google.com/p/goprotobuf/proto"
+	tp "tritium/proto"
 	yaml "goyaml"
 )
 
-func NewTritiumTestFromFile(filename string) (test *TritiumTest, err error) {
-	var data []byte
 
-	data, err = ioutil.ReadFile(filename)
-	if err != nil {
-		return
-	}
-
-	test = &TritiumTest{}
-	err = pb.Unmarshal(data, test)
-	if err != nil {
-		return
-	}
-
-	return
+type TritiumTest_Hash struct {
+	Key              string
+	Value            string
 }
 
-func (test *TritiumTest) WriteFile(filename string) (err error) {
-	var data []byte
-
-	data, err = pb.Marshal(test)
-	if err != nil {
-		return
-	}
-
-	err = ioutil.WriteFile(filename, data, 0644)
-	if err != nil {
-		return
-	}
-
-	return
+type TritiumTest struct {
+	Script           string
+	Input            string
+	Output           string
+	EnvProto         []*TritiumTest_Hash
+	ExportsProto     []*TritiumTest_Hash
+	Logs             []string
+	Transformer      *tp.Transform
 }
 
 func (test *TritiumTest) Env() (env map[string]string) {
 	env = map[string]string{}
 	for _, hash := range test.EnvProto {
-		env[null.GetString(hash.Key)] = null.GetString(hash.Value)
+		env[hash.Key] = hash.Value
 	}
 	return
 }
@@ -56,7 +38,7 @@ func (test *TritiumTest) Env() (env map[string]string) {
 func (test *TritiumTest) Exports() (exports [][]string) {
 	exports = make([][]string, len(test.ExportsProto))
 	for n, hash := range test.ExportsProto {
-		exports[n] = []string{null.GetString(hash.Key), null.GetString(hash.Value)}
+		exports[n] = []string{hash.Key, hash.Value}
 	}
 	return
 }
@@ -65,7 +47,7 @@ func (test *TritiumTest) SetEnv(env map[string]string) {
 	th := make([]*TritiumTest_Hash, len(env))
 	i := 0
 	for key, value := range env {
-		th[i] = &TritiumTest_Hash{Key: pb.String(key), Value: pb.String(value)}
+		th[i] = &TritiumTest_Hash{Key: key, Value: value}
 		i++
 	}
 	test.EnvProto = th
@@ -74,7 +56,7 @@ func (test *TritiumTest) SetEnv(env map[string]string) {
 func (test *TritiumTest) SetExports(exports [][]string) {
 	th := make([]*TritiumTest_Hash, len(exports))
 	for n, export := range exports {
-		th[n] = &TritiumTest_Hash{Key: pb.String(export[0]), Value: pb.String(export[1])}
+		th[n] = &TritiumTest_Hash{Key: export[0], Value: export[1]}
 	}
 	test.ExportsProto = th
 }
@@ -114,9 +96,9 @@ func NewTritiumTestFromFolder(path string) (test *TritiumTest, err error) {
 	}
 
 	test = &TritiumTest{
-		Script: pb.String(string(script)),
-		Input:  pb.String(string(input)),
-		Output: pb.String(string(output)),
+		Script: string(script),
+		Input:  string(input),
+		Output: string(output),
 		Logs:   []string{},
 	}
 
@@ -133,19 +115,19 @@ func (test *TritiumTest) WriteFolder(path string) (err error) {
 	}
 
 	input_script := filepath.Join(path, "input.ts")
-	err = ioutil.WriteFile(input_script, []byte(null.GetString(test.Script)), 0644)
+	err = ioutil.WriteFile(input_script, []byte(test.Script), 0644)
 	if err != nil {
 		return
 	}
 
 	input_file := filepath.Join(path, "input.txt")
-	err = ioutil.WriteFile(input_file, []byte(null.GetString(test.Input)), 0644)
+	err = ioutil.WriteFile(input_file, []byte(test.Input), 0644)
 	if err != nil {
 		return
 	}
 
 	output_file := filepath.Join(path, "output.txt")
-	err = ioutil.WriteFile(output_file, []byte(null.GetString(test.Output)), 0644)
+	err = ioutil.WriteFile(output_file, []byte(test.Output), 0644)
 	if err != nil {
 		return
 	}
