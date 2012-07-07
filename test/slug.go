@@ -1,8 +1,9 @@
-package proto
+package test
 
+import tp "tritium/proto"
 import "testing"
 
-func checkSlug(t *testing.T, testslug *Slug, name string, version string, stages int) {
+func checkSlug(t *testing.T, testslug *tp.Slug, name string, version string, stages int) {
 	if testslug == nil {
 		t.Fatal("Slug is nil")
 	}
@@ -21,7 +22,7 @@ func TestNewSlug(t *testing.T) {
 	version := "0.0.0"
 	stages := 4
 
-	s, err := NewSlug(name, version, stages)
+	s, err := tp.NewSlug(name, version, stages)
 	if err != nil {
 		t.Fatal("Error creating slug")
 	}
@@ -33,7 +34,7 @@ func TestWriteSlug(t *testing.T) {
 	version := "0.0.0"
 	stages := 0
 
-	s, err := NewSlug(name, version, stages)
+	s, err := tp.NewSlug(name, version, stages)
 	if err != nil {
 		t.Fatal("Error creating slug")
 	}
@@ -44,7 +45,7 @@ func TestWriteSlug(t *testing.T) {
 		t.Fatal("Error writing slug")
 	}
 
-	s, err = NewSlugFromFile("test.slug")
+	s, err = tp.NewSlugFromFile("test.slug")
 	if err != nil {
 		t.Fatal("Error loading slug from file")
 	}
