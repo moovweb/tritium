@@ -808,13 +808,26 @@ func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interfac
 	return
 }
 
-func rewrite_to_upstream_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func rewrite_to_upstream_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	//rewrite_type := args[0].(string)
+	secure := args[1].(string)
 	from_proxy := scope.Value.(string)
 	println("search from_proxy", from_proxy)
+	println("secure:", secure)
+	from_proxy_secure := ""
+	if secure == "true" {
+		from_proxy_secure = "https://"+from_proxy
+	}
 	rrules := ctx.GetRewriteRules()
 	if len(rrules) > 0 {
 		for _, rr := range(rrules) {
+			if len(from_proxy_secure) > 0 {
+				if from_proxy_secure == *rr.From {
+					returnValue = *rr.To
+					scope.Value = *rr.To
+					return
+				}
+			}
 			if from_proxy == *rr.From {
 				returnValue = *rr.To
 				scope.Value = *rr.To
@@ -825,13 +838,26 @@ func rewrite_to_upstream_Text(ctx EngineContext, scope *Scope, ins *tp.Instructi
 	return
 }
 
-func rewrite_to_proxy_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	//rewrite_type := args[0].(string)
+	secure := args[1].(string)
 	from_upstream := scope.Value.(string)
 	println("search from_upstream", from_upstream)
+	println("secure:", secure)
+	from_upstream_secure := ""
+	if secure == "true" {
+		from_upstream_secure = "https://"+from_upstream
+	}
 	rrules := ctx.GetRewriteRules()
 	if len(rrules) > 0 {
 		for _, rr := range(rrules) {
+			if len(from_upstream_secure) >0 {
+				if from_upstream_secure == *rr.To {
+					returnValue = *rr.From
+					scope.Value = *rr.From
+					return
+				}
+			}
 			if from_upstream == *rr.To {
 				returnValue = *rr.From
 				scope.Value = *rr.From
