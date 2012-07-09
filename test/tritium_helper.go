@@ -25,6 +25,7 @@ type TritiumTest struct {
 	ExportsProto     []*TritiumTest_Hash
 	Logs             []string
 	Transformer      *tp.Transform
+	Rrules           []*tp.RewriteRule
 }
 
 func (test *TritiumTest) Env() (env map[string]string) {
