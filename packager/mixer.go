@@ -10,7 +10,7 @@ import (
 )
 
 import (
-	"butler"
+	"butler/mixer"
 	"butler/null"
 	proto "code.google.com/p/goprotobuf/proto"
 	yaml "goyaml"
@@ -103,7 +103,7 @@ func (m *Mixer) loadDependentMixer(buildPath string, name string) {
 	var newMixer *Mixer
 
 	if strings.HasSuffix(name, ".mxr") {
-		mxr, err := butler.GetMixerFromFile(name)
+		mxr, err := mixer.GetMixerFromFile(name)
 		if err != nil {
 			panic("Couldn't resolve mixer: " + name)
 		}

@@ -7,16 +7,16 @@ import (
 )
 
 import (
-	"butler"
+	mixers "butler/mixer"
 	xmlhelp "gokogiri/help"
 	"golog"
 	"runtime/debug"
+	"time"
 	"tritium"
 	"tritium/lamprey"
 	"tritium/packager"
 	tp "tritium/proto"
 	"tritium/whale"
-	"time"
 )
 
 func All(command string, directory string, options ...string) {
@@ -41,7 +41,7 @@ func All(command string, directory string, options ...string) {
 
 	if len(mixerPath) > 0 {
 		// Used when testing in ambrosia
-		mixer, err := butler.GetMixerFromFile(mixerPath)
+		mixer, err := mixers.GetMixerFromFile(mixerPath)
 		if err != nil {
 			panic("Error, could not load mixer: " + mixerPath)
 		}

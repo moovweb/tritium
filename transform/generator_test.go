@@ -1,22 +1,27 @@
 package transform
 
-import packager "tritium/packager"
-import whale "tritium/whale"
-import tp "tritium/proto"
-import "manhattan/project"
-import "golog"
-import "text/template"
-import "bytes"
-import "io/ioutil"
-import "os"
-import "fmt"
-import "time"
-import "testing"
-import "path/filepath"
-import pb "code.google.com/p/goprotobuf/proto"
-import "butler/null"
-import "butler"
-import "tritium/linker"
+import (
+	"bytes"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"testing"
+	"text/template"
+	"time"
+)
+
+import (
+	"butler/data"
+	"butler/null"
+	pb "code.google.com/p/goprotobuf/proto"
+	"golog"
+	"manhattan/project"
+	"tritium/linker"
+	packager "tritium/packager"
+	tp "tritium/proto"
+	whale "tritium/whale"
+)
 
 type GeneratorTestError struct {
 	msg string
@@ -42,7 +47,7 @@ const TEMPLATE_DIR = "templates"
 func init() {
 	TRITIUM_PATH = os.Getenv("TRITIUM_PATH")
 	if TRITIUM_PATH == "" {
-		TRITIUM_PATH = butler.GetDataPath()
+		TRITIUM_PATH = data.GetDataPath()
 	}
 }
 
