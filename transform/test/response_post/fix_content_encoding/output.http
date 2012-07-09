@@ -1,5 +1,0 @@
-HTTP/1.0 200 OK
-Connection: close
-Content-Encoding: gzip
-Content-Length: 
-Vary: Accept-Encoding

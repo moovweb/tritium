@@ -1,5 +1,0 @@
-HTTP/1.0 302 OK
-Connection: close
-Content-Length: 
-Vary: Accept-Encoding
-Location: http://google.com

@@ -1,4 +1,0 @@
-GET / HTTP/1.0
-Referer: www1.example.com
-Connection: close
-Via: 1.0 moovweb

@@ -1,4 +1,0 @@
-GET /?x=y&abc=a%20b%20c-whatnot!,ok HTTP/1.0
-Host: MODexample.comMOD
-Connection: close
-Via: 1.0 moovweb
