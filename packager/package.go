@@ -149,7 +149,7 @@ func NewUserPackage(loadPath *string, fallbackPath *string) *Package {
 }
 
 func newLog() *golog.Logger {
-	consoleProcessor := golog.NewConsoleProcessor(golog.LOG_DEBUG, true)
+	consoleProcessor := golog.NewConsoleProcessor(golog.LOG_ERR, true)
 	pkgLog := golog.NewLogger("tritium")
 	pkgLog.AddProcessor("console", consoleProcessor)
 	return pkgLog
