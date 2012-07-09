@@ -812,8 +812,6 @@ func rewrite_to_upstream_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Inst
 	//rewrite_type := args[0].(string)
 	secure := args[1].(string)
 	from_proxy := scope.Value.(string)
-	println("search from_proxy", from_proxy)
-	println("secure:", secure)
 	from_proxy_secure := ""
 	if secure == "true" {
 		from_proxy_secure = "https://"+from_proxy
@@ -845,8 +843,6 @@ func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruc
 	//rewrite_type := args[0].(string)
 	secure := args[1].(string)
 	from_upstream := scope.Value.(string)
-	println("search from_upstream", from_upstream)
-	println("secure:", secure)
 	from_upstream_secure := ""
 	if secure == "true" {
 		from_upstream_secure = "https://"+from_upstream
@@ -857,7 +853,7 @@ func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruc
 			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
 				continue
 			}
-			if len(from_upstream_secure) >0 {
+			if len(from_upstream_secure) > 0 {
 				if from_upstream_secure == *rr.Upstream {
 					returnValue = *rr.Proxy
 					scope.Value = *rr.Proxy
