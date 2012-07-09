@@ -12,6 +12,7 @@ import (
 	"butler/crypto"
 	"butler/null"
 	pb "code.google.com/p/goprotobuf/proto"
+	"manhattan/util/fileutil"
 )
 
 func NewMixer(path string) *Mixer {
@@ -46,7 +47,12 @@ func (m *Mixer) Write(path string) (outputPath string, err error) {
 
 	bytes = crypto.Encrypt(bytes)
 
-	err = ioutil.WriteFile(outputPath, bytes, 0644)
+	err = os.MkdirAll(path, fileutil.DIR_PERMS)
+	if err != nil {
+		return
+	}
+
+	err = ioutil.WriteFile(outputPath, bytes, fileutil.FILE_PERMS)
 	if err != nil {
 		return
 	}

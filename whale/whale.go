@@ -123,6 +123,7 @@ func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input i
 
 func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
 	defer func() {
+		//TODO Stack traces seem to get truncated on syslog...
 		if x := recover(); x != nil {
 			err, ok := x.(error)
 			errString := ""
