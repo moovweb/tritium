@@ -1,7 +1,7 @@
 package proto;
 
 import "tritium.proto";
-import "rewriterule.proto";
+import "rewrite_rule.proto";
 
 message Slug {
 	required string name = 1;
