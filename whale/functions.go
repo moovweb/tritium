@@ -811,10 +811,10 @@ func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interfac
 func rewrite_to_upstream_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	//rewrite_type := args[0].(string)
 	secure := args[1].(string)
-	from_proxy := scope.Value.(string)
-	from_proxy_secure := ""
+	fromProxy := scope.Value.(string)
+	fromProxySecure := ""
 	if secure == "true" {
-		from_proxy_secure = "https://"+from_proxy
+		fromProxySecure = "https://"+fromProxy
 	}
 	rrules := ctx.GetRewriteRules()
 	if len(rrules) > 0 {
@@ -822,14 +822,14 @@ func rewrite_to_upstream_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Inst
 			if *rr.Direction == tp.RewriteRule_UPSTREAM_TO_PROXY {
 				continue
 			}
-			if len(from_proxy_secure) > 0 {
-				if from_proxy_secure == *rr.Proxy {
+			if len(fromProxySecure) > 0 {
+				if fromProxySecure == *rr.Proxy {
 					returnValue = *rr.Upstream
 					scope.Value = *rr.Upstream
 					return
 				}
 			}
-			if from_proxy == *rr.Proxy {
+			if fromProxy == *rr.Proxy {
 				returnValue = *rr.Upstream
 				scope.Value = *rr.Upstream
 				return
@@ -842,10 +842,10 @@ func rewrite_to_upstream_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Inst
 func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	//rewrite_type := args[0].(string)
 	secure := args[1].(string)
-	from_upstream := scope.Value.(string)
-	from_upstream_secure := ""
+	fromUpstream := scope.Value.(string)
+	fromUpstreamSecure := ""
 	if secure == "true" {
-		from_upstream_secure = "https://"+from_upstream
+		fromUpstreamSecure = "https://"+fromUpstream
 	}
 	rrules := ctx.GetRewriteRules()
 	if len(rrules) > 0 {
@@ -853,14 +853,14 @@ func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruc
 			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
 				continue
 			}
-			if len(from_upstream_secure) > 0 {
-				if from_upstream_secure == *rr.Upstream {
+			if len(fromUpstreamSecure) > 0 {
+				if fromUpstreamSecure == *rr.Upstream {
 					returnValue = *rr.Proxy
 					scope.Value = *rr.Proxy
 					return
 				}
 			}
-			if from_upstream == *rr.Upstream {
+			if fromUpstream == *rr.Upstream {
 				returnValue = *rr.Proxy
 				scope.Value = *rr.Proxy
 				return
