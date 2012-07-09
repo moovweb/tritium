@@ -149,11 +149,9 @@ func NewUserPackage(loadPath *string, fallbackPath *string) *Package {
 }
 
 func newLog() *golog.Logger {
+	consoleProcessor := golog.NewConsoleProcessor(golog.LOG_DEBUG, true)
 	pkgLog := golog.NewLogger("tritium")
-	os.Mkdir("tmp", os.FileMode(0777))
-	//TODO should handle err here
-	fileProcessor, _ := golog.NewFileProcessor(golog.LOG_DEBUG, "tmp/packager.log")
-	pkgLog.AddProcessor("file", fileProcessor)
+	pkgLog.AddProcessor("console", consoleProcessor)
 	return pkgLog
 }
 
