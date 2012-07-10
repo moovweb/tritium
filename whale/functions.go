@@ -840,7 +840,7 @@ func rewrite_to_upstream_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Inst
 }
 
 func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	//rewrite_type := args[0].(string)
+	rewriteType := args[0].(string)
 	secure := args[1].(string)
 	fromUpstream := scope.Value.(string)
 	fromUpstreamSecure := ""
@@ -855,14 +855,24 @@ func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruc
 			}
 			if len(fromUpstreamSecure) > 0 {
 				if fromUpstreamSecure == *rr.Upstream {
-					returnValue = *rr.Proxy
-					scope.Value = *rr.Proxy
+					if rewriteType == "cookie" {
+						returnValue = *rr.CookieDomain
+						scope.Value = *rr.CookieDomain
+					} else {
+						returnValue = *rr.Proxy
+						scope.Value = *rr.Proxy
+					}
 					return
 				}
 			}
 			if fromUpstream == *rr.Upstream {
-				returnValue = *rr.Proxy
-				scope.Value = *rr.Proxy
+				if rewriteType == "cookie" {
+					returnValue = *rr.CookieDomain
+					scope.Value = *rr.CookieDomain
+				} else {
+					returnValue = *rr.Proxy
+					scope.Value = *rr.Proxy
+				}
 				return
 			}
 		}
