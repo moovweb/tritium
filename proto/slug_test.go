@@ -27,25 +27,3 @@ func TestNewSlug(t *testing.T) {
 	}
 	checkSlug(t, s, name, version, stages)
 }
-
-func TestWriteSlug(t *testing.T) {
-	name := "test"
-	version := "0.0.0"
-	stages := 0
-
-	s, err := NewSlug(name, version, stages)
-	if err != nil {
-		t.Fatal("Error creating slug")
-	}
-	checkSlug(t, s, name, version, stages)
-
-	err = s.WriteFile("test.slug")
-	if err != nil {
-		t.Fatal("Error writing slug")
-	}
-
-	s, err = NewSlugFromFile("test.slug")
-	if err != nil {
-		t.Fatal("Error loading slug from file")
-	}
-}
