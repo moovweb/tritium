@@ -1,2 +1,0 @@
-rewrite_link_matcher: ([a-z.]*belk)\.com
-rewrite_link_replacement: m.$1.com

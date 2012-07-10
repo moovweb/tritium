@@ -1,3 +1,0 @@
-rewrite_link_matcher: (^|\/\/|\"|\')(?!mlocal\.)(www\.)?([a-z0-9\-\.]*)accenture\.com
-rewrite_link_matcher_str: (^|\/\/|\"|\')(?!mlocal\.)(www\.)?([a-z0-9\-\.]*)accenture\.com
-rewrite_link_replacement: \1mlocal.\3accenture.com
