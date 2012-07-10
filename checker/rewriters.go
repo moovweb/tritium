@@ -79,7 +79,7 @@ func check_cookie_results(test RewriteTestCase, result string) bool {
 	return strings.HasPrefix(result, expected)
 }
 
-func run_tests(test_type string, engine *whale.Whale, transformer *proto.Transform, tests []RewriteTestCase, create_cmd create_http_cmd, check_cmd check_cmd_transform, logger *golog.Logger) bool {
+func run_tests(test_type string, engine *whale.Whale, transformer *proto.Transform, rrules []*proto.RewriteRule, tests []RewriteTestCase, create_cmd create_http_cmd, check_cmd check_cmd_transform, logger *golog.Logger) bool {
 	all_passed := true
 	logger.Info("Running " + test_type + " Rewriter Tests...")
 	for i, t := range tests {
@@ -91,7 +91,7 @@ func run_tests(test_type string, engine *whale.Whale, transformer *proto.Transfo
 
 		// Temporarily just try to create a really large timeout.
 		timeout := time.Now().Add(time.Duration(1) * time.Minute)
-		result, exports, _ := engine.Run(transformer, http_cmd, env, timeout)
+		result, exports, _ := engine.Run(transformer, rrules, http_cmd, env, timeout)
 		logger.Debug("\n==Results after transform==\n" + result + "\n==========================")
 		logger.Debug("Exports:  " + fmt.Sprintln(exports))
 		passed := check_cmd(t, result)
@@ -105,7 +105,7 @@ func run_tests(test_type string, engine *whale.Whale, transformer *proto.Transfo
 	return all_passed
 }
 
-func RunProjectRewriterTests(req_tsf *proto.Transform, post_tsf *proto.Transform, projectPath string, logger *golog.Logger) bool {
+func RunProjectRewriterTests(req_tsf *proto.Transform, post_tsf *proto.Transform, rrules []*proto.RewriteRule, projectPath string, logger *golog.Logger) bool {
 	test_path := filepath.Join(projectPath, TEST_FILE)
 	test_cases, err := read_test_cases(test_path)
 	if err != nil {
@@ -114,9 +114,9 @@ func RunProjectRewriterTests(req_tsf *proto.Transform, post_tsf *proto.Transform
 	logger.Debug("Test cases loaded from: " + test_path)
 
 	engine := whale.NewEngine(logger)
-	passed_host := run_tests("Host", engine, req_tsf, test_cases.Host, create_host_http_req, check_host_results, logger)
-	passed_link := run_tests("Link", engine, post_tsf, test_cases.Link, create_link_http_res, check_link_results, logger)
-	passed_cookie := run_tests("Cookie", engine, post_tsf, test_cases.Cookie_Domain, create_cookie_http_res, check_cookie_results, logger)
+	passed_host := run_tests("Host", engine, req_tsf, rrules, test_cases.Host, create_host_http_req, check_host_results, logger)
+	passed_link := run_tests("Link", engine, post_tsf, rrules, test_cases.Link, create_link_http_res, check_link_results, logger)
+	passed_cookie := run_tests("Cookie", engine, post_tsf, rrules, test_cases.Cookie_Domain, create_cookie_http_res, check_cookie_results, logger)
 
 	return passed_host && passed_link && passed_cookie
 }

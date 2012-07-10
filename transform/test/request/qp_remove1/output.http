@@ -1,4 +1,0 @@
-GET /path/?x=y HTTP/1.0
-Host: MODexample.comMOD
-Connection: close
-Via: 1.0 moovweb

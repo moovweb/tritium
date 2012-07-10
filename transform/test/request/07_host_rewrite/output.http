@@ -1,4 +1,0 @@
-GET / HTTP/1.0
-Host: www.example.com
-Connection: close
-Via: 1.0 moovweb

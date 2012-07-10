@@ -7,7 +7,7 @@ import proto1 "code.google.com/p/goprotobuf/proto"
 import "math"
 
 // Reference proto and math imports to suppress error if they are not otherwise used.
-var _ = proto1.GetString
+var _ = proto1.Marshal
 var _ = math.Inf
 
 type Transform struct {
@@ -19,6 +19,13 @@ type Transform struct {
 func (this *Transform) Reset()         { *this = Transform{} }
 func (this *Transform) String() string { return proto1.CompactTextString(this) }
 func (*Transform) ProtoMessage()       {}
+
+func (this *Transform) GetPkg() *Package {
+	if this != nil {
+		return this.Pkg
+	}
+	return nil
+}
 
 func init() {
 }

@@ -1,6 +1,0 @@
-GET /products/submarine HTTP/1.0
-Host: MODm.example.comMOD
-User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_6; en-US) AppleWebKit/534.16 (KHTML, like Gecko) Chrome/10.0.648.133 Safari/534.16
-Origin: MODhttp://m.example.comMOD
-Connection: close
-Via: 1.0 moovweb

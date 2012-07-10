@@ -34,6 +34,7 @@ type WhaleContext struct {
 	Yields                   []*YieldBlock
 	*Whale
 	*tp.Transform
+	Rrules                   []*tp.RewriteRule
 
 	// Debug info
 	Filename          string
@@ -60,13 +61,14 @@ func NewEngine(logger *golog.Logger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, deadline time.Time) (ctx *WhaleContext) {
+func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, rrules []*tp.RewriteRule, deadline time.Time) (ctx *WhaleContext) {
 	ctx = &WhaleContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
 		Logs:                     make([]string, 0),
 		Env:                      vars,
 		Transform:                transform,
+		Rrules:                   rrules,
 		MatchStack:               make([]string, 0),
 		MatchShouldContinueStack: make([]bool, 0),
 		Yields:                   make([]*YieldBlock, 0),
@@ -105,8 +107,8 @@ func (eng *Whale) Free() {
 	*/
 }
 
-func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
-	ctx := NewEngineCtx(eng, vars, transform, deadline)
+func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
+	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline)
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
 	scope := &Scope{Value: input.(string)}
@@ -409,4 +411,7 @@ func (ctx *WhaleContext) SetShouldContinue(cont bool) {
 	if num := len(ctx.MatchShouldContinueStack); num > 0 {
 		ctx.MatchShouldContinueStack[num-1] = cont
 	}
+}
+func (ctx *WhaleContext) GetRewriteRules() []*tp.RewriteRule {
+	return ctx.Rrules
 }

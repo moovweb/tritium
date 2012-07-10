@@ -1,0 +1,13 @@
+package proto;
+
+message RewriteRule {
+	optional string proxy = 1;
+	optional string upstream = 2;
+	optional RuleDirection direction = 3  [default=BIDIRECTIONAL];
+	optional string cookie_domain = 4;
+	enum RuleDirection {
+		BIDIRECTIONAL = 0;
+		PROXY_TO_UPSTREAM = 1;
+		UPSTREAM_TO_PROXY = 2;
+	}
+}

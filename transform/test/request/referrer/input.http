@@ -1,9 +1,0 @@
-GET /tips/internet/internet/inttip/inttip.htm HTTP/1.1
-Host: www.fraud.org
-User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; en-US; rv:1.9.1.17) Gecko/20110121 Firefox/3.5.17
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: en-us,en;q=0.5
-Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
-Keep-Alive: 300
-Connection: keep-alive
-Referer: http://www.fraud.org/tips/internet/phishing.htm

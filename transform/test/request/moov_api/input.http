@@ -1,6 +1,0 @@
-GET / HTTP/1.0
-User-Agent: Wget/1.12 (linux-gnu)
-Accept: */*
-Host: mlocal.www.belk.com
-Connection: Keep-Alive
-X-Moov-API: true

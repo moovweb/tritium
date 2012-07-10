@@ -798,12 +798,84 @@ func length_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 }
 
 func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	start := time.Now().UnixNano()
+	start := time.Now()
 	for _, child := range ins.Children {
 		ctx.RunInstruction(scope, child)
 	}
-	duration := time.Now().UnixNano() - start
+	duration := time.Since(start)
 	// I only seem to get 6 significant digits, so output in microseconds
-	returnValue = strconv.FormatInt(duration/1000, 10) + "µs"
+	returnValue = strconv.FormatInt(duration.Nanoseconds()/1000, 10) + "µs"
+	return
+}
+
+func rewrite_to_upstream_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	//rewrite_type := args[0].(string)
+	secure := args[1].(string)
+	fromProxy := scope.Value.(string)
+	fromProxySecure := ""
+	if secure == "true" {
+		fromProxySecure = "https://"+fromProxy
+	}
+	rrules := ctx.GetRewriteRules()
+	if len(rrules) > 0 {
+		for _, rr := range(rrules) {
+			if *rr.Direction == tp.RewriteRule_UPSTREAM_TO_PROXY {
+				continue
+			}
+			if len(fromProxySecure) > 0 {
+				if fromProxySecure == *rr.Proxy {
+					returnValue = *rr.Upstream
+					scope.Value = *rr.Upstream
+					return
+				}
+			}
+			if fromProxy == *rr.Proxy {
+				returnValue = *rr.Upstream
+				scope.Value = *rr.Upstream
+				return
+			}
+		}
+	}
+	return
+}
+
+func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	rewriteType := args[0].(string)
+	secure := args[1].(string)
+	fromUpstream := scope.Value.(string)
+	fromUpstreamSecure := ""
+	if secure == "true" {
+		fromUpstreamSecure = "https://"+fromUpstream
+	}
+	rrules := ctx.GetRewriteRules()
+	if len(rrules) > 0 {
+		for _, rr := range(rrules) {
+			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
+				continue
+			}
+			if len(fromUpstreamSecure) > 0 {
+				if fromUpstreamSecure == *rr.Upstream {
+					if rewriteType == "cookie" {
+						returnValue = *rr.CookieDomain
+						scope.Value = *rr.CookieDomain
+					} else {
+						returnValue = *rr.Proxy
+						scope.Value = *rr.Proxy
+					}
+					return
+				}
+			}
+			if fromUpstream == *rr.Upstream {
+				if rewriteType == "cookie" {
+					returnValue = *rr.CookieDomain
+					scope.Value = *rr.CookieDomain
+				} else {
+					returnValue = *rr.Proxy
+					scope.Value = *rr.Proxy
+				}
+				return
+			}
+		}
+	}
 	return
 }

@@ -1,3 +1,0 @@
-GET / HTTP/1.0
-X-Moov-Custom1: false
-X-Moov-anotherValue: text/html
