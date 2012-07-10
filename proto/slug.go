@@ -5,13 +5,14 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 )
 
 func NewSlug(name string, version string, stages int) (slug *Slug, err error) {
 	slug = &Slug{
-		Name:         pb.String(name),
-		Version:      pb.String(version),
+		Name:         pb.String(strings.TrimSpace(name)),
+		Version:      pb.String(strings.TrimSpace(version)),
 		Transformers: make([]*Transform, stages),
 	}
 
