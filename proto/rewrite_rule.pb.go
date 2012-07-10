@@ -42,6 +42,7 @@ type RewriteRule struct {
 	Proxy            *string                    `protobuf:"bytes,1,opt,name=proxy" json:"proxy,omitempty"`
 	Upstream         *string                    `protobuf:"bytes,2,opt,name=upstream" json:"upstream,omitempty"`
 	Direction        *RewriteRule_RuleDirection `protobuf:"varint,3,opt,name=direction,enum=proto.RewriteRule_RuleDirection,def=0" json:"direction,omitempty"`
+	CookieDomain     *string                    `protobuf:"bytes,4,opt,name=cookie_domain" json:"cookie_domain,omitempty"`
 	XXX_unrecognized []byte                     `json:"-"`
 }
 
@@ -70,6 +71,13 @@ func (this *RewriteRule) GetDirection() RewriteRule_RuleDirection {
 		return *this.Direction
 	}
 	return Default_RewriteRule_Direction
+}
+
+func (this *RewriteRule) GetCookieDomain() string {
+	if this != nil && this.CookieDomain != nil {
+		return *this.CookieDomain
+	}
+	return ""
 }
 
 func init() {
