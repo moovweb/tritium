@@ -40,12 +40,12 @@ func Parse(data, file string) []*tp.ScriptObject {
 func readFile(file string) (src, fullpath string) {
 	fullpath, err := filepath.Abs(file)
 	if err != nil {
-		panic("No tritium file found at path" + fullpath)
+		panic("No tritium file found at: " + fullpath)
 	}
 	srcBytes, err := ioutil.ReadFile(file)
 
 	if err != nil {
-		panic("No tritium file found at path" + fullpath)
+		panic("No tritium file found at: " + fullpath)
 	}
 	src = string(srcBytes)
 	return
