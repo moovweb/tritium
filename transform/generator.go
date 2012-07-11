@@ -3,7 +3,6 @@ package transform
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"path/filepath"
@@ -13,7 +12,6 @@ import (
 import (
 	"butler/null"
 	"manhattan/project"
-	"rubex"
 	tp "tritium/proto"
 )
 
@@ -34,34 +32,6 @@ func runTemplate(name string, rawTemplate []byte, project *project.Project) ([]b
 }
 
 func Generate(project *project.Project, mixer *tp.Mixer) (map[string][]byte, error) {
-	// HACKY
-	type TempRewriter struct {
-		ToBeReplacedWithmatcher     string
-		ToBeReplacedWithreplacement string
-	}
-	tmpRewriter := make([]TempRewriter, len(project.Rewriter.Host))
-	for i, v := range project.Rewriter.Host {
-		tmpRewriter[i].ToBeReplacedWithmatcher = v.Matcher
-		tmpRewriter[i].ToBeReplacedWithreplacement = v.Replacement
-	}
-	// Make JSON
-	data, err := json.Marshal(tmpRewriter)
-	if err != nil {
-		project.HostJson = "{}"
-	} else {
-		project.HostJson = string(data)
-	}
-	// Lowercase hack
-	r := rubex.MustCompile("ToBeReplacedWithmatcher")
-	project.HostJson = r.Gsub(project.HostJson, "matcher")
-	r = rubex.MustCompile("ToBeReplacedWithreplacement")
-	project.HostJson = r.Gsub(project.HostJson, "replacement")
-	// Escape quotes
-	r = rubex.MustCompile("\"")
-	project.HostJson = r.Gsub(project.HostJson, "\\\"")
-
-	// END HACKY
-
 	segments := [4]string{"request.ts", "response_pre.ts", "body.ts", "response_post.ts"}
 	var finalError error
 
