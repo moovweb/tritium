@@ -31,10 +31,10 @@ ssh $MASTER_URL "rm $MASTER_MANIFEST_PATH" # If fails, just means this is the fi
 ssh $MASTER_URL "mkdir -p $( dirname "$MASTER_TRITIUM_PATH" )"
 [ $? != 0 ] && exit 1
 
-rsync -rae ss "$LOCAL_TRITIUM_PATH" "$MASTER_URL:$MASTER_TRITIUM_PATH"
+rsync -rae ssh "$LOCAL_TRITIUM_PATH" "$MASTER_URL:$MASTER_TRITIUM_PATH"
 [ $? != 0 ] && exit 1
 
-rsync -rae ss "$LOCAL_MANIFEST_PATH" "$MASTER_URL:$MASTER_MANIFEST_PATH"
+rsync -rae ssh "$LOCAL_MANIFEST_PATH" "$MASTER_URL:$MASTER_MANIFEST_PATH"
 [ $? != 0 ] && exit 1
 
 
