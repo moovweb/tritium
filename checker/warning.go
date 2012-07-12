@@ -15,6 +15,7 @@ type Warning struct {
 const (
 	WARNING_SCRIPT = iota
 	WARNING_REWRITER
+	WARNING_XPATH
 )
 
 func NewWarning(warning_type int, filepath string, line_number int, message string) (w *Warning) {
@@ -40,6 +41,8 @@ func (w *Warning) String() (result string) {
 		result = "Syntax warning in " + w.File() + " line " + w.LineNumber + " – " + w.Message
 	} else if w.Type == WARNING_REWRITER {
 		result = w.File() + " Rewrite Test #" + w.LineNumber + " Failed: " + w.Message
+	} else if w.Type == WARNING_XPATH {
+		result = "Xpath error in " + w.File() + " line " + w.LineNumber + " – " + w.Message
 	}
 	return
 }
