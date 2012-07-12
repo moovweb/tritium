@@ -15,6 +15,12 @@ func (r *CheckResult) AddScriptWarning(obj *tp.ScriptObject, ins *tp.Instruction
 	r.Warnings = append(r.Warnings, warning)
 }
 
+func (r *CheckResult) AddXpathWarning(obj *tp.ScriptObject, ins *tp.Instruction, message string) {
+	warning := NewWarning(WARNING_XPATH, null.GetString(obj.Name), int(null.GetInt32(ins.LineNumber)), message)
+	print("F")
+	r.Warnings = append(r.Warnings, warning)
+}
+
 func (r *CheckResult) AddRewriterWarning(rrtype string, position int, message string) {
 	warning := NewWarning(WARNING_REWRITER, rrtype, position, message)
 	print("F")
