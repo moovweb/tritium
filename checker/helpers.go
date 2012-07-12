@@ -2,19 +2,22 @@ package checker
 
 import (
 	tp "tritium/proto"
-	"golog"
+	"butler/null"
 )
 
 type CheckResult struct {
 	Warnings []*Warning
-	Logger   *golog.Logger
 }
 
-func (r *CheckResult) AddWarning(obj *tp.ScriptObject, ins *tp.Instruction, message string) {
-	warning := NewWarning(obj, ins, message)
-	if r.Logger != nil {
-		r.Logger.Warning(warning.String())
-	}
+func (r *CheckResult) AddScriptWarning(obj *tp.ScriptObject, ins *tp.Instruction, message string) {
+	warning := NewWarning(WARNING_SCRIPT, null.GetString(obj.Name), int(null.GetInt32(ins.LineNumber)), message)
+	print("F")
+	r.Warnings = append(r.Warnings, warning)
+}
+
+func (r *CheckResult) AddRewriterWarning(rrtype string, position int, message string) {
+	warning := NewWarning(WARNING_REWRITER, rrtype, position, message)
+	print("F")
 	r.Warnings = append(r.Warnings, warning)
 }
 
