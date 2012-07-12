@@ -1,23 +1,28 @@
 package checker
 
 import (
-	"butler/null"
 	"fmt"
 	. "strings"
-	tp "tritium/proto"
 )
 
 type Warning struct {
+	Type       int
 	Message    string
 	FilePath   string
 	LineNumber string
 }
 
-func NewWarning(obj *tp.ScriptObject, ins *tp.Instruction, message string) (w *Warning) {
+const (
+	WARNING_SCRIPT = iota
+	WARNING_REWRITER
+)
+
+func NewWarning(warning_type int, filepath string, line_number int, message string) (w *Warning) {
 	w = &Warning{
+		Type:       warning_type,
 		Message:    message,
-		FilePath:   null.GetString(obj.Name),
-		LineNumber: fmt.Sprintf("%d", null.GetInt32(ins.LineNumber)),
+		FilePath:   filepath,
+		LineNumber: fmt.Sprintf("%d", line_number),
 	}
 	return
 }
@@ -30,6 +35,11 @@ func (w *Warning) File() string {
 	return w.FilePath
 }
 
-func (w *Warning) String() string {
-	return w.File() + ":" + w.LineNumber + "– " + w.Message
+func (w *Warning) String() (result string) {
+	if w.Type == WARNING_SCRIPT {
+		result = "Syntax warning in " + w.File() + " line " + w.LineNumber + " – " + w.Message
+	} else if w.Type == WARNING_REWRITER {
+		result = w.File() + " Rewrite Test #" + w.LineNumber + " Failed: " + w.Message
+	}
+	return
 }

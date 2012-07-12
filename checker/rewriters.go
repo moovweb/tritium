@@ -1,10 +1,8 @@
 package checker
 
 import (
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -41,7 +39,7 @@ func read_test_cases(test_file string) (ProjectTests, error) {
 }
 
 type create_http_cmd func(RewriteTestCase) string
-type check_cmd_transform func(RewriteTestCase, string) bool
+type read_cmd_transform func(string) string
 
 func create_host_http_req(test RewriteTestCase) string {
 	request := "GET / HTTP/1.0\r\n"
@@ -49,10 +47,10 @@ func create_host_http_req(test RewriteTestCase) string {
 	return request
 }
 
-func check_host_results(test RewriteTestCase, result string) bool {
-	expected := "GET / HTTP/1.0\r\n"
-	expected += "Host: " + test.Expected
-	return strings.HasPrefix(result, expected)
+func read_host_results(result string) string {
+	lines := strings.Split(result, "\n")
+	check := lines[1][6:]
+	return strings.TrimSpace(check)
 }
 
 func create_link_http_res(test RewriteTestCase) string {
@@ -61,62 +59,58 @@ func create_link_http_res(test RewriteTestCase) string {
 	return response
 }
 
-func check_link_results(test RewriteTestCase, result string) bool {
-	expected := "HTTP/1.0 200 OK\r\n"
-	expected += "Location: " + test.Expected
-	return strings.HasPrefix(result, expected)
+func read_link_results(result string) string {
+	lines := strings.Split(result, "\n")
+	check := lines[1][10:]
+	return strings.TrimSpace(check)
 }
 
 func create_cookie_http_res(test RewriteTestCase) string {
 	response := "HTTP/1.0 200 OK\r\n"
-	response += "Set-Cookie: Domain=" + test.Test + "; Path=/"
+	response += "Set-Cookie: Domain=" + test.Test
 	return response
 }
 
-func check_cookie_results(test RewriteTestCase, result string) bool {
-	expected := "HTTP/1.0 200 OK\r\n"
-	expected += "Set-Cookie: Domain=" + test.Expected + "; Path=/"
-	return strings.HasPrefix(result, expected)
+func read_cookie_results(result string) string {
+	lines := strings.Split(result, "\n")
+	check := lines[1][19:]
+	return strings.TrimSpace(check)
 }
 
-func run_tests(test_type string, engine *whale.Whale, transformer *proto.Transform, rrules []*proto.RewriteRule, tests []RewriteTestCase, create_cmd create_http_cmd, check_cmd check_cmd_transform, logger *golog.Logger) bool {
+func (result *CheckResult) run_tests(test_type string, engine *whale.Whale, transformer *proto.Transform, rrules []*proto.RewriteRule, tests []RewriteTestCase, create_cmd create_http_cmd, read_result_cmd read_cmd_transform, logger *golog.Logger) bool {
 	all_passed := true
-	logger.Info("Running " + test_type + " Rewriter Tests...")
-	for i, t := range tests {
-		logger.Debug("Starting " + test_type + " test #" + strconv.Itoa(i))
+
+	for i, current_test := range tests {
 		env := map[string]string{}
-		env["host"] = t.Host
-		http_cmd := create_cmd(t)
-		logger.Debug("\n===Original Command===\n" + http_cmd + "\n========================\nEnvironment: " + fmt.Sprintln(env))
+		env["host"] = current_test.Host
+		http_cmd := create_cmd(current_test)
 
 		// Temporarily just try to create a really large timeout.
 		timeout := time.Now().Add(time.Duration(1) * time.Minute)
-		result, exports, _ := engine.Run(transformer, rrules, http_cmd, env, timeout)
-		logger.Debug("\n==Results after transform==\n" + result + "\n==========================")
-		logger.Debug("Exports:  " + fmt.Sprintln(exports))
-		passed := check_cmd(t, result)
-		if !passed {
-			logger.Error(" * " + test_type + " test #" + strconv.Itoa(i) + "...FAILED")
-			all_passed = false
+		test_result, _, _ := engine.Run(transformer, rrules, http_cmd, env, timeout)
+		test_output := read_result_cmd(test_result)
+
+		if test_output == current_test.Expected {
+			print(".")
 		} else {
-			logger.Info(" * " + test_type + " test #" + strconv.Itoa(i) + "...PASSED")
+			result.AddRewriterWarning(test_type, i+1, "Expected: " + current_test.Expected + " Got: " + test_output)
+			all_passed = false
 		}
 	}
 	return all_passed
 }
 
-func RunProjectRewriterTests(req_tsf *proto.Transform, post_tsf *proto.Transform, rrules []*proto.RewriteRule, projectPath string, logger *golog.Logger) bool {
+func (result *CheckResult) CheckRewriters(req_tsf *proto.Transform, post_tsf *proto.Transform, rrules []*proto.RewriteRule, projectPath string, logger *golog.Logger) bool {
 	test_path := filepath.Join(projectPath, TEST_FILE)
 	test_cases, err := read_test_cases(test_path)
 	if err != nil {
 		return false
 	}
-	logger.Debug("Test cases loaded from: " + test_path)
 
 	engine := whale.NewEngine(logger)
-	passed_host := run_tests("Host", engine, req_tsf, rrules, test_cases.Host, create_host_http_req, check_host_results, logger)
-	passed_link := run_tests("Link", engine, post_tsf, rrules, test_cases.Link, create_link_http_res, check_link_results, logger)
-	passed_cookie := run_tests("Cookie", engine, post_tsf, rrules, test_cases.Cookie_Domain, create_cookie_http_res, check_cookie_results, logger)
+	passed_host := result.run_tests("Host", engine, req_tsf, rrules, test_cases.Host, create_host_http_req, read_host_results, logger)
+	passed_link := result.run_tests("Link", engine, post_tsf, rrules, test_cases.Link, create_link_http_res, read_link_results, logger)
+	passed_cookie := result.run_tests("Cookie", engine, post_tsf, rrules, test_cases.Cookie_Domain, create_cookie_http_res, read_cookie_results, logger)
 
 	return passed_host && passed_link && passed_cookie
 }
