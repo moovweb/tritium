@@ -16,7 +16,7 @@ func (result *CheckResult) CheckForSelectText(script *tp.ScriptObject) {
 				for _, arg := range ins.Arguments {
 					xpath := null.GetString(arg.Value)
 					if tester.Match([]byte(xpath)) {
-						result.AddWarning(script, ins, "Shouldn't use comment()/text() in '"+xpath+"'")
+						result.AddScriptWarning(script, ins, "Shouldn't use comment()/text() in '"+xpath+"'")
 					}
 				}
 			}
@@ -34,7 +34,7 @@ func (result *CheckResult) CheckForNotMisuse(script *tp.ScriptObject) {
 					for _, arg := range ins.Arguments {
 						if *arg.Type == tp.Instruction_FUNCTION_CALL {
 							if null.GetString(arg.Value) == "not" {
-								result.AddWarning(script, ins, "Possible misuse of not()– remember not is the opposite of with!")
+								result.AddScriptWarning(script, ins, "Possible misuse of not()– remember not is the opposite of with!")
 							}
 						}
 					}
@@ -53,7 +53,7 @@ func (result *CheckResult) CheckForLocationExport(script *tp.ScriptObject) {
 			if name == "export" {
 				if ins.Arguments != nil {
 					if null.GetString(ins.Arguments[0].Value) == "location" {
-						result.AddWarning(script, ins, "Incorrect export of location! Use \"Location\" not \"location\"")
+						result.AddScriptWarning(script, ins, "Incorrect export of location! Use \"Location\" not \"location\"")
 					}
 				}
 			}
