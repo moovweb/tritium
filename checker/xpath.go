@@ -25,10 +25,12 @@ func (result *CheckResult) CheckXpath(script *tp.ScriptObject) {
 			for _, xpath_func := range xpath_funcs {
 				if name == xpath_func {
 					if ins.Arguments != nil {
-						test_xpath := null.GetString(ins.Arguments[0].Value)
-						err := xpath.Check(test_xpath)
-						if err != nil {
-							result.AddXpathWarning(script, ins, err.Error())
+						if len(ins.Arguments) > 0 {
+							test_xpath := null.GetString(ins.Arguments[0].Value)
+							err := xpath.Check(test_xpath)
+							if err != nil {
+								result.AddXpathWarning(script, ins, err.Error())
+							}
 						}
 					}
 				}
