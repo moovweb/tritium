@@ -19,6 +19,7 @@ func CheckBeforeLinking(scripts []*tp.ScriptObject) *CheckResult {
 		result.CheckForSelectText(script)
 		result.CheckForNotMisuse(script)
 		result.CheckForLocationExport(script)
+		result.CheckXpath(script)
 	}
 	return result
 }
