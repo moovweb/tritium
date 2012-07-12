@@ -48,6 +48,7 @@ type WhaleContext struct {
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
+const TimeoutError = "EngineTimeout"
 
 func NewEngine(logger *golog.Logger) *Whale {
 	e := &Whale{
@@ -132,17 +133,19 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 			} else {
 				errString = x.(string)
 			}
-			if ctx.HadError == false {
-				ctx.HadError = true
-				errString = errString + "\n" + ins.Type.String() + " " + null.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
-			}
-			errString = errString + ctx.FileAndLine(ins) + "\n"
+			if errString != TimeoutError {
+				if ctx.HadError == false {
+					ctx.HadError = true
+					errString = errString + "\n" + ins.Type.String() + " " + null.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
+				}
+				errString = errString + ctx.FileAndLine(ins) + "\n"
+		  }
 			panic(errString)
 		}
 	}()
 
 	if time.Now().After(ctx.Deadline) {
-		panic("engine timeout")
+		panic(TimeoutError)
 	}
 
 	// If our object is invalid, then skip it
