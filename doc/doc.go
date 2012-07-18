@@ -11,6 +11,7 @@ import (
 
 import (
 	"butler/null"
+	yaml "goyaml"
 	"tritium/packager"
 	tp "tritium/proto"
 )
@@ -89,6 +90,14 @@ func Generate(outputFile string) {
 	if err != nil {
 		panic("Couldn't write doc file:\n" + err.Error())
 	}
+}
+
+func RenderDocumentationAsYaml(d *DefinitionList) []byte {
+	docs, err := yaml.Marshal(&d)
+	if err != nil {
+		panic("Couldn't create YAML of Tritium spec: " + err.Error())
+	}
+	return docs
 }
 
 func RenderDocumentation(d *DefinitionList) []byte {
