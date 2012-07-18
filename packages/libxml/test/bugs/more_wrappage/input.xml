@@ -1,7 +1,0 @@
-<div class="news-article"> 
-  <div class="news-article-h3">News</div>
-  <div id="font-resize">
-    <p><a href="#" id="text-plus">+</a> <a href="#" id="text-minus">-</a><span style="float:right;">Text Size</span> </p>
-	  <div style="clear:both;"></div>
-  </div>
-</div>
