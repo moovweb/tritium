@@ -1,0 +1,15 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+  <div>
+<span><p>Hello</p></span><div>my</div>
+<span><p>name is</p></span><span>Mr.</span><span><p>Aaron</p></span>
+</div>
+  <div>
+<span>1</span><span class="separator"> | </span><span>2</span><span class="separator"> | </span><span>3</span>
+</div>
+  <div>
+<span>Chunk 1</span><div>before whitespace</div>
+<span>                 </span><div>after whitespace</div>
+<span>Chunk 2</span>
+</div>
+</body></html>
