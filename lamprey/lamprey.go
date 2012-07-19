@@ -3,6 +3,7 @@ package lamprey
 import (
 	"fmt"
 	"time"
+	"os"
 )
 
 import (
@@ -81,31 +82,30 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 	}
 
 	ctx.level++
-
 	returnValue = ""
 	switch *ins.Type {
 	case tp.Instruction_BLOCK:
-		fmt.Printf("%sInstruction block; scope value:\n%v\n", indent, scope.Value)
+		fmt.Fprintf(os.Stderr, "%sInstruction block; scope value:\n%v\n", indent, scope.Value)
 		returnValue = ctx.RunChildren(scope, ins)
-		fmt.Printf("%sInstruction block returns: %v\n", indent, returnValue)
+		fmt.Fprintf(os.Stderr, "%sInstruction block returns: %v\n", indent, returnValue)
 	case tp.Instruction_TEXT:
-		fmt.Printf("%sInstruction text\n", indent)
+		fmt.Fprintf(os.Stderr, "%sInstruction text\n", indent)
 		returnValue = null.GetString(ins.Value)
-		fmt.Printf("%sInstruction text returns: %v\n", indent, returnValue)
+		fmt.Fprintf(os.Stderr, "%sInstruction text returns: %v\n", indent, returnValue)
 	case tp.Instruction_LOCAL_VAR:
-		fmt.Printf("%sEval local var\n", indent)
+		fmt.Fprintf(os.Stderr, "%sEval local var\n", indent)
 		name := null.GetString(ins.Value)
 		vars := ctx.Vars()
 		if len(ins.Arguments) > 0 {
 			vars[name] = ctx.RunInstruction(scope, ins.Arguments[0])
 		}
-		fmt.Printf("%s%%%s: %v\n", indent, name, vars[name])
+		fmt.Fprintf(os.Stderr, "%s%%%s: %v\n", indent, name, vars[name])
 		if len(ins.Children) > 0 {
 			ts := &whale.Scope{Value: ctx.Vars()[name]}
 			ctx.RunChildren(ts, ins)
 			vars[name] = ts.Value
 		}
-		fmt.Printf("%sreturn: %v\n", indent, vars[name])
+		fmt.Fprintf(os.Stderr, "%sreturn: %v\n", indent, vars[name])
 		returnValue = vars[name]
 	case tp.Instruction_IMPORT:
 		obj := ctx.Objects[int(null.GetInt32(ins.ObjectId))]
@@ -113,11 +113,11 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 		ctx.Filename = null.GetString(obj.Name)
 		ctx.RunChildren(scope, obj.Root)
 		ctx.Filename = curFile
-		fmt.Printf("%sImport: %q\n", indent, ctx.Filename)
+		fmt.Fprintf(os.Stderr, "%sImport: %q\n", indent, ctx.Filename)
 	case tp.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(null.GetInt32(ins.FunctionId))]
-		fmt.Printf("%s%s\n", indent, fun.Name)
-		fmt.Printf("%sscope.Value berfore loading vars:\n%v\n", indent, scope.Value)
+		fmt.Fprintf(os.Stderr, "%s%s\n", indent, fun.Name)
+		fmt.Fprintf(os.Stderr, "%sscope.Value berfore loading vars:\n%v\n", indent, scope.Value)
 		args := make([]interface{}, len(ins.Arguments))
 		for i, argIns := range ins.Arguments {
 			args[i] = ctx.RunInstruction(scope, argIns)
@@ -131,8 +131,8 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 			}
 		}
 		debugInfo += ")\n"
-		fmt.Printf("%s%s", indent, debugInfo)
-		fmt.Printf("%sscope.Value before calling:\n%v\n", indent, scope.Value)
+		fmt.Fprintf(os.Stderr, "%s%s", indent, debugInfo)
+		fmt.Fprintf(os.Stderr, "%sscope.Value before calling:\n%v\n", indent, scope.Value)
 
 		if null.GetBool(fun.BuiltIn) {
 			if f := whale.LookupBuiltIn(fun.Name); f != nil {
@@ -154,15 +154,15 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 			}
 			// PUSH!
 			ctx.PushYieldBlock(yieldBlock)
-			fmt.Printf("%srun children\n", indent)
+			fmt.Fprintf(os.Stderr, "%srun children\n", indent)
 			returnValue = ctx.RunChildren(scope, fun.Instruction)
 			// POP!
 			ctx.PopYieldBlock()
 		}
 
-		fmt.Printf("%sscope.Value:\n%v\n", indent, scope.Value)
-		fmt.Printf("%sreturnValue:\n%v\n", indent, returnValue)
-		fmt.Printf("%s%s done\n\n", indent, fun.Name)
+		fmt.Fprintf(os.Stderr, "%sscope.Value:\n%v\n", indent, scope.Value)
+		fmt.Fprintf(os.Stderr, "%sreturnValue:\n%v\n", indent, returnValue)
+		fmt.Fprintf(os.Stderr, "%s%s done\n\n", indent, fun.Name)
 	}
 	ctx.level--
 
