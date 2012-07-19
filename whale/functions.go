@@ -813,6 +813,7 @@ func rewrite_to_upstream_Text(ctx EngineContext, scope *Scope, ins *tp.Instructi
 	fromProxy := scope.Value.(string)
 	rrules := ctx.GetRewriteRules()
 	println("rewrite_to_upstream searching", fromProxy)
+	returnValue = "false"
 	if len(rrules) > 0 {
 		for _, rr := range(rrules) {
 			if *rr.Direction == tp.RewriteRule_UPSTREAM_TO_PROXY {
@@ -820,7 +821,7 @@ func rewrite_to_upstream_Text(ctx EngineContext, scope *Scope, ins *tp.Instructi
 			}
 			println(*rr.Proxy, *rr.Upstream)
 			if fromProxy == *rr.Proxy {
-				returnValue = *rr.Upstream
+				returnValue = "true"
 				scope.Value = *rr.Upstream
 				return
 			}
@@ -834,24 +835,30 @@ func rewrite_to_proxy_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction,
 	fromUpstream := scope.Value.(string)
 	rrules := ctx.GetRewriteRules()
 	println("rewrite_to_proxy searching", fromUpstream)
+	returnValue = "false"
 	if len(rrules) > 0 {
 		for _, rr := range(rrules) {
 			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
 				continue
 			}
-			println(*rr.Proxy, *rr.Upstream)
 			if fromUpstream == *rr.Upstream {
 				if rewriteType == "cookie" {
-					returnValue = *rr.CookieDomain
+					returnValue = "true"
 					scope.Value = *rr.CookieDomain
 				} else {
-					returnValue = *rr.Proxy
+					returnValue = "true"
 					scope.Value = *rr.Proxy
 				}
-				println("return:", *rr.Proxy)
 				return
 			}
 		}
 	}
 	return
 }
+
+func debug_me_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	msg := args[0].(string)
+	println("DEBUG_ME:", msg)
+	return
+}
+

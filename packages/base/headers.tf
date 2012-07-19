@@ -91,3 +91,5 @@
 " Rewrite a host/link/cookie from upstream to proxy "
 @func Text.rewrite_to_proxy(Text %from_upstream) Text
 
+" for internal debug use "
+@func Text.debug_me(Text %msg) Text
