@@ -812,7 +812,6 @@ func rewrite_to_upstream_Text(ctx EngineContext, scope *Scope, ins *tp.Instructi
 	//rewrite_type := args[0].(string)
 	fromProxy := scope.Value.(string)
 	rrules := ctx.GetRewriteRules()
-	println("rewrite_to_upstream searching", fromProxy)
 	returnValue = "false"
 	if len(rrules) > 0 {
 		for _, rr := range(rrules) {
@@ -834,7 +833,6 @@ func rewrite_to_proxy_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction,
 	rewriteType := args[0].(string)
 	fromUpstream := scope.Value.(string)
 	rrules := ctx.GetRewriteRules()
-	println("rewrite_to_proxy searching", fromUpstream)
 	returnValue = "false"
 	if len(rrules) > 0 {
 		for _, rr := range(rrules) {
