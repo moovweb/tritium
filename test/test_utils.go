@@ -118,7 +118,7 @@ func RunTestSuite(directoryFromRoot string, t *testing.T) {
 		if error.Panic {
 			fmt.Printf(error.Message)
 		} else {
-			fmt.Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", error.Name, error.Message, error.Got, error.Expected)
+			println(fmt.Sprintf("\n==========\n%v :: %v \n\n Got \n----------\n[%v]\n\n Expected \n----------\n[%v]\n", error.Name, error.Message, error.Got, error.Expected))
 		}
 	}
 	fmt.Printf("\n+++ Finished test suite(%v) +++\n\n", directoryFromRoot)
