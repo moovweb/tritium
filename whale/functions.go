@@ -810,7 +810,7 @@ func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interfac
 
 func rewrite_to_upstream_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	//rewrite_type := args[0].(string)
-	fromProxy := scope.Value.(string)
+	fromProxy := strings.ToLower(scope.Value.(string))
 	rrules := ctx.GetRewriteRules()
 	returnValue = "false"
 	if len(rrules) > 0 {
@@ -818,7 +818,6 @@ func rewrite_to_upstream_Text(ctx EngineContext, scope *Scope, ins *tp.Instructi
 			if *rr.Direction == tp.RewriteRule_UPSTREAM_TO_PROXY {
 				continue
 			}
-			println(*rr.Proxy, *rr.Upstream)
 			if fromProxy == *rr.Proxy {
 				returnValue = "true"
 				scope.Value = *rr.Upstream
@@ -831,7 +830,7 @@ func rewrite_to_upstream_Text(ctx EngineContext, scope *Scope, ins *tp.Instructi
 
 func rewrite_to_proxy_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	rewriteType := args[0].(string)
-	fromUpstream := scope.Value.(string)
+	fromUpstream := strings.ToLower(scope.Value.(string))
 	rrules := ctx.GetRewriteRules()
 	returnValue = "false"
 	if len(rrules) > 0 {
