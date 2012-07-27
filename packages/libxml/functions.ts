@@ -224,6 +224,7 @@ Functionally equivalent to `name() { set(%name) }`."
 "Parses the document into HTML."
 
 @func Text.html(Text %enc) {
+  $charset_determined = %enc
   html(%enc, %enc) {
     yield()
   }
@@ -248,6 +249,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 @func Text.html_fragment(Text %enc) {
+  $charset_determined = %enc
   html_fragment(%enc, %enc) {
     yield()
   }
