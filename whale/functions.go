@@ -852,3 +852,10 @@ func rewrite_to_proxy_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction,
 	}
 	return
 }
+
+func debug_me_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	msg := args[0].(string)
+	println("DEBUG_ME:", msg)
+	return
+}
+
