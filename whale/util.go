@@ -70,3 +70,15 @@ func ReformatHostMapValue(value string, append_proto, append_slashes bool) (newV
 	}
 	return
 }
+
+//true if domain1 is less restrictive than domain2
+func IsDomainConvered(domain1, domain2 string) bool {
+	if strings.HasSuffix(domain2, domain1) {
+		return true
+	}
+	//handle the edge case: ".example.com" is equivalent to "example.com"
+	if strings.Trim(domain1, ".") == strings.Trim(domain2, ".") {
+		return true
+	}
+	return false
+}

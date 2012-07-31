@@ -811,65 +811,88 @@ func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interfac
 func rewrite_to_upstream_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	//rewrite_type := args[0].(string)
 	secure := args[1].(string)
-	fromProxy := strings.ToLower(scope.Value.(string))
+	host := strings.ToLower(scope.Value.(string))
 	
-	key, append_proto, append_slashes := GenerateHostMapKey(fromProxy, secure)
+	key, append_proto, append_slashes := GenerateHostMapKey(host, secure)
 
 	rrules := ctx.GetRewriteRules()
 	returnValue = "false"
 	if len(rrules) > 0 {
-		value := fromProxy
+		newHost := host
 		found := false
 		for _, rr := range(rrules) {
 			if *rr.Direction == tp.RewriteRule_UPSTREAM_TO_PROXY {
 				continue
 			}
 			if key == *rr.Proxy {
-				value = *rr.Upstream
+				newHost = ReformatHostMapValue(*rr.Upstream, append_proto, append_slashes)
 				returnValue = "true"
 				found = true
 				break
 			}
 		}
 		if found {
-			value = ReformatHostMapValue(value, append_proto, append_slashes)
-			scope.Value = value
+			scope.Value = newHost
 		}
 	}
 	return
 }
 
-func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	rewriteType := args[0].(string)
-	secure := args[1].(string)
-	fromUpstream := strings.ToLower(scope.Value.(string))
-	
-	key, append_proto, append_slashes := GenerateHostMapKey(fromUpstream, secure)
+func rewrite_link_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	secure := args[0].(string)
+	link := strings.ToLower(scope.Value.(string))
+	key, append_proto, append_slashes := GenerateHostMapKey(link, secure)
 	rrules := ctx.GetRewriteRules()
 	returnValue = "false"
 	if len(rrules) > 0 {
-		value := fromUpstream
+		newLink := link
 		found := false
 		for _, rr := range(rrules) {
 			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
 				continue
 			}
 			if key == *rr.Upstream {
-				if rewriteType == "cookie" {
-					value = *rr.CookieDomain
-				} else {
-					value = *rr.Proxy
-				}
+				newLink = ReformatHostMapValue(*rr.Proxy, append_proto, append_slashes)
 				returnValue = "true"
 				found = true
 				break
 			}
 		}
 		if found {
-			if rewriteType != "cookie" {
-				value = ReformatHostMapValue(value, append_proto, append_slashes)
+			scope.Value = newLink
+		}
+	}
+	return
+}
+
+func rewrite_cookie_domain_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	host := args[0].(string)
+	secure := args[1].(string)
+	domain := strings.ToLower(scope.Value.(string))
+	key, _, _ := GenerateHostMapKey(host, secure)
+	rrules := ctx.GetRewriteRules()
+	returnValue = "false"
+	if len(rrules) > 0 {
+		newDomain := domain
+		found := false
+		for _, rr := range(rrules) {
+			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
+				continue
 			}
-			scope.Value = value
+			if key == *rr.Upstream {
+				newDomain = *rr.CookieDomain
+				returnValue = "true"
+				found = true
+				break
+			}
+		}
+		if found {
+			if ! IsDomainConvered(domain, newDomain) { //the new cookie domain is NOT covered by the existing domain
+				scope.Value = newDomain
+			} else if ! strings.HasPrefix(domain, ".") { //should we do it here???? //TODO
+				domain = "." + domain
+				scope.Value = domain
+			}
 		}
 	}
 	return

@@ -85,11 +85,14 @@
 " Captures all instances of the regular expression **%search**. "
 @func Text.capture(Regexp %search) Text Text
 
-" Rewrite a host/link/cookie from proxy to upstream "
+" Rewrite a host/referer/origin from proxy to upstream "
 @func Text.rewrite_to_upstream(Text %from_proxy, Text %secure) Text
 
-" Rewrite a host/link/cookie from upstream to proxy "
-@func Text.rewrite_to_proxy(Text %from_upstream, Text %secure) Text
+" Rewrite a link from upstream to proxy "
+@func Text.rewrite_link(Text %secure) Text
+
+" Rewrite a cookie domain from upstream to proxy "
+@func Text.rewrite_cookie_domain(Text %host, Text %secure) Text
 
 " for internal debug use "
 @func Text.debug_me(Text %msg) Text
