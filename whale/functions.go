@@ -871,9 +871,6 @@ func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruc
 			}
 			scope.Value = value
 		}
-		println("rewrite_to_proxy_Text_Text")
-		println("key:", key)
-		println("value:", value, "\n--------\n")
 	}
 	return
 }
