@@ -84,8 +84,8 @@ func init() {
 	builtInFunctions["upcase.Text"] = upcase_Text
 	builtInFunctions["guess_encoding"] = guess_encoding
 	builtInFunctions["length.Text"] = length_Text
-	builtInFunctions["rewrite_to_upstream.Text"] = rewrite_to_upstream_Text
-	builtInFunctions["rewrite_to_proxy.Text"] = rewrite_to_proxy_Text
+	builtInFunctions["rewrite_to_upstream.Text.Text"] = rewrite_to_upstream_Text_Text
+	builtInFunctions["rewrite_to_proxy.Text.Text"] = rewrite_to_proxy_Text_Text
 	builtInFunctions["debug_me.Text"] = debug_me_Text
 }
 

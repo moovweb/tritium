@@ -808,47 +808,72 @@ func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interfac
 	return
 }
 
-func rewrite_to_upstream_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func rewrite_to_upstream_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	//rewrite_type := args[0].(string)
+	secure := args[1].(string)
 	fromProxy := strings.ToLower(scope.Value.(string))
+	
+	key, append_proto, append_slashes := GenerateHostMapKey(fromProxy, secure)
+
 	rrules := ctx.GetRewriteRules()
 	returnValue = "false"
 	if len(rrules) > 0 {
+		value := fromProxy
+		found := false
 		for _, rr := range(rrules) {
 			if *rr.Direction == tp.RewriteRule_UPSTREAM_TO_PROXY {
 				continue
 			}
-			if fromProxy == *rr.Proxy {
+			if key == *rr.Proxy {
+				value = *rr.Upstream
 				returnValue = "true"
-				scope.Value = *rr.Upstream
-				return
+				found = true
+				break
 			}
+		}
+		if found {
+			value = ReformatHostMapValue(value, append_proto, append_slashes)
+			scope.Value = value
 		}
 	}
 	return
 }
 
-func rewrite_to_proxy_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	rewriteType := args[0].(string)
+	secure := args[1].(string)
 	fromUpstream := strings.ToLower(scope.Value.(string))
+	
+	key, append_proto, append_slashes := GenerateHostMapKey(fromUpstream, secure)
 	rrules := ctx.GetRewriteRules()
 	returnValue = "false"
 	if len(rrules) > 0 {
+		value := fromUpstream
+		found := false
 		for _, rr := range(rrules) {
 			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
 				continue
 			}
-			if fromUpstream == *rr.Upstream {
+			if key == *rr.Upstream {
 				if rewriteType == "cookie" {
-					returnValue = "true"
-					scope.Value = *rr.CookieDomain
+					value = *rr.CookieDomain
 				} else {
-					returnValue = "true"
-					scope.Value = *rr.Proxy
+					value = *rr.Proxy
 				}
-				return
+				returnValue = "true"
+				found = true
+				break
 			}
 		}
+		if found {
+			if rewriteType != "cookie" {
+				value = ReformatHostMapValue(value, append_proto, append_slashes)
+			}
+			scope.Value = value
+		}
+		println("rewrite_to_proxy_Text_Text")
+		println("key:", key)
+		println("value:", value, "\n--------\n")
 	}
 	return
 }

@@ -34,3 +34,39 @@ func GetCharsetFromContentType(ct string) string {
 	}
 	return ""
 }
+
+func GenerateHostMapKey(key, secure string) (newKey string , append_proto, append_slashes bool)  {
+	newKey = key
+	proto := "http:"
+	if secure == "true" {
+		proto = "https:"
+	}
+	append_proto = false
+	append_slashes = false
+	if ! strings.HasPrefix(key, "http:") && ! strings.HasPrefix(key, "https:") {
+		if strings.HasPrefix(key, "//") {
+			newKey = proto + key
+			append_proto = true
+		} else {
+			newKey = proto + "//" + key
+			append_proto = true
+			append_slashes = true
+		}
+	}
+	return
+}
+
+func ReformatHostMapValue(value string, append_proto, append_slashes bool) (newValue string) {
+	newValue = value
+	if append_proto { //strip proto
+		if strings.HasPrefix(newValue, "http:") {
+			newValue = newValue[5:]
+		} else if strings.HasPrefix(newValue, "https:") {
+			newValue = newValue[6:]
+		}
+	}
+	if append_slashes && strings.HasPrefix(newValue, "//") {
+		newValue = newValue[2:]
+	}
+	return
+}
