@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strconv"
+	"strings"
 	. "tritium/tokenizer" // was meant to be in this package
 )
 
@@ -506,10 +507,27 @@ func (p *Parser) definition() *tp.Function {
 	}
 	funcBody := &tp.Instruction{
 		Type:     tp.Instruction_BLOCK.Enum(),
-		Children: p.block(),
+		// Children: p.block(),
+		// use the wrapper to get a better error message
+		Children: p.function_body(*node.Name),
 	}
 	node.Instruction = funcBody
 	return node
+}
+
+func (p *Parser) function_body(funcName string) (stmts []*tp.Instruction) {
+	// catch a parsing error and add extra error info about the surrounding definition
+	defer func() {
+		if r := recover(); r != nil {
+			// pull out the actual message without the filename/line-no
+			msg := strings.Split(r.(string), "-- ")[1]
+			// re-throw the error with the current filename, line-no, and function-name
+			p.error(fmt.Sprintf("in function '%s': %s", funcName, msg))
+		}
+	}()
+
+	stmts = p.block()
+	return stmts
 }
 
 func (p *Parser) parameters(funcName string) []*tp.Function_Argument {
