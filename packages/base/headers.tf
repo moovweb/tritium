@@ -40,7 +40,7 @@
 " Completes the pseudo-logic of `with()`, allowing the specification of an alternative."
 @func else() Text
 
-" Only used within functions  - enables functions within the scope of the current function to be performed. "
+" Only used within functions  - enables functions within the scope of the current function to be performed."
 @func yield() Text
 
 " Only used within functions - enables functions within the scope of the current function to be performed. "
