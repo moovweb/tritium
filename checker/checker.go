@@ -1,24 +1,25 @@
 package checker
 
 import (
-	tp "athena"
-	"golog"
+	tp "tritium/proto"
 	"tritium/parser"
 )
 
-func CheckFile(path string, logger *golog.Logger) *CheckResult {
+func CheckFile(path string) *CheckResult {
 	objs := parser.ParseFileSet(path)
-	return CheckBeforeLinking(objs, logger)
+	return CheckBeforeLinking(objs)
 }
 
-func CheckBeforeLinking(scripts []*tp.ScriptObject, logger *golog.Logger) *CheckResult {
+func CheckBeforeLinking(scripts []*tp.ScriptObject) *CheckResult {
 	result := &CheckResult{
 		Warnings: make([]*Warning, 0),
-		Logger:   logger,
 	}
 	for _, script := range scripts {
+		print(".")
 		result.CheckForSelectText(script)
 		result.CheckForNotMisuse(script)
+		result.CheckForLocationExport(script)
+		result.CheckXpath(script)
 	}
 	return result
 }

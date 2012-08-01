@@ -1,7 +1,7 @@
 package whale
 
 import (
-	tp "athena"
+	tp "tritium/proto"
 	"fmt"
 	"goconv"
 	"gokogiri/css"
@@ -270,6 +270,29 @@ func replace_Regexp(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 			}
 			return val
 		})
+	})
+	returnValue = scope.Value
+	return
+}
+
+func capture_Regexp(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	regexp := args[0].(*rubex.Regexp)
+	scope.Value = regexp.GsubFunc(scope.Value.(string), func(match string, captures map[string]string) string {
+		usesGlobal := (ctx.GetEnv("use_global_replace_vars") == "true")
+
+		for name, capture := range captures {
+			if usesGlobal {
+				ctx.SetEnv(name, capture)
+			}
+			ctx.SetVar(name, capture)
+		}
+
+		replacementScope := &Scope{Value: match}
+		for _, child := range ins.Children {
+			ctx.RunInstruction(replacementScope, child)
+		}
+
+		return replacementScope.Value.(string)
 	})
 	returnValue = scope.Value
 	return
@@ -775,12 +798,57 @@ func length_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 }
 
 func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	start := time.Now().UnixNano()
+	start := time.Now()
 	for _, child := range ins.Children {
 		ctx.RunInstruction(scope, child)
 	}
-	duration := time.Now().UnixNano() - start
+	duration := time.Since(start)
 	// I only seem to get 6 significant digits, so output in microseconds
-	returnValue = strconv.FormatInt(duration/1000, 10) + "µs"
+	returnValue = strconv.FormatInt(duration.Nanoseconds()/1000, 10) + "µs"
+	return
+}
+
+func rewrite_to_upstream_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	//rewrite_type := args[0].(string)
+	fromProxy := strings.ToLower(scope.Value.(string))
+	rrules := ctx.GetRewriteRules()
+	returnValue = "false"
+	if len(rrules) > 0 {
+		for _, rr := range(rrules) {
+			if *rr.Direction == tp.RewriteRule_UPSTREAM_TO_PROXY {
+				continue
+			}
+			if fromProxy == *rr.Proxy {
+				returnValue = "true"
+				scope.Value = *rr.Upstream
+				return
+			}
+		}
+	}
+	return
+}
+
+func rewrite_to_proxy_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	rewriteType := args[0].(string)
+	fromUpstream := strings.ToLower(scope.Value.(string))
+	rrules := ctx.GetRewriteRules()
+	returnValue = "false"
+	if len(rrules) > 0 {
+		for _, rr := range(rrules) {
+			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
+				continue
+			}
+			if fromUpstream == *rr.Upstream {
+				if rewriteType == "cookie" {
+					returnValue = "true"
+					scope.Value = *rr.CookieDomain
+				} else {
+					returnValue = "true"
+					scope.Value = *rr.Proxy
+				}
+				return
+			}
+		}
+	}
 	return
 }

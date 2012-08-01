@@ -1,13 +1,17 @@
 package whale
 
 import (
-	tp "athena"
-	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
+	"strings"
+	"time"
+)
+
+import (
+	"butler/null"
 	"gokogiri/xpath"
 	"golog"
 	"rubex"
-	"strings"
+	tp "tritium/proto"
 )
 
 type Whale struct {
@@ -30,6 +34,7 @@ type WhaleContext struct {
 	Yields                   []*YieldBlock
 	*Whale
 	*tp.Transform
+	Rrules                   []*tp.RewriteRule
 
 	// Debug info
 	Filename          string
@@ -38,9 +43,12 @@ type WhaleContext struct {
 	XPathCache        map[string]*xpath.Expression
 	InnerReplacer     *rubex.Regexp
 	HeaderContentType *rubex.Regexp
+
+	Deadline time.Time
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
+const TimeoutError = "EngineTimeout"
 
 func NewEngine(logger *golog.Logger) *Whale {
 	e := &Whale{
@@ -54,13 +62,14 @@ func NewEngine(logger *golog.Logger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform) (ctx *WhaleContext) {
+func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, rrules []*tp.RewriteRule, deadline time.Time) (ctx *WhaleContext) {
 	ctx = &WhaleContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
 		Logs:                     make([]string, 0),
 		Env:                      vars,
 		Transform:                transform,
+		Rrules:                   rrules,
 		MatchStack:               make([]string, 0),
 		MatchShouldContinueStack: make([]bool, 0),
 		Yields:                   make([]*YieldBlock, 0),
@@ -69,6 +78,7 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform) (
 		XPathCache:               make(map[string]*xpath.Expression),
 		InnerReplacer:            rubex.MustCompile(`[\\$](\d)`),
 		HeaderContentType:        rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
+		Deadline:                 deadline,
 	}
 	return
 }
@@ -98,13 +108,13 @@ func (eng *Whale) Free() {
 	*/
 }
 
-func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output string, exports [][]string, logs []string) {
-	ctx := NewEngineCtx(eng, vars, transform)
+func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
+	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline)
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
 	scope := &Scope{Value: input.(string)}
 	obj := transform.Objects[0]
-	ctx.Filename = proto.GetString(obj.Name)
+	ctx.Filename = null.GetString(obj.Name)
 	ctx.RunInstruction(scope, obj.Root)
 	output = scope.Value.(string)
 	exports = ctx.Exports
@@ -114,6 +124,7 @@ func (eng *Whale) Run(transform *tp.Transform, input interface{}, vars map[strin
 
 func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
 	defer func() {
+		//TODO Stack traces seem to get truncated on syslog...
 		if x := recover(); x != nil {
 			err, ok := x.(error)
 			errString := ""
@@ -122,17 +133,23 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 			} else {
 				errString = x.(string)
 			}
-			if ctx.HadError == false {
-				ctx.HadError = true
-				errString = errString + "\n" + ins.Type.String() + " " + proto.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
-			}
-			errString = errString + ctx.FileAndLine(ins) + "\n"
+			if errString != TimeoutError {
+				if ctx.HadError == false {
+					ctx.HadError = true
+					errString = errString + "\n" + ins.Type.String() + " " + null.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
+				}
+				errString = errString + ctx.FileAndLine(ins) + "\n"
+		  }
 			panic(errString)
 		}
 	}()
 
+	if time.Now().After(ctx.Deadline) {
+		panic(TimeoutError)
+	}
+
 	// If our object is invalid, then skip it
-	if proto.GetBool(ins.IsValid) == false {
+	if null.GetBool(ins.IsValid) == false {
 		panic("Invalid instruction. Should have stopped before linking!")
 	}
 	indent := ""
@@ -147,9 +164,9 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 			returnValue = ctx.RunInstruction(scope, child)
 		}
 	case tp.Instruction_TEXT:
-		returnValue = proto.GetString(ins.Value)
+		returnValue = null.GetString(ins.Value)
 	case tp.Instruction_LOCAL_VAR:
-		name := proto.GetString(ins.Value)
+		name := null.GetString(ins.Value)
 		vars := ctx.Vars()
 		if len(ins.Arguments) > 0 {
 			vars[name] = ctx.RunInstruction(scope, ins.Arguments[0])
@@ -163,21 +180,21 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 		}
 		returnValue = vars[name]
 	case tp.Instruction_IMPORT:
-		obj := ctx.Objects[int(proto.GetInt32(ins.ObjectId))]
+		obj := ctx.Objects[int(null.GetInt32(ins.ObjectId))]
 		curFile := ctx.Filename
-		ctx.Filename = proto.GetString(obj.Name)
+		ctx.Filename = null.GetString(obj.Name)
 		for _, child := range obj.Root.Children {
 			ctx.RunInstruction(scope, child)
 		}
 		ctx.Filename = curFile
 	case tp.Instruction_FUNCTION_CALL:
-		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]
+		fun := ctx.Functions[int(null.GetInt32(ins.FunctionId))]
 		args := make([]interface{}, len(ins.Arguments))
 		for i, argIns := range ins.Arguments {
 			args[i] = ctx.RunInstruction(scope, argIns)
 		}
 
-		if proto.GetBool(fun.BuiltIn) {
+		if null.GetBool(fun.BuiltIn) {
 			if f := builtInFunctions[fun.Name]; f != nil {
 				returnValue = f(ctx, scope, ins, args)
 				if returnValue == nil {
@@ -192,7 +209,7 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 			// Setup the new local var
 			vars := make(map[string]interface{}, len(args))
 			for i, arg := range fun.Args {
-				vars[proto.GetString(arg.Name)] = args[i]
+				vars[null.GetString(arg.Name)] = args[i]
 			}
 			yieldBlock := &YieldBlock{
 				Ins:  ins,
@@ -258,21 +275,21 @@ func (ctx *WhaleContext) Vars() map[string]interface{} {
 }
 
 func (ctx *WhaleContext) FileAndLine(ins *tp.Instruction) string {
-	lineNum := fmt.Sprintf("%d", proto.GetInt32(ins.LineNumber))
+	lineNum := fmt.Sprintf("%d", null.GetInt32(ins.LineNumber))
 	return (ctx.Filename + ":" + lineNum)
 }
 
 func (ctx *WhaleContext) UsePackage(pkg *tp.Package) {
 	ctx.Types = make([]string, len(pkg.Types))
 	for i, t := range pkg.Types {
-		ctx.Types[i] = proto.GetString(t.Name)
+		ctx.Types[i] = null.GetString(t.Name)
 	}
 
 	ctx.Functions = make([]*Function, len(pkg.Functions))
 	for i, f := range pkg.Functions {
-		name := proto.GetString(f.Name)
+		name := null.GetString(f.Name)
 		for _, a := range f.Args {
-			typeString := ctx.Types[int(proto.GetInt32(a.TypeId))]
+			typeString := ctx.Types[int(null.GetInt32(a.TypeId))]
 			name = name + "." + typeString
 		}
 		fun := &Function{
@@ -321,7 +338,7 @@ func (ctx *WhaleContext) AddExport(exports []string) {
 }
 
 func (ctx *WhaleContext) AddLog(log string) {
-	ctx.Log.Info("TRITIUM: " + log)
+	//ctx.Log.Info("TRITIUM: " + log)
 	ctx.Logs = append(ctx.Logs, log)
 }
 
@@ -397,4 +414,7 @@ func (ctx *WhaleContext) SetShouldContinue(cont bool) {
 	if num := len(ctx.MatchShouldContinueStack); num > 0 {
 		ctx.MatchShouldContinueStack[num-1] = cont
 	}
+}
+func (ctx *WhaleContext) GetRewriteRules() []*tp.RewriteRule {
+	return ctx.Rrules
 }

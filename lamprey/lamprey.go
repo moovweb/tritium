@@ -1,10 +1,15 @@
 package lamprey
 
 import (
-	tp "athena"
-	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
+	"time"
+	"os"
+)
+
+import (
+	"butler/null"
 	"golog"
+	tp "tritium/proto"
 	"tritium/whale"
 )
 
@@ -24,15 +29,15 @@ func NewEngine(logger *golog.Logger) *Lamprey {
 	return e
 }
 
-func (eng *Lamprey) Run(transform *tp.Transform, input interface{}, vars map[string]string) (output string, exports [][]string, logs []string) {
+func (eng *Lamprey) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
 	ctx := &Ctx{Lamprey: eng}
-	ctx.WhaleContext = whale.NewEngineCtx(eng.Whale, vars, transform)
+	ctx.WhaleContext = whale.NewEngineCtx(eng.Whale, vars, transform, rrules, deadline)
 
 	ctx.Yields = append(ctx.Yields, &whale.YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
 	scope := &whale.Scope{Value: input.(string)}
 	obj := transform.Objects[0]
-	ctx.Filename = proto.GetString(obj.Name)
+	ctx.Filename = null.GetString(obj.Name)
 	ctx.level = 0
 	ctx.RunInstruction(scope, obj.Root)
 	output = scope.Value.(string)
@@ -60,7 +65,7 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 			}
 			if ctx.HadError == false {
 				ctx.HadError = true
-				errString = errString + "\n" + ins.Type.String() + " " + proto.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
+				errString = errString + "\n" + ins.Type.String() + " " + null.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
 			}
 			errString = errString + ctx.FileAndLine(ins) + "\n"
 			panic(errString)
@@ -68,7 +73,7 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 	}()
 
 	// If our object is invalid, then skip it
-	if proto.GetBool(ins.IsValid) == false {
+	if null.GetBool(ins.IsValid) == false {
 		panic("Invalid instruction. Should have stopped before linking!")
 	}
 	indent := ""
@@ -77,43 +82,42 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 	}
 
 	ctx.level++
-
 	returnValue = ""
 	switch *ins.Type {
 	case tp.Instruction_BLOCK:
-		fmt.Printf("%sInstruction block; scope value:\n%v\n", indent, scope.Value)
+		fmt.Fprintf(os.Stderr, "%sInstruction block; scope value:\n%v\n", indent, scope.Value)
 		returnValue = ctx.RunChildren(scope, ins)
-		fmt.Printf("%sInstruction block returns: %v\n", indent, returnValue)
+		fmt.Fprintf(os.Stderr, "%sInstruction block returns: %v\n", indent, returnValue)
 	case tp.Instruction_TEXT:
-		fmt.Printf("%sInstruction text\n", indent)
-		returnValue = proto.GetString(ins.Value)
-		fmt.Printf("%sInstruction text returns: %v\n", indent, returnValue)
+		fmt.Fprintf(os.Stderr, "%sInstruction text\n", indent)
+		returnValue = null.GetString(ins.Value)
+		fmt.Fprintf(os.Stderr, "%sInstruction text returns: %v\n", indent, returnValue)
 	case tp.Instruction_LOCAL_VAR:
-		fmt.Printf("%sEval local var\n", indent)
-		name := proto.GetString(ins.Value)
+		fmt.Fprintf(os.Stderr, "%sEval local var\n", indent)
+		name := null.GetString(ins.Value)
 		vars := ctx.Vars()
 		if len(ins.Arguments) > 0 {
 			vars[name] = ctx.RunInstruction(scope, ins.Arguments[0])
 		}
-		fmt.Printf("%s%%%s: %v\n", indent, name, vars[name])
+		fmt.Fprintf(os.Stderr, "%s%%%s: %v\n", indent, name, vars[name])
 		if len(ins.Children) > 0 {
 			ts := &whale.Scope{Value: ctx.Vars()[name]}
 			ctx.RunChildren(ts, ins)
 			vars[name] = ts.Value
 		}
-		fmt.Printf("%sreturn: %v\n", indent, vars[name])
+		fmt.Fprintf(os.Stderr, "%sreturn: %v\n", indent, vars[name])
 		returnValue = vars[name]
 	case tp.Instruction_IMPORT:
-		obj := ctx.Objects[int(proto.GetInt32(ins.ObjectId))]
+		obj := ctx.Objects[int(null.GetInt32(ins.ObjectId))]
 		curFile := ctx.Filename
-		ctx.Filename = proto.GetString(obj.Name)
+		ctx.Filename = null.GetString(obj.Name)
 		ctx.RunChildren(scope, obj.Root)
 		ctx.Filename = curFile
-		fmt.Printf("%sImport: %q\n", indent, ctx.Filename)
+		fmt.Fprintf(os.Stderr, "%sImport: %q\n", indent, ctx.Filename)
 	case tp.Instruction_FUNCTION_CALL:
-		fun := ctx.Functions[int(proto.GetInt32(ins.FunctionId))]
-		fmt.Printf("%s%s\n", indent, fun.Name)
-		fmt.Printf("%sscope.Value berfore loading vars:\n%v\n", indent, scope.Value)
+		fun := ctx.Functions[int(null.GetInt32(ins.FunctionId))]
+		fmt.Fprintf(os.Stderr, "%s%s\n", indent, fun.Name)
+		fmt.Fprintf(os.Stderr, "%sscope.Value berfore loading vars:\n%v\n", indent, scope.Value)
 		args := make([]interface{}, len(ins.Arguments))
 		for i, argIns := range ins.Arguments {
 			args[i] = ctx.RunInstruction(scope, argIns)
@@ -127,10 +131,10 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 			}
 		}
 		debugInfo += ")\n"
-		fmt.Printf("%s%s", indent, debugInfo)
-		fmt.Printf("%sscope.Value before calling:\n%v\n", indent, scope.Value)
+		fmt.Fprintf(os.Stderr, "%s%s", indent, debugInfo)
+		fmt.Fprintf(os.Stderr, "%sscope.Value before calling:\n%v\n", indent, scope.Value)
 
-		if proto.GetBool(fun.BuiltIn) {
+		if null.GetBool(fun.BuiltIn) {
 			if f := whale.LookupBuiltIn(fun.Name); f != nil {
 				returnValue = f(ctx, scope, ins, args)
 			} else {
@@ -142,7 +146,7 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 			// Setup the new local var
 			vars := make(map[string]interface{}, len(args))
 			for i, arg := range fun.Args {
-				vars[proto.GetString(arg.Name)] = args[i]
+				vars[null.GetString(arg.Name)] = args[i]
 			}
 			yieldBlock := &whale.YieldBlock{
 				Ins:  ins,
@@ -150,15 +154,15 @@ func (ctx *Ctx) RunInstruction(scope *whale.Scope, ins *tp.Instruction) (returnV
 			}
 			// PUSH!
 			ctx.PushYieldBlock(yieldBlock)
-			fmt.Printf("%srun children\n", indent)
+			fmt.Fprintf(os.Stderr, "%srun children\n", indent)
 			returnValue = ctx.RunChildren(scope, fun.Instruction)
 			// POP!
 			ctx.PopYieldBlock()
 		}
 
-		fmt.Printf("%sscope.Value:\n%v\n", indent, scope.Value)
-		fmt.Printf("%sreturnValue:\n%v\n", indent, returnValue)
-		fmt.Printf("%s%s done\n\n", indent, fun.Name)
+		fmt.Fprintf(os.Stderr, "%sscope.Value:\n%v\n", indent, scope.Value)
+		fmt.Fprintf(os.Stderr, "%sreturnValue:\n%v\n", indent, returnValue)
+		fmt.Fprintf(os.Stderr, "%s%s done\n\n", indent, fun.Name)
 	}
 	ctx.level--
 

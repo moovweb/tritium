@@ -8,9 +8,10 @@ import "testing"
 import "runtime"
 import "fmt"
 import "tritium/spec"
-import ap "athena"
+import tp "tritium/proto"
 import "tritium/packager"
 import "golog"
+import "time"
 
 
 func RunTest(path string) (result *spec.Result) {
@@ -44,7 +45,8 @@ func RunTest(path string) (result *spec.Result) {
 	}
 
 	eng := whale.NewEngine(logger)
-	result.Merge(spec.Compare(eng.Run(spec.Script, spec.Input, spec.Vars)))
+	d, _ := time.ParseDuration("1m")
+	result.Merge(spec.Compare(eng.Run(spec.Script, nil, spec.Input, spec.Vars, time.Now().Add(d))))
 
 	return
 }
@@ -77,7 +79,7 @@ func relativeDirectory(directoryFromRoot string) (directory string, ok bool) {
 	return
 }
 
-var pkg *ap.Package
+var pkg *tp.Package
 
 func initializePackage() {
 	packagesPath, ok := relativeDirectory("packages")
@@ -116,7 +118,7 @@ func RunTestSuite(directoryFromRoot string, t *testing.T) {
 		if error.Panic {
 			fmt.Printf(error.Message)
 		} else {
-			fmt.Printf("\n==========\n%v :: %v \n\n Got \n----------\n%v\n\n Expected \n----------\n%v\n", error.Name, error.Message, error.Got, error.Expected)
+			println(fmt.Sprintf("\n==========\n%v :: %v \n\n Got \n----------\n[%v]\n\n Expected \n----------\n[%v]\n", error.Name, error.Message, error.Got, error.Expected))
 		}
 	}
 	fmt.Printf("\n+++ Finished test suite(%v) +++\n\n", directoryFromRoot)

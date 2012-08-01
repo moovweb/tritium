@@ -1,27 +1,29 @@
 package packager
 
 import (
-	tp "athena"
-	proto "code.google.com/p/goprotobuf/proto"
 	"io/ioutil"
-	"log"
-	"path/filepath"
-	"tritium/crypto"
 	"os"
+	"path/filepath"
+)
+
+import (
+	"butler/crypto"
+	"butler/null"
+	proto "code.google.com/p/goprotobuf/proto"
+	tp "tritium/proto"
 )
 
 func (pkg *Package) write() {
 	//	path, name := filepath.Split(pkg.location)
 	//	path, name := filepath.Split(pkg.LoadPath)
 	//	outputFilename := filepath.Join(path, name, name+".tpkg")
-	name := proto.GetString(pkg.Name)
+	name := null.GetString(pkg.Name)
 	outputFilename := filepath.Join(pkg.LoadPath, name+".tpkg")
 
 	bytes, err := proto.Marshal(pkg.Package)
 
 	if err != nil {
-		println("Could not marshal package:", name)
-		log.Panic(err)
+		panic("Could not marshal package: " + name + " (" + err.Error() + ")")
 	}
 
 	bytes = crypto.Encrypt(bytes)
@@ -72,7 +74,7 @@ func (pkg *Package) Merge(otherPackage *tp.Package) {
 	var existingTypeId int
 
 	for _, someType := range otherPackage.Types {
-		existingTypeId = pkg.GetTypeId(proto.GetString(someType.Name))
+		existingTypeId = pkg.GetTypeId(null.GetString(someType.Name))
 		if existingTypeId == -1 {
 			pkg.Types = append(pkg.Types, someType)
 		}
@@ -80,7 +82,7 @@ func (pkg *Package) Merge(otherPackage *tp.Package) {
 
 	for _, function := range otherPackage.Functions {
 
-		if proto.GetBool(function.BuiltIn) {
+		if null.GetBool(function.BuiltIn) {
 			pkg.resolveHeader(function)
 		} else {
 			resolveDefinition(pkg.Package, function)
@@ -92,7 +94,7 @@ func (pkg *Package) Merge(otherPackage *tp.Package) {
 		pkg.Dependencies = append(pkg.Dependencies, dependency)
 	}
 
-	otherName := proto.GetString(otherPackage.Name)
+	otherName := null.GetString(otherPackage.Name)
 	pkg.Dependencies = append(pkg.Dependencies, otherName)
-	pkg.Log.Info("Added dependency (" + otherName + ") to " + proto.GetString(pkg.Name) + "'s loaded dependencies")
+	pkg.Log.Info("Added dependency (" + otherName + ") to " + null.GetString(pkg.Name) + "'s loaded dependencies")
 }

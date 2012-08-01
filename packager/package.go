@@ -1,7 +1,7 @@
 package packager
 
 import (
-	tp "athena"
+	tp "tritium/proto"
 	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"golog"
@@ -149,11 +149,9 @@ func NewUserPackage(loadPath *string, fallbackPath *string) *Package {
 }
 
 func newLog() *golog.Logger {
+	consoleProcessor := golog.NewConsoleProcessor(golog.LOG_ERR, true)
 	pkgLog := golog.NewLogger("tritium")
-	os.Mkdir("tmp", os.FileMode(0777))
-	//TODO should handle err here
-	fileProcessor, _ := golog.NewFileProcessor(golog.LOG_DEBUG, "tmp/packager.log")
-	pkgLog.AddProcessor("file", fileProcessor)
+	pkgLog.AddProcessor("console", consoleProcessor)
 	return pkgLog
 }
 
@@ -267,3 +265,37 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 
 	return nil
 }
+
+// Assumes access to raw packages
+// This will only be true on dev / build boxes
+
+func NewRootPackage(rootPackagePath string, name string, dataPath string) (*Package){
+	rootPackage := NewPackage(rootPackagePath, PackageOptions{"stdout" : false,"output_tpkg" : false,"use_tpkg" : true})
+
+	rootPackage.FallbackPath = filepath.Join(dataPath, "packages") 
+	// This works out ok since the packager loadDependency() code path will check fallbacks for .tpkg's
+	return rootPackage
+}
+
+
+func BuildRootPackage(rootPackage *Package, rootPackagePath string, name string) (loadError *Error){
+	error := rootPackage.LoadFromPath(rootPackagePath, name )
+
+	if error != nil {
+		return error
+	}
+
+	info, err := ReadPackageInfoFile(rootPackagePath)
+
+	if err != nil {
+		return &Error{
+		Code: BUILD_ERROR,
+		Message: *err,
+		}
+	}
+
+	rootPackage.Name = proto.String( info.Name )
+
+	return nil
+}
+

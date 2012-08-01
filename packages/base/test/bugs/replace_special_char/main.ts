@@ -1,0 +1,3 @@
+set("©")
+
+replace(/©/, "blah")

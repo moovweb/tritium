@@ -1,7 +1,7 @@
 package whale
 
 import (
-	tp "athena"
+	tp "tritium/proto"
 	"gokogiri/xpath"
 	"golog"
 	"rubex"
@@ -70,4 +70,5 @@ type EngineContext interface {
 	GetInnerReplacer() *rubex.Regexp
 	GetHeaderContentTypeRegex() *rubex.Regexp
 	//	GetOutputBuffer() []byte
+	GetRewriteRules() []*tp.RewriteRule
 }

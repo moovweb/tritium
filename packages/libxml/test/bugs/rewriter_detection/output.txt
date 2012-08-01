@@ -1,1 +1,0 @@
-Location: http://mlocal.accenture.com/something

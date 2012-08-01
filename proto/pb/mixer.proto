@@ -1,0 +1,12 @@
+package proto;
+
+import "file.proto";
+import "rewriter.proto";
+import "package.proto";
+
+message Mixer {
+  required string name = 1;
+  required string version = 2;
+  repeated File rewriters = 3;
+  optional Package package = 4;  
+}

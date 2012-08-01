@@ -1,0 +1,6 @@
+package proto;
+
+message File {
+        required string path = 1;
+        required bytes data = 2;
+}

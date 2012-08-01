@@ -2,14 +2,13 @@ package packager
 
 import (
 	proto "code.google.com/p/goprotobuf/proto"
-	"log"
 )
 
 func (pkg *Package) SerializedOutput() {
 
 	bytes, err := proto.Marshal(pkg.Package)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 	println(string(bytes))
 }

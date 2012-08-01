@@ -211,24 +211,6 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Wraps the selected node (defined by **%selector**) in a tag specified by **%tag**. For example `wrap_together(\"./span\", \"div\")` will wrap all span children of the current node in a div. Using XPath to select a particular child (e.g. `./span[1]`) will wrap that child plus its direct sibling of the same node type."
-
-@func XMLNode.wrap_together(Text %selector, Text %tag) {
-  $(%selector + "[1]") {
-    wrap(%tag) {
-      %wrapper = this()
-      $("..") {
-        $(%selector) {
-          match(equal(this(), %wrapper), "false") {
-            move(this(), %wrapper, position("bottom"))
-          }
-        }
-      }
-      yield()
-    }
-  }
-}
-
 # This is used to specify the encoding for a page
 "Parses the document into HTML."
 

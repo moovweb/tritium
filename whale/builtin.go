@@ -1,6 +1,6 @@
 package whale
 
-import tp "athena"
+import tp "tritium/proto"
 
 type builtInFunc func(EngineContext, *Scope, *tp.Instruction, []interface{}) interface{}
 
@@ -50,6 +50,7 @@ func init() {
 
 	builtInFunctions["regexp.Text.Text"] = regexp_Text_Text
 	builtInFunctions["replace.Regexp"] = replace_Regexp
+	builtInFunctions["capture.Regexp"] = capture_Regexp
 	builtInFunctions["inner_text"] = text
 	builtInFunctions["text"] = text
 
@@ -83,6 +84,8 @@ func init() {
 	builtInFunctions["upcase.Text"] = upcase_Text
 	builtInFunctions["guess_encoding"] = guess_encoding
 	builtInFunctions["length.Text"] = length_Text
+	builtInFunctions["rewrite_to_upstream.Text"] = rewrite_to_upstream_Text
+	builtInFunctions["rewrite_to_proxy.Text"] = rewrite_to_proxy_Text
 }
 
 func LookupBuiltIn(name string) builtInFunc {

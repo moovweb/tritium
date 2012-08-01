@@ -1,16 +1,15 @@
 package spec
 
 import (
-	tp "athena"
+	tp "tritium/proto"
 	yaml "goyaml"
 	. "io/ioutil"
 	"log"
 	. "path/filepath"
 	"tritium/linker"
-	//"bytes"
 	. "fmt"
 	"strings"
-	"tritium"
+	"tritium/transform"
 )
 
 type Spec struct {
@@ -35,7 +34,7 @@ func LoadSpec(dir string, pkg *tp.Package) (*Spec, error) {
 
 	if len(customFunctions) == 1 {
 		functionsFile := customFunctions[0]
-		pkg = tritium.MakeProjectPackage(functionsFile, pkg)
+		transform.LoadFunctions(functionsFile, pkg)
 	}
 
 	script, err := linker.RunWithPackage(Join(dir, "main.ts"), pkg)
