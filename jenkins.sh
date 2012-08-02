@@ -14,7 +14,10 @@ python -u "$TOOLS_DIR/build.py" tritium/tritium $GIT_BRANCH
 [ $? != 0 ] && exit 1
 
 # Run tritium tests
-export LD_LIBRARY_PATH="$MOOV_HOME/clibs/lib"
+[ "$OS_NAME" == "linux" ] && export LD_LIBRARY_PATH="$MOOV_HOME/clibs/lib"
+[ "$OS_NAME" == "darwin" ] && export DYLD_LIBRARY_PATH="$MOOV_HOME/clibs/lib"
+[ "$OS_NAME" == "windows" ] && export PATH="$MOOV_HOME/clibs/bin;$PATH"
+
 export TRITIUM_PATH="$MOOV_HOME/src/tritium"
 python -u "$TOOLS_DIR/tests.py" tritium/tritium
 [ $? != 0 ] && exit 1
