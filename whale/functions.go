@@ -808,66 +808,68 @@ func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interfac
 	return
 }
 
-func rewrite_to_upstream_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func rewrite_to_upstream_Text_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	//rewrite_type := args[0].(string)
 	secure := args[1].(string)
+	catchAll := args[2].(string)
 	host := strings.ToLower(scope.Value.(string))
+	
+	//strip off catchAll
+	if len(catchAll) > 0 && strings.HasSuffix(host, catchAll) {
+		host = host[:len(host)-len(catchAll)]
+		ctx.SetEnv("__catch_all_enabled__", "true")
+	}
 	
 	key, append_proto, append_slashes := GenerateHostMapKey(host, secure)
 
 	rrules := ctx.GetRewriteRules()
 	returnValue = "false"
 	if len(rrules) > 0 {
-		newHost := host
-		found := false
 		for _, rr := range(rrules) {
 			if *rr.Direction == tp.RewriteRule_UPSTREAM_TO_PROXY {
 				continue
 			}
 			if key == *rr.Proxy {
-				newHost = ReformatHostMapValue(*rr.Upstream, append_proto, append_slashes)
+				scope.Value = ReformatHostMapValue(*rr.Upstream, append_proto, append_slashes)
 				returnValue = "true"
-				found = true
 				break
 			}
-		}
-		if found {
-			scope.Value = newHost
 		}
 	}
 	return
 }
 
-func rewrite_link_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func rewrite_link_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	secure := args[0].(string)
+	catchAll := args[1].(string)
 	link := strings.ToLower(scope.Value.(string))
 	key, append_proto, append_slashes := GenerateHostMapKey(link, secure)
 	rrules := ctx.GetRewriteRules()
 	returnValue = "false"
 	if len(rrules) > 0 {
-		newLink := link
-		found := false
 		for _, rr := range(rrules) {
 			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
 				continue
 			}
 			if key == *rr.Upstream {
-				newLink = ReformatHostMapValue(*rr.Proxy, append_proto, append_slashes)
+				newLink := ReformatHostMapValue(*rr.Proxy, append_proto, append_slashes)
+				catchAllEnabled := ctx.GetEnv("__catch_all_enabled__")
+				if catchAllEnabled == "true" {
+					newLink = newLink + catchAll
+				}
+				scope.Value = newLink
 				returnValue = "true"
-				found = true
 				break
 			}
-		}
-		if found {
-			scope.Value = newLink
 		}
 	}
 	return
 }
 
-func rewrite_cookie_domain_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func rewrite_cookie_domain_Text_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	host := args[0].(string)
 	secure := args[1].(string)
+	catchAll := args[2].(string)
 	domain := strings.ToLower(scope.Value.(string))
 	key, _, _ := GenerateHostMapKey(host, secure)
 	rrules := ctx.GetRewriteRules()
@@ -887,12 +889,18 @@ func rewrite_cookie_domain_Text_Text(ctx EngineContext, scope *Scope, ins *tp.In
 			}
 		}
 		if found {
-			if ! IsDomainConvered(domain, newDomain) { //the new cookie domain is NOT covered by the existing domain
-				scope.Value = newDomain
-			} else if ! strings.HasPrefix(domain, ".") { //should we do it here???? //TODO
-				domain = "." + domain
-				scope.Value = domain
+			catchAllEnabled := ctx.GetEnv("__catch_all_enabled__")
+			if IsDomainConvered(domain, newDomain) { //the new cookie domain is NOT covered by the existing domain
+				if ! strings.HasPrefix(domain, ".") { //should we do it here???? //TODO
+					newDomain = "." + domain
+				} else {
+					newDomain = domain
+				}
 			}
+			if catchAllEnabled == "true" {
+				newDomain = newDomain + catchAll
+			}
+			scope.Value = newDomain
 		}
 	}
 	return
