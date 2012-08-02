@@ -86,13 +86,13 @@
 @func Text.capture(Regexp %search) Text Text
 
 " Rewrite a host/referer/origin from proxy to upstream "
-@func Text.rewrite_to_upstream(Text %from_proxy, Text %secure) Text
+@func Text.rewrite_to_upstream(Text %from_proxy, Text %secure, Text %catchall) Text
 
 " Rewrite a link from upstream to proxy "
-@func Text.rewrite_link(Text %secure) Text
+@func Text.rewrite_link(Text %secure, Text %catchall) Text
 
 " Rewrite a cookie domain from upstream to proxy "
-@func Text.rewrite_cookie_domain(Text %host, Text %secure) Text
+@func Text.rewrite_cookie_domain(Text %host, Text %secure, Text %catchall) Text
 
 " for internal debug use "
 @func Text.debug_me(Text %msg) Text
