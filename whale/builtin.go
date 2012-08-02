@@ -84,9 +84,9 @@ func init() {
 	builtInFunctions["upcase.Text"] = upcase_Text
 	builtInFunctions["guess_encoding"] = guess_encoding
 	builtInFunctions["length.Text"] = length_Text
-	builtInFunctions["rewrite_to_upstream.Text.Text"] = rewrite_to_upstream_Text_Text
-	builtInFunctions["rewrite_link.Text"] = rewrite_link_Text
-	builtInFunctions["rewrite_cookie_domain.Text.Text"] =  rewrite_cookie_domain_Text_Text
+	builtInFunctions["rewrite_to_upstream.Text.Text.Text"] = rewrite_to_upstream_Text_Text_Text
+	builtInFunctions["rewrite_link.Text.Text"] = rewrite_link_Text_Text
+	builtInFunctions["rewrite_cookie_domain.Text.Text.Text"] =  rewrite_cookie_domain_Text_Text_Text
 	builtInFunctions["debug_me.Text"] = debug_me_Text
 }
 

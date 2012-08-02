@@ -104,10 +104,10 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 
 func (ctx *LinkingContext) ProcessInstruction(ins *tp.Instruction, scopeType int) (returnType int) {
 	localScope := make(LocalDef, 0)
-	return ctx.ProcessInstructionWithLocalScope(ins, scopeType, localScope)
+	return ctx.ProcessInstructionWithLocalScope(ins, scopeType, localScope, "")
 }
 
-func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction, scopeType int, localScope LocalDef) (returnType int) {
+func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction, scopeType int, localScope LocalDef, caller string) (returnType int) {
 	returnType = -1
 	ins.IsValid = proto.Bool(true)
 	switch *ins.Type {
@@ -132,14 +132,14 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		if name == "1" || name == "2" || name == "3" || name == "4" || name == "5" || name == "6" || name == "7" {
 			if len(ins.Arguments) > 0 {
 				// We are going to assign something to this variable
-				returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope)
+				returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller)
 				if returnType != ctx.textType {
 					ctx.error(ins, "Numeric local vars can ONLY be Text")
 				}
 			}
 			if ins.Children != nil {
 				for _, child := range ins.Children {
-					ctx.ProcessInstructionWithLocalScope(child, ctx.textType, localScope)
+					ctx.ProcessInstructionWithLocalScope(child, ctx.textType, localScope, caller)
 				}
 			}
 			returnType = ctx.textType
@@ -152,7 +152,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 				} else {
 					if ins.Children != nil {
 						for _, child := range ins.Children {
-							returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope)
+							returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope, caller)
 						}
 					}
 				}
@@ -160,7 +160,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			} else {
 				if len(ins.Arguments) > 0 {
 					// We are going to assign something to this variable
-					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope)
+					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller)
 					localScope[name] = returnType
 				} else {
 					println(ins.String())
@@ -174,9 +174,10 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		if stub == "yield" {
 			ins.YieldTypeId = proto.Int32(int32(scopeType))
 		}
+		// process the args
 		if ins.Arguments != nil {
 			for _, arg := range ins.Arguments {
-				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope)
+				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope, caller)
 				if argReturn == -1 {
 					ctx.error(ins, "Invalid argument object %q", arg.String())
 					return
@@ -184,6 +185,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 				stub = stub + "," + ctx.types[argReturn]
 			}
 		}
+		// look up the function wrt the current context type + function name
 		funcId, ok := ctx.funList[scopeType][stub]
 		if ok != true {
 			message := "Available functions...\n"
@@ -197,7 +199,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			} else {
 				fileName = "in package " + *ctx.Pkg.Name
 			}
-			ctx.error(ins, "No such function found: %s.%s %s in file %s:%d", ctx.types[scopeType], stub, fileName, *ctx.Pkg.Path, null.GetInt32(ins.LineNumber))
+			ctx.error(ins, "Could not find function %s.%s %s in file %s:%d\n(called from %s.%s)", ctx.types[scopeType], stub, fileName, *ctx.Pkg.Path, null.GetInt32(ins.LineNumber), ctx.types[scopeType], caller)
 		} else {
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
@@ -222,7 +224,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 
 			if ins.Children != nil {
 				for _, child := range ins.Children {
-					ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope)
+					ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope, stub) // thread the name of the caller through the linkages
 				}
 			}
 		}
@@ -231,7 +233,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 	case tp.Instruction_BLOCK:
 		if ins.Children != nil {
 			for _, child := range ins.Children {
-				returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope)
+				returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope, caller)
 			}
 		}
 	}
