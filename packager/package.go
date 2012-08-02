@@ -117,6 +117,7 @@ func NewPackage(loadPath string, options PackageOptions) *Package {
 			Functions:    make([]*tp.Function, 0),
 			Types:        make([]*tp.Type, 0),
 			Dependencies: make([]string, 0),
+			Path:         proto.String(loadPath),
 		},
 		loaded:   make([]*PackageInfo, 0),
 		Log:      newLog(),
@@ -173,8 +174,9 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 	// LoadPath is the full path to the mixer
 	// Since the path won't always end w the name (e.g. user defined function / mixer packages), specify the name as well
 
-	pkg.Println(loadPath + ":" + name)
-	pkg.Log.Info("\n\n\n\nLoading:%v", loadPath+":"+name)
+	fullName := loadPath + ":" + name
+	pkg.Println(fullName)
+	pkg.Log.Info("\n\n\n\nLoading:%v", fullName)
 
 	loaded := pkg.loadedDependency(name)
 	if loaded {
@@ -239,6 +241,7 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 
 	s = time.Now()
 	entryPoint := filepath.Join(loadPath, "functions.ts")
+	pkg.Path = proto.String(entryPoint)
 
 	ReadPackageDefinitions(pkg.Package, entryPoint)
 
