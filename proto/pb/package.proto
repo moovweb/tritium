@@ -22,4 +22,7 @@ message Package {
 
 	// Only used in non-linked combined packages
 	repeated string dependencies = 4;
+
+	// The following field is for nicer error messages
+	optional string path = 5;
 }

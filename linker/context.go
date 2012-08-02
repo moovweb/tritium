@@ -191,13 +191,13 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 				message = message + funcName + "\n"
 			}
 			log.Printf("%s\n", message)
-			fileName := ""
+			var fileName string
 			if len(ctx.files) > 0 {
-				fileName = ctx.files[(len(ctx.files) - 1)]
+				fileName = "in file " + ctx.files[(len(ctx.files) - 1)]
 			} else {
-				fileName = "in package"
+				fileName = "in package " + *ctx.Pkg.Name
 			}
-			ctx.error(ins, "No such function found: %s.%s in file %s:%d", ctx.types[scopeType], stub, fileName, null.GetInt32(ins.LineNumber))
+			ctx.error(ins, "No such function found: %s.%s %s in file %s:%d", ctx.types[scopeType], stub, fileName, *ctx.Pkg.Path, null.GetInt32(ins.LineNumber))
 		} else {
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]

@@ -39,6 +39,7 @@ type Package struct {
 	Functions        []*Function `protobuf:"bytes,2,rep,name=functions" json:"functions,omitempty"`
 	Types            []*Type     `protobuf:"bytes,3,rep,name=types" json:"types,omitempty"`
 	Dependencies     []string    `protobuf:"bytes,4,rep,name=dependencies" json:"dependencies,omitempty"`
+	Path             *string     `protobuf:"bytes,5,opt,name=path" json:"path,omitempty"`
 	XXX_unrecognized []byte      `json:"-"`
 }
 
@@ -49,6 +50,13 @@ func (*Package) ProtoMessage()       {}
 func (this *Package) GetName() string {
 	if this != nil && this.Name != nil {
 		return *this.Name
+	}
+	return ""
+}
+
+func (this *Package) GetPath() string {
+	if this != nil && this.Path != nil {
+		return *this.Path
 	}
 	return ""
 }
