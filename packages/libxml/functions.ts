@@ -233,7 +233,14 @@ Functionally equivalent to `name() { set(%name) }`."
 "Parses the document into HTML."
 
 @func Text.html() {
-  $encoding = guess_encoding()
+  match($charset_determined) {
+    with("") {
+      $encoding = guess_encoding()
+    }
+    else() {
+      $encoding = $charset_determined
+    }
+  }
   html($encoding, $encoding) {
     yield()
   } 
