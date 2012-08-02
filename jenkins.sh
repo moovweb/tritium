@@ -25,6 +25,11 @@ MASTER_MANIFEST_PATH="$MASTER_BIN/tritium/$GIT_BRANCH/$OS_NAME-$ARCH/$BUILD_NUMB
 LOCAL_TRITIUM_PATH="$MOOV_HOME/bin/$BUILD_NUMBER-tritium"
 LOCAL_MANIFEST_PATH="$MOOV_HOME/bin/$BUILD_NUMBER-MANIFEST.MF"
 
+if [ $OS_NAME == "windows" ]; then
+	LOCAL_TRITIUM_PATH=`echo "$LOCAL_TRITIUM_PATH" | awk '{sub(/^C:/,"/c"); print}'`
+	LOCAL_MANIFEST_PATH=`echo "$LOCAL_MANIFEST_PATH" | awk '{sub(/^C:/,"/c"); print}'`
+fi
+
 ssh $MASTER_URL "rm $MASTER_TRITIUM_PATH"  # If fails, just means this is the first job for this num.
 ssh $MASTER_URL "rm $MASTER_MANIFEST_PATH" # If fails, just means this is the first job for this num.
 
