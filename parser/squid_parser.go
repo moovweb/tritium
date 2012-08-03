@@ -520,7 +520,7 @@ func (p *Parser) function_body(funcName string) (stmts []*tp.Instruction) {
 	defer func() {
 		if r := recover(); r != nil {
 			// pull out the actual message without the filename/line-no
-			msg := strings.Split(r.(string), "-- ")[1]
+			msg := strings.Split(strings.Split(r.(string), "-- ")[1], "; ")[0]
 			// re-throw the error with the current filename, line-no, and function-name
 			p.error(fmt.Sprintf("in function '%s': %s", funcName, msg))
 		}
