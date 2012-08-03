@@ -110,7 +110,6 @@ func mergeOptions(options PackageOptions) PackageOptions {
 
 func NewPackage(loadPath string, options PackageOptions) *Package {
 	options = mergeOptions(options)
-
 	return &Package{
 		Package: &tp.Package{
 			Name:         proto.String("combined"),

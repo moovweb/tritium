@@ -35,48 +35,53 @@ func ListInstructions(instrs ...*Instruction) []*Instruction {
 
 func FoldLeft(funcName string, base *Instruction, seq []*Instruction) (acc *Instruction) {
 	for acc = base; len(seq) > 0; seq = seq[1:] {
-		acc = MakeFunctionCall(funcName, ListInstructions(acc, seq[0]), nil, *base.LineNumber)
+		acc = MakeFunctionCall(funcName, ListInstructions(acc, seq[0]), nil, *base.FileName, *base.LineNumber)
 	}
 	return acc
 }
 
-func MakeText(text string, lineNum int32) *Instruction {
+func MakeText(text string, fileName string, lineNum int32) *Instruction {
 	return &Instruction{
 		Type:       Instruction_TEXT.Enum(),
 		Value:      pb.String(text),
+		FileName:   pb.String(fileName),
 		LineNumber: pb.Int32(lineNum),
 	}
 }
 
-func MakePosition(pos string, lineNum int32) *Instruction {
+func MakePosition(pos string, fileName string, lineNum int32) *Instruction {
 	return &Instruction{
 		Type:       Instruction_POSITION.Enum(),
 		Value:      pb.String(pos),
+		FileName:   pb.String(fileName),
 		LineNumber: pb.Int32(lineNum),
 	}
 }
 
-func MakeComment(comment string, lineNum int32) *Instruction {
+func MakeComment(comment string, fileName string, lineNum int32) *Instruction {
 	return &Instruction{
 		Type:       Instruction_COMMENT.Enum(),
 		Value:      pb.String(comment),
+		FileName:   pb.String(fileName),
 		LineNumber: pb.Int32(lineNum),
 	}
 }
 
-func MakeImport(path string, lineNum int32) *Instruction {
+func MakeImport(path string, fileName string, lineNum int32) *Instruction {
 	return &Instruction{
 		Type:       Instruction_IMPORT.Enum(),
 		Value:      pb.String(path),
+		FileName:   pb.String(fileName),
 		LineNumber: pb.Int32(lineNum),
 	}
 }
 
-func MakeLocalVar(name string, val *Instruction, block []*Instruction, lineNum int32) *Instruction {
+func MakeLocalVar(name string, val *Instruction, block []*Instruction, fileName string, lineNum int32) *Instruction {
 	node := &Instruction{
 		Type:       Instruction_LOCAL_VAR.Enum(),
 		Value:      pb.String(name),
 		Children:   block,
+		FileName:   pb.String(fileName),
 		LineNumber: pb.Int32(lineNum),
 	}
 	if val == nil {
@@ -87,20 +92,22 @@ func MakeLocalVar(name string, val *Instruction, block []*Instruction, lineNum i
 	return node
 }
 
-func MakeFunctionCall(name string, args []*Instruction, block []*Instruction, lineNum int32) *Instruction {
+func MakeFunctionCall(name string, args []*Instruction, block []*Instruction, fileName string, lineNum int32) *Instruction {
 	return &Instruction{
 		Type:       Instruction_FUNCTION_CALL.Enum(),
 		Value:      pb.String(name),
 		Arguments:  args,
 		Children:   block,
+		FileName:   pb.String(fileName),
 		LineNumber: pb.Int32(lineNum),
 	}
 }
 
-func MakeBlock(children []*Instruction, lineNum int32) *Instruction {
+func MakeBlock(children []*Instruction, fileName string, lineNum int32) *Instruction {
 	return &Instruction{
 		Type:       Instruction_BLOCK.Enum(),
 		Children:   children,
+		FileName:   pb.String(fileName),
 		LineNumber: pb.Int32(lineNum),
 	}
 }

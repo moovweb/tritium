@@ -179,7 +179,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			for _, arg := range ins.Arguments {
 				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope, caller)
 				if argReturn == -1 {
-					ctx.error(ins, "Invalid argument object %q", arg.String())
+					ctx.error(ins, "Invalid argument object:\n\t[%s]", arg.String())
 					return
 				}
 				stub = stub + "," + ctx.types[argReturn]
@@ -193,13 +193,13 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 				message = message + funcName + "\n"
 			}
 			log.Printf("%s\n", message)
-			var fileName string
+			var sourceStr string
 			if len(ctx.files) > 0 {
-				fileName = "in file " + ctx.files[(len(ctx.files) - 1)]
+				sourceStr = "in file " + ctx.files[(len(ctx.files) - 1)]
 			} else {
-				fileName = "in package " + *ctx.Pkg.Name
+				sourceStr = "in package " + *ctx.Pkg.Name
 			}
-			ctx.error(ins, "Could not find function %s.%s %s in file %s:%d\n(called from %s.%s)", ctx.types[scopeType], stub, fileName, *ctx.Pkg.Path, null.GetInt32(ins.LineNumber), ctx.types[scopeType], caller)
+			ctx.error(ins, "Could not find function %s.%s %s (called from %s.%s in %s:%d)", ctx.types[scopeType], stub, sourceStr, ctx.types[scopeType], caller, ins.GetFileName(), ins.GetLineNumber())
 		} else {
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]

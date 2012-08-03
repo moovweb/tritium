@@ -60,6 +60,7 @@ type Instruction struct {
 	LineNumber       *int32                       `protobuf:"varint,7,opt,name=line_number" json:"line_number,omitempty"`
 	YieldTypeId      *int32                       `protobuf:"varint,8,opt,name=yield_type_id" json:"yield_type_id,omitempty"`
 	IsValid          *bool                        `protobuf:"varint,9,opt,name=is_valid" json:"is_valid,omitempty"`
+	FileName         *string                      `protobuf:"bytes,10,opt,name=file_name" json:"file_name,omitempty"`
 	XXX_unrecognized []byte                       `json:"-"`
 }
 
@@ -114,6 +115,13 @@ func (this *Instruction) GetIsValid() bool {
 		return *this.IsValid
 	}
 	return false
+}
+
+func (this *Instruction) GetFileName() string {
+	if this != nil && this.FileName != nil {
+		return *this.FileName
+	}
+	return ""
 }
 
 func init() {

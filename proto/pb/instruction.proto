@@ -20,6 +20,8 @@ message Instruction {
 	
 	optional bool is_valid = 9;
 
+	optional string file_name = 10;
+
 	enum InstructionType {
 		BLOCK = 0;
 		FUNCTION_CALL = 1;

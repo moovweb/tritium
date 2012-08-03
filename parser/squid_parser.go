@@ -136,7 +136,7 @@ func (p *Parser) Parse() *tp.ScriptObject {
 	}
 
 	script.Functions = defs
-	script.Root = tp.MakeBlock(stmts, line)
+	script.Root = tp.MakeBlock(stmts, p.FullPath, line)
 
 	return script
 
@@ -168,7 +168,7 @@ func (p *Parser) statement() (node *tp.Instruction) {
 	switch p.peek().Lexeme {
 	case IMPORT:
 		token := p.pop() // pop the "@import" token (includes importee)
-		node = tp.MakeImport(filepath.Join(p.DirName, token.Value), token.LineNumber)
+		node = tp.MakeImport(filepath.Join(p.DirName, token.Value), p.FullPath, token.LineNumber)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	default:
@@ -225,15 +225,15 @@ func (p *Parser) literal() (node *tp.Instruction) {
 	token := p.pop()
 	switch token.Lexeme {
 	case STRING:
-		node = tp.MakeText(token.Value, token.LineNumber)
+		node = tp.MakeText(token.Value, p.FullPath, token.LineNumber)
 	case REGEXP:
 		node = tp.MakeFunctionCall("regexp",
-			tp.ListInstructions(tp.MakeText(token.Value, token.LineNumber),
-				tp.MakeText(token.ExtraValue, token.LineNumber)),
+			tp.ListInstructions(tp.MakeText(token.Value, p.FullPath, token.LineNumber),
+				tp.MakeText(token.ExtraValue, p.FullPath, token.LineNumber)),
 			nil,
-			token.LineNumber)
+			p.FullPath, token.LineNumber)
 	case POS:
-		node = tp.MakePosition(token.Value, token.LineNumber)
+		node = tp.MakePosition(token.Value, p.FullPath, token.LineNumber)
 	}
 	return node
 }
@@ -255,10 +255,10 @@ func (p *Parser) read() (node *tp.Instruction) {
 	p.pop() // pop the rparen
 	contents, err := ioutil.ReadFile(filepath.Join(p.DirName, readPath))
 	if err != nil { // can't use p.error because it's not a syntax error
-		msg := fmt.Sprintf("%s:%d -- read could not open %s", p.FileName, readLineNo, readPath)
+		msg := fmt.Sprintf("%s:%d -- read could not open %s", p.FullPath, readLineNo, readPath)
 		panic(msg)
 	}
-	node = tp.MakeText(string(contents), readLineNo)
+	node = tp.MakeText(string(contents), p.FullPath, readLineNo)
 	return node
 }
 
@@ -302,20 +302,20 @@ func (p *Parser) call() (node *tp.Instruction) {
 		for i, k := range kwdnames {
 			tempname := p.gensym()
 			tempvar := tp.MakeFunctionCall("var",
-				tp.ListInstructions(tp.MakeText(tempname, funcLineNo),
+				tp.ListInstructions(tp.MakeText(tempname, p.FullPath, funcLineNo),
 					kwdvals[i]),
-				nil, funcLineNo)
+				nil, p.FullPath, funcLineNo)
 			outer = append(outer, tempvar)
 			kwdToGensym[k] = tempname
 		}
 		inner := tp.ListInstructions()
 		for _, k := range kwdnames {
 			getter := tp.MakeFunctionCall("var",
-				tp.ListInstructions(tp.MakeText(kwdToGensym[k], funcLineNo)),
-				nil, funcLineNo)
+				tp.ListInstructions(tp.MakeText(kwdToGensym[k], p.FullPath, funcLineNo)),
+				nil, p.FullPath, funcLineNo)
 			setter := tp.MakeFunctionCall("set",
-				tp.ListInstructions(tp.MakeText(k, funcLineNo), getter),
-				nil, funcLineNo)
+				tp.ListInstructions(tp.MakeText(k, p.FullPath, funcLineNo), getter),
+				nil, p.FullPath, funcLineNo)
 			inner = append(inner, setter)
 		}
 		if block != nil {
@@ -323,21 +323,21 @@ func (p *Parser) call() (node *tp.Instruction) {
 				inner = append(inner, v)
 			}
 		}
-		theCall := tp.MakeFunctionCall(funcName, ords, inner, funcLineNo)
+		theCall := tp.MakeFunctionCall(funcName, ords, inner, p.FullPath, funcLineNo)
 		outer = append(outer, theCall)
-		node = tp.MakeBlock(outer, funcLineNo)
+		node = tp.MakeBlock(outer, p.FullPath, funcLineNo)
 
 	} else if funcName == "concat" && numArgs > 2 {
 		// expand variadic concat into nested binary concats
 		lhs := tp.FoldLeft("concat", ords[0], ords[1:numArgs-1])
 		rhs := ords[numArgs-1]
-		node = tp.MakeFunctionCall("concat", tp.ListInstructions(lhs, rhs), block, funcLineNo)
+		node = tp.MakeFunctionCall("concat", tp.ListInstructions(lhs, rhs), block, p.FullPath, funcLineNo)
 	} else if funcName == "log" && numArgs > 1 {
 		// expand variadic log into composition of log and concat
 		cats := tp.FoldLeft("concat", ords[0], ords[1:])
-		node = tp.MakeFunctionCall("log", tp.ListInstructions(cats), block, funcLineNo)
+		node = tp.MakeFunctionCall("log", tp.ListInstructions(cats), block, p.FullPath, funcLineNo)
 	} else {
-		node = tp.MakeFunctionCall(funcName, ords, block, funcLineNo)
+		node = tp.MakeFunctionCall(funcName, ords, block, p.FullPath, funcLineNo)
 	}
 	return node
 }
@@ -399,7 +399,7 @@ func (p *Parser) cast() (node *tp.Instruction) {
 		block = p.block()
 	}
 
-	node = tp.MakeFunctionCall(typeName, tp.ListInstructions(expr), block, typeLineNo)
+	node = tp.MakeFunctionCall(typeName, tp.ListInstructions(expr), block, p.FullPath, typeLineNo)
 	return node
 }
 
@@ -425,13 +425,13 @@ func (p *Parser) variable() (node *tp.Instruction) {
 		block = p.block()
 	}
 	if lexeme == LVAR {
-		node = tp.MakeLocalVar(name, val, block, lineNo)
+		node = tp.MakeLocalVar(name, val, block, p.FullPath, lineNo)
 	} else {
-		args := tp.ListInstructions(tp.MakeText(name, lineNo))
+		args := tp.ListInstructions(tp.MakeText(name, p.FullPath, lineNo))
 		if val != nil {
 			args = append(args, val)
 		}
-		node = tp.MakeFunctionCall("var", args, block, lineNo)
+		node = tp.MakeFunctionCall("var", args, block, p.FullPath, lineNo)
 	}
 	return node
 }
