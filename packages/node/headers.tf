@@ -29,7 +29,7 @@
 " Opens a scope to rename the current node. For example, `name() { set(\"div\") }`. "
 @func Node.name() Text Text
 
-" Deletes the current node. "
+" Removes the current node from the tree. "
 @func Node.remove() Text Node
 
 " Returns the XPath of the current node. "
