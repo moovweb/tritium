@@ -23,6 +23,10 @@ type LinkingContext struct {
 	*tp.Transform
 }
 
+func (ctx *LinkingContext) FunctionsIn(ScopeType int32) FuncMap {
+	return ctx.funList[ScopeType]
+}
+
 type LocalDef map[string]int
 
 func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject) *LinkingContext {
