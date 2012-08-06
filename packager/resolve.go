@@ -1,6 +1,7 @@
 package packager
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -17,24 +18,41 @@ import (
 )
 
 func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
+
 	linkingContext := linker.NewLinkingContext(pkg)
 
-	//	pkg.Log.Info("\t -- Resolving --\n")
-	//	pkg.Log.Info("\t\t -- function: %v\n", fun)
+	// pkg.Log.Info("\t -- Resolving --\n")
+	// pkg.Log.Info("\t\t -- function: %v\n", fun)
 
 	// Re-uses linker's logic to resolve function definitions
 	if null.GetBool(fun.BuiltIn) == false {
 		typeName := null.GetString(fun.ScopeType)
 
+		
+		// Make sure we're not replacing an existing function bacause it's (currently) a security risk
+		typeID := fun.GetScopeTypeId()
+		siblingFuncs := linkingContext.FunctionsIn(typeID)
+		// println("CHECKING FOR FRATRICIDE IN", typeName)
+		_, present := siblingFuncs[fun.Stub(pkg)]
+		if present {
+			msg := fmt.Sprintf("Redefining an existing function is not permitted: %s", fun.Stub(pkg))
+			panic(msg)
+		}
+		// for name, sib := range siblingFuncs {
+		// 	println("\t", name, sib)
+		// }
+		/////////////////////////////////////////////////////////////////////////////
+
+
 		if len(typeName) != 0 {
-			// When I pass in functions from the inheritance resolver, they're typeId is already set
+			// When I pass in functions from the inheritance resolver, their typeId is already set
 			fun.ScopeTypeId = pkg.GetProtoTypeId(fun.ScopeType)
 			fun.ScopeType = nil
 		}
 
 		localScope := make(linker.LocalDef, len(fun.Args))
 
-		//		fun.ReturnTypeId = pkg.GetProtoTypeId(fun.ReturnType)
+		// fun.ReturnTypeId = pkg.GetProtoTypeId(fun.ReturnType)
 		for _, arg := range fun.Args {
 			argTypeName := arg.TypeString
 			var argTypeId int
@@ -53,9 +71,9 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
 			localScope[null.GetString(arg.Name)] = argTypeId
 		}
 
-		//pkg.Log.Info("Some insitruction: %v, %s", fun.Instruction, null.GetString(fun.Name) )
+		// pkg.Log.Info("Some insitruction: %v, %s", fun.Instruction, null.GetString(fun.Name) )
 		scopeTypeId := int(null.GetInt32(fun.ScopeTypeId))
-		//pkg.Log.Info("\t\t -- opening scope type : %v\n", scopeTypeId)
+		// pkg.Log.Info("\t\t -- opening scope type : %v\n", scopeTypeId)
 		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope, *fun.Name)
 
 		if linkingContext.HasErrors() {
