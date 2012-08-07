@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	// "strings"
 )
 
 import (
@@ -28,20 +29,21 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
 	if null.GetBool(fun.BuiltIn) == false {
 		typeName := null.GetString(fun.ScopeType)
 
-		
-		// Make sure we're not replacing an existing function bacause it's (currently) a security risk
-		typeID := fun.GetScopeTypeId()
-		siblingFuncs := linkingContext.FunctionsIn(typeID)
-		// println("CHECKING FOR FRATRICIDE IN", typeName)
-		_, present := siblingFuncs[fun.Stub(pkg)]
-		if present {
-			msg := fmt.Sprintf("Redefining an existing function is not permitted: %s", fun.Stub(pkg))
-			panic(msg)
-		}
-		// for name, sib := range siblingFuncs {
-		// 	println("\t", name, sib)
+
+		// DON'T DO THE FOLLOWING HERE -- NEED TO RESOLVE INHERITANCE FIRST
+		// // Make sure we're not replacing an existing function bacause it's (currently) a security risk
+		// typeID := fun.GetScopeTypeId()
+		// siblingFuncs := linkingContext.FunctionsIn(typeID)
+		// // println("CHECKING FOR FRATRICIDE IN", typeName)
+		// _, present := siblingFuncs[fun.Stub(pkg)]
+		// if present {
+		// 	msg := fmt.Sprintf("Redefining an existing function is not permitted: %s", fun.Stub(pkg))
+		// 	panic(msg)
 		// }
-		/////////////////////////////////////////////////////////////////////////////
+		// // for name, sib := range siblingFuncs {
+		// // 	println("\t", name, sib)
+		// // }
+		// /////////////////////////////////////////////////////////////////////////////
 
 
 		if len(typeName) != 0 {
@@ -204,6 +206,7 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 
 	//pkg.Println(" -- reading definitions")
 	_, err := ioutil.ReadFile(location)
+	println("READING DEFINITIONS:", location)
 
 	if err != nil {
 		//pkg.Log.Info("\t -- no user defined functions found")
@@ -212,9 +215,30 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 
 	definitions := parser.ParseFile(location)
 
+	// Create a map of pre-packaged function signatures
+	prepackaged := make(map[string]bool)
+	for _, f := range pkg.Functions {
+		sig := fmt.Sprintf("%s.%s", f.ScopeTypeString(pkg), f.Stub(pkg))
+		prepackaged[sig] = true
+		println(sig)
+	}
+	println("*****************")
+	println("*****************")
+	println()
+	println()
+
 	for _, function := range definitions.Functions {
 		//pkg.Log.Info("\t -- function: %v", function)
 		resolveDefinition(pkg, function)
+
+		// After resolving a user-defined function, see if its fully resolved signature
+		// is the same as the signature of a prepackaged function. If so, throw an error.
+		// newSig := fmt.Sprintf("%s.%s", function.ScopeTypeString(pkg), function.Stub(pkg))
+		// _, present := prepackaged[newSig]
+		// if present {
+		// 	panic(fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1) + ")"))
+		// }
+
 		pkg.Functions = append(pkg.Functions, function)
 	}
 }

@@ -121,3 +121,7 @@
 @func Text.dump() {
   this()
 }
+
+@func Text.foo() {
+  log("FOO")
+}
