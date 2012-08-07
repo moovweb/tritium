@@ -16,6 +16,8 @@
   }
 }
 
+" Returns the number of the current node in relation to its siblings (e.g. $(\"./div\") { log(index()) } will return \"1\" if the div is the first div child, 2 if it is the second div child, and so on). "
+
 @func Node.index() {
   index(this()) {
     yield()

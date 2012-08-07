@@ -839,7 +839,7 @@ func rewrite_to_upstream_Text_Text_Text(ctx EngineContext, scope *Scope, ins *tp
 	return
 }
 
-func rewrite_link_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	secure := args[0].(string)
 	catchAll := args[1].(string)
 	link := strings.ToLower(scope.Value.(string))

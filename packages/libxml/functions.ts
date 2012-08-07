@@ -76,6 +76,8 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
+"Sets the attribute defined by **%name** to the value defined by **%value**. For example, `set(\"class\", \"one\")` will assign a class of 'one' to the node."
+
 @func XMLNode.set(Text %name, Text %value) {
   attribute(%name) {
     value(%value)
