@@ -75,6 +75,7 @@ func BuildPackage(path string) *Package {
 }
 
 func BuildDefaultPackage() *Package {
+	// println("BUILD DEFAULT PACKAGE")
 	return BuildPackage(DefaultPackagePath)
 }
 
@@ -141,6 +142,7 @@ func NewUserPackage(loadPath *string, fallbackPath *string) *Package {
 	userPackages, _ := filepath.Glob(filepath.Join(userPackage.LoadPath, "*"))
 
 	for _, path := range userPackages {
+		// println("\tUSER PACKAGE", path)
 		components := strings.Split(path, "/")
 		name := components[len(components)-1]
 		userPackage.Load(name)
@@ -173,7 +175,7 @@ func (pkg *Package) Load(packageName string) {
 func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 	// LoadPath is the full path to the mixer
 	// Since the path won't always end w the name (e.g. user defined function / mixer packages), specify the name as well
-
+	// println("LOAD FROM PATH", loadPath)
 	fullName := loadPath + ":" + name
 	pkg.Println(fullName)
 	pkg.Log.Info("\n\n\n\nLoading:%v", fullName)
@@ -273,6 +275,7 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 // This will only be true on dev / build boxes
 
 func NewRootPackage(rootPackagePath string, name string, dataPath string) (*Package){
+	// println("NEW ROOT PACKAGE", dataPath)
 	rootPackage := NewPackage(rootPackagePath, PackageOptions{"stdout" : false,"output_tpkg" : false,"use_tpkg" : true})
 
 	rootPackage.FallbackPath = filepath.Join(dataPath, "packages") 
@@ -282,6 +285,7 @@ func NewRootPackage(rootPackagePath string, name string, dataPath string) (*Pack
 
 
 func BuildRootPackage(rootPackage *Package, rootPackagePath string, name string) (loadError *Error){
+	// println("BUILD ROOT PACKAGE", rootPackagePath)
 	error := rootPackage.LoadFromPath(rootPackagePath, name )
 
 	if error != nil {

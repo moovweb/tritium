@@ -205,7 +205,7 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 
 	//pkg.Println(" -- reading definitions")
 	_, err := ioutil.ReadFile(location)
-	println("READING DEFINITIONS:", location)
+//()("READING DEFINITIONS:", location)
 
 	if err != nil {
 		//pkg.Log.Info("\t -- no user defined functions found")
@@ -219,27 +219,34 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 	for _, f := range pkg.Functions {
 		sig := fmt.Sprintf("%s.%s", f.ScopeTypeString(pkg), f.Stub(pkg))
 		prepackaged[sig] = true
-		println(sig)
+		// println(sig)
 	}
-	println("*****************")
-	println("*****************")
-	println()
-	println()
+	// println("*****************")
+	// println("*****************")
+	// println()
+	// println()
 
 	for _, function := range definitions.Functions {
 		//pkg.Log.Info("\t -- function: %v", function)
+		// println("ABOUT TO RESOLVE DEF FOR ", *function.Name)
 		resolveDefinition(pkg, function)
-
+		// println("RESOLVED A DEFINITION:", *function.Name)
 		// After resolving a user-defined function, see if its fully resolved signature
 		// is the same as the signature of a prepackaged function. If so, throw an error.
 		newSig := fmt.Sprintf("%s.%s", function.ScopeTypeString(pkg), function.Stub(pkg))
+		// println("MADE SIG FOR ", *function.Name)
+		// present := false
 		_, present := prepackaged[newSig]
 		if present {
-			panic(fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1) + ")"))
+			msg := fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1) + ")")
+//()("SPLICED ERROR MESSAGE")
+			panic(msg)
 		}
 
 		pkg.Functions = append(pkg.Functions, function)
+//(		println)("FINISHED CHECKING FOR REDEFINITIONS FOR", *function.Name)
 	}
+//	println("DONE READING PACKAGE DEFS")
 }
 
 func (pkg *Package) Marshal() []byte {
@@ -268,7 +275,7 @@ func (pkg *Package) loadPackageDependency(name string) *Error {
 	if loaded {
 		return nil
 	}
-
+//	println("LOADING PKG DEPENDENCY", name)
 	pkg.Load(name)
 
 	return nil
@@ -286,6 +293,7 @@ func (pkg *Package) loadedDependency(name string) bool {
 
 // Not fully functional. Dang it.
 func ReadPackageInfoFile(location string) (info *PackageInfo, error *string) {
+//	println("READING PACKAGE INFO FILE", location + "/package.yml")
 	packageInfo := &PackageInfo{}
 	infoFile, err := ioutil.ReadFile(location + "/package.yml")
 	if err != nil {
@@ -298,6 +306,7 @@ func ReadPackageInfoFile(location string) (info *PackageInfo, error *string) {
 }
 
 func (pkg *Package) readHeaderFile(location string) {
+//	println("READING FUNCTION HEADER FILE")
 	// TODO : plug in new go parser to do this
 	input_file := filepath.Join(location, "headers.tf")
 
@@ -319,7 +328,6 @@ func (pkg *Package) readHeaderFile(location string) {
 }
 
 func (pkg *Package) resolveHeader(function *tp.Function) {
-
 	returnType := null.GetString(function.ReturnType)
 	if len(returnType) > 0 {
 		function.ReturnTypeId = proto.Int32(int32(pkg.findTypeIndex(returnType)))
