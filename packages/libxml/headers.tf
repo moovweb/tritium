@@ -12,6 +12,8 @@
 
 " Replaces the node's contents with a CDATA block. "
 @func XMLNode.cdata(Text %contents) Text
+
+" Removes the node specified by `%xpath_selector` (e.g. `remove(\"//table\")` will remove all table nodes from the document). "
 @func XMLNode.remove(Text %xpath_selector) Text
 
 " Opens up the insides of the node to text modification. Used for nodes containing text and other XML elements. For text-only nodes, use `text()`."

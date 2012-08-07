@@ -23,6 +23,10 @@ type LinkingContext struct {
 	*tp.Transform
 }
 
+func (ctx *LinkingContext) FunctionsIn(ScopeType int32) FuncMap {
+	return ctx.funList[ScopeType]
+}
+
 type LocalDef map[string]int
 
 func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject) *LinkingContext {
@@ -199,7 +203,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			} else {
 				fileName = "in package " + *ctx.Pkg.Name
 			}
-			ctx.error(ins, "Could not find function %s.%s %s in file %s:%d\n(called from %s.%s)", ctx.types[scopeType], stub, fileName, *ctx.Pkg.Path, null.GetInt32(ins.LineNumber), ctx.types[scopeType], caller)
+			ctx.error(ins, "Could not find function %s.%s %s in file %s:%d\n(called from %s.%s)", ctx.types[scopeType], stub, fileName, ctx.Pkg.GetPath(), null.GetInt32(ins.LineNumber), ctx.types[scopeType], caller)
 		} else {
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
