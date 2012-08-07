@@ -89,7 +89,7 @@
 @func Text.rewrite_to_upstream(Text %from_proxy, Text %secure, Text %catchall) Text
 
 " Rewrite a link from upstream to proxy "
-@func Text.rewrite_link(Text %secure, Text %catchall) Text
+@func Text.rewrite_to_proxy(Text %secure, Text %catchall) Text
 
 " Rewrite a cookie domain from upstream to proxy "
 @func Text.rewrite_cookie_domain(Text %host, Text %secure, Text %catchall) Text
