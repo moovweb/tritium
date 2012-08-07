@@ -11,14 +11,14 @@
 " Specifies the position of a node (e.g. `position(\"top\")` or `\"bottom\"`). "
 @func position(Text %position) Position
 
-" Opens a scope for specifying the position of a node (e.g. `\"top\"` or `\"bottom\"`). For example, `position() { set(\"top\") }`. "
-@func position() Position
+//" Opens a scope for specifying the position of a node (e.g. `\"top\"` or `\"bottom\"`). For example, `position() { set(\"top\") }`. "
+//@func position() Position
 
 " Searches the tree and selects all nodes matching **%xpath_selector**. "
 @func Node.select(Text %xpath_selector) Text Node
 
-" Opens up the contents to text modification. Use only for text-only nodes - any XML children will be removed. "
-@func Node.text() Text Text
+//" Opens up the contents to text modification. Use only for text-only nodes - any XML children will be removed. "
+//@func Node.text() Text Text
 
 " Moves the first node (**%what**) to the second node (**%where**), at a specified position (**%pos**). "
 @func Node.move(Node %what, Node %where, Position %pos) Text Node
@@ -35,8 +35,8 @@
 " Returns the XPath of the current node. "
 @func Node.path() Text Text
 
-" Injects HTML (specified by **%html**) into the current node. For example, `inject(\"file.html\")`."
-@func Node.inject(Text %html) Text
+//" Injects HTML (specified by **%html**) into the current node. For example, `inject(\"file.html\")`."
+//@func Node.inject(Text %html) Text
 
 " Creates a new node (specified by **%tag_name**) and inserts it at the location specified by **%pos**. For example, `insert_at(\"top\", \"div\")`. "
 @func Node.insert_at(Position %pos, Text %tag_name) Text

@@ -64,8 +64,8 @@
 " Returns **%input_string** in lower case "
 @func downcase(Text %input_string) Text
 
-" Returns the current text scope as a string. Useful to pass the current Text as an argument. "
-@func Text.text() Text Text
+//" Returns the current text scope as a string. Useful to pass the current Text as an argument. "
+//@func Text.text() Text Text
 
 " Replaces the entire current text with what you pass in. For example, `set(\"one\")`. "
 @func Text.set(Text %value) Text
