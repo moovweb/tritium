@@ -87,7 +87,6 @@ func init() {
 	builtInFunctions["rewrite_to_upstream.Text.Text.Text"] = rewrite_to_upstream_Text_Text_Text
 	builtInFunctions["rewrite_to_proxy.Text.Text"] = rewrite_to_proxy_Text_Text
 	builtInFunctions["rewrite_cookie_domain.Text.Text.Text"] =  rewrite_cookie_domain_Text_Text_Text
-	builtInFunctions["debug_me.Text"] = debug_me_Text
 }
 
 func LookupBuiltIn(name string) builtInFunc {
