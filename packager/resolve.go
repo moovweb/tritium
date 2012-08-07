@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	// "strings"
+	"strings"
 )
 
 import (
@@ -232,11 +232,11 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 
 		// After resolving a user-defined function, see if its fully resolved signature
 		// is the same as the signature of a prepackaged function. If so, throw an error.
-		// newSig := fmt.Sprintf("%s.%s", function.ScopeTypeString(pkg), function.Stub(pkg))
-		// _, present := prepackaged[newSig]
-		// if present {
-		// 	panic(fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1) + ")"))
-		// }
+		newSig := fmt.Sprintf("%s.%s", function.ScopeTypeString(pkg), function.Stub(pkg))
+		_, present := prepackaged[newSig]
+		if present {
+			panic(fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1) + ")"))
+		}
 
 		pkg.Functions = append(pkg.Functions, function)
 	}
