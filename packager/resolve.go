@@ -1,6 +1,7 @@
 package packager
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
