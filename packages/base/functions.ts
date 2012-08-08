@@ -72,7 +72,6 @@
 }
 
 "Opens the current node for text modification. Should be used when the current node contains text *only*. For other cases, use `inner()`."
-
 @func Text.text() {
   this() {
     yield()
@@ -102,10 +101,12 @@
 }
 
 # TEMPORARY UNTIL I STOP CRYING
+/*
 @func Text.index() { 
   deprecated("You can only use index() in a Node scope")
   "1"
 }
+*/
 @func Text.fetch(Text %text) {
   deprecated("You can only use fetch() in a Node scope")
   "" 
@@ -120,4 +121,8 @@
 }
 @func Text.dump() {
   this()
+}
+
+@func Text.foo() {
+  log("FOO")
 }

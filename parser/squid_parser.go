@@ -58,20 +58,20 @@ func (p *Parser) error(msg string) {
 	switch numVals {
 	case 0:
 		fullMsg = fmt.Sprintf(formatString,
-			p.FileName,
+			p.FullPath,
 			p.peek().LineNumber,
 			msg,
 			LexemeName[p.peek().Lexeme])
 	case 1:
 		fullMsg = fmt.Sprintf(formatString,
-			p.FileName,
+			p.FullPath,
 			p.peek().LineNumber,
 			msg,
 			LexemeName[p.peek().Lexeme],
 			val1)
 	case 2:
 		fullMsg = fmt.Sprintf(formatString,
-			p.FileName,
+			p.FullPath,
 			p.peek().LineNumber,
 			msg,
 			LexemeName[p.peek().Lexeme],

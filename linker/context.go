@@ -77,6 +77,22 @@ func NewLinkingContext(pkg *tp.Package) *LinkingContext {
 	// Find Text type int -- need its ID to deal with Text literals during processing
 	ctx.textType = pkg.GetTypeId("Text")
 
+	// println("TYPES")
+	// for i, t := range types {
+	// 	println(i, ":", t)
+	// }
+	// println()
+
+	// println("FUNCTIONS")
+	// for t, fm := range functionLookup {
+	// 	println("TYPE", t)
+	// 	for n, f:= range fm {
+	// 		println(n, ":", f)
+	// 	}
+	// 	println()
+	// }
+	// println()
+
 	return ctx
 }
 
