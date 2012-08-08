@@ -93,6 +93,3 @@
 
 " Rewrite a cookie domain from upstream to proxy "
 @func Text.rewrite_cookie_domain(Text %host, Text %secure, Text %catchall) Text
-
-" for internal debug use "
-@func Text.debug_me(Text %msg) Text

@@ -906,9 +906,3 @@ func rewrite_cookie_domain_Text_Text_Text(ctx EngineContext, scope *Scope, ins *
 	return
 }
 
-func debug_me_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	msg := args[0].(string)
-	println("DEBUG_ME:", msg)
-	return
-}
-
