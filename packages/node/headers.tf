@@ -17,8 +17,8 @@
 " Searches the tree and selects all nodes matching **%xpath_selector**. "
 @func Node.select(Text %xpath_selector) Text Node
 
-//" Opens up the contents to text modification. Use only for text-only nodes - any XML children will be removed. "
-//@func Node.text() Text Text
+" Opens up the contents to text modification. Use only for text-only nodes - any XML children will be removed. "
+@func Node.text() Text Text
 
 " Moves the first node (**%what**) to the second node (**%where**), at a specified position (**%pos**). "
 @func Node.move(Node %what, Node %where, Position %pos) Text Node
