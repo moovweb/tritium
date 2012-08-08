@@ -101,10 +101,12 @@
 }
 
 # TEMPORARY UNTIL I STOP CRYING
+/*
 @func Text.index() { 
   deprecated("You can only use index() in a Node scope")
   "1"
 }
+*/
 @func Text.fetch(Text %text) {
   deprecated("You can only use fetch() in a Node scope")
   "" 
