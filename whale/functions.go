@@ -1,7 +1,6 @@
 package whale
 
 import (
-	tp "tritium/proto"
 	"fmt"
 	"goconv"
 	"gokogiri/css"
@@ -11,8 +10,9 @@ import (
 	"rubex"
 	"strconv"
 	"strings"
-	"unicode/utf8"
 	"time"
+	tp "tritium/proto"
+	"unicode/utf8"
 )
 
 //The string value of me
@@ -813,19 +813,19 @@ func rewrite_to_upstream_Text_Text_Text(ctx EngineContext, scope *Scope, ins *tp
 	secure := args[1].(string)
 	catchAll := args[2].(string)
 	host := strings.ToLower(scope.Value.(string))
-	
+
 	//strip off catchAll
 	if len(catchAll) > 0 && strings.HasSuffix(host, catchAll) {
 		host = host[:len(host)-len(catchAll)]
 		ctx.SetEnv("__catch_all_enabled__", "true")
 	}
-	
+
 	key, append_proto, append_slashes := GenerateHostMapKey(host, secure)
 
 	rrules := ctx.GetRewriteRules()
 	returnValue = "false"
 	if len(rrules) > 0 {
-		for _, rr := range(rrules) {
+		for _, rr := range rrules {
 			if *rr.Direction == tp.RewriteRule_UPSTREAM_TO_PROXY {
 				continue
 			}
@@ -847,7 +847,7 @@ func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruc
 	rrules := ctx.GetRewriteRules()
 	returnValue = "false"
 	if len(rrules) > 0 {
-		for _, rr := range(rrules) {
+		for _, rr := range rrules {
 			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
 				continue
 			}
@@ -877,7 +877,7 @@ func rewrite_cookie_domain_Text_Text_Text(ctx EngineContext, scope *Scope, ins *
 	if len(rrules) > 0 {
 		newDomain := domain
 		found := false
-		for _, rr := range(rrules) {
+		for _, rr := range rrules {
 			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
 				continue
 			}
@@ -890,8 +890,8 @@ func rewrite_cookie_domain_Text_Text_Text(ctx EngineContext, scope *Scope, ins *
 		}
 		if found {
 			catchAllEnabled := ctx.GetEnv("__catch_all_enabled__")
-			if IsDomainConvered(domain, newDomain) { //the new cookie domain is NOT covered by the existing domain
-				if ! strings.HasPrefix(domain, ".") { //should we do it here???? //TODO
+			if IsDomainCovered(domain, newDomain) { //the new cookie domain is NOT covered by the existing domain
+				if !strings.HasPrefix(domain, ".") { //should we do it here???? //TODO
 					newDomain = "." + domain
 				} else {
 					newDomain = domain
@@ -911,4 +911,3 @@ func debug_me_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []
 	println("DEBUG_ME:", msg)
 	return
 }
-
