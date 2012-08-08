@@ -217,7 +217,14 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 	// Create a map of pre-packaged function signatures
 	prepackaged := make(map[string]bool)
 	for _, f := range pkg.Functions {
-		sig := fmt.Sprintf("%s.%s", f.ScopeTypeString(pkg), f.Stub(pkg))
+		var sig string
+		baseSig := f.Stub(pkg)
+		if (baseSig == "name,Text" ||
+		    baseSig == "text") {
+			sig = fmt.Sprintf("%s.%s", f.ScopeTypeString(pkg), f.Stub(pkg))
+		} else {
+			sig = baseSig
+		}
 		prepackaged[sig] = true
 		// println(sig)
 	}
@@ -228,25 +235,28 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 
 	for _, function := range definitions.Functions {
 		//pkg.Log.Info("\t -- function: %v", function)
-		// println("ABOUT TO RESOLVE DEF FOR ", *function.Name)
 		resolveDefinition(pkg, function)
-		// println("RESOLVED A DEFINITION:", *function.Name)
+
 		// After resolving a user-defined function, see if its fully resolved signature
 		// is the same as the signature of a prepackaged function. If so, throw an error.
-		newSig := fmt.Sprintf("%s.%s", function.ScopeTypeString(pkg), function.Stub(pkg))
-		// println("MADE SIG FOR ", *function.Name)
+		var newSig string
+		newBaseSig := function.Stub(pkg)
+		if (newBaseSig == "name,Text" ||
+		    newBaseSig == "text") {
+			newSig = fmt.Sprintf("%s.%s", function.ScopeTypeString(pkg), function.Stub(pkg))
+		} else {
+			newSig = newBaseSig
+		}
 		// present := false
 		_, present := prepackaged[newSig]
 		if present {
 			msg := fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1) + ")")
-//()("SPLICED ERROR MESSAGE")
+			println(msg)
 			panic(msg)
 		}
 
 		pkg.Functions = append(pkg.Functions, function)
-//(		println)("FINISHED CHECKING FOR REDEFINITIONS FOR", *function.Name)
 	}
-//	println("DONE READING PACKAGE DEFS")
 }
 
 func (pkg *Package) Marshal() []byte {
