@@ -1,8 +1,8 @@
 package tritium
 
 import (
-	tp "tritium/proto"
 	"time"
+	tp "tritium/proto"
 )
 
 type Engine interface {

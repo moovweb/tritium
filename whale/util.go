@@ -35,7 +35,7 @@ func GetCharsetFromContentType(ct string) string {
 	return ""
 }
 
-func GenerateHostMapKey(key, secure string) (newKey string , append_proto, append_slashes bool)  {
+func GenerateHostMapKey(key, secure string) (newKey string, append_proto, append_slashes bool) {
 	newKey = key
 	proto := "http:"
 	if secure == "true" {
@@ -43,7 +43,7 @@ func GenerateHostMapKey(key, secure string) (newKey string , append_proto, appen
 	}
 	append_proto = false
 	append_slashes = false
-	if ! strings.HasPrefix(key, "http:") && ! strings.HasPrefix(key, "https:") {
+	if !strings.HasPrefix(key, "http:") && !strings.HasPrefix(key, "https:") {
 		if strings.HasPrefix(key, "//") {
 			newKey = proto + key
 			append_proto = true
@@ -72,7 +72,7 @@ func ReformatHostMapValue(value string, append_proto, append_slashes bool) (newV
 }
 
 //true if domain1 is less restrictive than domain2
-func IsDomainConvered(domain1, domain2 string) bool {
+func IsDomainCovered(domain1, domain2 string) bool {
 	if strings.HasSuffix(domain2, domain1) {
 		return true
 	}
