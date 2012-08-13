@@ -171,6 +171,9 @@ func (t *Tokenizer) discardBlockComment() {
 			}
 			if t.Source[i] == '*' {
 				depth++
+			} else if c := regexpSlashPattern.Find(t.Source); len(c) > 0 { // we may be inside a regexp
+				i += len(c)
+				println(string(c))
 			}
 		case '*':
 			i++
