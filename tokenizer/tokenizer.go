@@ -171,9 +171,10 @@ func (t *Tokenizer) discardBlockComment() {
 			}
 			if t.Source[i] == '*' {
 				depth++
-			} else if c := regexpSlashPattern.Find(t.Source); len(c) > 0 { // we may be inside a regexp
-				i += len(c)
-				println(string(c))
+			} else if c := regexpSlashPattern.Find(t.Source[i-1 : length]); len(c) > 0 { // we may be inside a regexp
+				i += len(c)-1
+				println("*** REGEXP IN COMMENT [", string(c), "]")
+				continue
 			}
 		case '*':
 			i++
@@ -183,6 +184,18 @@ func (t *Tokenizer) discardBlockComment() {
 			}
 			if t.Source[i] == '/' {
 				depth--
+			}
+		case '"', '\'':
+			if c := matcher[STRING].Find(t.Source[i : length]); len(c) > 0 { // skip embedded strings
+				i += len(c)
+				println("*** STRING IN COMMENT [", string(c), "]")
+				continue
+			}
+		case '`':
+			if c := regexpBackQuotePattern.Find(t.Source[i : length]); len(c) > 0 { // skip embedded backquoted regexps
+				i += len(c)
+				println("*** BACKQUOTED REGEXP IN COMMENT [", string(c), "]")
+				continue
 			}
 		}
 		i++
