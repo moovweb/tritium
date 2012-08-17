@@ -1,5 +1,0 @@
-$a = concat("a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a")
-$a = concat($a, $a, $a, $a) 
-$a = concat($a, $a, $a, $a) 
-$a = concat($a, $a, $a, $a) 
-set($a)

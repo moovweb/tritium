@@ -1,3 +1,0 @@
-set("©")
-
-replace(/©/, "blah")

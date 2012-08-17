@@ -1,3 +1,0 @@
-
-set("b")
-prepend("a")

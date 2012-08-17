@@ -1,1 +1,0 @@
-set(concat("a", "b", "c"))

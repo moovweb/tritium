@@ -1,4 +1,0 @@
-html() {
-  log($encoding)
-}
-

@@ -1,3 +1,0 @@
-xml() {
-  remove("//comment()")
-}

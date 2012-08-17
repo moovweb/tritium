@@ -1,6 +1,0 @@
-name: libxml
-dependencies:
-  - node
-types:
-  - XMLNode < Node
-  - Attribute

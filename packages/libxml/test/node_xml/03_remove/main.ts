@@ -1,5 +1,0 @@
-xml() {
-  $("//deadman") {
-    remove()
-  }
-}

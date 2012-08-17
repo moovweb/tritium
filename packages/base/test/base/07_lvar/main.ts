@@ -1,3 +1,0 @@
-
-%a = "works"
-log(%a)

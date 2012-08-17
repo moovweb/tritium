@@ -1,1 +1,0 @@
-I should be deleted by a call to clear()
