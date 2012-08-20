@@ -12,10 +12,6 @@ func init() {
 	builtInFunctions["time"] = time_
 	builtInFunctions["this"] = this_
 	builtInFunctions["yield"] = yield_
-	builtInFunctions["var_Text"] = var_Text
-	builtInFunctions["var_Text_Text"] = var_Text_Text
-	builtInFunctions["match_Text"] = match_Text
-	builtInFunctions["html_doc_Text_Text"] = html_doc_Text_Text
 	builtInFunctions["xml"] = xml_Text_Text
 	builtInFunctions["select.Text"] = select_Text
 	builtInFunctions["export.Text"] = export_Text

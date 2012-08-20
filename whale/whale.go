@@ -195,6 +195,7 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 		}
 
 		if null.GetBool(fun.BuiltIn) {
+			println("CALLING BUILTIN:", fun.Name)
 			if f := builtInFunctions[fun.Name]; f != nil {
 				returnValue = f(ctx, scope, ins, args)
 				if returnValue == nil {

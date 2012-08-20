@@ -329,7 +329,9 @@ func (pkg *Package) readHeaderFile(location string) {
 
 	for _, function := range stubs.Functions {
 		stubStr := function.Stub(pkg.Package)
-		println("RESOLVING PRIMITIVE:", stubStr)
+		println("RESOLVING PRIMITIVE:")
+		println("\t", stubStr)
+		println("\t", function.GetName())
 
 		pkg.resolveHeader(function)
 
