@@ -328,6 +328,9 @@ func (pkg *Package) readHeaderFile(location string) {
 	stubs := parser.ParseFile(input_file)
 
 	for _, function := range stubs.Functions {
+		stubStr := function.Stub(pkg.Package)
+		println("RESOLVING PRIMITIVE:", stubStr)
+
 		pkg.resolveHeader(function)
 
 		function.BuiltIn = proto.Bool(true)
