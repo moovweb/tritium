@@ -16,6 +16,7 @@ import (
 	linker "tritium/linker"
 	parser "tritium/parser"
 	tp "tritium/proto"
+	whale "tritium/whale"
 )
 
 func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
@@ -279,13 +280,11 @@ func (pkg *Package) findTypeIndex(name string) int {
 }
 
 func (pkg *Package) loadPackageDependency(name string) *Error {
-
 	loaded := pkg.loadedDependency(name)
 
 	if loaded {
 		return nil
 	}
-//	println("LOADING PKG DEPENDENCY", name)
 	pkg.Load(name)
 
 	return nil
@@ -328,10 +327,11 @@ func (pkg *Package) readHeaderFile(location string) {
 	stubs := parser.ParseFile(input_file)
 
 	for _, function := range stubs.Functions {
-		stubStr := function.Stub(pkg.Package)
-		println("RESOLVING PRIMITIVE:")
-		println("\t", stubStr)
-		println("\t", function.GetName())
+		// Verify that signatures for primitives refer to things that exist
+		stubStr := strings.Replace(function.Stub(pkg.Package), ",", ".", -1)
+		if whale.LookupBuiltIn(stubStr) == nil {
+			panic("in " + input_file + " -- attempt to provide signature for nonexistent built-in " + function.GetName())
+		}
 
 		pkg.resolveHeader(function)
 
