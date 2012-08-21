@@ -8,4 +8,5 @@ message Slug {
 	required string version = 2;
 	repeated Transform transformers = 3;
 	repeated RewriteRule rrules = 4;
+	repeated string ssl_whitelist = 5;
 }
