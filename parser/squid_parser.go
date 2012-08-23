@@ -120,7 +120,7 @@ func (p *Parser) Parse() *tp.ScriptObject {
 				}
 			}
 		default:
-			stmts = append(stmts, p.statement())
+			stmts = append(stmts, p.statement(false))
 		}
 	}
 
@@ -164,27 +164,34 @@ func (p *Parser) Parse() *tp.ScriptObject {
 	// return script
 }
 
-func (p *Parser) statement() (node *tp.Instruction) {
+func (p *Parser) statement(in_definition bool) (node *tp.Instruction) {
 	switch p.peek().Lexeme {
 	case IMPORT:
+		if in_definition {
+			p.error("imports not allowed inside function definitions")
+		}
 		token := p.pop() // pop the "@import" token (includes importee)
 		node = tp.MakeImport(filepath.Join(p.DirName, token.Value), token.LineNumber)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
-		node = p.expression()
+		node = p.expression(in_definition)
 	default:
-		p.error("statement must consist of import or expression")
+		if in_definition {
+			p.error("statement inside function definition must consist of expression")
+		} else {
+			p.error("statement must consist of import or expression")
+		}
 	}
 	return node
 }
 
-func (p *Parser) expression() (node *tp.Instruction) {
-	node = p.term()
+func (p *Parser) expression(in_definition bool) (node *tp.Instruction) {
+	node = p.term(in_definition)
 	rest := tp.ListInstructions()
 	for p.peek().Lexeme == PLUS {
 		p.pop() // pop the plus sign
 		switch p.peek().Lexeme {
 		case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
-			rest = append(rest, p.term())
+			rest = append(rest, p.term(in_definition))
 		default:
 			p.error("argument to + must be a self-contained expression")
 		}
@@ -195,21 +202,21 @@ func (p *Parser) expression() (node *tp.Instruction) {
 	return node
 }
 
-func (p *Parser) term() (node *tp.Instruction) {
+func (p *Parser) term(in_definition bool) (node *tp.Instruction) {
 	switch p.peek().Lexeme {
 	case STRING, REGEXP, POS:
 		node = p.literal()
 	case READ:
 		node = p.read()
 	case ID:
-		node = p.call()
+		node = p.call(in_definition)
 	case TYPE:
-		node = p.cast()
+		node = p.cast(in_definition)
 	case GVAR, LVAR:
-		node = p.variable()
+		node = p.variable(in_definition)
 	case LPAREN:
 		p.pop() // pop the lparen
-		node = p.expression()
+		node = p.expression(in_definition)
 		if p.peek().Lexeme != RPAREN {
 			p.error("unclosed parenthesis")
 		}
@@ -262,7 +269,7 @@ func (p *Parser) read() (node *tp.Instruction) {
 	return node
 }
 
-func (p *Parser) call() (node *tp.Instruction) {
+func (p *Parser) call(in_definition bool) (node *tp.Instruction) {
 	funcName := p.pop().Value // grab the function name
 	funcLineNo := p.peek().LineNumber
 	if p.peek().Lexeme != LPAREN {
@@ -270,7 +277,7 @@ func (p *Parser) call() (node *tp.Instruction) {
 	}
 	p.pop() // pop the lparen
 
-	ords, kwdnames, kwdvals := p.arguments(funcName) // gather the arguments
+	ords, kwdnames, kwdvals := p.arguments(funcName, in_definition) // gather the arguments
 	numArgs := len(ords)
 
 	// TO DO: integrate this block for better variadic concat/log expansions
@@ -292,7 +299,7 @@ func (p *Parser) call() (node *tp.Instruction) {
 	p.pop() // pop the rparen
 	var block []*tp.Instruction
 	if p.peek().Lexeme == LBRACE {
-		block = p.block()
+		block = p.block(in_definition)
 	}
 
 	// Expand keyword args
@@ -342,7 +349,7 @@ func (p *Parser) call() (node *tp.Instruction) {
 	return node
 }
 
-func (p *Parser) arguments(funcName string) (ords []*tp.Instruction, kwdnames []string, kwdvals []*tp.Instruction) {
+func (p *Parser) arguments(funcName string, in_definition bool) (ords []*tp.Instruction, kwdnames []string, kwdvals []*tp.Instruction) {
 	ords, kwdnames, kwdvals = make([]*tp.Instruction, 0), make([]string, 0), make([]*tp.Instruction, 0)
 	counter := 0
 	for p.peek().Lexeme != RPAREN {
@@ -358,14 +365,14 @@ func (p *Parser) arguments(funcName string) (ords []*tp.Instruction, kwdnames []
 			// TO DO: CHECK EXPRESSION FIRST-SET
 			switch p.peek().Lexeme {
 			case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
-				kwdvals = append(kwdvals, p.expression())
+				kwdvals = append(kwdvals, p.expression(in_definition))
 			default:
 				p.error("value for keyword argument " + strconv.Quote(k) + " in call to " + funcName + " is not a valid expression")
 			}
 		} else {
 			switch p.peek().Lexeme {
 			case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
-				ords = append(ords, p.expression())
+				ords = append(ords, p.expression(in_definition))
 			default:
 				p.error("value for ordinal argument in call to " + funcName + " is not a valid expression")
 			}
@@ -382,28 +389,28 @@ func (p *Parser) arguments(funcName string) (ords []*tp.Instruction, kwdnames []
 	return ords, kwdnames, kwdvals
 }
 
-func (p *Parser) cast() (node *tp.Instruction) {
+func (p *Parser) cast(in_definition bool) (node *tp.Instruction) {
 	typeName := p.pop().Value // grab the function name
 	typeLineNo := p.peek().LineNumber
 	if p.peek().Lexeme != LPAREN {
 		p.error("parenthesized argument needed for typecast to " + typeName)
 	}
 	p.pop() // pop the lparen
-	expr := p.expression()
+	expr := p.expression(in_definition)
 	if p.peek().Lexeme != RPAREN {
 		p.error("single argument to " + typeName + " typecast is missing closing parenthesis")
 	}
 	p.pop() // pop the rparen
 	var block []*tp.Instruction
 	if p.peek().Lexeme == LBRACE {
-		block = p.block()
+		block = p.block(in_definition)
 	}
 
 	node = tp.MakeFunctionCall(typeName, tp.ListInstructions(expr), block, typeLineNo)
 	return node
 }
 
-func (p *Parser) variable() (node *tp.Instruction) {
+func (p *Parser) variable(in_definition bool) (node *tp.Instruction) {
 	token := p.pop()
 	lexeme, name, lineNo := token.Lexeme, token.Value, token.LineNumber
 	sigil := "$"
@@ -416,13 +423,13 @@ func (p *Parser) variable() (node *tp.Instruction) {
 		p.pop() // pop the equal sign
 		switch p.peek().Lexeme {
 		case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
-			val = p.expression()
+			val = p.expression(in_definition)
 		default:
 			p.error("invalid expression in assignment to " + sigil + name)
 		}
 	}
 	if p.peek().Lexeme == LBRACE {
-		block = p.block()
+		block = p.block(in_definition)
 	}
 	if lexeme == LVAR {
 		node = tp.MakeLocalVar(name, val, block, lineNo)
@@ -436,11 +443,11 @@ func (p *Parser) variable() (node *tp.Instruction) {
 	return node
 }
 
-func (p *Parser) block() (stmts []*tp.Instruction) {
+func (p *Parser) block(in_definition bool) (stmts []*tp.Instruction) {
 	stmts = tp.ListInstructions()
 	p.pop() // pop the lbrace
 	for p.peek().Lexeme != RBRACE {
-		stmts = append(stmts, p.statement())
+		stmts = append(stmts, p.statement(in_definition))
 	}
 	p.pop() // pop the rbrace
 	if len(stmts) == 0 {
@@ -526,7 +533,7 @@ func (p *Parser) function_body(funcName string) (stmts []*tp.Instruction) {
 		}
 	}()
 
-	stmts = p.block()
+	stmts = p.block(true)
 	return stmts
 }
 
