@@ -92,7 +92,17 @@ func Generate(outputFile string) {
 	}
 }
 
+/*
 func RenderDocumentationAsYaml(d *DefinitionList) []byte {
+	docs, err := yaml.Marshal(&d)
+	if err != nil {
+		panic("Couldn't create YAML of Tritium spec: " + err.Error())
+	}
+	return docs
+}
+*/
+
+func RenderDocumentationAsYaml(d *FunctionDefinition) []byte {
 	docs, err := yaml.Marshal(&d)
 	if err != nil {
 		panic("Couldn't create YAML of Tritium spec: " + err.Error())
