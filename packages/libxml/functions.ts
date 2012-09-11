@@ -1,4 +1,4 @@
-"Convenience function for selecting w css"
+"Selects an element with CSS-style selectors. @example `$$(\".one\")` will select all elements with the class of \"one\"."
 
 @func XMLNode.$$(Text %css_selector) {
   $(css(%css_selector)) {
@@ -6,7 +6,7 @@
   }
 }
 
-"Adds a class (specified by **%class**) to the currently-selected node. Also adds a space to prevent overwriting of any over classes."
+"Adds a class (specified by **%class**) to the currently-selected node. Also adds a space to prevent overwriting of any over classes. @example `$(\"./div\") { add_class(\"one\") }` will add a class of \" one\" to the div."
 
 @func XMLNode.add_class(Text %class) {
 
@@ -20,7 +20,7 @@
   }
 }
 
-"Wraps the *contents* of the currently-selected node in the tag defined by **%tag**. (Compare this to `wrap()`, which wraps the currently-selected node, not its contents.)"
+"Wraps the *contents* of the currently-selected node in the tag defined by **%tag**. (Compare to `wrap()`, which wraps the currently-selected node, not its contents.) @example Given `<span>dog</span>`, `$(\"span\") { inner_wrap(\"div\") }` will return `<span><div>dog</div></span>`."
 
 @func XMLNode.inner_wrap(Text %tag_name) {
 
@@ -33,12 +33,12 @@
   }
 }
 
-"Removes any children text nodes."
+"Removes any children text nodes. @example Given `<div> one <span>two</span> </div>`, `remove_text_nodes()` performed on the div will only remove \"one\"." 
 @func XMLNode.remove_text_nodes() {
   remove("./text()")
 }
 
-"Allows you to set the value (**%value**) for the attribute you are selecting with **%name**. For example, `attribute(\"class\", \"one\")` sets the class as 'one'."
+"Allows you to set the value (**%value**) for the attribute you are selecting with **%name**. @example `attribute(\"class\", \"one\")` sets the class as 'one'."
 
 @func XMLNode.attribute(Text %name, Text %value) {
   attribute(%name) {
@@ -49,7 +49,7 @@
   }
 }
 
-"Changes the value of the currently-selected attribute to that specified by **%value**. For example, `attribute(\"href\") { value(\"link\")}`."
+"Changes the value of the currently-selected attribute to that specified by **%value**. @example `attribute(\"href\") { value(\"link\")}` sets the href to be \"link\"."
 @func Attribute.value(Text %value) {
   value() {
     set(%value)
@@ -57,7 +57,7 @@
   }
 }
 
-"Changes the name of the currently-selected attribute to that specified by **%name**. For example, `attribute(\"href\") { name(\"src\") }`.
+"Changes the name of the currently-selected attribute to that specified by **%name**. @example `attribute(\"href\") { name(\"src\") }`.
 
 Functionally equivalent to `name() { set(%name) }`."
 
@@ -68,7 +68,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Similar to `asset()`, but references a Sass stylesheet specifically. For example, `sass(\"main.scss\")`."
+"Similar to `asset()`, but references a Sass stylesheet specifically. @example `sass(\"main.scss\")` references the main stylesheet."
 
 @func sass(Text %filename) {
   asset(concat("stylesheets/.css/", concat(%filename, ".css"))) {
@@ -76,7 +76,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Sets the attribute defined by **%name** to the value defined by **%value**. For example, `set(\"class\", \"one\")` will assign a class of 'one' to the node."
+"Sets the attribute defined by **%name** to the value defined by **%value**. @example `set(\"class\", \"one\")` will assign a class of 'one' to the node."
 
 @func XMLNode.set(Text %name, Text %value) {
   attribute(%name) {
@@ -85,13 +85,13 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 # Used to be a helper function, just pass through and should work the same
-"Allows mass-attribute setting."
+"Allows mass-attribute setting. @example `$(\"./div\") { attributes (class: \"one\", id: \"two\") }` will assign the div a class of 'one' and an id of 'two'."
 
 @func XMLNode.attributes() {
   yield()
 }
 
-" Opens the current node for text modificaiton. "
+" Opens the current node for text modificaiton. @example `$(\"./div\") { text() { set(\"dog\") } }` will overwrite the inside of the div to 'dog'."
 
 @func XMLNode.text() {
   inner_text() {
@@ -99,7 +99,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Opens the current node for text modification, replacing everything inside with the **%value**. (Essentially, the same as `text() { set(Text %value) }`.)"
+"Opens the current node for text modification, replacing everything inside with the **%value**. (Essentially, the same as `text() { set(Text %value) }`.) @example `$(\"./div\") { text(\"dog\") }` will overwrite the inside of the div to 'dog'."
 
 @func XMLNode.text(Text %value) {
   text() {
@@ -108,7 +108,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Searches for nodes matching `%xpath` and ensures a domain is in the path of the `%attribute`"
+"Searches for nodes matching `%xpath` and ensures a domain is in the path of the `%attribute`. @example `absolutize(\"//img\", \"src\")` will convert all `img` tag sources from relative ('images/dog.png') to absolute ('http://www.example.com/images/dog.png')."
 
 @func XMLNode.absolutize(Text %xpath, Text %attribute) {
 
@@ -150,7 +150,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 
-"Searches for nodes matching `%xpath` and ensures a domain is in their `src` path."
+"Searches for nodes matching `%xpath` and ensures a domain is in their `src` path. @example `absolutize(\"//img\")` changes all `img` tag sources from relative ('images/dog.png') to absolute ('http://example.com/images/dog.png')."
 
 @func XMLNode.absolutize(Text %xpath) {
   absolutize(%xpath, "src") {
@@ -158,7 +158,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Searches for `<img>` and `<script>` tags and ensures a domain is in their `src` path."
+"Searches for `<img>` and `<script>` tags and ensures a domain is in their `src` path. @example `absolutize()` will go through the entire document and change every `img` and `script` tag source from relative ('asset/image.png' or 'asset/script.js') to absolute ('http://example.com/asset/image.png' or 'http://example.com/asset/script.js')."
 
 @func XMLNode.absolutize() {
   absolutize(".//img|.//script") {
@@ -166,7 +166,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts javascript (specified by **%js**) in a script tag within the currently-selected node at the position specified by **%pos**."
+"Inserts javascript (specified by **%js**) in a script tag within the currently-selected node at the position specified by **%pos**. @example `$(\"div\") { insert_javascript_at(\"top\", \"alert('Boo')\") }` will insert the javascript specified at the top of the div."
 
 @func XMLNode.insert_javascript_at(Position %pos, Text %js) {
   insert_at(%pos, "script") {
@@ -176,7 +176,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts javascript (specified by **%js**) in a script tag within the currently-selected node."
+"Inserts javascript (specified by **%js**) in a script tag within the currently-selected node. @example `$(\"div\") { insert_javascript(\"alert('Boo')\") }` will insert the javascript at the bottom of the div."
 
 @func XMLNode.insert_javascript(Text %js) {
   insert_javascript_at(position(), %js) {
@@ -184,7 +184,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Opens the insides of the node to text modification - anything within the node will be overwritten by what is put in **%html**."
+"Opens the insides of the node to text modification - anything within the node will be overwritten by what is put in **%html**. @example Given `<div> <span>Item</span> </div>`, using `$(\"div\") { inner(\"<a>\") }` will replace the span with an empty 'a' tag, returning `<div><a></a></div>."
 
 @func XMLNode.inner(Text %html) {
   inner() {
@@ -193,7 +193,7 @@ Functionally equivalent to `name() { set(%name) }`."
   } 
 }
 
-"Wraps the selected node in the tag defined by **%tag**, then yields to the new tag."
+"Wraps the selected node in the tag defined by **%tag**, then yields to the new tag. @example `$(\"div\") { wrap(\"span\") }` will wrap the div inside a span tag."
 
 @func XMLNode.wrap(Text %tag) {
   %parent_node = this()
@@ -214,7 +214,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 # This is used to specify the encoding for a page
-"Parses the document into HTML."
+"Parses the document into HTML. Allows specification of the current coding of HTML and how the result should be coded. @example `html(\"gbk\", \"utf-8\")` parses gbk HTML into utf-8 HTML."
 
 @func Text.html(Text %from_enc, Text %to_enc) {
   html_doc(%from_enc, %to_enc) {
@@ -223,7 +223,7 @@ Functionally equivalent to `name() { set(%name) }`."
   export("Content-Type-Charset", %to_enc)
 }
 
-"Parses the document into HTML."
+"Parses the document into HTML, specifying the encoding (**%enc**). @example `html(\"utf-8\")` parses the document into utf-8 html."
 
 @func Text.html(Text %enc) {
   $charset_determined = %enc
@@ -232,7 +232,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Parses the document into HTML."
+"Parses the document into HTML. @example In *html.ts*, there is `html()` at the top, which guesses the encoding and parses the html accordingly."
 
 @func Text.html() {
   match($charset_determined) {
@@ -248,7 +248,7 @@ Functionally equivalent to `name() { set(%name) }`."
   } 
 }
 
-"Parses a frament of the document (i.e. the output doesn't start with `<html>`)."
+"Parses a fragment of the document. The `html()` function adds `<html>` tags to the output. This function does not."
 
 @func Text.html_fragment(Text %from_enc, Text %to_enc) {
   html_fragment_doc(%from_enc, %to_enc) {
@@ -257,12 +257,16 @@ Functionally equivalent to `name() { set(%name) }`."
   export("Content-Type-Charset", %to_enc)   # Right now we always output in utf-8, so set the response header appropriately
 }
 
+"Parses a fragment of the document. The `html()` function adds `<html>` tags to the output. This function does not."
+
 @func Text.html_fragment(Text %enc) {
   $charset_determined = %enc
   html_fragment(%enc, %enc) {
     yield()
   }
 }
+
+"Parses a fragment of the document. The `html()` function adds `<html>` tags to the output. This function does not."
 
 @func Text.html_fragment() {
   $encoding = guess_encoding()
@@ -274,6 +278,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # POSITIONALS
 # siblings of these are in node, but these use Inner so are here.
 
+"Inserts a tag (specified by **%tag**) with content (**%content**) at a position specified by **%pos** (relative to the currently-selected node). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
 
 @func XMLNode.insert_at(Text %pos, Text %tag, Text %content) {
   insert_at(position(%pos), %tag) {
@@ -282,7 +287,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node). For example `insert_at(\"top\", \"div\", \"Some text\")`."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
 
 @func XMLNode.insert_at(Position %pos, Text %tag, Text %inner) {
   insert_at(%pos, %tag) {
@@ -291,7 +296,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts the tag (specified by **%tag**) with content (**%inner**) into the currently-selected node."
+"Inserts the tag (specified by **%tag**) with content (**%inner**) into the currently-selected node. @example `insert(\"div\", \"Some text\")` will insert `<div>Some text</div>` into the current node - by default at the bottom."
 
 @func XMLNode.insert(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
@@ -300,7 +305,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) at the bottom of the currently-selected node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at the bottom of the currently-selected node. @example `insert_bottom(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the bottom of the current node."
 
 @func XMLNode.insert_bottom(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
@@ -309,7 +314,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) at the top of the currently-selected node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at the top of the currently-selected node. @example `insert_top(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
 
 @func XMLNode.insert_top(Text %tag, Text %inner) {
   insert_at(position("top"), %tag) {
@@ -318,7 +323,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) after the currently-selected node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) after the currently-selected node. @example `insert_after(\"div\", \"Some text\")` will insert `<div>Some text</div>` after the current node."
 
 @func XMLNode.insert_after(Text %tag, Text %inner) {
   insert_at(position("after"), %tag) {
@@ -327,7 +332,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) before the currently-selected node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) before the currently-selected node. @example `insert_before(\"div\", \"Some text\")` will insert `<div>Some text</div>` before the current node."
 
 @func XMLNode.insert_before(Text %tag, Text %inner) {
   insert_at(position("before"), %tag) {
@@ -336,7 +341,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts javascript (specified by **%js**) in a script tag at the bottom of the currently-selected node."
+"Inserts javascript (specified by **%js**) in a script tag at the bottom of the currently-selected node. @example `insert_javascript_bottom(\"alert('Boo')\")` will insert `<script>alert('Boo')</script>` at the bottom of the current node."
 
 @func XMLNode.insert_javascript_bottom(Text %js) {
   insert_javascript_at(position("bottom"), %js) {
@@ -344,7 +349,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts javascript (specified by **%js**) in a script tag at the top of the currently-selected node."
+"Inserts javascript (specified by **%js**) in a script tag at the top of the currently-selected node. @example `insert_javascript_top(\"alert('Boo')\")` will insert `<script>alert('Boo')</script>` at the top of the current node."
 
 @func XMLNode.insert_javascript_top(Text %js) {
   insert_javascript_at(position("top"), %js) {
@@ -352,7 +357,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts javascript (specified by **%js**) in a script tag after the currently-selected node."
+"Inserts javascript (specified by **%js**) in a script tag after the currently-selected node. @example `insert_javascript_after(\"alert('Boo')\")` will insert `<script>alert('Boo')</script>` after the current node."
 
 @func XMLNode.insert_javascript_after(Text %js) {
   insert_javascript_at(position("after"), %js) {
@@ -360,7 +365,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts javascript (specified by **%js**) in a script tag after the currently-selected node."
+"Inserts javascript (specified by **%js**) in a script tag before the currently-selected node. @example `insert_javascript_before(\"alert('Boo')\")` will insert `<script>alert('Boo')</script>` before the current node."
 
 @func XMLNode.insert_javascript_before(Text %js) {
   insert_javascript_at(position("before"), %js) {

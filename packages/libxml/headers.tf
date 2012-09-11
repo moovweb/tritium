@@ -1,4 +1,4 @@
-" Converts a CSS-selector (**%selector**) to XPath. "
+" Selects an element with CSS-style selectors. @example `$$(\".one\")` will select all elements with the class of \"one\". "
 @func css(Text %selector) Text Text
 
 " Parses the document as XML and passes you back an XMLNode scope. "
@@ -13,34 +13,37 @@
 " Replaces the node's contents with a CDATA block. "
 @func XMLNode.cdata(Text %contents) Text
 
-" Removes the node specified by `%xpath_selector` (e.g. `remove(\"//table\")` will remove all table nodes from the document). "
+" Removes the node specified by `%xpath_selector`. @example `remove(\"//table\")` will remove all table elements from the document. "
 @func XMLNode.remove(Text %xpath_selector) Text
 
-" Opens up the insides of the node to text modification. Used for nodes containing text and other XML elements. For text-only nodes, use `text()`."
+" Opens up the insides of the node to modification. Used for nodes containing text and other XML elements. For text-only modification, use `text()`. @example Given `<div><span></span></div>`, `$(\"./div\") { inner(\"<a>\") }` will return `<div><a></a></div>`. Compare with `$(\"./div\") { text(\"<a>\") }`, which returns `<div>\"<a>\"</div>`. "
 @func XMLNode.inner() Text Text
 
-" Similar to `dump()`, but only converts the inside of the currently-selected node to text. "
+" Converts the inside of the currently-selected node to text. @example Using `$(\"./body\") { inner_text() }` returns all the text in the HTML tree (with none of the HTML nodes)."
 @func XMLNode.inner_text() Text Text
 
-" Opens the attribute you select with **name** (e.g. `attribute(\"class\")` opens the class for modification). "
+" Opens the attribute you select with **%name**. @example `attribute(\"class\")` opens the class for modification. "
 @func XMLNode.attribute(Text %name) Text Attribute
 
-" Outputs the current node as text. "
+" Deprecated: Outputs the current node as text. @example "
 @func XMLNode.dump() Text
 
 " Returns \"true\" or \"false\" "
 @func equal(XMLNode %a, XMLNode %b) Text
 @func equal(Node %a, Node %b) Text
 
-" Wraps the first *text* child inside the specified tag. "
+" Wraps the *text* children inside the specified tag. @example Given `<div> text <a>link</a> </div>`, `$(\"./div\") { wrap_text_children(\"span\") }` results in `<div> <span>text</span> <a>link</a> </div>`. "
 @func XMLNode.wrap_text_children(Text %tag_name) Text XMLNode
+
+" Moves current element's children to the node specified by **%tag_name** at the position **%pos**."
+
 @func XMLNode.move_children_to(Node %tag_name, Position %pos) Text
 
-" Removes the currently-selected attribute. For example `attribute(\"href\") { remove() } `. "
+" Removes the currently-selected attribute. @example `$(\"./a\") { attribute(\"href\") { remove() } }` will remove the href from the a tag. "
 @func Attribute.remove() Text
 
-" Opens the value scope, enabling it to be changed using `set()`. "
+" Opens the value scope, enabling it to be changed using `set()`. @example `$(\"./a\") { attribute(\"href\") { value() { set (\"LINK\")} } }` will set the href of the a tag to 'LINK'. "
 @func Attribute.value() Text Text
 
-" Opens the name scope, so it can be changed using `set()`. "
+" Opens the name scope, so it can be changed using `set()`. @example `$(\"./a\") { attribute(\"href\") { name() { set (\"alt\")} } }` will change the name of the attribute from 'href' to 'alt'."
 @func Attribute.name() Text Text
