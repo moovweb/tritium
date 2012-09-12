@@ -1,4 +1,4 @@
-" This is a the way that we have Tritium communicate variables back to its execution environment. For example,  `export(\"Content-Type\", \"application/js\")` to change the content-type. "
+" This is a the way that we have Tritium communicate variables back to its execution environment. @example `export(\"Content-Type\", \"application/js\")` changes the content-type to application/js. "
 
 @func export(Text %key, Text %value) {
   export(%key) {
@@ -7,20 +7,20 @@
   }
 }
 
-"Parses regular expressions - so `/a/` is equivalent to `regexp(\"a\")`. (Use hard-coded regex if you can. This is much slower than hard-coding regex.)  "
+"Parses regular expressions. (Use hard-coded regex if you can. This is much slower than hard-coding regex.) @example `with(regexp(\"a\"))` is equivalent to `with(/a/)`. "
 
 @func regexp(Text %exp) {
   regexp(%exp, "")
 }
 
-"Allows reference to the assets folder without hard-coding a path. For example, `asset(\"images/icon.png\")`."
+"References to the assets folder without hard-coding a path. @example `asset(\"images/icon.png\")` points to *assets/images/icon*, including the domain if necessary."
 @func asset(Text %name) {
   concat($asset_host, %name) {
     yield()
   }
 }
 
-"Prints the time a block took to run."
+"Prints the time a block took to run. @example `html() { bm(\"TIME\") }` will print the time it took to parse the HTML in the server logs in the format 'TIME: x ms'."
 @func bm(Text %name) {
   log(concat(%name, ": ", 
     time() {
@@ -28,7 +28,7 @@
     }))
 }
 
-"If only one string is to be matched, it can be placed after the target. For example `match($path, \"product\")`."
+"If only one string is to be matched, it can be placed after the target. @example `match($path, \"product\")` will see if 'product' appears in the path of the current url."
 @func match(Text %target, Text %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -37,7 +37,7 @@
   }
 }
 
-"If only one string is to be matched, it can be placed after the target. For example, `match($path, /product/)`."
+"If only one string is to be matched, it can be placed after the target. @example `match($path, /product/)` will see if 'product' appears in the path of the current url."
 @func match(Text %target, Regexp %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -46,7 +46,7 @@
   }
 }
 
-"The opposite of `match()`."
+"The opposite of `match()`. @example `match_not($path, \"product\")` will check that 'product' is *not* in the url."
 @func match_not(Text %target, Text %comparitor) {
   match(%target) {
     not(%comparitor) {
@@ -55,7 +55,7 @@
   }
 }
 
-"The opposite of `match()`."
+"The opposite of `match()`. @example `match_not($path, /product/)` will check that 'product' is *not* in the url."
 @func match_not(Text %target, Regexp %comparitor) {
   match(%target) {
     not(%comparitor) {
@@ -64,21 +64,21 @@
   }
 }
 
-"Similar to `remove()`, but works in the text scope."
+"Similar to `remove()`, but works in the text scope. @example Given `<div>Dog</div>`, `$(\"./div\") { text() { clear() } }` will return `<div></div>`."
 @func Text.clear() {
   set("") {
     yield()
   }
 }
 
-"Opens the current node for text modification. Should be used when the current node contains text *only*. For other cases, use `inner()`."
+"Opens the current node for text modification. Should be used when the manipulation is on text *only*. For other cases, use `inner()`. @example `text() { set(\"<a>\") }` will set the inside as the string '<a>' - whereas using `inner()` will set the *tag*."
 @func Text.text() {
   this() {
     yield()
   }
 }
 
-"Replaces the regular expression specified by **%search** with the text **%with**. For example, `replace(/bad/, \"good\")`. "
+"Replaces the regular expression specified by **%search** with the text **%with**. @example `replace(/bad/, \"good\")`. "
 
 @func Text.replace(Regexp %search, Text %with) {
   replace(%search) {
@@ -87,13 +87,15 @@
   }
 }
 
-"Replaces the text specified by **%search** with the text **%with**. For example, `replace(\"bad\", \"good\")`. "
+"Replaces the text specified by **%search** with the text **%with**. @example `replace(\"bad\", \"good\")`. "
 
 @func Text.replace(Text %search, Text %with) {
   replace(%search) {
     set(%with)
   }
 }
+
+"Returns the length of the item in characters. Note that it includes whitespace and return characters. @example Given `<div>dog and cat</div>`, the Tritium `$(\"./div\") { text() { log(length()) } }` will log **11** in the server logs."
 
 @func Text.length() {
   $input = this()

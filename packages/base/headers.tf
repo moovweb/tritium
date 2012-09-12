@@ -1,25 +1,25 @@
 
-" Allows you to set global variables. Equivalent to `$`."
+" Allows you to set global variables. Equivalent to `$`. @example `var(\"txt1\") { set(\"MYTEXT\") }` sets the variable of 'txt1' to 'MYTEXT'."
 @func var(Text %name) Text Text
-" Allows you to set global variables. Equivalent to `$`."
+" Allows you to set global variables. Equivalent to `$`. @example `var(\"txt1\", \"MYTEXT\")` sets the variable of 'txt1' to 'MYTEXT'."
 @func var(Text %name, Text %value) Text Text
 
-" Returns the time-to-execute (time units vary by implementation). "
+" Returns the time-to-execute (time units vary by implementation). @example `log(time())` will log the time taken to reach that point in the server logs. "
 @func time() Text
 
-" Specifies a target (specified by **%target**) to be searched. To be used in conjunction with `with()`. For example, `match($path) { with(/product/) }`."
+" Specifies a target (specified by **%target**) to be searched. To be used in conjunction with `with()`. @example `match($path) { with(/product/) }` will match the path of the url to see if the regular expression 'product' matches."
 @func match(Text %match_target) Text
 
-" Writes out a string (**%log_message**) to the console and debug log. For example `log(\"Importing home-page\")`. "
+" Writes out a string (**%log_message**) to the console and debug log. @example `log(\"Importing home-page\")`. "
 @func log(Text %log_message) Text Text
 
-" Returns the warning **%message** when a function is deprecated. Mostly useful when defining functions. "
+" Returns the warning **%message** when a function is deprecated. Mostly useful when defining functions. @example `@func XMLNode.old() { deprecated("WARNING! This function has been deprecated") }` will print out a server log message whenever the function is used. "
 @func deprecated(Text %message) Text Text
 
-" Used with `match()` as an opposite of `with()`. For example, `match($var) {not('hi')}`. "
+" Used with `match()` as an opposite of `with()`. @example `match($var) { not('hi') }` will check that the '$var' is not set to 'hi'. "
 @func not(Text %text) Text
 
-" Used with `match()` as an opposite of `with()`. For example, `match($var) {not('hi')}`. "
+" Used with `match()` as an opposite of `with()`. @example `match($var) { not(/hi/) }` will check that the '$var' is not set to 'hi'. "
 @func not(Regexp %regexp) Text
 
 " Used with `match()`. Allows the match function to specify what is being matched. For example: `match($path) { with(\"something\") }`."
