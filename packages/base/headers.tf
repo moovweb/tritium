@@ -13,7 +13,7 @@
 " Writes out a string (**%log_message**) to the console and debug log. @example `log(\"Importing home-page\")`. "
 @func log(Text %log_message) Text Text
 
-" Returns the warning **%message** when a function is deprecated. Mostly useful when defining functions. @example `@func XMLNode.old() { deprecated("WARNING! This function has been deprecated") }` will print out a server log message whenever the function is used. "
+" Returns the warning **%message** when a function is deprecated. Mostly useful when defining functions. @example `@func XMLNode.old() { deprecated(\"WARNING! This function has been deprecated\") }` will print out a server log message whenever the function is used. "
 @func deprecated(Text %message) Text Text
 
 " Used with `match()` as an opposite of `with()`. @example `match($var) { not('hi') }` will check that the '$var' is not set to 'hi'. "
