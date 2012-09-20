@@ -28,7 +28,7 @@
   }
 }
 
-" Renames the current node to the tag specified by **%value**. @example `name(\"span\")` will change the currently-selected node to a span. "
+" Renames the current node to the tag specified by **%value** - [more information](http://beta.moovweb.com/learn/training/function_guides/rename). @example `name(\"span\")` will change the currently-selected node to a span. "
 
 @func Node.name(Text %value) {
   name() {
@@ -104,7 +104,7 @@
   } 
 }
 
-" Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos**. @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body. "
+" Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos** - [more information](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body. "
 
 @func Node.move_to(Text %xpath, Position %pos) {
   %parent_node = this()
@@ -114,7 +114,7 @@
   }
 }
 
-" Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos**. @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body."
+" Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos** - [more information](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body."
 
 @func Node.move_to(Text %xpath, Text %pos) {
   move_to(%xpath, position(%pos)) {
@@ -122,7 +122,7 @@
   }
 }
 
-" Moves the currently-selected node to the bottom of the node specified by **%xpath**. @example `move_to(\"//body\")` will move the current node to the bottom of the body."
+" Moves the currently-selected node to the bottom of the node specified by **%xpath** - [more information](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\")` will move the current node to the bottom of the body."
 
 @func Node.move_to(Text %xpath) {
   move_to(%xpath, position()) {
@@ -130,7 +130,7 @@
   }
 }
 
-" Moves the node specified by **%where** to the currently-selected node, at the position **%pos**. @example `move_here(\"//table\", \"top\")` will move every table in the document into the top of the current node."
+" Moves the node specified by **%where** to the currently-selected node, at the position **%pos** - [more information](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\", \"top\")` will move every table in the document into the top of the current node."
 
 @func Node.move_here(Text %where, Position %pos) {
   %parent = this()
@@ -140,7 +140,7 @@
   }
 }
 
-" Moves the node specified by **%where** to the currently-selected node, at the position **%pos**. @example `move_here(\"//table\", \"top\")` will move every table in the document into the top of the current node."
+" Moves the node specified by **%where** to the currently-selected node, at the position **%pos** - [more information](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\", \"top\")` will move every table in the document into the top of the current node."
 
 @func Node.move_here(Text %where, Text %pos) {
   move_here(%where, position(%pos)) {
@@ -148,7 +148,7 @@
   }
 }
 
-" Moves the node specified by **%where** to the bottom of the currently-selected node. @example `move_here(\"//table\")` will move every table in the document into the bottom of the current node."
+" Moves the node specified by **%where** to the bottom of the currently-selected node - [more information](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\")` will move every table in the document into the bottom of the current node."
 
 @func Node.move_here(Text %where) {
   move_here(%where, position("bottom")) {
@@ -158,7 +158,7 @@
 
 # DIRECTIONALS... UGH.
 
-" Inserts a tag (specified by **%tag**) in the currently-selected node. @example `insert(\"div\")` will insert a div at the bottom of the current node."
+" Inserts a tag (specified by **%tag**) in the currently-selected node - [more information](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert(\"div\")` will insert a div at the bottom of the current node."
 
 @func Node.insert(Text %tag) {
   insert_at(position(), %tag) {
@@ -166,7 +166,7 @@
   }
 }
 
-" Inserts a tag (specified by **%tag**) at the bottom of the currently-selected node. @example `insert_bottom(\"div\")` will insert a div at the bottom of the current node."
+" Inserts a tag (specified by **%tag**) at the bottom of the currently-selected node - [more information](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_bottom(\"div\")` will insert a div at the bottom of the current node."
 
 @func Node.insert_bottom(Text %tag) {
   insert_at(position(), %tag) {
@@ -174,7 +174,7 @@
   }
 }
 
-" Inserts a tag (specified by **%tag**) at the top of the currently-selected node. @example `insert_top(\"div\")` will insert a div at the top of the current node."
+" Inserts a tag (specified by **%tag**) at the top of the currently-selected node - [more information](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_top(\"div\")` will insert a div at the top of the current node."
 
 @func Node.insert_top(Text %tag) {
   insert_at(position("top"), %tag) {
@@ -182,7 +182,7 @@
   }
 }
 
-"Inserts a tag (specified by **%tag**) after the currently-selected node. @example `insert_after(\"div\")` will insert a div after the current node."
+"Inserts a tag (specified by **%tag**) after the currently-selected node - [more information](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_after(\"div\")` will insert a div after the current node."
 
 @func Node.insert_after(Text %tag) {
   insert_at(position("after"), %tag) {
@@ -190,7 +190,7 @@
   }
 }
 
-" Inserts a tag (specified by **%tag**) before the currently-selected node. @example `insert_before(\"div\")` will insert a div before the current node."
+" Inserts a tag (specified by **%tag**) before the currently-selected node - [more information](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_before(\"div\")` will insert a div before the current node."
 
 @func Node.insert_before(Text %tag) {
   insert_at(position("before"), %tag) {

@@ -2,7 +2,7 @@
 " Returns the number of the current node in relation to its siblings. @example `$(\"./div\") { log(index()) }` will return '1' if the div is the first div child, '2' if it is the second div child, and so on. "
 @func index(Node %node) Text
 
-" Selects an element to pass it to a function. @example Given `<div>Dog</div>`, `$(\"./div\") { $var = fetch(text()) }` will set 'var' to be 'Dog'. "
+" Selects an element to pass it to a function - [more information](http://beta.moovweb.com/learn/training/function_guides/fetch). @example Given `<div>Dog</div>`, `$(\"./div\") { $var = fetch(text()) }` will set 'var' to be 'Dog'. "
 @func Node.fetch(Text %selector) Text Text
 
 " Returns the current node. "
@@ -26,10 +26,10 @@
 " Copies the node and yields to it. "
 @func Node.dup() Node Node
 
-" Opens a scope to rename the current node. @example `name() { set(\"div\") }` renames the current node to 'div'. "
+" Opens a scope to rename the current node - [more information](http://beta.moovweb.com/learn/training/function_guides/rename). @example `name() { set(\"div\") }` renames the current node to 'div'. "
 @func Node.name() Text Text
 
-" Removes the current node from the tree. @example `$(\"//table\") { remove() }` will remove all the tables from the HTML. "
+" Removes the current node from the tree - [more information](http://beta.moovweb.com/learn/training/function_guides/removing). @example `$(\"//table\") { remove() }` will remove all the tables from the HTML. "
 @func Node.remove() Text Node
 
 " Returns the XPath of the current node. @example From any node, using `log(path())` will return the path to the node in the logs. "
@@ -47,5 +47,5 @@
 " Injects HTML (specified by **%html**) into the current node at the location specified by **%pos**. @example `inject_at(\"top\", \"file.html\")` injects the file specified at the top of the current node."
 @func Node.inject_at(Text %pos, Text %html) Text
 
-" Replaces the current value with the one specified by %value. @example `name() { set(\"div\") }`. "
+" Replaces the current value with the one specified by %value - [more information](http://beta.moovweb.com/learn/training/function_guides/rename). @example `name() { set(\"div\") }`. "
 @func Node.set(Text %value) Text

@@ -13,7 +13,7 @@
 " Replaces the node's contents with a CDATA block. "
 @func XMLNode.cdata(Text %contents) Text
 
-" Removes the node specified by `%xpath_selector`. @example `remove(\"//table\")` will remove all table elements from the document. "
+" Removes the node specified by `%xpath_selector` - [more information](http://beta.moovweb.com/learn/training/function_guides/removing). @example `remove(\"//table\")` will remove all table elements from the document. "
 @func XMLNode.remove(Text %xpath_selector) Text
 
 " Opens up the insides of the node to modification. Used for nodes containing text and other XML elements. For text-only modification, use `text()`. @example Given `<div><span></span></div>`, `$(\"./div\") { inner(\"<a>\") }` will return `<div><a></a></div>`. Compare with `$(\"./div\") { text(\"<a>\") }`, which returns `<div>\"<a>\"</div>`. "
@@ -22,7 +22,7 @@
 " Converts the inside of the currently-selected node to text. @example Using `$(\"./body\") { inner_text() }` returns all the text in the HTML tree (with none of the HTML nodes)."
 @func XMLNode.inner_text() Text Text
 
-" Opens the attribute you select with **%name**. @example `attribute(\"class\")` opens the class for modification. "
+" Opens the attribute you select with **%name** - [more information](http://beta.moovweb.com/learn/training/function_guides/attribute). @example `attribute(\"class\")` opens the class for modification. "
 @func XMLNode.attribute(Text %name) Text Attribute
 
 " Deprecated: Outputs the current node as text. @example "

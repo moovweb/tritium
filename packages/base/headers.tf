@@ -7,7 +7,7 @@
 " Returns the time-to-execute (time units vary by implementation). @example `log(time())` will log the time taken to reach that point in the server logs. "
 @func time() Text
 
-" Specifies a target (specified by **%target**) to be searched. To be used in conjunction with `with()`. @example `match($path) { with(/product/) }` will match the path of the url to see if the regular expression 'product' matches."
+" Specifies a target (specified by **%target**) to be searched. To be used in conjunction with `with()` - [more information](http://beta.moovweb.com/learn/training/function_guides/match). @example `match($path) { with(/product/) }` will match the path of the url to see if the regular expression 'product' matches."
 @func match(Text %match_target) Text
 
 " Writes out a string (**%log_message**) to the console and debug log. @example `log(\"Importing home-page\")`. "
@@ -70,10 +70,10 @@
 " Replaces the entire current text with what you pass in. @example `set(\"one\")` will set the whole of the text to 'one'. "
 @func Text.set(Text %value) Text
 
-" Replaces all instances of the regular expression **%search**. This yields to a Text scope that allows you to set the replacement string using `with()`. @example `replace(/bad/) { set(\"good\") }`."
+" Replaces all instances of the regular expression **%search**. This yields to a Text scope that allows you to set the replacement string using `with()` - [more information](http://beta.moovweb.com/learn/training/function_guides/replace). @example `replace(/bad/) { set(\"good\") }`."
 @func Text.replace(Regexp %search) Text Text
 
-" Replaces all instances of the text **%search**. This yields to a Text scope that allows you to set the replacement string using `with()`. @example `replace(\"bad\") { set(\"good\") }`."
+" Replaces all instances of the text **%search**. This yields to a Text scope that allows you to set the replacement string using `with()` - [more information](http://beta.moovweb.com/learn/training/function_guides/replace). @example `replace(\"bad\") { set(\"good\") }`."
 @func Text.replace(Text %search) Text Text
 
 " Adds **%text_to_prepend** to the beginning of the text. @example Given `<div>Dog</div>`, `$(\"./div\") { text() { prepend(\"Super-\") } }` will change the text to 'Super-Dog'."
