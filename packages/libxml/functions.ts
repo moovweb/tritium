@@ -38,7 +38,7 @@
   remove("./text()")
 }
 
-"Allows you to set the value (**%value**) for the attribute you are selecting with **%name** - [more information](http://beta.moovweb.com/learn/training/function_guides/attribute). @example `attribute(\"class\", \"one\")` sets the class as 'one'."
+"Allows you to set the value (**%value**) for the attribute you are selecting with **%name** - [click for example](http://beta.moovweb.com/learn/training/function_guides/attribute). @example `attribute(\"class\", \"one\")` sets the class as 'one'."
 
 @func XMLNode.attribute(Text %name, Text %value) {
   attribute(%name) {
@@ -85,7 +85,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 # Used to be a helper function, just pass through and should work the same
-"Allows mass-attribute setting - [more information](http://beta.moovweb.com/learn/training/function_guides/attribute). @example `$(\"./div\") { attributes (class: \"one\", id: \"two\") }` will assign the div a class of 'one' and an id of 'two'."
+"Allows mass-attribute setting - [click for example](http://beta.moovweb.com/learn/training/function_guides/attribute). @example `$(\"./div\") { attributes (class: \"one\", id: \"two\") }` will assign the div a class of 'one' and an id of 'two'."
 
 @func XMLNode.attributes() {
   yield()
@@ -193,7 +193,7 @@ Functionally equivalent to `name() { set(%name) }`."
   } 
 }
 
-"Wraps the selected node in the tag defined by **%tag**, then yields to the new tag - [more information](http://beta.moovweb.com/learn/training/function_guides/wrap). @example `$(\"div\") { wrap(\"span\") }` will wrap the div inside a span tag."
+"Wraps the selected node in the tag defined by **%tag**, then yields to the new tag - [click for example](http://beta.moovweb.com/learn/training/function_guides/wrap). @example `$(\"div\") { wrap(\"span\") }` will wrap the div inside a span tag."
 
 @func XMLNode.wrap(Text %tag) {
   %parent_node = this()
@@ -278,7 +278,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # POSITIONALS
 # siblings of these are in node, but these use Inner so are here.
 
-"Inserts a tag (specified by **%tag**) with content (**%content**) at a position specified by **%pos** (relative to the currently-selected node) - [more information](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
+"Inserts a tag (specified by **%tag**) with content (**%content**) at a position specified by **%pos** (relative to the currently-selected node) - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
 
 @func XMLNode.insert_at(Text %pos, Text %tag, Text %content) {
   insert_at(position(%pos), %tag) {
@@ -287,7 +287,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node) - [more information](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node) - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
 
 @func XMLNode.insert_at(Position %pos, Text %tag, Text %inner) {
   insert_at(%pos, %tag) {
@@ -296,7 +296,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts the tag (specified by **%tag**) with content (**%inner**) into the currently-selected node  - [more information](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert(\"div\", \"Some text\")` will insert `<div>Some text</div>` into the current node - by default at the bottom."
+"Inserts the tag (specified by **%tag**) with content (**%inner**) into the currently-selected node  - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert(\"div\", \"Some text\")` will insert `<div>Some text</div>` into the current node - by default at the bottom."
 
 @func XMLNode.insert(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
@@ -305,7 +305,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) at the bottom of the currently-selected node - [more information](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_bottom(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the bottom of the current node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at the bottom of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_bottom(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the bottom of the current node."
 
 @func XMLNode.insert_bottom(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
@@ -314,7 +314,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) at the top of the currently-selected node - [more information](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_top(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at the top of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_top(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
 
 @func XMLNode.insert_top(Text %tag, Text %inner) {
   insert_at(position("top"), %tag) {
@@ -323,7 +323,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) after the currently-selected node - [more information](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_after(\"div\", \"Some text\")` will insert `<div>Some text</div>` after the current node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) after the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_after(\"div\", \"Some text\")` will insert `<div>Some text</div>` after the current node."
 
 @func XMLNode.insert_after(Text %tag, Text %inner) {
   insert_at(position("after"), %tag) {
@@ -332,7 +332,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) before the currently-selected node - [more information](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_before(\"div\", \"Some text\")` will insert `<div>Some text</div>` before the current node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) before the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_before(\"div\", \"Some text\")` will insert `<div>Some text</div>` before the current node."
 
 @func XMLNode.insert_before(Text %tag, Text %inner) {
   insert_at(position("before"), %tag) {
