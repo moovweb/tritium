@@ -13,7 +13,7 @@
   regexp(%exp, "")
 }
 
-"References to the assets folder without hard-coding a path - [more information](http://beta.moovweb.com/learn/training/function_guides/asset). @example `asset(\"images/icon.png\")` points to *assets/images/icon*, including the domain if necessary."
+"References to the assets folder without hard-coding a path - [click for example](http://beta.moovweb.com/learn/training/function_guides/asset). @example `asset(\"images/icon.png\")` points to *assets/images/icon*, including the domain if necessary."
 @func asset(Text %name) {
   concat($asset_host, %name) {
     yield()
@@ -28,7 +28,7 @@
     }))
 }
 
-"If only one string is to be matched, it can be placed after the target - [more information](http://beta.moovweb.com/learn/training/function_guides/match). @example `match($path, \"product\")` will see if 'product' appears in the path of the current url."
+"If only one string is to be matched, it can be placed after the target - [click for example](http://beta.moovweb.com/learn/training/function_guides/match). @example `match($path, \"product\")` will see if 'product' appears in the path of the current url."
 @func match(Text %target, Text %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -37,7 +37,7 @@
   }
 }
 
-"If only one string is to be matched, it can be placed after the target - [more information](http://beta.moovweb.com/learn/training/function_guides/match). @example `match($path, /product/)` will see if 'product' appears in the path of the current url."
+"If only one string is to be matched, it can be placed after the target - [click for example](http://beta.moovweb.com/learn/training/function_guides/match). @example `match($path, /product/)` will see if 'product' appears in the path of the current url."
 @func match(Text %target, Regexp %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -78,7 +78,7 @@
   }
 }
 
-"Replaces the regular expression specified by **%search** with the text **%with** - [more information](http://beta.moovweb.com/learn/training/function_guides/replace). @example `replace(/bad/, \"good\")`. "
+"Replaces the regular expression specified by **%search** with the text **%with** - [click for example](http://beta.moovweb.com/learn/training/function_guides/replace). @example `replace(/bad/, \"good\")`. "
 
 @func Text.replace(Regexp %search, Text %with) {
   replace(%search) {
@@ -87,7 +87,7 @@
   }
 }
 
-"Replaces the text specified by **%search** with the text **%with** - [more information](http://beta.moovweb.com/learn/training/function_guides/replace). @example `replace(\"bad\", \"good\")`. "
+"Replaces the text specified by **%search** with the text **%with** - [click for example](http://beta.moovweb.com/learn/training/function_guides/replace). @example `replace(\"bad\", \"good\")`. "
 
 @func Text.replace(Text %search, Text %with) {
   replace(%search) {
