@@ -1,5 +1,5 @@
 
-" Returns the number of the current node in relation to its siblings. @example `$(\"./div\") { log(index()) }` will return '1' if the div is the first div child, '2' if it is the second div child, and so on. "
+" Returns the number of the node specified in relation to its siblings. @example `$(\"./div\") { log(index()) }` will return '1' if the div is the first div child, '2' if it is the second div child, and so on. "
 @func index(Node %node) Text
 
 " Selects an element to pass it to a function - [click for example](http://beta.moovweb.com/learn/training/function_guides/fetch). @example Given `<div>Dog</div>`, `$(\"./div\") { $var = fetch(text()) }` will set 'var' to be 'Dog'. "

@@ -28,7 +28,7 @@
 " Used with `match()`. Allows the match function to specify what is being matched. @example `match($path) { with(/product/) }` will check the path of the url matches the regular expression 'product'."
 @func with(Regexp %regexp) Text
 
-" Convert from one encoding to another. (If you want a list of encodings, you can run `iconv -l` on your command line.) @example `text() { convert_encoding(\"\", \"\") }` will convert the text from gbk to utf-8."
+" Convert from one encoding to another. (If you want a list of encodings, you can run `iconv -l` on your command line.) @example `text() { convert_encoding(\"gbk\", \"utf-8\") }` will convert the text from gbk to utf-8."
 @func Text.convert_encoding(Text %from, Text %to) Text
 
 " Guess the encoding from the input, the response header and html meta tag. "
@@ -94,5 +94,5 @@
 " Rewrite a cookie domain from upstream to proxy "
 @func Text.rewrite_cookie_domain(Text %host, Text %secure, Text %catchall) Text
 
-" Rewrite a link from upstream to proxy "
+" Rewrite a link from upstream to proxy, where **%secure** is either 'true' or 'false' and **%catchall** is a catchall suffix. @example `rewrite_link(\"true\", \".moovapp.com\")` will rewrite secure links to include the catchall '.moovapp.com' at the end."
 @func Text.rewrite_link(Text %secure, Text %catchall) Text
