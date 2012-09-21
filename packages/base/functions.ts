@@ -71,7 +71,7 @@
   }
 }
 
-"Opens the current node for text modification. Should be used when the manipulation is on text *only*. For other cases, use `inner()`. @example `text() { set(\"<a>\") }` will set the inside as the string '<a>' - whereas using `inner()` will set the *tag*."
+"Opens the current node for text modification. Should be used when the manipulation is on text *only* - [click for example](http://beta.moovweb.com/learn/training/function_guides/text) For other cases, use `inner()`. @example `text() { set(\"<a>\") }` will set the inside as the string '<a>' - whereas using `inner()` will set the *tag*."
 @func Text.text() {
   this() {
     yield()
