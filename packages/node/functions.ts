@@ -20,7 +20,7 @@
   }
 }
 
-" Returns the number of the current node in relation to its siblings. @example `$(\"./div\") { log(index()) }` will return '1' if the div is the first div child, '2' if it is the second div child, and so on. "
+" Returns the number of the current node in relation to other nodes Tritium has iterated through - [click for example](http://beta.moovweb.com/learn/training/function_guides/index). @example `$(\"./div\") { log(index()) }` will return '1' if there is only one div child, '1 2' if there are two div children, and so on. "
 
 @func Node.index() {
   index(this()) {
