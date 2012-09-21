@@ -1,4 +1,4 @@
-" This is a the way that we have Tritium communicate variables back to its execution environment. @example `export(\"Content-Type\", \"application/js\")` changes the content-type to application/js. "
+" This is a the way that we have Tritium communicate variables back to its execution environment. - [click for example](http://beta.moovweb.com/learn/reference/configuration/index#Environment+Variables)@example `export(\"Content-Type\", \"application/js\")` changes the content-type to application/js."
 
 @func export(Text %key, Text %value) {
   export(%key) {
@@ -71,7 +71,7 @@
   }
 }
 
-"Opens the current node for text modification. Should be used when the manipulation is on text *only*. For other cases, use `inner()`. @example `text() { set(\"<a>\") }` will set the inside as the string '<a>' - whereas using `inner()` will set the *tag*."
+"Opens the current node for text modification. Should be used when the manipulation is on text *only* - [click for example](http://beta.moovweb.com/learn/training/function_guides/text) For other cases, use `inner()`. @example `text() { set(\"<a>\") }` will set the inside as the string '<a>' - whereas using `inner()` will set the *tag*."
 @func Text.text() {
   this() {
     yield()
