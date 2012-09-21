@@ -52,7 +52,7 @@
 " Parses regular expressions. (Use hard-coded regex if you can. This is much slower than hard-coding regex.) The **%options** text allows [Ruby modifiers](http://www.regular-expressions.info/ruby.html) to be included. @example `regexp(\"dog\", \"i\")` uses the `/i` modifier to make the expression case-insensitive, so the regex will match both 'DOG' and 'dog' (plus 'Dog', 'dOg', etc.). "
 @func regexp(Text %expression, Text %options) Regexp Text
 
-" Concatenates two (or more) strings. @example `concat(\"dog\", \"cat\")` is equivalent to `\"dog\" + \"cat\"`. "
+" Concatenates two (or more) strings. - [click for example](http://beta.moovweb.com/learn/training/function_guides/concat)@example `concat(\"dog\", \"cat\")` is equivalent to `\"dog\" + \"cat\"`. "
 @func concat(Text %a, Text %b) Text Text
 
 " This is a the way that we have Tritium communicate variables back to its execution environment. @example `export(\"Content-Type\", \"application/js\")` changes the content-type. "
