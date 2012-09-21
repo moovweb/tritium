@@ -96,7 +96,7 @@
   } 
 }
 
-" Injects HTML (specified by **%html**) into the current node. @example `inject(\"<div>New Div</div>\")` will insert your new HTML into the current node. "
+" Injects HTML (specified by **%html**) into the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject(\"<div>New Div</div>\")` will insert your new HTML into the current node. "
 
 @func Node.inject(Text %html) {
   inject_at("bottom", %html) {
@@ -198,7 +198,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) into the current node. @example `inject(read(\"file.html\"))` will inject the HTML in the specified file into the bottom of the current node."
+" Injects HTML (specified by **%html**) into the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject(read(\"file.html\"))` will inject the HTML in the specified file into the bottom of the current node."
 
 @func Node.inject(Text %html) {
   inject_at(position("bottom"), %html) {
@@ -206,7 +206,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) at the bottom of the current node. @example `inject_bottom(read(\"file.html\"))` will inject the HTML in the specified file into the bottom of the current node."
+" Injects HTML (specified by **%html**) at the bottom of the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_bottom(read(\"file.html\"))` will inject the HTML in the specified file into the bottom of the current node."
 
 @func Node.inject_bottom(Text %html) {
   inject_at(position("bottom"), %html) {
@@ -214,7 +214,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) at the top of the current node. @example `inject_top(read(\"file.html\"))` will inject the HTML in the specified file into the top of the current node."
+" Injects HTML (specified by **%html**) at the top of the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_top(read(\"file.html\"))` will inject the HTML in the specified file into the top of the current node."
 
 @func Node.inject_top(Text %html) {
   inject_at(position("top"), %html) {
@@ -222,7 +222,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) after the current node. @example `inject_after(read(\"file.html\"))` will inject the HTML in the specified file after the current node."
+" Injects HTML (specified by **%html**) after the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_after(read(\"file.html\"))` will inject the HTML in the specified file after the current node."
 
 @func Node.inject_after(Text %html) {
   inject_at(position("after"), %html) {
@@ -230,7 +230,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) before the current node. @example `inject_before(read(\"file.html\"))` will inject the HTML in the specified file before the current node."
+" Injects HTML (specified by **%html**) before the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_before(read(\"file.html\"))` will inject the HTML in the specified file before the current node."
 
 @func Node.inject_before(Text %html) {
   inject_at(position("before"), %html) {
