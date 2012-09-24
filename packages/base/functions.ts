@@ -46,7 +46,7 @@
   }
 }
 
-"The opposite of `match()`. @example `match_not($path, \"product\")` will check that 'product' is *not* in the url."
+"The opposite of `match()` - [click for example](http://beta.moovweb.com/learn/training/function_guides/match). @example `match_not($path, \"product\")` will check that 'product' is *not* in the url."
 @func match_not(Text %target, Text %comparitor) {
   match(%target) {
     not(%comparitor) {
@@ -55,7 +55,7 @@
   }
 }
 
-"The opposite of `match()`. @example `match_not($path, /product/)` will check that 'product' is *not* in the url."
+"The opposite of `match()` - [click for example](http://beta.moovweb.com/learn/training/function_guides/match). @example `match_not($path, /product/)` will check that 'product' is *not* in the url."
 @func match_not(Text %target, Regexp %comparitor) {
   match(%target) {
     not(%comparitor) {
