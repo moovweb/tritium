@@ -16,7 +16,7 @@
 " Removes the node specified by `%xpath_selector` - [click for example](http://beta.moovweb.com/learn/training/function_guides/removing). @example `remove(\"//table\")` will remove all table elements from the document. "
 @func XMLNode.remove(Text %xpath_selector) Text
 
-" Opens up the insides of the node to modification. Used for nodes containing text and other XML elements. For text-only modification, use `text()`. @example Given `<div><span></span></div>`, `$(\"./div\") { inner(\"<a>\") }` will return `<div><a></a></div>`. Compare with `$(\"./div\") { text(\"<a>\") }`, which returns `<div>\"<a>\"</div>`. "
+" Opens up the insides of the node to modification. Used for nodes containing text and other XML elements. For text-only modification, use `text()`. @example Given `<div><span></span></div>`, `$(\"./div\") { inner() { set(\"<a>\") } }` will return `<div><a></a></div>`. Compare with `$(\"./div\") { text() { set(\"<a>\") } }`, which returns `<div>&lt;a&gt;</div>`. "
 @func XMLNode.inner() Text Text
 
 " Converts the inside of the currently-selected node to text. @example Using `$(\"./body\") { inner_text() }` returns all the text in the HTML tree (with none of the HTML nodes)."
