@@ -1,10 +1,10 @@
 package whale
 
 import (
-	tp "tritium/proto"
 	"gokogiri/xpath"
 	"golog"
 	"rubex"
+	tp "tritium/proto"
 )
 
 type Position int
@@ -22,7 +22,7 @@ var Positions = map[string]Position{
 	"before": BEFORE,
 	"after":  AFTER,
 	"above":  BEFORE,
-	"below":  BOTTOM,
+	"below":  AFTER,
 }
 
 type YieldBlock struct {
