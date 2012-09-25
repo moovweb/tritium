@@ -4,7 +4,7 @@ import "testing"
 
 
 func TestBase(t *testing.T) {
-	RunTestSuite("packages/base/examples/multi", t)
+	RunTestSuite("packages/base/test/examples/multi", t)
 }
 
 // func TestLibXML(t *testing.T) {
