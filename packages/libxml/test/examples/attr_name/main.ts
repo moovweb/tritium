@@ -1,7 +1,14 @@
 html_fragment() {
-  $(".//div") {
+  $$(".sun") {
     attribute("class") {
       name("id")
+    }
+  }
+  $$(".gobi") {
+    attribute("class") {
+      name() {
+        set("href")
+      }
     }
   }
 }
