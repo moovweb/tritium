@@ -1,4 +1,4 @@
-" Selects an element with CSS-style selectors. @example `$$(\".one\")` will select all elements with the class of \"one\". "
+" Selects an element with CSS-style selectors. @example `$(css(\".one\"))` will select all elements with the class of \"one\". "
 @func css(Text %selector) Text Text
 
 " Parses the document as XML and passes you back an XMLNode scope. "
