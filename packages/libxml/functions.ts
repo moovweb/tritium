@@ -166,7 +166,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts javascript (specified by **%js**) in a script tag within the currently-selected node at the position specified by **%pos**. @example `$(\"div\") { insert_javascript_at(\"top\", \"alert('Boo')\") }` will insert the javascript specified at the top of the div."
+"Inserts javascript (specified by **%js**) in a script tag within the currently-selected node at the position specified by **%pos**. @example `$(\"div\") { insert_javascript_at(position(\"top\"), \"alert('Boo')\") }` will insert the javascript specified at the top of the div."
 
 @func XMLNode.insert_javascript_at(Position %pos, Text %js) {
   insert_at(%pos, "script") {
