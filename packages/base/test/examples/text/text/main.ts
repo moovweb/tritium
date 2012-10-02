@@ -1,7 +1,9 @@
 html_fragment() {
   $$("#my_div") {
     text() {
-      clear()
+      text() {
+        set("Text I've changed!")
+      }
     }
   }
 }
