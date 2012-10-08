@@ -4,4 +4,7 @@ html() {
   match($name, "my_div"){
       log("We reached my div!")
   }
+  match($name, /my_div/){
+      log("We reached my div again!")
+  }
 }
