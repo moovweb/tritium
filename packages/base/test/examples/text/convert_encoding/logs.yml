@@ -1,0 +1,2 @@
+- This will convert the text from gbk to utf-8.
+- If you want a list of encodings, you can run iconv -l on your command line.
