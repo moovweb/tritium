@@ -3,11 +3,11 @@ html_fragment() {
     attribute("src", "http://example.com/image.png")
   }
   $(".//div") {
-    attribute("class", "kodiak")
+    attribute("class", "newclass1")
   }
   $(".//span") {
     attribute("class") {
-      value("brown")
+      value("newclass2")
     }
   }
 }

@@ -1,13 +1,13 @@
 html_fragment() {
-  $$(".sun") {
+  $$(".one") {
     attribute("class") {
-      value("honey")
+      value("newone")
     }
   }
-  $$(".gobi") {
+  $$(".two") {
     attribute("class") {
       value() {
-        set("spectacled")
+        set("newtwo")
       }
     }
   }

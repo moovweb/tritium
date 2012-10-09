@@ -1,5 +1,5 @@
 html_fragment() {
   $(".//a") {
-    attributes(class: "polar", id: "grizzly", href: "http://google.com")
+    attributes(class: "one", id: "two", href: "http://google.com")
   }
 }
