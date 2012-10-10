@@ -1,10 +1,10 @@
 html_fragment() {
-  $$(".sun") {
+  $$(".one") {
     attribute("class") {
       name("id")
     }
   }
-  $$(".gobi") {
+  $$(".two") {
     attribute("class") {
       name() {
         set("href")

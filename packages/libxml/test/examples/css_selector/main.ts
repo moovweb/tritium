@@ -1,8 +1,8 @@
 html_fragment() {
-  $$("#polar") {
+  $$("#one") {
     insert("a")
   }
-  $$(".polar") {
+  $$(".one") {
     insert("span")
   }
 }

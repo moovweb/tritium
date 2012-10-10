@@ -1,8 +1,8 @@
 html_fragment() {
   $(".//div") {
-    add_class("bear")
+    add_class("class2")
   }
   $(".//span") {
-    add_class("bear")
+    add_class("class2")
   }
 }

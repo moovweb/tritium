@@ -1,5 +1,5 @@
 html_fragment() {
   $(".//div") {
-    inner("bear <a>")
+    inner("TEXT <a>")
   }
 }
