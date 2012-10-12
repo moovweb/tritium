@@ -30,21 +30,22 @@
 
 "If only one string is to be matched, it can be placed after the target - [click for example](http://beta.moovweb.com/learn/training/function_guides/match). @example `match($path, \"product\")` will see if 'product' appears in the path of the current url."
 
-# Listings Page
-# @abstract The match function is used for logic to check against the content of strings and variables.
 
-# In-Depth Page
-# @header Name of the function 
+# @abstract The match function is used for logic to check against the content of strings and variables.
+# @name Name of the function 
 # @category Category type of function, in this case Environment.
-# @arg Arguments the function takes and what scopes it can be used in.
+# @scope Scope Type
+# @arg Arguments
 # @description In-depth description. If only one string is to be matched, it can be placed after the target.
-# @example (We want the whole example to link to Tritium Tester)
+# @example
 ## $path = "product" 
 ## match($path, "product") {
 ##   log("Match successful!")
 ## }
-# @guide A link to an in-depth guide on how to use this function.
-# @source An expandable button for the function's Source Code.
+# @exampletext Here's a link to example in Tritium tester
+# @examplelink Link
+# @guidetext Here's a link to an in-depth guide on how to use this function.
+# @guidelink Link
 
 @func match(Text %target, Text %comparitor) {
   match(%target) {
