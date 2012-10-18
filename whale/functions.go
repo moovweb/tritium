@@ -408,7 +408,7 @@ func select_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 		returnValue = "false"
 		return
 	}
-	nodes, err := node.Search(expr)
+	nodes, err := node.SearchByDeadline(expr, ctx.GetDeadline())
 	if err != nil {
 		ctx.Logger().Error("select err: %s", err.Error())
 		returnValue = "false"
@@ -456,8 +456,7 @@ func remove_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 		returnValue = "0"
 		return
 	}
-
-	nodes, err := node.Search(expr)
+	nodes, err := node.SearchByDeadline(expr, ctx.GetDeadline())
 	if err != nil {
 		ctx.Logger().Error("select err: %s", err.Error())
 		returnValue = "false"
@@ -635,7 +634,7 @@ func fetch_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []int
 		return
 	}
 
-	nodes, err := node.Search(expr)
+	nodes, err := node.SearchByDeadline(expr, ctx.GetDeadline())
 	if err == nil && len(nodes) > 0 {
 		node := nodes[0]
 		returnValue = node.String()
@@ -712,7 +711,7 @@ func css_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []inter
 func wrap_text_children_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
 	node := scope.Value.(xml.Node)
-	if textNodes, err := node.Search("./text()"); err == nil {
+	if textNodes, err := node.SearchByDeadline("./text()", ctx.GetDeadline()); err == nil {
 		tagName := args[0].(string)
 		tag := fmt.Sprintf("<%s />", tagName)
 		for index, textNode := range textNodes {
