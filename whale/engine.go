@@ -1,5 +1,7 @@
 package whale
 
+import "time"
+
 import (
 	"gokogiri/xpath"
 	"golog"
@@ -71,4 +73,5 @@ type EngineContext interface {
 	GetHeaderContentTypeRegex() *rubex.Regexp
 	//	GetOutputBuffer() []byte
 	GetRewriteRules() []*tp.RewriteRule
+	GetDeadline() *time.Time
 }
