@@ -1,13 +1,74 @@
 
 " Allows you to set global variables. Equivalent to `$`. @example `var(\"txt1\") { set(\"MYTEXT\") }` sets the variable of 'txt1' to 'MYTEXT'."
+# @abstract The var function allows you to set global variables. 
+# @name var
+# @category Environment
+# @scope Text,XMLNode
+# @args Text %name
+# @description 
+# @example
+# var("my_var") {
+#   set("is set")
+# }
+# log($my_var)
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/var
+# @guidetext Function Guide
+# @guidelink
 @func var(Text %name) Text Text
+
 " Allows you to set global variables. Equivalent to `$`. @example `var(\"txt1\", \"MYTEXT\")` sets the variable of 'txt1' to 'MYTEXT'."
+# @abstract The var function allows you to set global variables. 
+# @name var
+# @category Environment
+# @scope Text,XMLNode
+# @args Text %name,Text %value
+# @description 
+# @example
+# var("my_var", "is set")
+# log($my_var)
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/var
+# @guidetext Function Guide
+# @guidelink
 @func var(Text %name, Text %value) Text Text
 
 " Returns the time-to-execute (time units vary by implementation). @example `log(time())` will log the time taken to reach that point in the server logs. "
+# @abstract The time function returns the time it has taken to reach that point thus far.
+# @name time
+# @category Environment
+# @scope Text,XMLNode
+# @args
+# @description 
+# @example
+# log(time())
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/time
+# @guidetext Function Guide
+# @guidelink
 @func time() Text
 
 " Specifies a target (specified by **%target**) to be searched. To be used in conjunction with `with()` - [click for example](http://beta.moovweb.com/learn/training/function_guides/match). @example `match($path) { with(/product/) }` will match the path of the url to see if the regular expression 'product' matches."
+# @abstract The match function is used for logic to check against the content of strings and variables.
+# @name match
+# @category Environment,Text
+# @scope Text
+# @args Text %target
+# @description
+# @example
+#   $path = "product"
+#   match($path) {
+#     with(/product/) {
+#       log("Match successful!")
+#     }
+#     else() {
+#       log("Match unsuccessful.")
+#     }
+#   }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/match
+# @guidetext Function Guide
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func match(Text %match_target) Text
 
 " Writes out a string (**%log_message**) to the console and debug log. @example `log(\"Importing home-page\")`. "

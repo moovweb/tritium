@@ -3,7 +3,7 @@
 # @name export
 # @category Environment
 # @scope Text
-# @args Text %key, Text %value
+# @args Text %key,Text %value
 # @description 
 # @example
 # html() {
@@ -52,7 +52,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/asset
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/asset
 @func asset(Text %name) {
   concat($asset_host, %name) {
@@ -69,7 +69,7 @@
 # @description 
 # @example
 # $("./body") {
-#  bm()
+#  bm("TIME")
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/bm
@@ -87,7 +87,7 @@
 # @name match
 # @category Environment,Text
 # @scope Text
-# @args Text %target, Text %comparitor
+# @args Text %target,Text %comparitor
 # @description If only one string is to be matched, it can be placed after the target.
 # @example
 #   $path = "product"
@@ -96,7 +96,7 @@
 #   }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/match
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func match(Text %target, Text %comparitor) {
   match(%target) {
@@ -111,7 +111,7 @@
 # @name match
 # @category Environment,Text
 # @scope Text
-# @args Text %target, Regexp %comparitor
+# @args Text %target,Regexp %comparitor
 # @description If only one string is to be matched, it can be placed after the target.
 # @example
 #   $path = "product"
@@ -120,7 +120,7 @@
 #   }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/match2
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func match(Text %target, Regexp %comparitor) {
   match(%target) {
@@ -135,7 +135,7 @@
 # @name match_not
 # @category Environment,Text
 # @scope Text
-# @args Text %target, Text %comparitor
+# @args Text %target,Text %comparitor
 # @description 
 # @example
 #   $path = "product"
@@ -144,7 +144,7 @@
 #   }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/match_not
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func match_not(Text %target, Text %comparitor) {
   match(%target) {
@@ -159,7 +159,7 @@
 # @name match_not
 # @category Environment,Text
 # @scope Text
-# @args Text %target, Regexp %comparitor
+# @args Text %target,Regexp %comparitor
 # @description 
 # @example
 #   $path = "product"
@@ -168,7 +168,7 @@
 #   }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/match_not2
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func match_not(Text %target, Regexp %comparitor) {
   match(%target) {
@@ -193,7 +193,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/text/clear
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink 
 @func Text.clear() {
   set("") {
@@ -217,7 +217,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink
 @func Text.text() {
   this() {
@@ -230,7 +230,7 @@
 # @name replace
 # @category Modify,Text
 # @scope Text
-# @args Text Regexp %search, Text %with
+# @args Text Regexp %search,Text %with
 # @description 
 # @example
 # $$("#my_div") {
@@ -240,7 +240,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/text/replace
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
 @func Text.replace(Regexp %search, Text %with) {
   replace(%search) {
@@ -254,7 +254,7 @@
 # @name replace
 # @category Modify,Text
 # @scope Text
-# @args Text Text %search, Text %with
+# @args Text Text %search,Text %with
 # @description 
 # @example
 # $$("#my_div") {
@@ -264,7 +264,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/text/replace2
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
 @func Text.replace(Text %search, Text %with) {
   replace(%search) {
@@ -287,7 +287,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/text/length
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink 
 @func Text.length() {
   $input = this()
