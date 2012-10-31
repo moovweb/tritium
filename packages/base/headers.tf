@@ -1,7 +1,36 @@
 
 " Allows you to set global variables. Equivalent to `$`. @example `var(\"txt1\") { set(\"MYTEXT\") }` sets the variable of 'txt1' to 'MYTEXT'."
+# @abstract The var function allows you to set global variables. 
+# @name var
+# @category Environment
+# @scope Text,XMLNode
+# @args Text %name
+# @description 
+# @example
+# var("my_var") {
+#   set("is set")
+# }
+# log($my_var)
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/var
+# @guidetext Function Guide
+# @guidelink
 @func var(Text %name) Text Text
+
 " Allows you to set global variables. Equivalent to `$`. @example `var(\"txt1\", \"MYTEXT\")` sets the variable of 'txt1' to 'MYTEXT'."
+# @abstract The var function allows you to set global variables. 
+# @name var
+# @category Environment
+# @scope Text,XMLNode
+# @args Text %name,Text %value
+# @description 
+# @example
+# var("my_var", "is set")
+# log($my_var)
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/var
+# @guidetext Function Guide
+# @guidelink
 @func var(Text %name, Text %value) Text Text
 
 " Returns the time-to-execute (time units vary by implementation). @example `log(time())` will log the time taken to reach that point in the server logs. "

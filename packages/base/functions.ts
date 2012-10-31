@@ -52,7 +52,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/asset
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/asset
 @func asset(Text %name) {
   concat($asset_host, %name) {
@@ -96,7 +96,7 @@
 #   }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/match
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func match(Text %target, Text %comparitor) {
   match(%target) {
@@ -120,7 +120,7 @@
 #   }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/match2
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func match(Text %target, Regexp %comparitor) {
   match(%target) {
@@ -144,7 +144,7 @@
 #   }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/match_not
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func match_not(Text %target, Text %comparitor) {
   match(%target) {
@@ -168,7 +168,7 @@
 #   }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/match_not2
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func match_not(Text %target, Regexp %comparitor) {
   match(%target) {
@@ -193,7 +193,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/text/clear
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink 
 @func Text.clear() {
   set("") {
@@ -217,7 +217,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink
 @func Text.text() {
   this() {
@@ -240,7 +240,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/text/replace
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
 @func Text.replace(Regexp %search, Text %with) {
   replace(%search) {
@@ -264,7 +264,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/text/replace2
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
 @func Text.replace(Text %search, Text %with) {
   replace(%search) {
@@ -287,7 +287,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/text/length
-# @guidetext Detailed Function Guide
+# @guidetext Function Guide
 # @guidelink 
 @func Text.length() {
   $input = this()
