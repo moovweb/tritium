@@ -40,20 +40,20 @@
 }
 
 "References to the assets folder without hard-coding a path - [click for example](http://beta.moovweb.com/learn/training/function_guides/asset). @example `asset(\"images/icon.png\")` points to *assets/images/icon*, including the domain if necessary."
-# @abstract The asset function is used to rewrite the sources of your assets.
+# @abstract The asset function is used to rewrite the source attribute of your assets.
 # @name asset
 # @category Environment
 # @scope Text
-# @args Text %exp
+# @args Text %name
 # @description 
 # @example
-# with(regexp("true")) {
-# # run this code if your text matches the string "true" 
+# $$("head") {
+#  insert("link", src:asset("stylesheets/mystyles.css"))
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/regexp
-# @guidetext Replacing Text With Regexp
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
+# @examplelink http://tritium.moovweb.com/base/test/examples/asset
+# @guidetext Detailed Function Guide
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/asset
 @func asset(Text %name) {
   concat($asset_host, %name) {
     yield()
