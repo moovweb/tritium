@@ -3,7 +3,7 @@
 # @name export
 # @category Environment
 # @scope Text
-# @args Text %key, Text %value
+# @args Text %key,Text %value
 # @description 
 # @example
 # html() {
@@ -69,7 +69,7 @@
 # @description 
 # @example
 # $("./body") {
-#  bm()
+#  bm("TIME")
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/bm
@@ -87,7 +87,7 @@
 # @name match
 # @category Environment,Text
 # @scope Text
-# @args Text %target, Text %comparitor
+# @args Text %target,Text %comparitor
 # @description If only one string is to be matched, it can be placed after the target.
 # @example
 #   $path = "product"
@@ -111,7 +111,7 @@
 # @name match
 # @category Environment,Text
 # @scope Text
-# @args Text %target, Regexp %comparitor
+# @args Text %target,Regexp %comparitor
 # @description If only one string is to be matched, it can be placed after the target.
 # @example
 #   $path = "product"
@@ -135,7 +135,7 @@
 # @name match_not
 # @category Environment,Text
 # @scope Text
-# @args Text %target, Text %comparitor
+# @args Text %target,Text %comparitor
 # @description 
 # @example
 #   $path = "product"
@@ -159,7 +159,7 @@
 # @name match_not
 # @category Environment,Text
 # @scope Text
-# @args Text %target, Regexp %comparitor
+# @args Text %target,Regexp %comparitor
 # @description 
 # @example
 #   $path = "product"
@@ -230,7 +230,7 @@
 # @name replace
 # @category Modify,Text
 # @scope Text
-# @args Text Regexp %search, Text %with
+# @args Text Regexp %search,Text %with
 # @description 
 # @example
 # $$("#my_div") {
@@ -254,7 +254,7 @@
 # @name replace
 # @category Modify,Text
 # @scope Text
-# @args Text Text %search, Text %with
+# @args Text Text %search,Text %with
 # @description 
 # @example
 # $$("#my_div") {
