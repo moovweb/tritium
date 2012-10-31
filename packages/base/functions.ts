@@ -1,5 +1,18 @@
 " This is a the way that we have Tritium communicate variables back to its execution environment. - [click for example](http://beta.moovweb.com/learn/reference/configuration/index#Environment+Variables)@example `export(\"Content-Type\", \"application/js\")` changes the content-type to application/js."
-
+# @abstract The export function is used to set response header information such as content-type, cache-time, and more. 
+# @name export
+# @category Environment
+# @scope Text
+# @args Text %key, %Text %value
+# @description 
+# @example
+# html() {
+#   export("Content-Type", "text/html")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/export
+# @guidetext Useful Environment Variables
+# @guidelink http://beta.moovweb.com/learn/reference/configuration/index#Environment+Variables
 @func export(Text %key, Text %value) {
   export(%key) {
     set(%value)
@@ -8,12 +21,39 @@
 }
 
 "Parses regular expressions. (Use hard-coded regex if you can. This is much slower than hard-coding regex.) @example `with(regexp(\"a\"))` is equivalent to `with(/a/)`. "
-
+# @abstract The regexp function is used to parse regular expressions.
+# @name regexp
+# @category Environment, Modify
+# @scope Text
+# @args Text %exp
+# @description 
+# @example
+# with(regexp("true")) {
+# # run this code if your text matches the string "true" 
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/regexp
+# @guidetext Replacing Text With Regexp
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
 @func regexp(Text %exp) {
   regexp(%exp, "")
 }
 
 "References to the assets folder without hard-coding a path - [click for example](http://beta.moovweb.com/learn/training/function_guides/asset). @example `asset(\"images/icon.png\")` points to *assets/images/icon*, including the domain if necessary."
+# @abstract The asset function is used to rewrite the sources of your assets.
+# @name asset
+# @category Environment
+# @scope Text
+# @args Text %exp
+# @description 
+# @example
+# with(regexp("true")) {
+# # run this code if your text matches the string "true" 
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/regexp
+# @guidetext Replacing Text With Regexp
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
 @func asset(Text %name) {
   concat($asset_host, %name) {
     yield()
@@ -29,24 +69,21 @@
 }
 
 "If only one string is to be matched, it can be placed after the target - [click for example](http://beta.moovweb.com/learn/training/function_guides/match). @example `match($path, \"product\")` will see if 'product' appears in the path of the current url."
-
-
 # @abstract The match function is used for logic to check against the content of strings and variables.
-# @name Name of the function 
-# @category Category type of function, in this case Environment.
-# @scope Scope Type
-# @arg Arguments
-# @description In-depth description. If only one string is to be matched, it can be placed after the target.
+# @name match
+# @category Environment
+# @scope Text
+# @args Text %target, %Text %comparitor
+# @description If only one string is to be matched, it can be placed after the target.
 # @example
-## $path = "product" 
-## match($path, "product") {
-##   log("Match successful!")
-## }
-# @exampletext Here's a link to example in Tritium tester
-# @examplelink Link
-# @guidetext Here's a link to an in-depth guide on how to use this function.
-# @guidelink Link
-
+#   $path = "product"
+#   match($path, "product") {
+#     log("Match successful!")
+#   }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/match
+# @guidetext Detailed Function Guide
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func match(Text %target, Text %comparitor) {
   match(%target) {
     with(%comparitor) {
