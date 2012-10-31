@@ -262,7 +262,20 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Opens the current node for text modification, replacing everything inside with the **%value**. (Essentially, the same as `text() { set(Text %value) }`.) @example `$(\"./div\") { text(\"dog\") }` will overwrite the inside of the div to 'dog'."
-
+# @abstract The text function with an an argument replaces the current node's interior with the text.
+# @name text
+# @category Modify
+# @scope XMLNode
+# @args Text %value
+# @description 
+# @example
+# $("./div") {
+#   text("NewText")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/text
+# @guidetextUsing the text function.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/text
 @func XMLNode.text(Text %value) {
   text() {
     set(%value)
@@ -271,7 +284,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Searches for nodes matching `%xpath` and ensures a domain is in the path of the `%attribute`. @example `absolutize(\"//img\", \"src\")` will convert all `img` tag sources from relative ('images/dog.png') to absolute ('http://www.example.com/images/dog.png')."
-
+# @abstract Given two arguments, the absolutize function takes the nodes specified and ensures the host domain is part of the attribute specified.
+# @name absolutize
+# @category Modify,Environment
+# @scope XMLNode
+# @args Text %xpath,Text %attribute
+# @description 
+# @example
+# absolutize(".//img", "src")
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext
+# @guidelink 
 @func XMLNode.absolutize(Text %xpath, Text %attribute) {
 
   # Absolutize IMG and SCRIPT SRCs
@@ -313,7 +337,18 @@ Functionally equivalent to `name() { set(%name) }`."
 
 
 "Searches for nodes matching `%xpath` and ensures a domain is in their `src` path. @example `absolutize(\"//img\")` changes all `img` tag sources from relative ('images/dog.png') to absolute ('http://example.com/images/dog.png')."
-
+# @abstract Given one argument, the absolutize function takes the nodes specified and makes sure a domain is in the src attribute.
+# @name absolutize
+# @category Modify,Environment
+# @scope XMLNode
+# @args Text %xpath
+# @description 
+# @example
+# absolutize("//img")
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext
+# @guidelink 
 @func XMLNode.absolutize(Text %xpath) {
   absolutize(%xpath, "src") {
     yield()
@@ -321,7 +356,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Searches for `<img>` and `<script>` tags and ensures a domain is in their `src` path. @example `absolutize()` will go through the entire document and change every `img` and `script` tag source from relative ('asset/image.png' or 'asset/script.js') to absolute ('http://example.com/asset/image.png' or 'http://example.com/asset/script.js')."
-
+# @abstract Given no arguments, the absolutize function ensures all script and img tags have sources with domains.
+# @name absolutize
+# @category Modify,Environment
+# @scope XMLNode
+# @args
+# @description 
+# @example
+# absolutize()
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext
+# @guidelink 
 @func XMLNode.absolutize() {
   absolutize(".//img|.//script") {
     yield()
