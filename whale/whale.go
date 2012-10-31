@@ -418,3 +418,6 @@ func (ctx *WhaleContext) SetShouldContinue(cont bool) {
 func (ctx *WhaleContext) GetRewriteRules() []*tp.RewriteRule {
 	return ctx.Rrules
 }
+func (ctx *WhaleContext) GetDeadline() *time.Time {
+	return &(ctx.Deadline)
+}

@@ -184,7 +184,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Opens the insides of the node to text modification - anything within the node will be overwritten by what is put in **%html**. @example Given `<div> <span>Item</span> </div>`, using `$(\"div\") { inner(\"<a>\") }` will replace the span with an empty 'a' tag, returning `<div><a></a></div>."
+"Opens the insides of the node to modification - anything within the node will be overwritten by what is put in **%html**. @example Given `<div> <span>Item</span> </div>`, using `$(\"div\") { inner(\"<a>\") }` will replace the span with an empty 'a' tag, returning `<div><a></a></div>`."
 
 @func XMLNode.inner(Text %html) {
   inner() {

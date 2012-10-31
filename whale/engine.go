@@ -1,10 +1,12 @@
 package whale
 
+import "time"
+
 import (
-	tp "tritium/proto"
 	"gokogiri/xpath"
 	"golog"
 	"rubex"
+	tp "tritium/proto"
 )
 
 type Position int
@@ -22,7 +24,7 @@ var Positions = map[string]Position{
 	"before": BEFORE,
 	"after":  AFTER,
 	"above":  BEFORE,
-	"below":  BOTTOM,
+	"below":  AFTER,
 }
 
 type YieldBlock struct {
@@ -71,4 +73,5 @@ type EngineContext interface {
 	GetHeaderContentTypeRegex() *rubex.Regexp
 	//	GetOutputBuffer() []byte
 	GetRewriteRules() []*tp.RewriteRule
+	GetDeadline() *time.Time
 }
