@@ -250,7 +250,22 @@
 }
 
 "Replaces the text specified by **%search** with the text **%with** - [click for example](http://beta.moovweb.com/learn/training/function_guides/replace). @example `replace(\"bad\", \"good\")`. "
-
+# @abstract Replaces the regular expression specified with the text provided.
+# @name replace
+# @category Modify,Text
+# @scope Text
+# @args Text Text %search, Text %with
+# @description 
+# @example
+# $$("#my_div") {
+#   text() {
+#     replace("Replace Me", "Replaced!")
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/text/replace2
+# @guidetext Detailed Function Guide
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
 @func Text.replace(Text %search, Text %with) {
   replace(%search) {
     set(%with)
@@ -258,7 +273,22 @@
 }
 
 "Returns the length of the item in characters. Note that it includes whitespace and return characters. @example Given `<div>dog and cat</div>`, the Tritium `$(\"./div\") { text() { log(length()) } }` will log **11** in the server logs."
-
+# @abstract Returns the length of the item in characters. This includes whitespace and return characters. 
+# @name length
+# @category Text
+# @scope Text
+# @args Text 
+# @description 
+# @example
+# $$("#my_div") {
+#   text() {
+#     log(length())
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/text/length
+# @guidetext Detailed Function Guide
+# @guidelink 
 @func Text.length() {
   $input = this()
   length($input)
