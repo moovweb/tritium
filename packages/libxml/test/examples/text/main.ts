@@ -1,5 +1,10 @@
 html_fragment() {
-  $(".//div") {
+  $(".//div[@class='one']") {
     text("text <a>")
+  }
+  $(".//div[@class='two']") {
+    text() {
+      set("NewText")
+    }
   }
 }

@@ -1,5 +1,31 @@
-"Selects an element with CSS-style selectors. @example `$$(\".one\")` will select all elements with the class of \"one\"."
+# @abstract 
+# @name 
+# @category 
+# @scope
+# @args
+# @description 
+# @example
+# 
+# 
+# 
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext
+# @guidelink 
 
+"Selects an element with CSS-style selectors. @example `$$(\".one\")` will select all elements with the class of \"one\"."
+# @abstract The $$ selects elements with a CSS-style selector.
+# @name $$
+# @category Select,Misc
+# @scope XMLNode
+# @args Text %css_selector
+# @description 
+# @example
+# $$("#id")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/css_selector
+# @guidetext
+# @guidelink 
 @func XMLNode.$$(Text %css_selector) {
   $(css(%css_selector)) {
     yield()
@@ -7,7 +33,20 @@
 }
 
 "Adds a class (specified by **%class**) to the currently-selected node. Also adds a space to prevent overwriting of any over classes. @example `$(\"./div\") { add_class(\"one\") }` will add a class of \" one\" to the div."
-
+# @abstract The add_class function adds a class to the current node.
+# @name add_class
+# @category Modify
+# @scope XMLNode
+# @args Text %class
+# @description 
+# @example
+# $("./div") {
+#   add_class("class")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/add_class
+# @guidetext Use of Adding a Class
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute#Adding+a+Class
 @func XMLNode.add_class(Text %class) {
 
 
@@ -21,7 +60,20 @@
 }
 
 "Wraps the *contents* of the currently-selected node in the tag defined by **%tag**. (Compare to `wrap()`, which wraps the currently-selected node, not its contents.) @example Given `<span>dog</span>`, `$(\"span\") { inner_wrap(\"div\") }` will return `<span><div>dog</div></span>`."
-
+# @abstract Wraps the content of the currently-selected node in the tag specified.
+# @name inner_wrap
+# @category Modify
+# @scope XMLNode
+# @args Text %tag_name
+# @description 
+# @example
+# $("./div") {
+#   inner_wrap("span")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/inner_wrap
+# @guidetext
+# @guidelink 
 @func XMLNode.inner_wrap(Text %tag_name) {
 
   insert_top(%tag_name) {
@@ -34,12 +86,39 @@
 }
 
 "Removes any children text nodes. @example Given `<div> one <span>two</span> </div>`, `remove_text_nodes()` performed on the div will only remove \"one\"." 
+# @abstract Removes children nodes that contain text.
+# @name remove_text_nodes
+# @category Modify
+# @scope XMLNode
+# @args
+# @description 
+# @example
+# $("./div") {
+#   remove_text_nodes()
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/remove_text_nodes
+# @guidetext
+# @guidelink 
 @func XMLNode.remove_text_nodes() {
   remove("./text()")
 }
 
 "Allows you to set the value (**%value**) for the attribute you are selecting with **%name** - [click for example](http://beta.moovweb.com/learn/training/function_guides/attribute). @example `attribute(\"class\", \"one\")` sets the class as 'one'."
-
+# @abstract The attribute function sets a value for any attribute.
+# @name attribute
+# @category Modify
+# @scope XMLNode
+# @args Text %name,Text %value
+# @description 
+# @example
+# $("./a") {
+#   attribute("href", "http://example.com")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute
+# @guidetext The attribute function and its alternatives.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute
 @func XMLNode.attribute(Text %name, Text %value) {
   attribute(%name) {
     value() {
@@ -50,6 +129,22 @@
 }
 
 "Changes the value of the currently-selected attribute to that specified by **%value**. @example `attribute(\"href\") { value(\"link\")}` sets the href to be \"link\"."
+# @abstract The value function in the attribute scope changes the value of the attribute.
+# @name value
+# @category Attribute,Modify
+# @scope Attribute
+# @args Text %value
+# @description 
+# @example
+# $("./a") {
+#   attribute("href") {
+#     value("http://example.com")
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext
+# @guidelink 
 @func Attribute.value(Text %value) {
   value() {
     set(%value)
@@ -60,7 +155,22 @@
 "Changes the name of the currently-selected attribute to that specified by **%name**. @example `attribute(\"href\") { name(\"src\") }`.
 
 Functionally equivalent to `name() { set(%name) }`."
-
+# @abstract The name function allows you to change the name of an attribute.
+# @name name
+# @category Attribute,Modify
+# @scope Attribute
+# @args Text %name
+# @description 
+# @example
+# $("./div") {
+#   attribute("id") {
+#     name("class")
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext
+# @guidelink 
 @func Attribute.name(Text %name) {
   name() { 
     set(%name) 
@@ -69,7 +179,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Similar to `asset()`, but references a Sass stylesheet specifically. @example `sass(\"main.scss\")` references the main stylesheet."
-
+# @abstract References a Sass stylesheet in the stylesheets folder.
+# @name sass
+# @category Misc
+# @scope Base
+# @args Text %filename
+# @description 
+# @example
+# insert("link", rel: "stylesheet", type: "text/css", href: sass("main")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/sass
+# @guidetext
+# @guidelink 
 @func sass(Text %filename) {
   asset(concat("stylesheets/.css/", concat(%filename, ".css"))) {
     yield()
@@ -77,7 +198,20 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Sets the attribute defined by **%name** to the value defined by **%value** - [click for example](http://beta.moovweb.com/learn/training/function_guides/set). @example `set(\"class\", \"one\")` will assign a class of 'one' to the node."
-
+# @abstract The set function, when given two arguments, assigns an attribute to the selected element.
+# @name set
+# @category Modify
+# @scope XMLNode
+# @args Text %name,Text %value
+# @description 
+# @example
+# $("./a") {
+#   set("href", "http://example.com")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/set
+# @guidetext Overview of the two ways to use set().
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/set
 @func XMLNode.set(Text %name, Text %value) {
   attribute(%name) {
     value(%value)
@@ -86,13 +220,41 @@ Functionally equivalent to `name() { set(%name) }`."
 
 # Used to be a helper function, just pass through and should work the same
 "Allows mass-attribute setting - [click for example](http://beta.moovweb.com/learn/training/function_guides/attribute). @example `$(\"./div\") { attributes (class: \"one\", id: \"two\") }` will assign the div a class of 'one' and an id of 'two'."
-
+# @abstract The attributes function allows you to set multiple attributes on an element.
+# @name attributes
+# @category Attribute,Modify
+# @scope attribute
+# @args 
+# @description 
+# @example
+# $("./div") {
+#   attributes(class: "class", id: "id")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/attributes
+# @guidetext
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute
 @func XMLNode.attributes() {
   yield()
 }
 
 " Opens the current node for text modificaiton. @example `$(\"./div\") { text() { set(\"dog\") } }` will overwrite the inside of the div to 'dog'."
-
+# @abstract Opens the current node for text modification.
+# @name text
+# @category Modify
+# @scope XMLNode
+# @args
+# @description 
+# @example
+# $("./div") {
+#   text() {
+#     set("NewText")  
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/text
+# @guidetext Using the text function.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/text
 @func XMLNode.text() {
   inner_text() {
     yield()
