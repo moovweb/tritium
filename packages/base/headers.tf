@@ -72,6 +72,18 @@
 @func match(Text %match_target) Text
 
 " Writes out a string (**%log_message**) to the console and debug log. @example `log(\"Importing home-page\")`. "
+# @abstract The log function is used to write out a string to the console. It's often useful for debugging Tritium.
+# @name log
+# @category Environment
+# @scope Text,XMLNode
+# @args Text %log_message
+# @description
+# @example
+#   log("I've reached this point in the code!")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/log
+# @guidetext Function Guide
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/log
 @func log(Text %log_message) Text Text
 
 " Returns the warning **%message** when a function is deprecated. Mostly useful when defining functions. @example `@func XMLNode.old() { deprecated(\"WARNING! This function has been deprecated\") }` will print out a server log message whenever the function is used. "
