@@ -256,31 +256,156 @@
 @func Text.this() Text
 
 " Parses regular expressions. (Use hard-coded regex if you can. This is much slower than hard-coding regex.) The **%options** text allows [Ruby modifiers](http://www.regular-expressions.info/ruby.html) to be included. @example `regexp(\"dog\", \"i\")` uses the `/i` modifier to make the expression case-insensitive, so the regex will match both 'DOG' and 'dog' (plus 'Dog', 'dOg', etc.). "
-#
+# @abstract The regexp function is used to parse regular expressions.
+# @name regexp
+# @category Environment,Modify,Text
+# @scope Text
+# @args Text %expression,Text %options
+# @description 
+# @example
+# with(regexp("true", "i")) {
+# # run this code if your text matches the string "true"
+# # the "i" indicates that the match is case insensitive
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/regexp
+# @guidetext Replacing Text With Regexp
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
 @func regexp(Text %expression, Text %options) Regexp Text
 
 " Concatenates two (or more) strings. - [click for example](http://beta.moovweb.com/learn/training/function_guides/concat)@example `concat(\"dog\", \"cat\")` is equivalent to `\"dog\" + \"cat\"`. "
+# @abstract The concat function is used to concatenate two or more strings.
+# @name concat
+# @category Text
+# @scope Text
+# @args Text %a,Text %b
+# @description 
+# @example
+# $$("#my_div") {
+#   $name = fetch("./@id")
+#   log(concat("Did I reach ", $name, "?"))
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/concat
+# @guidetext Function Guide
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/concat
 @func concat(Text %a, Text %b) Text Text
 
 " This is a the way that we have Tritium communicate variables back to its execution environment. @example `export(\"Content-Type\", \"application/js\")` changes the content-type. "
+# @abstract The export function is used to set response header information such as content-type, cache-time, and more. 
+# @name export
+# @category Environment
+# @scope Text
+# @args Text %key,Text %value
+# @description 
+# @example
+# html() {
+#   export("Content-Type", "text/html")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/export
+# @guidetext Useful Environment Variables
+# @guidelink http://beta.moovweb.com/learn/reference/configuration/index#Environment+Variables
 @func export(Text %key_name) Text Text
 
 " Returns **%input_string** in all caps. @example `upcase(\"dog\")` will return 'DOG'. "
+# @abstract The upcase function is used to return the input string in all uppercase letters.
+# @name upcase
+# @category Text,Modify
+# @scope Text
+# @args Text %input_string
+# @description 
+# @example
+# $$("#my_div") {
+#   $name = fetch("./@id")
+#   log(concat("I've reached ", upcase($name), "!"))
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/upcase
+# @guidetext Useful Environment Variables
+# @guidelink
 @func upcase(Text %input_string) Text
 
 " Returns **%input_string** in lower case. @example `downcase(\"DOG\")` will return 'dog'. "
+# @abstract The downcase function is used to return the input string in all lowercase letters.
+# @name downcase
+# @category Text,Modify
+# @scope Text
+# @args Text %input_string
+# @description 
+# @example
+# $$("#my_div") {
+#   $name = fetch("./@id")
+#   log(concat("I've reached ", downcase($name), "!"))
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/downcase
+# @guidetext Useful Environment Variables
+# @guidelink
 @func downcase(Text %input_string) Text
 
 //" Returns the current text scope as a string. Useful to pass the current Text as an argument. "
 //@func Text.text() Text Text
 
 " Replaces the entire current text with what you pass in. @example `set(\"one\")` will set the whole of the text to 'one'. "
+# @abstract The set function is used to replace the entire current text with the provided value.
+# @name set
+# @category Text,Modify
+# @scope Text
+# @args Text %value
+# @description 
+# @example
+# $$("#my_div") {
+#   text() {
+#     set("I've been set!")
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/text/set
+# @guidetext Useful Environment Variables
+# @guidelink
 @func Text.set(Text %value) Text
 
-" Replaces all instances of the regular expression **%search**. This yields to a Text scope that allows you to set the replacement string using `with()` - [click for example](http://beta.moovweb.com/learn/training/function_guides/replace). @example `replace(/bad/) { set(\"good\") }`."
+" Replaces all instances of the regular expression **%search**. This yields to a Text scope that allows you to set the replacement string using `set()` - [click for example](http://beta.moovweb.com/learn/training/function_guides/replace). @example `replace(/bad/) { set(\"good\") }`."
+# @abstract Opens a scope to all instances of the regular expression provided that you can then replace using the set() function.
+# @name replace
+# @category Modify,Text
+# @scope Text
+# @args Regexp %search
+# @description 
+# @example
+# $$("#my_div") {
+#   text() {
+#     replace(/Replace Me/) {
+#       set("Replaced!")
+#     }
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/text/replace
+# @guidetext Function Guide
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
 @func Text.replace(Regexp %search) Text Text
 
-" Replaces all instances of the text **%search**. This yields to a Text scope that allows you to set the replacement string using `with()` - [click for example](http://beta.moovweb.com/learn/training/function_guides/replace). @example `replace(\"bad\") { set(\"good\") }`."
+" Replaces all instances of the text **%search**. This yields to a Text scope that allows you to set the replacement string using `set()` - [click for example](http://beta.moovweb.com/learn/training/function_guides/replace). @example `replace(\"bad\") { set(\"good\") }`."
+# @abstract Opens a scope to all instances of the regular expression provided that you can then replace using the set() function.
+# @name replace
+# @category Modify,Text
+# @scope Text
+# @args Text %search
+# @description 
+# @example
+# $$("#my_div") {
+#   text() {
+#     replace("Replace Me") {
+#       set("Replaced!")
+#     }
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/text/replace
+# @guidetext Function Guide
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
 @func Text.replace(Text %search) Text Text
 
 " Adds **%text_to_prepend** to the beginning of the text. @example Given `<div>Dog</div>`, `$(\"./div\") { text() { prepend(\"Super-\") } }` will change the text to 'Super-Dog'."
