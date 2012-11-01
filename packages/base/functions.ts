@@ -277,7 +277,7 @@
 # @name length
 # @category Text
 # @scope Text
-# @args Text 
+# @args 
 # @description 
 # @example
 # $$("#my_div") {

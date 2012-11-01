@@ -170,15 +170,80 @@
 @func with(Regexp %regexp) Text
 
 " Convert from one encoding to another. (If you want a list of encodings, you can run `iconv -l` on your command line.) @example `text() { convert_encoding(\"gbk\", \"utf-8\") }` will convert the text from gbk to utf-8."
+# @abstract The convert_encoding function is used to convert from one encoding to another.
+# @name convert_encoding
+# @category Text
+# @scope Text
+# @args Text %from,Text %to
+# @description
+# @example
+# text() {
+#   convert_encoding("gbk", "utf-8")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/text/convert_encoding
+# @guidetext Function Guide
+# @guidelink
 @func Text.convert_encoding(Text %from, Text %to) Text
 
 " Guess the encoding from the input, the response header and html meta tag. "
+# @abstract The guess_encoding function is used to guess the encoding from the input, the response header and the html meta tag.
+# @name guess_encoding
+# @category Text
+# @scope Text
+# @args
+# @description
+# @example
+# text() {
+#   $encoding = guess_encoding()
+#   log(concat("I'm guessing your encoding is ", $encoding))
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/text/guess_encoding
+# @guidetext Function Guide
+# @guidelink
 @func Text.guess_encoding() Text
 
 " Returns the length of the **%input**. @example `log(length(\"text\"))` will return '4' in the server logs."
+# @abstract Returns the length of the input.
+# @name length
+# @category Text
+# @scope Text
+# @args Text %input
+# @description 
+# @example
+# $$("#my_div") {
+#   text() {
+#     log(length("text"))
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/text/length
+# @guidetext Function Guide
+# @guidelink 
 @func length(Text %input) Text
 
 " Completes the pseudo-logic of `with()`, allowing the specification of an alternative. @example `match($path) { with(/product/) else() { log(\"Not selecting product\")} }` will only log the message if 'product' is not in the path."
+# @abstract The else function completes the pseudo-logic of with() in your match() statements, allowing the specification of a catchall alternative.
+# @name else
+# @category Environment,Text
+# @scope Text,XMLNode
+# @args
+# @description 
+# @example
+# $var = "Match me."
+# match($var) {
+#   with("No match.") {
+#     log("This log won't be run...")
+#   }
+#   else() {
+#     log("Because the else statement was matched this time!")
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/else
+# @guidetext Function Guide
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func else() Text
 
 " Only used within functions - enables functions within the scope of the current function to be performed. @example To learn more, check out [our helpdesk post on how yield works](http://help.moovweb.com/entries/21633781-what-does-the-yield-function-do)."
@@ -191,6 +256,7 @@
 @func Text.this() Text
 
 " Parses regular expressions. (Use hard-coded regex if you can. This is much slower than hard-coding regex.) The **%options** text allows [Ruby modifiers](http://www.regular-expressions.info/ruby.html) to be included. @example `regexp(\"dog\", \"i\")` uses the `/i` modifier to make the expression case-insensitive, so the regex will match both 'DOG' and 'dog' (plus 'Dog', 'dOg', etc.). "
+#
 @func regexp(Text %expression, Text %options) Regexp Text
 
 " Concatenates two (or more) strings. - [click for example](http://beta.moovweb.com/learn/training/function_guides/concat)@example `concat(\"dog\", \"cat\")` is equivalent to `\"dog\" + \"cat\"`. "
