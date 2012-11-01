@@ -6,6 +6,7 @@
 # @args Text %key,Text %value
 # @description
 # The export function is used when you want to change the outgoing response header.
+# Things to note: You cannot currently export the status of the response header (i.e. 200, 302, etc.).
 # Common use cases include (but are not limited to):
 # 1) Malformed HTML or Javascript with the wrong content-type set.
 # 2) Setting the Cache-Time of the page.
@@ -32,7 +33,8 @@
 # @category Environment,Modify,Text
 # @scope Text
 # @args Text %exp
-# @description The regexp function is used to parse regular expressions. Regular Expressions are incredibly powerful for selecting and modifying groups of text.
+# @description
+# The regexp function is used to parse regular expressions. Regular Expressions are incredibly powerful for selecting and modifying groups of text.
 # Common use cases include (but are not limited to):
 # 1) Removing extra text when transitioning from desktop to mobile sites.
 # 2) Modifying text to be more clear and concise to fit a smaller viewport.
@@ -57,7 +59,8 @@
 # @category Environment
 # @scope Text
 # @args Text %name
-# @description The asset function is most commonly used to rewrite the sources of images to the new Moovweb domain so that you can serve local content fast. Often when redesigning sites, you'll want to resize images, minify javascript, bundle assets together, and take a variety of performance measures to optimize your mobile site. Performance is increasingly important for mobile because of the significantly worse bandwidth that your users are using to connect (Edge, 3G, and WiFi). This means you'll want to optimize and re-serve any bloated content from the desktop site. The asset function helps to rewrite all those sources. 
+# @description
+# The asset function is most commonly used to rewrite the sources of images to the new Moovweb domain so that you can serve local content fast. Often when redesigning sites, you'll want to resize images, minify javascript, bundle assets together, and take a variety of performance measures to optimize your mobile site. Performance is increasingly important for mobile because of the significantly worse bandwidth that your users are using to connect (Edge, 3G, and WiFi). This means you'll want to optimize and re-serve any bloated content from the desktop site. The asset function helps to rewrite all those sources. 
 # Common use cases include (but are not limited to):
 # 1) Serving optimized local images
 # 2) Rewriting src and href tags for scripts, links, and images. 
@@ -78,12 +81,16 @@
 }
 
 "Prints the time a block took to run. @example `html() { bm(\"TIME\") }` will print the time it took to parse the HTML in the server logs in the format 'TIME: x ms'."
-# @abstract The bm function prints the time a block took to run.
+# @abstract The bm function prints in the terminal output the time a block took to run.
 # @name bm
 # @category Environment
 # @scope Text
 # @args Text %name
 # @description 
+# The bm function is used to test the performance of your code by the proxy. Generally, the majority of your performance boost will come from optimizing the images, scripts, and stylesheets of the existing desktop site. However, there are ways to improve performance of the execution of the proxy such as using XPath selectors instead of CSS selectors and avoiding deep searches for content in the DOM. 
+# Things to note: The bm() measurements vary between trials so you may have to run several samples to get an accurate representation of execution speed.
+# Common use cases include (but are not limited to):
+# 1) Measuring the time it takes for a block of code to run. 
 # @example
 # $("./body") {
 #  bm("TIME")
@@ -105,7 +112,8 @@
 # @category Environment,Text
 # @scope Text
 # @args Text %target,Text %comparitor
-# @description If only one string is to be matched, it can be placed after the target.
+# @description
+# If only one string is to be matched, it can be placed after the target.
 # @example
 #   $path = "product"
 #   match($path, "product") {
