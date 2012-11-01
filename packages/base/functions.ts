@@ -144,7 +144,15 @@
 # @category Environment,Text
 # @scope Text
 # @args Text %target,Regexp %comparitor
-# @description If only one string is to be matched, it can be placed after the target.
+# @description
+# The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. 
+# Things to note: If you have more than one variable or regular expression to test againt, you can simply provide the match function with the variable in question and then use embeded with() statements for each case. You can also provide a final else() statement to serve as a catchall for all unsuccessful matches.
+# Common use cases include (but are not limited to):
+# 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
+# 2) Matching attributes with certain content to determine if they need to be changed in some way. 
+# 3) Simulating if/then/else statements and boolean true/false logic to run differing Tritium. 
+# 4) Matching the status, content-type, or other information from the incoming header.
+# In this example, we match the $path variable to see if it matches the string "product". Since it does, the log "Match successful!" will output to your terminal.
 # @example
 #   $path = "product"
 #   match($path, /product/) {
@@ -169,6 +177,14 @@
 # @scope Text
 # @args Text %target,Text %comparitor
 # @description 
+# The match_not function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. Match_not() essentially inverts what you would expect from the match function. This means that if a match is not successful, then the block of code inside that match_not() or with() statement will run. 
+# Things to note: If you have more than one variable or regular expression to test againt, you can simply provide the match_not function with the variable in question and then use embeded with() statements for each case. You can also provide a final else() statement to serve as a catchall for all unsuccessful matches.
+# Common use cases include (but are not limited to):
+# 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
+# 2) Matching attributes with certain content to determine if they need to be changed in some way. 
+# 3) Simulating if/then/else statements and boolean true/false logic to run differing Tritium. 
+# 4) Matching the status, content-type, or other information from the incoming header.
+# In this example, we match the $path variable to see if it matches the string "price". Since it does not, the log "Match successful!" will output to your terminal.
 # @example
 #   $path = "product"
 #   match_not($path, "price") {
@@ -192,7 +208,15 @@
 # @category Environment,Text
 # @scope Text
 # @args Text %target,Regexp %comparitor
-# @description 
+# @description
+# The match_not function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. Match_not() essentially inverts what you would expect from the match function. This means that if a match is not successful, then the block of code inside that match_not() or with() statement will run. 
+# Things to note: If you have more than one variable or regular expression to test againt, you can simply provide the match_not function with the variable in question and then use embeded with() statements for each case. You can also provide a final else() statement to serve as a catchall for all unsuccessful matches.
+# Common use cases include (but are not limited to):
+# 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
+# 2) Matching attributes with certain content to determine if they need to be changed in some way. 
+# 3) Simulating if/then/else statements and boolean true/false logic to run differing Tritium. 
+# 4) Matching the status, content-type, or other information from the incoming header.
+# In this example, we match the $path variable to see if it matches the string "price". Since it does not, the log "Match successful!" will output to your terminal.
 # @example
 #   $path = "product"
 #   match_not($path, /price/) {
