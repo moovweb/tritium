@@ -5,7 +5,7 @@
 # @category Environment
 # @scope Text,XMLNode
 # @args Text %name
-# @description 
+# @description
 # @example
 # var("my_var") {
 #   set("is set")

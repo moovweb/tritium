@@ -4,7 +4,13 @@
 # @category Environment
 # @scope Text
 # @args Text %key,Text %value
-# @description 
+# @description
+# The export function is used when you want to change the outgoing response header.
+# Common use cases include (but are not limited to):
+# 1) Malformed HTML or Javascript with the wrong content-type set.
+# 2) Setting the Cache-Time of the page.
+# 3) Setting the Location for a redirect.
+# In this example, we are setting the Content-Type to "text/html".  
 # @example
 # html() {
 #   export("Content-Type", "text/html")
@@ -26,15 +32,21 @@
 # @category Environment,Modify,Text
 # @scope Text
 # @args Text %exp
-# @description 
+# @description The regexp function is used to parse regular expressions. Regular Expressions are incredibly powerful for selecting and modifying groups of text.
+# Common use cases include (but are not limited to):
+# 1) Removing extra text when transitioning from desktop to mobile sites.
+# 2) Modifying text to be more clear and concise to fit a smaller viewport.
+# 3) Changing instructions such as "click" to "tap" for mobile devices.
+# 4) Fixing malformed HTML before the document is parsed so your selectors work properly.
 # @example
+# In this example, we are using the string "true" and turning it into a regular expression to use in a match/with statement. If the string true is anywhere in the text we are matching, the code in the with() statement will run. 
 # with(regexp("true")) {
 # # run this code if your text matches the string "true" 
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/base/test/examples/regexp
-# @guidetext Replacing Text With Regexp
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
+# @guidetext Regex Guide
+# @guidelink http://beta.moovweb.com/learn/reference/tools/regex
 @func regexp(Text %exp) {
   regexp(%exp, "")
 }
@@ -45,7 +57,12 @@
 # @category Environment
 # @scope Text
 # @args Text %name
-# @description 
+# @description The asset function is most commonly used to rewrite the sources of images to the new Moovweb domain so that you can serve local content fast. Often when redesigning sites, you'll want to resize images, minify javascript, bundle assets together, and take a variety of performance measures to optimize your mobile site. Performance is increasingly important for mobile because of the significantly worse bandwidth that your users are using to connect (Edge, 3G, and WiFi). This means you'll want to optimize and re-serve any bloated content from the desktop site. The asset function helps to rewrite all those sources. 
+# Common use cases include (but are not limited to):
+# 1) Serving optimized local images
+# 2) Rewriting src and href tags for scripts, links, and images. 
+# 3) Serving local stylesheets 
+# In this example, we are inserting a new link tag with a src that uses the asset() function to define its domain and then we pass in the path name as the parameter to the asset function. 
 # @example
 # $$("head") {
 #  insert("link", src:asset("stylesheets/mystyles.css"))
