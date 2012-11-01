@@ -409,9 +409,41 @@
 @func Text.replace(Text %search) Text Text
 
 " Adds **%text_to_prepend** to the beginning of the text. @example Given `<div>Dog</div>`, `$(\"./div\") { text() { prepend(\"Super-\") } }` will change the text to 'Super-Dog'."
+# @abstract The prepend function adds the input text to the beginning of the text scope from which it is called.
+# @name prepend
+# @category Modify,Text
+# @scope Text
+# @args Text %text_to_prepend
+# @description 
+# @example
+  $$("#my_div") {
+    text() {
+      prepend("This is how you prepend text in front of the existing text in #my_div.")
+    }
+  }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/text/prepend
+# @guidetext Function Guide
+# @guidelink 
 @func Text.prepend(Text %text_to_prepend) Text
 
 " Adds **%text_to_append** to the end of the text. @example Given `<div>Dog</div>`, `$(\"./div\") { text() { append(\"Fish\") } }` will change the text to 'DogFish'."
+# @abstract The append function adds the input text to the end of the text scope from which it is called.
+# @name append
+# @category Modify,Text
+# @scope Text
+# @args Text %text_to_append
+# @description 
+# @example
+  $$("#my_div") {
+    text() {
+      append("This is how you append text to the end of the existing text in #my_div.")
+    }
+  }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/text/append
+# @guidetext Function Guide
+# @guidelink 
 @func Text.append(Text %text_to_append) Text
 
 " Captures all instances of the regular expression **%search**. "
