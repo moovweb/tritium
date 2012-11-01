@@ -90,15 +90,83 @@
 @func deprecated(Text %message) Text Text
 
 " Used with `match()` as an opposite of `with()`. @example `match($var) { not('hi') }` will check that the '$var' is not set to 'hi'. "
+# @abstract The not function is used with match() as an opposite to with().
+# @name not
+# @category Environment,Text
+# @scope Text,XMLNode
+# @args Text %text
+# @description
+# @example
+# $var = "Match Me"
+# match($var) {
+#   not("Match You") {
+#     log("Match unsuccessful!")
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/not
+# @guidetext Function Guide
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func not(Text %text) Text
 
 " Used with `match()` as an opposite of `with()`. @example `match($var) { not(/hi/) }` will check that the '$var' is not set to 'hi'. "
+# @abstract The not function is used with match() as an opposite to with().
+# @name not
+# @category Environment,Text
+# @scope Text,XMLNode
+# @args Regexp %regexp
+# @description
+# @example
+# $var = "Match Me"
+# match($var) {
+#   not(/Match You/) {
+#     log("Match unsuccessful!")
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/not
+# @guidetext Function Guide
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func not(Regexp %regexp) Text
 
 " Used with `match()`. Allows the match function to specify what is being matched. @example `match($path) { with(\"product\") }` will check the path of the url matches 'product'."
+# @abstract The with function is used with match() to match a variable with multiple possibilities.
+# @name with
+# @category Environment,Text
+# @scope Text,XMLNode
+# @args Text %text
+# @description
+# @example
+# $var = "Match Me"
+# match($var) {
+#   with("Match Me") {
+#     log("Match successful!")
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/with
+# @guidetext Function Guide
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func with(Text %text) Text
 
 " Used with `match()`. Allows the match function to specify what is being matched. @example `match($path) { with(/product/) }` will check the path of the url matches the regular expression 'product'."
+# @abstract The with function is used with match() to match a variable with multiple possibilities.
+# @name with
+# @category Environment,Text
+# @scope Text,XMLNode
+# @args Regexp %regexp
+# @description
+# @example
+# $var = "Match Me"
+# match($var) {
+#   with(/Match Me/) {
+#     log("Match successful!")
+#   }
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/base/test/examples/with
+# @guidetext Function Guide
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func with(Regexp %regexp) Text
 
 " Convert from one encoding to another. (If you want a list of encodings, you can run `iconv -l` on your command line.) @example `text() { convert_encoding(\"gbk\", \"utf-8\") }` will convert the text from gbk to utf-8."
