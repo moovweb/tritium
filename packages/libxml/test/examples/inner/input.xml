@@ -1,4 +1,9 @@
-<div>
+<div class="one">
+  <a>Link</a>
+  <span></span>
+</div>
+
+<div class="two">
   <a>Link</a>
   <span></span>
 </div>

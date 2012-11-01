@@ -1,17 +1,3 @@
-# @abstract 
-# @name 
-# @category 
-# @scope
-# @args
-# @description 
-# @example
-# 
-# 
-# 
-# @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
-# @guidelink 
 
 "Selects an element with CSS-style selectors. @example `$$(\".one\")` will select all elements with the class of \"one\"."
 # @abstract The $$ selects elements with a CSS-style selector.
@@ -116,7 +102,7 @@
 #   attribute("href", "http://example.com")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/attribute
 # @guidetext The attribute function and its alternatives.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute
 @func XMLNode.attribute(Text %name, Text %value) {
@@ -142,7 +128,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/value
 # @guidetext
 # @guidelink 
 @func Attribute.value(Text %value) {
@@ -168,7 +154,7 @@ Functionally equivalent to `name() { set(%name) }`."
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/name
 # @guidetext
 # @guidelink 
 @func Attribute.name(Text %name) {
@@ -231,7 +217,7 @@ Functionally equivalent to `name() { set(%name) }`."
 #   attributes(class: "class", id: "id")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/attributes
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/attributes
 # @guidetext
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute
 @func XMLNode.attributes() {

@@ -1,2 +1,5 @@
-<div>TEXT <a></a>
+<div class="one">TEXT <a></a>
+</div>
+
+<div class="two">Some other text <a></a>
 </div>
