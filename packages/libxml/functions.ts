@@ -375,7 +375,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts javascript (specified by **%js**) in a script tag within the currently-selected node at the position specified by **%pos**. @example `$(\"div\") { insert_javascript_at(position(\"top\"), \"alert('Boo')\") }` will insert the javascript specified at the top of the div."
-
+# @abstract Inserts javascript in the current node at the position specified.
+# @name insert_javascript_at
+# @category Create,Javascript
+# @scope XNLNode
+# @args Position %pos,Text %js
+# @description 
+# @example
+# insert_javascript_at(position("top"), "alert('Boo')")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert_javascript
+# @guidetext
+# @guidelink 
 @func XMLNode.insert_javascript_at(Position %pos, Text %js) {
   insert_at(%pos, "script") {
     attribute("type", "text/javascript")
@@ -385,7 +396,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts javascript (specified by **%js**) in a script tag within the currently-selected node. @example `$(\"div\") { insert_javascript(\"alert('Boo')\") }` will insert the javascript at the bottom of the div."
-
+# @abstract Inserts javascript in a script tag in the current node.
+# @name insert_javascript_at
+# @category Create,Javascript
+# @scope XNLNode
+# @args Text %js
+# @description 
+# @example
+# insert_javascript("alert('Boo')")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert_javascript
+# @guidetext
+# @guidelink 
 @func XMLNode.insert_javascript(Text %js) {
   insert_javascript_at(position(), %js) {
     yield()
@@ -393,7 +415,20 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Opens the insides of the node to modification - anything within the node will be overwritten by what is put in **%html**. @example Given `<div> <span>Item</span> </div>`, using `$(\"div\") { inner(\"<a>\") }` will replace the span with an empty 'a' tag, returning `<div><a></a></div>`."
-
+# @abstract Opens the inside of the current node for modification.
+# @name inner
+# @category Modify
+# @scope XMLNode
+# @args Text %html
+# @description 
+# @example
+# $("./div") {
+#   inner("New Content")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/inner
+# @guidetext Information on the inner function and comparing it to the text function.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/inner
 @func XMLNode.inner(Text %html) {
   inner() {
     set(%html) 
@@ -402,7 +437,20 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Wraps the selected node in the tag defined by **%tag**, then yields to the new tag - [click for example](http://beta.moovweb.com/learn/training/function_guides/wrap). @example `$(\"div\") { wrap(\"span\") }` will wrap the div inside a span tag."
-
+# @abstract Wraps the current node in a new tag.
+# @name wrap
+# @category Modify
+# @scope XMLNode
+# @args Text %tag
+# @description 
+# @example
+# $("./a") {
+#   wrap("div")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/wrap
+# @guidetext
+# @guidelink 
 @func XMLNode.wrap(Text %tag) {
   %parent_node = this()
   insert_at(position("before"), %tag) {
@@ -423,7 +471,18 @@ Functionally equivalent to `name() { set(%name) }`."
 
 # This is used to specify the encoding for a page
 "Parses the document into HTML. Allows specification of the current coding of HTML and how the result should be coded. @example `html(\"gbk\", \"utf-8\")` parses gbk HTML into utf-8 HTML."
-
+# @abstract Parses the document into HTML, from and to the encodings specified.
+# @name html
+# @category Environment
+# @scope Text
+# @args Text %from_enc,Text %to_enc
+# @description 
+# @example
+# html("gbk", "utf-8")
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext
+# @guidelink 
 @func Text.html(Text %from_enc, Text %to_enc) {
   html_doc(%from_enc, %to_enc) {
     yield()
@@ -432,7 +491,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Parses the document into HTML, specifying the encoding (**%enc**). @example `html(\"utf-8\")` parses the document into utf-8 html."
-
+# @abstract Parses the document into HTML with the specified encoding.
+# @name html
+# @category Environment
+# @scope Text
+# @args Text %enc
+# @description 
+# @example
+# html("utf-8")
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext
+# @guidelink 
 @func Text.html(Text %enc) {
   $charset_determined = %enc
   html(%enc, %enc) {
@@ -441,7 +511,20 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Parses the document into HTML. @example In *html.ts*, there is `html()` at the top, which guesses the encoding and parses the html accordingly."
-
+# @abstract Parses the document as HTML.
+# @name html
+# @category Environment
+# @scope Text
+# @args
+# @description 
+# @example
+# html() {
+#   $("/html/body")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext
+# @guidelink 
 @func Text.html() {
   match($charset_determined) {
     with("") {
@@ -457,7 +540,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Parses a fragment of the document. The `html()` function adds `<html>` tags to the output. This function does not."
-
+# @abstract Parses a fragment of the document as HTML, using the encodings specified.
+# @name html_fragment
+# @category Environment
+# @scope Text
+# @args Text %from_enc,Text %to_enc
+# @description [Compare to the html() function]
+# @example
+# html_fragment("gbk", "utf-8")
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext
+# @guidelink 
 @func Text.html_fragment(Text %from_enc, Text %to_enc) {
   html_fragment_doc(%from_enc, %to_enc) {
     yield()
@@ -466,7 +560,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Parses a fragment of the document. The `html()` function adds `<html>` tags to the output. This function does not."
-
+# @abstract Parses a fragment of the document as HTML with the encoding specified.
+# @name html_fragment
+# @category Environment
+# @scope Text
+# @args Text %enc
+# @description 
+# @example
+# html_fragment("utf-8")
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext
+# @guidelink 
 @func Text.html_fragment(Text %enc) {
   $charset_determined = %enc
   html_fragment(%enc, %enc) {
@@ -475,7 +580,20 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Parses a fragment of the document. The `html()` function adds `<html>` tags to the output. This function does not."
-
+# @abstract Parses a fragment of the document as HTML
+# @name html_fragment
+# @category Environment
+# @scope Text
+# @args
+# @description 
+# @example
+# html_fragment() {
+#   $("/div")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext
+# @guidelink 
 @func Text.html_fragment() {
   $encoding = guess_encoding()
   html_fragment($encoding, $encoding) {
@@ -487,7 +605,18 @@ Functionally equivalent to `name() { set(%name) }`."
 # siblings of these are in node, but these use Inner so are here.
 
 "Inserts a tag (specified by **%tag**) with content (**%content**) at a position specified by **%pos** (relative to the currently-selected node) - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
-
+# @abstract Inserts a tag with the (optional) content at the location given.
+# @name insert_at
+# @category Create
+# @scope XMLNode
+# @args Text %pos,Text %tag,Text %content
+# @description 
+# @example
+# insert_at("top", "div", "Content")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @guidetext Uses of the various insert functions.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_at(Text %pos, Text %tag, Text %content) {
   insert_at(position(%pos), %tag) {
     inner(%content)
@@ -496,7 +625,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node) - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
-
+# @abstract Inserts a tag with the (optional) content at the position specified.
+# @name insert_at
+# @category Create
+# @scope XMLNode
+# @args Position %pos,Text %tag,Text %content
+# @description 
+# @example
+# insert_at(position(top), "div", "Content")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @guidetext Uses of the various insert functions.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_at(Position %pos, Text %tag, Text %inner) {
   insert_at(%pos, %tag) {
     inner(%inner)
@@ -505,7 +645,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts the tag (specified by **%tag**) with content (**%inner**) into the currently-selected node  - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert(\"div\", \"Some text\")` will insert `<div>Some text</div>` into the current node - by default at the bottom."
-
+# @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
+# @name insert
+# @category Create
+# @scope XMLNode
+# @args Text %tag,Text %inner
+# @description 
+# @example
+# insert("div", "Content")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @guidetext Uses of the various insert functions.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
     inner(%inner)
@@ -514,7 +665,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts a tag (specified by **%tag**) with content (**%inner**) at the bottom of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_bottom(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the bottom of the current node."
-
+# @abstract Inserts a tag with the (optional) content into bottom of the current node.
+# @name insert_bottom
+# @category Create
+# @scope XMLNode
+# @args Text %tag,Text %inner
+# @description 
+# @example
+# insert_bottom("div", "Content")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @guidetext Uses of the various insert functions.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_bottom(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
     inner(%inner)
@@ -523,7 +685,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts a tag (specified by **%tag**) with content (**%inner**) at the top of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_top(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
-
+# @abstract Inserts a tag with the (optional) content into top of the current node.
+# @name insert_top
+# @category Create
+# @scope XMLNode
+# @args Text %tag,Text %inner
+# @description 
+# @example
+# insert_top("div", "Content")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @guidetext Uses of the various insert functions.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_top(Text %tag, Text %inner) {
   insert_at(position("top"), %tag) {
     inner(%inner)
@@ -532,7 +705,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts a tag (specified by **%tag**) with content (**%inner**) after the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_after(\"div\", \"Some text\")` will insert `<div>Some text</div>` after the current node."
-
+# @abstract Inserts a tag with the (optional) content after the current node.
+# @name insert_after
+# @category Create
+# @scope XMLNode
+# @args Text %tag,Text %inner
+# @description 
+# @example
+# insert_after("div", "Content")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @guidetext Uses of the various insert functions.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_after(Text %tag, Text %inner) {
   insert_at(position("after"), %tag) {
     inner(%inner)
@@ -541,7 +725,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts a tag (specified by **%tag**) with content (**%inner**) before the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_before(\"div\", \"Some text\")` will insert `<div>Some text</div>` before the current node."
-
+# @abstract Inserts a tag with the (optional) content before the current node. 
+# @name insert_before
+# @category Create
+# @scope XMLNode
+# @args Text %tag,Text %inner
+# @description 
+# @example
+# insert_before("div", "Content")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @guidetext Uses of the various insert functions.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_before(Text %tag, Text %inner) {
   insert_at(position("before"), %tag) {
     inner(%inner)
@@ -550,7 +745,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts javascript (specified by **%js**) in a script tag at the bottom of the currently-selected node. @example `insert_javascript_bottom(\"alert('Boo')\")` will insert `<script>alert('Boo')</script>` at the bottom of the current node."
-
+# @abstract Inserts javascript at the bottom of the current node.
+# @name insert_javascript_bottom
+# @category Create
+# @scope XMLNode
+# @args Text %js
+# @description 
+# @example
+# insert_javascript_bottom("alert('Boo')")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert_javascript
+# @guidetext
+# @guidelink 
 @func XMLNode.insert_javascript_bottom(Text %js) {
   insert_javascript_at(position("bottom"), %js) {
     yield()
@@ -558,7 +764,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts javascript (specified by **%js**) in a script tag at the top of the currently-selected node. @example `insert_javascript_top(\"alert('Boo')\")` will insert `<script>alert('Boo')</script>` at the top of the current node."
-
+# @abstract Inserts javascript at the top of the current node.
+# @name insert_javascript_top
+# @category Create
+# @scope XMLNode
+# @args Text %js
+# @description 
+# @example
+# insert_javascript_top("alert('Boo')")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert_javascript
+# @guidetext
+# @guidelink 
 @func XMLNode.insert_javascript_top(Text %js) {
   insert_javascript_at(position("top"), %js) {
     yield()
@@ -566,7 +783,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts javascript (specified by **%js**) in a script tag after the currently-selected node. @example `insert_javascript_after(\"alert('Boo')\")` will insert `<script>alert('Boo')</script>` after the current node."
-
+# @abstract Inserts javascript after the current node.
+# @name insert_javascript_after
+# @category Create
+# @scope XMLNode
+# @args Text %js
+# @description 
+# @example
+# insert_javascript_after("alert('Boo')")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert_javascript
+# @guidetext
+# @guidelink 
 @func XMLNode.insert_javascript_after(Text %js) {
   insert_javascript_at(position("after"), %js) {
     yield()
@@ -574,7 +802,18 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts javascript (specified by **%js**) in a script tag before the currently-selected node. @example `insert_javascript_before(\"alert('Boo')\")` will insert `<script>alert('Boo')</script>` before the current node."
-
+# @abstract Inserts javascript before the current node.
+# @name insert_javascript_before
+# @category Create
+# @scope XMLNode
+# @args Text %js
+# @description 
+# @example
+# insert_javascript_bbefore"alert('Boo')")
+# @exampletext Tritium Tester Example
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert_javascript
+# @guidetext
+# @guidelink 
 @func XMLNode.insert_javascript_before(Text %js) {
   insert_javascript_at(position("before"), %js) {
     yield()
