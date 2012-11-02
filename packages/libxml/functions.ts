@@ -1,17 +1,3 @@
-# @abstract 
-# @name 
-# @category 
-# @scope
-# @args
-# @description 
-# @example
-# 
-# 
-# 
-# @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
-# @guidelink 
 
 "Selects an element with CSS-style selectors. @example `$$(\".one\")` will select all elements with the class of \"one\"."
 # @abstract The $$ selects elements with a CSS-style selector.
@@ -20,8 +6,16 @@
 # @scope XMLNode
 # @args Text %css_selector
 # @description 
+# $$ selects an element of HTML using a CSS-style selector. It is used as an alternative selector to the single-dollar sign (which selects via XPath).
+# People usually find the $$ easier to use - at least in the beginning - as it requires no knowledge of XPath.
+# Things to note: the $$ converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
+# For example, the selector $$("#one") will be converted into $(".//*[id='one']"). The double-forward slash deep search could affect performance.
+# Common use cases include (but are not limited to):
+# 1) Selecting many element types based on attributes rather than tag names
+# 2) Selecting items without being familiar with XPath
+# The example below selects every item with the id "one".
 # @example
-# $$("#id")
+# $$("#one")
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/libxml/test/examples/css_selector
 # @guidetext
@@ -39,9 +33,16 @@
 # @scope XMLNode
 # @args Text %class
 # @description 
+# The add_class function is used to add a class to the current node. 
+# What the function does is takes the current node and appends any existing classes with a space, followed by the class specified. 
+# The add_class function will therefore not overwrite any existing classes that are present on the node. Contrast this with the attribute function, which would obliterate any existing classes. 
+# Common use cases include (but are not limited to):
+# 1) Adding a class to the body of the page for page-specific styling
+# 2) Keeping existing classes (and associated styles) while adding your own on top
+# The example below will take the selected div and add a class of " one" to it.
 # @example
 # $("./div") {
-#   add_class("class")
+#   add_class("one")
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/libxml/test/examples/add_class
@@ -65,7 +66,11 @@
 # @category Modify
 # @scope XMLNode
 # @args Text %tag_name
-# @description 
+# @description
+# Common use cases include (but are not limited to):
+# 1) Wrapping all interior content into an anchor tag
+# 2) 
+# The example below will take the contents of the div and wrap them in a span.
 # @example
 # $("./div") {
 #   inner_wrap("span")
@@ -116,7 +121,7 @@
 #   attribute("href", "http://example.com")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/attribute
 # @guidetext The attribute function and its alternatives.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute
 @func XMLNode.attribute(Text %name, Text %value) {
@@ -142,7 +147,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/value
 # @guidetext
 # @guidelink 
 @func Attribute.value(Text %value) {
@@ -168,7 +173,7 @@ Functionally equivalent to `name() { set(%name) }`."
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/name
 # @guidetext
 # @guidelink 
 @func Attribute.name(Text %name) {
@@ -231,7 +236,7 @@ Functionally equivalent to `name() { set(%name) }`."
 #   attributes(class: "class", id: "id")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/attributes
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/attributes
 # @guidetext
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute
 @func XMLNode.attributes() {
