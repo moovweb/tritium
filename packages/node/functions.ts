@@ -6,11 +6,15 @@
 # @args Text %xpath
 # @description
 # The $ selector is used to tell Tritium which node(s) you'd like to select to perform transformation on. The general process of transformation involves two basic steps: 1) selecting a node, and 2) performing some function on it. 
-# Things to note: If Tritium finds no matching node for the XPath provided, it simply skips over that block of code. 
+# Things to note: If Tritium finds no matching node for the XPath provided, it simply skips over that block of code. If Tritium finds more than one matching node for the XPath provided, it will iterate over each element sequentially running the block of code inside the selector.
 # Common uses include:
 # 1) Just about anything you want to do with Tritium.
+# In this example, we select every div element in the document and open a scope for manipulation.
+# @example
+# $("//div") {
+# }
 # @exampletext Tritium Tester Example
-# @examplelink /libxml/xpath_selector
+# @examplelink /libxml/test/examples/xpath_selector
 # @guidetext XPath Reference Guide
 # @guidelink http://beta.moovweb.com/learn/reference/tools/xpath
 @func Node.$(Text %xpath) {
@@ -20,12 +24,18 @@
 }
 
 " Specifies the position of a node. By default is 'bottom'. @example `move_to(\"..\", position())` will move a node to the bottom of its parent."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
+# @abstract The position function is used to return a position type.
+# @name position
+# @category Create,Move
+# @scope XMLNode
 # @args
 # @description
+# The position function is used to return a position type. Positions include: before, after, above, below, top and bottom.
+# Things to note: by default, the position type returned is "bottom". You can also specify which position type you'd like to return by passing it in as a parameter.
+# Common uses include: 
+# 1) Some functions require position inputs as parameters. You can call position() to fulfill this requirement.
+# 2) When defining custom functions you may want to use a position type in your definition.
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
