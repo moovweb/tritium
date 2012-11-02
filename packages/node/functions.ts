@@ -1,14 +1,18 @@
 " Searches the tree and selects all nodes matching **%xpath**. @example `$(\"//div\")` will find every div element in the document."
-# @abstract The $ function is a selector that takes an %xpath input. XPath is a syntax for notation based on the structure of the HTML DOM. 
+# @abstract The $ function is a selector that takes an %xpath input. XPath is a syntax for selection notation based on the structure of an HTML DOM.
 # @name $
 # @category Environment,Create,Modify,Move,Misc,Text
-# @scope
+# @scope Attribute,XMLNode,Text
 # @args Text %xpath
 # @description
+# The $ selector is used to tell Tritium which node(s) you'd like to select to perform transformation on. The general process of transformation involves two basic steps: 1) selecting a node, and 2) performing some function on it. 
+# Things to note: If Tritium finds no matching node for the XPath provided, it simply skips over that block of code. 
+# Common uses include:
+# 1) Just about anything you want to do with Tritium.
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext 
-# @guidelink 
+# @examplelink /libxml/xpath_selector
+# @guidetext XPath Reference Guide
+# @guidelink http://beta.moovweb.com/learn/reference/tools/xpath
 @func Node.$(Text %xpath) {
   select(%xpath) {
     yield()
