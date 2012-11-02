@@ -96,6 +96,7 @@
 }
 
 " Copies the node specified by **%xpath** to the currently-selected node, at the position **%pos**. @example `copy_here(\"//table\", \"top\")` will copy every table in the document into the top of the current node."
+# @hide
 # @abstract 
 # @name
 # @category Environment,Create,Modify,Move,Misc,Text
@@ -113,6 +114,7 @@
 }
 
 " Copies the node specified by **%xpath** to the currently-selected node (at the bottom by default). @example `copy_here(\"//table\")` will copy every table in the document into the bottom of the current node. "
+# @hide
 # @abstract 
 # @name
 # @category Environment,Create,Modify,Move,Misc,Text
@@ -153,6 +155,7 @@
 }
 
 " Copies the currently-selected node to the node specified by **%xpath**, at the position **%pos**. @example `copy_to(\"//body\", \"top\")` will copy the current node into the top of the body. "
+# @hide
 # @abstract 
 # @name
 # @category Environment,Create,Modify,Move,Misc,Text
@@ -170,6 +173,7 @@
 }
 
 " Copies the currently-selected node to the bottom of the node specified by **%xpath**. @example `copy_to(\"//body\")` will copy the current node into the bottom of the body. "
+# @hide
 # @abstract 
 # @name
 # @category Environment,Create,Modify,Move,Misc,Text
@@ -223,6 +227,7 @@
 }
 
 " Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body."
+# @hide
 # @abstract 
 # @name
 # @category Environment,Create,Modify,Move,Misc,Text
@@ -240,6 +245,7 @@
 }
 
 " Moves the currently-selected node to the bottom of the node specified by **%xpath** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\")` will move the current node to the bottom of the body."
+# @hide
 # @abstract 
 # @name
 # @category Environment,Create,Modify,Move,Misc,Text
@@ -276,6 +282,7 @@
 }
 
 " Moves the node specified by **%where** to the currently-selected node, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\", \"top\")` will move every table in the document into the top of the current node."
+# @hide
 # @abstract 
 # @name
 # @category Environment,Create,Modify,Move,Misc,Text
@@ -293,6 +300,7 @@
 }
 
 " Moves the node specified by **%where** to the bottom of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\")` will move every table in the document into the bottom of the current node."
+# @hide
 # @abstract 
 # @name
 # @category Environment,Create,Modify,Move,Misc,Text
