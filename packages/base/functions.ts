@@ -34,14 +34,14 @@
 # @scope Text
 # @args Text %exp
 # @description
-# The regexp function is used to parse regular expressions. Regular Expressions are incredibly powerful for selecting and modifying groups of text.
+# The regexp function is used to parse expressions and turn them into regular expressions. Regular Expressions are incredibly powerful for selecting and modifying groups of text.
 # Common uses include:
 # 1) Removing extra text when transitioning from desktop to mobile sites.
 # 2) Modifying text to be more clear and concise to fit a smaller viewport.
 # 3) Changing instructions such as "click" to "tap" for mobile devices.
 # 4) Fixing malformed HTML before the document is parsed so your selectors work properly.
-# @example
 # In this example, we are using the string "true" and turning it into a regular expression to use in a match/with statement. If the string true is anywhere in the text we are matching, the code in the with() statement will run. 
+# @example
 # with(regexp("true")) {
 # # run this code if your text matches the string "true" 
 # }
@@ -362,7 +362,8 @@
 # @description 
 # The length function is used to return the length of the current text node or the provided input string. 
 # Common uses include:
-# 1) Finding the length of a string. 
+# 1) Validating an input string to make sure it is either a minimum or maximum number of characters.
+# 2) Finding the length of a string. 
 # In this example, we log the length of the current text inside the div with an ID of "my_div".
 # @example
 # $$("#my_div") {

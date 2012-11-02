@@ -233,6 +233,10 @@
 # @scope Text
 # @args Text %from,Text %to
 # @description
+# The convert_encoding function is used to convert text from one encoding to another. 
+# Common uses include:
+# 1) Converting incorrectly encoded text 
+# In this example, we convert from gbk to utf-8 encoding. 
 # @example
 # text() {
 #   convert_encoding("gbk", "utf-8")
@@ -250,6 +254,10 @@
 # @scope Text
 # @args
 # @description
+# The guess_encoding function is used to guess the text encoding of the current scope. The function uses information from the input, the response header, and the html meta tags.
+# Common uses include:
+# 1) When you need to figure out the current encoding.
+# In this example, we guess the encoding of the current text node.
 # @example
 # text() {
 #   $encoding = guess_encoding()
@@ -268,6 +276,11 @@
 # @scope Text
 # @args Text %input
 # @description 
+# The length function is used to return the length of the current text node or the provided input string. 
+# Common uses include:
+# 1) Validating an input string to make sure it is either a minimum or maximum number of characters.
+# 2) Finding the length of a string. 
+# In this example, we log the length of the %input string "text".
 # @example
 # $$("#my_div") {
 #   text() {
@@ -287,6 +300,12 @@
 # @scope Text,XMLNode
 # @args
 # @description 
+# The else() function is used inside your match() statements to serve as a catchall for when none of your with() statements find a successful match. The else() function will then serve as your default behavior for unanticipated match cases.
+# Common uses include:
+# 1) Serving as a catchall for common errors, such as unrecognized URL mappings.
+# 2) Completing if-else pseudo logic when matching variables, attributes, and other traits of the current DOM. 
+# 3) Generally providing a default behavior for your Tritium scripts.
+# In this example, the $var value does not match the existing with() statement, which means the else() statement will run its inner code block.
 # @example
 # $var = "Match me."
 # match($var) {
@@ -319,6 +338,14 @@
 # @scope Text
 # @args Text %expression,Text %options
 # @description 
+# The regexp function is used to parse %expressions and turn them into regular expressions. Regular Expressions are incredibly powerful for selecting and modifying groups of text. 
+# Things to note: The %options input provides flags for the regular expression such as "i" which indicates it should be case insensitive. 
+# Common uses include:
+# 1) Removing extra text when transitioning from desktop to mobile sites.
+# 2) Modifying text to be more clear and concise to fit a smaller viewport.
+# 3) Changing instructions such as "click" to "tap" for mobile devices.
+# 4) Fixing malformed HTML before the document is parsed so your selectors work properly.
+# In this example, we are using the string "true" and turning it into a regular expression to use in a match/with statement. We are also accepting any combination of upper and lower case because of the "i" flag. If the string "true" is anywhere in the text we are matching, the code in the with() statement will run. 
 # @example
 # with(regexp("true", "i")) {
 # # run this code if your text matches the string "true"
@@ -337,6 +364,13 @@
 # @scope Text
 # @args Text %a,Text %b
 # @description 
+# The concat function is used to combine two or more strings into a single string.
+# Things to note: The concat function takes at least two strings and up to ten strings as input parameters. These parameters will be combined in the order in which they are provided. 
+# Common uses include:
+# 1) In log statements when outputting some combination of variables and description of those variables. 
+# 2) When selecting elements based on variables or attributes they may need to be formatted properly using the concat function. 
+# 3) When manipulating text scopes and combining the content of several scopes.
+# In this example, we fetch the ID of the div with the ID "my_div" and then we log a concat statement to the terminal output.
 # @example
 # $$("#my_div") {
 #   $name = fetch("./@id")
