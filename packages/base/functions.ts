@@ -330,6 +330,13 @@
 # @scope Text
 # @args Text Text %search,Text %with
 # @description 
+# The replace function is used to alter existing text nodes by replacing them based on either regular expressions or specific strings. 
+# Things to note: Unless otherwise specified by the Regular Expression, all matches found by the %search parameter will be replaced. 
+# Common uses include:
+# 1) Replacing desktop instructions like "click" to mobile instructions like "tap"
+# 2) Removing extra or unnecessary text
+# 3) Rewriting attributes based on some standard set via a regular expression.
+# In this example we are replacing the text "Replace Me" inside #my_div with the text "Replaced!".
 # @example
 # $$("#my_div") {
 #   text() {
@@ -353,6 +360,10 @@
 # @scope Text
 # @args 
 # @description 
+# The length function is used to return the length of the current text node or the provided input string. 
+# Common uses include:
+# 1) Finding the length of a string. 
+# In this example, we log the length of the current text inside the div with an ID of "my_div".
 # @example
 # $$("#my_div") {
 #   text() {
