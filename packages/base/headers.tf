@@ -177,6 +177,14 @@
 # @scope Text,XMLNode
 # @args Text %text
 # @description
+# The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. The with() statement is used inside a match() statement to match the variable with certain strings or regular expressions. If the input %text is contained in the matched variable, then the code block inside the with() statement is executed. 
+# Things to note: You can have multiple with() statements inside a single match statement. They are executed sequentially and as soon as one with() statement is matched successfully, the rest will be skipped over.
+# Common uses include:
+# 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
+# 2) Matching attributes with certain content to determine if they need to be changed in some way. 
+# 3) Simulating if/then/else statements and boolean true/false logic to run differing Tritium. 
+# 4) Matching the status, content-type, or other information from the incoming header.
+# In this example, we match the $var variable with the string "Match Me". Since the match is successful, the log is then executed.
 # @example
 # $var = "Match Me"
 # match($var) {
@@ -197,6 +205,14 @@
 # @scope Text,XMLNode
 # @args Regexp %regexp
 # @description
+# The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. The with() statement is used inside a match() statement to match the variable with certain strings or regular expressions. If the input %text is contained in the matched variable, then the code block inside the with() statement is executed. 
+# Things to note: You can have multiple with() statements inside a single match statement. They are executed sequentially and as soon as one with() statement is matched successfully, the rest will be skipped over.
+# Common uses include:
+# 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
+# 2) Matching attributes with certain content to determine if they need to be changed in some way. 
+# 3) Simulating if/then/else statements and boolean true/false logic to run differing Tritium. 
+# 4) Matching the status, content-type, or other information from the incoming header.
+# In this example, we match the $var variable with the regular expression "Match Me". Since the match is successful, the log is then executed.
 # @example
 # $var = "Match Me"
 # match($var) {
