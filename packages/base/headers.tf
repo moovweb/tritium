@@ -127,11 +127,16 @@
 # @scope Text,XMLNode
 # @args Text %text
 # @description
+# The not function is used inside a match() statement as an opposite to the with() statement. In other words, if the match is not successful, the code inside the not() block will run, whereas if the match is successful, the code will be skipped over.
+# Common use cases include: 
+# 1) When the page is structured such that you only know what scripts you want to run when certain content does not exist.
+# 2) When you are mapping URL paths to page types and you know what content must not exist in the path to fulfill a mapping requirement.
+# In the following example, we match the variable $var with the not() statement of "Match You". Since that statement does not exist in the variable, the log inside the not statement will be executed.
 # @example
 # $var = "Match Me"
 # match($var) {
 #   not("Match You") {
-#     log("Match unsuccessful!")
+#     log("The $var variable does not contain the string Match You!")
 #   }
 # }
 # @exampletext Tritium Tester Example
@@ -147,11 +152,16 @@
 # @scope Text,XMLNode
 # @args Regexp %regexp
 # @description
+# The not function is used inside a match() statement as an opposite to the with() statement. In other words, if the match is not successful, the code inside the not() block will run, whereas if the match is successful, the code will be skipped over.
+# Common use cases include: 
+# 1) When the page is structured such that you only know what scripts you want to run when certain content does not exist.
+# 2) When you are mapping URL paths to page types and you know what content must not exist in the path to fulfill a mapping requirement.
+# In the following example, we match the variable $var with the not() regular expression "Match You". Since that statement does not exist in the variable, the log inside the not statement will be executed.
 # @example
 # $var = "Match Me"
 # match($var) {
 #   not(/Match You/) {
-#     log("Match unsuccessful!")
+#     log("The $var variable does not successfully match the regex Match You!")
 #   }
 # }
 # @exampletext Tritium Tester Example
