@@ -103,7 +103,12 @@
 # @scope Text,XMLNode
 # @args Text %log_message
 # @description
-# The log function is used 
+# The log function is used to output information to the terminal.
+# Common uses include:
+# 1) Checking the value of environment variables
+# 2) Displaying status messages as the result of certain matches or logic
+# 3) Debugging Tritium that isn't working in development
+# The following example shows the typical use case for debugging Tritium that isn't working. This is often done by setting logs throughout your code to see if you selectors and logic is executing the proper statements.
 # @example
 #   log("I've reached this point in the code!")
 # @exampletext Tritium Tester Example
