@@ -6,6 +6,12 @@
 # @scope Text,XMLNode
 # @args Text %name
 # @description
+# The var function is used to set global variables that can be used for various logic throughout your code. 
+# Common uses include: 
+# 1) True/False logic
+# 2) Storing fetched text and attributes
+# 3) Using stored values in a match() statement to run different Tritium scripts.
+# The following example simply illustrates how to set a variable manually to whatever %name and value you desire. 
 # @example
 # var("my_var") {
 #   set("is set")
@@ -23,7 +29,13 @@
 # @category Environment
 # @scope Text,XMLNode
 # @args Text %name,Text %value
-# @description 
+# @description
+# The var function is used to set global variables that can be used for various logic throughout your code. 
+# Common uses include: 
+# 1) True/False logic
+# 2) Storing fetched text and attributes
+# 3) Using stored values in a match() statement to run different Tritium scripts.
+# The following example simply illustrates how to set a variable manually to whatever %name and %value you desire. 
 # @example
 # var("my_var", "is set")
 # log($my_var)
