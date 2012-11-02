@@ -7,6 +7,7 @@
 # @args Text %css_selector
 # @description 
 # $$ selects an element of HTML using a CSS-style selector. It is used as an alternative selector to the single-dollar sign (which selects via XPath).
+# The function takes one argument, which is the item to be selected.
 # People usually find the $$ easier to use - at least in the beginning - as it requires no knowledge of XPath.
 # Things to note: the $$ converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
 # For example, the selector $$("#one") will be converted into $(".//*[id='one']"). The double-forward slash deep search could affect performance.
@@ -34,6 +35,7 @@
 # @args Text %class
 # @description 
 # The add_class function is used to add a class to the current node. 
+# The function takes one argument - the class to be added.
 # What the function does is takes the current node and appends any existing classes with a space, followed by the class specified. 
 # The add_class function will therefore not overwrite any existing classes that are present on the node. Contrast this with the attribute function, which would obliterate any existing classes. 
 # Common use cases include (but are not limited to):
@@ -67,6 +69,8 @@
 # @scope XMLNode
 # @args Text %tag_name
 # @description
+# The inner_wrap function takes all the content of the current node and wraps it.
+# The function takes one argument and that is the name of the tag in which you want to wrap the content of the current node.
 # Common use cases include (but are not limited to):
 # 1) Wrapping all interior content into an anchor tag
 # 2) 
@@ -96,7 +100,12 @@
 # @category Modify
 # @scope XMLNode
 # @args
-# @description 
+# @description
+# The remove_text_nodes function takes all text that is a direct child of the current node and removes it.
+# Any non-text nodes (e.g. anchor tags, image tags, etc.) will remain intact.
+# Common use cases include (but are not limited to):
+# 1) Removing blank text nodes in between elements
+# The example below will remove only text nodes from the div.
 # @example
 # $("./div") {
 #   remove_text_nodes()
@@ -115,7 +124,15 @@
 # @category Modify
 # @scope XMLNode
 # @args Text %name,Text %value
-# @description 
+# @description
+# The attribute function is used a lot in Tritium. It allows you to modify any attribute on the current node.
+# The function takes two arguments - the first being the attribute name and the second its value.
+# If the attribute already exists on the tag, it will be overwritten by the new value specified.
+# Common use cases include (but are not limited to):
+# 1) Overwriting existing classes with your own class
+# 2) 
+# 3) Adding attributes to enable Uranium
+# The example below will add a href of http://example.com to the selected a tag.
 # @example
 # $("./a") {
 #   attribute("href", "http://example.com")
@@ -140,6 +157,11 @@
 # @scope Attribute
 # @args Text %value
 # @description 
+# The value function allows you to modify the value of an attribute. 
+# The function takes one argument - the value for the attribute.
+# An example of the value function being used on an attribute can be found in the functions/main.ts file in the rewrite_links function.
+# The value function is used to modify the hrefs of anchor tags.
+# In the example below, the href attribute of the selected a tag will be given a new value of http://example.com.
 # @example
 # $("./a") {
 #   attribute("href") {
@@ -166,6 +188,11 @@ Functionally equivalent to `name() { set(%name) }`."
 # @scope Attribute
 # @args Text %name
 # @description 
+# The name function allows you to change the name of an attribute.
+# It takes one argument, which is the new name for the attribute.
+# A use case for this function is found in the lateload function in the functions/main.ts file of a Moovweb project.
+# The name function is used to change the src attribute of images to data-ur-ll-src - which signals to some javascript to load the images when the page has finished.
+# The example below changes the id of the selected div to a class.
 # @example
 # $("./div") {
 #   attribute("id") {
@@ -175,7 +202,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/name
 # @guidetext
-# @guidelink 
+# @guidelink <a href="#name Text name"
 @func Attribute.name(Text %name) {
   name() { 
     set(%name) 
@@ -190,6 +217,12 @@ Functionally equivalent to `name() { set(%name) }`."
 # @scope Base
 # @args Text %filename
 # @description 
+# The sass function points to the stylesheets directory of your project, allowing for easy reference to your stylesheets.
+# The function takes one argument, which is the name of the stylesheet. The file should be referenced in relation to the assets/stylesheets folder.
+# As the function is mainly used to reference stylesheets in the project, this function is usually only found once. Most projects only inject one stylesheet.
+# In the functions/main.ts file, you can see the sass function being used in the add_assets function, which inserts a link to the main stylesheet.
+# Related functions: <a href="#asset Text name">asset()</a>
+# The example below will insert a link tag with an href pointing to the assets/stylesheets/.css/main.css file of the project.
 # @example
 # insert("link", rel: "stylesheet", type: "text/css", href: sass("main")
 # @exampletext Tritium Tester Example
@@ -209,6 +242,10 @@ Functionally equivalent to `name() { set(%name) }`."
 # @scope XMLNode
 # @args Text %name,Text %value
 # @description 
+# The set function allows you to set an attribute on an element.
+# The function takes two arguments. The first is the name of the attribute and the second is the value for that attribute.
+# Related functions: <a href="#attribute Text name Text value">attribute()</a>
+# The example below will take the a tag and set an href attribute with the value http://example.com.
 # @example
 # $("./a") {
 #   set("href", "http://example.com")
@@ -231,9 +268,16 @@ Functionally equivalent to `name() { set(%name) }`."
 # @scope attribute
 # @args 
 # @description 
+# The attributes function allows you to set multiple attributes for an element.
+# It is commonly used instead of the attribute function, as it leaves open the possibility to add more attributes later on.
+# The function can take an arbitrary number of arguments in the format `name: "value"`.
+# Common use cases include (but are not limited to):
+# 1) Assigning multiple attributes for Uranium - such as a data-ur-id and a data-ur-component type.
+# 2) Adding a class while also setting the value of an input 
+# The example below gives the selected div two attributes - a class of "one" and an id of "two".
 # @example
 # $("./div") {
-#   attributes(class: "class", id: "id")
+#   attributes(class: "one", id: "two")
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/attributes
@@ -249,7 +293,13 @@ Functionally equivalent to `name() { set(%name) }`."
 # @category Modify
 # @scope XMLNode
 # @args
-# @description 
+# @description
+# The text function opens up the text scope.
+# Without any further functions, the text function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
+# Common use cases include (but are not limited to):
+# 1) Grabbing text from unnecessarily-nested nodes
+# 2) Opening a text scope to then replace a word in a paragraph
+# The example below will set the inside of the div to be "NewText".
 # @example
 # $("./div") {
 #   text() {
@@ -273,6 +323,11 @@ Functionally equivalent to `name() { set(%name) }`."
 # @scope XMLNode
 # @args Text %value
 # @description 
+# The text function behaves slightly differently when an argument is passed into it.
+# The function takes one argument, which is the text that will appear in the element.
+# Important to note is that anything within the argument will be inserted as text. So using `text("<a></a>")` will insert the *text* rather than the HTML tag.
+# Compare this to the inner function, which will insert the *tag* itself.
+# The example below will replace the interior of the div with the text "NewText".
 # @example
 # $("./div") {
 #   text("NewText")
@@ -289,6 +344,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Searches for nodes matching `%xpath` and ensures a domain is in the path of the `%attribute`. @example `absolutize(\"//img\", \"src\")` will convert all `img` tag sources from relative ('images/dog.png') to absolute ('http://www.example.com/images/dog.png')."
+# @hide
 # @abstract Given two arguments, the absolutize function takes the nodes specified and ensures the host domain is part of the attribute specified.
 # @name absolutize
 # @category Modify,Environment
@@ -342,6 +398,7 @@ Functionally equivalent to `name() { set(%name) }`."
 
 
 "Searches for nodes matching `%xpath` and ensures a domain is in their `src` path. @example `absolutize(\"//img\")` changes all `img` tag sources from relative ('images/dog.png') to absolute ('http://example.com/images/dog.png')."
+# @hide
 # @abstract Given one argument, the absolutize function takes the nodes specified and makes sure a domain is in the src attribute.
 # @name absolutize
 # @category Modify,Environment
@@ -361,12 +418,19 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Searches for `<img>` and `<script>` tags and ensures a domain is in their `src` path. @example `absolutize()` will go through the entire document and change every `img` and `script` tag source from relative ('asset/image.png' or 'asset/script.js') to absolute ('http://example.com/asset/image.png' or 'http://example.com/asset/script.js')."
-# @abstract Given no arguments, the absolutize function ensures all script and img tags have sources with domains.
+# @abstract The absolutize function ensures all script and img tags have sources with domains.
 # @name absolutize
 # @category Modify,Environment
 # @scope XMLNode
 # @args
 # @description 
+# The absolutize function takes paths of sources for images and scripts and ensures that they contain a domain.
+# Instead of the source being "/images/icon.png", it would be "http://example.com/images/icon.png". This ensures that no unnecessary files are directed through the proxy, increasing performance.
+# The function can be used in three ways. Without any arguments, the function will take all img and src tags and absolutize their src attribute.
+# You can pass in a particular tag using XPath (e.g. absolutize(".//img")) if you only want to absolutize one particular tag.
+# Or, you can specify two arguments. The first is the tag, defined in XPath, which you want to absolutize. The second argument is the attribute that you want to absolutize (e.g. src or href).
+# Absolutizing URLs is often done in projects at the top of the scripts/html.ts file.
+# The example below will take all the image tags and 
 # @example
 # absolutize()
 # @exampletext Tritium Tester Example
@@ -386,6 +450,11 @@ Functionally equivalent to `name() { set(%name) }`."
 # @scope XNLNode
 # @args Position %pos,Text %js
 # @description 
+# The insert_javascript_at function takes the javascript specified, wraps it in a script tag, and inserts it in the currently-selected node at a position specified by you.
+# The function takes two arguments. The first is the position at which the script tag should be added, and the second is the javascript itself.
+# Important to note is that the first argument has to be in the *position* scope, meaning that plain text will not work. You must place the text within the position function, as in the example.
+# Acceptable positions are: top, bottom, before and after.
+# The example below will insert a script tag containing "alert('Boo')" at the top of the selected element.
 # @example
 # insert_javascript_at(position("top"), "alert('Boo')")
 # @exampletext Tritium Tester Example
@@ -402,11 +471,21 @@ Functionally equivalent to `name() { set(%name) }`."
 
 "Inserts javascript (specified by **%js**) in a script tag within the currently-selected node. @example `$(\"div\") { insert_javascript(\"alert('Boo')\") }` will insert the javascript at the bottom of the div."
 # @abstract Inserts javascript in a script tag in the current node.
-# @name insert_javascript_at
+# @name insert_javascript
 # @category Create,Javascript
 # @scope XNLNode
 # @args Text %js
 # @description 
+# The insert_javascript function inserts javascript into the currently-selected node. It takes the javascript specified, wraps it in a script tag, and inserts it into the current node.
+# The function takes one argument - the javascript to be inserted.
+# By default, the script is inserted in the bottom of the node.
+# There are a number of comparable functions that perform similar functions but specify a position in their name:
+# - insert_javascript_top(Text %js)
+# - insert_javascript_bottom(Text %js)
+# - insert_javascript_before(Text %js)
+# - insert_javascript_after(Text %js)
+# The function is commonly used when javascript needs to be added to a specific node rather than globally, via Fusion.
+# In the example below, the javascript "alert('Boo')" will be inserted at the bottom of the current node.
 # @example
 # insert_javascript("alert('Boo')")
 # @exampletext Tritium Tester Example
@@ -426,6 +505,8 @@ Functionally equivalent to `name() { set(%name) }`."
 # @scope XMLNode
 # @args Text %html
 # @description 
+#
+# Compare to the text() function, which replaces the content with text only.
 # @example
 # $("./div") {
 #   inner("New Content")
@@ -656,6 +737,8 @@ Functionally equivalent to `name() { set(%name) }`."
 # @scope XMLNode
 # @args Text %tag,Text %inner
 # @description 
+# Content
+# Adding attributes too
 # @example
 # insert("div", "Content")
 # @exampletext Tritium Tester Example
@@ -750,6 +833,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts javascript (specified by **%js**) in a script tag at the bottom of the currently-selected node. @example `insert_javascript_bottom(\"alert('Boo')\")` will insert `<script>alert('Boo')</script>` at the bottom of the current node."
+# @hide
 # @abstract Inserts javascript at the bottom of the current node.
 # @name insert_javascript_bottom
 # @category Create
@@ -769,6 +853,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts javascript (specified by **%js**) in a script tag at the top of the currently-selected node. @example `insert_javascript_top(\"alert('Boo')\")` will insert `<script>alert('Boo')</script>` at the top of the current node."
+# @hide
 # @abstract Inserts javascript at the top of the current node.
 # @name insert_javascript_top
 # @category Create
@@ -788,6 +873,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts javascript (specified by **%js**) in a script tag after the currently-selected node. @example `insert_javascript_after(\"alert('Boo')\")` will insert `<script>alert('Boo')</script>` after the current node."
+# @hide
 # @abstract Inserts javascript after the current node.
 # @name insert_javascript_after
 # @category Create
@@ -807,6 +893,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts javascript (specified by **%js**) in a script tag before the currently-selected node. @example `insert_javascript_before(\"alert('Boo')\")` will insert `<script>alert('Boo')</script>` before the current node."
+# @hide
 # @abstract Inserts javascript before the current node.
 # @name insert_javascript_before
 # @category Create
@@ -814,7 +901,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @args Text %js
 # @description 
 # @example
-# insert_javascript_bbefore"alert('Boo')")
+# insert_javascript_before"alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/libxml/test/examples/insert_javascript
 # @guidetext
