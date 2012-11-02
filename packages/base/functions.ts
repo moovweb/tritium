@@ -7,7 +7,7 @@
 # @description
 # The export function is used when you want to change the outgoing response header.
 # Things to note: You cannot currently export the status of the response header (i.e. 200, 302, etc.).
-# Common use cases include (but are not limited to):
+# Common uses include:
 # 1) Malformed HTML or Javascript with the wrong content-type set.
 # 2) Setting the Cache-Time of the page.
 # 3) Setting the Location for a redirect.
@@ -34,14 +34,14 @@
 # @scope Text
 # @args Text %exp
 # @description
-# The regexp function is used to parse regular expressions. Regular Expressions are incredibly powerful for selecting and modifying groups of text.
-# Common use cases include (but are not limited to):
+# The regexp function is used to parse expressions and turn them into regular expressions. Regular Expressions are incredibly powerful for selecting and modifying groups of text.
+# Common uses include:
 # 1) Removing extra text when transitioning from desktop to mobile sites.
 # 2) Modifying text to be more clear and concise to fit a smaller viewport.
 # 3) Changing instructions such as "click" to "tap" for mobile devices.
 # 4) Fixing malformed HTML before the document is parsed so your selectors work properly.
-# @example
 # In this example, we are using the string "true" and turning it into a regular expression to use in a match/with statement. If the string true is anywhere in the text we are matching, the code in the with() statement will run. 
+# @example
 # with(regexp("true")) {
 # # run this code if your text matches the string "true" 
 # }
@@ -61,7 +61,7 @@
 # @args Text %name
 # @description
 # The asset function is most commonly used to rewrite the sources of images to the new Moovweb domain so that you can serve local content fast. Often when redesigning sites, you'll want to resize images, minify javascript, bundle assets together, and take a variety of performance measures to optimize your mobile site. Performance is increasingly important for mobile because of the significantly worse bandwidth that your users are using to connect (Edge, 3G, and WiFi). This means you'll want to optimize and re-serve any bloated content from the desktop site. The asset function helps to rewrite all those sources. 
-# Common use cases include (but are not limited to):
+# Common uses include:
 # 1) Serving optimized local images
 # 2) Rewriting src and href tags for scripts, links, and images. 
 # 3) Serving local stylesheets 
@@ -89,7 +89,7 @@
 # @description 
 # The bm function is used to test the performance of your code by the proxy. Generally, the majority of your performance boost will come from optimizing the images, scripts, and stylesheets of the existing desktop site. However, there are ways to improve performance of the execution of the proxy such as using XPath selectors instead of CSS selectors and avoiding deep searches for content in the DOM. 
 # Things to note: The bm() measurements vary between trials so you may have to run several samples to get an accurate representation of execution speed.
-# Common use cases include (but are not limited to):
+# Common uses include:
 # 1) Measuring the time it takes for a block of code to run. 
 # @example
 # $("./body") {
@@ -115,7 +115,7 @@
 # @description
 # The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. 
 # Things to note: If you have more than one variable or regular expression to test againt, you can simply provide the match function with the variable in question and then use embeded with() statements for each case. You can also provide a final else() statement to serve as a catchall for all unsuccessful matches.
-# Common use cases include (but are not limited to):
+# Common uses include:
 # 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
 # 2) Matching attributes with certain content to determine if they need to be changed in some way. 
 # 3) Simulating if/then/else statements and boolean true/false logic to run differing Tritium. 
@@ -147,7 +147,7 @@
 # @description
 # The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. 
 # Things to note: If you have more than one variable or regular expression to test againt, you can simply provide the match function with the variable in question and then use embeded with() statements for each case. You can also provide a final else() statement to serve as a catchall for all unsuccessful matches.
-# Common use cases include (but are not limited to):
+# Common uses include:
 # 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
 # 2) Matching attributes with certain content to determine if they need to be changed in some way. 
 # 3) Simulating if/then/else statements and boolean true/false logic to run differing Tritium. 
@@ -179,7 +179,7 @@
 # @description 
 # The match_not function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. Match_not() essentially inverts what you would expect from the match function. This means that if a match is not successful, then the block of code inside that match_not() or with() statement will run. 
 # Things to note: If you have more than one variable or regular expression to test againt, you can simply provide the match_not function with the variable in question and then use embeded with() statements for each case. You can also provide a final else() statement to serve as a catchall for all unsuccessful matches.
-# Common use cases include (but are not limited to):
+# Common uses include:
 # 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
 # 2) Matching attributes with certain content to determine if they need to be changed in some way. 
 # 3) Simulating if/then/else statements and boolean true/false logic to run differing Tritium. 
@@ -211,7 +211,7 @@
 # @description
 # The match_not function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. Match_not() essentially inverts what you would expect from the match function. This means that if a match is not successful, then the block of code inside that match_not() or with() statement will run. 
 # Things to note: If you have more than one variable or regular expression to test againt, you can simply provide the match_not function with the variable in question and then use embeded with() statements for each case. You can also provide a final else() statement to serve as a catchall for all unsuccessful matches.
-# Common use cases include (but are not limited to):
+# Common uses include:
 # 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
 # 2) Matching attributes with certain content to determine if they need to be changed in some way. 
 # 3) Simulating if/then/else statements and boolean true/false logic to run differing Tritium. 
@@ -241,6 +241,11 @@
 # @scope Text
 # @args
 # @description 
+# The clear function is used to remove text from inside a text scope. 
+# Common uses include:
+# 1) Clearing extra white space inside nodes
+# 2) Clearing text links to turn them into icons 
+# In this example, we are simply clearing any existing text inside the node with an ID of "my_div". 
 # @example
 # $$("#my_div") {
 #   text() {
@@ -265,6 +270,12 @@
 # @scope XMLNode
 # @args
 # @description 
+# The text() function is used to either set the text of the current node, or to open the text scope of the current node for modification. 
+# Things to note: The text() function is different from the inner() function in that it will only return an array of the text nodes inside the element from which it is called. Inner(), on the other hand, will return the entire inner HTML of the node from which it is called. 
+# Common uses include: 
+# 1) Opening the scope for the use of text scope functions such as replace, set, length, append, prepend, clear and more. 
+# 2) Setting the text of the current node. 
+# In this example, we are opening the text scope of the div with an ID of "my_div".
 # @example
 # $$("#my_div") {
 #   text() {
@@ -272,7 +283,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink http://tritium.moovweb.com/base/test/examples/text/text
 # @guidetext Function Guide
 # @guidelink
 @func Text.text() {
@@ -288,6 +299,13 @@
 # @scope Text
 # @args Text Regexp %search,Text %with
 # @description 
+# The replace function is used to alter existing text nodes by replacing them based on either regular expressions or specific strings. 
+# Things to note: Unless otherwise specified by the Regular Expression, all matches found by the %search parameter will be replaced. 
+# Common uses include:
+# 1) Replacing desktop instructions like "click" to mobile instructions like "tap"
+# 2) Removing extra or unnecessary text
+# 3) Rewriting attributes based on some standard set via a regular expression.
+# In this example we are replacing the text "Replace Me" inside #my_div with the text "Replaced!".
 # @example
 # $$("#my_div") {
 #   text() {
@@ -312,6 +330,13 @@
 # @scope Text
 # @args Text Text %search,Text %with
 # @description 
+# The replace function is used to alter existing text nodes by replacing them based on either regular expressions or specific strings. 
+# Things to note: Unless otherwise specified by the Regular Expression, all matches found by the %search parameter will be replaced. 
+# Common uses include:
+# 1) Replacing desktop instructions like "click" to mobile instructions like "tap"
+# 2) Removing extra or unnecessary text
+# 3) Rewriting attributes based on some standard set via a regular expression.
+# In this example we are replacing the text "Replace Me" inside #my_div with the text "Replaced!".
 # @example
 # $$("#my_div") {
 #   text() {
@@ -335,6 +360,11 @@
 # @scope Text
 # @args 
 # @description 
+# The length function is used to return the length of the current text node or the provided input string. 
+# Common uses include:
+# 1) Validating an input string to make sure it is either a minimum or maximum number of characters.
+# 2) Finding the length of a string. 
+# In this example, we log the length of the current text inside the div with an ID of "my_div".
 # @example
 # $$("#my_div") {
 #   text() {
