@@ -485,6 +485,13 @@
 # @scope Text
 # @args Regexp %search
 # @description 
+# The replace function is used to alter existing text nodes by replacing them based on either regular expressions or specific strings. 
+# Things to note: Unless otherwise specified by the Regular Expression, all matches found by the %search parameter will be replaced. 
+# Common uses include:
+# 1) Replacing desktop instructions like "click" to mobile instructions like "tap"
+# 2) Removing extra or unnecessary text
+# 3) Rewriting attributes based on some standard set via a regular expression.
+# In this example we are replacing the text "Replace Me" inside #my_div with the text "Replaced!".
 # @example
 # $$("#my_div") {
 #   text() {
@@ -505,7 +512,14 @@
 # @category Modify,Text
 # @scope Text
 # @args Text %search
-# @description 
+# @description
+# The replace function is used to alter existing text nodes by replacing them based on either regular expressions or specific strings. 
+# Things to note: Unless otherwise specified by the Regular Expression, all matches found by the %search parameter will be replaced. 
+# Common uses include:
+# 1) Replacing desktop instructions like "click" to mobile instructions like "tap"
+# 2) Removing extra or unnecessary text
+# 3) Rewriting attributes based on some standard set via a regular expression.
+# In this example we are replacing the text "Replace Me" inside #my_div with the text "Replaced!".
 # @example
 # $$("#my_div") {
 #   text() {
@@ -527,6 +541,11 @@
 # @scope Text
 # @args Text %text_to_prepend
 # @description 
+# The prepend function is used to insert text at the beginning of a text scope. 
+# Common uses include:
+# 1) Categorizing content by attaching labels or other forms of organized tags.
+# 2) Numbering content using the prepend() function in combination with the index() function.
+# In this example, we prepend a sentence onto the beginning of the text node inside "my_div".
 # @example
   $$("#my_div") {
     text() {
@@ -546,6 +565,11 @@
 # @scope Text
 # @args Text %text_to_append
 # @description 
+# The append function is used to insert text at the end of a text scope. 
+# Common uses include:
+# 1) Adding instructions following content.
+# 2) Elaborating on content without resetting it. 
+# In this example, we append a sentence onto the end of the text node inside "my_div".
 # @example
   $$("#my_div") {
     text() {
