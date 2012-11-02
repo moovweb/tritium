@@ -241,6 +241,11 @@
 # @scope Text
 # @args
 # @description 
+# The clear function is used to remove text from inside a text scope. 
+# Common use cases include (but are not limited to):
+# 1) Clearing extra white space inside nodes
+# 2) Clearing text links to turn them into icons 
+# In this example, we are simply clearing any existing text inside the node with an ID of "my_div". 
 # @example
 # $$("#my_div") {
 #   text() {
@@ -265,6 +270,12 @@
 # @scope XMLNode
 # @args
 # @description 
+# The text() function is used to either set the text of the current node, or to open the text scope of the current node for modification. 
+# Things to note: The text() function is different from the inner() function in that it will only return an array of the text nodes inside the element from which it is called. Inner(), on the other hand, will return the entire inner HTML of the node from which it is called. 
+# Common uses include (but are not limited to): 
+# 1) Opening the scope for the use of text scope functions such as replace, set, length, append, prepend, clear and more. 
+# 2) Setting the text of the current node. 
+# In this example, we are opening the text scope of the div with an ID of "my_div".
 # @example
 # $$("#my_div") {
 #   text() {
@@ -272,7 +283,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink http://tritium.moovweb.com/base/test/examples/text/text
 # @guidetext Function Guide
 # @guidelink
 @func Text.text() {
