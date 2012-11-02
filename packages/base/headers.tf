@@ -389,6 +389,13 @@
 # @scope Text
 # @args Text %key,Text %value
 # @description 
+# The export function is used when you want to change the outgoing response header.
+# Things to note: You cannot currently export the status of the response header (i.e. 200, 302, etc.).
+# Common uses include:
+# 1) Malformed HTML or Javascript with the wrong content-type set.
+# 2) Setting the Cache-Time of the page.
+# 3) Setting the Location for a redirect.
+# In this example, we are setting the Content-Type to "text/html". 
 # @example
 # html() {
 #   export("Content-Type", "text/html")
@@ -406,6 +413,10 @@
 # @scope Text
 # @args Text %input_string
 # @description 
+# The upcase function is used to return the provided input string in all uppercase letters.
+# Common uses include:
+# 1) Making buttons more prominent such as SIGN IN or SIGN UP NOW. 
+# In this example, we fetch the ID of the div with the ID "my_div" and then we log a concat statement using uppercase letters for the name of the div. 
 # @example
 # $$("#my_div") {
 #   $name = fetch("./@id")
@@ -424,6 +435,10 @@
 # @scope Text
 # @args Text %input_string
 # @description 
+# The downcase function is used to return the provided input string in all lowercase letters.
+# Common uses include:
+# 1) Making text less prominent.
+# In this example, we fetch the ID of the div with the ID "my_div" and then we log a concat statement using lowercase letters for the name of the div. 
 # @example
 # $$("#my_div") {
 #   $name = fetch("./@id")
@@ -439,12 +454,18 @@
 //@func Text.text() Text Text
 
 " Replaces the entire current text with what you pass in. @example `set(\"one\")` will set the whole of the text to 'one'. "
-# @abstract The set function is used to replace the entire current text with the provided value.
+# @abstract The set function is used to replace the entire current scope with the provided value.
 # @name set
 # @category Text,Modify
 # @scope Text
 # @args Text %value
 # @description 
+# The set function is used to override any existing content in the current scope and set it to the %value provided.
+# Things to note: when used in an XMLNode scope the entire inner HTML will be set overriding any child nodes and content. 
+# Common uses include:
+# 1) Setting the content of text scopes
+# 2) Setting the value of attribute scopes
+# In this example, we set the text node inside "my_div" to "I've been set!".
 # @example
 # $$("#my_div") {
 #   text() {
