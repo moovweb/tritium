@@ -1,5 +1,14 @@
 " Searches the tree and selects all nodes matching **%xpath**. @example `$(\"//div\")` will find every div element in the document."
-
+# @abstract The $ function is a selector that takes an %xpath input. XPath is a syntax for notation based on the structure of the HTML DOM. 
+# @name $
+# @category Environment,Create,Modify,Move,Misc,Text
+# @scope
+# @args Text %xpath
+# @description
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext 
+# @guidelink 
 @func Node.$(Text %xpath) {
   select(%xpath) {
     yield()
