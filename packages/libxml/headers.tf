@@ -192,12 +192,20 @@
 # The equal function takes two nodes and compares them to see if they are equal.
 # Important to note is that you cannot use text as input for this function. You should set a variable using this() on your current node, then use that variable as an argument.
 # The function takes two arguments - these are the nodes which you need to equate.
+# The function is commonly used when writing functions - in order to ensure that a function is not performed on itself, potentially avoiding a loop.
+# The example below will compare the div node twice. First to its anchor child - where the log will return "false" because the two nodes are not equal. The second log message will be "true" as we have scoped back into the anchor's parent - the div. 
 # @example
-# 
-# 
-# 
+# $("./div") {
+#   %div = this()
+#   $("./a") {
+#     log(equal(%div, this()))
+#     $("..") {
+#       log(equal(%div, this()))
+#     }
+#   }    
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink http://tritium.moovweb.com/libxml/test/examples/equal
 # @guidetext
 # @guidelink 
 @func equal(XMLNode %a, XMLNode %b) Text
