@@ -11,6 +11,7 @@
 # People usually find the $$ easier to use - at least in the beginning - as it requires no knowledge of XPath.
 # Things to note: the $$ converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
 # For example, the selector $$("#one") will be converted into $(".//*[id='one']"). The double-forward slash deep search could affect performance.
+# Related functions: <a href="css Text selector">css()</a>
 # Common use cases include (but are not limited to):
 # 1) Selecting many element types based on attributes rather than tag names
 # 2) Selecting items without being familiar with XPath
@@ -160,7 +161,7 @@
 # The value function allows you to modify the value of an attribute. 
 # The function takes one argument - the value for the attribute.
 # An example of the value function being used on an attribute can be found in the functions/main.ts file in the rewrite_links function.
-# The value function is used to modify the hrefs of anchor tags.
+# In this case, the value function is used to modify the hrefs of anchor tags.
 # In the example below, the href attribute of the selected a tag will be given a new value of http://example.com.
 # @example
 # $("./a") {
@@ -191,7 +192,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # The name function allows you to change the name of an attribute.
 # It takes one argument, which is the new name for the attribute.
 # A use case for this function is found in the lateload function in the functions/main.ts file of a Moovweb project.
-# The name function is used to change the src attribute of images to data-ur-ll-src - which signals to some javascript to load the images when the page has finished.
+# In this case, the name function is used to change the src attribute of images to data-ur-ll-src - which signals to some javascript to load the images when the page has finished.
 # The example below changes the id of the selected div to a class.
 # @example
 # $("./div") {

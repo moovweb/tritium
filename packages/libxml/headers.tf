@@ -5,8 +5,16 @@
 # @scope Base
 # @args Text %css
 # @description 
+# The css function selects elements on a page using a CSS-style selector.
+# The function takes one argument, the item to be selected. The argument is written as a standard CSS selector - for example #one to search for an id.
+# Things to note: the css() function converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
+# Related functions: <a href="#$$ Text css_selector">css()</a>
+# Common use cases include (but are not limited to):
+# 1) Selecting many element types based on attributes rather than tag names
+# 2) Selecting items without being familiar with XPath
+# The example below will remove any element on the page with an id of "one".
 # @example
-# css("#id") {
+# css("#one") {
 #   remove()
 # }
 # @exampletext Tritium Tester Example
@@ -22,6 +30,7 @@
 # @scope Text
 # @args
 # @description 
+# The example below will parse the document as XML, allowing the selection of nodes with XPath.
 # @example
 # xml() {
 #   $("/xml")
@@ -83,9 +92,18 @@
 # @category Modify
 # @scope XMLNode
 # @args Text %xpath_selector
-# @description 
+# @description
+# The remove function deletes the element specified by the selector.
+# The function takes one argument - the location of the node to be removed, specified using XPath.
+# As you can select attributes using XPath, it is possible to delete attributes using the remove() function. Select an attribute using the @ sign - for example "@class" will select a class.
+# Common use cases include (but are not limited to):
+# 1) Removing all the `<br>` tags in a paragraph
+# 2) Removing style attributes from tags
+# The example below will remove all span children of the div.
 # @example
-# remove("./span")
+# $("./div") {
+#   remove("./span")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/libxml/test/examples/remove
 # @guidetext Removing nodes.
@@ -99,6 +117,11 @@
 # @scope XMLNode
 # @args 
 # @description 
+# The inner function opens the scope of the current node for manipulation.
+# Related functions: <a href='#inner Text html'>inner(Text %html)</a>
+# Common use cases include (but are not limited to):
+# 1) Opening the inner scope to replace contents
+# The example below will open the scope of the current div and replace everything with "NEW".
 # @example
 # $("./div") {
 #   inner() {
@@ -117,7 +140,13 @@
 # @category Modify
 # @scope XMLNode
 # @args
-# @description 
+# @description
+# The inner_text function converts the entirety of the current node into text.
+# The function essentially removes all HTML tags/elements and returns the text of the element.
+# Common use cases include (but are not limited to):
+# 1) Extracting text from a table
+# 2) Grabbing the text of an anchor while removing its tag
+# The example below will "flatten" the table, leaving only the text of the table in the tag.
 # @example
 # $("./table") {
 #   inner_text
@@ -135,6 +164,11 @@
 # @scope XMLNode
 # @args Text %name
 # @description 
+# The attribute function opens the scope of the attribute specified.
+# The function takes one argument - the attribute name.
+# Common use examples include (but are not limited to):
+# 1) Opening the scope of the attribute to replace certain characters
+# The example below will open the scope of the class attribute.
 # @example
 # $("./div[@class='one']") {
 #   attribute("class") {}
@@ -155,6 +189,9 @@
 # @scope Base
 # @args XMLNode %a,XMLNode %b
 # @description 
+# The equal function takes two nodes and compares them to see if they are equal.
+# Important to note is that you cannot use text as input for this function. You should set a variable using this() on your current node, then use that variable as an argument.
+# The function takes two arguments - these are the nodes which you need to equate.
 # @example
 # 
 # 
@@ -172,6 +209,9 @@
 # @scope Base
 # @args Node %a,Node %b
 # @description 
+# The equal function takes two nodes and compares them to see if they are equal.
+# Important to note is that you cannot use text as input for this function. You should set a variable using this() on your current node, then use that variable as an argument.
+# The function takes two arguments - these are the nodes which you need to equate.
 # @example
 # 
 # 
@@ -188,7 +228,14 @@
 # @category Create
 # @scope XMLNode
 # @args Text %tag_name
-# @description 
+# @description
+# The wrap_text_children function takes all the children of the current node and wraps them in the tag specified.
+# The function takes one argument - the tag in which you want to wrap the text children.
+# Important to note is that the function will wrap all text children - even whitespace. This means you may have some empty tags generated.
+# Common use examples include (but are not limited to):
+# 1) Wrapping all text children in tags so that they can then be subsequently removed
+# 2) From a mixture of text nodes and HTML nodes, wrapping text children in a tag allows for easier manipulation
+# The example below will take all the text node children of the span and wrap them in divs.
 # @example
 # $("./span")
 #   wrap_text_children("div")
@@ -223,6 +270,10 @@
 # @scope Attribute
 # @args
 # @description 
+# The remove function removes the currently-selected attribute. It is an extremely useful function.
+# Common uses include (but are not limited to):
+# 1) Removing inline styles once the attribute has been selected
+# The example below will remove the class from the selected div.
 # @example
 # $("./div[@class='one']")
 #   attribute("class") {
@@ -242,6 +293,12 @@
 # @scope Attribute
 # @args 
 # @description 
+# The value function opens the scope of the selected attribute. This allows you to modify the value of an attribute. 
+# To modify the value itself, you would need to use the set function (to change it completely), or perhaps the replace function to replace certain aspects.
+# Common use cases include (but are not limited to):
+# 1) Altering the value of a class
+# 2) Modifying the value of an href attribute
+# In the example below, the class attribute of the selected div tag will be given a new value of "two".
 # @example
 # $("./div[@class='one']")
 #   attribute("class") {
@@ -261,6 +318,9 @@
 # @scope Attribute
 # @args 
 # @description 
+# The name function opens the scope of the selected attribute. It allows you to change the name of an attribute.
+# To modify the name itself, you would need to use the set function (to change it completely), or perhaps the replace function to replace certain aspects.
+# The example below changes the class of the selected div into an id.
 # @example
 # $("./div[@class='one']")
 #   attribute("class") {
