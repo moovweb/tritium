@@ -145,7 +145,7 @@
 
 " Returns the XPath of the current node. @example From any node, using `log(path())` will return the path to the node in the logs. "
 # @abstract 
-# @name
+# @name path
 # @category Misc
 # @scope Node
 # @args
@@ -161,26 +161,19 @@
 //@func Node.inject(Text %html) Text
 
 " Creates a new node (specified by **%tag_name**) and inserts it at the location specified by **%pos**. @example `insert_at(\"top\", \"div\")` inserts a div at the top of the current node. "
-# @abstract 
-# @name
-# @category Create
-# @scope Node
-# @args
-# @description
-# @example
-# @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.insert_at(Position %pos, Text %tag_name) Text
 
 " Injects HTML (specified by **%html**) into the current node at the location specified by **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_at(\"top\", read(\"file.html\"))` injects the file specified at the top of the current node."
 # @abstract Injects HTML into the current node at the position specified.
-# @name
+# @name inject_at
 # @category Create
 # @scope Node
-# @args
+# @args Text %pos,Text %html
 # @description
+# Common uses include (but are not limited to):
+# 1) Injecting a scaffold for a header and/or footer
+# The example below will inject the section.html file into the top of the selected div. Notice how the read function is used to input the file.
 # @example
 # $("./div") {
 #   inject_at(position("top"), read("section.html"))
