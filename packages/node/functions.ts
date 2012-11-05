@@ -73,9 +73,9 @@
 " Renames the current node to the tag specified by **%value** - [click for example](http://beta.moovweb.com/learn/training/function_guides/rename). @example `name(\"span\")` will change the currently-selected node to a span. "
 # @abstract Renames the current node to the tag specified by the input. 
 # @name name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @category Modify
 # @scope Attribute,XMLNode,Text
-# @args
+# @args %value
 # @description
 # The name function replaces the name of the currently selected node with the input provided by %value.
 # @example
@@ -91,18 +91,7 @@
 }
 
 " Copies the node specified by **%xpath** to the currently-selected node, at the position **%pos**. @example `copy_here(\"//table\", \"top\")` will copy every table in the document into the top of the current node."
-# @abstract The copy_here function copies the node specified by the input %xpath to the currently selected node. 
-# @name copy_here
-# @category Create,Move
-# @scope Attribute,XMLNode,Text
-# @args Text %xpath,Position %pos
-# @description The copy_here function copies the node specified by the input XPath selector to the current scope from which it is called. 
-# Things to note: There is also an optional position variable (%pos) that can specify where in relation to the current node it should be placed such as: "before", "after", "top" or "bottom".
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/copy_here
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.copy_here(Text %xpath, Position %pos) {
   %calling_node = this()
   $(%xpath) {
@@ -123,7 +112,19 @@
 }
 
 " Copies the node specified by **%xpath** to the currently-selected node (at the bottom by default). @example `copy_here(\"//table\")` will copy every table in the document into the bottom of the current node. "
-# @hide
+# @abstract The copy_here function copies the node specified by the input %xpath to the currently selected node. 
+# @name copy_here
+# @category Create,Move
+# @scope Attribute,XMLNode,Text
+# @args Text %xpath
+# @description
+# The copy_here function copies the node specified by the input XPath selector to the current scope from which it is called. 
+# Things to note: There is also an optional position variable (%pos) that can specify where in relation to the current node it should be placed such as: "before", "after", "top" or "bottom".
+# @example
+# @exampletext
+# @examplelink /libxml/test/examples/node/copy_here
+# @guidetext 
+# @guidelink 
 @func Node.copy_here(Text %xpath) {
   copy_here(%xpath, position()) {
     yield() 
@@ -132,18 +133,7 @@
 
 
 " Copies the currently-selected node to the node specified by **%xpath**, at the position **%pos**. @example `copy_to(\"//body\", \"top\")` will copy the current node into the top of the body. "
-# @abstract The copy_to function copies the currently selected node to the node specified by the input %xpath.
-# @name copy_to
-# @category Create,Move
-# @scope Attribute,XMLNode,Text
-# @args Text %xpath,Position %pos
-# @description The copy_to function copies the currently selected node to the node specified by the input %xpath.
-# Things to note: There is also an optional position variable (%pos) that can specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/copy_to
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.copy_to(Text %xpath, Position %pos) {
   dup() {
     %calling_node = this()
@@ -164,7 +154,19 @@
 }
 
 " Copies the currently-selected node to the bottom of the node specified by **%xpath**. @example `copy_to(\"//body\")` will copy the current node into the bottom of the body. "
-# @hide
+# @abstract The copy_to function copies the currently selected node to the node specified by the input %xpath.
+# @name copy_to
+# @category Create,Move
+# @scope Attribute,XMLNode,Text
+# @args Text %xpath
+# @description
+# The copy_to function copies the currently selected node to the node specified by the input %xpath.
+# Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be copied such as: "before", "after", "top" or "bottom".
+# @example
+# @exampletext
+# @examplelink /libxml/test/examples/node/copy_to
+# @guidetext 
+# @guidelink 
 @func Node.copy_to(Text %xpath) {
   copy_to(%xpath, position()) {
     yield()
@@ -176,8 +178,14 @@
 # @name inject
 # @category Create,Modify
 # @scope Attribute,XMLNode,Text
-# @args
-# @description The inject function injects HTML into the current node.
+# @args %html
+# @description
+# The inject function injects HTML into the current node.
+# There are a number of comparable functions that perform similar functions but specify a position in their name so you don't have to pass it in as a parameter:
+# - inject_top(Text %html)
+# - inject_bottom(Text %html)
+# - inject_before(Text %html)
+# - inject_after(Text %html)
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink packages/libxml/test/examples/node/inject
@@ -190,17 +198,7 @@
 }
 
 " Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body. "
-# @abstract The move_to command moves the currently selected node to the node specified by the %xpath input. 
-# @name move_to
-# @category Modify,Move
-# @scope Attribute,XMLNode,Text
-# @args
-# @description The move_to command moves the currently selected node to the node specified by the %xpath input. 
-# @example
-# @exampletext Tritium Tester Example
-# @examplelink /libxml/test/examples/node/move_to
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.move_to(Text %xpath, Position %pos) {
   %parent_node = this()
   $(%xpath) {
@@ -211,17 +209,6 @@
 
 " Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body."
 # @hide
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
 @func Node.move_to(Text %xpath, Text %pos) {
   move_to(%xpath, position(%pos)) {
     yield()
@@ -229,16 +216,17 @@
 }
 
 " Moves the currently-selected node to the bottom of the node specified by **%xpath** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\")` will move the current node to the bottom of the body."
-# @hide
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract The move_to command moves the currently selected node to the node specified by the %xpath input. 
+# @name move_to
+# @category Modify,Move
 # @scope Attribute,XMLNode,Text
-# @args
+# @args %xpath
 # @description
+# The move_to command moves the currently selected node to the node specified by the %xpath input. 
+# Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
 # @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
+# @exampletext Tritium Tester Example
+# @examplelink /libxml/test/examples/node/move_to
 # @guidetext 
 # @guidelink 
 @func Node.move_to(Text %xpath) {
@@ -248,17 +236,7 @@
 }
 
 " Moves the node specified by **%where** to the currently-selected node, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\", \"top\")` will move every table in the document into the top of the current node."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.move_here(Text %where, Position %pos) {
   %parent = this()
   select(%where) {
@@ -269,17 +247,6 @@
 
 " Moves the node specified by **%where** to the currently-selected node, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\", \"top\")` will move every table in the document into the top of the current node."
 # @hide
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
 @func Node.move_here(Text %where, Text %pos) {
   move_here(%where, position(%pos)) {
     yield()
@@ -287,16 +254,17 @@
 }
 
 " Moves the node specified by **%where** to the bottom of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\")` will move every table in the document into the bottom of the current node."
-# @hide
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract The move_here function moves the node specified by the input xpath to the currently selected node. 
+# @name move_here
+# @category Modify,Move
 # @scope Attribute,XMLNode,Text
-# @args
+# @args %where
 # @description
+# The move_here function moves the node specified by the input xpath to the currently selected node. 
+# Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
 # @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
+# @exampletext Tritium Tester Example
+# @examplelink /libxml/test/examples/node/move_here
 # @guidetext 
 # @guidelink 
 @func Node.move_here(Text %where) {
@@ -334,17 +302,30 @@
 }
 
 " Inserts a tag (specified by **%tag**) at the bottom of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_bottom(\"div\")` will insert a div at the bottom of the current node."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
+# @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
+# @name insert
+# @category Create
+# @scope XMLNode
+# @args Text %tag,Text %inner
+# @description 
+# The insert function adds the specified tag into the currently-selected node. By default, it will insert the tag at the bottom.
+# The function has one obligatory argument - the tag name - and one optional argument - the content. 
+# There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, insert("div", "Content", class: "one") will add a class of "one" to the new element.
+# There are a number of comparable functions that perform similar functions but specify a position in their name:
+# - insert_top(Text %tag, Text %inner)
+# - insert_bottom(Text %tag, Text %inner)
+# - insert_before(Text %tag, Text %inner)
+# - insert_after(Text %tag, Text %inner)
+# Common use examples include:
+# 1) Adding an anchor tag to link to the desktop site
+# 2) Inserting a header or footer on a page
+# The example below will insert a div with the content "Content" into the bottom of the current node.
 # @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
+# insert("div", "Content")
+# @exampletext Tritium Tester Example
+# @examplelink packages/libxml/test/examples/insert
+# @guidetext Uses of the various insert functions.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func Node.insert_bottom(Text %tag) {
   insert_at(position(), %tag) {
     yield()
@@ -352,17 +333,30 @@
 }
 
 " Inserts a tag (specified by **%tag**) at the top of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_top(\"div\")` will insert a div at the top of the current node."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
+# @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
+# @name insert
+# @category Create
+# @scope XMLNode
+# @args Text %tag,Text %inner
+# @description 
+# The insert function adds the specified tag into the currently-selected node. By default, it will insert the tag at the bottom.
+# The function has one obligatory argument - the tag name - and one optional argument - the content. 
+# There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, insert("div", "Content", class: "one") will add a class of "one" to the new element.
+# There are a number of comparable functions that perform similar functions but specify a position in their name:
+# - insert_top(Text %tag, Text %inner)
+# - insert_bottom(Text %tag, Text %inner)
+# - insert_before(Text %tag, Text %inner)
+# - insert_after(Text %tag, Text %inner)
+# Common use examples include:
+# 1) Adding an anchor tag to link to the desktop site
+# 2) Inserting a header or footer on a page
+# The example below will insert a div with the content "Content" into the bottom of the current node.
 # @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
+# insert("div", "Content")
+# @exampletext Tritium Tester Example
+# @examplelink packages/libxml/test/examples/insert
+# @guidetext Uses of the various insert functions.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func Node.insert_top(Text %tag) {
   insert_at(position("top"), %tag) {
     yield()
@@ -370,17 +364,30 @@
 }
 
 "Inserts a tag (specified by **%tag**) after the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_after(\"div\")` will insert a div after the current node."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
+# @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
+# @name insert
+# @category Create
+# @scope XMLNode
+# @args Text %tag,Text %inner
+# @description 
+# The insert function adds the specified tag into the currently-selected node. By default, it will insert the tag at the bottom.
+# The function has one obligatory argument - the tag name - and one optional argument - the content. 
+# There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, insert("div", "Content", class: "one") will add a class of "one" to the new element.
+# There are a number of comparable functions that perform similar functions but specify a position in their name:
+# - insert_top(Text %tag, Text %inner)
+# - insert_bottom(Text %tag, Text %inner)
+# - insert_before(Text %tag, Text %inner)
+# - insert_after(Text %tag, Text %inner)
+# Common use examples include:
+# 1) Adding an anchor tag to link to the desktop site
+# 2) Inserting a header or footer on a page
+# The example below will insert a div with the content "Content" into the bottom of the current node.
 # @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
+# insert("div", "Content")
+# @exampletext Tritium Tester Example
+# @examplelink packages/libxml/test/examples/insert
+# @guidetext Uses of the various insert functions.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func Node.insert_after(Text %tag) {
   insert_at(position("after"), %tag) {
     yield()
@@ -388,17 +395,30 @@
 }
 
 " Inserts a tag (specified by **%tag**) before the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_before(\"div\")` will insert a div before the current node."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
+# @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
+# @name insert
+# @category Create
+# @scope XMLNode
+# @args Text %tag,Text %inner
+# @description 
+# The insert function adds the specified tag into the currently-selected node. By default, it will insert the tag at the bottom.
+# The function has one obligatory argument - the tag name - and one optional argument - the content. 
+# There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, insert("div", "Content", class: "one") will add a class of "one" to the new element.
+# There are a number of comparable functions that perform similar functions but specify a position in their name:
+# - insert_top(Text %tag, Text %inner)
+# - insert_bottom(Text %tag, Text %inner)
+# - insert_before(Text %tag, Text %inner)
+# - insert_after(Text %tag, Text %inner)
+# Common use examples include:
+# 1) Adding an anchor tag to link to the desktop site
+# 2) Inserting a header or footer on a page
+# The example below will insert a div with the content "Content" into the bottom of the current node.
 # @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
+# insert("div", "Content")
+# @exampletext Tritium Tester Example
+# @examplelink packages/libxml/test/examples/insert
+# @guidetext Uses of the various insert functions.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert 
 @func Node.insert_before(Text %tag) {
   insert_at(position("before"), %tag) {
     yield()
@@ -406,17 +426,7 @@
 }
 
 " Injects HTML (specified by **%html**) into the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject(read(\"file.html\"))` will inject the HTML in the specified file into the bottom of the current node."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.inject(Text %html) {
   inject_at(position("bottom"), %html) {
     yield()
@@ -424,17 +434,7 @@
 }
 
 " Injects HTML (specified by **%html**) at the bottom of the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_bottom(read(\"file.html\"))` will inject the HTML in the specified file into the bottom of the current node."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.inject_bottom(Text %html) {
   inject_at(position("bottom"), %html) {
     yield()
@@ -442,17 +442,7 @@
 }
 
 " Injects HTML (specified by **%html**) at the top of the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_top(read(\"file.html\"))` will inject the HTML in the specified file into the top of the current node."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.inject_top(Text %html) {
   inject_at(position("top"), %html) {
     yield()
@@ -460,17 +450,7 @@
 }
 
 " Injects HTML (specified by **%html**) after the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_after(read(\"file.html\"))` will inject the HTML in the specified file after the current node."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.inject_after(Text %html) {
   inject_at(position("after"), %html) {
     yield()
@@ -478,17 +458,7 @@
 }
 
 " Injects HTML (specified by **%html**) before the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_before(read(\"file.html\"))` will inject the HTML in the specified file before the current node."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.inject_before(Text %html) {
   inject_at(position("before"), %html) {
     yield()
