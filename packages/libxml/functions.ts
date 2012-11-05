@@ -289,17 +289,19 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 " Opens the current node for text modificaiton. @example `$(\"./div\") { text() { set(\"dog\") } }` will overwrite the inside of the div to 'dog'."
-# @abstract Opens the current node for text modification.
+# @abstract Opens the current node for text modification or retrieves text.
 # @name text
 # @category Modify
 # @scope XMLNode
 # @args
 # @description
-# The text function opens up the text scope.
+# The text function opens up the text scope or retrieves the text contained within the current scope.
 # Without any further functions, the text function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
+# A further function can be used (such as `set`) to replace anything inside the current node with text.
 # Common use cases include (but are not limited to):
 # 1) Grabbing text from unnecessarily-nested nodes
 # 2) Opening a text scope to then replace a word in a paragraph
+# 3) Fetching text from a tag to put into a variable
 # The example below will set the inside of the div to be "NewText".
 # @example
 # $("./div") {

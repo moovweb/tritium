@@ -59,31 +59,53 @@
 //@func position() Position
 
 " Searches the tree and selects all nodes matching **%xpath_selector**. Works the same as `$`. @example `select(\"//div\")` will select every div in the HTML."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract Selects all nodes matching the XPath specified.
+# @name select
+# @category Misc
 # @scope Node
-# @args
+# @args Text %xpath_selector
 # @description
+# The select function searches the HTML tree to match the XPath specified.
+# The function takes one argument, and that is the 
+# Related functions: <a href="#$ Text xpath">$()</a>
+# Common uses include:
+# 1) Selecting any HTML element in Tritium using XPath
+# The example below selects the html and body 
 # @example
+# select("/html/body") {
+#   remove()
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink packages/libxml/test/examples/node/select
 # @guidetext 
 # @guidelink 
 @func Node.select(Text %xpath_selector) Text Node
 
 " Opens up the contents to text modification. Use only for text-only nodes - any XML children will be removed. @example With `<div> Dog <span>Cat</span> </div>`, the Tritium `$(\"./div\") { text() { prepend(\"Super\") } }` will result in `<div>Super Dog Cat</div>`."
-# @abstract 
+# @abstract Opens the contents of the current node to text modification or retrieves the text of the current node.
 # @name text
 # @category Modify,Text
 # @scope Node
 # @args
-# @description
+# The text function opens up the text scope or retrieves the text contained within the current scope.
+# Without any further functions, the text function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
+# A further function can be used (such as `set`) to replace anything inside the current node with text.
+# Important to note is that anything within the argument will be inserted as text. So using `text("<a></a>")` will insert the *text* rather than the HTML tag.
+# Common use cases include (but are not limited to):
+# 1) Grabbing text from unnecessarily-nested nodes
+# 2) Opening a text scope to then replace a word in a paragraph
+# 3) Fetching text from a tag to put into a variable
+# The example below will set the interior of the current div to be "New".
 # @example
+# $("./div") {
+#   text() {
+#     set("New")
+#   }
+# }
 # @exampletext Tritium Tester Example
 # @examplelink packages/libxml/test/examples/text
-# @guidetext 
-# @guidelink 
+# @guidetext The two main uses of text.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/text
 @func Node.text() Text Text
 
 " Moves the first node (**%what**) to the second node (**%where**), at a specified position (**%pos**). "
