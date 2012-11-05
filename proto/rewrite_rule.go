@@ -2,14 +2,14 @@ package proto
 
 const (
 	RuleBidirection = "=>"
-    RuleToProxy = "<-"
-    RuleToUpstream = "->"
+	RuleToProxy     = "<-"
+	RuleToUpstream  = "->"
 )
 
 func ReadRewriteRules(rules []string) []*RewriteRule {
 	if ruleNum := len(rules); ruleNum/4 > 0 {
 		rrules := make([]*RewriteRule, 0, ruleNum/4)
-		for i := 0; i < ruleNum/4; i ++ {
+		for i := 0; i < ruleNum/4; i++ {
 			newRule := &RewriteRule{}
 			newRule.Proxy = new(string)
 			newRule.Upstream = new(string)

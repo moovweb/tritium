@@ -1,7 +1,6 @@
 package packager
 
 import (
-	tp "tritium/proto"
 	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"golog"
@@ -9,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	tp "tritium/proto"
 )
 
 type Error struct {
@@ -49,7 +49,7 @@ func LoadDefaultPackage(path *string) *Package {
 
 func OutputPackage(pkgPath, outPath string) (pkg *Package, newFilePath string) {
 	pkg = BuildPackage(pkgPath)
-	
+
 	_, err := os.Stat(outPath)
 	if err != nil {
 		creationErr := os.MkdirAll(outPath, os.FileMode(0777))
@@ -274,19 +274,18 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 // Assumes access to raw packages
 // This will only be true on dev / build boxes
 
-func NewRootPackage(rootPackagePath string, name string, dataPath string) (*Package){
+func NewRootPackage(rootPackagePath string, name string, dataPath string) *Package {
 	// println("NEW ROOT PACKAGE", dataPath)
-	rootPackage := NewPackage(rootPackagePath, PackageOptions{"stdout" : false,"output_tpkg" : false,"use_tpkg" : true})
+	rootPackage := NewPackage(rootPackagePath, PackageOptions{"stdout": false, "output_tpkg": false, "use_tpkg": true})
 
-	rootPackage.FallbackPath = filepath.Join(dataPath, "packages") 
+	rootPackage.FallbackPath = filepath.Join(dataPath, "packages")
 	// This works out ok since the packager loadDependency() code path will check fallbacks for .tpkg's
 	return rootPackage
 }
 
-
-func BuildRootPackage(rootPackage *Package, rootPackagePath string, name string) (loadError *Error){
+func BuildRootPackage(rootPackage *Package, rootPackagePath string, name string) (loadError *Error) {
 	// println("BUILD ROOT PACKAGE", rootPackagePath)
-	error := rootPackage.LoadFromPath(rootPackagePath, name )
+	error := rootPackage.LoadFromPath(rootPackagePath, name)
 
 	if error != nil {
 		return error
@@ -296,13 +295,12 @@ func BuildRootPackage(rootPackage *Package, rootPackagePath string, name string)
 
 	if err != nil {
 		return &Error{
-		Code: BUILD_ERROR,
-		Message: *err,
+			Code:    BUILD_ERROR,
+			Message: *err,
 		}
 	}
 
-	rootPackage.Name = proto.String( info.Name )
+	rootPackage.Name = proto.String(info.Name)
 
 	return nil
 }
-

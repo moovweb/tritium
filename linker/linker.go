@@ -1,9 +1,9 @@
 package linker
 
 import (
-	tp "tritium/proto"
 	"errors"
 	parser "tritium/parser"
+	tp "tritium/proto"
 )
 
 func RunStringWithPackage(src, path string, pkg *tp.Package) (*tp.Transform, error) {

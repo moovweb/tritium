@@ -1,8 +1,8 @@
 package checker
 
 import (
-	tp "tritium/proto"
 	"butler/null"
+	tp "tritium/proto"
 )
 
 type CheckResult struct {

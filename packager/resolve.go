@@ -29,7 +29,6 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
 	if null.GetBool(fun.BuiltIn) == false {
 		typeName := null.GetString(fun.ScopeType)
 
-
 		// DON'T DO THE FOLLOWING HERE -- NEED TO RESOLVE INHERITANCE FIRST
 		// // Make sure we're not replacing an existing function bacause it's (currently) a security risk
 		// typeID := fun.GetScopeTypeId()
@@ -44,7 +43,6 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
 		// // 	println("\t", name, sib)
 		// // }
 		// /////////////////////////////////////////////////////////////////////////////
-
 
 		if len(typeName) != 0 {
 			// When I pass in functions from the inheritance resolver, they're typeId is already set
@@ -206,7 +204,7 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 
 	//pkg.Println(" -- reading definitions")
 	_, err := ioutil.ReadFile(location)
-//()("READING DEFINITIONS:", location)
+	//()("READING DEFINITIONS:", location)
 
 	if err != nil {
 		//pkg.Log.Info("\t -- no user defined functions found")
@@ -220,8 +218,8 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 	for _, f := range pkg.Functions {
 		var sig string
 		baseSig := f.Stub(pkg)
-		if (baseSig == "name,Text" ||
-		    baseSig == "text") {
+		if baseSig == "name,Text" ||
+			baseSig == "text" {
 			sig = fmt.Sprintf("%s.%s", f.ScopeTypeString(pkg), f.Stub(pkg))
 		} else {
 			sig = baseSig
@@ -242,8 +240,8 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 		// is the same as the signature of a prepackaged function. If so, throw an error.
 		var newSig string
 		newBaseSig := function.Stub(pkg)
-		if (newBaseSig == "name,Text" ||
-		    newBaseSig == "text") {
+		if newBaseSig == "name,Text" ||
+			newBaseSig == "text" {
 			newSig = fmt.Sprintf("%s.%s", function.ScopeTypeString(pkg), function.Stub(pkg))
 		} else {
 			newSig = newBaseSig
@@ -251,7 +249,7 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 		// present := false
 		_, present := prepackaged[newSig]
 		if present {
-			msg := fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1) + ")")
+			msg := fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1)+")")
 			println(msg)
 			panic(msg)
 		}
@@ -286,7 +284,7 @@ func (pkg *Package) loadPackageDependency(name string) *Error {
 	if loaded {
 		return nil
 	}
-//	println("LOADING PKG DEPENDENCY", name)
+	//	println("LOADING PKG DEPENDENCY", name)
 	pkg.Load(name)
 
 	return nil
@@ -304,7 +302,7 @@ func (pkg *Package) loadedDependency(name string) bool {
 
 // Not fully functional. Dang it.
 func ReadPackageInfoFile(location string) (info *PackageInfo, error *string) {
-//	println("READING PACKAGE INFO FILE", location + "/package.yml")
+	//	println("READING PACKAGE INFO FILE", location + "/package.yml")
 	packageInfo := &PackageInfo{}
 	infoFile, err := ioutil.ReadFile(location + "/package.yml")
 	if err != nil {
@@ -317,7 +315,7 @@ func ReadPackageInfoFile(location string) (info *PackageInfo, error *string) {
 }
 
 func (pkg *Package) readHeaderFile(location string) {
-//	println("READING FUNCTION HEADER FILE")
+	//	println("READING FUNCTION HEADER FILE")
 	// TODO : plug in new go parser to do this
 	input_file := filepath.Join(location, "headers.tf")
 

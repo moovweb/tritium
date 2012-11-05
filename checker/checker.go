@@ -1,8 +1,8 @@
 package checker
 
 import (
-	tp "tritium/proto"
 	"tritium/parser"
+	tp "tritium/proto"
 )
 
 func CheckFile(path string) *CheckResult {

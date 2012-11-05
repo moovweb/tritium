@@ -34,7 +34,7 @@ type WhaleContext struct {
 	Yields                   []*YieldBlock
 	*Whale
 	*tp.Transform
-	Rrules                   []*tp.RewriteRule
+	Rrules []*tp.RewriteRule
 
 	// Debug info
 	Filename          string
@@ -139,7 +139,7 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 					errString = errString + "\n" + ins.Type.String() + " " + null.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
 				}
 				errString = errString + ctx.FileAndLine(ins) + "\n"
-		  }
+			}
 			panic(errString)
 		}
 	}()
