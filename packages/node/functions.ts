@@ -14,7 +14,7 @@
 # $("//div") {
 # }
 # @exampletext Tritium Tester Example
-# @examplelink /libxml/test/examples/xpath_selector
+# @examplelink /libxml/test/examples/node/xpath_selector
 # @guidetext XPath Reference Guide
 # @guidelink http://beta.moovweb.com/learn/reference/tools/xpath
 @func Node.$(Text %xpath) {
@@ -37,7 +37,7 @@
 # 2) When defining custom functions you may want to use a position type in your definition.
 # @example
 # @exampletext Tritium Tester Example
-# @examplelink /libxml/test/examples/position
+# @examplelink /libxml/test/examples/node/position
 # @guidetext 
 # @guidelink 
 @func position() {
@@ -45,7 +45,7 @@
 }
 
 " "
-
+# @hide
 @func Node.node() {
   this() {
     yield()
@@ -53,14 +53,15 @@
 }
 
 " Returns the number of the current node in relation to other nodes Tritium has iterated through - [click for example](http://beta.moovweb.com/learn/training/function_guides/index). @example `$(\"./div\") { log(index()) }` will return '1' if there is only one div child, '1 2' if there are two div children, and so on. "
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract The index function returns the order of which this node is iterated through when selected by Tritium.
+# @name index
+# @category Environment,Misc
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
-# @exampletext
-# @examplelink
+# @example
+# @exampletext Tritium Tester Example
+# @examplelink /libxml/test/examples/node/index
 # @guidetext 
 # @guidelink 
 @func Node.index() {
@@ -70,12 +71,14 @@
 }
 
 " Renames the current node to the tag specified by **%value** - [click for example](http://beta.moovweb.com/learn/training/function_guides/rename). @example `name(\"span\")` will change the currently-selected node to a span. "
-# @abstract 
+# @abstract Renames the current node to the tag specified by the input. 
 # @name
 # @category Environment,Create,Modify,Move,Misc,Text
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# The name function replaces the name of the currently selected node with the input provided by %value.
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -94,6 +97,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -117,6 +121,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -135,6 +140,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -153,6 +159,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -176,6 +183,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -194,6 +202,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -211,6 +220,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -228,6 +238,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -248,6 +259,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -266,6 +278,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -283,6 +296,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -303,6 +317,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -321,6 +336,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -340,6 +356,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -357,6 +374,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -374,6 +392,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -391,6 +410,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -408,6 +428,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -425,6 +446,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -442,6 +464,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -459,6 +482,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -476,6 +500,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
@@ -493,6 +518,7 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
+# @example
 # @exampletext
 # @examplelink
 # @guidetext 
