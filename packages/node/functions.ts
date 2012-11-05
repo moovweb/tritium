@@ -73,9 +73,9 @@
 " Renames the current node to the tag specified by **%value** - [click for example](http://beta.moovweb.com/learn/training/function_guides/rename). @example `name(\"span\")` will change the currently-selected node to a span. "
 # @abstract Renames the current node to the tag specified by the input. 
 # @name name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @category Modify
 # @scope Attribute,XMLNode,Text
-# @args
+# @args %value
 # @description
 # The name function replaces the name of the currently selected node with the input provided by %value.
 # @example
@@ -91,18 +91,7 @@
 }
 
 " Copies the node specified by **%xpath** to the currently-selected node, at the position **%pos**. @example `copy_here(\"//table\", \"top\")` will copy every table in the document into the top of the current node."
-# @abstract The copy_here function copies the node specified by the input %xpath to the currently selected node. 
-# @name copy_here
-# @category Create,Move
-# @scope Attribute,XMLNode,Text
-# @args Text %xpath,Position %pos
-# @description The copy_here function copies the node specified by the input XPath selector to the current scope from which it is called. 
-# Things to note: There is also an optional position variable (%pos) that can specify where in relation to the current node it should be placed such as: "before", "after", "top" or "bottom".
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/copy_here
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.copy_here(Text %xpath, Position %pos) {
   %calling_node = this()
   $(%xpath) {
@@ -123,7 +112,19 @@
 }
 
 " Copies the node specified by **%xpath** to the currently-selected node (at the bottom by default). @example `copy_here(\"//table\")` will copy every table in the document into the bottom of the current node. "
-# @hide
+# @abstract The copy_here function copies the node specified by the input %xpath to the currently selected node. 
+# @name copy_here
+# @category Create,Move
+# @scope Attribute,XMLNode,Text
+# @args Text %xpath
+# @description
+# The copy_here function copies the node specified by the input XPath selector to the current scope from which it is called. 
+# Things to note: There is also an optional position variable (%pos) that can specify where in relation to the current node it should be placed such as: "before", "after", "top" or "bottom".
+# @example
+# @exampletext
+# @examplelink /libxml/test/examples/node/copy_here
+# @guidetext 
+# @guidelink 
 @func Node.copy_here(Text %xpath) {
   copy_here(%xpath, position()) {
     yield() 
@@ -157,8 +158,9 @@
 # @name copy_to
 # @category Create,Move
 # @scope Attribute,XMLNode,Text
-# @args Text %xpath,Position %pos
-# @description The copy_to function copies the currently selected node to the node specified by the input %xpath.
+# @args Text %xpath
+# @description
+# The copy_to function copies the currently selected node to the node specified by the input %xpath.
 # Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be copied such as: "before", "after", "top" or "bottom".
 # @example
 # @exampletext
@@ -176,8 +178,9 @@
 # @name inject
 # @category Create,Modify
 # @scope Attribute,XMLNode,Text
-# @args
-# @description The inject function injects HTML into the current node.
+# @args %html
+# @description
+# The inject function injects HTML into the current node.
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink packages/libxml/test/examples/node/inject
@@ -212,8 +215,9 @@
 # @name move_to
 # @category Modify,Move
 # @scope Attribute,XMLNode,Text
-# @args
-# @description The move_to command moves the currently selected node to the node specified by the %xpath input. 
+# @args %xpath
+# @description
+# The move_to command moves the currently selected node to the node specified by the %xpath input. 
 # Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
 # @example
 # @exampletext Tritium Tester Example
@@ -227,17 +231,7 @@
 }
 
 " Moves the node specified by **%where** to the currently-selected node, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\", \"top\")` will move every table in the document into the top of the current node."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.move_here(Text %where, Position %pos) {
   %parent = this()
   select(%where) {
@@ -248,17 +242,6 @@
 
 " Moves the node specified by **%where** to the currently-selected node, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\", \"top\")` will move every table in the document into the top of the current node."
 # @hide
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
 @func Node.move_here(Text %where, Text %pos) {
   move_here(%where, position(%pos)) {
     yield()
@@ -266,16 +249,17 @@
 }
 
 " Moves the node specified by **%where** to the bottom of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\")` will move every table in the document into the bottom of the current node."
-# @hide
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract The move_here function moves the node specified by the input xpath to the currently selected node. 
+# @name move_here
+# @category Modify,Move
 # @scope Attribute,XMLNode,Text
-# @args
+# @args %where
 # @description
+# The move_here function moves the node specified by the input xpath to the currently selected node. 
+# Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
 # @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
+# @exampletext Tritium Tester Example
+# @examplelink /libxml/test/examples/node/move_here
 # @guidetext 
 # @guidelink 
 @func Node.move_here(Text %where) {
