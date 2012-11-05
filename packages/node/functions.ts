@@ -95,7 +95,7 @@
 # @name copy_here
 # @category Create,Move
 # @scope Attribute,XMLNode,Text
-# @args
+# @args Text %xpath,Position %pos
 # @description The copy_here function copies the node specified by the input XPath selector to the current scope from which it is called. 
 # Things to note: There is also an optional position variable (%pos) that can specify where in relation to the current node it should be placed such as: "before", "after", "top" or "bottom".
 # @example
@@ -136,7 +136,7 @@
 # @name copy_to
 # @category Create,Move
 # @scope Attribute,XMLNode,Text
-# @args
+# @args Text %xpath,Position %pos
 # @description The copy_to function copies the currently selected node to the node specified by the input %xpath.
 # Things to note: There is also an optional position variable (%pos) that can specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
 # @example
@@ -173,14 +173,14 @@
 
 " Injects HTML (specified by **%html**) into the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject(\"<div>New Div</div>\")` will insert your new HTML into the current node. "
 # @abstract The inject function injects HTML into the current node.
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @name inject
+# @category Create,Modify
 # @scope Attribute,XMLNode,Text
 # @args
-# @description
+# @description The inject function injects HTML into the current node.
 # @example
-# @exampletext
-# @examplelink packages/libxml/test/examples/node/
+# @exampletext Tritium Tester Example
+# @examplelink packages/libxml/test/examples/node/inject
 # @guidetext 
 # @guidelink 
 @func Node.inject(Text %html) {
@@ -190,15 +190,15 @@
 }
 
 " Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body. "
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract The move_to command moves the currently selected node to the node specified by the %xpath input. 
+# @name move_to
+# @category Modify,Move
 # @scope Attribute,XMLNode,Text
 # @args
-# @description
+# @description The move_to command moves the currently selected node to the node specified by the %xpath input. 
 # @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
+# @exampletext Tritium Tester Example
+# @examplelink /libxml/test/examples/node/move_to
 # @guidetext 
 # @guidelink 
 @func Node.move_to(Text %xpath, Position %pos) {
