@@ -25,9 +25,6 @@
 " Opens the attribute you select with **%name** - [click for example](http://beta.moovweb.com/learn/training/function_guides/attribute). @example `attribute(\"class\")` opens the class for modification. "
 @func XMLNode.attribute(Text %name) Text Attribute
 
-" Deprecated: Outputs the current node as text. @example "
-@func XMLNode.dump() Text
-
 " Returns \"true\" or \"false\" "
 @func equal(XMLNode %a, XMLNode %b) Text
 @func equal(Node %a, Node %b) Text

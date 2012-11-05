@@ -44,8 +44,5 @@
 " Injects HTML (specified by **%html**) into the current node at the location specified by **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_at(\"top\", read(\"file.html\"))` injects the file specified at the top of the current node."
 @func Node.inject_at(Position %pos, Text %html) Text
 
-" Injects HTML (specified by **%html**) into the current node at the location specified by **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_at(\"top\", \"file.html\")` injects the file specified at the top of the current node."
-@func Node.inject_at(Text %pos, Text %html) Text
-
 " Replaces the current value with the one specified by %value - [click for example](http://beta.moovweb.com/learn/training/function_guides/rename). @example `name() { set(\"div\") }`. "
 @func Node.set(Text %value) Text

@@ -99,7 +99,7 @@
 " Injects HTML (specified by **%html**) into the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject(\"<div>New Div</div>\")` will insert your new HTML into the current node. "
 
 @func Node.inject(Text %html) {
-  inject_at("bottom", %html) {
+  inject_at(position("bottom"), %html) {
     yield() 
   } 
 }
