@@ -79,10 +79,10 @@
 # @description
 # The name function replaces the name of the currently selected node with the input provided by %value.
 # @example
-# @exampletext
-# @examplelink
-# @guidetext 
-# @guidelink 
+# @exampletext Tritium Tester Example
+# @examplelink /libxml/test/examples/node/name
+# @guidetext
+# @guidelink
 @func Node.name(Text %value) {
   name() {
     set(%value)
@@ -99,7 +99,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/copy_here
 # @guidetext 
 # @guidelink 
 @func Node.copy_here(Text %xpath, Position %pos) {
@@ -123,7 +123,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.copy_here(Text %xpath, Text %pos) {
@@ -142,7 +142,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.copy_here(Text %xpath) {
@@ -161,7 +161,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.copy_to(Text %xpath, Position %pos) {
@@ -185,7 +185,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.copy_to(Text %xpath, Text %pos) {
@@ -204,7 +204,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.copy_to(Text %xpath) {
@@ -222,7 +222,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.inject(Text %html) {
@@ -240,7 +240,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.move_to(Text %xpath, Position %pos) {
@@ -261,7 +261,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.move_to(Text %xpath, Text %pos) {
@@ -280,7 +280,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.move_to(Text %xpath) {
@@ -298,7 +298,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.move_here(Text %where, Position %pos) {
@@ -319,7 +319,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.move_here(Text %where, Text %pos) {
@@ -338,7 +338,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.move_here(Text %where) {
@@ -358,7 +358,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.insert(Text %tag) {
@@ -376,7 +376,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.insert_bottom(Text %tag) {
@@ -394,7 +394,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.insert_top(Text %tag) {
@@ -412,7 +412,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.insert_after(Text %tag) {
@@ -430,7 +430,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.insert_before(Text %tag) {
@@ -448,7 +448,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.inject(Text %html) {
@@ -466,7 +466,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.inject_bottom(Text %html) {
@@ -484,7 +484,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.inject_top(Text %html) {
@@ -502,7 +502,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.inject_after(Text %html) {
@@ -520,7 +520,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink
+# @examplelink /libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.inject_before(Text %html) {
