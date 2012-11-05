@@ -7,9 +7,9 @@ func TestBase(t *testing.T) {
 	RunTestSuite("packages/base/test/examples/", t)
 }
 
-// func TestLibXML(t *testing.T) {
-// 	RunTestSuite("packages/libxml", t)
-// }
+func TestLibXML(t *testing.T) {
+	RunTestSuite("packages/libxml/test/examples", t)
+}
 
 // func BenchmarkBase(b *testing.B) {
 // 	RunBenchmarkSuite("packages/base", b)

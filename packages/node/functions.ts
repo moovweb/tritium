@@ -6,7 +6,7 @@
 # @args Text %xpath
 # @description
 # The $ selector is used to tell Tritium which node(s) you'd like to select to perform transformation on. The general process of transformation involves two basic steps: 1) selecting a node, and 2) performing some function on it. 
-# Things to note: If Tritium finds no matching node for the XPath provided, it simply skips over that block of code. If Tritium finds more than one matching node for the XPath provided, it will iterate over each element sequentially running the block of code inside the selector.
+# Things to note: If Tritium finds no matching node for the XPath provided, it simply skips over that block of code. If Tritium finds more than one matching node for the XPath provided, it will iterate over each element sequentially running the block of code inside the selector on each element.
 # Common uses include:
 # 1) Just about anything you want to do with Tritium.
 # In this example, we select every div element in the document and open a scope for manipulation.
@@ -36,8 +36,8 @@
 # 1) Some functions require position inputs as parameters. You can call position() to fulfill this requirement.
 # 2) When defining custom functions you may want to use a position type in your definition.
 # @example
-# @exampletext
-# @examplelink
+# @exampletext Tritium Tester Example
+# @examplelink /libxml/test/examples/position
 # @guidetext 
 # @guidelink 
 @func position() {
