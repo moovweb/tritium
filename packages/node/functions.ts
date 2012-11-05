@@ -72,7 +72,7 @@
 
 " Renames the current node to the tag specified by **%value** - [click for example](http://beta.moovweb.com/learn/training/function_guides/rename). @example `name(\"span\")` will change the currently-selected node to a span. "
 # @abstract Renames the current node to the tag specified by the input. 
-# @name
+# @name name
 # @category Environment,Create,Modify,Move,Misc,Text
 # @scope Attribute,XMLNode,Text
 # @args
@@ -91,12 +91,13 @@
 }
 
 " Copies the node specified by **%xpath** to the currently-selected node, at the position **%pos**. @example `copy_here(\"//table\", \"top\")` will copy every table in the document into the top of the current node."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract The copy_here function copies the node specified by the input %xpath to the currently selected node. 
+# @name copy_here
+# @category Create,Move
 # @scope Attribute,XMLNode,Text
 # @args
-# @description
+# @description The copy_here function copies the node specified by the input XPath selector to the current scope from which it is called. 
+# Things to note: There is also an optional position variable (%pos) that can specify where in relation to the current node it should be placed such as: "before", "after", "top" or "bottom".
 # @example
 # @exampletext
 # @examplelink /libxml/test/examples/node/copy_here
@@ -115,17 +116,6 @@
 
 " Copies the node specified by **%xpath** to the currently-selected node, at the position **%pos**. @example `copy_here(\"//table\", \"top\")` will copy every table in the document into the top of the current node."
 # @hide
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
 @func Node.copy_here(Text %xpath, Text %pos) {
   copy_here(%xpath, position(%pos)) {
     yield() 
@@ -134,17 +124,6 @@
 
 " Copies the node specified by **%xpath** to the currently-selected node (at the bottom by default). @example `copy_here(\"//table\")` will copy every table in the document into the bottom of the current node. "
 # @hide
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
 @func Node.copy_here(Text %xpath) {
   copy_here(%xpath, position()) {
     yield() 
@@ -153,15 +132,16 @@
 
 
 " Copies the currently-selected node to the node specified by **%xpath**, at the position **%pos**. @example `copy_to(\"//body\", \"top\")` will copy the current node into the top of the body. "
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract The copy_to function copies the currently selected node to the node specified by the input %xpath.
+# @name copy_to
+# @category Create,Move
 # @scope Attribute,XMLNode,Text
 # @args
-# @description
+# @description The copy_to function copies the currently selected node to the node specified by the input %xpath.
+# Things to note: There is also an optional position variable (%pos) that can specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
 # @example
 # @exampletext
-# @examplelink /libxml/test/examples/node/
+# @examplelink /libxml/test/examples/node/copy_to
 # @guidetext 
 # @guidelink 
 @func Node.copy_to(Text %xpath, Position %pos) {
@@ -177,17 +157,6 @@
 
 " Copies the currently-selected node to the node specified by **%xpath**, at the position **%pos**. @example `copy_to(\"//body\", \"top\")` will copy the current node into the top of the body. "
 # @hide
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
 @func Node.copy_to(Text %xpath, Text %pos) {
   copy_to(%xpath, position(%pos)) {
     yield()
@@ -196,17 +165,6 @@
 
 " Copies the currently-selected node to the bottom of the node specified by **%xpath**. @example `copy_to(\"//body\")` will copy the current node into the bottom of the body. "
 # @hide
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
 @func Node.copy_to(Text %xpath) {
   copy_to(%xpath, position()) {
     yield()
