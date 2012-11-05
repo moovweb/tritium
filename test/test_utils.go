@@ -3,6 +3,7 @@ package test
 import "path/filepath"
 import "tritium/whale"
 import "testing"
+
 //import "log4go"
 //import "runtime/debug"
 import "runtime"
@@ -13,14 +14,13 @@ import "tritium/packager"
 import "golog"
 import "time"
 
-
 func RunTest(path string) (result *spec.Result) {
 	result = spec.NewResult()
 
 	logger := golog.NewLogger("tritium")
 	logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO, true))
 
-  /*** TODO(SJ) : Reintegrate w new log system. We need to catch errors when running tests
+	/*** TODO(SJ) : Reintegrate w new log system. We need to catch errors when running tests
 	defer func() {
 		if x := recover(); x != nil {
 			err, ok := x.(error)
@@ -54,7 +54,7 @@ func RunTest(path string) (result *spec.Result) {
 func GatherTests(directory string) (tests []string) {
 	matches, err := filepath.Glob(filepath.Join(directory, "main.ts"))
 
-	if err == nil && matches != nil{
+	if err == nil && matches != nil {
 		tests = append(tests, directory)
 	}
 
@@ -91,8 +91,6 @@ func initializePackage() {
 	tpkg := packager.LoadDefaultPackage(&packagesPath)
 	pkg = tpkg.Package
 }
-
-
 
 func RunTestSuite(directoryFromRoot string, t *testing.T) {
 	directory, ok := relativeDirectory(directoryFromRoot)

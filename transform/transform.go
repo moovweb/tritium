@@ -1,9 +1,9 @@
 package transform
 
 import (
-	tp "tritium/proto"
-	"tritium/packager"
 	"tritium/linker"
+	"tritium/packager"
+	tp "tritium/proto"
 )
 
 func CompileString(data string, path string, pkg *tp.Package) (*tp.Transform, error) {

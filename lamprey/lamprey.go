@@ -2,8 +2,8 @@ package lamprey
 
 import (
 	"fmt"
-	"time"
 	"os"
+	"time"
 )
 
 import (

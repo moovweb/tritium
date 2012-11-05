@@ -1,13 +1,13 @@
 package parser
 
 import (
-	tp "tritium/proto"
 	"code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"strconv"
 	"strings"
+	tp "tritium/proto"
 	. "tritium/tokenizer" // was meant to be in this package
 )
 
@@ -506,7 +506,7 @@ func (p *Parser) definition() *tp.Function {
 		p.error("definition for " + funcName + " is missing a body")
 	}
 	funcBody := &tp.Instruction{
-		Type:     tp.Instruction_BLOCK.Enum(),
+		Type: tp.Instruction_BLOCK.Enum(),
 		// Children: p.block(),
 		// use the wrapper to get a better error message
 		Children: p.function_body(*node.Name),
