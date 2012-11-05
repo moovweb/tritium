@@ -18,7 +18,7 @@
 # }
 # log($my_var)
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/var
+# @examplelink packages/base/test/examples/var
 # @guidetext Function Guide
 # @guidelink
 @func var(Text %name) Text Text
@@ -40,7 +40,7 @@
 # var("my_var", "is set")
 # log($my_var)
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/var
+# @examplelink packages/base/test/examples/var
 # @guidetext Function Guide
 # @guidelink
 @func var(Text %name, Text %value) Text Text
@@ -60,7 +60,7 @@
 # @example
 # log(time())
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/time
+# @examplelink packages/base/test/examples/time
 # @guidetext Function Guide
 # @guidelink
 @func time() Text
@@ -91,7 +91,7 @@
 #     }
 #   }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/match
+# @examplelink packages/base/test/examples/match
 # @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func match(Text %match_target) Text
@@ -112,7 +112,7 @@
 # @example
 #   log("I've reached this point in the code!")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/log
+# @examplelink packages/base/test/examples/log
 # @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/log
 @func log(Text %log_message) Text Text
@@ -140,7 +140,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/not
+# @examplelink packages/base/test/examples/not
 # @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func not(Text %text) Text
@@ -165,7 +165,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/not
+# @examplelink packages/base/test/examples/not
 # @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func not(Regexp %regexp) Text
@@ -193,7 +193,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/with
+# @examplelink packages/base/test/examples/with
 # @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func with(Text %text) Text
@@ -221,7 +221,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/with
+# @examplelink packages/base/test/examples/with
 # @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func with(Regexp %regexp) Text
@@ -242,7 +242,7 @@
 #   convert_encoding("gbk", "utf-8")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/text/convert_encoding
+# @examplelink packages/base/test/examples/text/convert_encoding
 # @guidetext Function Guide
 # @guidelink
 @func Text.convert_encoding(Text %from, Text %to) Text
@@ -264,7 +264,7 @@
 #   log(concat("I'm guessing your encoding is ", $encoding))
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/text/guess_encoding
+# @examplelink packages/base/test/examples/text/guess_encoding
 # @guidetext Function Guide
 # @guidelink
 @func Text.guess_encoding() Text
@@ -288,7 +288,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/text/length
+# @examplelink packages/base/test/examples/text/length
 # @guidetext Function Guide
 # @guidelink 
 @func length(Text %input) Text
@@ -317,7 +317,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/else
+# @examplelink packages/base/test/examples/else
 # @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/match
 @func else() Text
@@ -352,7 +352,7 @@
 # # the "i" indicates that the match is case insensitive
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/regexp
+# @examplelink packages/base/test/examples/regexp
 # @guidetext Replacing Text With Regexp
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
 @func regexp(Text %expression, Text %options) Regexp Text
@@ -377,7 +377,7 @@
 #   log(concat("Did I reach ", $name, "?"))
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/concat
+# @examplelink packages/base/test/examples/concat
 # @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/concat
 @func concat(Text %a, Text %b) Text Text
@@ -401,7 +401,7 @@
 #   export("Content-Type", "text/html")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/export
+# @examplelink packages/base/test/examples/export
 # @guidetext Useful Environment Variables
 # @guidelink http://beta.moovweb.com/learn/reference/configuration/index#Environment+Variables
 @func export(Text %key_name) Text Text
@@ -423,7 +423,7 @@
 #   log(concat("I've reached ", upcase($name), "!"))
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/upcase
+# @examplelink packages/base/test/examples/upcase
 # @guidetext Useful Environment Variables
 # @guidelink
 @func upcase(Text %input_string) Text
@@ -445,7 +445,7 @@
 #   log(concat("I've reached ", downcase($name), "!"))
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/downcase
+# @examplelink packages/base/test/examples/downcase
 # @guidetext Useful Environment Variables
 # @guidelink
 @func downcase(Text %input_string) Text
@@ -473,7 +473,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/text/set
+# @examplelink packages/base/test/examples/text/set
 # @guidetext Useful Environment Variables
 # @guidelink
 @func Text.set(Text %value) Text
@@ -501,7 +501,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/text/replace
+# @examplelink packages/base/test/examples/text/replace
 # @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
 @func Text.replace(Regexp %search) Text Text
@@ -529,7 +529,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/text/replace
+# @examplelink packages/base/test/examples/text/replace
 # @guidetext Function Guide
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
 @func Text.replace(Text %search) Text Text
@@ -553,7 +553,7 @@
     }
   }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/text/prepend
+# @examplelink packages/base/test/examples/text/prepend
 # @guidetext Function Guide
 # @guidelink 
 @func Text.prepend(Text %text_to_prepend) Text
@@ -577,7 +577,7 @@
     }
   }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/base/test/examples/text/append
+# @examplelink packages/base/test/examples/text/append
 # @guidetext Function Guide
 # @guidelink 
 @func Text.append(Text %text_to_append) Text

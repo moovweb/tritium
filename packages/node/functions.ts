@@ -172,7 +172,7 @@
 }
 
 " Injects HTML (specified by **%html**) into the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject(\"<div>New Div</div>\")` will insert your new HTML into the current node. "
-# @abstract 
+# @abstract The inject function injects HTML into the current node.
 # @name
 # @category Environment,Create,Modify,Move,Misc,Text
 # @scope Attribute,XMLNode,Text
@@ -180,7 +180,7 @@
 # @description
 # @example
 # @exampletext
-# @examplelink /libxml/test/examples/node/
+# @examplelink packages/libxml/test/examples/node/
 # @guidetext 
 # @guidelink 
 @func Node.inject(Text %html) {
