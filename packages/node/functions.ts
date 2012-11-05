@@ -174,6 +174,9 @@
 # @description
 # The copy_to function copies the currently selected node to the node specified by the input %xpath.
 # Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be copied such as: "before", "after", "top" or "bottom".
+# Common uses include:
+# 1) Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead. 
+# 2) Duplicating useful information
 # @example
 # @exampletext
 # @examplelink /libxml/test/examples/node/copy_to
@@ -193,11 +196,14 @@
 # @args %html
 # @description
 # The inject function injects HTML into the current node.
-# There are a number of comparable functions that perform similar functions but specify a position in their name so you don't have to pass it in as a parameter:
+# Things to note: There are a number of comparable functions that perform similar functions but specify a position in their name so you don't have to pass it in as a parameter:
 # - inject_top(Text %html)
 # - inject_bottom(Text %html)
 # - inject_before(Text %html)
 # - inject_after(Text %html)
+# Common uses include:
+# 1) Injecting entire templates of code at once from another file using the inject() function in combination with the read() function.
+# 2) Fixing broken HTML
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink packages/libxml/test/examples/node/inject
@@ -236,6 +242,10 @@
 # @description
 # The move_to command moves the currently selected node to the node specified by the %xpath input. 
 # Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
+# Common uses include: 
+# 1) Creating the proper structure for a page by moving the elements you want to keep into the proper place.
+# 2) Fixing the existing structure of a page by moving elements around.
+# 3) Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more. 
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink /libxml/test/examples/node/move_to
@@ -274,6 +284,9 @@
 # @description
 # The move_here function moves the node specified by the input xpath to the currently selected node. 
 # Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
+# 1) Creating the proper structure for a page by moving the elements you want to keep into the proper place.
+# 2) Fixing the existing structure of a page by moving elements around.
+# 3) Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more. 
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink /libxml/test/examples/node/move_here
