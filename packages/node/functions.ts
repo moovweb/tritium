@@ -132,18 +132,7 @@
 
 
 " Copies the currently-selected node to the node specified by **%xpath**, at the position **%pos**. @example `copy_to(\"//body\", \"top\")` will copy the current node into the top of the body. "
-# @abstract The copy_to function copies the currently selected node to the node specified by the input %xpath.
-# @name copy_to
-# @category Create,Move
-# @scope Attribute,XMLNode,Text
-# @args Text %xpath,Position %pos
-# @description The copy_to function copies the currently selected node to the node specified by the input %xpath.
-# Things to note: There is also an optional position variable (%pos) that can specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/copy_to
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.copy_to(Text %xpath, Position %pos) {
   dup() {
     %calling_node = this()
@@ -164,7 +153,18 @@
 }
 
 " Copies the currently-selected node to the bottom of the node specified by **%xpath**. @example `copy_to(\"//body\")` will copy the current node into the bottom of the body. "
-# @hide
+# @abstract The copy_to function copies the currently selected node to the node specified by the input %xpath.
+# @name copy_to
+# @category Create,Move
+# @scope Attribute,XMLNode,Text
+# @args Text %xpath,Position %pos
+# @description The copy_to function copies the currently selected node to the node specified by the input %xpath.
+# Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be copied such as: "before", "after", "top" or "bottom".
+# @example
+# @exampletext
+# @examplelink /libxml/test/examples/node/copy_to
+# @guidetext 
+# @guidelink 
 @func Node.copy_to(Text %xpath) {
   copy_to(%xpath, position()) {
     yield()
@@ -190,17 +190,7 @@
 }
 
 " Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body. "
-# @abstract The move_to command moves the currently selected node to the node specified by the %xpath input. 
-# @name move_to
-# @category Modify,Move
-# @scope Attribute,XMLNode,Text
-# @args
-# @description The move_to command moves the currently selected node to the node specified by the %xpath input. 
-# @example
-# @exampletext Tritium Tester Example
-# @examplelink /libxml/test/examples/node/move_to
-# @guidetext 
-# @guidelink 
+# @hide
 @func Node.move_to(Text %xpath, Position %pos) {
   %parent_node = this()
   $(%xpath) {
@@ -211,17 +201,6 @@
 
 " Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body."
 # @hide
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
-# @description
-# @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
-# @guidetext 
-# @guidelink 
 @func Node.move_to(Text %xpath, Text %pos) {
   move_to(%xpath, position(%pos)) {
     yield()
@@ -229,16 +208,16 @@
 }
 
 " Moves the currently-selected node to the bottom of the node specified by **%xpath** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\")` will move the current node to the bottom of the body."
-# @hide
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract The move_to command moves the currently selected node to the node specified by the %xpath input. 
+# @name move_to
+# @category Modify,Move
 # @scope Attribute,XMLNode,Text
 # @args
-# @description
+# @description The move_to command moves the currently selected node to the node specified by the %xpath input. 
+# Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
 # @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
+# @exampletext Tritium Tester Example
+# @examplelink /libxml/test/examples/node/move_to
 # @guidetext 
 # @guidelink 
 @func Node.move_to(Text %xpath) {
