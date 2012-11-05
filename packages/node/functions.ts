@@ -1,17 +1,18 @@
 " Searches the tree and selects all nodes matching **%xpath**. @example `$(\"//div\")` will find every div element in the document."
-# @abstract The $ function is a selector that takes an %xpath input. XPath is a syntax for selection notation based on the structure of an HTML DOM.
+# @abstract The $ function is a selector that takes XPath as an input. XPath is a syntax for selection notation based on the structure of an HTML DOM.
 # @name $
 # @category Environment,Create,Modify,Move,Misc,Text
 # @scope Attribute,XMLNode,Text
 # @args Text %xpath
 # @description
-# The $ selector is used to tell Tritium which node(s) you'd like to select to perform transformation on. The general process of transformation involves two basic steps: 1) selecting a node, and 2) performing some function on it. 
+# The $ selector is used to tell Tritium which node(s) you'd like to select to perform transformation on. The general process of transformation involves two basic steps: 1) Selecting a node, and 2) Performing some function on that node. We refer to the process of selecting a node for transformation as "opening a scope" throughout our documentation.
 # Things to note: If Tritium finds no matching node for the XPath provided, it simply skips over that block of code. If Tritium finds more than one matching node for the XPath provided, it will iterate over each element sequentially running the block of code inside the selector on each element.
 # Common uses include:
 # 1) Just about anything you want to do with Tritium.
 # In this example, we select every div element in the document and open a scope for manipulation.
 # @example
 # $("//div") {
+#   # Run transformations on these divs one at a time.
 # }
 # @exampletext Tritium Tester Example
 # @examplelink /libxml/test/examples/node/xpath_selector
@@ -28,7 +29,7 @@
 # @name position
 # @category Create,Move
 # @scope XMLNode
-# @args
+# @args %pos
 # @description
 # The position function is used to return a position type. Positions include: before, after, above, below, top and bottom.
 # Things to note: by default, the position type returned is "bottom". You can also specify which position type you'd like to return by passing it in as a parameter.
@@ -59,7 +60,11 @@
 # @scope Attribute,XMLNode,Text
 # @args
 # @description
-# @example
+# The index function is used to return the order of which the node is transformed when selected using Tritium. Every time you use a Tritium selector that selects more than a single element, the MoovSDK will iterate over each element and run the inner block of code on each element one at a time. The index() function returns the order of that element in the execution queue.
+# Common uses include:
+# 1) Giving elements a unique attribute that corresponds to their index number.
+# 2) Referencing a certain element based on its order of execution.
+# 3) General order based logic, such as giving all odd numbered elements in the queue a certain class so you can style them differently.
 # @exampletext Tritium Tester Example
 # @examplelink /libxml/test/examples/node/index
 # @guidetext 
@@ -77,7 +82,11 @@
 # @scope Attribute,XMLNode,Text
 # @args %value
 # @description
-# The name function replaces the name of the currently selected node with the input provided by %value.
+# The name function replaces the name of the currently selected node with the input provided by the parameter %value. This means you are effectively changing the element that will be rendered in the DOM. 
+# Common uses include:
+# 1) Changing tables and their inner rows and data cells to divs. 
+# 2) Changing anchors that have been wrapped inside anchors to divs to avoid broken HTML. 
+# 3) Changing between divs and spans depending on how you want the page to flow.
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink /libxml/test/examples/node/name
@@ -120,6 +129,9 @@
 # @description
 # The copy_here function copies the node specified by the input XPath selector to the current scope from which it is called. 
 # Things to note: There is also an optional position variable (%pos) that can specify where in relation to the current node it should be placed such as: "before", "after", "top" or "bottom".
+# Common uses include:
+# 1) Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead. 
+# 2) Duplicating useful information
 # @example
 # @exampletext
 # @examplelink /libxml/test/examples/node/copy_here
@@ -128,7 +140,7 @@
 @func Node.copy_here(Text %xpath) {
   copy_here(%xpath, position()) {
     yield() 
-  } 
+  }
 }
 
 
@@ -162,6 +174,9 @@
 # @description
 # The copy_to function copies the currently selected node to the node specified by the input %xpath.
 # Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be copied such as: "before", "after", "top" or "bottom".
+# Common uses include:
+# 1) Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead. 
+# 2) Duplicating useful information
 # @example
 # @exampletext
 # @examplelink /libxml/test/examples/node/copy_to
@@ -181,11 +196,14 @@
 # @args %html
 # @description
 # The inject function injects HTML into the current node.
-# There are a number of comparable functions that perform similar functions but specify a position in their name so you don't have to pass it in as a parameter:
+# Things to note: There are a number of comparable functions that perform similar functions but specify a position in their name so you don't have to pass it in as a parameter:
 # - inject_top(Text %html)
 # - inject_bottom(Text %html)
 # - inject_before(Text %html)
 # - inject_after(Text %html)
+# Common uses include:
+# 1) Injecting entire templates of code at once from another file using the inject() function in combination with the read() function.
+# 2) Fixing broken HTML
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink packages/libxml/test/examples/node/inject
@@ -224,6 +242,10 @@
 # @description
 # The move_to command moves the currently selected node to the node specified by the %xpath input. 
 # Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
+# Common uses include: 
+# 1) Creating the proper structure for a page by moving the elements you want to keep into the proper place.
+# 2) Fixing the existing structure of a page by moving elements around.
+# 3) Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more. 
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink /libxml/test/examples/node/move_to
@@ -262,6 +284,9 @@
 # @description
 # The move_here function moves the node specified by the input xpath to the currently selected node. 
 # Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
+# 1) Creating the proper structure for a page by moving the elements you want to keep into the proper place.
+# 2) Fixing the existing structure of a page by moving elements around.
+# 3) Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more. 
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink /libxml/test/examples/node/move_here
