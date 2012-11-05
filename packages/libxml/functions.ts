@@ -19,7 +19,7 @@
 # @example
 # $$("#one")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/css_selector
+# @examplelink packages/libxml/test/examples/css_selector
 # @guidetext
 # @guidelink 
 @func XMLNode.$$(Text %css_selector) {
@@ -48,7 +48,7 @@
 #   add_class("one")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/add_class
+# @examplelink packages/libxml/test/examples/add_class
 # @guidetext Use of Adding a Class
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute#Adding+a+Class
 @func XMLNode.add_class(Text %class) {
@@ -81,7 +81,7 @@
 #   inner_wrap("span")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/inner_wrap
+# @examplelink packages/libxml/test/examples/inner_wrap
 # @guidetext
 # @guidelink 
 @func XMLNode.inner_wrap(Text %tag_name) {
@@ -112,7 +112,7 @@
 #   remove_text_nodes()
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/remove_text_nodes
+# @examplelink packages/libxml/test/examples/remove_text_nodes
 # @guidetext
 # @guidelink 
 @func XMLNode.remove_text_nodes() {
@@ -139,7 +139,7 @@
 #   attribute("href", "http://example.com")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/attribute
+# @examplelink packages/libxml/test/examples/attribute/attribute
 # @guidetext The attribute function and its alternatives.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute
 @func XMLNode.attribute(Text %name, Text %value) {
@@ -170,7 +170,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/value
+# @examplelink packages/libxml/test/examples/attribute/value
 # @guidetext
 # @guidelink 
 @func Attribute.value(Text %value) {
@@ -201,7 +201,7 @@ Functionally equivalent to `name() { set(%name) }`."
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/name
+# @examplelink packages/libxml/test/examples/attribute/name
 # @guidetext
 # @guidelink <a href="#name Text name"
 @func Attribute.name(Text %name) {
@@ -227,7 +227,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert("link", rel: "stylesheet", type: "text/css", href: sass("main")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/sass
+# @examplelink packages/libxml/test/examples/sass
 # @guidetext
 # @guidelink 
 @func sass(Text %filename) {
@@ -252,7 +252,7 @@ Functionally equivalent to `name() { set(%name) }`."
 #   set("href", "http://example.com")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/set
+# @examplelink packages/libxml/test/examples/set
 # @guidetext Overview of the two ways to use set().
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/set
 @func XMLNode.set(Text %name, Text %value) {
@@ -281,7 +281,7 @@ Functionally equivalent to `name() { set(%name) }`."
 #   attributes(class: "one", id: "two")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/attributes
+# @examplelink packages/libxml/test/examples/attribute/attributes
 # @guidetext
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute
 @func XMLNode.attributes() {
@@ -308,7 +308,7 @@ Functionally equivalent to `name() { set(%name) }`."
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/text
+# @examplelink packages/libxml/test/examples/text
 # @guidetext Using the text function.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/text
 @func XMLNode.text() {
@@ -334,7 +334,7 @@ Functionally equivalent to `name() { set(%name) }`."
 #   text("NewText")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/text
+# @examplelink packages/libxml/test/examples/text
 # @guidetextUsing the text function.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/text
 @func XMLNode.text(Text %value) {
@@ -459,7 +459,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert_javascript_at(position("top"), "alert('Boo')")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert_javascript
+# @examplelink packages/libxml/test/examples/insert_javascript
 # @guidetext
 # @guidelink 
 @func XMLNode.insert_javascript_at(Position %pos, Text %js) {
@@ -491,7 +491,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert_javascript("alert('Boo')")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert_javascript
+# @examplelink packages/libxml/test/examples/insert_javascript
 # @guidetext
 # @guidelink 
 @func XMLNode.insert_javascript(Text %js) {
@@ -520,7 +520,7 @@ Functionally equivalent to `name() { set(%name) }`."
 #   inner("New Content")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/inner
+# @examplelink packages/libxml/test/examples/inner
 # @guidetext Information on the inner function and comparing it to the text function.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/inner
 @func XMLNode.inner(Text %html) {
@@ -549,7 +549,7 @@ Functionally equivalent to `name() { set(%name) }`."
 #   wrap("div", class: "one")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/wrap
+# @examplelink packages/libxml/test/examples/wrap
 # @guidetext
 # @guidelink 
 @func XMLNode.wrap(Text %tag) {
@@ -736,7 +736,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert_at("top", "div", "Content")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @examplelink packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_at(Text %pos, Text %tag, Text %content) {
@@ -757,7 +757,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert_at(position(top), "div", "Content")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @examplelink packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_at(Position %pos, Text %tag, Text %inner) {
@@ -789,7 +789,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert("div", "Content")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @examplelink packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert(Text %tag, Text %inner) {
@@ -810,7 +810,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert_bottom("div", "Content")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @examplelink packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_bottom(Text %tag, Text %inner) {
@@ -831,7 +831,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert_top("div", "Content")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @examplelink packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_top(Text %tag, Text %inner) {
@@ -852,7 +852,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert_after("div", "Content")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @examplelink packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_after(Text %tag, Text %inner) {
@@ -873,7 +873,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert_before("div", "Content")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert
+# @examplelink packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_before(Text %tag, Text %inner) {
@@ -894,7 +894,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert_javascript_bottom("alert('Boo')")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert_javascript
+# @examplelink packages/libxml/test/examples/insert_javascript
 # @guidetext
 # @guidelink 
 @func XMLNode.insert_javascript_bottom(Text %js) {
@@ -914,7 +914,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert_javascript_top("alert('Boo')")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert_javascript
+# @examplelink packages/libxml/test/examples/insert_javascript
 # @guidetext
 # @guidelink 
 @func XMLNode.insert_javascript_top(Text %js) {
@@ -934,7 +934,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert_javascript_after("alert('Boo')")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert_javascript
+# @examplelink packages/libxml/test/examples/insert_javascript
 # @guidetext
 # @guidelink 
 @func XMLNode.insert_javascript_after(Text %js) {
@@ -954,7 +954,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # insert_javascript_before"alert('Boo')")
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/insert_javascript
+# @examplelink packages/libxml/test/examples/insert_javascript
 # @guidetext
 # @guidelink 
 @func XMLNode.insert_javascript_before(Text %js) {

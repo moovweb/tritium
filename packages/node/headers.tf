@@ -1,7 +1,7 @@
 
 " Returns the number of the node specified in relation to its siblings. @example `$(\"./div\") { log(index()) }` will return '1' if the div is the first div child, '2' if it is the second div child, and so on. "
 # @abstract 
-# @name
+# @name node
 # @category Environment,Create,Modify,Move,Misc,Text
 # @scope Base
 # @args
@@ -23,8 +23,8 @@
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink
-# @guidetext 
-# @guidelink 
+# @guidetext Using fetch.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/fetch
 @func Node.fetch(Text %selector) Text Text
 
 " Returns the current node. "
@@ -93,9 +93,10 @@
 # @scope Node
 # @args
 # @description
+# Due to the lack of text input, the function is mostly used when defining other functions. For example, check out the sources of most of the move_to functions are defined around this function.
 # @example
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink packages/libxml/test/examples/node/move
 # @guidetext 
 # @guidelink 
 @func Node.move(Node %what, Node %where, Position %pos) Text Node
@@ -174,15 +175,18 @@
 @func Node.insert_at(Position %pos, Text %tag_name) Text
 
 " Injects HTML (specified by **%html**) into the current node at the location specified by **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_at(\"top\", read(\"file.html\"))` injects the file specified at the top of the current node."
-# @abstract 
+# @abstract Injects HTML into the current node at the position specified.
 # @name
 # @category Create
 # @scope Node
 # @args
 # @description
 # @example
+# $("./div") {
+#   inject_at(position("top"), read("section.html"))
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink packages/libxml/test/examples/node/inject_at
 # @guidetext 
 # @guidelink 
 @func Node.inject_at(Position %pos, Text %html) Text
@@ -194,13 +198,17 @@
 # @scope Node
 # @args Text %pos,Text %html
 # @description
-# The inject_at function takes HTML and injects
+# The inject_at function takes HTML and injects it into the current node at the location specified.
+# The function takes two arguments. The first is the position at which the HTML should be inserted. The second argument is the HTML to be inserted. The HTML can be written out, in full, between two quotes. If there is a lot of HTML to be injected, it can also be in a file. Use the read function to input the file.
+# Common uses include (but are not limited to):
+# 1) Injecting a scaffold for a header and/or footer
+# The example below will inject the section.html file into the top of the selected div. Notice how the read function is used to input the file.
 # @example
 # $("./div") {
 #   inject_at("top", read("section.html"))
 # }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink packages/libxml/test/examples/node/inject_at
 # @guidetext 
 # @guidelink 
 @func Node.inject_at(Text %pos, Text %html) Text
@@ -214,7 +222,7 @@
 # @description
 # @example
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink packages/libxml/test/examples/set
 # @guidetext An example also using the name function.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/rename
 @func Node.set(Text %value) Text

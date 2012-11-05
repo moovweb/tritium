@@ -18,7 +18,7 @@
 #   remove()
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/css
+# @examplelink packages/libxml/test/examples/css
 # @guidetext
 # @guidelink 
 @func css(Text %selector) Text Text
@@ -105,7 +105,7 @@
 #   remove("./span")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/remove
+# @examplelink packages/libxml/test/examples/remove
 # @guidetext Removing nodes.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/removing
 @func XMLNode.remove(Text %xpath_selector) Text
@@ -129,7 +129,7 @@
 #   }
 # } 
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/inner
+# @examplelink packages/libxml/test/examples/inner
 # @guidetext More information on the inner function with a comparison to the text function.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/inner
 @func XMLNode.inner() Text Text
@@ -152,7 +152,7 @@
 #   inner_text
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/inner_text
+# @examplelink packages/libxml/test/examples/inner_text
 # @guidetext
 # @guidelink 
 @func XMLNode.inner_text() Text Text
@@ -174,7 +174,7 @@
 #   attribute("class") {}
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/attribute
+# @examplelink packages/libxml/test/examples/attribute/attribute
 # @guidetext
 # @guidelink 
 @func XMLNode.attribute(Text %name) Text Attribute
@@ -205,7 +205,7 @@
 #   }    
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/equal
+# @examplelink packages/libxml/test/examples/equal
 # @guidetext
 # @guidelink 
 @func equal(XMLNode %a, XMLNode %b) Text
@@ -249,7 +249,7 @@
 #   wrap_text_children("div")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/wrap_text_children
+# @examplelink packages/libxml/test/examples/wrap_text_children
 # @guidetext
 # @guidelink 
 @func XMLNode.wrap_text_children(Text %tag_name) Text XMLNode
@@ -260,13 +260,21 @@
 # @category Modify
 # @scope XMLNode
 # @args Node %tag_name,Position %pos
-# @description 
+# @description
+# The move_children_to function is used to move children of the current node into another node.
+# The function takes two arguments. The first is the new node that the children will be moved into. The second is the position at which the children will be moved. 
+# What's unique about these arguments is that they can't be a string - so entering an XPath direction will not work. To enter the node argument, you must select that node and set a local variable (using `%`) of the node. For the position, you must use the position function as in the example below.
+# Because of the complexity of setting a variable, this function is mainly used in definitions of functions - for example, the inner_wrap function.
+# In the example below, the "one" div is selected and a local variable is set. The variable is then used later, once we have selected div "two". All of two's children will be moved into the first div, at the top.
 # @example
-# 
-# 
-# 
+# $("./div[@class='one']") {
+#   %one = this()
+#   $("../div[@class='two']") {
+#     move_children_to(%one, position("top"))
+#   }
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink packages/libxml/test/examples/move_children_to
 # @guidetext
 # @guidelink 
 @func XMLNode.move_children_to(Node %tag_name, Position %pos) Text
@@ -289,7 +297,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/remove
+# @examplelink packages/libxml/test/examples/attribute/remove
 # @guidetext
 # @guidelink 
 @func Attribute.remove() Text
@@ -314,7 +322,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/value
+# @examplelink packages/libxml/test/examples/attribute/value
 # @guidetext
 # @guidelink 
 @func Attribute.value() Text Text
@@ -336,7 +344,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink http://tritium.moovweb.com/libxml/test/examples/attribute/name
+# @examplelink packages/libxml/test/examples/attribute/name
 # @guidetext
 # @guidelink 
 @func Attribute.name() Text Text
