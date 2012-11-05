@@ -16,6 +16,7 @@ import (
 	linker "tritium/linker"
 	parser "tritium/parser"
 	tp "tritium/proto"
+	whale "tritium/whale"
 )
 
 func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
@@ -326,8 +327,15 @@ func (pkg *Package) readHeaderFile(location string) {
 	}
 
 	stubs := parser.ParseFile(input_file)
-
 	for _, function := range stubs.Functions {
+		// Verify that signatures for primitives refer to things that actually exist
+		stubStr := strings.Replace(function.Stub(pkg.Package), ",", ".", -1)
+		if whale.LookupBuiltIn(stubStr) == nil {
+			// TODO: figure out why the panic string is suppressed so that we can remove the println
+			println("in " + input_file + " -- attempt to provide signature for nonexistent built-in " + stubStr)
+			panic("in " + input_file + " -- attempt to provide signature for nonexistent built-in " + stubStr)
+		}
+
 		pkg.resolveHeader(function)
 
 		function.BuiltIn = proto.Bool(true)
