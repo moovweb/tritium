@@ -74,27 +74,38 @@
 
 " Opens up the contents to text modification. Use only for text-only nodes - any XML children will be removed. @example With `<div> Dog <span>Cat</span> </div>`, the Tritium `$(\"./div\") { text() { prepend(\"Super\") } }` will result in `<div>Super Dog Cat</div>`."
 # @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @name text
+# @category Modify,Text
 # @scope Node
 # @args
 # @description
 # @example
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink packages/libxml/test/examples/text
 # @guidetext 
 # @guidelink 
 @func Node.text() Text Text
 
 " Moves the first node (**%what**) to the second node (**%where**), at a specified position (**%pos**). "
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract Moves one node to another node at the position specified.
+# @name move
+# @category Modify,Move
 # @scope Node
-# @args
+# @args Node %what,Node %where,Position %pos
 # @description
-# Due to the lack of text input, the function is mostly used when defining other functions. For example, check out the sources of most of the move_to functions are defined around this function.
+# The move function moves a certain node to a particular place in another node.
+# The function takes three arguments: what needs to be moved, where it needs to be moved, and the position at which it needs to be moved.
+# Important to note is the format in which the arguments must be given. They cannot be specified by a text string, so you cannot use a string of XPath to specify the nodes (e.g. "./div") or a text input for the position (e.g. "top").
+# Instead of using a string to define the position, you must use the position function to wrap it. For the nodes, you must set a local variable pointing to a particular node using `this()`.
+# Due to the lack of text input, the function is mostly used when defining other functions. For example, most of the move_to functions are defined around this function.
+# The example below selects the div "one" and assigns it a local variable. Then, it selects the div "two" and moves that div (`this()`) to the top of div one.
 # @example
+# $("./div[@class='one']") {
+#   %one = this()
+#   $("../div[@class='two']") {
+#     move(this(), %one, position("top"))
+#   }
+# }
 # @exampletext Tritium Tester Example
 # @examplelink packages/libxml/test/examples/node/move
 # @guidetext 
@@ -102,57 +113,88 @@
 @func Node.move(Node %what, Node %where, Position %pos) Text Node
 
 " Copies the node and yields to it. "
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract Copies the current node.
+# @name dup
+# @category Create
 # @scope Node
 # @args
 # @description
+# The dup function copies the current node. The copy is placed immediately after the current node.
+# The function is mostly used within other functions - for example the copy_to function.
+# The example below will copy the currently-selected div.
 # @example
+# $("./div") {
+#   dup()
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink packages/libxml/test/examples/node/dup
 # @guidetext 
 # @guidelink 
 @func Node.dup() Node Node
 
 " Opens a scope to rename the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/rename). @example `name() { set(\"div\") }` renames the current node to 'div'. "
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract Opens a scope to rename the current node.
+# @name name
+# @category Modify
 # @scope Node
 # @args
 # @description
+# The name function opens a scope via which the name of the current tag can be changed.
+# Common use cases include (but are not limited to):
+# 1) Rename table elements to more manipulable tags
+# The example below will rename the selected div to an a tag.
 # @example
+# $("./div") {
+#   name() {
+#     set("a")
+#   }
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext 
-# @guidelink 
+# @examplelink packages/libxml/test/examples/node/name
+# @guidetext Uses for the name function.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/rename
 @func Node.name() Text Text
 
 " Removes the current node from the tree - [click for example](http://beta.moovweb.com/learn/training/function_guides/removing). @example `$(\"//table\") { remove() }` will remove all the tables from the HTML. "
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract Removes the current node from the tree.
+# @name remove
+# @category Modify
 # @scope Node
 # @args
 # @description
+# The remove function removes the node that is currently selected.
+# Common use cases include (but are not limited to):
+# 1) Removing empty items on a page
+# 2) Removing a table once all useful information has been moved out
+# The example below will select every table in the document and remove it and its contents.
 # @example
+# $("//table") {
+#   remove()  
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext 
-# @guidelink 
+# @examplelink packages/libxml/test/examples/remove
+# @guidetext Discussion of the remove function.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/removing
 @func Node.remove() Text Node
 
 " Returns the XPath of the current node. @example From any node, using `log(path())` will return the path to the node in the logs. "
-# @abstract 
+# @abstract Returns the XPath of the current node.
 # @name path
 # @category Misc
 # @scope Node
 # @args
 # @description
+# The path function returns the nodal path to the currently-selected node.
+# Common use cases include (but are not limited to):
+# 1) Debugging by figuring out where in the HTML tree you are
+# 2) Setting a variable using the current path, in order to use it later for moving items
+# The example below will log the path to the selected div.
 # @example
+# $("./div") {
+#   log(path())
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink packages/libxml/test/examples/node/path
 # @guidetext 
 # @guidelink 
 @func Node.path() Text Text
