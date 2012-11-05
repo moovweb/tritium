@@ -308,15 +308,23 @@
 # DIRECTIONALS... UGH.
 
 " Inserts a tag (specified by **%tag**) in the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert(\"div\")` will insert a div at the bottom of the current node."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
-# @args
+# @abstract Inserts a new node at the position specified.
+# @name insert_at
+# @category Create
+# @scope Node
+# @args Position %pos,Text %tag_name
 # @description
+# The insert_at function inserts a tag in the current node at the location specified.
+# The function takes two arguments - the first is the position at which the new tag will be inserted. The second is the type of tag that should be inserted.
+# There is also a third, optional argument which allows you to specify the text which will be inserted in the element. Plus, you can add an arbitrary number of arguments specifying attributes. 
+# The example below will insert a span at the top of the selected div. Then, the snippet will insert an a tag at the bottom of the div. The a tag will have the text of "Click!" and have an href attribute with a value of http://example.com.
 # @example
-# @exampletext
-# @examplelink /libxml/test/examples/node/
+# $("./div") {
+#   insert_at(position("top"), "span")
+#   insert_at("bottom", "a", "Click!", href: "http://example.com")
+# }
+# @exampletext Tritium Tester Example
+# @examplelink packages/libxml/test/examples/insert
 # @guidetext 
 # @guidelink 
 @func Node.insert(Text %tag) {
