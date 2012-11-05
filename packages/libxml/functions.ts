@@ -11,6 +11,7 @@
 # People usually find the $$ easier to use - at least in the beginning - as it requires no knowledge of XPath.
 # Things to note: the $$ converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
 # For example, the selector $$("#one") will be converted into $(".//*[id='one']"). The double-forward slash deep search could affect performance.
+# Related functions: <a href="css Text selector">css()</a>
 # Common use cases include (but are not limited to):
 # 1) Selecting many element types based on attributes rather than tag names
 # 2) Selecting items without being familiar with XPath
@@ -160,7 +161,7 @@
 # The value function allows you to modify the value of an attribute. 
 # The function takes one argument - the value for the attribute.
 # An example of the value function being used on an attribute can be found in the functions/main.ts file in the rewrite_links function.
-# The value function is used to modify the hrefs of anchor tags.
+# In this case, the value function is used to modify the hrefs of anchor tags.
 # In the example below, the href attribute of the selected a tag will be given a new value of http://example.com.
 # @example
 # $("./a") {
@@ -191,7 +192,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # The name function allows you to change the name of an attribute.
 # It takes one argument, which is the new name for the attribute.
 # A use case for this function is found in the lateload function in the functions/main.ts file of a Moovweb project.
-# The name function is used to change the src attribute of images to data-ur-ll-src - which signals to some javascript to load the images when the page has finished.
+# In this case, the name function is used to change the src attribute of images to data-ur-ll-src - which signals to some javascript to load the images when the page has finished.
 # The example below changes the id of the selected div to a class.
 # @example
 # $("./div") {
@@ -484,7 +485,8 @@ Functionally equivalent to `name() { set(%name) }`."
 # - insert_javascript_bottom(Text %js)
 # - insert_javascript_before(Text %js)
 # - insert_javascript_after(Text %js)
-# The function is commonly used when javascript needs to be added to a specific node rather than globally, via Fusion.
+# Common use examples include (but are not limmited to):
+# 1) Javascript needs to be added to a specific node rather than globally
 # In the example below, the javascript "alert('Boo')" will be inserted at the bottom of the current node.
 # @example
 # insert_javascript("alert('Boo')")
@@ -505,8 +507,14 @@ Functionally equivalent to `name() { set(%name) }`."
 # @scope XMLNode
 # @args Text %html
 # @description 
-#
+# The inner function replaces the inside of the current node with the information given.
+# The function takes one argument - the content which will be used to set the interior of the current node.
+# Important to note is that all the interior of the current node will be obliterated and replaced with the input.
+# If the input contains tags, these will be rendered as HTML elements.
 # Compare to the text() function, which replaces the content with text only.
+# Common uses cases include (but are not limited to):
+# 1) Setting the inside of a node with both text and a new node
+# The example below will replace all the content of the current div with "New Content".
 # @example
 # $("./div") {
 #   inner("New Content")
@@ -529,9 +537,16 @@ Functionally equivalent to `name() { set(%name) }`."
 # @scope XMLNode
 # @args Text %tag
 # @description 
+# The wrap function takes the current node and wraps it in a new tag.
+# The function takes one obligatory argument - the new tag. It also takes an arbitrary number of additional arguments specifying attributes.
+# For example, you can specify a class using `class: "my_class"` as a second argument.
+# Common uses cases include (but are not limited to):
+# 1) Wrapping elements in a li tag to form a list
+# 2) Wrapping an element in an anchor tag to make a link
+# The example below will wrap the selected a tag in a div with the class "one".
 # @example
 # $("./a") {
-#   wrap("div")
+#   wrap("div", class: "one")
 # }
 # @exampletext Tritium Tester Example
 # @examplelink http://tritium.moovweb.com/libxml/test/examples/wrap
@@ -557,6 +572,7 @@ Functionally equivalent to `name() { set(%name) }`."
 
 # This is used to specify the encoding for a page
 "Parses the document into HTML. Allows specification of the current coding of HTML and how the result should be coded. @example `html(\"gbk\", \"utf-8\")` parses gbk HTML into utf-8 HTML."
+# @hide
 # @abstract Parses the document into HTML, from and to the encodings specified.
 # @name html
 # @category Environment
@@ -577,6 +593,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Parses the document into HTML, specifying the encoding (**%enc**). @example `html(\"utf-8\")` parses the document into utf-8 html."
+# @hide
 # @abstract Parses the document into HTML with the specified encoding.
 # @name html
 # @category Environment
@@ -602,7 +619,13 @@ Functionally equivalent to `name() { set(%name) }`."
 # @category Environment
 # @scope Text
 # @args
-# @description 
+# @description
+# The html function parses the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
+# Used in its basic sense, the function guesses the HTML encoding. The encoding can also be specified with up to two arguments.
+# A single argument can be used to specify the "to" and "from" encodings, or they can be specified separately using two arguments - html("x", "y") would parse the document from encoding "x" into encoding "y".
+# Important to note is that as part of the parsing, the function will add `<html>` tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the <a href="#html_fragment">html_fragment</a> function.
+# The html function can be found in the scripts/main.ts file of your project, where it parses every page as HTML.
+# The example below will parse the HTML, allowing selectors to point to nodes of the document.
 # @example
 # html() {
 #   $("/html/body")
@@ -626,6 +649,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Parses a fragment of the document. The `html()` function adds `<html>` tags to the output. This function does not."
+# @hide
 # @abstract Parses a fragment of the document as HTML, using the encodings specified.
 # @name html_fragment
 # @category Environment
@@ -646,6 +670,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Parses a fragment of the document. The `html()` function adds `<html>` tags to the output. This function does not."
+# @hide
 # @abstract Parses a fragment of the document as HTML with the encoding specified.
 # @name html_fragment
 # @category Environment
@@ -672,6 +697,11 @@ Functionally equivalent to `name() { set(%name) }`."
 # @scope Text
 # @args
 # @description 
+# The html_fragment function parses a fragment of the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
+# Just as for the html function, html_fragment can take up to two arguments. By default, function guesses the HTML encoding. 
+# A single argument can be used to specify the "to" and "from" encodings, or they can be specified separately using two arguments - html_fragment("x", "y") would parse the document from encoding "x" into encoding "y".
+# A common use example could be that only a small section of the request being processed is HTML, and that fragment must be parsed without adding a HTML tag and DOCTYPE.
+# The example below will parse a fragment of HTML, allowing selectors to point to nodes of the document. 
 # @example
 # html_fragment() {
 #   $("/div")
@@ -697,6 +727,12 @@ Functionally equivalent to `name() { set(%name) }`."
 # @scope XMLNode
 # @args Text %pos,Text %tag,Text %content
 # @description 
+# The insert_at function inserts a new element into the document at a position specified.
+# The function takes three arguments. The first is the position, relative to the current node, at which you want to insert the new element. The second is the tag name. The third (optional) argument is the content of the node.
+# There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, insert_at("top", "div", "Content", class: "one") will add a class of "one" to the new element.
+# Common use examples include (but are not limited to):
+# 1) Creating a button/content element for Uranium
+# The example below will insert a div tag at the top of the current node. The tag will have the content "Content".
 # @example
 # insert_at("top", "div", "Content")
 # @exampletext Tritium Tester Example
@@ -711,6 +747,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node) - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
+# @hide 
 # @abstract Inserts a tag with the (optional) content at the position specified.
 # @name insert_at
 # @category Create
@@ -737,8 +774,18 @@ Functionally equivalent to `name() { set(%name) }`."
 # @scope XMLNode
 # @args Text %tag,Text %inner
 # @description 
-# Content
-# Adding attributes too
+# The insert function adds the specified tag into the currently-selected node. By default, it will insert the tag at the bottom.
+# The function has one obligatory argument - the tag name - and one optional argument - the content. 
+# There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, insert("div", "Content", class: "one") will add a class of "one" to the new element.
+# There are a number of comparable functions that perform similar functions but specify a position in their name:
+# - insert_top(Text %tag, Text %inner)
+# - insert_bottom(Text %tag, Text %inner)
+# - insert_before(Text %tag, Text %inner)
+# - insert_after(Text %tag, Text %inner)
+# Common use examples include:
+# 1) Adding an anchor tag to link to the desktop site
+# 2) Inserting a header or footer on a page
+# The example below will insert a div with the content "Content" into the bottom of the current node.
 # @example
 # insert("div", "Content")
 # @exampletext Tritium Tester Example
@@ -753,6 +800,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts a tag (specified by **%tag**) with content (**%inner**) at the bottom of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_bottom(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the bottom of the current node."
+# @hide
 # @abstract Inserts a tag with the (optional) content into bottom of the current node.
 # @name insert_bottom
 # @category Create
@@ -773,6 +821,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts a tag (specified by **%tag**) with content (**%inner**) at the top of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_top(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
+# @hide
 # @abstract Inserts a tag with the (optional) content into top of the current node.
 # @name insert_top
 # @category Create
@@ -793,6 +842,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts a tag (specified by **%tag**) with content (**%inner**) after the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_after(\"div\", \"Some text\")` will insert `<div>Some text</div>` after the current node."
+# @hide
 # @abstract Inserts a tag with the (optional) content after the current node.
 # @name insert_after
 # @category Create
@@ -813,6 +863,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 "Inserts a tag (specified by **%tag**) with content (**%inner**) before the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_before(\"div\", \"Some text\")` will insert `<div>Some text</div>` before the current node."
+# @hide
 # @abstract Inserts a tag with the (optional) content before the current node. 
 # @name insert_before
 # @category Create
