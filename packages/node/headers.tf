@@ -52,9 +52,18 @@
 # @scope Node
 # @args
 # @description
+# The this function is used to point to the current node.
+# The function is mostly used in the context of defining other functions. Most of the time, you can write an XPath to point to the correct node - but sometimes you have to specify the node itself. Here is where the this function is useful.
+# The example below uses the function twice. Once to set a variable as the current node (the anchor tag) and once to specifiy the current node (the span) in a function. Node that we are using the move function here, which can only take nodes as arguments (i.e. not a string corresponding to XPath).
 # @example
+# $("./a") {
+#   %link = this()
+#   $("../span") {
+#     move(%link, this(), position("top"))
+#   }
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink packages/libxml/test/examples/node/move
 # @guidetext 
 # @guidelink 
 @func Node.this() Node Node
