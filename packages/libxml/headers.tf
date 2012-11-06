@@ -19,7 +19,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/css
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func css(Text %selector) Text Text
 
@@ -28,16 +28,17 @@
 # @name xml
 # @category Environment 
 # @scope Text
-# @args
+# @args 
 # @description 
+# The xml function parses the document as XML. Parsing is essential to enable selection of XML nodes using Tritium.
 # The example below will parse the document as XML, allowing the selection of nodes with XPath.
 # @example
 # xml() {
 #   $("/xml")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
+# @examplelink 
+# @guidetext 
 # @guidelink 
 @func Text.xml() Text XMLNode
 
@@ -48,11 +49,12 @@
 # @scope Text
 # @args Text %input_encoding,Text %output_encoding
 # @description 
+# The html_doc 
 # @example
 # html_doc("gbk", "utf-8")
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
+# @examplelink 
+# @guidetext 
 # @guidelink 
 @func Text.html_doc(Text %input_encoding, Text %output_encoding) Text XMLNode
 
@@ -66,8 +68,8 @@
 # @example
 # html_fragment_doc("gbk", "utf-8")
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
+# @examplelink 
+# @guidetext 
 # @guidelink 
 @func Text.html_fragment_doc(Text %input_encoding, Text %output_encoding) Text XMLNode
 
@@ -81,8 +83,8 @@
 # @example
 # 
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
+# @examplelink 
+# @guidetext 
 # @guidelink 
 @func XMLNode.cdata(Text %contents) Text
 
@@ -139,7 +141,7 @@
 # @name inner_text
 # @category Modify
 # @scope XMLNode
-# @args
+# @args 
 # @description
 # The inner_text function converts the entirety of the current node into text.
 # The function essentially removes all HTML tags/elements and returns the text of the element.
@@ -153,7 +155,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/inner_text
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.inner_text() Text Text
 
@@ -175,7 +177,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/attribute/attribute
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.attribute(Text %name) Text Attribute
 
@@ -206,7 +208,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/equal
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func equal(XMLNode %a, XMLNode %b) Text
 
@@ -225,13 +227,13 @@
 # 
 # 
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
-# @guidelink
+# @examplelink 
+# @guidetext 
+# @guidelink 
 @func equal(Node %a, Node %b) Text
 
 " Wraps the *text* children inside the specified tag. @example Given `<div> text <a>link</a> </div>`, `$(\"./div\") { wrap_text_children(\"span\") }` results in `<div> <span>text</span> <a>link</a> </div>`. "
-# @abstract 
+# @abstract Wraps text children inside a new tag.
 # @name wrap_text_children
 # @category Create
 # @scope XMLNode
@@ -250,7 +252,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/wrap_text_children
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.wrap_text_children(Text %tag_name) Text XMLNode
 
@@ -275,7 +277,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/move_children_to
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.move_children_to(Node %tag_name, Position %pos) Text
 
@@ -284,7 +286,7 @@
 # @name remove
 # @category Modify
 # @scope Attribute
-# @args
+# @args 
 # @description 
 # The remove function removes the currently-selected attribute. It is an extremely useful function.
 # Common uses include (but are not limited to):
@@ -298,7 +300,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/attribute/remove
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func Attribute.remove() Text
 
@@ -323,7 +325,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/attribute/value
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func Attribute.value() Text Text
 
@@ -345,6 +347,6 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/attribute/name
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func Attribute.name() Text Text

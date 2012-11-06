@@ -50,7 +50,7 @@
 # @name this
 # @category Misc
 # @scope Node
-# @args
+# @args 
 # @description
 # The this function is used to point to the current node.
 # The function is mostly used in the context of defining other functions. Most of the time, you can write an XPath to point to the correct node - but sometimes you have to specify the node itself. Here is where the this function is useful.
@@ -119,7 +119,8 @@
 # @name text
 # @category Modify,Text
 # @scope Node
-# @args
+# @args 
+# @description
 # The text function opens up the text scope or retrieves the text contained within the current scope.
 # Without any further functions, the text function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
 # A further function can be used (such as `set`) to replace anything inside the current node with text.
@@ -172,7 +173,7 @@
 # @name dup
 # @category Create
 # @scope Node
-# @args
+# @args 
 # @description
 # The dup function copies the current node. The copy is placed immediately after the current node.
 # The function is mostly used within other functions - for example the copy_to function.
@@ -192,7 +193,7 @@
 # @name name
 # @category Modify
 # @scope Node
-# @args
+# @args 
 # @description
 # The name function opens a scope via which the name of the current tag can be changed.
 # Common use cases include (but are not limited to):
@@ -215,7 +216,7 @@
 # @name remove
 # @category Modify
 # @scope Node
-# @args
+# @args 
 # @description
 # The remove function removes the node that is currently selected.
 # Common use cases include (but are not limited to):
@@ -237,7 +238,7 @@
 # @name path
 # @category Misc
 # @scope Node
-# @args
+# @args 
 # @description
 # The path function returns the nodal path to the currently-selected node.
 # Common use cases include (but are not limited to):
@@ -309,8 +310,8 @@
 # @category Modify
 # @scope Node
 # @args Text %value
-# @description
-# @example
+# @description 
+# @example 
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/set
 # @guidetext An example also using the name function.

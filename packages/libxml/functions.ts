@@ -20,7 +20,7 @@
 # $$("#one")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/css_selector
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.$$(Text %css_selector) {
   $(css(%css_selector)) {
@@ -74,7 +74,7 @@
 # The function takes one argument and that is the name of the tag in which you want to wrap the content of the current node.
 # Common use cases include (but are not limited to):
 # 1) Wrapping all interior content into an anchor tag
-# 2) 
+# 2) Wrapping a mixture of text and nodes into one tag
 # The example below will take the contents of the div and wrap them in a span.
 # @example
 # $("./div") {
@@ -82,7 +82,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/inner_wrap
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.inner_wrap(Text %tag_name) {
 
@@ -100,7 +100,7 @@
 # @name remove_text_nodes
 # @category Modify
 # @scope XMLNode
-# @args
+# @args 
 # @description
 # The remove_text_nodes function takes all text that is a direct child of the current node and removes it.
 # Any non-text nodes (e.g. anchor tags, image tags, etc.) will remain intact.
@@ -113,7 +113,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/remove_text_nodes
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.remove_text_nodes() {
   remove("./text()")
@@ -171,7 +171,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/attribute/value
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func Attribute.value(Text %value) {
   value() {
@@ -202,8 +202,8 @@ Functionally equivalent to `name() { set(%name) }`."
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/attribute/name
-# @guidetext
-# @guidelink <a href="#name Text name"
+# @guidetext 
+# @guidelink 
 @func Attribute.name(Text %name) {
   name() { 
     set(%name) 
@@ -228,7 +228,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # insert("link", rel: "stylesheet", type: "text/css", href: sass("main")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/sass
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func sass(Text %filename) {
   asset(concat("stylesheets/.css/", concat(%filename, ".css"))) {
@@ -282,7 +282,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/attribute/attributes
-# @guidetext
+# @guidetext More ways to add attributes.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute
 @func XMLNode.attributes() {
   yield()
@@ -293,7 +293,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @name text
 # @category Modify
 # @scope XMLNode
-# @args
+# @args 
 # @description
 # The text function opens up the text scope or retrieves the text contained within the current scope.
 # Without any further functions, the text function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
@@ -357,8 +357,8 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # absolutize(".//img", "src")
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
+# @examplelink 
+# @guidetext 
 # @guidelink 
 @func XMLNode.absolutize(Text %xpath, Text %attribute) {
 
@@ -411,8 +411,8 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # absolutize("//img")
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
+# @examplelink 
+# @guidetext 
 # @guidelink 
 @func XMLNode.absolutize(Text %xpath) {
   absolutize(%xpath, "src") {
@@ -425,7 +425,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @name absolutize
 # @category Modify,Environment
 # @scope XMLNode
-# @args
+# @args 
 # @description 
 # The absolutize function takes paths of sources for images and scripts and ensures that they contain a domain.
 # Instead of the source being "/images/icon.png", it would be "http://example.com/images/icon.png". This ensures that no unnecessary files are directed through the proxy, increasing performance.
@@ -437,8 +437,8 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # absolutize()
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
+# @examplelink 
+# @guidetext 
 # @guidelink 
 @func XMLNode.absolutize() {
   absolutize(".//img|.//script") {
@@ -462,7 +462,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # insert_javascript_at(position("top"), "alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert_javascript
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.insert_javascript_at(Position %pos, Text %js) {
   insert_at(%pos, "script") {
@@ -494,7 +494,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # insert_javascript("alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert_javascript
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.insert_javascript(Text %js) {
   insert_javascript_at(position(), %js) {
@@ -552,7 +552,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/wrap
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.wrap(Text %tag) {
   %parent_node = this()
@@ -584,8 +584,8 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # html("gbk", "utf-8")
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
+# @examplelink 
+# @guidetext 
 # @guidelink 
 @func Text.html(Text %from_enc, Text %to_enc) {
   html_doc(%from_enc, %to_enc) {
@@ -605,8 +605,8 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # html("utf-8")
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
+# @examplelink 
+# @guidetext 
 # @guidelink 
 @func Text.html(Text %enc) {
   $charset_determined = %enc
@@ -620,7 +620,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @name html
 # @category Environment
 # @scope Text
-# @args
+# @args 
 # @description
 # The html function parses the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
 # Used in its basic sense, the function guesses the HTML encoding. The encoding can also be specified with up to two arguments.
@@ -633,8 +633,8 @@ Functionally equivalent to `name() { set(%name) }`."
 #   $("/html/body")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
+# @examplelink 
+# @guidetext 
 # @guidelink 
 @func Text.html() {
   match($charset_determined) {
@@ -661,8 +661,8 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # html_fragment("gbk", "utf-8")
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
+# @examplelink 
+# @guidetext 
 # @guidelink 
 @func Text.html_fragment(Text %from_enc, Text %to_enc) {
   html_fragment_doc(%from_enc, %to_enc) {
@@ -682,8 +682,8 @@ Functionally equivalent to `name() { set(%name) }`."
 # @example
 # html_fragment("utf-8")
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
+# @examplelink 
+# @guidetext 
 # @guidelink 
 @func Text.html_fragment(Text %enc) {
   $charset_determined = %enc
@@ -709,8 +709,8 @@ Functionally equivalent to `name() { set(%name) }`."
 #   $("/div")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext
+# @examplelink 
+# @guidetext 
 # @guidelink 
 @func Text.html_fragment() {
   $encoding = guess_encoding()
@@ -897,7 +897,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # insert_javascript_bottom("alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert_javascript
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.insert_javascript_bottom(Text %js) {
   insert_javascript_at(position("bottom"), %js) {
@@ -917,7 +917,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # insert_javascript_top("alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert_javascript
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.insert_javascript_top(Text %js) {
   insert_javascript_at(position("top"), %js) {
@@ -937,7 +937,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # insert_javascript_after("alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert_javascript
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.insert_javascript_after(Text %js) {
   insert_javascript_at(position("after"), %js) {
@@ -957,7 +957,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # insert_javascript_before"alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert_javascript
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func XMLNode.insert_javascript_before(Text %js) {
   insert_javascript_at(position("before"), %js) {
