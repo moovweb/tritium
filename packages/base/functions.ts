@@ -19,7 +19,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/export
 # @guidetext Useful Environment Variables
-# @guidelink http://beta.moovweb.com/learn/reference/configuration/index#Environment+Variables
+# @guidelink  http://beta.moovweb.com/learn/reference/configuration/index#Environment+Variables
 @func export(Text %key, Text %value) {
   export(%key) {
     set(%value)
@@ -49,7 +49,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/regexp
 # @guidetext Regex Guide
-# @guidelink http://beta.moovweb.com/learn/reference/tools/regex
+# @guidelink  http://beta.moovweb.com/learn/reference/tools/regex
 @func regexp(Text %exp) {
   regexp(%exp, "")
 }
@@ -74,7 +74,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/asset
 # @guidetext Function Guide
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/asset
+# @guidelink  http://beta.moovweb.com/learn/training/function_guides/asset
 @func asset(Text %name) {
   concat($asset_host, %name) {
     yield()
@@ -100,7 +100,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/bm
 # @guidetext
-# @guidelink
+# @guidelink 
 @func bm(Text %name) {
   log(concat(%name, ": ", 
     time() {
@@ -132,7 +132,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/match
 # @guidetext Function Guide
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
+# @guidelink  http://beta.moovweb.com/learn/training/function_guides/match
 @func match(Text %target, Text %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -165,7 +165,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/match2
 # @guidetext Function Guide
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
+# @guidelink  http://beta.moovweb.com/learn/training/function_guides/match
 @func match(Text %target, Regexp %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -198,7 +198,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/match_not
 # @guidetext Function Guide
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
+# @guidelink  http://beta.moovweb.com/learn/training/function_guides/match
 @func match_not(Text %target, Text %comparitor) {
   match(%target) {
     not(%comparitor) {
@@ -231,7 +231,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/match_not2
 # @guidetext Function Guide
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
+# @guidelink  http://beta.moovweb.com/learn/training/function_guides/match
 @func match_not(Text %target, Regexp %comparitor) {
   match(%target) {
     not(%comparitor) {
@@ -262,7 +262,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/clear
 # @guidetext Function Guide
-# @guidelink 
+# @guidelink  
 @func Text.clear() {
   set("") {
     yield()
@@ -293,7 +293,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/text
 # @guidetext Function Guide
-# @guidelink
+# @guidelink 
 @func Text.text() {
   this() {
     yield()
@@ -324,7 +324,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/replace
 # @guidetext Function Guide
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
+# @guidelink  http://beta.moovweb.com/learn/training/function_guides/replace
 @func Text.replace(Regexp %search, Text %with) {
   replace(%search) {
     set(%with)
@@ -355,7 +355,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/replace2
 # @guidetext Function Guide
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
+# @guidelink  http://beta.moovweb.com/learn/training/function_guides/replace
 @func Text.replace(Text %search, Text %with) {
   replace(%search) {
     set(%with)
@@ -383,7 +383,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/length
 # @guidetext Function Guide
-# @guidelink 
+# @guidelink  
 @func Text.length() {
   $input = this()
   length($input)
