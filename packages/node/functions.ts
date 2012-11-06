@@ -17,7 +17,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/node/xpath_selector
 # @guidetext XPath Reference Guide
-# @guidelink http://beta.moovweb.com/learn/reference/tools/xpath
+# @guidelink  http://beta.moovweb.com/learn/reference/tools/xpath
 @func Node.$(Text %xpath) {
   select(%xpath) {
     yield()
@@ -42,7 +42,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/node/position
 # @guidetext 
-# @guidelink 
+# @guidelink  
 @func position() {
   position("bottom") 
 }
@@ -70,7 +70,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/node/index
 # @guidetext 
-# @guidelink 
+# @guidelink  
 @func Node.index() {
   index(this()) {
     yield()
@@ -93,7 +93,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/node/name
 # @guidetext
-# @guidelink
+# @guidelink 
 @func Node.name(Text %value) {
   name() {
     set(%value)
@@ -138,7 +138,7 @@
 # @exampletext
 # @examplelink test/examples/node/copy_here
 # @guidetext 
-# @guidelink 
+# @guidelink  
 @func Node.copy_here(Text %xpath) {
   copy_here(%xpath, position()) {
     yield() 
@@ -183,7 +183,7 @@
 # @exampletext
 # @examplelink test/examples/node/copy_to
 # @guidetext 
-# @guidelink 
+# @guidelink  
 @func Node.copy_to(Text %xpath) {
   copy_to(%xpath, position()) {
     yield()
@@ -210,7 +210,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink packagestest/examples/node/inject
 # @guidetext 
-# @guidelink 
+# @guidelink  
 @func Node.inject(Text %html) {
   inject_at("bottom", %html) {
     yield() 
@@ -252,7 +252,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/node/move_to
 # @guidetext 
-# @guidelink 
+# @guidelink  
 @func Node.move_to(Text %xpath) {
   move_to(%xpath, position()) {
     yield()
@@ -293,7 +293,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/node/move_here
 # @guidetext 
-# @guidelink 
+# @guidelink  
 @func Node.move_here(Text %where) {
   move_here(%where, position("bottom")) {
     yield()
@@ -321,7 +321,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink packages/libxml/test/examples/insert
 # @guidetext 
-# @guidelink 
+# @guidelink  
 @func Node.insert(Text %tag) {
   insert_at(position(), %tag) {
     yield()
@@ -352,7 +352,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
+# @guidelink  http://beta.moovweb.com/learn/training/function_guides/insert
 @func Node.insert_bottom(Text %tag) {
   insert_at(position(), %tag) {
     yield()
@@ -383,7 +383,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
+# @guidelink  http://beta.moovweb.com/learn/training/function_guides/insert
 @func Node.insert_top(Text %tag) {
   insert_at(position("top"), %tag) {
     yield()
@@ -414,7 +414,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
+# @guidelink  http://beta.moovweb.com/learn/training/function_guides/insert
 @func Node.insert_after(Text %tag) {
   insert_at(position("after"), %tag) {
     yield()
@@ -445,7 +445,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert 
+# @guidelink  http://beta.moovweb.com/learn/training/function_guides/insert 
 @func Node.insert_before(Text %tag) {
   insert_at(position("before"), %tag) {
     yield()
