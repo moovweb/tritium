@@ -23,13 +23,22 @@
 @func index(Node %node) Text
 
 " Selects an element to pass it to a function - [click for example](http://beta.moovweb.com/learn/training/function_guides/fetch). @example Given `<div>Dog</div>`, `$(\"./div\") { $var = fetch(text()) }` will set 'var' to be 'Dog'. "
-# @abstract 
+# @abstract Retrieves information from the node specified.
 # @name fetch
 # @category Misc
 # @scope Node
 # @args Text %selector
 # @description
+# The fetch function retrieves the information from the node specified.
+# The function takes one argument - the node/information you want. This should be specified in XPath.
+# Common uses include:
+# 1) Grabbing text from a link in order to use it elsewhere
+# 2) Fetching the value of an attribute 
+# The example below fetches any text within the anchor tag and sets it as a variable.
 # @example
+# $("./a") {
+#   $linktxt = fetch("text()")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink packages/libxml/test/examples/node/fetch
 # @guidetext Using fetch.
