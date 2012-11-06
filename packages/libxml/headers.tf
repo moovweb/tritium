@@ -18,7 +18,7 @@
 #   remove()
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/css
+# @examplelink test/examples/css
 # @guidetext
 # @guidelink 
 @func css(Text %selector) Text Text
@@ -105,7 +105,7 @@
 #   remove("./span")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/remove
+# @examplelink test/examples/remove
 # @guidetext Removing nodes.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/removing
 @func XMLNode.remove(Text %xpath_selector) Text
@@ -129,7 +129,7 @@
 #   }
 # } 
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/inner
+# @examplelink test/examples/inner
 # @guidetext More information on the inner function with a comparison to the text function.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/inner
 @func XMLNode.inner() Text Text
@@ -152,7 +152,7 @@
 #   inner_text
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/inner_text
+# @examplelink test/examples/inner_text
 # @guidetext
 # @guidelink 
 @func XMLNode.inner_text() Text Text
@@ -174,7 +174,7 @@
 #   attribute("class") {}
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/attribute/attribute
+# @examplelink test/examples/attribute/attribute
 # @guidetext
 # @guidelink 
 @func XMLNode.attribute(Text %name) Text Attribute
@@ -205,7 +205,7 @@
 #   }    
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/equal
+# @examplelink test/examples/equal
 # @guidetext
 # @guidelink 
 @func equal(XMLNode %a, XMLNode %b) Text
@@ -249,7 +249,7 @@
 #   wrap_text_children("div")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/wrap_text_children
+# @examplelink test/examples/wrap_text_children
 # @guidetext
 # @guidelink 
 @func XMLNode.wrap_text_children(Text %tag_name) Text XMLNode
@@ -274,7 +274,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/move_children_to
+# @examplelink test/examples/move_children_to
 # @guidetext
 # @guidelink 
 @func XMLNode.move_children_to(Node %tag_name, Position %pos) Text
@@ -297,7 +297,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/attribute/remove
+# @examplelink test/examples/attribute/remove
 # @guidetext
 # @guidelink 
 @func Attribute.remove() Text
@@ -322,7 +322,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/attribute/value
+# @examplelink test/examples/attribute/value
 # @guidetext
 # @guidelink 
 @func Attribute.value() Text Text
@@ -344,7 +344,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/attribute/name
+# @examplelink test/examples/attribute/name
 # @guidetext
 # @guidelink 
 @func Attribute.name() Text Text

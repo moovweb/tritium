@@ -1,56 +1,89 @@
 
 " Returns the number of the node specified in relation to its siblings. @example `$(\"./div\") { log(index()) }` will return '1' if the div is the first div child, '2' if it is the second div child, and so on. "
-# @abstract 
-# @name node
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract Returns the current iteration of the function being performed.
+# @name index
+# @category Misc
 # @scope Base
-# @args
-# @description
+# @args Node %node
+# The index function is used to return the order of which the node is transformed when selected using Tritium. Every time you use a Tritium selector that selects more than a single element, the MoovSDK will iterate over each element and run the inner block of code on each element one at a time. The index() function returns the order of that element in the execution queue.
+# Note that the function does not necessarily give the index of the current node in relation to its siblings. It is the number of iterations the previous selection has gone through.
+# Common uses include:
+# 1) Giving elements a unique attribute that corresponds to their index number.
+# 2) Referencing a certain element based on its order of execution.
+# 3) General order based logic, such as giving all odd numbered elements in the queue a certain class so you can style them differently.
+# The example below will assign a class to every div. The first div that is encountered will have a class of "div_number_1". The second div found will be "div_number_2" etc.
 # @example
+# $("./div") {
+#   attribute("class", "div_number_" + index(this()))
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext 
-# @guidelink 
+# @examplelink test/examples/node/index
+# @guidetext More information about indexing items.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/index_func
 @func index(Node %node) Text
 
 " Selects an element to pass it to a function - [click for example](http://beta.moovweb.com/learn/training/function_guides/fetch). @example Given `<div>Dog</div>`, `$(\"./div\") { $var = fetch(text()) }` will set 'var' to be 'Dog'. "
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract Retrieves information from the node specified.
+# @name fetch
+# @category Misc
 # @scope Node
-# @args
+# @args Text %selector
 # @description
+# The fetch function retrieves the information from the node specified.
+# The function takes one argument - the node/information you want. This should be specified in XPath.
+# Common uses include:
+# 1) Grabbing text from a link in order to use it elsewhere
+# 2) Fetching the value of an attribute 
+# The example below fetches any text within the anchor tag and sets it as a variable.
 # @example
+# $("./a") {
+#   $linktxt = fetch("text()")
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink test/examples/node/fetch
 # @guidetext Using fetch.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/fetch
 @func Node.fetch(Text %selector) Text Text
 
 " Returns the current node. "
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract Returns the currently-selected node.
+# @name this
+# @category Misc
 # @scope Node
 # @args
 # @description
+# The this function is used to point to the current node.
+# The function is mostly used in the context of defining other functions. Most of the time, you can write an XPath to point to the correct node - but sometimes you have to specify the node itself. Here is where the this function is useful.
+# The example below uses the function twice. Once to set a variable as the current node (the anchor tag) and once to specifiy the current node (the span) in a function. Node that we are using the move function here, which can only take nodes as arguments (i.e. not a string corresponding to XPath).
 # @example
+# $("./a") {
+#   %link = this()
+#   $("../span") {
+#     move(%link, this(), position("top"))
+#   }
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink test/examples/node/move
 # @guidetext 
 # @guidelink 
 @func Node.this() Node Node
 
 " Specifies the position of a node. @example `move_to(\"//body\", position(\"top\")` will move the current tag to the top of the body. "
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Position
-# @args
+# @abstract Specifies positional information.
+# @name position
+# @category Misc
+# @scope Base
+# @args Text %position
 # @description
+# For some functions, you cannot enter a position as a text string. In these cases, you need to enter a position using the position function.
+# The function takes one argument, which is the position you wish to specify. Possible positions include top, bottom, before and after.
+# The example below will move the div to the top of the body node.
 # @example
+# $("./div") {
+#   move_to("/html/body", position("top"))
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink test/examples/node/position
 # @guidetext 
 # @guidelink 
 @func position(Text %position) Position
@@ -59,31 +92,53 @@
 //@func position() Position
 
 " Searches the tree and selects all nodes matching **%xpath_selector**. Works the same as `$`. @example `select(\"//div\")` will select every div in the HTML."
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract Selects all nodes matching the XPath specified.
+# @name select
+# @category Misc
 # @scope Node
-# @args
+# @args Text %xpath_selector
 # @description
+# The select function searches the HTML tree to match the XPath specified.
+# The function takes one argument, and that is the 
+# Related functions: <a href="#$ Text xpath">$()</a>
+# Common uses include:
+# 1) Selecting any HTML element in Tritium using XPath
+# The example below selects the html and body 
 # @example
+# select("/html/body") {
+#   remove()
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink test/examples/node/select
 # @guidetext 
 # @guidelink 
 @func Node.select(Text %xpath_selector) Text Node
 
 " Opens up the contents to text modification. Use only for text-only nodes - any XML children will be removed. @example With `<div> Dog <span>Cat</span> </div>`, the Tritium `$(\"./div\") { text() { prepend(\"Super\") } }` will result in `<div>Super Dog Cat</div>`."
-# @abstract 
+# @abstract Opens the contents of the current node to text modification or retrieves the text of the current node.
 # @name text
 # @category Modify,Text
 # @scope Node
 # @args
-# @description
+# The text function opens up the text scope or retrieves the text contained within the current scope.
+# Without any further functions, the text function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
+# A further function can be used (such as `set`) to replace anything inside the current node with text.
+# Important to note is that anything within the argument will be inserted as text. So using `text("<a></a>")` will insert the *text* rather than the HTML tag.
+# Common use cases include (but are not limited to):
+# 1) Grabbing text from unnecessarily-nested nodes
+# 2) Opening a text scope to then replace a word in a paragraph
+# 3) Fetching text from a tag to put into a variable
+# The example below will set the interior of the current div to be "New".
 # @example
+# $("./div") {
+#   text() {
+#     set("New")
+#   }
+# }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/text
-# @guidetext 
-# @guidelink 
+# @examplelink test/examples/text
+# @guidetext The two main uses of text.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/text
 @func Node.text() Text Text
 
 " Moves the first node (**%what**) to the second node (**%where**), at a specified position (**%pos**). "
@@ -107,7 +162,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/node/move
+# @examplelink test/examples/node/move
 # @guidetext 
 # @guidelink 
 @func Node.move(Node %what, Node %where, Position %pos) Text Node
@@ -127,7 +182,7 @@
 #   dup()
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/node/dup
+# @examplelink test/examples/node/dup
 # @guidetext 
 # @guidelink 
 @func Node.dup() Node Node
@@ -150,7 +205,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/node/name
+# @examplelink test/examples/node/name
 # @guidetext Uses for the name function.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/rename
 @func Node.name() Text Text
@@ -172,7 +227,7 @@
 #   remove()  
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/remove
+# @examplelink test/examples/remove
 # @guidetext Discussion of the remove function.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/removing
 @func Node.remove() Text Node
@@ -194,7 +249,7 @@
 #   log(path())
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/node/path
+# @examplelink test/examples/node/path
 # @guidetext 
 # @guidelink 
 @func Node.path() Text Text
@@ -221,7 +276,7 @@
 #   inject_at(position("top"), read("section.html"))
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/node/inject_at
+# @examplelink test/examples/node/inject_at
 # @guidetext 
 # @guidelink 
 @func Node.inject_at(Position %pos, Text %html) Text
@@ -243,7 +298,7 @@
 #   inject_at("top", read("section.html"))
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/node/inject_at
+# @examplelink test/examples/node/inject_at
 # @guidetext 
 # @guidelink 
 @func Node.inject_at(Text %pos, Text %html) Text
@@ -257,7 +312,7 @@
 # @description
 # @example
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/set
+# @examplelink test/examples/set
 # @guidetext An example also using the name function.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/rename
 @func Node.set(Text %value) Text
