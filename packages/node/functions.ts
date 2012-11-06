@@ -36,7 +36,9 @@
 # Common uses include: 
 # 1) Some functions require position inputs as parameters. You can call position() to fulfill this requirement.
 # 2) When defining custom functions you may want to use a position type in your definition.
+# In this example, we move the current node to the bottom of its parent.
 # @example
+# move_to("..", position())
 # @exampletext Tritium Tester Example
 # @examplelink /libxml/test/examples/node/position
 # @guidetext 
