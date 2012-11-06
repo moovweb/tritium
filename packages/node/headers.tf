@@ -1,36 +1,45 @@
 
 " Returns the number of the node specified in relation to its siblings. @example `$(\"./div\") { log(index()) }` will return '1' if the div is the first div child, '2' if it is the second div child, and so on. "
-# @abstract 
-# @name node
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract Returns the current iteration of the function being performed.
+# @name index
+# @category Misc
 # @scope Base
-# @args
-# @description
+# @args Node %node
+# The index function is used to return the order of which the node is transformed when selected using Tritium. Every time you use a Tritium selector that selects more than a single element, the MoovSDK will iterate over each element and run the inner block of code on each element one at a time. The index() function returns the order of that element in the execution queue.
+# Note that the function does not necessarily give the index of the current node in relation to its siblings. It is the number of iterations the previous selection has gone through.
+# Common uses include:
+# 1) Giving elements a unique attribute that corresponds to their index number.
+# 2) Referencing a certain element based on its order of execution.
+# 3) General order based logic, such as giving all odd numbered elements in the queue a certain class so you can style them differently.
+# The example below will assign a class to every div. The first div that is encountered will have a class of "div_number_1". The second div found will be "div_number_2" etc.
 # @example
+# $("./div") {
+#   attribute("class", "div_number_" + index(this()))
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
-# @guidetext 
-# @guidelink 
+# @examplelink packages/libxml/test/examples/node/index
+# @guidetext More information about indexing items.
+# @guidelink http://beta.moovweb.com/learn/training/function_guides/index_func
 @func index(Node %node) Text
 
 " Selects an element to pass it to a function - [click for example](http://beta.moovweb.com/learn/training/function_guides/fetch). @example Given `<div>Dog</div>`, `$(\"./div\") { $var = fetch(text()) }` will set 'var' to be 'Dog'. "
 # @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @name fetch
+# @category Misc
 # @scope Node
-# @args
+# @args Text %selector
 # @description
 # @example
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink packages/libxml/test/examples/node/fetch
 # @guidetext Using fetch.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/fetch
 @func Node.fetch(Text %selector) Text Text
 
 " Returns the current node. "
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
+# @abstract Returns the currently-selected node.
+# @name this
+# @category Misc
 # @scope Node
 # @args
 # @description
@@ -42,15 +51,21 @@
 @func Node.this() Node Node
 
 " Specifies the position of a node. @example `move_to(\"//body\", position(\"top\")` will move the current tag to the top of the body. "
-# @abstract 
-# @name
-# @category Environment,Create,Modify,Move,Misc,Text
-# @scope Position
-# @args
+# @abstract Specifies positional information.
+# @name position
+# @category Misc
+# @scope Base
+# @args Text %position
 # @description
+# For some functions, you cannot enter a position as a text string. In these cases, you need to enter a position using the position function.
+# The function takes one argument, which is the position you wish to specify. Possible positions include top, bottom, before and after.
+# The example below will move the div to the top of the body node.
 # @example
+# $("./div") {
+#   move_to("/html/body", position("top"))
+# }
 # @exampletext Tritium Tester Example
-# @examplelink
+# @examplelink packages/libxml/test/examples/node/position
 # @guidetext 
 # @guidelink 
 @func position(Text %position) Position
