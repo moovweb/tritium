@@ -50,8 +50,8 @@
 # @args Text %input_encoding,Text %output_encoding
 # @description 
 # The html doc function parses the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
-# The encoding must be specified with two arguments, used to specify the "to" and "from" encodings. `html_doc("x", "y")` would parse the document from encoding "x" into encoding "y".
-# Important to note is that as part of the parsing, the function will add `<html>` tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the <a href="#html_fragment">html_fragment</a> function.
+# The encoding must be specified with two arguments, used to specify the "to" and "from" encodings. <code>html_doc("x", "y")</code> would parse the document from encoding "x" into encoding "y".
+# Important to note is that as part of the parsing, the function will add <code><html></code> tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the <a href="#html_fragment">html_fragment</a> function.
 # The html function can be found in the scripts/main.ts file of your project, where it parses every page as HTML.
 # The example below will parse the HTML from gbk encoding to utf-8 encoding, allowing selectors to point to nodes of the document.
 # @example
@@ -90,8 +90,12 @@
 # @scope XMLNode
 # @args Text %contents
 # @description 
+# The cdata function allows you to insert chunks of CDATA on your page.
+# CDATA is information that is not parsed by the XML parser. Therefore, it can include characters that may break XML (for example, <code><</code>). It is often used for inserting javascript.
+# The function takes one argument - the content which needs to be passed into the CDATA block.
+# The example below 
 # @example
-# 
+# cdata("//<![CDATA[\n alert('Boo!') \n//]]>")
 # @exampletext Tritium Tester Example
 # @examplelink 
 # @guidetext 
@@ -109,7 +113,7 @@
 # The function takes one argument - the location of the node to be removed, specified using XPath.
 # As you can select attributes using XPath, it is possible to delete attributes using the remove() function. Select an attribute using the @ sign - for example "@class" will select a class.
 # Common use cases include (but are not limited to):
-# 1) Removing all the `<br>` tags in a paragraph
+# 1) Removing all the <code><br></code> tags in a paragraph
 # 2) Removing style attributes from tags
 # The example below will remove all span children of the div.
 # @example
@@ -275,7 +279,7 @@
 # @description
 # The move_children_to function is used to move children of the current node into another node.
 # The function takes two arguments. The first is the new node that the children will be moved into. The second is the position at which the children will be moved. 
-# What's unique about these arguments is that they can't be a string - so entering an XPath direction will not work. To enter the node argument, you must select that node and set a local variable (using `%`) of the node. For the position, you must use the position function as in the example below.
+# What's unique about these arguments is that they can't be a string - so entering an XPath direction will not work. To enter the node argument, you must select that node and set a local variable (using <code>%</code>) of the node. For the position, you must use the position function as in the example below.
 # Because of the complexity of setting a variable, this function is mainly used in definitions of functions - for example, the inner_wrap function.
 # In the example below, the "one" div is selected and a local variable is set. The variable is then used later, once we have selected div "two". All of two's children will be moved into the first div, at the top.
 # @example

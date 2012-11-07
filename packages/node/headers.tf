@@ -123,8 +123,8 @@
 # @description
 # The text function opens up the text scope or retrieves the text contained within the current scope.
 # Without any further functions, the text function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
-# A further function can be used (such as `set`) to replace anything inside the current node with text.
-# Important to note is that anything within the argument will be inserted as text. So using `text("<a></a>")` will insert the *text* rather than the HTML tag.
+# A further function can be used (such as <code>set</code>) to replace anything inside the current node with text.
+# Important to note is that anything within the argument will be inserted as text. So using <code>text("<a></a>")</code> will insert the *text* rather than the HTML tag.
 # Common use cases include (but are not limited to):
 # 1) Grabbing text from unnecessarily-nested nodes
 # 2) Opening a text scope to then replace a word in a paragraph
@@ -152,9 +152,9 @@
 # The move function moves a certain node to a particular place in another node.
 # The function takes three arguments: what needs to be moved, where it needs to be moved, and the position at which it needs to be moved.
 # Important to note is the format in which the arguments must be given. They cannot be specified by a text string, so you cannot use a string of XPath to specify the nodes (e.g. "./div") or a text input for the position (e.g. "top").
-# Instead of using a string to define the position, you must use the position function to wrap it. For the nodes, you must set a local variable pointing to a particular node using `this()`.
+# Instead of using a string to define the position, you must use the position function to wrap it. For the nodes, you must set a local variable pointing to a particular node using <code>this()</code>.
 # Due to the lack of text input, the function is mostly used when defining other functions. For example, most of the move_to functions are defined around this function.
-# The example below selects the div "one" and assigns it a local variable. Then, it selects the div "two" and moves that div (`this()`) to the top of div one.
+# The example below selects the div "one" and assigns it a local variable. Then, it selects the div "two" and moves that div (<code>this()</code>) to the top of div one.
 # @example
 # $("./div[@class='one']") {
 #   %one = this()

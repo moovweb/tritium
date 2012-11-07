@@ -271,7 +271,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @description 
 # The attributes function allows you to set multiple attributes for an element.
 # It is commonly used instead of the attribute function, as it leaves open the possibility to add more attributes later on.
-# The function can take an arbitrary number of arguments in the format `name: "value"`.
+# The function can take an arbitrary number of arguments in the format <code>name: "value"</code>.
 # Common use cases include (but are not limited to):
 # 1) Assigning multiple attributes for Uranium - such as a data-ur-id and a data-ur-component type.
 # 2) Adding a class while also setting the value of an input 
@@ -297,7 +297,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @description
 # The text function opens up the text scope or retrieves the text contained within the current scope.
 # Without any further functions, the text function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
-# A further function can be used (such as `set`) to replace anything inside the current node with text.
+# A further function can be used (such as <code>set</code>) to replace anything inside the current node with text.
 # Common use cases include (but are not limited to):
 # 1) Grabbing text from unnecessarily-nested nodes
 # 2) Opening a text scope to then replace a word in a paragraph
@@ -541,7 +541,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @description 
 # The wrap function takes the current node and wraps it in a new tag.
 # The function takes one obligatory argument - the new tag. It also takes an arbitrary number of additional arguments specifying attributes.
-# For example, you can specify a class using `class: "my_class"` as a second argument.
+# For example, you can specify a class using <code>class: "my_class"</code> as a second argument.
 # Common uses cases include (but are not limited to):
 # 1) Wrapping elements in a li tag to form a list
 # 2) Wrapping an element in an anchor tag to make a link
@@ -625,7 +625,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # The html function parses the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
 # Used in its basic sense, the function guesses the HTML encoding. The encoding can also be specified with up to two arguments.
 # A single argument can be used to specify the "to" and "from" encodings, or they can be specified separately using two arguments - html("x", "y") would parse the document from encoding "x" into encoding "y".
-# Important to note is that as part of the parsing, the function will add `<html>` tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the <a href="#html_fragment">html_fragment</a> function.
+# Important to note is that as part of the parsing, the function will add <code><html></code> tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the <a href="#html_fragment">html_fragment</a> function.
 # The html function can be found in the scripts/main.ts file of your project, where it parses every page as HTML.
 # The example below will parse the HTML, allowing selectors to point to nodes of the document.
 # @example
