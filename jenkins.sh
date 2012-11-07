@@ -7,7 +7,12 @@ source "$HOME/gobuilds/tools/jenkins-env.sh"
 [ ! -d $MOOV_HOME ] && mkdir -p "$MOOV_HOME/src"
 
 # Link the clibs so that we can compile our projects against them.
-[ ! -d $MOOV_HOME/clibs ] && ln -s -f $CLIBS_HOME "$MOOV_HOME/clibs"
+# We have to delete/link every time cause windows does does a copy instead of
+# a link, so those will become stale unless we "link" again.
+rm -rf "$MOOV_HOME/clibs"
+[ $? != 0 ] && exit 1
+ln -fs $CLIBS_HOME "$MOOV_HOME/clibs"
+[ $? != 0 ] && exit 1
 
 # Build tritium since we'll use it to create the lib package
 python -u "$TOOLS_DIR/build.py" tritium/tritium $GIT_BRANCH
