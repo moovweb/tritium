@@ -310,8 +310,17 @@
 # @category Modify
 # @scope Node
 # @args Text %value
-# @description 
+# @description
+# The set function allows you to replace the current value with one specified.
+# It is commonly used within other functions, such as name() (see example below).
+# The function takes one argument - the value which will replace the current one.
+# The example below will take the div and set the name to "span" (i.e. change the div to a span).
 # @example 
+# $("./div") {
+#   name() {
+#     set("span")
+#   }
+# }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/set
 # @guidetext An example also using the name function.

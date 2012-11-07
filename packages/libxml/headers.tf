@@ -49,9 +49,15 @@
 # @scope Text
 # @args Text %input_encoding,Text %output_encoding
 # @description 
-# The html_doc 
+# The html doc function parses the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
+# The encoding must be specified with two arguments, used to specify the "to" and "from" encodings. `html_doc("x", "y")` would parse the document from encoding "x" into encoding "y".
+# Important to note is that as part of the parsing, the function will add `<html>` tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the <a href="#html_fragment">html_fragment</a> function.
+# The html function can be found in the scripts/main.ts file of your project, where it parses every page as HTML.
+# The example below will parse the HTML from gbk encoding to utf-8 encoding, allowing selectors to point to nodes of the document.
 # @example
-# html_doc("gbk", "utf-8")
+# html_doc("gbk", "utf-8") {
+#   $("/html/body")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink 
 # @guidetext 
@@ -65,6 +71,10 @@
 # @scope Text
 # @args Text %input_encoding,Text %output_encoding
 # @description 
+# The html fragment doc function parses a fragment of the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
+# Just as for the html_doc function, html_fragment_doc takes two arguments, specifing the "to" and "from" encodings. html_fragment_doc("x", "y") would parse the document from encoding "x" into encoding "y".
+# A common use example could be that only a small section of the request being processed is HTML, and that fragment must be parsed without adding a HTML tag and DOCTYPE.
+# The example below will parse a fragment of HTML from gbk to utf-8 encoding, allowing selectors to point to nodes of the document. 
 # @example
 # html_fragment_doc("gbk", "utf-8")
 # @exampletext Tritium Tester Example
