@@ -201,16 +201,17 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 }
 
 func ReadPackageDefinitions(pkg *tp.Package, location string) {
-
 	//pkg.Println(" -- reading definitions")
 	_, err := ioutil.ReadFile(location)
 	//()("READING DEFINITIONS:", location)
 
 	if err != nil {
 		//pkg.Log.Info("\t -- no user defined functions found")
+		msg := fmt.Sprintf("unable to open function definition file: %s", location)
+		// println(msg)
+		panic(msg)
 		return
 	}
-
 	definitions := parser.ParseFile(location)
 
 	// Create a map of pre-packaged function signatures
@@ -225,7 +226,6 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 			sig = baseSig
 		}
 		prepackaged[sig] = true
-		// println(sig)
 	}
 	// println("*****************")
 	// println("*****************")
@@ -233,29 +233,35 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 	// println()
 
 	for _, function := range definitions.Functions {
-		//pkg.Log.Info("\t -- function: %v", function)
-		resolveDefinition(pkg, function)
+		if function.GetName() == "@import" { // check if it's an import stub first ...
+			importPath := function.GetDescription()
+			ReadPackageDefinitions(pkg, importPath)
+		} else { // otherwise if it's not an import stub ...
+			//pkg.Log.Info("\t -- function: %v", function)
+			resolveDefinition(pkg, function)
 
-		// After resolving a user-defined function, see if its fully resolved signature
-		// is the same as the signature of a prepackaged function. If so, throw an error.
-		var newSig string
-		newBaseSig := function.Stub(pkg)
-		if newBaseSig == "name,Text" ||
-			newBaseSig == "text" {
-			newSig = fmt.Sprintf("%s.%s", function.ScopeTypeString(pkg), function.Stub(pkg))
-		} else {
-			newSig = newBaseSig
-		}
-		// present := false
-		_, present := prepackaged[newSig]
-		if present {
-			msg := fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1)+")")
-			println(msg)
-			panic(msg)
-		}
+			// After resolving a user-defined function, see if its fully resolved signature
+			// is the same as the signature of a prepackaged function. If so, throw an error.
+			var newSig string
+			newBaseSig := function.Stub(pkg)
+			if newBaseSig == "name,Text" ||
+				newBaseSig == "text" {
+				newSig = fmt.Sprintf("%s.%s", function.ScopeTypeString(pkg), function.Stub(pkg))
+			} else {
+				newSig = newBaseSig
+			}
+			// present := false
+			_, present := prepackaged[newSig]
+			if present {
+				msg := fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1)+")")
+				println(msg)
+				panic(msg)
+			}
 
-		pkg.Functions = append(pkg.Functions, function)
+			pkg.Functions = append(pkg.Functions, function)
+		}
 	}
+
 }
 
 func (pkg *Package) Marshal() []byte {
