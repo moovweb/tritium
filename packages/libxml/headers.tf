@@ -93,11 +93,13 @@
 # The cdata function allows you to insert chunks of CDATA on your page.
 # CDATA is information that is not parsed by the XML parser. Therefore, it can include characters that may break XML (for example, <code><</code>). It is often used for inserting javascript.
 # The function takes one argument - the content which needs to be passed into the CDATA block.
-# The example below 
+# The example below will replace the contents of the selected div with a CDATA block containing the javascript "alert('Boo')".
 # @example
-# cdata("//<![CDATA[\n alert('Boo!') \n//]]>")
+# $("./div") {
+#   cdata("//<![CDATA[\n alert('Boo!') \n//]]>")
+# }
 # @exampletext Tritium Tester Example
-# @examplelink 
+# @examplelink test/examples/cdata
 # @guidetext 
 # @guidelink 
 @func XMLNode.cdata(Text %contents) Text
