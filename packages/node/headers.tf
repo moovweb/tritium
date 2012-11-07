@@ -17,7 +17,7 @@
 #   attribute("class", "div_number_" + index(this()))
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/index
+# @examplelink ../../libxml/test/examples/node/index
 # @guidetext More information about indexing items.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/index_func
 @func index(Node %node) Text
@@ -40,7 +40,7 @@
 #   $linktxt = fetch("text()")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/fetch
+# @examplelink ../../libxml/test/examples/node/fetch
 # @guidetext Using fetch.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/fetch
 @func Node.fetch(Text %selector) Text Text
@@ -63,7 +63,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/move
+# @examplelink ../../libxml/test/examples/node/move
 # @guidetext 
 # @guidelink 
 @func Node.this() Node Node
@@ -83,7 +83,7 @@
 #   move_to("/html/body", position("top"))
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/position
+# @examplelink ../../libxml/test/examples/node/position
 # @guidetext 
 # @guidelink 
 @func position(Text %position) Position
@@ -109,7 +109,7 @@
 #   remove()
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/select
+# @examplelink ../../libxml/test/examples/node/select
 # @guidetext 
 # @guidelink 
 @func Node.select(Text %xpath_selector) Text Node
@@ -137,7 +137,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/text
+# @examplelink ../../libxml/test/examples/text
 # @guidetext The two main uses of text.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/text
 @func Node.text() Text Text
@@ -163,7 +163,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/move
+# @examplelink ../../libxml/test/examples/node/move
 # @guidetext 
 # @guidelink 
 @func Node.move(Node %what, Node %where, Position %pos) Text Node
@@ -183,7 +183,7 @@
 #   dup()
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/dup
+# @examplelink ../../libxml/test/examples/node/dup
 # @guidetext 
 # @guidelink 
 @func Node.dup() Node Node
@@ -206,7 +206,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/name
+# @examplelink ../../libxml/test/examples/node/name
 # @guidetext Uses for the name function.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/rename
 @func Node.name() Text Text
@@ -228,7 +228,7 @@
 #   remove()  
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/remove
+# @examplelink ../../libxml/test/examples/remove
 # @guidetext Discussion of the remove function.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/removing
 @func Node.remove() Text Node
@@ -250,7 +250,7 @@
 #   log(path())
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/path
+# @examplelink ../../libxml/test/examples/node/path
 # @guidetext 
 # @guidelink 
 @func Node.path() Text Text
@@ -277,7 +277,7 @@
 #   inject_at(position("top"), read("section.html"))
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/inject_at
+# @examplelink ../../libxml/test/examples/node/inject_at
 # @guidetext 
 # @guidelink 
 @func Node.inject_at(Position %pos, Text %html) Text
@@ -299,7 +299,7 @@
 #   inject_at("top", read("section.html"))
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/inject_at
+# @examplelink ../../libxml/test/examples/node/inject_at
 # @guidetext 
 # @guidelink 
 @func Node.inject_at(Text %pos, Text %html) Text
@@ -322,7 +322,7 @@
 #   }
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/set
+# @examplelink ../../libxml/test/examples/set
 # @guidetext An example also using the name function.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/rename
 @func Node.set(Text %value) Text
