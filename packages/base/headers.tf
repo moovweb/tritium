@@ -3,7 +3,7 @@
 # @abstract The var function allows you to set global variables. 
 # @name var
 # @category Environment
-# @scope Text,XMLNode
+# @scope Global
 # @args Text %name
 # @description
 # The var function is used to set global variables that can be used for various logic throughout your code. 
@@ -27,7 +27,7 @@
 # @abstract The var function allows you to set global variables. 
 # @name var
 # @category Environment
-# @scope Text,XMLNode
+# @scope Global
 # @args Text %name,Text %value
 # @description
 # The var function is used to set global variables that can be used for various logic throughout your code. 
@@ -49,7 +49,7 @@
 # @abstract The time function returns the time it has taken to reach that point thus far.
 # @name time
 # @category Environment
-# @scope Text,XMLNode
+# @scope Global
 # @args
 # @description 
 # The time function returns the time-to-execute the Tritium code up until it hits the function call. 
@@ -69,7 +69,7 @@
 # @abstract The match function is used for logic to check against the content of strings and variables.
 # @name match
 # @category Environment,Text
-# @scope Text
+# @scope Global
 # @args Text %target
 # @description
 # The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. 
@@ -100,7 +100,7 @@
 # @abstract The log function is used to write out a string to the console. It's often useful for debugging Tritium.
 # @name log
 # @category Environment
-# @scope Text,XMLNode
+# @scope Global
 # @args Text %log_message
 # @description
 # The log function is used to output information to the terminal.
@@ -124,7 +124,7 @@
 # @abstract The not function is used with match() as an opposite to with().
 # @name not
 # @category Environment,Text
-# @scope Text,XMLNode
+# @scope Global
 # @args Text %text
 # @description
 # The not function is used inside a match() statement as an opposite to the with() statement. In other words, if the match is not successful, the code inside the not() block will run, whereas if the match is successful, the code will be skipped over.
@@ -149,7 +149,7 @@
 # @abstract The not function is used with match() as an opposite to with().
 # @name not
 # @category Environment,Text
-# @scope Text,XMLNode
+# @scope Global
 # @args Regexp %regexp
 # @description
 # The not function is used inside a match() statement as an opposite to the with() statement. In other words, if the match is not successful, the code inside the not() block will run, whereas if the match is successful, the code will be skipped over.
@@ -174,7 +174,7 @@
 # @abstract The with function is used with match() to match a variable with multiple possibilities.
 # @name with
 # @category Environment,Text
-# @scope Text,XMLNode
+# @scope Global
 # @args Text %text
 # @description
 # The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. The with() statement is used inside a match() statement to match the variable with certain strings or regular expressions. If the input %text is contained in the matched variable, then the code block inside the with() statement is executed. 
@@ -202,7 +202,7 @@
 # @abstract The with function is used with match() to match a variable with multiple possibilities.
 # @name with
 # @category Environment,Text
-# @scope Text,XMLNode
+# @scope Global
 # @args Regexp %regexp
 # @description
 # The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. The with() statement is used inside a match() statement to match the variable with certain strings or regular expressions. If the input %text is contained in the matched variable, then the code block inside the with() statement is executed. 
@@ -297,7 +297,7 @@
 # @abstract The else function completes the pseudo-logic of with() in your match() statements, allowing the specification of a catchall alternative.
 # @name else
 # @category Environment,Text
-# @scope Text,XMLNode
+# @scope Global
 # @args
 # @description 
 # The else() function is used inside your match() statements to serve as a catchall for when none of your with() statements find a successful match. The else() function will then serve as your default behavior for unanticipated match cases.
@@ -335,7 +335,7 @@
 # @abstract The regexp function is used to parse regular expressions.
 # @name regexp
 # @category Environment,Modify,Text
-# @scope Text
+# @scope Global
 # @args Text %expression,Text %options
 # @description 
 # The regexp function is used to parse %expressions and turn them into regular expressions. Regular Expressions are incredibly powerful for selecting and modifying groups of text. 
@@ -361,7 +361,7 @@
 # @abstract The concat function is used to concatenate two or more strings.
 # @name concat
 # @category Text
-# @scope Text
+# @scope Global
 # @args Text %a,Text %b
 # @description 
 # The concat function is used to combine two or more strings into a single string.
@@ -386,7 +386,7 @@
 # @abstract The export function is used to set response header information such as content-type, cache-time, and more. 
 # @name export
 # @category Environment
-# @scope Text
+# @scope Global
 # @args Text %key,Text %value
 # @description 
 # The export function is used when you want to change the outgoing response header.
