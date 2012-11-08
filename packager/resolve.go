@@ -207,6 +207,7 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 
 	if err != nil {
 		//pkg.Log.Info("\t -- no user defined functions found")
+		// TODO: BETTER ERROR MESSAGE --AARON
 		msg := fmt.Sprintf("unable to open function definition file: %s", location)
 		// println(msg)
 		panic(msg)
@@ -336,7 +337,7 @@ func (pkg *Package) readHeaderFile(location string) {
 		stubStr := strings.Replace(function.Stub(pkg.Package), ",", ".", -1)
 		if whale.LookupBuiltIn(stubStr) == nil {
 			// TODO: figure out why the panic string is suppressed so that we can remove the println
-			println("in " + input_file + " -- attempt to provide signature for nonexistent built-in " + stubStr)
+			// println("in " + input_file + " -- attempt to provide signature for nonexistent built-in " + stubStr)
 			panic("in " + input_file + " -- attempt to provide signature for nonexistent built-in " + stubStr)
 		}
 
