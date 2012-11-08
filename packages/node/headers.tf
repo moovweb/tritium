@@ -50,7 +50,7 @@
 # @name this
 # @category Misc
 # @scope Node
-# @args
+# @args 
 # @description
 # The this function is used to point to the current node.
 # The function is mostly used in the context of defining other functions. Most of the time, you can write an XPath to point to the correct node - but sometimes you have to specify the node itself. Here is where the this function is useful.
@@ -119,11 +119,12 @@
 # @name text
 # @category Modify,Text
 # @scope Node
-# @args
+# @args 
+# @description
 # The text function opens up the text scope or retrieves the text contained within the current scope.
 # Without any further functions, the text function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
-# A further function can be used (such as `set`) to replace anything inside the current node with text.
-# Important to note is that anything within the argument will be inserted as text. So using `text("<a></a>")` will insert the *text* rather than the HTML tag.
+# A further function can be used (such as <code>set</code>) to replace anything inside the current node with text.
+# Important to note is that anything within the argument will be inserted as text. So using <code>text("<a></a>")</code> will insert the *text* rather than the HTML tag.
 # Common use cases include (but are not limited to):
 # 1) Grabbing text from unnecessarily-nested nodes
 # 2) Opening a text scope to then replace a word in a paragraph
@@ -151,9 +152,9 @@
 # The move function moves a certain node to a particular place in another node.
 # The function takes three arguments: what needs to be moved, where it needs to be moved, and the position at which it needs to be moved.
 # Important to note is the format in which the arguments must be given. They cannot be specified by a text string, so you cannot use a string of XPath to specify the nodes (e.g. "./div") or a text input for the position (e.g. "top").
-# Instead of using a string to define the position, you must use the position function to wrap it. For the nodes, you must set a local variable pointing to a particular node using `this()`.
+# Instead of using a string to define the position, you must use the position function to wrap it. For the nodes, you must set a local variable pointing to a particular node using <code>this()</code>.
 # Due to the lack of text input, the function is mostly used when defining other functions. For example, most of the move_to functions are defined around this function.
-# The example below selects the div "one" and assigns it a local variable. Then, it selects the div "two" and moves that div (`this()`) to the top of div one.
+# The example below selects the div "one" and assigns it a local variable. Then, it selects the div "two" and moves that div (<code>this()</code>) to the top of div one.
 # @example
 # $("./div[@class='one']") {
 #   %one = this()
@@ -172,7 +173,7 @@
 # @name dup
 # @category Create
 # @scope Node
-# @args
+# @args 
 # @description
 # The dup function copies the current node. The copy is placed immediately after the current node.
 # The function is mostly used within other functions - for example the copy_to function.
@@ -192,7 +193,7 @@
 # @name name
 # @category Modify
 # @scope Node
-# @args
+# @args 
 # @description
 # The name function opens a scope via which the name of the current tag can be changed.
 # Common use cases include (but are not limited to):
@@ -215,7 +216,7 @@
 # @name remove
 # @category Modify
 # @scope Node
-# @args
+# @args 
 # @description
 # The remove function removes the node that is currently selected.
 # Common use cases include (but are not limited to):
@@ -237,7 +238,7 @@
 # @name path
 # @category Misc
 # @scope Node
-# @args
+# @args 
 # @description
 # The path function returns the nodal path to the currently-selected node.
 # Common use cases include (but are not limited to):
@@ -310,7 +311,16 @@
 # @scope Node
 # @args Text %value
 # @description
-# @example
+# The set function allows you to replace the current value with one specified.
+# It is commonly used within other functions, such as name() (see example below).
+# The function takes one argument - the value which will replace the current one.
+# The example below will take the div and set the name to "span" (i.e. change the div to a span).
+# @example 
+# $("./div") {
+#   name() {
+#     set("span")
+#   }
+# }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/set
 # @guidetext An example also using the name function.
