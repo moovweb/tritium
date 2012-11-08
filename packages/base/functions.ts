@@ -13,13 +13,6 @@
   regexp(%exp, "")
 }
 
-"References to the assets folder without hard-coding a path - [click for example](http://beta.moovweb.com/learn/training/function_guides/asset). @example `asset(\"images/icon.png\")` points to *assets/images/icon*, including the domain if necessary."
-@func asset(Text %name) {
-  concat($asset_host, %name) {
-    yield()
-  }
-}
-
 "Prints the time a block took to run. @example `html() { bm(\"TIME\") }` will print the time it took to parse the HTML in the server logs in the format 'TIME: x ms'."
 @func bm(Text %name) {
   log(concat(%name, ": ", 
@@ -62,6 +55,31 @@
       yield()
     }
   }
+}
+
+"References to the assets folder without hard-coding a path - [click for example](http://beta.moovweb.com/learn/training/function_guides/asset). @example `asset(\"images/icon.png\")` points to *assets/images/icon*, including the domain if necessary."
+@func asset(Text %name) {
+  match($__abs_asset_host__) {
+    with("") {
+      #check if not checked yet
+      match($asset_host) {
+        with(/^(http:|https:|)\/\//) {
+          #nothing
+        }
+        else() {
+          $asset_host = concat("//", $host, $asset_host)
+        }
+        $__abs_asset_host__ = "true"
+      }
+      $asset_url = concat($asset_host, %name)
+    }
+    else() {
+      $asset_url = concat($asset_host, %name)
+    }
+  }
+  #no yield
+  #what scope does it open anyway
+  $asset_url
 }
 
 "Similar to `remove()`, but works in the text scope. @example Given `<div>Dog</div>`, `$(\"./div\") { text() { clear() } }` will return `<div></div>`."
