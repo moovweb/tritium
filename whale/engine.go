@@ -74,4 +74,5 @@ type EngineContext interface {
 	//	GetOutputBuffer() []byte
 	GetRewriteRules() []*tp.RewriteRule
 	GetDeadline() *time.Time
+	AddMemoryObject(MemoryObject)
 }

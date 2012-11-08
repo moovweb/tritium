@@ -45,9 +45,11 @@ type WhaleContext struct {
 	HeaderContentType *rubex.Regexp
 
 	Deadline time.Time
+	Mobjects []MemoryObject
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
+const defaultMobjects = 4
 const TimeoutError = "EngineTimeout"
 
 func NewEngine(logger *golog.Logger) *Whale {
@@ -79,7 +81,10 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, r
 		InnerReplacer:            rubex.MustCompile(`[\\$](\d)`),
 		HeaderContentType:        rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
 		Deadline:                 deadline,
+		Mobjects:                 make([]MemoryObject, 0, defaultMobjects),
 	}
+	ctx.AddMemoryObject(ctx.InnerReplacer)
+	ctx.AddMemoryObject(ctx.HeaderContentType)
 	return
 }
 
@@ -110,6 +115,7 @@ func (eng *Whale) Free() {
 
 func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
 	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline)
+	defer Ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
 	scope := &Scope{Value: input.(string)}
@@ -120,6 +126,14 @@ func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input i
 	exports = ctx.Exports
 	logs = ctx.Logs
 	return
+}
+
+func (ctx *WhaleContext) Free() {
+    for _, o := range ctx.Mobjects {
+		if o != nil {
+			o.Free()
+		}
+	}
 }
 
 func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
@@ -314,6 +328,7 @@ func (ctx *WhaleContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 		var err error
 		r, err = rubex.NewRegexp(pattern, mode)
 		if err == nil {
+			ctx.AddMemoryObject(r)
 			ctx.RegexpCache[sig] = r
 		}
 	}
@@ -325,6 +340,7 @@ func (ctx *WhaleContext) GetXpathExpr(p string) (e *xpath.Expression) {
 	if e == nil {
 		e = xpath.Compile(p)
 		if e != nil {
+			ctx.AddMemoryObject(e)
 			ctx.XPathCache[p] = e
 		} else {
 			ctx.AddLog("Invalid XPath used: " + p)
@@ -420,4 +436,7 @@ func (ctx *WhaleContext) GetRewriteRules() []*tp.RewriteRule {
 }
 func (ctx *WhaleContext) GetDeadline() *time.Time {
 	return &(ctx.Deadline)
+}
+func (ctx *WhaleContext) AddMemoryObject(o MemoryObject) {
+	ctx.Mobjects = append(ctx.Mobjects, o)
 }
