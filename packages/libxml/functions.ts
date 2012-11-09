@@ -11,7 +11,7 @@
 # People usually find the $$ easier to use - at least in the beginning - as it requires no knowledge of XPath.
 # Things to note: the $$ converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
 # For example, the selector $$("#one") will be converted into $(".//*[id='one']"). The double-forward slash deep search could affect performance.
-# Related functions: <a href="css(Text %selector)">css()</a>
+# Related functions: <a href="#css(Text %selector)">css()</a>
 # Common use cases include (but are not limited to):
 # 1) Selecting many element types based on attributes rather than tag names
 # 2) Selecting items without being familiar with XPath

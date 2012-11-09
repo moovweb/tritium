@@ -90,7 +90,7 @@
 # @description 
 # The bm function is used to test the performance of your code by the proxy. Generally, the majority of your performance boost will come from optimizing the images, scripts, and stylesheets of the existing desktop site. However, there are ways to improve performance of the execution of the proxy such as using XPath selectors instead of CSS selectors and avoiding deep searches for content in the DOM. 
 # Things to note: The bm() measurements vary between trials so you may have to run several samples to get an accurate representation of execution speed.
-# Related functions: <a href="#time">time()</a>
+# Related functions: <a href="#time() Text">time()</a>
 # Common uses include:
 # 1) Measuring the time it takes for a block of code to run. 
 # @example
