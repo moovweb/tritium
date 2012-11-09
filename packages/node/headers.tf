@@ -100,7 +100,7 @@
 # @description
 # The select function searches the HTML tree to match the XPath specified.
 # The function takes one argument, and that is the 
-# Related functions: <a href="#$ Text xpath">$()</a>
+# Related functions: <a href="#$(Text %xpath)">$()</a>
 # Common uses include:
 # 1) Selecting any HTML element in Tritium using XPath
 # The example below selects the html and body 

@@ -11,7 +11,7 @@
 # People usually find the $$ easier to use - at least in the beginning - as it requires no knowledge of XPath.
 # Things to note: the $$ converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
 # For example, the selector $$("#one") will be converted into $(".//*[id='one']"). The double-forward slash deep search could affect performance.
-# Related functions: <a href="css Text selector">css()</a>
+# Related functions: <a href="css(Text %selector)">css()</a>
 # Common use cases include (but are not limited to):
 # 1) Selecting many element types based on attributes rather than tag names
 # 2) Selecting items without being familiar with XPath
@@ -222,7 +222,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # The function takes one argument, which is the name of the stylesheet. The file should be referenced in relation to the assets/stylesheets folder.
 # As the function is mainly used to reference stylesheets in the project, this function is usually only found once. Most projects only inject one stylesheet.
 # In the functions/main.ts file, you can see the sass function being used in the add_assets function, which inserts a link to the main stylesheet.
-# Related functions: <a href="#asset Text name">asset()</a>
+# Related functions: <a href="#asset(Text %name)">asset()</a>
 # The example below will insert a link tag with an href pointing to the assets/stylesheets/.css/main.css file of the project.
 # @example
 # insert("link", rel: "stylesheet", type: "text/css", href: sass("main")
@@ -245,7 +245,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @description 
 # The set function allows you to set an attribute on an element.
 # The function takes two arguments. The first is the name of the attribute and the second is the value for that attribute.
-# Related functions: <a href="#attribute Text name Text value">attribute()</a>
+# Related functions: <a href="#attribute(Text %name, Text %value)">attribute()</a>
 # The example below will take the a tag and set an href attribute with the value http://example.com.
 # @example
 # $("./a") {
@@ -625,7 +625,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # The html function parses the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
 # Used in its basic sense, the function guesses the HTML encoding. The encoding can also be specified with up to two arguments.
 # A single argument can be used to specify the "to" and "from" encodings, or they can be specified separately using two arguments - html("x", "y") would parse the document from encoding "x" into encoding "y".
-# Important to note is that as part of the parsing, the function will add <code><html></code> tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the <a href="#html_fragment">html_fragment</a> function.
+# Important to note is that as part of the parsing, the function will add <code><html></code> tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the <a href="#html_fragment()">html_fragment</a> function.
 # The html function can be found in the scripts/main.ts file of your project, where it parses every page as HTML.
 # The example below will parse the HTML, allowing selectors to point to nodes of the document.
 # @example
