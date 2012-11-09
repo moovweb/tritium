@@ -15,7 +15,7 @@
 #   # Run transformations on these divs one at a time.
 # }
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/xpath_selector
+# @examplelink ../../libxml/test/examples/node/xpath_selector
 # @guidetext XPath Reference Guide
 # @guidelink  http://beta.moovweb.com/learn/reference/tools/xpath
 @func Node.$(Text %xpath) {
@@ -40,7 +40,7 @@
 # @example
 # move_to("..", position())
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/position
+# @examplelink ../../libxml/test/examples/node/position
 # @guidetext 
 # @guidelink  
 @func position() {
@@ -68,7 +68,7 @@
 # 2) Referencing a certain element based on its order of execution.
 # 3) General order based logic, such as giving all odd numbered elements in the queue a certain class so you can style them differently.
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/index
+# @examplelink ../../libxml/test/examples/node/index
 # @guidetext 
 # @guidelink  
 @func Node.index() {
@@ -91,7 +91,7 @@
 # 3) Changing between divs and spans depending on how you want the page to flow.
 # @example
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/name
+# @examplelink ../../libxml/test/examples/node/name
 # @guidetext
 # @guidelink 
 @func Node.name(Text %value) {
@@ -136,7 +136,7 @@
 # 2) Duplicating useful information
 # @example
 # @exampletext
-# @examplelink test/examples/node/copy_here
+# @examplelink ../../libxml/test/examples/node/copy_here
 # @guidetext 
 # @guidelink  
 @func Node.copy_here(Text %xpath) {
@@ -181,7 +181,7 @@
 # 2) Duplicating useful information
 # @example
 # @exampletext
-# @examplelink test/examples/node/copy_to
+# @examplelink ../../libxml/test/examples/node/copy_to
 # @guidetext 
 # @guidelink  
 @func Node.copy_to(Text %xpath) {
@@ -208,7 +208,7 @@
 # 2) Fixing broken HTML
 # @example
 # @exampletext Tritium Tester Example
-# @examplelink packagestest/examples/node/inject
+# @examplelink ../../libxml/packagestest/examples/node/inject
 # @guidetext 
 # @guidelink  
 @func Node.inject(Text %html) {
@@ -250,7 +250,7 @@
 # 3) Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more. 
 # @example
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/move_to
+# @examplelink ../../libxml/test/examples/node/move_to
 # @guidetext 
 # @guidelink  
 @func Node.move_to(Text %xpath) {
@@ -291,7 +291,7 @@
 # 3) Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more. 
 # @example
 # @exampletext Tritium Tester Example
-# @examplelink test/examples/node/move_here
+# @examplelink ../../libxml/test/examples/node/move_here
 # @guidetext 
 # @guidelink  
 @func Node.move_here(Text %where) {
@@ -319,7 +319,7 @@
 #   insert_at("bottom", "a", "Click!", href: "http://example.com")
 # }
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/insert
+# @examplelink ../../libxml/packages/libxml/test/examples/insert
 # @guidetext 
 # @guidelink  
 @func Node.insert(Text %tag) {
@@ -350,7 +350,7 @@
 # @example
 # insert("div", "Content")
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/insert
+# @examplelink ../../libxml/packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
 # @guidelink  http://beta.moovweb.com/learn/training/function_guides/insert
 @func Node.insert_bottom(Text %tag) {
@@ -381,7 +381,7 @@
 # @example
 # insert("div", "Content")
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/insert
+# @examplelink ../../libxml/packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
 # @guidelink  http://beta.moovweb.com/learn/training/function_guides/insert
 @func Node.insert_top(Text %tag) {
@@ -412,7 +412,7 @@
 # @example
 # insert("div", "Content")
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/insert
+# @examplelink ../../libxml/packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
 # @guidelink  http://beta.moovweb.com/learn/training/function_guides/insert
 @func Node.insert_after(Text %tag) {
@@ -443,7 +443,7 @@
 # @example
 # insert("div", "Content")
 # @exampletext Tritium Tester Example
-# @examplelink packages/libxml/test/examples/insert
+# @examplelink ../../libxml/packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
 # @guidelink  http://beta.moovweb.com/learn/training/function_guides/insert 
 @func Node.insert_before(Text %tag) {

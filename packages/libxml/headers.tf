@@ -8,7 +8,7 @@
 # The css function selects elements on a page using a CSS-style selector.
 # The function takes one argument, the item to be selected. The argument is written as a standard CSS selector - for example #one to search for an id.
 # Things to note: the css() function converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
-# Related functions: <a href="#$$ Text css_selector">css()</a>
+# Related functions: <a href="#$$(Text %css_selector)">css()</a>
 # Common use cases include (but are not limited to):
 # 1) Selecting many element types based on attributes rather than tag names
 # 2) Selecting items without being familiar with XPath
@@ -51,7 +51,7 @@
 # @description 
 # The html doc function parses the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
 # The encoding must be specified with two arguments, used to specify the "to" and "from" encodings. <code>html_doc("x", "y")</code> would parse the document from encoding "x" into encoding "y".
-# Important to note is that as part of the parsing, the function will add <code><html></code> tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the <a href="#html_fragment">html_fragment</a> function.
+# Important to note is that as part of the parsing, the function will add <code><html></code> tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the <a href="#html_fragment()">html_fragment</a> function.
 # The html function can be found in the scripts/main.ts file of your project, where it parses every page as HTML.
 # The example below will parse the HTML from gbk encoding to utf-8 encoding, allowing selectors to point to nodes of the document.
 # @example
@@ -136,7 +136,7 @@
 # @args 
 # @description 
 # The inner function opens the scope of the current node for manipulation.
-# Related functions: <a href='#inner Text html'>inner(Text %html)</a>
+# Related functions: <a href='#inner(Text %html)'>inner(Text %html)</a>
 # Common use cases include (but are not limited to):
 # 1) Opening the inner scope to replace contents
 # The example below will open the scope of the current div and replace everything with "NEW".
