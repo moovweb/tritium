@@ -11,7 +11,7 @@
 # People usually find the $$ easier to use - at least in the beginning - as it requires no knowledge of XPath.
 # Things to note: the $$ converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
 # For example, the selector $$("#one") will be converted into $(".//*[id='one']"). The double-forward slash deep search could affect performance.
-# Related functions: <a href="#css(Text %selector)">css()</a>
+# Related functions: <a href="#css(Text %selector)">css</a>
 # Common use cases include (but are not limited to):
 # 1) Selecting many element types based on attributes rather than tag names
 # 2) Selecting items without being familiar with XPath
@@ -218,7 +218,7 @@
 # The function takes one argument, which is the name of the stylesheet. The file should be referenced in relation to the assets/stylesheets folder.
 # As the function is mainly used to reference stylesheets in the project, this function is usually only found once. Most projects only inject one stylesheet.
 # In the functions/main.ts file, you can see the sass function being used in the add_assets function, which inserts a link to the main stylesheet.
-# Related functions: <a href="#asset(Text %name)">asset()</a>
+# Related functions: <a href="#asset(Text %name)">asset</a>
 # The example below will insert a link tag with an href pointing to the assets/stylesheets/.css/main.css file of the project.
 # @example
 # insert("link", rel: "stylesheet", type: "text/css", href: sass("main")
@@ -241,7 +241,7 @@
 # @description 
 # The set function allows you to set an attribute on an element.
 # The function takes two arguments. The first is the name of the attribute and the second is the value for that attribute.
-# Related functions: <a href="#attribute(Text %name, Text %value)">attribute()</a>
+# Related functions: <a href="#attribute(Text %name, Text %value)">attribute</a>
 # The example below will take the a tag and set an href attribute with the value http://example.com.
 # @example
 # $("./a") {

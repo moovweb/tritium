@@ -44,7 +44,7 @@
 # In this example, we are using the string "true" and turning it into a regular expression to use in a match/with statement. If the string true is anywhere in the text we are matching, the code in the with() statement will run. 
 # @example
 # with(regexp("true")) {
-# # run this code if your text matches the string "true" 
+#   # run this code if your text matches the string "true"
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/regexp
@@ -69,7 +69,7 @@
 # In this example, we are inserting a new link tag with a src that uses the asset() function to define its domain and then we pass in the path name as the parameter to the asset function. 
 # @example
 # $$("head") {
-#  insert("link", src:asset("stylesheets/mystyles.css"))
+#   insert("link", src:asset("stylesheets/mystyles.css"))
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/asset
@@ -90,12 +90,12 @@
 # @description 
 # The bm function is used to test the performance of your code by the proxy. Generally, the majority of your performance boost will come from optimizing the images, scripts, and stylesheets of the existing desktop site. However, there are ways to improve performance of the execution of the proxy such as using XPath selectors instead of CSS selectors and avoiding deep searches for content in the DOM. 
 # Things to note: The bm() measurements vary between trials so you may have to run several samples to get an accurate representation of execution speed.
-# Related functions: <a href="#time() Text">time()</a>
+# Related functions: <a href="#time() Text">time</a>
 # Common uses include:
 # 1) Measuring the time it takes for a block of code to run. 
 # @example
 # $("./body") {
-#  bm("TIME")
+#   bm("TIME")
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/bm
@@ -117,7 +117,7 @@
 # @description
 # The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. 
 # Things to note: If you have more than one variable or regular expression to test againt, you can simply provide the match function with the variable in question and then use embeded with() statements for each case. You can also provide a final else() statement to serve as a catchall for all unsuccessful matches.
-# Related functions: <a href="#with(Text %text)">with()</a>, <a href="#else()">else()</a>, <a href="#not(Text %text)">not()</a>, <a href="#match_not Text target">match_not(Text %target)</a>
+# Related functions: <a href="#with(Text %text)">with</a>, <a href="#else()">else</a>, <a href="#not(Text %text)">not</a>, <a href="#match_not(Text %target)">match_not</a>
 # Common uses include:
 # 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
 # 2) Matching attributes with certain content to determine if they need to be changed in some way. 
@@ -125,10 +125,10 @@
 # 4) Matching the status, content-type, or other information from the incoming header.
 # In this example, we match the $path variable to see if it matches the string "product". Since it does, the log "Match successful!" will output to your terminal.
 # @example
-#   $path = "product"
-#   match($path, "product") {
-#     log("Match successful!")
-#   }
+# $path = "product"
+# match($path, "product") {
+#   log("Match successful!")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/match
 # @guidetext Function Guide
@@ -156,12 +156,12 @@
 # 3) Simulating if/then/else statements and boolean true/false logic to run differing Tritium. 
 # 4) Matching the status, content-type, or other information from the incoming header.
 # In this example, we match the $path variable to see if it matches the string "product". Since it does, the log "Match successful!" will output to your terminal.
-# Related functions: <a href="#with(Text %text)">with()</a>, <a href="#else()">else()</a>, <a href="#not(Text %text)">not()</a>, <a href="#match_not Text target">match_not(Text %target)</a>
+# Related functions: <a href="#with(Text %text)">with</a>, <a href="#else()">else</a>, <a href="#not(Text %text)">not</a>, <a href="#match_not(Text %target)">match_not</a>
 # @example
-#   $path = "product"
-#   match($path, /product/) {
-#     log("Match successful!")
-#   }
+# $path = "product"
+# match($path, /product/) {
+#   log("Match successful!")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/match2
 # @guidetext Function Guide
@@ -183,7 +183,7 @@
 # @description 
 # The match_not function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. Match_not() essentially inverts what you would expect from the match function. This means that if a match is not successful, then the block of code inside that match_not() or with() statement will run. 
 # Things to note: If you have more than one variable or regular expression to test againt, you can simply provide the match_not function with the variable in question and then use embeded with() statements for each case. You can also provide a final else() statement to serve as a catchall for all unsuccessful matches.
-# Related functions: <a href="#with(Text %text)">with()</a>, <a href="#else()">else()</a>, <a href="#not(Text %text)">not()</a>, <a href="#match Text target">match(Text %target)</a>
+# Related functions: <a href="#with(Text %text)">with</a>, <a href="#else()">else</a>, <a href="#not(Text %text)">not</a>, <a href="#match(Text %target)">match</a>
 # Common uses include:
 # 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
 # 2) Matching attributes with certain content to determine if they need to be changed in some way. 
@@ -191,10 +191,10 @@
 # 4) Matching the status, content-type, or other information from the incoming header.
 # In this example, we match the $path variable to see if it matches the string "price". Since it does not, the log "Match successful!" will output to your terminal.
 # @example
-#   $path = "product"
-#   match_not($path, "price") {
-#     log("Match successful!")
-#   }
+# $path = "product"
+# match_not($path, "price") {
+#   log("Match successful!")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/match_not
 # @guidetext Function Guide
@@ -216,7 +216,7 @@
 # @description
 # The match_not function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. Match_not() essentially inverts what you would expect from the match function. This means that if a match is not successful, then the block of code inside that match_not() or with() statement will run. 
 # Things to note: If you have more than one variable or regular expression to test againt, you can simply provide the match_not function with the variable in question and then use embeded with() statements for each case. You can also provide a final else() statement to serve as a catchall for all unsuccessful matches.
-# Related functions: <a href="#with(Text %text)">with()</a>, <a href="#else()">else()</a>, <a href="#not(Text %text)">not()</a>, <a href="#match(Text %target)">match(Text %target)</a>
+# Related functions: <a href="#with(Text %text)">with</a>, <a href="#else()">else</a>, <a href="#not(Text %text)">not</a>, <a href="#match(Text %target)">match</a>
 # Common uses include:
 # 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
 # 2) Matching attributes with certain content to determine if they need to be changed in some way. 
@@ -224,10 +224,10 @@
 # 4) Matching the status, content-type, or other information from the incoming header.
 # In this example, we match the $path variable to see if it matches the string "price". Since it does not, the log "Match successful!" will output to your terminal.
 # @example
-#   $path = "product"
-#   match_not($path, /price/) {
-#     log("Match successful!")
-#   }
+# $path = "product"
+# match_not($path, /price/) {
+#   log("Match successful!")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/match_not2
 # @guidetext Function Guide
@@ -248,7 +248,7 @@
 # @args 
 # @description 
 # The clear function is used to remove text from inside a text scope.
-# Related functions: <a href="#remove">remove()</a>
+# Related functions: <a href="#remove()">remove</a>
 # Common uses include:
 # 1) Clearing extra white space inside nodes
 # 2) Clearing text links to turn them into icons 
@@ -279,7 +279,7 @@
 # @description 
 # The text() function is used to either set the text of the current node, or to open the text scope of the current node for modification. 
 # Things to note: The text() function is different from the inner() function in that it will only return an array of the text nodes inside the element from which it is called. Inner(), on the other hand, will return the entire inner HTML of the node from which it is called.
-# Related functions: <a href="#inner()">inner()</a>
+# Related functions: <a href="#inner()">inner</a>
 # Common uses include: 
 # 1) Opening the scope for the use of text scope functions such as replace, set, length, append, prepend, clear and more. 
 # 2) Setting the text of the current node. 
@@ -309,7 +309,7 @@
 # @description 
 # The replace function is used to alter existing text nodes by replacing them based on either regular expressions or specific strings. 
 # Things to note: Unless otherwise specified by the Regular Expression, all matches found by the %search parameter will be replaced.
-# Related functions: <a href="#text">text()</a>, <a href="#inner">inner()</a>
+# Related functions: <a href="#text()">text</a>, <a href="#inner()">inner</a>
 # Common uses include:
 # 1) Replacing desktop instructions like "click" to mobile instructions like "tap"
 # 2) Removing extra or unnecessary text
