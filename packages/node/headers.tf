@@ -3,7 +3,7 @@
 # @abstract Returns the current iteration of the function being performed.
 # @name index
 # @category Misc
-# @scope Base
+# @scope XMLNode
 # @args Node %node
 # The index function is used to return the order of which the node is transformed when selected using Tritium. Every time you use a Tritium selector that selects more than a single element, the MoovSDK will iterate over each element and run the inner block of code on each element one at a time. The index() function returns the order of that element in the execution queue.
 # Note that the function does not necessarily give the index of the current node in relation to its siblings. It is the number of iterations the previous selection has gone through.
@@ -26,7 +26,7 @@
 # @abstract Retrieves information from the node specified.
 # @name fetch
 # @category Misc
-# @scope Node
+# @scope XMLNode
 # @args Text %selector
 # @description
 # The fetch function retrieves the information from the node specified.
@@ -49,7 +49,7 @@
 # @abstract Returns the currently-selected node.
 # @name this
 # @category Misc
-# @scope Node
+# @scope XMLNode
 # @args 
 # @description
 # The this function is used to point to the current node.
@@ -72,7 +72,7 @@
 # @abstract Specifies positional information.
 # @name position
 # @category Misc
-# @scope Base
+# @scope XMLNode
 # @args Text %position
 # @description
 # For some functions, you cannot enter a position as a text string. In these cases, you need to enter a position using the position function.
@@ -95,7 +95,7 @@
 # @abstract Selects all nodes matching the XPath specified.
 # @name select
 # @category Misc
-# @scope Node
+# @scope XMLNode
 # @args Text %xpath_selector
 # @description
 # The select function searches the HTML tree to match the XPath specified.
@@ -118,7 +118,7 @@
 # @abstract Opens the contents of the current node to text modification or retrieves the text of the current node.
 # @name text
 # @category Modify,Text
-# @scope Node
+# @scope XMLNode
 # @args 
 # @description
 # The text function opens up the text scope or retrieves the text contained within the current scope.
@@ -146,7 +146,7 @@
 # @abstract Moves one node to another node at the position specified.
 # @name move
 # @category Modify,Move
-# @scope Node
+# @scope XMLNode
 # @args Node %what,Node %where,Position %pos
 # @description
 # The move function moves a certain node to a particular place in another node.
@@ -172,7 +172,7 @@
 # @abstract Copies the current node.
 # @name dup
 # @category Create
-# @scope Node
+# @scope XMLNode
 # @args 
 # @description
 # The dup function copies the current node. The copy is placed immediately after the current node.
@@ -192,7 +192,7 @@
 # @abstract Opens a scope to rename the current node.
 # @name name
 # @category Modify
-# @scope Node
+# @scope XMLNode
 # @args 
 # @description
 # The name function opens a scope via which the name of the current tag can be changed.
@@ -215,7 +215,7 @@
 # @abstract Removes the current node from the tree.
 # @name remove
 # @category Modify
-# @scope Node
+# @scope XMLNode
 # @args 
 # @description
 # The remove function removes the node that is currently selected.
@@ -237,7 +237,7 @@
 # @abstract Returns the XPath of the current node.
 # @name path
 # @category Misc
-# @scope Node
+# @scope XMLNode
 # @args 
 # @description
 # The path function returns the nodal path to the currently-selected node.
@@ -266,7 +266,7 @@
 # @abstract Injects HTML into the current node at the position specified.
 # @name inject_at
 # @category Create
-# @scope Node
+# @scope XMLNode
 # @args Text %pos,Text %html
 # @description
 # Common uses include (but are not limited to):
@@ -286,7 +286,7 @@
 # @abstract Injects HTML into the current node at the location specified.
 # @name inject_at
 # @category Create
-# @scope Node
+# @scope XMLNode
 # @args Text %pos,Text %html
 # @description
 # The inject_at function takes HTML and injects it into the current node at the location specified.
@@ -308,7 +308,7 @@
 # @abstract Replaces the current interior of the node.
 # @name set
 # @category Modify
-# @scope Node
+# @scope XMLNode
 # @args Text %value
 # @description
 # The set function allows you to replace the current value with one specified.

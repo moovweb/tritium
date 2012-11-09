@@ -2,7 +2,7 @@
 # @abstract The export function is used to set response header information such as content-type, cache-time, and more. 
 # @name export
 # @category Environment
-# @scope Text
+# @scope Global
 # @args Text %key,Text %value
 # @description
 # The export function is used when you want to change the outgoing response header.
@@ -31,7 +31,7 @@
 # @abstract The regexp function is used to parse regular expressions.
 # @name regexp
 # @category Environment,Modify,Text
-# @scope Text
+# @scope Global
 # @args Text %exp
 # @description
 # The regexp function is used to parse expressions and turn them into regular expressions. Regular Expressions are incredibly powerful for selecting and modifying groups of text.
@@ -58,7 +58,7 @@
 # @abstract The asset function is used to rewrite the source attribute of your assets.
 # @name asset
 # @category Environment
-# @scope Text
+# @scope Global
 # @args Text %name
 # @description
 # The asset function is most commonly used to rewrite the sources of images to the new Moovweb domain so that you can serve local content fast. Often when redesigning sites, you'll want to resize images, minify javascript, bundle assets together, and take a variety of performance measures to optimize your mobile site. Performance is increasingly important for mobile because of the significantly worse bandwidth that your users are using to connect (Edge, 3G, and WiFi). This means you'll want to optimize and re-serve any bloated content from the desktop site. The asset function helps to rewrite all those sources. 
@@ -85,7 +85,7 @@
 # @abstract The bm function prints in the terminal output the time a block took to run.
 # @name bm
 # @category Environment
-# @scope Text
+# @scope Global
 # @args Text %name
 # @description 
 # The bm function is used to test the performance of your code by the proxy. Generally, the majority of your performance boost will come from optimizing the images, scripts, and stylesheets of the existing desktop site. However, there are ways to improve performance of the execution of the proxy such as using XPath selectors instead of CSS selectors and avoiding deep searches for content in the DOM. 
@@ -112,7 +112,7 @@
 # @abstract The match function is used for logic to check against the content of strings and variables.
 # @name match
 # @category Environment,Text
-# @scope Text
+# @scope Global
 # @args Text %target,Text %comparitor
 # @description
 # The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. 
@@ -145,7 +145,7 @@
 # @abstract The match function is used for logic to check against the content of strings and variables.
 # @name match
 # @category Environment,Text
-# @scope Text
+# @scope Global
 # @args Text %target,Regexp %comparitor
 # @description
 # The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. 
@@ -178,7 +178,7 @@
 # @abstract The match_not function is used opposite the match function to check that strings and variables do not contain certain content.
 # @name match_not
 # @category Environment,Text
-# @scope Text
+# @scope Global
 # @args Text %target,Text %comparitor
 # @description 
 # The match_not function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. Match_not() essentially inverts what you would expect from the match function. This means that if a match is not successful, then the block of code inside that match_not() or with() statement will run. 
@@ -211,7 +211,7 @@
 # @abstract The match_not function is used opposite the match function to check that strings and variables do not contain certain content.
 # @name match_not
 # @category Environment,Text
-# @scope Text
+# @scope Global
 # @args Text %target,Regexp %comparitor
 # @description
 # The match_not function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. Match_not() essentially inverts what you would expect from the match function. This means that if a match is not successful, then the block of code inside that match_not() or with() statement will run. 
@@ -274,7 +274,7 @@
 # @abstract Opens the current node for text modification. Should be used when the manipulation is on text only.
 # @name text
 # @category Modify,Text
-# @scope XMLNode
+# @scope Global
 # @args
 # @description 
 # The text() function is used to either set the text of the current node, or to open the text scope of the current node for modification. 

@@ -2,7 +2,7 @@
 # @abstract The $ function is a selector that takes XPath as an input. XPath is a syntax for selection notation based on the structure of an HTML DOM.
 # @name $
 # @category Environment,Create,Modify,Move,Misc,Text
-# @scope Attribute,XMLNode,Text
+# @scope XMLNode
 # @args Text %xpath
 # @description
 # The $ selector is used to tell Tritium which node(s) you'd like to select to perform transformation on. The general process of transformation involves two basic steps: 1) Selecting a node, and 2) Performing some function on that node. We refer to the process of selecting a node for transformation as "opening a scope" throughout our documentation.
@@ -59,7 +59,7 @@
 # @abstract The index function returns the order of which this node is iterated through when selected by Tritium.
 # @name index
 # @category Environment,Misc
-# @scope Attribute,XMLNode,Text
+# @scope XMLNode
 # @args
 # @description
 # The index function is used to return the order of which the node is transformed when selected using Tritium. Every time you use a Tritium selector that selects more than a single element, the MoovSDK will iterate over each element and run the inner block of code on each element one at a time. The index() function returns the order of that element in the execution queue.
@@ -81,7 +81,7 @@
 # @abstract Renames the current node to the tag specified by the input. 
 # @name name
 # @category Modify
-# @scope Attribute,XMLNode,Text
+# @scope XMLNode
 # @args %value
 # @description
 # The name function replaces the name of the currently selected node with the input provided by the parameter %value. This means you are effectively changing the element that will be rendered in the DOM. 
@@ -126,7 +126,7 @@
 # @abstract The copy_here function copies the node specified by the input %xpath to the currently selected node. 
 # @name copy_here
 # @category Create,Move
-# @scope Attribute,XMLNode,Text
+# @scope XMLNode
 # @args Text %xpath
 # @description
 # The copy_here function copies the node specified by the input XPath selector to the current scope from which it is called. 
@@ -171,7 +171,7 @@
 # @abstract The copy_to function copies the currently selected node to the node specified by the input %xpath.
 # @name copy_to
 # @category Create,Move
-# @scope Attribute,XMLNode,Text
+# @scope XMLNode
 # @args Text %xpath
 # @description
 # The copy_to function copies the currently selected node to the node specified by the input %xpath.
@@ -194,7 +194,7 @@
 # @abstract The inject function injects HTML into the current node.
 # @name inject
 # @category Create,Modify
-# @scope Attribute,XMLNode,Text
+# @scope XMLNode
 # @args %html
 # @description
 # The inject function injects HTML into the current node.
@@ -239,7 +239,7 @@
 # @abstract The move_to command moves the currently selected node to the node specified by the %xpath input. 
 # @name move_to
 # @category Modify,Move
-# @scope Attribute,XMLNode,Text
+# @scope XMLNode
 # @args %xpath
 # @description
 # The move_to command moves the currently selected node to the node specified by the %xpath input. 
@@ -281,7 +281,7 @@
 # @abstract The move_here function moves the node specified by the input xpath to the currently selected node. 
 # @name move_here
 # @category Modify,Move
-# @scope Attribute,XMLNode,Text
+# @scope XMLNode
 # @args %where
 # @description
 # The move_here function moves the node specified by the input xpath to the currently selected node. 
@@ -306,7 +306,7 @@
 # @abstract Inserts a new node at the position specified.
 # @name insert_at
 # @category Create
-# @scope Node
+# @scope XMLNode
 # @args Position %pos,Text %tag_name
 # @description
 # The insert_at function inserts a tag in the current node at the location specified.
