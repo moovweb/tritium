@@ -216,7 +216,7 @@
 # @description
 # The match_not function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. Match_not() essentially inverts what you would expect from the match function. This means that if a match is not successful, then the block of code inside that match_not() or with() statement will run. 
 # Things to note: If you have more than one variable or regular expression to test againt, you can simply provide the match_not function with the variable in question and then use embeded with() statements for each case. You can also provide a final else() statement to serve as a catchall for all unsuccessful matches.
-# Related functions: <a href="#with(Text %text)">with()</a>, <a href="#else()">else()</a>, <a href="#not(Text %text)">not()</a>, <a href="#match Text target">match(Text %target)</a>
+# Related functions: <a href="#with(Text %text)">with()</a>, <a href="#else()">else()</a>, <a href="#not(Text %text)">not()</a>, <a href="#match(Text %target)">match(Text %target)</a>
 # Common uses include:
 # 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
 # 2) Matching attributes with certain content to determine if they need to be changed in some way. 
@@ -279,7 +279,7 @@
 # @description 
 # The text() function is used to either set the text of the current node, or to open the text scope of the current node for modification. 
 # Things to note: The text() function is different from the inner() function in that it will only return an array of the text nodes inside the element from which it is called. Inner(), on the other hand, will return the entire inner HTML of the node from which it is called.
-# Related functions: <a href="#inner">inner()</a>
+# Related functions: <a href="#inner()">inner()</a>
 # Common uses include: 
 # 1) Opening the scope for the use of text scope functions such as replace, set, length, append, prepend, clear and more. 
 # 2) Setting the text of the current node. 
