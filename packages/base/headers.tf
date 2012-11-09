@@ -50,7 +50,7 @@
 # @name time
 # @category Environment
 # @scope Global
-# @args
+# @args 
 # @description 
 # The time function returns the time-to-execute the Tritium code up until it hits the function call. 
 # Things to note: The time taken varies for each implementation so to have an accurate sense of time several trials should be run. 
@@ -252,7 +252,7 @@
 # @name guess_encoding
 # @category Text
 # @scope Text
-# @args
+# @args 
 # @description
 # The guess_encoding function is used to guess the text encoding of the current scope. The function uses information from the input, the response header, and the html meta tags.
 # Common uses include:
@@ -298,7 +298,7 @@
 # @name else
 # @category Environment,Text
 # @scope Global
-# @args
+# @args 
 # @description 
 # The else() function is used inside your match() statements to serve as a catchall for when none of your with() statements find a successful match. The else() function will then serve as your default behavior for unanticipated match cases.
 # Common uses include:

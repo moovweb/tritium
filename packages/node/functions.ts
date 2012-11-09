@@ -300,7 +300,7 @@
   }
 }
 
-# DIRECTIONALS... UGH.
+// DIRECTIONALS... UGH.
 
 " Inserts a tag (specified by **%tag**) in the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert(\"div\")` will insert a div at the bottom of the current node."
 # @abstract Inserts a new node at the position specified.

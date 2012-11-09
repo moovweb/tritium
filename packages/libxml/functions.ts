@@ -52,8 +52,6 @@
 # @guidetext Use of Adding a Class
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute#Adding+a+Class
 @func XMLNode.add_class(Text %class) {
-
-
   attribute("class") {
     value() {
       append(" ")
@@ -180,9 +178,7 @@
   }
 }
 
-"Changes the name of the currently-selected attribute to that specified by **%name**. @example `attribute(\"href\") { name(\"src\") }`.
-
-Functionally equivalent to `name() { set(%name) }`."
+"Changes the name of the currently-selected attribute to that specified by **%name**. @example `attribute(\"href\") { name(\"src\") }`. Functionally equivalent to `name() { set(%name) }`."
 # @abstract The name function allows you to change the name of an attribute.
 # @name name
 # @category Attribute,Modify
@@ -261,7 +257,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-# Used to be a helper function, just pass through and should work the same
+// Used to be a helper function, just pass through and should work the same
 "Allows mass-attribute setting - [click for example](http://beta.moovweb.com/learn/training/function_guides/attribute). @example `$(\"./div\") { attributes (class: \"one\", id: \"two\") }` will assign the div a class of 'one' and an id of 'two'."
 # @abstract The attributes function allows you to set multiple attributes on an element.
 # @name attributes
@@ -562,7 +558,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-# @HC - This seems like a duplicate:
+// @HC - This seems like a duplicate:
 
 @func XMLNode.wrap(Text %tag) {
   %node = this()
@@ -572,7 +568,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-# This is used to specify the encoding for a page
+// This is used to specify the encoding for a page
 "Parses the document into HTML. Allows specification of the current coding of HTML and how the result should be coded. @example `html(\"gbk\", \"utf-8\")` parses gbk HTML into utf-8 HTML."
 # @hide
 # @abstract Parses the document into HTML, from and to the encodings specified.
@@ -697,7 +693,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # @name html_fragment
 # @category Environment
 # @scope Text
-# @args
+# @args 
 # @description 
 # The html_fragment function parses a fragment of the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
 # Just as for the html function, html_fragment can take up to two arguments. By default, function guesses the HTML encoding. 
@@ -719,8 +715,8 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-# POSITIONALS
-# siblings of these are in node, but these use Inner so are here.
+// POSITIONALS
+// siblings of these are in node, but these use Inner so are here.
 
 "Inserts a tag (specified by **%tag**) with content (**%content**) at a position specified by **%pos** (relative to the currently-selected node) - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
 # @abstract Inserts a tag with the (optional) content at the location given.

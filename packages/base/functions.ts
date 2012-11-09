@@ -245,7 +245,7 @@
 # @name clear
 # @category Modify,Text
 # @scope Text
-# @args
+# @args 
 # @description 
 # The clear function is used to remove text from inside a text scope.
 # Related functions: <a href="#remove">remove()</a>
@@ -275,7 +275,7 @@
 # @name text
 # @category Modify,Text
 # @scope Global
-# @args
+# @args 
 # @description 
 # The text() function is used to either set the text of the current node, or to open the text scope of the current node for modification. 
 # Things to note: The text() function is different from the inner() function in that it will only return an array of the text nodes inside the element from which it is called. Inner(), on the other hand, will return the entire inner HTML of the node from which it is called.
