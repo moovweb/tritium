@@ -207,7 +207,6 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 
 	if err != nil {
 		//pkg.Log.Info("\t -- no user defined functions found")
-		// TODO: BETTER ERROR MESSAGE --AARON
 		msg := fmt.Sprintf("unable to open function definition file: %s", location)
 		// println(msg)
 		panic(msg)
@@ -240,7 +239,7 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 			// report the name of the file that contains the import statement.
 			importExists, existsErr := exists(importPath)
 			if !importExists || (existsErr != nil) {
-				errURL := "http://help.moovweb.com/entries/22335641-importing-non-existant-files-in-functions-main-ts"
+				errURL := "http://help.moovweb.com/entries/22335641-importing-non-existent-files-in-functions-main-ts"
 				msg := fmt.Sprintf("\n********\nin file %s:\nattempting to import nonexistent file %s\nPlease consult %s for more information about this error.\n********\n", location, importPath, errURL)
 				panic(msg)
 			}
