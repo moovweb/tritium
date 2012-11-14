@@ -226,6 +226,7 @@
 @func equal(XMLNode %a, XMLNode %b) Text
 
 " Returns \"true\" or \"false\" depending on whether the nodes are equal. "
+# @hide
 # @abstract Returns "true" or "false" depending on whether the nodes are equal.
 # @name equal
 # @category Misc
