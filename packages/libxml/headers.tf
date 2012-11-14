@@ -236,10 +236,7 @@
 # The equal function takes two nodes and compares them to see if they are equal.
 # Important to note is that you cannot use text as input for this function. You should set a variable using this() on your current node, then use that variable as an argument.
 # The function takes two arguments - these are the nodes which you need to equate.
-# @example
-# 
-# 
-# 
+# @example 
 # @exampletext Tritium Tester Example
 # @examplelink 
 # @guidetext 
