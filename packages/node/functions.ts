@@ -62,15 +62,15 @@
 # @scope XMLNode
 # @args 
 # @description
-# The index function is used to return the order of which the node is transformed when selected using Tritium. Every time you use a Tritium selector that selects more than a single element, the MoovSDK will iterate over each element and run the inner block of code on each element one at a time. The index() function returns the order of that element in the execution queue.
+# The index function is used to return the order of which the node is transformed when selected using Tritium. Every time you use a Tritium selector that selects more than a single element, the Moovweb SDK will iterate over each element and run the inner block of code on each element one at a time. The index() function returns the order of that element in the execution queue.
 # ### Common uses include:
 # * Giving elements a unique attribute that corresponds to their index number.
 # * Referencing a certain element based on its order of execution.
 # * General order based logic, such as giving all odd numbered elements in the queue a certain class so you can style them differently.
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/index
-# @guidetext 
-# @guidelink 
+# @guidetext How indexing items works.
+# @guidelink http://console.moovweb.com/learn/training/function_guides/index_func
 @func Node.index() {
   index(this()) {
     yield()

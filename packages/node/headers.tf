@@ -19,7 +19,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/index
-# @guidetext More information about indexing items.
+# @guidetext How indexing items works.
 # @guidelink http://console.moovweb.com/learn/training/function_guides/index_func
 @func index(Node %node) Text
 
