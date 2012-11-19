@@ -9,12 +9,12 @@
 # $$ selects an element of HTML using a CSS-style selector. It is used as an alternative selector to the single-dollar sign (which selects via XPath).
 # The function takes one argument, which is the item to be selected.
 # People usually find the $$ easier to use - at least in the beginning - as it requires no knowledge of XPath.
-# Things to note: the $$ converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
+# **Things to note**: the $$ converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
 # For example, the selector $$("#one") will be converted into $(".//*[id='one']"). The double-forward slash deep search could affect performance.
-# Related functions: <a href="#css(Text %selector)">css</a>
+# *Related functions*: [css(selector)](#css(Text %selector))
 # Common use cases include (but are not limited to):
-# 1) Selecting many element types based on attributes rather than tag names
-# 2) Selecting items without being familiar with XPath
+# * Selecting many element types based on attributes rather than tag names
+# * Selecting items without being familiar with XPath
 # The example below selects every item with the id "one".
 # @example
 # $$("#one")
@@ -40,8 +40,8 @@
 # What the function does is takes the current node and appends any existing classes with a space, followed by the class specified. 
 # The add_class function will therefore not overwrite any existing classes that are present on the node. Contrast this with the attribute function, which would obliterate any existing classes. 
 # Common use cases include (but are not limited to):
-# 1) Adding a class to the body of the page for page-specific styling
-# 2) Keeping existing classes (and associated styles) while adding your own on top
+# * Adding a class to the body of the page for page-specific styling
+# * Keeping existing classes (and associated styles) while adding your own on top
 # The example below will take the selected div and add a class of " one" to it.
 # @example
 # $("./div") {
@@ -71,8 +71,8 @@
 # The inner_wrap function takes all the content of the current node and wraps it.
 # The function takes one argument and that is the name of the tag in which you want to wrap the content of the current node.
 # Common use cases include (but are not limited to):
-# 1) Wrapping all interior content into an anchor tag
-# 2) Wrapping a mixture of text and nodes into one tag
+# * Wrapping all interior content into an anchor tag
+# * Wrapping a mixture of text and nodes into one tag
 # The example below will take the contents of the div and wrap them in a span.
 # @example
 # $("./div") {
@@ -103,7 +103,7 @@
 # The remove_text_nodes function takes all text that is a direct child of the current node and removes it.
 # Any non-text nodes (e.g. anchor tags, image tags, etc.) will remain intact.
 # Common use cases include (but are not limited to):
-# 1) Removing blank text nodes in between elements
+# * Removing blank text nodes in between elements
 # The example below will remove only text nodes from the div.
 # @example
 # $("./div") {
@@ -128,9 +128,8 @@
 # The function takes two arguments - the first being the attribute name and the second its value.
 # If the attribute already exists on the tag, it will be overwritten by the new value specified.
 # Common use cases include (but are not limited to):
-# 1) Overwriting existing classes with your own class
-# 2) 
-# 3) Adding attributes to enable Uranium
+# * Overwriting existing classes with your own class
+# * Adding attributes to enable Uranium
 # The example below will add a href of http://example.com to the selected a tag.
 # @example
 # $("./a") {
@@ -218,7 +217,7 @@
 # The function takes one argument, which is the name of the stylesheet. The file should be referenced in relation to the assets/stylesheets folder.
 # As the function is mainly used to reference stylesheets in the project, this function is usually only found once. Most projects only inject one stylesheet.
 # In the functions/main.ts file, you can see the sass function being used in the add_assets function, which inserts a link to the main stylesheet.
-# Related functions: <a href="#asset(Text %name)">asset</a>
+# *Related functions*: [asset(name)](#asset(Text %name))
 # The example below will insert a link tag with an href pointing to the assets/stylesheets/.css/main.css file of the project.
 # @example
 # insert("link", rel: "stylesheet", type: "text/css", href: sass("main")
@@ -241,7 +240,7 @@
 # @description 
 # The set function allows you to set an attribute on an element.
 # The function takes two arguments. The first is the name of the attribute and the second is the value for that attribute.
-# Related functions: <a href="#attribute(Text %name, Text %value)">attribute</a>
+# *Related functions*: [attribute(name, value)](#attribute(Text %name, Text %value))
 # The example below will take the a tag and set an href attribute with the value http://example.com.
 # @example
 # $("./a") {
@@ -267,10 +266,10 @@
 # @description 
 # The attributes function allows you to set multiple attributes for an element.
 # It is commonly used instead of the attribute function, as it leaves open the possibility to add more attributes later on.
-# The function can take an arbitrary number of arguments in the format <code>name: "value"</code>.
+# The function can take an arbitrary number of arguments in the format `name: "value"`
 # Common use cases include (but are not limited to):
-# 1) Assigning multiple attributes for Uranium - such as a data-ur-id and a data-ur-component type.
-# 2) Adding a class while also setting the value of an input 
+# * Assigning multiple attributes for Uranium - such as a data-ur-id and a data-ur-component type.
+# * Adding a class while also setting the value of an input.
 # The example below gives the selected div two attributes - a class of "one" and an id of "two".
 # @example
 # $("./div") {
@@ -293,11 +292,11 @@
 # @description
 # The text function opens up the text scope or retrieves the text contained within the current scope.
 # Without any further functions, the text function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
-# A further function can be used (such as <code>set</code>) to replace anything inside the current node with text.
+# A further function can be used (such as `set`) to replace anything inside the current node with text.
 # Common use cases include (but are not limited to):
-# 1) Grabbing text from unnecessarily-nested nodes
-# 2) Opening a text scope to then replace a word in a paragraph
-# 3) Fetching text from a tag to put into a variable
+# * Grabbing text from unnecessarily-nested nodes
+# * Opening a text scope to then replace a word in a paragraph
+# * Fetching text from a tag to put into a variable
 # The example below will set the inside of the div to be "NewText".
 # @example
 # $("./div") {
@@ -333,7 +332,7 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text
-# @guidetextUsing the text function.
+# @guidetext Using the text function.
 # @guidelink http://beta.moovweb.com/learn/training/function_guides/text
 @func XMLNode.text(Text %value) {
   text() {
@@ -352,7 +351,7 @@
 # @description 
 # @example
 # absolutize(".//img", "src")
-# @exampletext Tritium Tester Example
+# @exampletext 
 # @examplelink 
 # @guidetext 
 # @guidelink 
@@ -406,7 +405,7 @@
 # @description 
 # @example
 # absolutize("//img")
-# @exampletext Tritium Tester Example
+# @exampletext 
 # @examplelink 
 # @guidetext 
 # @guidelink 
@@ -432,7 +431,7 @@
 # The example below will take all the image tags and 
 # @example
 # absolutize()
-# @exampletext Tritium Tester Example
+# @exampletext 
 # @examplelink 
 # @guidetext 
 # @guidelink 
@@ -484,7 +483,7 @@
 # - insert_javascript_before(Text %js)
 # - insert_javascript_after(Text %js)
 # Common use examples include (but are not limmited to):
-# 1) Javascript needs to be added to a specific node rather than globally
+# * Javascript needs to be added to a specific node rather than globally
 # In the example below, the javascript "alert('Boo')" will be inserted at the bottom of the current node.
 # @example
 # insert_javascript("alert('Boo')")
@@ -510,8 +509,8 @@
 # Important to note is that all the interior of the current node will be obliterated and replaced with the input.
 # If the input contains tags, these will be rendered as HTML elements.
 # Compare to the text() function, which replaces the content with text only.
-# Common uses cases include (but are not limited to):
-# 1) Setting the inside of a node with both text and a new node
+# ### Common uses cases include (but are not limited to):
+# * Setting the inside of a node with both text and a new node
 # The example below will replace all the content of the current div with "New Content".
 # @example
 # $("./div") {
@@ -537,10 +536,10 @@
 # @description 
 # The wrap function takes the current node and wraps it in a new tag.
 # The function takes one obligatory argument - the new tag. It also takes an arbitrary number of additional arguments specifying attributes.
-# For example, you can specify a class using <code>class: "my_class"</code> as a second argument.
-# Common uses cases include (but are not limited to):
-# 1) Wrapping elements in a li tag to form a list
-# 2) Wrapping an element in an anchor tag to make a link
+# For example, you can specify a class using `class: "my_class"` as a second argument.
+# ### Common uses cases include (but are not limited to):
+# * Wrapping elements in a li tag to form a list
+# * Wrapping an element in an anchor tag to make a link
 # The example below will wrap the selected a tag in a div with the class "one".
 # @example
 # $("./a") {
@@ -579,7 +578,7 @@
 # @description 
 # @example
 # html("gbk", "utf-8")
-# @exampletext Tritium Tester Example
+# @exampletext 
 # @examplelink 
 # @guidetext 
 # @guidelink 
@@ -600,7 +599,7 @@
 # @description 
 # @example
 # html("utf-8")
-# @exampletext Tritium Tester Example
+# @exampletext 
 # @examplelink 
 # @guidetext 
 # @guidelink 
@@ -621,14 +620,14 @@
 # The html function parses the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
 # Used in its basic sense, the function guesses the HTML encoding. The encoding can also be specified with up to two arguments.
 # A single argument can be used to specify the "to" and "from" encodings, or they can be specified separately using two arguments - html("x", "y") would parse the document from encoding "x" into encoding "y".
-# Important to note is that as part of the parsing, the function will add <code><html></code> tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the <a href="#html_fragment()">html_fragment</a> function.
+# Important to note is that as part of the parsing, the function will add `<html>` tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the [html_framgment()](#html_fragment()) function.
 # The html function can be found in the scripts/main.ts file of your project, where it parses every page as HTML.
 # The example below will parse the HTML, allowing selectors to point to nodes of the document.
 # @example
 # html() {
 #   $("/html/body")
 # }
-# @exampletext Tritium Tester Example
+# @exampletext 
 # @examplelink 
 # @guidetext 
 # @guidelink 
@@ -656,7 +655,7 @@
 # @description [Compare to the html() function]
 # @example
 # html_fragment("gbk", "utf-8")
-# @exampletext Tritium Tester Example
+# @exampletext 
 # @examplelink 
 # @guidetext 
 # @guidelink 
@@ -677,7 +676,7 @@
 # @description 
 # @example
 # html_fragment("utf-8")
-# @exampletext Tritium Tester Example
+# @exampletext 
 # @examplelink 
 # @guidetext 
 # @guidelink 
@@ -704,7 +703,7 @@
 # html_fragment() {
 #   $("/div")
 # }
-# @exampletext Tritium Tester Example
+# @exampletext 
 # @examplelink 
 # @guidetext 
 # @guidelink 
@@ -729,7 +728,7 @@
 # The function takes three arguments. The first is the position, relative to the current node, at which you want to insert the new element. The second is the tag name. The third (optional) argument is the content of the node.
 # There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, insert_at("top", "div", "Content", class: "one") will add a class of "one" to the new element.
 # Common use examples include (but are not limited to):
-# 1) Creating a button/content element for Uranium
+# * Creating a button/content element for Uranium
 # The example below will insert a div tag at the top of the current node. The tag will have the content "Content".
 # @example
 # insert_at("top", "div", "Content")
@@ -781,8 +780,8 @@
 # - insert_before(Text %tag, Text %inner)
 # - insert_after(Text %tag, Text %inner)
 # Common use examples include:
-# 1) Adding an anchor tag to link to the desktop site
-# 2) Inserting a header or footer on a page
+# * Adding an anchor tag to link to the desktop site
+# * Inserting a header or footer on a page
 # The example below will insert a div with the content "Content" into the bottom of the current node.
 # @example
 # insert("div", "Content")

@@ -7,10 +7,10 @@
 # @args Text %name
 # @description
 # The var function is used to set global variables that can be used for various logic throughout your code. 
-# Common uses include: 
-# 1) True/False logic
-# 2) Storing fetched text and attributes
-# 3) Using stored values in a match() statement to run different Tritium scripts.
+# ### Common uses include:
+# * True/False logic
+# * Storing fetched text and attributes
+# * Using stored values in a match() statement to run different Tritium scripts.
 # The following example simply illustrates how to set a variable manually to whatever %name and value you desire. 
 # @example
 # var("my_var") {
@@ -31,10 +31,10 @@
 # @args Text %name,Text %value
 # @description
 # The var function is used to set global variables that can be used for various logic throughout your code. 
-# Common uses include: 
-# 1) True/False logic
-# 2) Storing fetched text and attributes
-# 3) Using stored values in a match() statement to run different Tritium scripts.
+# ### Common uses include:
+# * True/False logic
+# * Storing fetched text and attributes
+# * Using stored values in a match() statement to run different Tritium scripts.
 # The following example simply illustrates how to set a variable manually to whatever %name and %value you desire. 
 # @example
 # var("my_var", "is set")
@@ -53,9 +53,9 @@
 # @args 
 # @description 
 # The time function returns the time-to-execute the Tritium code up until it hits the function call. 
-# Things to note: The time taken varies for each implementation so to have an accurate sense of time several trials should be run. 
-# Common uses include:
-# 1) Optimizing Tritium script performance. 
+# **Things to note**: The time taken varies for each implementation so to have an accurate sense of time several trials should be run. 
+# ### Common uses include:
+# * Optimizing Tritium script performance.
 # In this example, we display how to log the time() output to the terminal using the log() function. 
 # @example
 # log(time())
@@ -73,12 +73,12 @@
 # @args Text %target
 # @description
 # The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. Match is used to test the content of variables with strings, regular expressions, and other variables and then run code according to whether or not the match is successful. 
-# Things to note: If you have more than one variable or regular expression to test againt, you can simply provide the match function with the variable in question and then use embeded with() statements for each case. You can also provide a final else() statement to serve as a catchall for all unsuccessful matches.
-# Common uses include:
-# 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
-# 2) Matching attributes with certain content to determine if they need to be changed in some way. 
-# 3) Simulating if/then/else statements and boolean true/false logic to run differing Tritium. 
-# 4) Matching the status, content-type, or other information from the incoming header.
+# **Things to note**: If you have more than one variable or regular expression to test againt, you can simply provide the match function with the variable in question and then use embeded with() statements for each case. You can also provide a final else() statement to serve as a catchall for all unsuccessful matches.
+# ### Common uses include:
+# * Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
+# * Matching attributes with certain content to determine if they need to be changed in some way.
+# * Simulating if/then/else statements and boolean true/false logic to run differing Tritium.
+# * Matching the status, content-type, or other information from the incoming header.
 # In this example, we match the $path variable to see if it matches the regular expression /product/. Since it does, the log "Match successful!" will output to your terminal.
 # @example
 #   $path = "product"
@@ -104,10 +104,10 @@
 # @args Text %log_message
 # @description
 # The log function is used to output information to the terminal.
-# Common uses include:
-# 1) Checking the value of environment variables
-# 2) Displaying status messages as the result of certain matches or logic
-# 3) Debugging Tritium that isn't working in development
+# ### Common uses include:
+# * Checking the value of environment variables
+# * Displaying status messages as the result of certain matches or logic
+# * Debugging Tritium that isn't working in development
 # The following example shows the typical use case for debugging Tritium that isn't working. This is often done by setting logs throughout your code to see if you selectors and logic is executing the proper statements.
 # @example
 #   log("I've reached this point in the code!")
@@ -129,8 +129,8 @@
 # @description
 # The not function is used inside a match() statement as an opposite to the with() statement. In other words, if the match is not successful, the code inside the not() block will run, whereas if the match is successful, the code will be skipped over.
 # Common use cases include: 
-# 1) When the page is structured such that you only know what scripts you want to run when certain content does not exist.
-# 2) When you are mapping URL paths to page types and you know what content must not exist in the path to fulfill a mapping requirement.
+# * When the page is structured such that you only know what scripts you want to run when certain content does not exist.
+# * When you are mapping URL paths to page types and you know what content must not exist in the path to fulfill a mapping requirement.
 # In the following example, we match the variable $var with the not() statement of "Match You". Since that statement does not exist in the variable, the log inside the not statement will be executed.
 # @example
 # $var = "Match Me"
@@ -154,8 +154,8 @@
 # @description
 # The not function is used inside a match() statement as an opposite to the with() statement. In other words, if the match is not successful, the code inside the not() block will run, whereas if the match is successful, the code will be skipped over.
 # Common use cases include: 
-# 1) When the page is structured such that you only know what scripts you want to run when certain content does not exist.
-# 2) When you are mapping URL paths to page types and you know what content must not exist in the path to fulfill a mapping requirement.
+# * When the page is structured such that you only know what scripts you want to run when certain content does not exist.
+# * When you are mapping URL paths to page types and you know what content must not exist in the path to fulfill a mapping requirement.
 # In the following example, we match the variable $var with the not() regular expression "Match You". Since that statement does not exist in the variable, the log inside the not statement will be executed.
 # @example
 # $var = "Match Me"
@@ -178,12 +178,12 @@
 # @args Text %text
 # @description
 # The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. The with() statement is used inside a match() statement to match the variable with certain strings or regular expressions. If the input %text is contained in the matched variable, then the code block inside the with() statement is executed. 
-# Things to note: You can have multiple with() statements inside a single match statement. They are executed sequentially and as soon as one with() statement is matched successfully, the rest will be skipped over.
-# Common uses include:
-# 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
-# 2) Matching attributes with certain content to determine if they need to be changed in some way. 
-# 3) Simulating if/then/else statements and boolean true/false logic to run differing Tritium. 
-# 4) Matching the status, content-type, or other information from the incoming header.
+# **Things to note**: You can have multiple with() statements inside a single match statement. They are executed sequentially and as soon as one with() statement is matched successfully, the rest will be skipped over.
+# ### Common uses include:
+# * Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
+# * Matching attributes with certain content to determine if they need to be changed in some way.
+# * Simulating if/then/else statements and boolean true/false logic to run differing Tritium.
+# * Matching the status, content-type, or other information from the incoming header.
 # In this example, we match the $var variable with the string "Match Me". Since the match is successful, the log is then executed.
 # @example
 # $var = "Match Me"
@@ -206,12 +206,12 @@
 # @args Regexp %regexp
 # @description
 # The match function is used for pseudo-logic in Tritium. With match(), you have the equivalent of if-else and case statements in many other programming languages. The with() statement is used inside a match() statement to match the variable with certain strings or regular expressions. If the input %text is contained in the matched variable, then the code block inside the with() statement is executed. 
-# Things to note: You can have multiple with() statements inside a single match statement. They are executed sequentially and as soon as one with() statement is matched successfully, the rest will be skipped over.
-# Common uses include:
-# 1) Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
-# 2) Matching attributes with certain content to determine if they need to be changed in some way. 
-# 3) Simulating if/then/else statements and boolean true/false logic to run differing Tritium. 
-# 4) Matching the status, content-type, or other information from the incoming header.
+# **Things to note**: You can have multiple with() statements inside a single match statement. They are executed sequentially and as soon as one with() statement is matched successfully, the rest will be skipped over.
+# ### Common uses include:
+# * Matching the URL Path of the page and @importing different Tritium scripts depending on what page you are on.
+# * Matching attributes with certain content to determine if they need to be changed in some way.
+# * Simulating if/then/else statements and boolean true/false logic to run differing Tritium.
+# * Matching the status, content-type, or other information from the incoming header.
 # In this example, we match the $var variable with the regular expression "Match Me". Since the match is successful, the log is then executed.
 # @example
 # $var = "Match Me"
@@ -234,8 +234,8 @@
 # @args Text %from,Text %to
 # @description
 # The convert_encoding function is used to convert text from one encoding to another. 
-# Common uses include:
-# 1) Converting incorrectly encoded text 
+# ### Common uses include:
+# * Converting incorrectly encoded text
 # In this example, we convert from gbk to utf-8 encoding. 
 # @example
 # text() {
@@ -255,8 +255,8 @@
 # @args 
 # @description
 # The guess_encoding function is used to guess the text encoding of the current scope. The function uses information from the input, the response header, and the html meta tags.
-# Common uses include:
-# 1) When you need to figure out the current encoding.
+# ### Common uses include:
+# * When you need to figure out the current encoding.
 # In this example, we guess the encoding of the current text node.
 # @example
 # text() {
@@ -277,9 +277,9 @@
 # @args Text %input
 # @description 
 # The length function is used to return the length of the current text node or the provided input string. 
-# Common uses include:
-# 1) Validating an input string to make sure it is either a minimum or maximum number of characters.
-# 2) Finding the length of a string. 
+# ### Common uses include:
+# * Validating an input string to make sure it is either a minimum or maximum number of characters.
+# * Finding the length of a string.
 # In this example, we log the length of the %input string "text".
 # @example
 # $$("#my_div") {
@@ -289,8 +289,8 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/length
-# @guidetext Function Guide
-# @guidelink  
+# @guidetext 
+# @guidelink 
 @func length(Text %input) Text
 
 " Completes the pseudo-logic of `with()`, allowing the specification of an alternative. @example `match($path) { with(/product/) else() { log(\"Not selecting product\")} }` will only log the message if 'product' is not in the path."
@@ -301,10 +301,10 @@
 # @args 
 # @description 
 # The else() function is used inside your match() statements to serve as a catchall for when none of your with() statements find a successful match. The else() function will then serve as your default behavior for unanticipated match cases.
-# Common uses include:
-# 1) Serving as a catchall for common errors, such as unrecognized URL mappings.
-# 2) Completing if-else pseudo logic when matching variables, attributes, and other traits of the current DOM. 
-# 3) Generally providing a default behavior for your Tritium scripts.
+# ### Common uses include:
+# * Serving as a catchall for common errors, such as unrecognized URL mappings.
+# * Completing if-else pseudo logic when matching variables, attributes, and other traits of the current DOM.
+# * Generally providing a default behavior for your Tritium scripts.
 # In this example, the $var value does not match the existing with() statement, which means the else() statement will run its inner code block.
 # @example
 # $var = "Match me."
@@ -339,12 +339,12 @@
 # @args Text %expression,Text %options
 # @description 
 # The regexp function is used to parse %expressions and turn them into regular expressions. Regular Expressions are incredibly powerful for selecting and modifying groups of text. 
-# Things to note: The %options input provides flags for the regular expression such as "i" which indicates it should be case insensitive. 
-# Common uses include:
-# 1) Removing extra text when transitioning from desktop to mobile sites.
-# 2) Modifying text to be more clear and concise to fit a smaller viewport.
-# 3) Changing instructions such as "click" to "tap" for mobile devices.
-# 4) Fixing malformed HTML before the document is parsed so your selectors work properly.
+# **Things to note**: The %options input provides flags for the regular expression such as "i" which indicates it should be case insensitive.
+# ### Common uses include:
+# * Removing extra text when transitioning from desktop to mobile sites.
+# * Modifying text to be more clear and concise to fit a smaller viewport.
+# * Changing instructions such as "click" to "tap" for mobile devices.
+# * Fixing malformed HTML before the document is parsed so your selectors work properly.
 # In this example, we are using the string "true" and turning it into a regular expression to use in a match/with statement. We are also accepting any combination of upper and lower case because of the "i" flag. If the string "true" is anywhere in the text we are matching, the code in the with() statement will run. 
 # @example
 # with(regexp("true", "i")) {
@@ -365,11 +365,11 @@
 # @args Text %a,Text %b
 # @description 
 # The concat function is used to combine two or more strings into a single string.
-# Things to note: The concat function takes at least two strings and up to ten strings as input parameters. These parameters will be combined in the order in which they are provided. 
-# Common uses include:
-# 1) In log statements when outputting some combination of variables and description of those variables. 
-# 2) When selecting elements based on variables or attributes they may need to be formatted properly using the concat function. 
-# 3) When manipulating text scopes and combining the content of several scopes.
+# **Things to note**: The concat function takes at least two strings and up to ten strings as input parameters. These parameters will be combined in the order in which they are provided. 
+# ### Common uses include:
+# * In log statements when outputting some combination of variables and description of those variables.
+# * When selecting elements based on variables or attributes they may need to be formatted properly using the concat function.
+# * When manipulating text scopes and combining the content of several scopes.
 # In this example, we fetch the ID of the div with the ID "my_div" and then we log a concat statement to the terminal output.
 # @example
 # $$("#my_div") {
@@ -390,11 +390,11 @@
 # @args Text %key,Text %value
 # @description 
 # The export function is used when you want to change the outgoing response header.
-# Things to note: You cannot currently export the status of the response header (i.e. 200, 302, etc.).
-# Common uses include:
-# 1) Malformed HTML or Javascript with the wrong content-type set.
-# 2) Setting the Cache-Time of the page.
-# 3) Setting the Location for a redirect.
+# **Things to note**: You cannot currently export the status of the response header (i.e. 200, 302, etc.).
+# ### Common uses include:
+# * Malformed HTML or Javascript with the wrong content-type set.
+# * Setting the Cache-Time of the page.
+# * Setting the Location for a redirect.
 # In this example, we are setting the Content-Type to "text/html". 
 # @example
 # html() {
@@ -414,8 +414,8 @@
 # @args Text %input_string
 # @description 
 # The upcase function is used to return the provided input string in all uppercase letters.
-# Common uses include:
-# 1) Making buttons more prominent such as SIGN IN or SIGN UP NOW. 
+# ### Common uses include:
+# * Making buttons more prominent such as SIGN IN or SIGN UP NOW.
 # In this example, we fetch the ID of the div with the ID "my_div" and then we log a concat statement using uppercase letters for the name of the div. 
 # @example
 # $$("#my_div") {
@@ -436,8 +436,8 @@
 # @args Text %input_string
 # @description 
 # The downcase function is used to return the provided input string in all lowercase letters.
-# Common uses include:
-# 1) Making text less prominent.
+# ### Common uses include:
+# * Making text less prominent.
 # In this example, we fetch the ID of the div with the ID "my_div" and then we log a concat statement using lowercase letters for the name of the div. 
 # @example
 # $$("#my_div") {
@@ -461,10 +461,10 @@
 # @args Text %value
 # @description 
 # The set function is used to override any existing content in the current scope and set it to the %value provided.
-# Things to note: when used in an XMLNode scope the entire inner HTML will be set overriding any child nodes and content. 
-# Common uses include:
-# 1) Setting the content of text scopes
-# 2) Setting the value of attribute scopes
+# **Things to note**: when used in an XMLNode scope the entire inner HTML will be set overriding any child nodes and content.
+# ### Common uses include:
+# * Setting the content of text scopes
+# * Setting the value of attribute scopes
 # In this example, we set the text node inside "my_div" to "I've been set!".
 # @example
 # $$("#my_div") {
@@ -486,11 +486,11 @@
 # @args Regexp %search
 # @description 
 # The replace function is used to alter existing text nodes by replacing them based on either regular expressions or specific strings. 
-# Things to note: Unless otherwise specified by the Regular Expression, all matches found by the %search parameter will be replaced. 
-# Common uses include:
-# 1) Replacing desktop instructions like "click" to mobile instructions like "tap"
-# 2) Removing extra or unnecessary text
-# 3) Rewriting attributes based on some standard set via a regular expression.
+# **Things to note**: Unless otherwise specified by the Regular Expression, all matches found by the %search parameter will be replaced.
+# ### Common uses include:
+# * Replacing desktop instructions like "click" to mobile instructions like "tap"
+# * Removing extra or unnecessary text
+# * Rewriting attributes based on some standard set via a regular expression.
 # In this example we are replacing the text "Replace Me" inside #my_div with the text "Replaced!".
 # @example
 # $$("#my_div") {
@@ -514,11 +514,11 @@
 # @args Text %search
 # @description
 # The replace function is used to alter existing text nodes by replacing them based on either regular expressions or specific strings. 
-# Things to note: Unless otherwise specified by the Regular Expression, all matches found by the %search parameter will be replaced. 
-# Common uses include:
-# 1) Replacing desktop instructions like "click" to mobile instructions like "tap"
-# 2) Removing extra or unnecessary text
-# 3) Rewriting attributes based on some standard set via a regular expression.
+# **Things to note**: Unless otherwise specified by the Regular Expression, all matches found by the %search parameter will be replaced.
+# ### Common uses include:
+# * Replacing desktop instructions like "click" to mobile instructions like "tap"
+# * Removing extra or unnecessary text
+# * Rewriting attributes based on some standard set via a regular expression.
 # In this example we are replacing the text "Replace Me" inside #my_div with the text "Replaced!".
 # @example
 # $$("#my_div") {
@@ -542,9 +542,9 @@
 # @args Text %text_to_prepend
 # @description 
 # The prepend function is used to insert text at the beginning of a text scope. 
-# Common uses include:
-# 1) Categorizing content by attaching labels or other forms of organized tags.
-# 2) Numbering content using the prepend() function in combination with the index() function.
+# ### Common uses include:
+# * Categorizing content by attaching labels or other forms of organized tags.
+# * Numbering content using the prepend() function in combination with the index() function.
 # In this example, we prepend a sentence onto the beginning of the text node inside "my_div".
 # @example
   $$("#my_div") {
@@ -566,9 +566,9 @@
 # @args Text %text_to_append
 # @description 
 # The append function is used to insert text at the end of a text scope. 
-# Common uses include:
-# 1) Adding instructions following content.
-# 2) Elaborating on content without resetting it. 
+# ### Common uses include:
+# * Adding instructions following content.
+# * Elaborating on content without resetting it.
 # In this example, we append a sentence onto the end of the text node inside "my_div".
 # @example
   $$("#my_div") {

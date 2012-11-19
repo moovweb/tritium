@@ -5,12 +5,13 @@
 # @category Misc
 # @scope XMLNode
 # @args Node %node
+# @description
 # The index function is used to return the order of which the node is transformed when selected using Tritium. Every time you use a Tritium selector that selects more than a single element, the MoovSDK will iterate over each element and run the inner block of code on each element one at a time. The index() function returns the order of that element in the execution queue.
 # Note that the function does not necessarily give the index of the current node in relation to its siblings. It is the number of iterations the previous selection has gone through.
-# Common uses include:
-# 1) Giving elements a unique attribute that corresponds to their index number.
-# 2) Referencing a certain element based on its order of execution.
-# 3) General order based logic, such as giving all odd numbered elements in the queue a certain class so you can style them differently.
+# ### Common uses include:
+# * Giving elements a unique attribute that corresponds to their index number.
+# * Referencing a certain element based on its order of execution.
+# * General order based logic, such as giving all odd numbered elements in the queue a certain class so you can style them differently.
 # The example below will assign a class to every div. The first div that is encountered will have a class of "div_number_1". The second div found will be "div_number_2" etc.
 # @example
 # $("./div") {
@@ -31,9 +32,9 @@
 # @description
 # The fetch function retrieves the information from the node specified.
 # The function takes one argument - the node/information you want. This should be specified in XPath.
-# Common uses include:
-# 1) Grabbing text from a link in order to use it elsewhere
-# 2) Fetching the value of an attribute 
+# ### Common uses include:
+# * Grabbing text from a link in order to use it elsewhere
+# * Fetching the value of an attribute
 # The example below fetches any text within the anchor tag and sets it as a variable.
 # @example
 # $("./a") {
@@ -100,9 +101,9 @@
 # @description
 # The select function searches the HTML tree to match the XPath specified.
 # The function takes one argument, and that is the 
-# Related functions: <a href="#$(Text %xpath)">$()</a>
-# Common uses include:
-# 1) Selecting any HTML element in Tritium using XPath
+# *Related functions*: [$(xpath)](#$(Text %xpath))
+# ### Common uses include:
+# * Selecting any HTML element in Tritium using XPath
 # The example below selects the html and body 
 # @example
 # select("/html/body") {
@@ -126,9 +127,9 @@
 # A further function can be used (such as <code>set</code>) to replace anything inside the current node with text.
 # Important to note is that anything within the argument will be inserted as text. So using <code>text("<a></a>")</code> will insert the *text* rather than the HTML tag.
 # Common use cases include (but are not limited to):
-# 1) Grabbing text from unnecessarily-nested nodes
-# 2) Opening a text scope to then replace a word in a paragraph
-# 3) Fetching text from a tag to put into a variable
+# * Grabbing text from unnecessarily-nested nodes
+# * Opening a text scope to then replace a word in a paragraph
+# * Fetching text from a tag to put into a variable
 # The example below will set the interior of the current div to be "New".
 # @example
 # $("./div") {
@@ -197,7 +198,7 @@
 # @description
 # The name function opens a scope via which the name of the current tag can be changed.
 # Common use cases include (but are not limited to):
-# 1) Rename table elements to more manipulable tags
+# * Rename table elements to more manipulable tags
 # The example below will rename the selected div to an a tag.
 # @example
 # $("./div") {
@@ -220,8 +221,8 @@
 # @description
 # The remove function removes the node that is currently selected.
 # Common use cases include (but are not limited to):
-# 1) Removing empty items on a page
-# 2) Removing a table once all useful information has been moved out
+# * Removing empty items on a page
+# * Removing a table once all useful information has been moved out
 # The example below will select every table in the document and remove it and its contents.
 # @example
 # $("//table") {
@@ -242,8 +243,8 @@
 # @description
 # The path function returns the nodal path to the currently-selected node.
 # Common use cases include (but are not limited to):
-# 1) Debugging by figuring out where in the HTML tree you are
-# 2) Setting a variable using the current path, in order to use it later for moving items
+# * Debugging by figuring out where in the HTML tree you are
+# * Setting a variable using the current path, in order to use it later for moving items
 # The example below will log the path to the selected div.
 # @example
 # $("./div") {
@@ -269,8 +270,8 @@
 # @scope XMLNode
 # @args Text %pos,Text %html
 # @description
-# Common uses include (but are not limited to):
-# 1) Injecting a scaffold for a header and/or footer
+# ### Common uses include (but are not limited to):
+# * Injecting a scaffold for a header and/or footer
 # The example below will inject the section.html file into the top of the selected div. Notice how the read function is used to input the file.
 # @example
 # $("./div") {

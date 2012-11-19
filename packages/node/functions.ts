@@ -6,9 +6,9 @@
 # @args Text %xpath
 # @description
 # The $ selector is used to tell Tritium which node(s) you'd like to select to perform transformation on. The general process of transformation involves two basic steps: 1) Selecting a node, and 2) Performing some function on that node. We refer to the process of selecting a node for transformation as "opening a scope" throughout our documentation.
-# Things to note: If Tritium finds no matching node for the XPath provided, it simply skips over that block of code. If Tritium finds more than one matching node for the XPath provided, it will iterate over each element sequentially running the block of code inside the selector on each element.
-# Common uses include:
-# 1) Just about anything you want to do with Tritium.
+# **Things to note**: If Tritium finds no matching node for the XPath provided, it simply skips over that block of code. If Tritium finds more than one matching node for the XPath provided, it will iterate over each element sequentially running the block of code inside the selector on each element.
+# ### Common uses include:
+# * Just about anything you want to do with Tritium.
 # In this example, we select every div element in the document and open a scope for manipulation.
 # @example
 # $("//div") {
@@ -17,7 +17,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/xpath_selector
 # @guidetext XPath Reference Guide
-# @guidelink  http://beta.moovweb.com/learn/reference/tools/xpath
+# @guidelink http://beta.moovweb.com/learn/reference/tools/xpath
 @func Node.$(Text %xpath) {
   select(%xpath) {
     yield()
@@ -29,13 +29,13 @@
 # @name position
 # @category Create,Move
 # @scope XMLNode
-# @args %pos
+# @args 
 # @description
 # The position function is used to return a position type. Positions include: before, after, above, below, top and bottom.
-# Things to note: by default, the position type returned is "bottom". You can also specify which position type you'd like to return by passing it in as a parameter.
-# Common uses include: 
-# 1) Some functions require position inputs as parameters. You can call position() to fulfill this requirement.
-# 2) When defining custom functions you may want to use a position type in your definition.
+# **Things to note**: by default, the position type returned is "bottom". You can also specify which position type you'd like to return by passing it in as a parameter.
+# ### Common uses include:
+# * Some functions require position inputs as parameters. You can call position() to fulfill this requirement.
+# * When defining custom functions you may want to use a position type in your definition.
 # In this example, we move the current node to the bottom of its parent.
 # @example
 # move_to("..", position())
@@ -60,17 +60,17 @@
 # @name index
 # @category Environment,Misc
 # @scope XMLNode
-# @args
+# @args 
 # @description
 # The index function is used to return the order of which the node is transformed when selected using Tritium. Every time you use a Tritium selector that selects more than a single element, the MoovSDK will iterate over each element and run the inner block of code on each element one at a time. The index() function returns the order of that element in the execution queue.
-# Common uses include:
-# 1) Giving elements a unique attribute that corresponds to their index number.
-# 2) Referencing a certain element based on its order of execution.
-# 3) General order based logic, such as giving all odd numbered elements in the queue a certain class so you can style them differently.
+# ### Common uses include:
+# * Giving elements a unique attribute that corresponds to their index number.
+# * Referencing a certain element based on its order of execution.
+# * General order based logic, such as giving all odd numbered elements in the queue a certain class so you can style them differently.
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/index
 # @guidetext 
-# @guidelink  
+# @guidelink 
 @func Node.index() {
   index(this()) {
     yield()
@@ -82,17 +82,17 @@
 # @name name
 # @category Modify
 # @scope XMLNode
-# @args %value
+# @args Text %value
 # @description
 # The name function replaces the name of the currently selected node with the input provided by the parameter %value. This means you are effectively changing the element that will be rendered in the DOM. 
-# Common uses include:
-# 1) Changing tables and their inner rows and data cells to divs. 
-# 2) Changing anchors that have been wrapped inside anchors to divs to avoid broken HTML. 
-# 3) Changing between divs and spans depending on how you want the page to flow.
+# ### Common uses include:
+# * Changing tables and their inner rows and data cells to divs.
+# * Changing anchors that have been wrapped inside anchors to divs to avoid broken HTML.
+# * Changing between divs and spans depending on how you want the page to flow.
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/name
-# @guidetext
+# @guidetext 
 # @guidelink 
 @func Node.name(Text %value) {
   name() {
@@ -130,15 +130,15 @@
 # @args Text %xpath
 # @description
 # The copy_here function copies the node specified by the input XPath selector to the current scope from which it is called. 
-# Things to note: There is also an optional position variable (%pos) that can specify where in relation to the current node it should be placed such as: "before", "after", "top" or "bottom".
-# Common uses include:
-# 1) Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead. 
-# 2) Duplicating useful information
+# **Things to note**: There is also an optional position variable (%pos) that can specify where in relation to the current node it should be placed such as: "before", "after", "top" or "bottom".
+# ### Common uses include:
+# * Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead. 
+# * Duplicating useful information
 # @example
-# @exampletext
+# @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/copy_here
 # @guidetext 
-# @guidelink  
+# @guidelink 
 @func Node.copy_here(Text %xpath) {
   copy_here(%xpath, position()) {
     yield() 
@@ -175,15 +175,15 @@
 # @args Text %xpath
 # @description
 # The copy_to function copies the currently selected node to the node specified by the input %xpath.
-# Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be copied such as: "before", "after", "top" or "bottom".
-# Common uses include:
-# 1) Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead. 
-# 2) Duplicating useful information
+# **Things to note**: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be copied such as: "before", "after", "top" or "bottom".
+# ### Common uses include:
+# * Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead. 
+# * Duplicating useful information
 # @example
-# @exampletext
+# @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/copy_to
 # @guidetext 
-# @guidelink  
+# @guidelink 
 @func Node.copy_to(Text %xpath) {
   copy_to(%xpath, position()) {
     yield()
@@ -195,17 +195,17 @@
 # @name inject
 # @category Create,Modify
 # @scope XMLNode
-# @args %html
+# @args Text %html
 # @description
 # The inject function injects HTML into the current node.
-# Things to note: There are a number of comparable functions that perform similar functions but specify a position in their name so you don't have to pass it in as a parameter:
-# - inject_top(Text %html)
-# - inject_bottom(Text %html)
-# - inject_before(Text %html)
-# - inject_after(Text %html)
-# Common uses include:
-# 1) Injecting entire templates of code at once from another file using the inject() function in combination with the read() function.
-# 2) Fixing broken HTML
+# **Things to note**: There are a number of comparable functions that perform similar functions but specify a position in their name so you don't have to pass it in as a parameter:
+# * inject_top(Text %html)
+# * inject_bottom(Text %html)
+# * inject_before(Text %html)
+# * inject_after(Text %html)
+# ### Common uses include:
+# * Injecting entire templates of code at once from another file using the inject() function in combination with the read() function.
+# * Fixing broken HTML
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/packagestest/examples/node/inject
@@ -240,19 +240,19 @@
 # @name move_to
 # @category Modify,Move
 # @scope XMLNode
-# @args %xpath
+# @args Text %xpath
 # @description
 # The move_to command moves the currently selected node to the node specified by the %xpath input. 
-# Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
-# Common uses include: 
-# 1) Creating the proper structure for a page by moving the elements you want to keep into the proper place.
-# 2) Fixing the existing structure of a page by moving elements around.
-# 3) Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more. 
+# **Things to note**: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
+# ### Common uses include:
+# * Creating the proper structure for a page by moving the elements you want to keep into the proper place.
+# * Fixing the existing structure of a page by moving elements around.
+# * Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more.
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/move_to
 # @guidetext 
-# @guidelink  
+# @guidelink 
 @func Node.move_to(Text %xpath) {
   move_to(%xpath, position()) {
     yield()
@@ -285,15 +285,15 @@
 # @args %where
 # @description
 # The move_here function moves the node specified by the input xpath to the currently selected node. 
-# Things to note: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
-# 1) Creating the proper structure for a page by moving the elements you want to keep into the proper place.
-# 2) Fixing the existing structure of a page by moving elements around.
-# 3) Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more. 
+# **Things to note**: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
+# * Creating the proper structure for a page by moving the elements you want to keep into the proper place.
+# * Fixing the existing structure of a page by moving elements around.
+# * Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more.
 # @example
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/move_here
 # @guidetext 
-# @guidelink  
+# @guidelink 
 @func Node.move_here(Text %where) {
   move_here(%where, position("bottom")) {
     yield()
@@ -344,8 +344,8 @@
 # - insert_before(Text %tag, Text %inner)
 # - insert_after(Text %tag, Text %inner)
 # Common use examples include:
-# 1) Adding an anchor tag to link to the desktop site
-# 2) Inserting a header or footer on a page
+# * Adding an anchor tag to link to the desktop site
+# * Inserting a header or footer on a page
 # The example below will insert a div with the content "Content" into the bottom of the current node.
 # @example
 # insert("div", "Content")
@@ -375,8 +375,8 @@
 # - insert_before(Text %tag, Text %inner)
 # - insert_after(Text %tag, Text %inner)
 # Common use examples include:
-# 1) Adding an anchor tag to link to the desktop site
-# 2) Inserting a header or footer on a page
+# * Adding an anchor tag to link to the desktop site
+# * Inserting a header or footer on a page
 # The example below will insert a div with the content "Content" into the bottom of the current node.
 # @example
 # insert("div", "Content")
@@ -406,8 +406,8 @@
 # - insert_before(Text %tag, Text %inner)
 # - insert_after(Text %tag, Text %inner)
 # Common use examples include:
-# 1) Adding an anchor tag to link to the desktop site
-# 2) Inserting a header or footer on a page
+# * Adding an anchor tag to link to the desktop site
+# * Inserting a header or footer on a page
 # The example below will insert a div with the content "Content" into the bottom of the current node.
 # @example
 # insert("div", "Content")
@@ -437,8 +437,8 @@
 # - insert_before(Text %tag, Text %inner)
 # - insert_after(Text %tag, Text %inner)
 # Common use examples include:
-# 1) Adding an anchor tag to link to the desktop site
-# 2) Inserting a header or footer on a page
+# * Adding an anchor tag to link to the desktop site
+# * Inserting a header or footer on a page
 # The example below will insert a div with the content "Content" into the bottom of the current node.
 # @example
 # insert("div", "Content")

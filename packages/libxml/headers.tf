@@ -7,11 +7,11 @@
 # @description 
 # The css function selects elements on a page using a CSS-style selector.
 # The function takes one argument, the item to be selected. The argument is written as a standard CSS selector - for example #one to search for an id.
-# Things to note: the css() function converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
-# Related functions: <a href="#$$(Text %css_selector)">css()</a>
+# **Things to note**: the css() function converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
+# *Related functions*: [$$(css_selector)](#$$(Text %css_selector))
 # Common use cases include (but are not limited to):
-# 1) Selecting many element types based on attributes rather than tag names
-# 2) Selecting items without being familiar with XPath
+# * Selecting many element types based on attributes rather than tag names
+# * Selecting items without being familiar with XPath
 # The example below will remove any element on the page with an id of "one".
 # @example
 # css("#one") {
@@ -50,8 +50,8 @@
 # @args Text %input_encoding,Text %output_encoding
 # @description 
 # The html doc function parses the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
-# The encoding must be specified with two arguments, used to specify the "to" and "from" encodings. <code>html_doc("x", "y")</code> would parse the document from encoding "x" into encoding "y".
-# Important to note is that as part of the parsing, the function will add <code><html></code> tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the <a href="#html_fragment()">html_fragment</a> function.
+# The encoding must be specified with two arguments, used to specify the "to" and "from" encodings. `html_doc("x", "y")` would parse the document from encoding "x" into encoding "y".
+# Important to note is that as part of the parsing, the function will add `<html>` tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the [html_fragment()]("#html_fragment()) function.
 # The html function can be found in the scripts/main.ts file of your project, where it parses every page as HTML.
 # The example below will parse the HTML from gbk encoding to utf-8 encoding, allowing selectors to point to nodes of the document.
 # @example
@@ -91,7 +91,7 @@
 # @args Text %contents
 # @description 
 # The cdata function allows you to insert chunks of CDATA on your page.
-# CDATA is information that is not parsed by the XML parser. Therefore, it can include characters that may break XML (for example, <code><</code>). It is often used for inserting javascript.
+# CDATA is information that is not parsed by the XML parser. Therefore, it can include characters that may break XML (for example, `<`). It is often used for inserting javascript.
 # The function takes one argument - the content which needs to be passed into the CDATA block.
 # The example below will replace the contents of the selected div with a CDATA block containing the javascript "alert('Boo')".
 # @example
@@ -115,8 +115,8 @@
 # The function takes one argument - the location of the node to be removed, specified using XPath.
 # As you can select attributes using XPath, it is possible to delete attributes using the remove() function. Select an attribute using the @ sign - for example "@class" will select a class.
 # Common use cases include (but are not limited to):
-# 1) Removing all the <code><br></code> tags in a paragraph
-# 2) Removing style attributes from tags
+# * Removing all the `<br>` tags in a paragraph
+# * Removing style attributes from tags
 # The example below will remove all span children of the div.
 # @example
 # $("./div") {
@@ -136,9 +136,9 @@
 # @args 
 # @description 
 # The inner function opens the scope of the current node for manipulation.
-# Related functions: <a href='#inner(Text %html)'>inner(Text %html)</a>
+# *Related functions*: [inner(html)](#inner(Text %html))
 # Common use cases include (but are not limited to):
-# 1) Opening the inner scope to replace contents
+# * Opening the inner scope to replace contents
 # The example below will open the scope of the current div and replace everything with "NEW".
 # @example
 # $("./div") {
@@ -162,8 +162,8 @@
 # The inner_text function converts the entirety of the current node into text.
 # The function essentially removes all HTML tags/elements and returns the text of the element.
 # Common use cases include (but are not limited to):
-# 1) Extracting text from a table
-# 2) Grabbing the text of an anchor while removing its tag
+# * Extracting text from a table
+# * Grabbing the text of an anchor while removing its tag
 # The example below will "flatten" the table, leaving only the text of the table in the tag.
 # @example
 # $("./table") {
@@ -185,7 +185,7 @@
 # The attribute function opens the scope of the attribute specified.
 # The function takes one argument - the attribute name.
 # Common use examples include (but are not limited to):
-# 1) Opening the scope of the attribute to replace certain characters
+# * Opening the scope of the attribute to replace certain characters
 # The example below will open the scope of the class attribute.
 # @example
 # $("./div[@class='one']") {
@@ -254,8 +254,8 @@
 # The function takes one argument - the tag in which you want to wrap the text children.
 # Important to note is that the function will wrap all text children - even whitespace. This means you may have some empty tags generated.
 # Common use examples include (but are not limited to):
-# 1) Wrapping all text children in tags so that they can then be subsequently removed
-# 2) From a mixture of text nodes and HTML nodes, wrapping text children in a tag allows for easier manipulation
+# * Wrapping all text children in tags so that they can then be subsequently removed
+# * From a mixture of text nodes and HTML nodes, wrapping text children in a tag allows for easier manipulation
 # The example below will take all the text node children of the span and wrap them in divs.
 # @example
 # $("./span")
@@ -276,7 +276,7 @@
 # @description
 # The move_children_to function is used to move children of the current node into another node.
 # The function takes two arguments. The first is the new node that the children will be moved into. The second is the position at which the children will be moved. 
-# What's unique about these arguments is that they can't be a string - so entering an XPath direction will not work. To enter the node argument, you must select that node and set a local variable (using <code>%</code>) of the node. For the position, you must use the position function as in the example below.
+# What's unique about these arguments is that they can't be a string - so entering an XPath direction will not work. To enter the node argument, you must select that node and set a local variable (using `%`) of the node. For the position, you must use the position function as in the example below.
 # Because of the complexity of setting a variable, this function is mainly used in definitions of functions - for example, the inner_wrap function.
 # In the example below, the "one" div is selected and a local variable is set. The variable is then used later, once we have selected div "two". All of two's children will be moved into the first div, at the top.
 # @example
@@ -300,8 +300,8 @@
 # @args 
 # @description 
 # The remove function removes the currently-selected attribute. It is an extremely useful function.
-# Common uses include (but are not limited to):
-# 1) Removing inline styles once the attribute has been selected
+# ### Common uses include (but are not limited to):
+# * Removing inline styles once the attribute has been selected
 # The example below will remove the class from the selected div.
 # @example
 # $("./div[@class='one']")
@@ -325,8 +325,8 @@
 # The value function opens the scope of the selected attribute. This allows you to modify the value of an attribute. 
 # To modify the value itself, you would need to use the set function (to change it completely), or perhaps the replace function to replace certain aspects.
 # Common use cases include (but are not limited to):
-# 1) Altering the value of a class
-# 2) Modifying the value of an href attribute
+# * Altering the value of a class
+# * Modifying the value of an href attribute
 # In the example below, the class attribute of the selected div tag will be given a new value of "two".
 # @example
 # $("./div[@class='one']")
