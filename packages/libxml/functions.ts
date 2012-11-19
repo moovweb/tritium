@@ -9,8 +9,6 @@
 "Adds a class (specified by **%class**) to the currently-selected node. Also adds a space to prevent overwriting of any over classes."
 
 @func XMLNode.add_class(Text %class) {
-
-
   attribute("class") {
     value() {
       append(" ")
@@ -23,7 +21,6 @@
 "Wraps the *contents* of the currently-selected node in the tag defined by **%tag**. (Compare this to `wrap()`, which wraps the currently-selected node, not its contents.)"
 
 @func XMLNode.inner_wrap(Text %tag_name) {
-
   insert_top(%tag_name) {
     %wrapper = this()
     $("..") {
@@ -50,6 +47,7 @@
 }
 
 "Changes the value of the currently-selected attribute to that specified by **%value**. For example, `attribute(\"href\") { value(\"link\")}`."
+
 @func Attribute.value(Text %value) {
   value() {
     set(%value)
@@ -91,7 +89,7 @@ Functionally equivalent to `name() { set(%name) }`."
   yield()
 }
 
-" Opens the current node for text modificaiton. "
+"Opens the current node for text modificaiton. "
 
 @func XMLNode.text() {
   inner_text() {
@@ -111,7 +109,6 @@ Functionally equivalent to `name() { set(%name) }`."
 "Searches for nodes matching `%xpath` and ensures a domain is in the path of the `%attribute`"
 
 @func XMLNode.absolutize(Text %xpath, Text %attribute) {
-
   # Absolutize IMG and SCRIPT SRCs
   var("slash_path") {
     # the 'slash_path' is the path of this page without anything following it's last slash
@@ -158,7 +155,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Searches for `<img>` and `<script>` tags and ensures a domain is in their `src` path."
+"Searches for `img` and `script` tags and ensures a domain is in their `src` path."
 
 @func XMLNode.absolutize() {
   absolutize(".//img|.//script") {
@@ -166,7 +163,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts javascript (specified by **%js**) in a script tag within the currently-selected node at the position specified by **%pos**."
+"Inserts javascript (specified by **%js**) in a `script` tag within the currently-selected node at the position specified by **%pos**."
 
 @func XMLNode.insert_javascript_at(Position %pos, Text %js) {
   insert_at(%pos, "script") {
@@ -176,7 +173,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts javascript (specified by **%js**) in a script tag within the currently-selected node."
+"Inserts javascript (specified by **%js**) in a `script` tag within the currently-selected node."
 
 @func XMLNode.insert_javascript(Text %js) {
   insert_javascript_at(position(), %js) {
@@ -204,6 +201,7 @@ Functionally equivalent to `name() { set(%name) }`."
 }
 
 # @HC - This seems like a duplicate:
+"Wraps the selected node in the tag defined by **%tag**, then yields to the new tag."
 
 @func XMLNode.wrap(Text %tag) {
   %node = this()
@@ -248,7 +246,7 @@ Functionally equivalent to `name() { set(%name) }`."
   } 
 }
 
-"Parses a frament of the document (i.e. the output doesn't start with `<html>`)."
+"Parses a frament of the document (i.e. the output doesn't start with an `html` tag)."
 
 @func Text.html_fragment(Text %from_enc, Text %to_enc) {
   html_fragment_doc(%from_enc, %to_enc) {
@@ -257,12 +255,16 @@ Functionally equivalent to `name() { set(%name) }`."
   export("Content-Type-Charset", %to_enc)   # Right now we always output in utf-8, so set the response header appropriately
 }
 
+"Parses a frament of the document (i.e. the output doesn't start with an `html` tag)."
+
 @func Text.html_fragment(Text %enc) {
   $charset_determined = %enc
   html_fragment(%enc, %enc) {
     yield()
   }
 }
+
+"Parses a frament of the document (i.e. the output doesn't start with an `html` tag)."
 
 @func Text.html_fragment() {
   $encoding = guess_encoding()
@@ -274,6 +276,7 @@ Functionally equivalent to `name() { set(%name) }`."
 # POSITIONALS
 # siblings of these are in node, but these use Inner so are here.
 
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node). For example `insert_at(\"top\", \"div\", \"Some text\")`."
 
 @func XMLNode.insert_at(Text %pos, Text %tag, Text %content) {
   insert_at(position(%pos), %tag) {
@@ -336,7 +339,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts javascript (specified by **%js**) in a script tag at the bottom of the currently-selected node."
+"Inserts javascript (specified by **%js**) in a `script` tag at the bottom of the currently-selected node."
 
 @func XMLNode.insert_javascript_bottom(Text %js) {
   insert_javascript_at(position("bottom"), %js) {
@@ -344,7 +347,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts javascript (specified by **%js**) in a script tag at the top of the currently-selected node."
+"Inserts javascript (specified by **%js**) in a `script` tag at the top of the currently-selected node."
 
 @func XMLNode.insert_javascript_top(Text %js) {
   insert_javascript_at(position("top"), %js) {
@@ -352,7 +355,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts javascript (specified by **%js**) in a script tag after the currently-selected node."
+"Inserts javascript (specified by **%js**) in a `script` tag after the currently-selected node."
 
 @func XMLNode.insert_javascript_after(Text %js) {
   insert_javascript_at(position("after"), %js) {
@@ -360,7 +363,7 @@ Functionally equivalent to `name() { set(%name) }`."
   }
 }
 
-"Inserts javascript (specified by **%js**) in a script tag after the currently-selected node."
+"Inserts javascript (specified by **%js**) in a `script` tag after the currently-selected node."
 
 @func XMLNode.insert_javascript_before(Text %js) {
   insert_javascript_at(position("before"), %js) {
