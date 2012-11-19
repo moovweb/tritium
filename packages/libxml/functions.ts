@@ -50,7 +50,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/add_class
 # @guidetext Use of Adding a Class
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute#Adding+a+Class
+# @guidelink http://console.moovweb.com/learn/training/function_guides/attribute#Adding+a+Class
 @func XMLNode.add_class(Text %class) {
   attribute("class") {
     value() {
@@ -117,7 +117,7 @@
   remove("./text()")
 }
 
-"Allows you to set the value (**%value**) for the attribute you are selecting with **%name** - [click for example](http://beta.moovweb.com/learn/training/function_guides/attribute). @example `attribute(\"class\", \"one\")` sets the class as 'one'."
+"Allows you to set the value (**%value**) for the attribute you are selecting with **%name** - [click for example](http://console.moovweb.com/learn/training/function_guides/attribute). @example `attribute(\"class\", \"one\")` sets the class as 'one'."
 # @abstract The attribute function sets a value for any attribute.
 # @name attribute
 # @category Modify
@@ -138,7 +138,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/attribute/attribute
 # @guidetext The attribute function and its alternatives.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute
+# @guidelink http://console.moovweb.com/learn/training/function_guides/attribute
 @func XMLNode.attribute(Text %name, Text %value) {
   attribute(%name) {
     value() {
@@ -231,7 +231,7 @@
   }
 }
 
-"Sets the attribute defined by **%name** to the value defined by **%value** - [click for example](http://beta.moovweb.com/learn/training/function_guides/set). @example `set(\"class\", \"one\")` will assign a class of 'one' to the node."
+"Sets the attribute defined by **%name** to the value defined by **%value** - [click for example](http://console.moovweb.com/learn/training/function_guides/set). @example `set(\"class\", \"one\")` will assign a class of 'one' to the node."
 # @abstract The set function, when given two arguments, assigns an attribute to the selected element.
 # @name set
 # @category Modify
@@ -249,7 +249,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/set
 # @guidetext Overview of the two ways to use set().
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/set
+# @guidelink http://console.moovweb.com/learn/training/function_guides/set
 @func XMLNode.set(Text %name, Text %value) {
   attribute(%name) {
     value(%value)
@@ -257,7 +257,7 @@
 }
 
 // Used to be a helper function, just pass through and should work the same
-"Allows mass-attribute setting - [click for example](http://beta.moovweb.com/learn/training/function_guides/attribute). @example `$(\"./div\") { attributes (class: \"one\", id: \"two\") }` will assign the div a class of 'one' and an id of 'two'."
+"Allows mass-attribute setting - [click for example](http://console.moovweb.com/learn/training/function_guides/attribute). @example `$(\"./div\") { attributes (class: \"one\", id: \"two\") }` will assign the div a class of 'one' and an id of 'two'."
 # @abstract The attributes function allows you to set multiple attributes on an element.
 # @name attributes
 # @category Attribute,Modify
@@ -278,7 +278,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/attribute/attributes
 # @guidetext More ways to add attributes.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/attribute
+# @guidelink http://console.moovweb.com/learn/training/function_guides/attribute
 @func XMLNode.attributes() {
   yield()
 }
@@ -307,7 +307,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text
 # @guidetext Using the text function.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/text
+# @guidelink http://console.moovweb.com/learn/training/function_guides/text
 @func XMLNode.text() {
   inner_text() {
     yield()
@@ -333,7 +333,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text
 # @guidetext Using the text function.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/text
+# @guidelink http://console.moovweb.com/learn/training/function_guides/text
 @func XMLNode.text(Text %value) {
   text() {
     set(%value)
@@ -519,7 +519,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/inner
 # @guidetext Information on the inner function and comparing it to the text function.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/inner
+# @guidelink http://console.moovweb.com/learn/training/function_guides/inner
 @func XMLNode.inner(Text %html) {
   inner() {
     set(%html) 
@@ -527,7 +527,7 @@
   } 
 }
 
-"Wraps the selected node in the tag defined by **%tag**, then yields to the new tag - [click for example](http://beta.moovweb.com/learn/training/function_guides/wrap). @example `$(\"div\") { wrap(\"span\") }` will wrap the div inside a span tag."
+"Wraps the selected node in the tag defined by **%tag**, then yields to the new tag - [click for example](http://console.moovweb.com/learn/training/function_guides/wrap). @example `$(\"div\") { wrap(\"span\") }` will wrap the div inside a span tag."
 # @abstract Wraps the current node in a new tag.
 # @name wrap
 # @category Modify
@@ -717,7 +717,7 @@
 // POSITIONALS
 // siblings of these are in node, but these use Inner so are here.
 
-"Inserts a tag (specified by **%tag**) with content (**%content**) at a position specified by **%pos** (relative to the currently-selected node) - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
+"Inserts a tag (specified by **%tag**) with content (**%content**) at a position specified by **%pos** (relative to the currently-selected node) - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
 # @abstract Inserts a tag with the (optional) content at the location given.
 # @name insert_at
 # @category Create
@@ -735,7 +735,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
+# @guidelink http://console.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_at(Text %pos, Text %tag, Text %content) {
   insert_at(position(%pos), %tag) {
     inner(%content)
@@ -743,7 +743,7 @@
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node) - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node) - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
 # @hide 
 # @abstract Inserts a tag with the (optional) content at the position specified.
 # @name insert_at
@@ -756,7 +756,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
+# @guidelink http://console.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_at(Position %pos, Text %tag, Text %inner) {
   insert_at(%pos, %tag) {
     inner(%inner)
@@ -764,7 +764,7 @@
   }
 }
 
-"Inserts the tag (specified by **%tag**) with content (**%inner**) into the currently-selected node  - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert(\"div\", \"Some text\")` will insert `<div>Some text</div>` into the current node - by default at the bottom."
+"Inserts the tag (specified by **%tag**) with content (**%inner**) into the currently-selected node  - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert(\"div\", \"Some text\")` will insert `<div>Some text</div>` into the current node - by default at the bottom."
 # @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
 # @name insert
 # @category Create
@@ -788,7 +788,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
+# @guidelink http://console.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
     inner(%inner)
@@ -796,7 +796,7 @@
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) at the bottom of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_bottom(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the bottom of the current node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at the bottom of the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_bottom(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the bottom of the current node."
 # @hide
 # @abstract Inserts a tag with the (optional) content into bottom of the current node.
 # @name insert_bottom
@@ -809,7 +809,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
+# @guidelink http://console.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_bottom(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
     inner(%inner)
@@ -817,7 +817,7 @@
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) at the top of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_top(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at the top of the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_top(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
 # @hide
 # @abstract Inserts a tag with the (optional) content into top of the current node.
 # @name insert_top
@@ -830,7 +830,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
+# @guidelink http://console.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_top(Text %tag, Text %inner) {
   insert_at(position("top"), %tag) {
     inner(%inner)
@@ -838,7 +838,7 @@
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) after the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_after(\"div\", \"Some text\")` will insert `<div>Some text</div>` after the current node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) after the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_after(\"div\", \"Some text\")` will insert `<div>Some text</div>` after the current node."
 # @hide
 # @abstract Inserts a tag with the (optional) content after the current node.
 # @name insert_after
@@ -851,7 +851,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
+# @guidelink http://console.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_after(Text %tag, Text %inner) {
   insert_at(position("after"), %tag) {
     inner(%inner)
@@ -859,7 +859,7 @@
   }
 }
 
-"Inserts a tag (specified by **%tag**) with content (**%inner**) before the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_before(\"div\", \"Some text\")` will insert `<div>Some text</div>` before the current node."
+"Inserts a tag (specified by **%tag**) with content (**%inner**) before the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_before(\"div\", \"Some text\")` will insert `<div>Some text</div>` before the current node."
 # @hide
 # @abstract Inserts a tag with the (optional) content before the current node. 
 # @name insert_before
@@ -872,7 +872,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/insert
+# @guidelink http://console.moovweb.com/learn/training/function_guides/insert
 @func XMLNode.insert_before(Text %tag, Text %inner) {
   insert_at(position("before"), %tag) {
     inner(%inner)

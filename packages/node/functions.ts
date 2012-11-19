@@ -17,7 +17,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/xpath_selector
 # @guidetext XPath Reference Guide
-# @guidelink http://beta.moovweb.com/learn/reference/tools/xpath
+# @guidelink http://console.moovweb.com/learn/reference/tools/xpath
 @func Node.$(Text %xpath) {
   select(%xpath) {
     yield()
@@ -55,7 +55,7 @@
   }
 }
 
-" Returns the number of the current node in relation to other nodes Tritium has iterated through - [click for example](http://beta.moovweb.com/learn/training/function_guides/index). @example `$(\"./div\") { log(index()) }` will return '1' if there is only one div child, '1 2' if there are two div children, and so on. "
+" Returns the number of the current node in relation to other nodes Tritium has iterated through - [click for example](http://console.moovweb.com/learn/training/function_guides/index). @example `$(\"./div\") { log(index()) }` will return '1' if there is only one div child, '1 2' if there are two div children, and so on. "
 # @abstract The index function returns the order of which this node is iterated through when selected by Tritium.
 # @name index
 # @category Environment,Misc
@@ -77,7 +77,7 @@
   }
 }
 
-" Renames the current node to the tag specified by **%value** - [click for example](http://beta.moovweb.com/learn/training/function_guides/rename). @example `name(\"span\")` will change the currently-selected node to a span. "
+" Renames the current node to the tag specified by **%value** - [click for example](http://console.moovweb.com/learn/training/function_guides/rename). @example `name(\"span\")` will change the currently-selected node to a span. "
 # @abstract Renames the current node to the tag specified by the input. 
 # @name name
 # @category Modify
@@ -190,7 +190,7 @@
   } 
 }
 
-" Injects HTML (specified by **%html**) into the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject(\"<div>New Div</div>\")` will insert your new HTML into the current node. "
+" Injects HTML (specified by **%html**) into the current node - [click for example](http://console.moovweb.com/learn/training/function_guides/inject). @example `inject(\"<div>New Div</div>\")` will insert your new HTML into the current node. "
 # @abstract The inject function injects HTML into the current node.
 # @name inject
 # @category Create,Modify
@@ -217,7 +217,7 @@
   } 
 }
 
-" Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body. "
+" Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos** - [click for example](http://console.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body. "
 # @hide
 @func Node.move_to(Text %xpath, Position %pos) {
   %parent_node = this()
@@ -227,7 +227,7 @@
   }
 }
 
-" Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body."
+" Moves the currently-selected node to the node specified by **%xpath**, at the position **%pos** - [click for example](http://console.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\", \"top\")` will move the current node to the top of the body."
 # @hide
 @func Node.move_to(Text %xpath, Text %pos) {
   move_to(%xpath, position(%pos)) {
@@ -235,7 +235,7 @@
   }
 }
 
-" Moves the currently-selected node to the bottom of the node specified by **%xpath** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\")` will move the current node to the bottom of the body."
+" Moves the currently-selected node to the bottom of the node specified by **%xpath** - [click for example](http://console.moovweb.com/learn/training/function_guides/moving). @example `move_to(\"//body\")` will move the current node to the bottom of the body."
 # @abstract The move_to command moves the currently selected node to the node specified by the %xpath input. 
 # @name move_to
 # @category Modify,Move
@@ -259,7 +259,7 @@
   }
 }
 
-" Moves the node specified by **%where** to the currently-selected node, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\", \"top\")` will move every table in the document into the top of the current node."
+" Moves the node specified by **%where** to the currently-selected node, at the position **%pos** - [click for example](http://console.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\", \"top\")` will move every table in the document into the top of the current node."
 # @hide
 @func Node.move_here(Text %where, Position %pos) {
   %parent = this()
@@ -269,7 +269,7 @@
   }
 }
 
-" Moves the node specified by **%where** to the currently-selected node, at the position **%pos** - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\", \"top\")` will move every table in the document into the top of the current node."
+" Moves the node specified by **%where** to the currently-selected node, at the position **%pos** - [click for example](http://console.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\", \"top\")` will move every table in the document into the top of the current node."
 # @hide
 @func Node.move_here(Text %where, Text %pos) {
   move_here(%where, position(%pos)) {
@@ -277,7 +277,7 @@
   }
 }
 
-" Moves the node specified by **%where** to the bottom of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\")` will move every table in the document into the bottom of the current node."
+" Moves the node specified by **%where** to the bottom of the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/moving). @example `move_here(\"//table\")` will move every table in the document into the bottom of the current node."
 # @abstract The move_here function moves the node specified by the input xpath to the currently selected node. 
 # @name move_here
 # @category Modify,Move
@@ -302,7 +302,7 @@
 
 // DIRECTIONALS... UGH.
 
-" Inserts a tag (specified by **%tag**) in the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert(\"div\")` will insert a div at the bottom of the current node."
+" Inserts a tag (specified by **%tag**) in the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert(\"div\")` will insert a div at the bottom of the current node."
 # @abstract Inserts a new node at the position specified.
 # @name insert_at
 # @category Create
@@ -328,7 +328,7 @@
   }
 }
 
-" Inserts a tag (specified by **%tag**) at the bottom of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_bottom(\"div\")` will insert a div at the bottom of the current node."
+" Inserts a tag (specified by **%tag**) at the bottom of the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_bottom(\"div\")` will insert a div at the bottom of the current node."
 # @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
 # @name insert
 # @category Create
@@ -352,14 +352,14 @@
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink  http://beta.moovweb.com/learn/training/function_guides/insert
+# @guidelink  http://console.moovweb.com/learn/training/function_guides/insert
 @func Node.insert_bottom(Text %tag) {
   insert_at(position(), %tag) {
     yield()
   }
 }
 
-" Inserts a tag (specified by **%tag**) at the top of the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_top(\"div\")` will insert a div at the top of the current node."
+" Inserts a tag (specified by **%tag**) at the top of the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_top(\"div\")` will insert a div at the top of the current node."
 # @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
 # @name insert
 # @category Create
@@ -383,14 +383,14 @@
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink  http://beta.moovweb.com/learn/training/function_guides/insert
+# @guidelink  http://console.moovweb.com/learn/training/function_guides/insert
 @func Node.insert_top(Text %tag) {
   insert_at(position("top"), %tag) {
     yield()
   }
 }
 
-"Inserts a tag (specified by **%tag**) after the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_after(\"div\")` will insert a div after the current node."
+"Inserts a tag (specified by **%tag**) after the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_after(\"div\")` will insert a div after the current node."
 # @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
 # @name insert
 # @category Create
@@ -414,14 +414,14 @@
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink  http://beta.moovweb.com/learn/training/function_guides/insert
+# @guidelink  http://console.moovweb.com/learn/training/function_guides/insert
 @func Node.insert_after(Text %tag) {
   insert_at(position("after"), %tag) {
     yield()
   }
 }
 
-" Inserts a tag (specified by **%tag**) before the currently-selected node - [click for example](http://beta.moovweb.com/learn/training/function_guides/insert). @example `insert_before(\"div\")` will insert a div before the current node."
+" Inserts a tag (specified by **%tag**) before the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_before(\"div\")` will insert a div before the current node."
 # @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
 # @name insert
 # @category Create
@@ -445,14 +445,14 @@
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/packages/libxml/test/examples/insert
 # @guidetext Uses of the various insert functions.
-# @guidelink  http://beta.moovweb.com/learn/training/function_guides/insert 
+# @guidelink  http://console.moovweb.com/learn/training/function_guides/insert 
 @func Node.insert_before(Text %tag) {
   insert_at(position("before"), %tag) {
     yield()
   }
 }
 
-" Injects HTML (specified by **%html**) into the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject(read(\"file.html\"))` will inject the HTML in the specified file into the bottom of the current node."
+" Injects HTML (specified by **%html**) into the current node - [click for example](http://console.moovweb.com/learn/training/function_guides/inject). @example `inject(read(\"file.html\"))` will inject the HTML in the specified file into the bottom of the current node."
 # @hide
 @func Node.inject(Text %html) {
   inject_at(position("bottom"), %html) {
@@ -460,7 +460,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) at the bottom of the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_bottom(read(\"file.html\"))` will inject the HTML in the specified file into the bottom of the current node."
+" Injects HTML (specified by **%html**) at the bottom of the current node - [click for example](http://console.moovweb.com/learn/training/function_guides/inject). @example `inject_bottom(read(\"file.html\"))` will inject the HTML in the specified file into the bottom of the current node."
 # @hide
 @func Node.inject_bottom(Text %html) {
   inject_at(position("bottom"), %html) {
@@ -468,7 +468,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) at the top of the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_top(read(\"file.html\"))` will inject the HTML in the specified file into the top of the current node."
+" Injects HTML (specified by **%html**) at the top of the current node - [click for example](http://console.moovweb.com/learn/training/function_guides/inject). @example `inject_top(read(\"file.html\"))` will inject the HTML in the specified file into the top of the current node."
 # @hide
 @func Node.inject_top(Text %html) {
   inject_at(position("top"), %html) {
@@ -476,7 +476,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) after the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_after(read(\"file.html\"))` will inject the HTML in the specified file after the current node."
+" Injects HTML (specified by **%html**) after the current node - [click for example](http://console.moovweb.com/learn/training/function_guides/inject). @example `inject_after(read(\"file.html\"))` will inject the HTML in the specified file after the current node."
 # @hide
 @func Node.inject_after(Text %html) {
   inject_at(position("after"), %html) {
@@ -484,7 +484,7 @@
   }
 }
 
-" Injects HTML (specified by **%html**) before the current node - [click for example](http://beta.moovweb.com/learn/training/function_guides/inject). @example `inject_before(read(\"file.html\"))` will inject the HTML in the specified file before the current node."
+" Injects HTML (specified by **%html**) before the current node - [click for example](http://console.moovweb.com/learn/training/function_guides/inject). @example `inject_before(read(\"file.html\"))` will inject the HTML in the specified file before the current node."
 # @hide
 @func Node.inject_before(Text %html) {
   inject_at(position("before"), %html) {
