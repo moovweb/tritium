@@ -89,7 +89,7 @@
 # * Changing tables and their inner rows and data cells to divs.
 # * Changing anchors that have been wrapped inside anchors to divs to avoid broken HTML.
 # * Changing between divs and spans depending on how you want the page to flow.
-# @example
+# @example 
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/name
 # @guidetext 
@@ -134,7 +134,7 @@
 # ### Common uses include:
 # * Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead. 
 # * Duplicating useful information
-# @example
+# @example 
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/copy_here
 # @guidetext 
@@ -179,7 +179,7 @@
 # ### Common uses include:
 # * Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead. 
 # * Duplicating useful information
-# @example
+# @example 
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/copy_to
 # @guidetext 
@@ -206,7 +206,7 @@
 # ### Common uses include:
 # * Injecting entire templates of code at once from another file using the inject() function in combination with the read() function.
 # * Fixing broken HTML
-# @example
+# @example 
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/packagestest/examples/node/inject
 # @guidetext 
@@ -248,7 +248,7 @@
 # * Creating the proper structure for a page by moving the elements you want to keep into the proper place.
 # * Fixing the existing structure of a page by moving elements around.
 # * Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more.
-# @example
+# @example 
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/move_to
 # @guidetext 
@@ -289,7 +289,7 @@
 # * Creating the proper structure for a page by moving the elements you want to keep into the proper place.
 # * Fixing the existing structure of a page by moving elements around.
 # * Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more.
-# @example
+# @example 
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/move_here
 # @guidetext 
@@ -440,7 +440,7 @@
 # * Adding an anchor tag to link to the desktop site
 # * Inserting a header or footer on a page
 # The example below will insert a div with the content "Content" into the bottom of the current node.
-# @example
+# @example 
 # insert("div", "Content")
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/packages/libxml/test/examples/insert
