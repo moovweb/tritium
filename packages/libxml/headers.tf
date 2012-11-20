@@ -1,18 +1,19 @@
 " Selects an element with CSS-style selectors. @example `$(css(\".one\"))` will select all elements with the class of \"one\". "
 # @abstract Selects the element specified with a CSS-style selector.
 # @name css
-# @category Modify 
+# @category Modify
 # @scope Base
 # @args Text %css
 # @description 
-# The css function selects elements on a page using a CSS-style selector.
-# The function takes one argument, the item to be selected. The argument is written as a standard CSS selector - for example #one to search for an id.
-# **Things to note**: the css() function converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
-# *Related functions*: [$$(css_selector)](#$$(Text %css_selector))
-# Common use cases include (but are not limited to):
+# The `css` function selects elements on a page using a CSS-style selector.
+# The function takes one argument, the item to be selected. The argument is written as a standard CSS selector - for example `#one` to search for an `id`.
+# **Things to note**: the `css()` function converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so it will usually be slower than an XPath selector.
+# *Related functions*: [$$(css_selector)][1]
+# ### Common use cases include:
 # * Selecting many element types based on attributes rather than tag names
 # * Selecting items without being familiar with XPath
-# The example below will remove any element on the page with an id of "one".
+# The example below will remove any element on the page with an `id` of "one".
+# [1]: #$$(Text %css_selector)
 # @example
 # css("#one") {
 #   remove()
@@ -26,11 +27,11 @@
 " Parses the document as XML and passes you back an XMLNode scope. "
 # @abstract Parses the document as XML.
 # @name xml
-# @category Environment 
+# @category Environment
 # @scope Text
 # @args 
 # @description 
-# The xml function parses the document as XML. Parsing is essential to enable selection of XML nodes using Tritium.
+# The `xml` function parses the document as XML. Parsing is essential to enable selection of XML nodes using Tritium.
 # The example below will parse the document as XML, allowing the selection of nodes with XPath.
 # @example
 # xml() {
@@ -49,16 +50,17 @@
 # @scope Text
 # @args Text %input_encoding,Text %output_encoding
 # @description 
-# The html doc function parses the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
-# The encoding must be specified with two arguments, used to specify the "to" and "from" encodings. `html_doc("x", "y")` would parse the document from encoding "x" into encoding "y".
-# Important to note is that as part of the parsing, the function will add `<html>` tags and a DOCTYPE to the document. If you only want to parse a fragment of HTML, use the [html_fragment()]("#html_fragment()) function.
-# The html function can be found in the scripts/main.ts file of your project, where it parses every page as HTML.
-# The example below will parse the HTML from gbk encoding to utf-8 encoding, allowing selectors to point to nodes of the document.
+# The `html_doc` function parses the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
+# The encoding must be specified with two arguments, used to specify the "to" and "from" encodings (`%input_encoding` and `%output_encoding`). `html_doc("x", "y")` would parse the document from encoding `x` into encoding `y`.
+# Important to note is that as part of the parsing, the function will add `<html>` tags and a `DOCTYPE` to the document. If you only want to parse a fragment of HTML, use the [html_fragment()][1] function.
+# The `html` function can be found in the `scripts/main.ts` file of your project, where it parses every page as HTML.
+# The example below will parse the HTML from `gbk` encoding to `utf-8` encoding, allowing selectors to point to nodes of the document.
+# [1]: #Text.html_fragment_doc(Text %input_encoding, Text %output_encoding)
 # @example
 # html_doc("gbk", "utf-8") {
 #   $("/html/body")
 # }
-# @exampletext Tritium Tester Example
+# @exampletext 
 # @examplelink 
 # @guidetext 
 # @guidelink 
@@ -71,29 +73,30 @@
 # @scope Text
 # @args Text %input_encoding,Text %output_encoding
 # @description 
-# The html fragment doc function parses a fragment of the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
-# Just as for the html_doc function, html_fragment_doc takes two arguments, specifing the "to" and "from" encodings. html_fragment_doc("x", "y") would parse the document from encoding "x" into encoding "y".
-# A common use example could be that only a small section of the request being processed is HTML, and that fragment must be parsed without adding a HTML tag and DOCTYPE.
-# The example below will parse a fragment of HTML from gbk to utf-8 encoding, allowing selectors to point to nodes of the document. 
+# The `html_fragment_doc` function parses a fragment of the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
+# Just as for the `html_doc` function, `html_fragment_doc` takes two arguments, specifing the `%input_encoding` and `%output_encoding`. `html_fragment_doc("x", "y")` would parse the document from encoding `x` into encoding `y`.
+# ### Common use cases include:
+# * Only a small section of the request being processed is HTML, and that fragment must be parsed without adding a `HTML` tag and `DOCTYPE`.
+# The following example will parse a fragment of HTML from `gbk` to `utf-8` encoding, allowing selectors to point to nodes of the document.
 # @example
 # html_fragment_doc("gbk", "utf-8")
-# @exampletext Tritium Tester Example
+# @exampletext 
 # @examplelink 
 # @guidetext 
 # @guidelink 
 @func Text.html_fragment_doc(Text %input_encoding, Text %output_encoding) Text XMLNode
 
 " Replaces the node's contents with a CDATA block. "
-# @abstract Replaces the current node contents with a CDATA block. 
+# @abstract Replaces the current node contents with a `CDATA` block.
 # @name cdata
 # @category Environment
 # @scope XMLNode
 # @args Text %contents
 # @description 
-# The cdata function allows you to insert chunks of CDATA on your page.
-# CDATA is information that is not parsed by the XML parser. Therefore, it can include characters that may break XML (for example, `<`). It is often used for inserting javascript.
-# The function takes one argument - the content which needs to be passed into the CDATA block.
-# The example below will replace the contents of the selected div with a CDATA block containing the javascript "alert('Boo')".
+# The `cdata` function allows you to insert chunks of `CDATA` on your page.
+# `CDATA` is information that is not parsed by the XML parser. Therefore, it can include characters that may break XML (for example, `<`). It is often used for inserting JavaScript.
+# The function takes one argument - the `%content` which needs to be passed into the `CDATA` block.
+# The example below will replace the contents of the selected div with a `CDATA` block containing the JavaScript `alert('Boo')`.
 # @example
 # $("./div") {
 #   cdata("//<![CDATA[\n alert('Boo!') \n//]]>")
@@ -111,13 +114,13 @@
 # @scope XMLNode
 # @args Text %xpath_selector
 # @description
-# The remove function deletes the element specified by the selector.
-# The function takes one argument - the location of the node to be removed, specified using XPath.
-# As you can select attributes using XPath, it is possible to delete attributes using the remove() function. Select an attribute using the @ sign - for example "@class" will select a class.
-# Common use cases include (but are not limited to):
+# The `remove` function deletes the element specified by the selector.
+# The function takes one argument - the `%xpath_selector` which specifies the location of the node to be removed.
+# As you can select attributes using XPath, it is possible to delete attributes using the `remove()` function. Select an attribute using the `@` sign - for example `@class` will select a class.
+# ### Common use cases include:
 # * Removing all the `<br>` tags in a paragraph
-# * Removing style attributes from tags
-# The example below will remove all span children of the div.
+# * Removing `style` attributes from tags
+# The example below will remove all `span` children of the `div`.
 # @example
 # $("./div") {
 #   remove("./span")
@@ -135,17 +138,18 @@
 # @scope XMLNode
 # @args 
 # @description 
-# The inner function opens the scope of the current node for manipulation.
-# *Related functions*: [inner(html)](#inner(Text %html))
-# Common use cases include (but are not limited to):
+# The `inner` function opens the scope of the current node for manipulation.
+# *Related functions*: [inner(html)][1]
+# ### Common use cases include:
 # * Opening the inner scope to replace contents
-# The example below will open the scope of the current div and replace everything with "NEW".
+# The following example will open the scope of the current `div` and replace everything with "NEW".
+# [1]: #inner(Text %html)
 # @example
 # $("./div") {
 #   inner() {
 #     set("NEW")
 #   }
-# } 
+# }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/inner
 # @guidetext More information on the inner function with a comparison to the text function.
@@ -159,9 +163,9 @@
 # @scope XMLNode
 # @args 
 # @description
-# The inner_text function converts the entirety of the current node into text.
-# The function essentially removes all HTML tags/elements and returns the text of the element.
-# Common use cases include (but are not limited to):
+# The `inner_text` function converts the entirety of the current node into text.
+# The function essentially removes all `HTML` nodes and returns the text of the element.
+# ### Common use cases include:
 # * Extracting text from a table
 # * Grabbing the text of an anchor while removing its tag
 # The example below will "flatten" the table, leaving only the text of the table in the tag.
@@ -182,9 +186,8 @@
 # @scope XMLNode
 # @args Text %name
 # @description 
-# The attribute function opens the scope of the attribute specified.
-# The function takes one argument - the attribute name.
-# Common use examples include (but are not limited to):
+# The `attribute` function opens the scope of the `%name`d attribute.
+# ### Common use examples include:
 # * Opening the scope of the attribute to replace certain characters
 # The example below will open the scope of the class attribute.
 # @example
@@ -198,17 +201,18 @@
 @func XMLNode.attribute(Text %name) Text Attribute
 
 " Returns \"true\" or \"false\" depending on whether the nodes are equal. "
-# @abstract Returns "true" or "false" depending on whether the nodes are equal.
+# @abstract Returns `true` or `false` depending on whether the nodes are equal.
 # @name equal
 # @category Misc
 # @scope Base
 # @args XMLNode %a,XMLNode %b
 # @description 
-# The equal function takes two nodes and compares them to see if they are equal.
-# Important to note is that you cannot use text as input for this function. You should set a variable using this() on your current node, then use that variable as an argument.
-# The function takes two arguments - these are the nodes which you need to equate.
-# The function is commonly used when writing functions - in order to ensure that a function is not performed on itself, potentially avoiding a loop.
-# The example below will compare the div node twice. First to its anchor child - where the log will return "false" because the two nodes are not equal. The second log message will be "true" as we have scoped back into the anchor's parent - the div. 
+# The `equal` function takes two nodes and compares them to see if they are equal.
+# **Things to note**: you cannot use text as input for this function. You should set a variable using `this()` on your current node, then use that variable as an argument.
+# This function takes two arguments - the two nodes (`%a` and `%b`) you wish to equate.
+# ### Common use examples include:
+# * Ensuring that a function is not performed on itself, potentially avoiding a loop.
+# The following example will compare the `div` node twice: first to its anchor child (where the `log` will return `false`, because the two nodes are not equal), then with itself (where the log message will be `true`).
 # @example
 # $("./div") {
 #   %div = this()
@@ -217,7 +221,7 @@
 #     $("..") {
 #       log(equal(%div, this()))
 #     }
-#   }    
+#   }
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/equal
@@ -237,7 +241,7 @@
 # Important to note is that you cannot use text as input for this function. You should set a variable using this() on your current node, then use that variable as an argument.
 # The function takes two arguments - these are the nodes which you need to equate.
 # @example 
-# @exampletext Tritium Tester Example
+# @exampletext 
 # @examplelink 
 # @guidetext 
 # @guidelink 
@@ -250,13 +254,13 @@
 # @scope XMLNode
 # @args Text %tag_name
 # @description
-# The wrap_text_children function takes all the children of the current node and wraps them in the tag specified.
-# The function takes one argument - the tag in which you want to wrap the text children.
-# Important to note is that the function will wrap all text children - even whitespace. This means you may have some empty tags generated.
-# Common use examples include (but are not limited to):
+# The `wrap_text_children` function takes all the children of the current node and wraps them in a `%tag_name` node.
+# The function takes one argument: the `%tag_name` for the node in which you want to wrap the text children.
+# **Things to note**: the function will wrap all text children -- including whitespace. This often results in empty tags being generated.
+# ### Common use examples include:
 # * Wrapping all text children in tags so that they can then be subsequently removed
 # * From a mixture of text nodes and HTML nodes, wrapping text children in a tag allows for easier manipulation
-# The example below will take all the text node children of the span and wrap them in divs.
+# The example below will take all the text node children of the span and wrap them in `div`s.
 # @example
 # $("./span")
 #   wrap_text_children("div")
@@ -274,11 +278,13 @@
 # @scope XMLNode
 # @args Node %tag_name,Position %pos
 # @description
-# The move_children_to function is used to move children of the current node into another node.
-# The function takes two arguments. The first is the new node that the children will be moved into. The second is the position at which the children will be moved. 
-# What's unique about these arguments is that they can't be a string - so entering an XPath direction will not work. To enter the node argument, you must select that node and set a local variable (using `%`) of the node. For the position, you must use the position function as in the example below.
-# Because of the complexity of setting a variable, this function is mainly used in definitions of functions - for example, the inner_wrap function.
-# In the example below, the "one" div is selected and a local variable is set. The variable is then used later, once we have selected div "two". All of two's children will be moved into the first div, at the top.
+# The `move_children_to` function is used to move children of the current node into another node.
+# The function takes two arguments:
+# * `%tag_name`: The new node that the children will be moved into
+# * `%pos`: The position at which the children will be moved
+# **Things to note**: the arguments can not be strings; entering XPath selectors will not work. To enter the node argument, you must select that node and assign a local variable to the node (using `%`). For the position, you must use the position function as in the following example.
+# Because of the complexity of setting a variable, this function is mainly used in function definitions - e.g., the `inner_wrap` function.
+# In the example below, the `div` with class `one` is selected, and a local variable `%one` is set. The variable is then used later, once we have selected `div` with class `two`. That `div`'s children will be moved to the top of the former `div`.
 # @example
 # $("./div[@class='one']") {
 #   %one = this()
@@ -299,10 +305,10 @@
 # @scope Attribute
 # @args 
 # @description 
-# The remove function removes the currently-selected attribute. It is an extremely useful function.
-# ### Common uses include (but are not limited to):
+# The `remove` function removes the currently-selected attribute.
+# ### Common use cases include:
 # * Removing inline styles once the attribute has been selected
-# The example below will remove the class from the selected div.
+# The following example will remove the class from the selected div.
 # @example
 # $("./div[@class='one']")
 #   attribute("class") {
@@ -322,12 +328,12 @@
 # @scope Attribute
 # @args 
 # @description 
-# The value function opens the scope of the selected attribute. This allows you to modify the value of an attribute. 
-# To modify the value itself, you would need to use the set function (to change it completely), or perhaps the replace function to replace certain aspects.
-# Common use cases include (but are not limited to):
+# The `value` function opens the scope of the selected attribute. This allows you to modify the value of an attribute.
+# To modify the value itself, you would need to use the `set` function (which changes it completely), or the replace function (to replace certain pieces).
+# ### Common use cases include:
 # * Altering the value of a class
 # * Modifying the value of an href attribute
-# In the example below, the class attribute of the selected div tag will be given a new value of "two".
+# In the following example, the class attribute of the selected `div` tag will be given a new value of `two`.
 # @example
 # $("./div[@class='one']")
 #   attribute("class") {
@@ -347,9 +353,9 @@
 # @scope Attribute
 # @args 
 # @description 
-# The name function opens the scope of the selected attribute. It allows you to change the name of an attribute.
-# To modify the name itself, you would need to use the set function (to change it completely), or perhaps the replace function to replace certain aspects.
-# The example below changes the class of the selected div into an id.
+# The `name` function opens the scope of the selected attribute. It allows you to change the name of an attribute.
+# To modify the name itself, you need to use the `set` function (to change it completely) or the replace function (to replace certain aspects).
+# The following example changes the class of the selected `div` into an `ID`.
 # @example
 # $("./div[@class='one']")
 #   attribute("class") {
