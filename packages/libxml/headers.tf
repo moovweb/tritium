@@ -13,7 +13,7 @@
 # * Selecting many element types based on attributes rather than tag names
 # * Selecting items without being familiar with XPath
 # The example below will remove any element on the page with an `id` of "one".
-# [1]: #$$(Text %css_selector)
+# [1]: #XMLNode.$$(Text%20%css_selector)
 # @example
 # css("#one") {
 #   remove()
@@ -55,7 +55,7 @@
 # Important to note is that as part of the parsing, the function will add `<html>` tags and a `DOCTYPE` to the document. If you only want to parse a fragment of HTML, use the [html_fragment()][1] function.
 # The `html` function can be found in the `scripts/main.ts` file of your project, where it parses every page as HTML.
 # The example below will parse the HTML from `gbk` encoding to `utf-8` encoding, allowing selectors to point to nodes of the document.
-# [1]: #Text.html_fragment_doc(Text %input_encoding, Text %output_encoding)
+# [1]: #Text.html_fragment_doc(Text%20%input_encoding,%20Text%20%output_encoding)%20Text%20XMLNode
 # @example
 # html_doc("gbk", "utf-8") {
 #   $("/html/body")
@@ -143,7 +143,7 @@
 # ### Common use cases include:
 # * Opening the inner scope to replace contents
 # The following example will open the scope of the current `div` and replace everything with "NEW".
-# [1]: #inner(Text %html)
+# [1]: #XMLNode.inner()%20Text%20Text
 # @example
 # $("./div") {
 #   inner() {

@@ -42,9 +42,9 @@
 # * Changing instructions such as "click" to "tap" for mobile devices.
 # * Fixing malformed HTML before the document is parsed so your selectors work properly.
 # In the following example, we use the string `true` and turn it into a regular expression to use in a `match-with` statement. If the string `true` is anywhere in the text we are matching, the code in the `with()` statement will run.
-# [1]: #match(Text %target, Regexp %comparitor)
-# [2]: #with(Text %text) Text
-# [3]: #not(Text %text) Text
+# [1]: #match(Text%20%target,%20Regexp%20%comparitor)
+# [2]: #with(Text%20%text)%20Text
+# [3]: #not(Text%20%text)%20Text
 # @example
 # with(regexp("true")) {
 #   # run this code if your text matches the string "true"
@@ -69,7 +69,7 @@
 # *Related functions*: [time()][1]
 # ### Common uses include:
 # * Measuring the time it takes for a block of code to run.
-# [1]: #time() Text
+# [1]: #time()%20Text
 # @example
 # $("./body") {
 #   bm("TIME")
@@ -95,17 +95,17 @@
 # @description
 # The `match` function is used for pseudo-logic in Tritium. With `match()`, you have the equivalent of `if-else` and `case` statements in many other programming languages. `Match` is used to test the content of variables with strings, regular expressions, and other variables, and then run code according to whether or not the match is successful.
 # **Things to note**: If you have more than one variable or regular expression to test againt, you can simply provide the `match` function with the variable in question, and then use embedded `with()` statements for each case. You can also provide a final `else()` statement to serve as a catchall for all unsuccessful matches.
-# *Related functions*: [with(text)][1], [else()][2], [not(text)][3], [match_not(target)][4]
+# *Related functions*: [with(text)][1], [else()][2], [not(text)][3], [match_not(target, comparitor)][4]
 # ### Common uses include:
 # * Matching on the `$path` of the response to `@import` page-specific Tritium scripts.
 # * Matching attributes with specific content to change them in some way.
 # * Simulating `if-then-else` statements and boolean (`true/false`) logic to evaluate different Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
 # In the following example, we match the `$path` variable to see if it matches the string `product`. Since it does, the log "Match successful!" will output to the terminal.
-# [1]: #with(Text %text)
-# [2]: #else()
-# [3]: #not(Text %text)
-# [4]: #match_not(Text %target)
+# [1]: #with(Text%20%text)%20Text
+# [2]: #else()%20Text
+# [3]: #not(Text%20%text)%20Text
+# [4]: #match_not(Text%20%target,%20Text%20%comparitor)
 # @example
 # $path = "product"
 # match($path, "product") {
@@ -132,17 +132,17 @@
 # @description
 # The `match` function is used for pseudo-logic in Tritium. With `match()`, you have the equivalent of `if-else` and `case` statements in many other programming languages. `Match` is used to test the content of variables with strings, regular expressions, and other variables, then run code according to whether or not the match is successful.
 # **Things to note**: If you have more than one variable or regular expression to test against, you can simply provide the match function with the variable in question and then use embedded `with()` statements for each case. You can also provide a final `else()` statement to serve as a catchall for all unsuccessful matches.
-# *Related functions*: [with(text)][1], [else()][2], [not(text)][3], [match_not(target)][4]
+# *Related functions*: [with(text)][1], [else()][2], [not(text)][3], [match_not(target, comparitor)][4]
 # ### Common uses include:
 # * Matching on the `$path` of the response to `@import` page-specific Tritium scripts.
 # * Matching attributes with specific content to change them in some way.
 # * Simulating `if-then-else` statements and boolean (`true/false`) logic to evaluate different Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
 # In the following example, we match the `$path` variable to see if it matches the string `product`. Since it does, the log "Match successful!" will output to the terminal.
-# [1]: #with(Text %text)
-# [2]: #else()
-# [3]: #not(Text %text)
-# [4]: #match_not(Text %target)
+# [1]: #with(Text%20%text)%20Text
+# [2]: #else()%20Text
+# [3]: #not(Text%20%text)%20Text
+# [4]: #match_not(Text%20%target,%20Text%20%comparitor)
 # @example
 # $path = "product"
 # match($path, /product/) {
@@ -176,10 +176,10 @@
 # * Simulating `if-then-else` statements and boolean (`true/false`) logic to evaluate different Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
 # In the following example, we match the `$path` variable to see if it matches the string "price". Since it does not, the log "Match successful!" will output to your terminal.
-# [1]: #with(Text %text)
-# [2]: #else()
-# [3]: #not(Text %text)
-# [4]: #match(Text %target)
+# [1]: #with(Text%20%text)%20Text
+# [2]: #else()%20Text
+# [3]: #not(Text%20%text)%20Text
+# [4]: #match(Text%20%target)%20Text
 # @example
 # $path = "product"
 # match_not($path, "price") {
@@ -213,10 +213,10 @@
 # * Simulating `if-then-else` statements and boolean (`true/false`) logic to evaluate different Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
 # In the following example, we match the `$path` variable to see if it matches the string "price". Since it does not, the log "Match successful!" will output to your terminal.
-# [1]: #with(Text %text)
-# [2]: #else()
-# [3]: #not(Text %text)
-# [4]: #match(Text %target)
+# [1]: #with(Text%20%text)%20Text
+# [2]: #else()%20Text
+# [3]: #not(Text%20%text)%20Text
+# [4]: #match(Text%20%target)%20Text
 # @example
 # $path = "product"
 # match_not($path, /price/) {
@@ -272,7 +272,7 @@
 # * Clearing extra white space inside nodes
 # * Clearing text links to turn them into icons
 # In the following example, we simply clear any existing text inside the node with an ID of `my_div`.
-# [1]: #Attribute.remove() Text
+# [1]: #Attribute.remove()%20Text
 # @example
 # $$("#my_div") {
 #   text() {
@@ -304,7 +304,7 @@
 # * Opening the scope for the use of text scope functions such as `replace`, `set`, `length`, `append`, `prepend`, `clear` and more.
 # * Setting the text of the current node.
 # In the example, we open the text scope of the div with an ID of "my_div".
-# [1]: #XMLNode.inner() Text Text
+# [1]: #XMLNode.inner()%20Text%20Text
 # @example
 # $$("#my_div") {
 #   text() {
@@ -337,7 +337,7 @@
 # * Rewriting attributes based on some standard set via a regular expression.
 # In the following example, we replace the text "Replace Me" inside `#my_div` with the text "Replaced!".
 # [1]: #XMLNode.text()
-# [2]: #XMLNode.inner() Text Text
+# [2]: #XMLNode.inner()%20Text%20Text
 # @example
 # $$("#my_div") {
 #   text() {
