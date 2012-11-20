@@ -303,6 +303,7 @@
 // DIRECTIONALS... UGH.
 
 " Inserts a tag (specified by **%tag**) in the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert(\"div\")` will insert a div at the bottom of the current node."
+# @hide
 # @abstract Inserts a new node at the position specified.
 # @name insert_at
 # @category Create
@@ -329,30 +330,7 @@
 }
 
 " Inserts a tag (specified by **%tag**) at the bottom of the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_bottom(\"div\")` will insert a div at the bottom of the current node."
-# @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
-# @name insert
-# @category Create
-# @scope XMLNode
-# @args Text %tag,Text %inner
-# @description 
-# The insert function adds the specified tag into the currently-selected node. By default, it will insert the tag at the bottom.
-# The function has one obligatory argument - the tag name - and one optional argument - the content. 
-# There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, insert("div", "Content", class: "one") will add a class of "one" to the new element.
-# There are a number of comparable functions that perform similar functions but specify a position in their name:
-# - insert_top(Text %tag, Text %inner)
-# - insert_bottom(Text %tag, Text %inner)
-# - insert_before(Text %tag, Text %inner)
-# - insert_after(Text %tag, Text %inner)
-# Common use examples include:
-# * Adding an anchor tag to link to the desktop site
-# * Inserting a header or footer on a page
-# The example below will insert a div with the content "Content" into the bottom of the current node.
-# @example
-# insert("div", "Content")
-# @exampletext Tritium Tester Example
-# @examplelink ../../libxml/packages/libxml/test/examples/insert
-# @guidetext Uses of the various insert functions.
-# @guidelink  http://console.moovweb.com/learn/training/function_guides/insert
+# @hide
 @func Node.insert_bottom(Text %tag) {
   insert_at(position(), %tag) {
     yield()
@@ -360,30 +338,7 @@
 }
 
 " Inserts a tag (specified by **%tag**) at the top of the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_top(\"div\")` will insert a div at the top of the current node."
-# @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
-# @name insert
-# @category Create
-# @scope XMLNode
-# @args Text %tag,Text %inner
-# @description 
-# The insert function adds the specified tag into the currently-selected node. By default, it will insert the tag at the bottom.
-# The function has one obligatory argument - the tag name - and one optional argument - the content. 
-# There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, insert("div", "Content", class: "one") will add a class of "one" to the new element.
-# There are a number of comparable functions that perform similar functions but specify a position in their name:
-# - insert_top(Text %tag, Text %inner)
-# - insert_bottom(Text %tag, Text %inner)
-# - insert_before(Text %tag, Text %inner)
-# - insert_after(Text %tag, Text %inner)
-# Common use examples include:
-# * Adding an anchor tag to link to the desktop site
-# * Inserting a header or footer on a page
-# The example below will insert a div with the content "Content" into the bottom of the current node.
-# @example
-# insert("div", "Content")
-# @exampletext Tritium Tester Example
-# @examplelink ../../libxml/packages/libxml/test/examples/insert
-# @guidetext Uses of the various insert functions.
-# @guidelink  http://console.moovweb.com/learn/training/function_guides/insert
+# @hide
 @func Node.insert_top(Text %tag) {
   insert_at(position("top"), %tag) {
     yield()
@@ -391,30 +346,7 @@
 }
 
 "Inserts a tag (specified by **%tag**) after the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_after(\"div\")` will insert a div after the current node."
-# @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
-# @name insert
-# @category Create
-# @scope XMLNode
-# @args Text %tag,Text %inner
-# @description 
-# The insert function adds the specified tag into the currently-selected node. By default, it will insert the tag at the bottom.
-# The function has one obligatory argument - the tag name - and one optional argument - the content. 
-# There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, insert("div", "Content", class: "one") will add a class of "one" to the new element.
-# There are a number of comparable functions that perform similar functions but specify a position in their name:
-# - insert_top(Text %tag, Text %inner)
-# - insert_bottom(Text %tag, Text %inner)
-# - insert_before(Text %tag, Text %inner)
-# - insert_after(Text %tag, Text %inner)
-# Common use examples include:
-# * Adding an anchor tag to link to the desktop site
-# * Inserting a header or footer on a page
-# The example below will insert a div with the content "Content" into the bottom of the current node.
-# @example
-# insert("div", "Content")
-# @exampletext Tritium Tester Example
-# @examplelink ../../libxml/packages/libxml/test/examples/insert
-# @guidetext Uses of the various insert functions.
-# @guidelink  http://console.moovweb.com/learn/training/function_guides/insert
+# @hide
 @func Node.insert_after(Text %tag) {
   insert_at(position("after"), %tag) {
     yield()
@@ -422,30 +354,7 @@
 }
 
 " Inserts a tag (specified by **%tag**) before the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_before(\"div\")` will insert a div before the current node."
-# @abstract Inserts a tag with the (optional) content into the current node (at the bottom).
-# @name insert
-# @category Create
-# @scope XMLNode
-# @args Text %tag,Text %inner
-# @description 
-# The insert function adds the specified tag into the currently-selected node. By default, it will insert the tag at the bottom.
-# The function has one obligatory argument - the tag name - and one optional argument - the content. 
-# There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, insert("div", "Content", class: "one") will add a class of "one" to the new element.
-# There are a number of comparable functions that perform similar functions but specify a position in their name:
-# - insert_top(Text %tag, Text %inner)
-# - insert_bottom(Text %tag, Text %inner)
-# - insert_before(Text %tag, Text %inner)
-# - insert_after(Text %tag, Text %inner)
-# Common use examples include:
-# * Adding an anchor tag to link to the desktop site
-# * Inserting a header or footer on a page
-# The example below will insert a div with the content "Content" into the bottom of the current node.
-# @example 
-# insert("div", "Content")
-# @exampletext Tritium Tester Example
-# @examplelink ../../libxml/packages/libxml/test/examples/insert
-# @guidetext Uses of the various insert functions.
-# @guidelink  http://console.moovweb.com/learn/training/function_guides/insert 
+# @hide
 @func Node.insert_before(Text %tag) {
   insert_at(position("before"), %tag) {
     yield()
