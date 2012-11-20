@@ -1,4 +1,4 @@
-" This is a the way that we have Tritium communicate variables back to its execution environment. - [click for example](http://beta.moovweb.com/learn/reference/configuration/index#Environment+Variables)@example `export(\"Content-Type\", \"application/js\")` changes the content-type to application/js."
+" This is a the way that we have Tritium communicate variables back to its execution environment. - [click for example](http://console.moovweb.com/learn/reference/configuration/index#Environment+Variables)@example `export(\"Content-Type\", \"application/js\")` changes the content-type to application/js."
 # @abstract The `export` function is used to set response header information such as content-type, cache-time, and more.
 # @name export
 # @category Environment
@@ -19,7 +19,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/export
 # @guidetext Useful Environment Variables
-# @guidelink http://beta.moovweb.com/learn/reference/configuration/index#Environment+Variables
+# @guidelink http://console.moovweb.com/learn/reference/configuration/index#Environment+Variables
 @func export(Text %key, Text %value) {
   export(%key) {
     set(%value)
@@ -52,7 +52,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/regexp
 # @guidetext Regex Guide
-# @guidelink http://beta.moovweb.com/learn/reference/tools/regex
+# @guidelink http://console.moovweb.com/learn/reference/tools/regex
 @func regexp(Text %exp) {
   regexp(%exp, "")
 }
@@ -86,7 +86,7 @@
   ))
 }
 
-"If only one string is to be matched, it can be placed after the target - [click for example](http://beta.moovweb.com/learn/training/function_guides/match). @example `match($path, \"product\")` will see if 'product' appears in the path of the current url."
+"If only one string is to be matched, it can be placed after the target - [click for example](http://console.moovweb.com/learn/training/function_guides/match). @example `match($path, \"product\")` will see if 'product' appears in the path of the current url."
 # @abstract The `match` function is used for logic to check against the content of strings and variables.
 # @name match
 # @category Environment,Text
@@ -114,7 +114,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/match
 # @guidetext Function Guide
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
+# @guidelink http://console.moovweb.com/learn/training/function_guides/match
 @func match(Text %target, Text %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -123,7 +123,7 @@
   }
 }
 
-"If only one string is to be matched, it can be placed after the target - [click for example](http://beta.moovweb.com/learn/training/function_guides/match). @example `match($path, /product/)` will see if 'product' appears in the path of the current url."
+"If only one string is to be matched, it can be placed after the target - [click for example](http://console.moovweb.com/learn/training/function_guides/match). @example `match($path, /product/)` will see if 'product' appears in the path of the current url."
 # @abstract The `match` function is used for logic to check against the content of strings and variables.
 # @name match
 # @category Environment,Text
@@ -151,7 +151,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/match2
 # @guidetext Function Guide
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
+# @guidelink http://console.moovweb.com/learn/training/function_guides/match
 @func match(Text %target, Regexp %comparitor) {
   match(%target) {
     with(%comparitor) {
@@ -160,7 +160,7 @@
   }
 }
 
-"The opposite of `match()` - [click for example](http://beta.moovweb.com/learn/training/function_guides/match). @example `match_not($path, \"product\")` will check that 'product' is *not* in the url."
+"The opposite of `match()` - [click for example](http://console.moovweb.com/learn/training/function_guides/match). @example `match_not($path, \"product\")` will check that 'product' is *not* in the url."
 # @abstract The `match_not` function is used opposite the `match` function to check that strings and variables do **not** contain certain content.
 # @name match_not
 # @category Environment,Text
@@ -188,7 +188,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/match_not
 # @guidetext Function Guide
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
+# @guidelink http://console.moovweb.com/learn/training/function_guides/match
 @func match_not(Text %target, Text %comparitor) {
   match(%target) {
     not(%comparitor) {
@@ -197,7 +197,7 @@
   }
 }
 
-"The opposite of `match()` - [click for example](http://beta.moovweb.com/learn/training/function_guides/match). @example `match_not($path, /product/)` will check that 'product' is *not* in the url."
+"The opposite of `match()` - [click for example](http://console.moovweb.com/learn/training/function_guides/match). @example `match_not($path, /product/)` will check that 'product' is *not* in the url."
 # @abstract The `match_not` function is used opposite the `match` function to check that strings and variables do **not** contain certain content.
 # @name match_not
 # @category Environment,Text
@@ -225,7 +225,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/match_not2
 # @guidetext Function Guide
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/match
+# @guidelink http://console.moovweb.com/learn/training/function_guides/match
 @func match_not(Text %target, Regexp %comparitor) {
   match(%target) {
     not(%comparitor) {
@@ -234,7 +234,7 @@
   }
 }
 
-"References to the assets folder without hard-coding a path - [click for example](http://beta.moovweb.com/learn/training/function_guides/asset). @example `asset(\"images/icon.png\")` points to *assets/images/icon*, including the domain if necessary."
+"References to the assets folder without hard-coding a path - [click for example](http://console.moovweb.com/learn/training/function_guides/asset). @example `asset(\"images/icon.png\")` points to *assets/images/icon*, including the domain if necessary."
 @func asset(Text %name) {
   match($__abs_asset_host__) {
     with("") {
@@ -290,7 +290,7 @@
 }
 
 
-"Opens the current node for text modification. Should be used when the manipulation is on text *only* - [click for example](http://beta.moovweb.com/learn/training/function_guides/text) For other cases, use `inner()`. @example `text() { set(\"<a>\") }` will set the inside as the string `&lt;a&gt;` - whereas using `inner()` will set the *tag*."
+"Opens the current node for text modification. Should be used when the manipulation is on text *only* - [click for example](http://console.moovweb.com/learn/training/function_guides/text) For other cases, use `inner()`. @example `text() { set(\"<a>\") }` will set the inside as the string `&lt;a&gt;` - whereas using `inner()` will set the *tag*."
 # @abstract Opens the current node for text modification. Should be used when the manipulation is on text only.
 # @name text
 # @category Modify,Text
@@ -321,7 +321,7 @@
   }
 }
 
-"Replaces the regular expression specified by **%search** with the text **%with** - [click for example](http://beta.moovweb.com/learn/training/function_guides/replace). @example `replace(/bad/, \"good\")`. "
+"Replaces the regular expression specified by **%search** with the text **%with** - [click for example](http://console.moovweb.com/learn/training/function_guides/replace). @example `replace(/bad/, \"good\")`. "
 # @abstract Replaces the regular expression specified with the text provided.
 # @name replace
 # @category Modify,Text
@@ -347,7 +347,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/replace
 # @guidetext Function Guide
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
+# @guidelink http://console.moovweb.com/learn/training/function_guides/replace
 @func Text.replace(Regexp %search, Text %with) {
   replace(%search) {
     set(%with)
@@ -355,7 +355,7 @@
   }
 }
 
-"Replaces the text specified by **%search** with the text **%with** - [click for example](http://beta.moovweb.com/learn/training/function_guides/replace). @example `replace(\"bad\", \"good\")`. "
+"Replaces the text specified by **%search** with the text **%with** - [click for example](http://console.moovweb.com/learn/training/function_guides/replace). @example `replace(\"bad\", \"good\")`. "
 # @abstract Replaces the regular expression specified with the text provided.
 # @name replace
 # @category Modify,Text
@@ -378,7 +378,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/replace2
 # @guidetext Function Guide
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/replace
+# @guidelink http://console.moovweb.com/learn/training/function_guides/replace
 @func Text.replace(Text %search, Text %with) {
   replace(%search) {
     set(%with)

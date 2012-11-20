@@ -107,7 +107,7 @@
 # @guidelink 
 @func XMLNode.cdata(Text %contents) Text
 
-" Removes the node specified by `%xpath_selector` - [click for example](http://beta.moovweb.com/learn/training/function_guides/removing). @example `remove(\"//table\")` will remove all table elements from the document. "
+" Removes the node specified by `%xpath_selector` - [click for example](http://console.moovweb.com/learn/training/function_guides/removing). @example `remove(\"//table\")` will remove all table elements from the document. "
 # @abstract Removes the node specified.
 # @name remove
 # @category Modify
@@ -128,7 +128,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/remove
 # @guidetext Removing nodes.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/removing
+# @guidelink http://console.moovweb.com/learn/training/function_guides/removing
 @func XMLNode.remove(Text %xpath_selector) Text
 
 " Opens up the insides of the node to modification. Used for nodes containing text and other XML elements. For text-only modification, use `text()`. @example Given `<div><span></span></div>`, `$(\"./div\") { inner() { set(\"<a>\") } }` will return `<div><a></a></div>`. Compare with `$(\"./div\") { text() { set(\"<a>\") } }`, which returns `<div>&lt;a&gt;</div>`. "
@@ -153,7 +153,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/inner
 # @guidetext More information on the inner function with a comparison to the text function.
-# @guidelink http://beta.moovweb.com/learn/training/function_guides/inner
+# @guidelink http://console.moovweb.com/learn/training/function_guides/inner
 @func XMLNode.inner() Text Text
 
 " Converts the inside of the currently-selected node to text. @example Using `$(\"./body\") { inner_text() }` returns all the text in the HTML tree (with none of the HTML nodes)."
@@ -179,7 +179,7 @@
 # @guidelink 
 @func XMLNode.inner_text() Text Text
 
-" Opens the attribute you select with **%name** - [click for example](http://beta.moovweb.com/learn/training/function_guides/attribute). @example `attribute(\"class\")` opens the class for modification. "
+" Opens the attribute you select with **%name** - [click for example](http://console.moovweb.com/learn/training/function_guides/attribute). @example `attribute(\"class\")` opens the class for modification. "
 # @abstract Opens the selected attribute for modification.
 # @name attribute
 # @category Modify
