@@ -16,7 +16,7 @@
 # * Selecting many element types based on attributes rather than tag names
 # * Selecting items without being familiar with XPath
 # The following example selects every item with the `ID` "one".
-# [1]: #css(Text %selector)
+# [1]: #css(Text%20%selector)%20Text%20Text
 # @example
 # $$("#one")
 # @exampletext Tritium Tester Example
@@ -220,7 +220,7 @@
 # In the `functions/main.ts` file, you can see the `sass` function being used in the `add_assets` function, which inserts a link to the main stylesheet.
 # *Related functions*: [asset(name)][1]
 # The following example will insert a `link` tag with an `href` pointing to the `assets/stylesheets/.css/main.css` file of the project.
-# [1]: #asset(Text %name)
+# [1]: #asset(Text%20%name)
 # @example
 # insert("link", rel: "stylesheet", type: "text/css", href: sass("main")
 # @exampletext Tritium Tester Example
@@ -244,7 +244,7 @@
 # The function takes two arguments. The first is the `%name` of the attribute and the second is the `%value` for that attribute.
 # *Related functions*: [attribute(name, value)][1]
 # The following example will take the `a` tag and set an `href` attribute with the value `http://example.com`.
-# [1]: #attribute(Text %name, Text %value)
+# [1]: #XMLNode.attribute(Text%20%name,%20Text%20%value)
 # @example
 # $("./a") {
 #   set("href", "http://example.com")
@@ -596,7 +596,7 @@
 # **Things to note**: as part of the parsing, the function will add `<html>` tags and a `DOCTYPE` to the document. If you only want to parse a fragment of HTML, use the [html_framgment()][1] function.
 # An example of the `html` function can be found in the `scripts/main.ts` file of your project, where it parses every page as HTML.
 # The following example will parse the HTML as `gbk`, convert it to `utf-8`, then print a `log` statement if there is a root `HTML` node with a `body` child.
-# [1]: #Text.html_fragment(Text %from_enc, Text %to_enc)
+# [1]: #Text.html_fragment(Text%20%from_enc,%20Text%20%to_enc)
 # @example
 # html("gbk", "utf-8") {
 #   $("/html/body") {

@@ -105,7 +105,7 @@
 # ### Common uses include:
 # * Selecting any HTML element in Tritium using XPath
 # The example below selects the `html` and `body`
-# [1]: #$(Text %xpath)
+# [1]: #Node.$(Text%20%xpath)
 # @example
 # select("/html/body") {
 #   remove()
