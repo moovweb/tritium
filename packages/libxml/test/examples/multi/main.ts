@@ -5,6 +5,6 @@ html() {
 		$name = fetch("./@id")
 		$name = concat("p","p",$name)
 		attribute("name", $name)
-		export("Content-Type","silly")
+		export("Location","silly")
   }
 }
