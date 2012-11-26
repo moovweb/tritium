@@ -1,3 +1,22 @@
+# ADDING IN THE READ FUNCTION BECAUSE IT DOESN'T EXIST
+# @abstract Allows you to pass in external files as a string.
+# @name read
+# @category Create
+# @scope Global
+# @args Text %file
+# @description
+# The read function allows you to insert a file or external HTML document into existing markup.
+# The function takes one argument - the file to be read. It should be referenced relative to the current file.
+# ### Common uses include:
+# * Injecting a header scaffold on a page
+# * Add radically different markup for a page
+# In the example below, we inject the contents of the header.html file at the top of the body.
+# @example
+# $("./body") {
+#   inject_top(read("header.html"))
+# }
+@func read(Text %file) Text Text
+
 " This is a the way that we have Tritium communicate variables back to its execution environment. - [click for example](http://console.moovweb.com/learn/reference/configuration/index#Environment+Variables)@example `export(\"Content-Type\", \"application/js\")` changes the content-type to application/js."
 # @abstract The export function is used to set response header information such as content-type, cache-time, and more. 
 # @name export
