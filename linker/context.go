@@ -164,7 +164,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			if found {
 				returnType = typeId
 				if len(ins.Arguments) > 0 {
-					ctx.error(ins, "The local variable %%%q has been assigned before and cannot be reassigned!", name)
+					ctx.error(ins, "The local variable \"%%%s\" has been assigned before and cannot be reassigned!", name)
 				} else {
 					if ins.Children != nil {
 						for _, child := range ins.Children {
@@ -176,11 +176,15 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			} else {
 				if len(ins.Arguments) > 0 {
 					// We are going to assign something to this variable
+					// But first, check for possible mutation and prevent it for now.
+					if ins.Children != nil {
+						ctx.error(ins, "May not open a scope during initialization of local variable \"%%%s\".", name)
+					}
 					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller)
 					localScope[name] = returnType
 				} else {
 					println(ins.String())
-					ctx.error(ins, "I've never seen the variable %%%q before! Please assign a value before usage.", name)
+					ctx.error(ins, "I've never seen the variable \"%%%s\" before! Please assign a value before usage.", name)
 				}
 			}
 		}

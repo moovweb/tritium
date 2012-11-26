@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 	tp "tritium/proto"
-	. "tritium/tokenizer" // was meant to be in this package
+	. "tritium/parser/tokenizer"
 )
 
 type Parser struct {

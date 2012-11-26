@@ -6,13 +6,13 @@
 # @scope XMLNode
 # @args Node %node
 # @description
-# The index function is used to return the order of which the node is transformed when selected using Tritium. Every time you use a Tritium selector that selects more than a single element, the MoovSDK will iterate over each element and run the inner block of code on each element one at a time. The index() function returns the order of that element in the execution queue.
+# The `index` function is used to return the order of which the node is transformed when selected using Tritium. Every time you use a Tritium selector that selects more than a single element, the MoovSDK will iterate over each element and run the inner block of code on each element one at a time. The `index()` function returns the order of that element in the execution queue.
 # Note that the function does not necessarily give the index of the current node in relation to its siblings. It is the number of iterations the previous selection has gone through.
 # ### Common uses include:
 # * Giving elements a unique attribute that corresponds to their index number.
 # * Referencing a certain element based on its order of execution.
 # * General order based logic, such as giving all odd numbered elements in the queue a certain class so you can style them differently.
-# The example below will assign a class to every div. The first div that is encountered will have a class of "div_number_1". The second div found will be "div_number_2" etc.
+# The example below will assign a class to every `div`. The first `div` that is encountered will have a class of "div_number_1". The second `div` found will be "div_number_2" etc.
 # @example
 # $("./div") {
 #   attribute("class", "div_number_" + index(this()))
@@ -30,7 +30,7 @@
 # @scope XMLNode
 # @args Text %selector
 # @description
-# The fetch function retrieves the information from the node specified.
+# The `fetch` function retrieves the information from the node specified.
 # The function takes one argument - the node/information you want. This should be specified in XPath.
 # ### Common uses include:
 # * Grabbing text from a link in order to use it elsewhere
@@ -53,9 +53,9 @@
 # @scope XMLNode
 # @args 
 # @description
-# The this function is used to point to the current node.
-# The function is mostly used in the context of defining other functions. Most of the time, you can write an XPath to point to the correct node - but sometimes you have to specify the node itself. Here is where the this function is useful.
-# The example below uses the function twice. Once to set a variable as the current node (the anchor tag) and once to specifiy the current node (the span) in a function. Node that we are using the move function here, which can only take nodes as arguments (i.e. not a string corresponding to XPath).
+# The `this` function is used to point to the current node.
+# The function is mostly used in the context of defining other functions. Most of the time, you can write an XPath to point to the correct node - but sometimes you have to specify the node itself. Here is where the `this` function is useful.
+# The example below uses the function twice. Once to set a variable as the current node (the anchor tag) and once to specifiy the current node (the `span`) in a function. Node that we are using the move function here, which can only take nodes as arguments (i.e. not a string corresponding to XPath).
 # @example
 # $("./a") {
 #   %link = this()
@@ -76,9 +76,9 @@
 # @scope XMLNode
 # @args Text %position
 # @description
-# For some functions, you cannot enter a position as a text string. In these cases, you need to enter a position using the position function.
-# The function takes one argument, which is the position you wish to specify. Possible positions include top, bottom, before and after.
-# The example below will move the div to the top of the body node.
+# For some functions, you cannot enter a position as a text string. In these cases, you need to enter a position using the `position` function.
+# The function takes one argument, which is the `%position` you wish to specify. Possible positions include "top", "bottom", "before" and "after".
+# The example below will move the `div` to the top of the body node.
 # @example
 # $("./div") {
 #   move_to("/html/body", position("top"))
@@ -99,12 +99,13 @@
 # @scope XMLNode
 # @args Text %xpath_selector
 # @description
-# The select function searches the HTML tree to match the XPath specified.
-# The function takes one argument, and that is the 
-# *Related functions*: [$(xpath)](#$(Text %xpath))
+# The `select` function searches the HTML tree to match the XPath specified.
+# The function takes one argument, and that is the %path_selector for the node to select.
+# *Related functions*: [$(xpath)][1]
 # ### Common uses include:
 # * Selecting any HTML element in Tritium using XPath
-# The example below selects the html and body 
+# The example below selects the `html` and `body`
+# [1]: #Node.$(Text%20%xpath)
 # @example
 # select("/html/body") {
 #   remove()
@@ -122,15 +123,15 @@
 # @scope XMLNode
 # @args 
 # @description
-# The text function opens up the text scope or retrieves the text contained within the current scope.
-# Without any further functions, the text function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
-# A further function can be used (such as <code>set</code>) to replace anything inside the current node with text.
-# Important to note is that anything within the argument will be inserted as text. So using <code>text("<a></a>")</code> will insert the *text* rather than the HTML tag.
-# Common use cases include (but are not limited to):
+# The `text` function opens up the text scope or retrieves the text contained within the current scope.
+# Without any further functions, the `text` function - when performed on an XMLNode - will return any text within that node, removing all the `HTML` tags.
+# A further function can be used (such as `set`) to replace anything inside the current node with text.
+# Important to note is that anything within the argument will be inserted as text. So using `text("<a></a>")` will insert the *text* rather than the `HTML` tag.
+# ### Common use cases include:
 # * Grabbing text from unnecessarily-nested nodes
 # * Opening a text scope to then replace a word in a paragraph
 # * Fetching text from a tag to put into a variable
-# The example below will set the interior of the current div to be "New".
+# The example below will set the interior of the current `div` to be "New".
 # @example
 # $("./div") {
 #   text() {
@@ -150,12 +151,12 @@
 # @scope XMLNode
 # @args Node %what,Node %where,Position %pos
 # @description
-# The move function moves a certain node to a particular place in another node.
-# The function takes three arguments: what needs to be moved, where it needs to be moved, and the position at which it needs to be moved.
+# The `move` function moves a certain node to a particular place in another node.
+# The function takes three arguments: `%what` needs to be moved, `%where` it needs to be moved, and the `%position` at which it needs to be moved.
 # Important to note is the format in which the arguments must be given. They cannot be specified by a text string, so you cannot use a string of XPath to specify the nodes (e.g. "./div") or a text input for the position (e.g. "top").
-# Instead of using a string to define the position, you must use the position function to wrap it. For the nodes, you must set a local variable pointing to a particular node using <code>this()</code>.
-# Due to the lack of text input, the function is mostly used when defining other functions. For example, most of the move_to functions are defined around this function.
-# The example below selects the div "one" and assigns it a local variable. Then, it selects the div "two" and moves that div (<code>this()</code>) to the top of div one.
+# Instead of using a string to define the position, you must use the position function to wrap it. For the nodes, you must set a local variable pointing to a particular node using `this()`.
+# Due to the lack of text input, the function is mostly used when defining other functions. For example, most of the `move_to` functions are defined around this function.
+# The example below selects the `div` "one" and assigns it a local variable. Then, it selects the `div` "two" and moves that `div` (`this()`) to the top of `div` one.
 # @example
 # $("./div[@class='one']") {
 #   %one = this()
@@ -196,10 +197,10 @@
 # @scope XMLNode
 # @args 
 # @description
-# The name function opens a scope via which the name of the current tag can be changed.
-# Common use cases include (but are not limited to):
+# The `name` function opens a scope via which the name of the current tag can be changed.
+# ### Common use cases include:
 # * Rename table elements to more manipulable tags
-# The example below will rename the selected div to an a tag.
+# The example below will rename the selected `div` to an `a` tag.
 # @example
 # $("./div") {
 #   name() {
@@ -226,7 +227,7 @@
 # The example below will select every table in the document and remove it and its contents.
 # @example
 # $("//table") {
-#   remove()  
+#   remove()
 # }
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/remove
@@ -241,11 +242,11 @@
 # @scope XMLNode
 # @args 
 # @description
-# The path function returns the nodal path to the currently-selected node.
-# Common use cases include (but are not limited to):
+# The `path` function returns the nodal path to the currently-selected node.
+# ### Common use cases include:
 # * Debugging by figuring out where in the HTML tree you are
 # * Setting a variable using the current path, in order to use it later for moving items
-# The example below will log the path to the selected div.
+# The example below will log the path to the selected `div`.
 # @example
 # $("./div") {
 #   log(path())
@@ -270,9 +271,9 @@
 # @scope XMLNode
 # @args Text %pos,Text %html
 # @description
-# ### Common uses include (but are not limited to):
+# ### Common uses include:
 # * Injecting a scaffold for a header and/or footer
-# The example below will inject the section.html file into the top of the selected div. Notice how the read function is used to input the file.
+# The example below will inject the `section.html` file into the top of the selected `div`. Notice how the `read` function is used to input the file.
 # @example
 # $("./div") {
 #   inject_at(position("top"), read("section.html"))
@@ -290,10 +291,10 @@
 # @scope XMLNode
 # @args Text %value
 # @description
-# The set function allows you to replace the current value with one specified.
-# It is commonly used within other functions, such as name() (see example below).
-# The function takes one argument - the value which will replace the current one.
-# The example below will take the div and set the name to "span" (i.e. change the div to a span).
+# The `set` function allows you to replace the current value with one specified.
+# It is commonly used within other functions, such as `name()` (see example below).
+# The function takes one argument - the `%value` which will replace the current one.
+# The example below will take the `div` and set the name to "span" (i.e. change the `div` to a `span`).
 # @example 
 # $("./div") {
 #   name() {
