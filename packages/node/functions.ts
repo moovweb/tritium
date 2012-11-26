@@ -243,12 +243,17 @@
 # @args Text %xpath
 # @description
 # The move_to command moves the currently selected node to the node specified by the %xpath input. 
+# The function takes one argument, the XPath destination of the current node.
 # **Things to note**: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
 # ### Common uses include:
 # * Creating the proper structure for a page by moving the elements you want to keep into the proper place.
 # * Fixing the existing structure of a page by moving elements around.
 # * Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more.
+# The example below will take the currently-selected div and move it to the span child of its parent (i.e. a span sibling of the div).
 # @example 
+# $("./div") {
+#   move_to("../span")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/move_to
 # @guidetext 
@@ -285,11 +290,16 @@
 # @args %where
 # @description
 # The move_here function moves the node specified by the input xpath to the currently selected node. 
+# The function takes one argument - the XPath of the element that is to be moved into the current node.
 # **Things to note**: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
 # * Creating the proper structure for a page by moving the elements you want to keep into the proper place.
 # * Fixing the existing structure of a page by moving elements around.
 # * Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more.
+# The example below will take the span sibling of the div and move it into the div.
 # @example 
+# $("./div") {
+#   move_here("../span")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/move_here
 # @guidetext 
