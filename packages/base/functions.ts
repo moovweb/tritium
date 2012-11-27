@@ -15,7 +15,9 @@
 # $("./body") {
 #   inject_top(read("header.html"))
 # }
-@func read(Text %file) Text Text
+@func read$$$$$$$$$$$$$$$$$$$$(Text %file) Text Text {
+  // [native function]
+}
 
 " This is a the way that we have Tritium communicate variables back to its execution environment. - [click for example](http://console.moovweb.com/learn/reference/configuration/index#Environment+Variables)@example `export(\"Content-Type\", \"application/js\")` changes the content-type to application/js."
 # @abstract The `export` function is used to set response header information such as content-type, cache-time, and more.
