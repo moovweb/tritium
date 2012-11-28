@@ -12,6 +12,7 @@ import (
 	"golog"
 	"rubex"
 	tp "tritium/proto"
+	mhclient "mirrorhttp/client"
 )
 
 type Whale struct {
@@ -125,6 +126,36 @@ func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input i
 	output = scope.Value.(string)
 	exports = ctx.Exports
 	logs = ctx.Logs
+	return
+}
+
+func (eng *Whale) TransformRequest(transforms []*tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
+	uHttpRequest := input.(*mhclient.UpstreamHttpRequest)
+	newRequestHeader, export, logs := eng.Run(transforms[0], rrules, string(uHttpRequest.RawHeader), vars, deadline)
+	UpdateEnv(vars, export)
+	uHttpRequest.RawHeader = []byte(newRequestHeader)
+	uHttpRequest.Ssl = (vars["secure"] == "true")
+	uHttpRequest.Request.Host = vars["source_host"]
+	return
+}
+
+func (eng *Whale) TransformResponse(transforms []*tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
+	uHttpResponse := input.(*mhclient.UpstreamHttpResponse)
+	httpHeader := string(uHttpResponse.RawHeader)
+	newHeader, export, logs := eng.Run(transforms[1], rrules, httpHeader, vars, deadline)
+	UpdateEnv(vars, export)
+	uHttpResponse.RawHeader = []byte(newHeader)
+	vars["device_stylesheet"] = "main"
+	httpBody := string(uHttpResponse.Body)
+	newHttpBody, export, logs := eng.Run(transforms[2], rrules, httpBody, vars, deadline)
+	UpdateEnv(vars, export)
+	uHttpResponse.Body = []byte(newHttpBody)
+	vars["body_length"] = fmt.Sprintf("%d", len(newHttpBody))
+	vars["body"] = "true"
+	httpHeader = string(uHttpResponse.RawHeader)
+	newHeader, export, logs = eng.Run(transforms[3], rrules, httpHeader, vars, deadline)
+	UpdateEnv(vars, export)
+	uHttpResponse.RawHeader = []byte(newHeader)
 	return
 }
 

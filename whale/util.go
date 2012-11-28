@@ -82,3 +82,14 @@ func IsDomainCovered(domain1, domain2 string) bool {
 	}
 	return false
 }
+
+func UpdateEnv(env map[string]string, export [][]string) {
+	for _, strArray := range export {
+		if len(strArray) != 2 {
+		} else if strArray[0] == "set-cookie" {
+			env[strArray[0]] = env[strArray[0]] + strArray[1]
+		} else {
+			env[strArray[0]] = strArray[1]
+		}
+	}
+}
