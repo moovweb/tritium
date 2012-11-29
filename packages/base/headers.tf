@@ -323,6 +323,42 @@
 @func else() Text
 
 " Only used within functions - enables functions within the scope of the current function to be performed. @example To learn more, check out [our helpdesk post on how yield works](http://help.moovweb.com/entries/21633781-what-does-the-yield-function-do)."
+# @abstract The yield function is used when defining custom functions to signal where the function yields to a new scope.
+# @name yield
+# @category Environment
+# @scope Global
+# @args
+# @description 
+# The yield() function is used to tell Moovweb where you want a new scope to be opened when using this function.
+# This allows you to execute Tritium in the function even after the user has opened a scope and executed several other functions. 
+# Common uses include:
+# 1) Any time you need to execute code after someone uses your function. 
+# 2) Error checking your function's use cases. 
+# In this example, we first define a function that yields to a scope before our log() statement. This means if the user changes the $a variable, then the log statement will change as well.
+# However, in our second example, we log our variable $a before yielding, which means that even though the user's changes will take place. The variable will be logged before it is changed. So in our second example we will see "dog" rather than "dogcat".
+# @example
+# # first example 
+# @func XMLNode.foo { 
+#  $a = "dog" 
+#   yield() 
+#   log($a) 
+# }
+# # second example 
+# foo() { 
+#  $a = $a + "cat" 
+# }
+# @func XMLNode.foo { 
+#   $a = "dog"
+#   log($a) 
+#   yield() 
+# }
+# foo() { 
+#   $a = $a + "cat" 
+# }
+# @exampletext Tritium Tester Example
+# @examplelink
+# @guidetext Function Guide
+# @guidelink
 @func yield() Text
 
 " Only used within functions - enables functions within the scope of the current function to be performed.  @example To learn more, check out [our helpdesk post on how yield works](http://help.moovweb.com/entries/21633781-what-does-the-yield-function-do). "
