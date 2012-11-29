@@ -15,7 +15,7 @@
 # $("./body") {
 #   inject_top(read("header.html"))
 # }
-@func read(Text %file) {
+@func read$$$$$$$$$$$$$$$$$$$$(Text %file) {
   // [native function]
 }
 
