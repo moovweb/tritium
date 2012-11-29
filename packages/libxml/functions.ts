@@ -2,7 +2,7 @@
 "Selects an element with CSS-style selectors. @example `$$(\".one\")` will select all elements with the class of \"one\"."
 # @abstract The `$$` selects elements with a CSS-style selector.
 # @name $$
-# @category Select,Misc
+# @category Misc
 # @scope XMLNode
 # @args Text %css_selector
 # @description 
