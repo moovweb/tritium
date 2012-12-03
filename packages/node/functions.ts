@@ -9,6 +9,7 @@
 # **Things to note**: If Tritium finds no matching node for the `%xpath` selector provided, it simply skips over that block of code. If Tritium finds more than one matching node for the `%xpath` selector provided, it will iterate over each element sequentially running the block of code inside the selector on each element.
 # ### Common uses include:
 # * Just about anything you want to do with Tritium.
+# 
 # In this example, we select every `div` element in the document and open a scope for manipulation.
 # @example
 # $("//div") {
@@ -36,6 +37,7 @@
 # ### Common uses include:
 # * Some functions require position inputs as parameters. You can call `position()` to fulfill this requirement.
 # * When defining custom functions you may want to use a `position` type in your definition.
+# 
 # In this example, we move the current node to the bottom of its parent.
 # @example
 # move_to("..", position())
@@ -67,6 +69,7 @@
 # * Giving elements a unique attribute that corresponds to their index number.
 # * Referencing a certain element based on its order of execution.
 # * General order based logic, such as giving all odd numbered elements in the queue a certain class so you can style them differently.
+# 
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/index
 # @guidetext How indexing items works.
@@ -89,6 +92,7 @@
 # * Changing tables and their inner rows and data cells to `div`s.
 # * Changing anchors that have been wrapped inside anchors to `div`s to avoid broken HTML.
 # * Changing between `div`s and `span`s depending on how you want the page to flow.
+# 
 # @example 
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/name
@@ -134,6 +138,7 @@
 # ### Common uses include:
 # * Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead.
 # * Duplicating useful information
+# 
 # @example 
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/copy_here
@@ -178,6 +183,7 @@
 # ### Common uses include:
 # * Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead.
 # * Duplicating useful information
+# 
 # @example 
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/copy_to
@@ -202,9 +208,11 @@
 # * `inject_bottom(Text %html)`
 # * `inject_before(Text %html)`
 # * `inject_after(Text %html)`
+# 
 # ### Common uses include:
 # * Injecting entire templates of code at once from another file using the `inject()` function in combination with the `read()` function.
 # * Fixing broken HTML
+# 
 # @example 
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/packagestest/examples/node/inject
@@ -248,6 +256,7 @@
 # * Creating the proper structure for a page by moving the elements you want to keep into the proper place.
 # * Fixing the existing structure of a page by moving elements around.
 # * Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more.
+# 
 # The example below will take the currently-selected div and move it to the span child of its parent (i.e. a span sibling of the div).
 # @example 
 # $("./div") {
@@ -294,6 +303,7 @@
 # * Creating the proper structure for a page by moving the elements you want to keep into the proper place.
 # * Fixing the existing structure of a page by moving elements around.
 # * Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more.
+# 
 # The example below will take the span sibling of the div and move it into the div.
 # @example 
 # $("./div") {

@@ -12,6 +12,7 @@
 # ### Common use cases include:
 # * Selecting many element types based on attributes rather than tag names
 # * Selecting items without being familiar with XPath
+# 
 # The example below will remove any element on the page with an `id` of "one".
 # [1]: #XMLNode.$$(Text%20%css_selector)
 # @example
@@ -77,6 +78,7 @@
 # Just as for the `html_doc` function, `html_fragment_doc` takes two arguments, specifing the `%input_encoding` and `%output_encoding`. `html_fragment_doc("x", "y")` would parse the document from encoding `x` into encoding `y`.
 # ### Common use cases include:
 # * Only a small section of the request being processed is HTML, and that fragment must be parsed without adding a `HTML` tag and `DOCTYPE`.
+# 
 # The following example will parse a fragment of HTML from `gbk` to `utf-8` encoding, allowing selectors to point to nodes of the document.
 # @example
 # html_fragment_doc("gbk", "utf-8")
@@ -120,6 +122,7 @@
 # ### Common use cases include:
 # * Removing all the `<br>` tags in a paragraph
 # * Removing `style` attributes from tags
+# 
 # The example below will remove all `span` children of the `div`.
 # @example
 # $("./div") {
@@ -142,6 +145,7 @@
 # *Related functions*: [inner(html)][1]
 # ### Common use cases include:
 # * Opening the inner scope to replace contents
+# 
 # The following example will open the scope of the current `div` and replace everything with "NEW".
 # [1]: #XMLNode.inner()%20Text%20Text
 # @example
@@ -168,6 +172,7 @@
 # ### Common use cases include:
 # * Extracting text from a table
 # * Grabbing the text of an anchor while removing its tag
+# 
 # The example below will "flatten" the table, leaving only the text of the table in the tag.
 # @example
 # $("./table") {
@@ -189,6 +194,7 @@
 # The `attribute` function opens the scope of the `%name`d attribute.
 # ### Common use examples include:
 # * Opening the scope of the attribute to replace certain characters
+# 
 # The example below will open the scope of the class attribute.
 # @example
 # $("./div[@class='one']") {
@@ -212,6 +218,7 @@
 # This function takes two arguments - the two nodes (`%a` and `%b`) you wish to equate.
 # ### Common use examples include:
 # * Ensuring that a function is not performed on itself, potentially avoiding a loop.
+# 
 # The following example will compare the `div` node twice: first to its anchor child (where the `log` will return `false`, because the two nodes are not equal), then with itself (where the log message will be `true`).
 # @example
 # $("./div") {
@@ -260,6 +267,7 @@
 # ### Common use examples include:
 # * Wrapping all text children in tags so that they can then be subsequently removed
 # * From a mixture of text nodes and HTML nodes, wrapping text children in a tag allows for easier manipulation
+# 
 # The example below will take all the text node children of the span and wrap them in `div`s.
 # @example
 # $("./span")
@@ -282,6 +290,7 @@
 # The function takes two arguments:
 # * `%tag_name`: The new node that the children will be moved into
 # * `%pos`: The position at which the children will be moved
+# 
 # **Things to note**: the arguments can not be strings; entering XPath selectors will not work. To enter the node argument, you must select that node and assign a local variable to the node (using `%`). For the position, you must use the position function as in the following example.
 # Because of the complexity of setting a variable, this function is mainly used in function definitions - e.g., the `inner_wrap` function.
 # In the example below, the `div` with class `one` is selected, and a local variable `%one` is set. The variable is then used later, once we have selected `div` with class `two`. That `div`'s children will be moved to the top of the former `div`.
@@ -308,6 +317,7 @@
 # The `remove` function removes the currently-selected attribute.
 # ### Common use cases include:
 # * Removing inline styles once the attribute has been selected
+# 
 # The following example will remove the class from the selected div.
 # @example
 # $("./div[@class='one']")
@@ -333,6 +343,7 @@
 # ### Common use cases include:
 # * Altering the value of a class
 # * Modifying the value of an href attribute
+# 
 # In the following example, the class attribute of the selected `div` tag will be given a new value of `two`.
 # @example
 # $("./div[@class='one']")
