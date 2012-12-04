@@ -9,7 +9,7 @@
 # The function takes one argument, the item to be selected. The argument is written as a standard CSS selector - for example `#one` to search for an `id`.
 # **Things to note**: the `css()` function converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so it will usually be slower than an XPath selector.
 # *Related functions*: [$$(css_selector)][1]
-# ### Common use cases include:
+# ### Common uses include:
 # * Selecting many element types based on attributes rather than tag names
 # * Selecting items without being familiar with XPath
 # 
@@ -76,7 +76,7 @@
 # @description 
 # The `html_fragment_doc` function parses a fragment of the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
 # Just as for the `html_doc` function, `html_fragment_doc` takes two arguments, specifing the `%input_encoding` and `%output_encoding`. `html_fragment_doc("x", "y")` would parse the document from encoding `x` into encoding `y`.
-# ### Common use cases include:
+# ### Common uses include:
 # * Only a small section of the request being processed is HTML, and that fragment must be parsed without adding a `HTML` tag and `DOCTYPE`.
 # 
 # The following example will parse a fragment of HTML from `gbk` to `utf-8` encoding, allowing selectors to point to nodes of the document.
@@ -119,7 +119,7 @@
 # The `remove` function deletes the element specified by the selector.
 # The function takes one argument - the `%xpath_selector` which specifies the location of the node to be removed.
 # As you can select attributes using XPath, it is possible to delete attributes using the `remove()` function. Select an attribute using the `@` sign - for example `@class` will select a class.
-# ### Common use cases include:
+# ### Common uses include:
 # * Removing all the `<br>` tags in a paragraph
 # * Removing `style` attributes from tags
 # 
@@ -143,7 +143,7 @@
 # @description 
 # The `inner` function opens the scope of the current node for manipulation.
 # *Related functions*: [inner(html)][1]
-# ### Common use cases include:
+# ### Common uses include:
 # * Opening the inner scope to replace contents
 # 
 # The following example will open the scope of the current `div` and replace everything with "NEW".
@@ -169,7 +169,7 @@
 # @description
 # The `inner_text` function converts the entirety of the current node into text.
 # The function essentially removes all `HTML` nodes and returns the text of the element.
-# ### Common use cases include:
+# ### Common uses include:
 # * Extracting text from a table
 # * Grabbing the text of an anchor while removing its tag
 # 
@@ -315,7 +315,7 @@
 # @args 
 # @description 
 # The `remove` function removes the currently-selected attribute.
-# ### Common use cases include:
+# ### Common uses include:
 # * Removing inline styles once the attribute has been selected
 # 
 # The following example will remove the class from the selected div.
@@ -340,7 +340,7 @@
 # @description 
 # The `value` function opens the scope of the selected attribute. This allows you to modify the value of an attribute.
 # To modify the value itself, you would need to use the `set` function (which changes it completely), or the replace function (to replace certain pieces).
-# ### Common use cases include:
+# ### Common uses include:
 # * Altering the value of a class
 # * Modifying the value of an href attribute
 # 

@@ -130,7 +130,7 @@
 # Without any further functions, the `text` function - when performed on an XMLNode - will return any text within that node, removing all the `HTML` tags.
 # A further function can be used (such as `set`) to replace anything inside the current node with text.
 # Important to note is that anything within the argument will be inserted as text. So using `text("<a></a>")` will insert the *text* rather than the `HTML` tag.
-# ### Common use cases include:
+# ### Common uses include:
 # * Grabbing text from unnecessarily-nested nodes
 # * Opening a text scope to then replace a word in a paragraph
 # * Fetching text from a tag to put into a variable
@@ -202,7 +202,7 @@
 # @args 
 # @description
 # The `name` function opens a scope via which the name of the current tag can be changed.
-# ### Common use cases include:
+# ### Common uses include:
 # * Rename table elements to more manipulable tags
 # 
 # The example below will rename the selected `div` to an `a` tag.
@@ -226,7 +226,7 @@
 # @args 
 # @description
 # The remove function removes the node that is currently selected.
-# Common use cases include (but are not limited to):
+# Common uses include (but are not limited to):
 # * Removing empty items on a page
 # * Removing a table once all useful information has been moved out
 # 
@@ -249,7 +249,7 @@
 # @args 
 # @description
 # The `path` function returns the nodal path to the currently-selected node.
-# ### Common use cases include:
+# ### Common uses include:
 # * Debugging by figuring out where in the HTML tree you are
 # * Setting a variable using the current path, in order to use it later for moving items
 # 

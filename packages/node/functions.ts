@@ -139,7 +139,11 @@
 # * Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead.
 # * Duplicating useful information
 # 
+# The example below will create a copy the header and move it into the currently-selected div.
 # @example 
+# $("./div") {
+#   copy_here("/html/body/header")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/copy_here
 # @guidetext 
@@ -184,7 +188,11 @@
 # * Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead.
 # * Duplicating useful information
 # 
+# The example below will copy the currently-selected div into the header of the DOM.
 # @example 
+# $("./div") {
+#   copy_to("/html/body/header")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/copy_to
 # @guidetext 
@@ -213,7 +221,11 @@
 # * Injecting entire templates of code at once from another file using the `inject()` function in combination with the `read()` function.
 # * Fixing broken HTML
 # 
+# The example below will inject an `a` tag pointing to site.com into the bottom of the selected div.
 # @example 
+# $("./div") {
+#   inject("<a href="http://site.com">My new link!</a>")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/packagestest/examples/node/inject
 # @guidetext 
