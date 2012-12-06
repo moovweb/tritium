@@ -11,6 +11,7 @@
 # * True/False logic
 # * Storing fetched text and attributes
 # * Using stored values in a `match()` statement to run different Tritium scripts.
+# 
 # The following example simply illustrates how to set a variable manually to whatever `%name` and value you desire.
 # @example
 # var("my_var") {
@@ -35,6 +36,7 @@
 # * True/False logic
 # * Storing fetched text and attributes
 # * Using stored values in a `match()` statement to run different Tritium scripts.
+# 
 # The following example simply illustrates how to set a variable manually to whatever `%name` and `%value` you desire.
 # @example
 # var("my_var", "is set")
@@ -56,6 +58,7 @@
 # **Things to note**: The time taken varies for each implementation, so to have an accurate sense of time, several trials should be run.
 # ### Common uses include:
 # * Optimizing Tritium script performance.
+# 
 # In the following example, we display how to log the `time()` output to the terminal using the `log()` function.
 # @example
 # log(time())
@@ -79,6 +82,7 @@
 # * Matching attributes with certain content to determine if they need to be changed in some way.
 # * Simulating `if-then-else` statements and boolean (`true-false`) logic to run differing Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming headers.
+# 
 # In the following example, we match the `$path` variable to see if it matches the regular expression `/product/`. Since it does, the log "Match successful!" will output to the terminal.
 # @example
 # $path = "product"
@@ -108,6 +112,7 @@
 # * Checking the value of environment variables
 # * Displaying status messages as the result of certain matches or logic
 # * Debugging Tritium that isn't working in development
+# 
 # The following example shows the typical use case for debugging Tritium that isn't working. This is often done by setting logs throughout your code to see if you selectors and logic is executing the proper statements.
 # @example
 # log("I've reached this point in the code!")
@@ -131,6 +136,7 @@
 # ### Common uses include:
 # * When the page is structured such that you only know which scripts you want to run when certain content does not exist.
 # * When you are mapping URL paths to page types and you know what content must not exist in the path to fulfill a mapping requirement.
+# 
 # In the following example, we match the variable `$var` with the `not()` statement of "Match You". Since that statement does not exist in the variable, the `log` inside the `not` statement will be executed.
 # @example
 # $var = "Match Me"
@@ -156,6 +162,7 @@
 # Common use cases include:
 # * When the page is structured such that you only know what scripts you want to run when certain content does not exist.
 # * When you are mapping URL paths to page types and you know what content must not exist in the path to fulfill a mapping requirement.
+# 
 # In the following example, we match the variable `$var` with the `not()` regular expression "Match You". Since that statement does not exist in the variable, the `log` inside the `not` statement will be executed.
 # @example
 # $var = "Match Me"
@@ -184,6 +191,7 @@
 # * Matching attributes with certain content to determine if they need to be changed in some way.
 # * Simulating `if-then-else` statements and boolean (`true-false`) logic to run differing Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming headers.
+# 
 # In this example, we match the `$var` variable with the string "Match Me". Since the match is successful, the `log` is then executed.
 # @example
 # $var = "Match Me"
@@ -212,6 +220,7 @@
 # * Matching attributes with certain content to determine if they need to be changed in some way.
 # * Simulating `if-then-else` statements and boolean (`true-false`) logic to run differing Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming headers.
+# 
 # In this example, we match the `$var` variable with the regular expression "Match Me". Since the match is successful, the `log` is then executed.
 # @example
 # $var = "Match Me"
@@ -236,6 +245,7 @@
 # The `convert_encoding` function is used to convert text from one encoding to another.
 # ### Common uses include:
 # * Converting incorrectly encoded text
+# 
 # In this example, we convert from `gbk` to `utf-8` encoding.
 # @example
 # text() {
@@ -257,6 +267,7 @@
 # The `guess_encoding` function is used to guess the text encoding of the current scope. The function uses information from the input, the response header, and the HTML `meta` tags.
 # ### Common uses include:
 # * When you need to figure out the current encoding.
+# 
 # In this example, we guess the encoding of the current text node.
 # @example
 # text() {
@@ -280,6 +291,7 @@
 # ### Common uses include:
 # * Validating an `%input` string to make sure it is either a minimum or maximum number of characters.
 # * Finding the length of a string.
+# 
 # In this example, we `log` the length of the `%input` string "text".
 # @example
 # $$("#my_div") {
@@ -305,6 +317,7 @@
 # * Serving as a catchall for common errors, such as unrecognized URL mappings.
 # * Completing `if-else` pseudo logic when `match`ing variables, attributes, and other traits of the current DOM.
 # * Generally providing a default behavior for your Tritium scripts.
+# 
 # In the following example, the `$var` value does not match the existing `with()` statement, which means the `else()` statement will run its inner code block.
 # @example
 # $var = "Match me."
@@ -332,8 +345,9 @@
 # The yield() function is used to tell Moovweb where you want a new scope to be opened when using this function.
 # This allows you to execute Tritium in the function even after the user has opened a scope and executed several other functions. 
 # Common uses include:
-# 1) Any time you need to execute code after someone uses your function. 
-# 2) Error checking your function's use cases. 
+# * Any time you need to execute code after someone uses your function. 
+# * Error checking your function's use cases. 
+# 
 # In this example, we first define a function that yields to a scope before our log() statement. This means if the user changes the $a variable, then the log statement will change as well.
 # However, in our second example, we log our variable $a before yielding, which means that even though the user's changes will take place. The variable will be logged before it is changed. So in our second example we will see "dog" rather than "dogcat".
 # @example
@@ -381,6 +395,7 @@
 # * Modifying text to be more clear and concise to fit a smaller viewport.
 # * Changing instructions such as "click" to "tap" for mobile devices.
 # * Fixing malformed HTML before the document is parsed so your selectors work properly.
+# 
 # In the following example, we use the string "true" and turn it into a regular expression to use in a `match-with` statement. We are also accepting any combination of upper and lower case because of the `i` flag. If the string "true" is anywhere in the text we are matching, the code in the `with()` statement will run.
 # @example
 # with(regexp("true", "i")) {
@@ -406,6 +421,7 @@
 # * In `log` statements when outputting some combination of variables and description of those variables.
 # * When selecting elements based on variables or attributes, they may need to be formatted properly using the concat function.
 # * When manipulating text scopes and combining the content of several scopes.
+# 
 # In this example, we fetch the `ID` of the div with the `ID` "my_div", then we `log` a `concat` statement to the terminal output.
 # @example
 # $$("#my_div") {
@@ -431,6 +447,7 @@
 # * Malformed HTML or Javascript with the wrong `content-type` set.
 # * Setting the `Cache-Time` of the page.
 # * Setting the `Location` for a redirect.
+# 
 # In this example, we are setting the `Content-Type` to "text/html".
 # @example
 # html() {
@@ -452,6 +469,7 @@
 # The `upcase` function is used to return the provided `%input_string` in all uppercase letters.
 # ### Common uses include:
 # * Making buttons more prominent such as SIGN IN or SIGN UP NOW.
+# 
 # In this example, we fetch the `ID` of the div with the `ID` "my_div", then we `log` a `concat` statement using uppercase letters for the name of the div.
 # @example
 # $$("#my_div") {
@@ -474,6 +492,7 @@
 # The `downcase` function is used to return the provided `%input_string` in all lowercase letters.
 # ### Common uses include:
 # * Making text less prominent.
+# 
 # In this example, we fetch the `ID` of the div with the `ID` "my_div", then we `log` a `concat` statement using lowercase letters for the name of the div.
 # @example
 # $$("#my_div") {
@@ -501,6 +520,7 @@
 # ### Common uses include:
 # * Setting the content of text scopes
 # * Setting the value of attribute scopes
+# 
 # In this example, we set the text node inside "my_div" to "I've been set!".
 # @example
 # $$("#my_div") {
@@ -527,6 +547,7 @@
 # * Replacing desktop instructions like "click" to mobile instructions like "tap"
 # * Removing extra or unnecessary text
 # * Rewriting attributes based on some standard `set` via a regular expression.
+# 
 # In this example we are replacing the text "Replace Me" inside `#my_div` with the text "Replaced!".
 # @example
 # $$("#my_div") {
@@ -555,6 +576,7 @@
 # * Replacing desktop instructions like "click" to mobile instructions like "tap"
 # * Removing extra or unnecessary text
 # * Rewriting attributes based on some standard `set` via a regular expression.
+# 
 # In this example we are replacing the text "Replace Me" inside `#my_div` with the text "Replaced!".
 # @example
 # $$("#my_div") {
@@ -581,6 +603,7 @@
 # ### Common uses include:
 # * Categorizing content by attaching labels or other forms of organized tags.
 # * Numbering content using the prepend() function in combination with the index() function.
+# 
 # In this example, we prepend a sentence onto the beginning of the text node inside "my_div".
 # @example
   $$("#my_div") {
@@ -605,6 +628,7 @@
 # ### Common uses include:
 # * Adding instructions following content.
 # * Elaborating on content without resetting it.
+# 
 # In this example, we append a sentence onto the end of the text node inside `my_div`.
 # @example
   $$("#my_div") {

@@ -10,12 +10,13 @@
 # ### Common uses include:
 # * Injecting a header scaffold on a page
 # * Add radically different markup for a page
+# 
 # In the example below, we inject the contents of the header.html file at the top of the body.
 # @example
 # $("./body") {
 #   inject_top(read("header.html"))
 # }
-@func read(Text %file) {
+@func read$$$$$$$$$$$$$$$$$$$$(Text %file) {
   // [native function]
 }
 
@@ -32,6 +33,7 @@
 # * Malformed HTML or Javascript with the wrong `content-type` set.
 # * Setting the Cache-Time of the page.
 # * Setting the Location for a redirect.
+# 
 # In the following example, we set `Content-Type` to `text/html`.
 # @example
 # html() {
@@ -62,6 +64,7 @@
 # * Modifying text to be more clear and concise to fit a smaller viewport.
 # * Changing instructions such as "click" to "tap" for mobile devices.
 # * Fixing malformed HTML before the document is parsed so your selectors work properly.
+# 
 # In the following example, we use the string `true` and turn it into a regular expression to use in a `match-with` statement. If the string `true` is anywhere in the text we are matching, the code in the `with()` statement will run.
 # [1]: #match(Text%20%target,%20Regexp%20%comparitor)
 # [2]: #with(Text%20%text)%20Text
@@ -97,6 +100,7 @@
 # *Related functions*: [time()][1]
 # ### Common uses include:
 # * Measuring the time it takes for a block of code to run.
+# 
 # [1]: #time()%20Text
 # @example
 # $("./body") {
@@ -129,6 +133,7 @@
 # * Matching attributes with specific content to change them in some way.
 # * Simulating `if-then-else` statements and boolean (`true/false`) logic to evaluate different Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
+# 
 # In the following example, we match the `$path` variable to see if it matches the string `product`. Since it does, the log "Match successful!" will output to the terminal.
 # [1]: #with(Text%20%text)%20Text
 # [2]: #else()%20Text
@@ -166,6 +171,7 @@
 # * Matching attributes with specific content to change them in some way.
 # * Simulating `if-then-else` statements and boolean (`true/false`) logic to evaluate different Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
+# 
 # In the following example, we match the `$path` variable to see if it matches the string `product`. Since it does, the log "Match successful!" will output to the terminal.
 # [1]: #with(Text%20%text)%20Text
 # [2]: #else()%20Text
@@ -203,6 +209,7 @@
 # * Matching attributes with specific content to change them in some way.
 # * Simulating `if-then-else` statements and boolean (`true/false`) logic to evaluate different Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
+# 
 # In the following example, we match the `$path` variable to see if it matches the string "price". Since it does not, the log "Match successful!" will output to your terminal.
 # [1]: #with(Text%20%text)%20Text
 # [2]: #else()%20Text
@@ -240,6 +247,7 @@
 # * Matching attributes with specific content to change them in some way.
 # * Simulating `if-then-else` statements and boolean (`true/false`) logic to evaluate different Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
+# 
 # In the following example, we match the `$path` variable to see if it matches the string "price". Since it does not, the log "Match successful!" will output to your terminal.
 # [1]: #with(Text%20%text)%20Text
 # [2]: #else()%20Text
@@ -274,6 +282,7 @@
 # ### Common uses include:
 # * Clearing extra white space inside nodes
 # * Clearing text links to turn them into icons
+# 
 # In the following example, we simply clear any existing text inside the node with an ID of `my_div`.
 # [1]: #Attribute.remove()%20Text
 # @example
@@ -306,6 +315,7 @@
 # ### Common uses include:
 # * Opening the scope for the use of text scope functions such as `replace`, `set`, `length`, `append`, `prepend`, `clear` and more.
 # * Setting the text of the current node.
+# 
 # In the example, we open the text scope of the div with an ID of "my_div".
 # [1]: #XMLNode.inner()%20Text%20Text
 # @example
@@ -338,6 +348,7 @@
 # * Replacing desktop instructions like "click" to mobile instructions like "tap"
 # * Removing extra or unnecessary text
 # * Rewriting attributes based on some standard set via a regular expression.
+# 
 # In the following example, we replace the text "Replace Me" inside `#my_div` with the text "Replaced!".
 # [1]: #XMLNode.text()
 # [2]: #XMLNode.inner()%20Text%20Text
@@ -371,6 +382,7 @@
 # * Replacing desktop instructions like "click" to mobile instructions like "tap"
 # * Removing extra or unnecessary text
 # * Rewriting attributes based on some standard set via a regular expression.
+# 
 # In the following example, we replace the text "Replace Me" inside `#my_div` with the text "Replaced!".
 # @example
 # $$("#my_div") {
@@ -399,6 +411,7 @@
 # ### Common uses include:
 # * Validating an input string to make sure it is either a minimum or maximum number of characters.
 # * Finding the length of a string.
+# 
 # In the following example, we log the length of the current text inside the div with an ID of `my_div`.
 # @example
 # $$("#my_div") {

@@ -12,9 +12,10 @@
 # **Things to note**: the `$$` converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
 # For example, the selector `$$("#one")` will be converted into `$(".//*[id='one']")`. The double-forward-slash deep search could affect performance.
 # *Related functions*: [css(selector)][1]
-# ### Common use cases include:
+# ### Common uses include:
 # * Selecting many element types based on attributes rather than tag names
 # * Selecting items without being familiar with XPath
+# 
 # The following example selects every item with the `ID` "one".
 # [1]: #css(Text%20%selector)%20Text%20Text
 # @example
@@ -40,9 +41,10 @@
 # The function takes one argument - the `%class` to be added.
 # What the function does is takes the current node and appends any existing classes with a space, followed by the class specified.
 # The `add_class` function will therefore not overwrite any existing classes that are present on the node. Contrast this with the `attribute` function, which would obliterate any existing classes.
-# ### Common use cases include:
+# ### Common uses include:
 # * Adding a class to the body of the page for page-specific styling
 # * Keeping existing classes (and associated styles) while adding your own on top
+# 
 # The example below will take the selected `div` and add a class of "one" to it.
 # @example
 # $("./div") {
@@ -71,9 +73,10 @@
 # @description
 # The `inner_wrap` function takes all the content of the current node and wraps it.
 # The function takes one argument and that is the %tag_name into which you want to wrap the content of the current node.
-# ### Common use cases include:
+# ### Common uses include:
 # * Wrapping all interior content into an anchor tag
 # * Wrapping a mixture of text and nodes into one tag
+# 
 # The following example will take the contents of the `div` and wrap them in a `span`.
 # @example
 # $("./div") {
@@ -103,8 +106,9 @@
 # @description
 # The `remove_text_nodes` function takes all text that is a direct child of the current node and removes it.
 # Any non-text nodes (e.g. anchor tags, image tags, etc.) will remain intact.
-# ### Common use cases include:
+# ### Common uses include:
 # * Removing blank text nodes in between elements
+# 
 # The following example will remove only text nodes from the `div`.
 # @example
 # $("./div") {
@@ -128,9 +132,10 @@
 # The `attribute` function is used a lot in Tritium. It allows you to modify any attribute on the current node.
 # The function takes two arguments - the first being the attribute `%name` and the second its `%value`.
 # If the attribute already exists on the tag, it will be overwritten by the new `%value` specified.
-# ### Common use cases include:
+# ### Common uses include:
 # * Overwriting existing classes with your own class
 # * Adding attributes to enable Uranium
+# 
 # The following example will add an `href` of `http://example.com` to the selected `a` tag.
 # @example
 # $("./a") {
@@ -270,9 +275,10 @@
 # The `attributes` function allows you to set multiple attributes for an element.
 # It is commonly used instead of the `attribute` function, as it leaves open the possibility to add more attributes later on.
 # The function can take an arbitrary number of arguments in the format `name: "value"`
-# ### Common use cases include:
+# ### Common uses include:
 # * Assigning multiple attributes for Uranium - such as a `data-ur-id` and a `data-ur-component` type.
 # * Adding a class while also setting the value of an input.
+# 
 # The following example gives the selected `div` two attributes - a `class` of "one" and an `id` of "two".
 # @example
 # $("./div") {
@@ -296,10 +302,11 @@
 # The `text` function opens up the text scope or retrieves the text contained within the current scope.
 # Without any further functions, the `text` function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
 # A further function can be used (such as `set`) to replace anything inside the current node with text.
-# ### Common use cases include:
+# ### Common uses include:
 # * Grabbing text from unnecessarily-nested nodes
 # * Opening a text scope to then replace a word in a paragraph
 # * Fetching text from a tag to put into a variable
+# 
 # The example below will set the inside of the div to be "NewText".
 # @example
 # $("./div") {
@@ -357,6 +364,7 @@
 # * 0 arguments: the function will find all `img` and `script` child nodes (of the parent scope) and absolutize their `src` attribute.
 # * 1 argument: the `%xpath` selector for the node(s) you wish to absolutize.
 # * 2 arguments: (1) the `%xpath` selector for the node(s) you wish to absolutize; and (2) the `%attribute` that you want to absolutize (e.g. `src` or `href`).
+#
 # Absolutizing URLs is often done in projects at the top of the `scripts/html.ts` file.
 # The following examples show the three different the `absolutize` function can be used.
 # @example
@@ -496,8 +504,10 @@
 # * `insert_javascript_bottom(Text %js)`
 # * `insert_javascript_before(Text %js)`
 # * `insert_javascript_after(Text %js)`
+# 
 # ### Common use examples include:
 # * Javascript needs to be added to a specific node rather than globally
+# 
 # In the following example, the JavaScript `alert('Boo')` will be inserted at the bottom of the current node.
 # @example
 # insert_javascript("alert('Boo')")
@@ -524,6 +534,7 @@
 # Compare to the `text()` function, which replaces the content with text only.
 # ### Common uses cases:
 # * Setting the inside of a node with both text and a new node
+# 
 # The example below will replace all of the content of the current div with "New Content".
 # @example
 # $("./div") {
@@ -550,9 +561,10 @@
 # The `wrap` function takes the current node and wraps it in a new tag.
 # The function requires one argument - the new `%tag`. It also takes an arbitrary number of additional arguments specifying attributes and their values.
 # For example, you can specify a class using `class: "my_class"` as a second argument.
-# ### Common use cases include:
+# ### Common uses include:
 # * Wrapping elements in an `li` tag to form a list
 # * Wrapping an element in an `a` tag to make a link
+# 
 # The example below will wrap the selected `a` tag in a div with the class "one".
 # @example
 # $("./a") {
@@ -593,6 +605,7 @@
 # * 0 arguments: the function guesses the HTML encoding when parsing it, then opens it.
 # * 1 argument: the function parses the HTML with the specified encoding, then opens it.
 # * 2 arguments: the function converts the HTML from `%from_enc` to `%to_enc`, then opens it.
+# 
 # **Things to note**: as part of the parsing, the function will add `<html>` tags and a `DOCTYPE` to the document. If you only want to parse a fragment of HTML, use the [html_framgment()][1] function.
 # An example of the `html` function can be found in the `scripts/main.ts` file of your project, where it parses every page as HTML.
 # The following example will parse the HTML as `gbk`, convert it to `utf-8`, then print a `log` statement if there is a root `HTML` node with a `body` child.
@@ -683,8 +696,10 @@
 # * 0 arguments: the function guesses the HTML encoding, then opens it.
 # * 1 argument: the function parses the document with the specified encoding, then opens it for modification.
 # * 2 arguments: the function parses the document with the `%from_enc` encoding, converts it to the `%to_enc` encoding, then opens it.
-# ### Common use cases include:
+# 
+# ### Common uses include:
 # * Only a small section of the request being processed is HTML, and that fragment must be parsed without adding an `HTML` tag and a `DOCTYPE`.
+# 
 # The example below will parse a `gbk`-encoded  fragment of HTML, convert it to `utf-8`, then find all `div` nodes within the document.
 # @example
 # html_fragment("gbk", "utf-8") {
@@ -767,6 +782,7 @@
 # There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, `insert_at("top", "div", "Hello, Tritium!", class: "one")` will add a class of "one" to the new `div` node.
 # ### Common use examples include:
 # * Creating a button/content element for Uranium
+# 
 # The following example will insert a `div` tag at the top of the current node. The tag will have the content "Hello, Tritium!".
 # @example
 # insert_at("top", "div", "Hello, Tritium!")
@@ -817,9 +833,11 @@
 # * `insert_bottom(Text %tag, Text %inner)`
 # * `insert_before(Text %tag, Text %inner)`
 # * `insert_after(Text %tag, Text %inner)`
+# 
 # ### Common use examples include:
 # * Adding an `a` tag to link to the desktop site
 # * Inserting a header or footer on a page
+# 
 # The example below will insert a `div` with the content "Content" into the bottom of the current node.
 # @example
 # insert("div", "Content")

@@ -12,6 +12,7 @@
 # * Giving elements a unique attribute that corresponds to their index number.
 # * Referencing a certain element based on its order of execution.
 # * General order based logic, such as giving all odd numbered elements in the queue a certain class so you can style them differently.
+# 
 # The example below will assign a class to every `div`. The first `div` that is encountered will have a class of "div_number_1". The second `div` found will be "div_number_2" etc.
 # @example
 # $("./div") {
@@ -35,6 +36,7 @@
 # ### Common uses include:
 # * Grabbing text from a link in order to use it elsewhere
 # * Fetching the value of an attribute
+# 
 # The example below fetches any text within the anchor tag and sets it as a variable.
 # @example
 # $("./a") {
@@ -104,6 +106,7 @@
 # *Related functions*: [$(xpath)][1]
 # ### Common uses include:
 # * Selecting any HTML element in Tritium using XPath
+# 
 # The example below selects the `html` and `body`
 # [1]: #Node.$(Text%20%xpath)
 # @example
@@ -127,10 +130,11 @@
 # Without any further functions, the `text` function - when performed on an XMLNode - will return any text within that node, removing all the `HTML` tags.
 # A further function can be used (such as `set`) to replace anything inside the current node with text.
 # Important to note is that anything within the argument will be inserted as text. So using `text("<a></a>")` will insert the *text* rather than the `HTML` tag.
-# ### Common use cases include:
+# ### Common uses include:
 # * Grabbing text from unnecessarily-nested nodes
 # * Opening a text scope to then replace a word in a paragraph
 # * Fetching text from a tag to put into a variable
+# 
 # The example below will set the interior of the current `div` to be "New".
 # @example
 # $("./div") {
@@ -198,8 +202,9 @@
 # @args 
 # @description
 # The `name` function opens a scope via which the name of the current tag can be changed.
-# ### Common use cases include:
+# ### Common uses include:
 # * Rename table elements to more manipulable tags
+# 
 # The example below will rename the selected `div` to an `a` tag.
 # @example
 # $("./div") {
@@ -221,9 +226,10 @@
 # @args 
 # @description
 # The remove function removes the node that is currently selected.
-# Common use cases include (but are not limited to):
+# Common uses include (but are not limited to):
 # * Removing empty items on a page
 # * Removing a table once all useful information has been moved out
+# 
 # The example below will select every table in the document and remove it and its contents.
 # @example
 # $("//table") {
@@ -243,9 +249,10 @@
 # @args 
 # @description
 # The `path` function returns the nodal path to the currently-selected node.
-# ### Common use cases include:
+# ### Common uses include:
 # * Debugging by figuring out where in the HTML tree you are
 # * Setting a variable using the current path, in order to use it later for moving items
+# 
 # The example below will log the path to the selected `div`.
 # @example
 # $("./div") {
@@ -273,6 +280,7 @@
 # @description
 # ### Common uses include:
 # * Injecting a scaffold for a header and/or footer
+# 
 # The example below will inject the `section.html` file into the top of the selected `div`. Notice how the `read` function is used to input the file.
 # @example
 # $("./div") {
