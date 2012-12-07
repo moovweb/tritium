@@ -63,7 +63,7 @@ type EngineContext interface {
 	GetRegexp(string, string) *rubex.Regexp
 	GetXpathExpr(string) *xpath.Expression
 	AddExport([]string)
-	AddLog(string)
+	AddLog(string) int
 	SetEnv(string, string)
 	GetEnv(string) string
 

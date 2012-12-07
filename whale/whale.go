@@ -28,6 +28,7 @@ type WhaleContext struct {
 	Types                    []string
 	Exports                  [][]string
 	Logs                     []string
+	ImportedFiles            []string
 	Env                      map[string]string
 	MatchStack               []string
 	MatchShouldContinueStack []bool
@@ -197,10 +198,13 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 		obj := ctx.Objects[int(null.GetInt32(ins.ObjectId))]
 		curFile := ctx.Filename
 		ctx.Filename = null.GetString(obj.Name)
-		ctx.AddLog("__IMPORT__FILE__:" + ctx.Filename)
+		start := time.Now()
+		index := ctx.AddLog("__IMPORT__FILE__:" + ctx.Filename)
 		for _, child := range obj.Root.Children {
 			ctx.RunInstruction(scope, child)
 		}
+		timeSpent := time.Since(start)
+		ctx.UpdateLog(index, "__IMPORT__FILE__:" + timeSpent.String() + ":" + ctx.Filename)
 		ctx.Filename = curFile
 	case tp.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(null.GetInt32(ins.FunctionId))]
@@ -354,9 +358,18 @@ func (ctx *WhaleContext) AddExport(exports []string) {
 	ctx.Exports = append(ctx.Exports, exports)
 }
 
-func (ctx *WhaleContext) AddLog(log string) {
+func (ctx *WhaleContext) AddLog(log string) int {
 	//ctx.Log.Info("TRITIUM: " + log)
+	index := len(ctx.Logs)
 	ctx.Logs = append(ctx.Logs, log)
+	return index
+}
+
+func (ctx *WhaleContext) UpdateLog(index int, log string) {
+	//ctx.Log.Info("TRITIUM: " + log)
+	if index >= 0 && index < len(ctx.Logs) {
+		ctx.Logs[index] = log
+	}
 }
 
 func (ctx *WhaleContext) SetEnv(key, val string) {
