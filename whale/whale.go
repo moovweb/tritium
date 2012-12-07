@@ -197,6 +197,7 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 		obj := ctx.Objects[int(null.GetInt32(ins.ObjectId))]
 		curFile := ctx.Filename
 		ctx.Filename = null.GetString(obj.Name)
+		ctx.AddLog("__IMPORT__FILE__:" + ctx.Filename)
 		for _, child := range obj.Root.Children {
 			ctx.RunInstruction(scope, child)
 		}
