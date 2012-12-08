@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"strconv"
 )
 
 import (
@@ -203,8 +204,8 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 		for _, child := range obj.Root.Children {
 			ctx.RunInstruction(scope, child)
 		}
-		timeSpent := time.Since(start)
-		ctx.UpdateLog(index, "__IMPORT__FILE__:" + timeSpent.String() + ":" + ctx.Filename)
+		timeSpent := time.Since(start).Seconds()
+		ctx.UpdateLog(index, "__IMPORT__FILE__:" + strconv.FormatFloat(timeSpent, 'f', 6, 64) + ":" + ctx.Filename)
 		ctx.Filename = curFile
 	case tp.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(null.GetInt32(ins.FunctionId))]
