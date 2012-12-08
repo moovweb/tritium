@@ -205,7 +205,7 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 			ctx.RunInstruction(scope, child)
 		}
 		timeSpent := time.Since(start).Seconds()
-		ctx.UpdateLog(index, "__IMPORT__FILE__:" + strconv.FormatFloat(timeSpent, 'f', 6, 64) + ":" + ctx.Filename)
+		ctx.UpdateLog(index, "__IMPORT__FILE__:" + strconv.Itoa(int(timeSpent*1000)) + ":" + ctx.Filename)
 		ctx.Filename = curFile
 	case tp.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(null.GetInt32(ins.FunctionId))]
