@@ -12,7 +12,7 @@
 # **Things to note**: the `$$` converts the CSS selector to an XPath-style selector. It converts it into a local deep search, so could potentially be slower than an XPath selector.
 # For example, the selector `$$("#one")` will be converted into `$(".//*[id='one']")`. The double-forward-slash deep search could affect performance.
 # *Related functions*: [css(selector)][1]
-# ### Common uses include:
+# ### Common Uses
 # * Selecting many element types based on attributes rather than tag names
 # * Selecting items without being familiar with XPath
 # 
@@ -41,7 +41,7 @@
 # The function takes one argument - the `%class` to be added.
 # What the function does is takes the current node and appends any existing classes with a space, followed by the class specified.
 # The `add_class` function will therefore not overwrite any existing classes that are present on the node. Contrast this with the `attribute` function, which would obliterate any existing classes.
-# ### Common uses include:
+# ### Common Uses
 # * Adding a class to the body of the page for page-specific styling
 # * Keeping existing classes (and associated styles) while adding your own on top
 # 
@@ -73,7 +73,7 @@
 # @description
 # The `inner_wrap` function takes all the content of the current node and wraps it.
 # The function takes one argument and that is the %tag_name into which you want to wrap the content of the current node.
-# ### Common uses include:
+# ### Common Uses
 # * Wrapping all interior content into an anchor tag
 # * Wrapping a mixture of text and nodes into one tag
 # 
@@ -106,7 +106,7 @@
 # @description
 # The `remove_text_nodes` function takes all text that is a direct child of the current node and removes it.
 # Any non-text nodes (e.g. anchor tags, image tags, etc.) will remain intact.
-# ### Common uses include:
+# ### Common Uses
 # * Removing blank text nodes in between elements
 # 
 # The following example will remove only text nodes from the `div`.
@@ -132,7 +132,7 @@
 # The `attribute` function is used a lot in Tritium. It allows you to modify any attribute on the current node.
 # The function takes two arguments - the first being the attribute `%name` and the second its `%value`.
 # If the attribute already exists on the tag, it will be overwritten by the new `%value` specified.
-# ### Common uses include:
+# ### Common Uses
 # * Overwriting existing classes with your own class
 # * Adding attributes to enable Uranium
 # 
@@ -275,7 +275,7 @@
 # The `attributes` function allows you to set multiple attributes for an element.
 # It is commonly used instead of the `attribute` function, as it leaves open the possibility to add more attributes later on.
 # The function can take an arbitrary number of arguments in the format `name: "value"`
-# ### Common uses include:
+# ### Common Uses
 # * Assigning multiple attributes for Uranium - such as a `data-ur-id` and a `data-ur-component` type.
 # * Adding a class while also setting the value of an input.
 # 
@@ -302,7 +302,7 @@
 # The `text` function opens up the text scope or retrieves the text contained within the current scope.
 # Without any further functions, the `text` function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
 # A further function can be used (such as `set`) to replace anything inside the current node with text.
-# ### Common uses include:
+# ### Common Uses
 # * Grabbing text from unnecessarily-nested nodes
 # * Opening a text scope to then replace a word in a paragraph
 # * Fetching text from a tag to put into a variable
@@ -561,7 +561,7 @@
 # The `wrap` function takes the current node and wraps it in a new tag.
 # The function requires one argument - the new `%tag`. It also takes an arbitrary number of additional arguments specifying attributes and their values.
 # For example, you can specify a class using `class: "my_class"` as a second argument.
-# ### Common uses include:
+# ### Common Uses
 # * Wrapping elements in an `li` tag to form a list
 # * Wrapping an element in an `a` tag to make a link
 # 
@@ -697,7 +697,7 @@
 # * 1 argument: the function parses the document with the specified encoding, then opens it for modification.
 # * 2 arguments: the function parses the document with the `%from_enc` encoding, converts it to the `%to_enc` encoding, then opens it.
 # 
-# ### Common uses include:
+# ### Common Uses
 # * Only a small section of the request being processed is HTML, and that fragment must be parsed without adding an `HTML` tag and a `DOCTYPE`.
 # 
 # The example below will parse a `gbk`-encoded  fragment of HTML, convert it to `utf-8`, then find all `div` nodes within the document.
