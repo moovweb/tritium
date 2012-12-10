@@ -328,7 +328,7 @@ func xml_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []
 		returnValue = "false"
 		return
 	}
-
+	ctx.AddMemoryObject(doc)
 	ns := &Scope{Value: doc}
 
 	for _, child := range ins.Children {
@@ -337,7 +337,7 @@ func xml_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []
 
 	scope.Value = doc.String()
 	returnValue = scope.Value
-	doc.Free()
+	//doc.Free()
 	return
 }
 
@@ -358,6 +358,7 @@ func html_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, ar
 		returnValue = "false"
 		return
 	}
+	ctx.AddMemoryObject(doc)
 	ns := &Scope{Value: doc}
 
 	for _, child := range ins.Children {
@@ -368,7 +369,7 @@ func html_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, ar
 	}
 	scope.Value = doc.String()
 	returnValue = scope.Value
-	doc.Free()
+	//doc.Free()
 	return
 }
 
@@ -389,6 +390,7 @@ func html_fragment_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instru
 		returnValue = "false"
 		return
 	}
+	ctx.AddMemoryObject(fragment.Node.MyDocument())
 	ns := &Scope{Value: fragment}
 	for _, child := range ins.Children {
 		ctx.RunInstruction(ns, child)
@@ -396,7 +398,7 @@ func html_fragment_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instru
 	//output is always utf-8 because the content is internal to Doc.
 	scope.Value = ns.Value.(*xml.DocumentFragment).String()
 	returnValue = scope.Value
-	fragment.Node.MyDocument().Free()
+	//fragment.Node.MyDocument().Free()
 	return
 }
 
@@ -408,7 +410,7 @@ func select_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 		returnValue = "false"
 		return
 	}
-	nodes, err := node.Search(expr)
+	nodes, err := node.SearchByDeadline(expr, ctx.GetDeadline())
 	if err != nil {
 		ctx.Logger().Error("select err: %s", err.Error())
 		returnValue = "false"
@@ -456,8 +458,7 @@ func remove_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 		returnValue = "0"
 		return
 	}
-
-	nodes, err := node.Search(expr)
+	nodes, err := node.SearchByDeadline(expr, ctx.GetDeadline())
 	if err != nil {
 		ctx.Logger().Error("select err: %s", err.Error())
 		returnValue = "false"
@@ -635,7 +636,7 @@ func fetch_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []int
 		return
 	}
 
-	nodes, err := node.Search(expr)
+	nodes, err := node.SearchByDeadline(expr, ctx.GetDeadline())
 	if err == nil && len(nodes) > 0 {
 		node := nodes[0]
 		returnValue = node.String()
@@ -712,7 +713,7 @@ func css_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []inter
 func wrap_text_children_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
 	node := scope.Value.(xml.Node)
-	if textNodes, err := node.Search("./text()"); err == nil {
+	if textNodes, err := node.SearchByDeadline("./text()", ctx.GetDeadline()); err == nil {
 		tagName := args[0].(string)
 		tag := fmt.Sprintf("<%s />", tagName)
 		for index, textNode := range textNodes {
@@ -767,10 +768,11 @@ func guess_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 	cd, err := icu4go.NewCharsetDetector()
 	charsetDetected := ""
 	if err == nil {
+		ctx.AddMemoryObject(cd)
 		charsetDetected = cd.GuessCharset([]byte(input))
 		charsetDetected = strings.ToLower(charsetDetected)
 		ctx.SetEnv("charset_detected", charsetDetected)
-		cd.Free()
+		//cd.Free()
 	}
 	var charsetDetermined string
 	if len(charsetDetected) > 0 {

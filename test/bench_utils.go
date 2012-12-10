@@ -38,7 +38,7 @@ func RunBenchmark(path string, b *testing.B) {
 
 	b.StartTimer()
 	d, _ := time.ParseDuration("1m")
-	
+
 	for i := 0; i < b.N; i++ {
 		eng.Run(spec.Script, nil, spec.Input, spec.Vars, time.Now().Add(d))
 	}

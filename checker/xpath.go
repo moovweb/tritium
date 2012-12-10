@@ -1,12 +1,12 @@
 package checker
 
 import (
-	"gokogiri/xpath"
 	"butler/null"
+	"gokogiri/xpath"
 	tp "tritium/proto"
 )
 
-var xpath_funcs[] string = []string{
+var xpath_funcs []string = []string{
 	"copy_here",
 	"copy_to",
 	"fetch",
@@ -38,4 +38,3 @@ func (result *CheckResult) CheckXpath(script *tp.ScriptObject) {
 		}
 	})
 }
-

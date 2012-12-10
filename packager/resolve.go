@@ -16,6 +16,7 @@ import (
 	linker "tritium/linker"
 	parser "tritium/parser"
 	tp "tritium/proto"
+	whale "tritium/whale"
 )
 
 func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
@@ -27,7 +28,6 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
 	// Re-uses linker's logic to resolve function definitions
 	if null.GetBool(fun.BuiltIn) == false {
 		typeName := null.GetString(fun.ScopeType)
-
 
 		// DON'T DO THE FOLLOWING HERE -- NEED TO RESOLVE INHERITANCE FIRST
 		// // Make sure we're not replacing an existing function bacause it's (currently) a security risk
@@ -43,7 +43,6 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
 		// // 	println("\t", name, sib)
 		// // }
 		// /////////////////////////////////////////////////////////////////////////////
-
 
 		if len(typeName) != 0 {
 			// When I pass in functions from the inheritance resolver, they're typeId is already set
@@ -202,16 +201,17 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 }
 
 func ReadPackageDefinitions(pkg *tp.Package, location string) {
-
 	//pkg.Println(" -- reading definitions")
 	_, err := ioutil.ReadFile(location)
-//()("READING DEFINITIONS:", location)
+	//()("READING DEFINITIONS:", location)
 
 	if err != nil {
 		//pkg.Log.Info("\t -- no user defined functions found")
+		msg := fmt.Sprintf("unable to open function definition file: %s", location)
+		// println(msg)
+		panic(msg)
 		return
 	}
-
 	definitions := parser.ParseFile(location)
 
 	// Create a map of pre-packaged function signatures
@@ -219,14 +219,13 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 	for _, f := range pkg.Functions {
 		var sig string
 		baseSig := f.Stub(pkg)
-		if (baseSig == "name,Text" ||
-		    baseSig == "text") {
+		if baseSig == "name,Text" ||
+			baseSig == "text" {
 			sig = fmt.Sprintf("%s.%s", f.ScopeTypeString(pkg), f.Stub(pkg))
 		} else {
 			sig = baseSig
 		}
 		prepackaged[sig] = true
-		// println(sig)
 	}
 	// println("*****************")
 	// println("*****************")
@@ -234,29 +233,43 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 	// println()
 
 	for _, function := range definitions.Functions {
-		//pkg.Log.Info("\t -- function: %v", function)
-		resolveDefinition(pkg, function)
+		if function.GetName() == "@import" { // check if it's an import stub first ...
+			importPath := function.GetDescription()
+			// Verify the existence of the imported file from here, so that we can
+			// report the name of the file that contains the import statement.
+			importExists, existsErr := exists(importPath)
+			if !importExists || (existsErr != nil) {
+				errURL := "http://help.moovweb.com/entries/22335641-importing-non-existent-files-in-functions-main-ts"
+				msg := fmt.Sprintf("\n********\nin file %s:\nattempting to import nonexistent file %s\nPlease consult %s for more information about this error.\n********\n", location, importPath, errURL)
+				panic(msg)
+			}
+			ReadPackageDefinitions(pkg, importPath)
+		} else { // otherwise if it's not an import stub ...
+			//pkg.Log.Info("\t -- function: %v", function)
+			resolveDefinition(pkg, function)
 
-		// After resolving a user-defined function, see if its fully resolved signature
-		// is the same as the signature of a prepackaged function. If so, throw an error.
-		var newSig string
-		newBaseSig := function.Stub(pkg)
-		if (newBaseSig == "name,Text" ||
-		    newBaseSig == "text") {
-			newSig = fmt.Sprintf("%s.%s", function.ScopeTypeString(pkg), function.Stub(pkg))
-		} else {
-			newSig = newBaseSig
-		}
-		// present := false
-		_, present := prepackaged[newSig]
-		if present {
-			msg := fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1) + ")")
-			println(msg)
-			panic(msg)
-		}
+			// After resolving a user-defined function, see if its fully resolved signature
+			// is the same as the signature of a prepackaged function. If so, throw an error.
+			var newSig string
+			newBaseSig := function.Stub(pkg)
+			if newBaseSig == "name,Text" ||
+				newBaseSig == "text" {
+				newSig = fmt.Sprintf("%s.%s", function.ScopeTypeString(pkg), function.Stub(pkg))
+			} else {
+				newSig = newBaseSig
+			}
+			// present := false
+			_, present := prepackaged[newSig]
+			if present {
+				msg := fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1)+")")
+				println(msg)
+				panic(msg)
+			}
 
-		pkg.Functions = append(pkg.Functions, function)
+			pkg.Functions = append(pkg.Functions, function)
+		}
 	}
+
 }
 
 func (pkg *Package) Marshal() []byte {
@@ -285,7 +298,7 @@ func (pkg *Package) loadPackageDependency(name string) *Error {
 	if loaded {
 		return nil
 	}
-//	println("LOADING PKG DEPENDENCY", name)
+	//	println("LOADING PKG DEPENDENCY", name)
 	pkg.Load(name)
 
 	return nil
@@ -303,7 +316,7 @@ func (pkg *Package) loadedDependency(name string) bool {
 
 // Not fully functional. Dang it.
 func ReadPackageInfoFile(location string) (info *PackageInfo, error *string) {
-//	println("READING PACKAGE INFO FILE", location + "/package.yml")
+	//	println("READING PACKAGE INFO FILE", location + "/package.yml")
 	packageInfo := &PackageInfo{}
 	infoFile, err := ioutil.ReadFile(location + "/package.yml")
 	if err != nil {
@@ -316,7 +329,7 @@ func ReadPackageInfoFile(location string) (info *PackageInfo, error *string) {
 }
 
 func (pkg *Package) readHeaderFile(location string) {
-//	println("READING FUNCTION HEADER FILE")
+	//	println("READING FUNCTION HEADER FILE")
 	// TODO : plug in new go parser to do this
 	input_file := filepath.Join(location, "headers.tf")
 
@@ -326,8 +339,15 @@ func (pkg *Package) readHeaderFile(location string) {
 	}
 
 	stubs := parser.ParseFile(input_file)
-
 	for _, function := range stubs.Functions {
+		// Verify that signatures for primitives refer to things that actually exist
+		stubStr := strings.Replace(function.Stub(pkg.Package), ",", ".", -1)
+		if whale.LookupBuiltIn(stubStr) == nil {
+			// TODO: figure out why the panic string is suppressed so that we can remove the println
+			// println("in " + input_file + " -- attempt to provide signature for nonexistent built-in " + stubStr)
+			panic("in " + input_file + " -- attempt to provide signature for nonexistent built-in " + stubStr)
+		}
+
 		pkg.resolveHeader(function)
 
 		function.BuiltIn = proto.Bool(true)
@@ -377,4 +397,17 @@ func (pkg *Package) CollectFunctionDocs() {
 			}
 		}
 	}
+}
+
+// exists returns whether the given file or directory exists or not
+// (grabbed off of Stack Overflow)
+func exists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
 }

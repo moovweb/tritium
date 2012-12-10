@@ -1,14 +1,14 @@
 package spec
 
 import (
-	tp "tritium/proto"
+	. "fmt"
 	yaml "goyaml"
 	. "io/ioutil"
 	"log"
 	. "path/filepath"
-	"tritium/linker"
-	. "fmt"
 	"strings"
+	"tritium/linker"
+	tp "tritium/proto"
 	"tritium/transform"
 )
 

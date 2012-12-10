@@ -1,9 +1,9 @@
 package parser
 
 import (
-	tp "tritium/proto"
 	"io/ioutil"
 	"path/filepath"
+	tp "tritium/proto"
 )
 
 func ParseFile(file string) *tp.ScriptObject {

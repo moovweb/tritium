@@ -1,14 +1,14 @@
 package parser
 
 import (
-	tp "tritium/proto"
 	"code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"strconv"
 	"strings"
-	. "tritium/tokenizer" // was meant to be in this package
+	tp "tritium/proto"
+	. "tritium/parser/tokenizer"
 )
 
 type Parser struct {
@@ -108,6 +108,7 @@ func (p *Parser) Parse() *tp.ScriptObject {
 		case FUNC:
 			defs = append(defs, p.definition())
 
+			// Is this still necessary, now that new doc tools are being developed?
 			if len(stmts) > 0 {
 				previousStatement := stmts[len(stmts)-1]
 				if *previousStatement.Type == tp.Instruction_TEXT {
@@ -120,7 +121,18 @@ func (p *Parser) Parse() *tp.ScriptObject {
 				}
 			}
 		default:
-			stmts = append(stmts, p.statement())
+			stmt := p.statement()
+			stmts = append(stmts, stmt)
+			// need to intersperse imports with definitions
+			if tp.Instruction_InstructionType_name[int32(stmt.GetType())] == "IMPORT" {
+				// Make a special function stub that represents the import.
+				// Need to do this because we can't mix definitions and instructions in
+				// the same array.
+				imp := new(tp.Function)
+				imp.Name = proto.String("@import")
+				imp.Description = proto.String(stmt.GetValue())
+				defs = append(defs, imp)
+			}
 		}
 	}
 
@@ -506,7 +518,7 @@ func (p *Parser) definition() *tp.Function {
 		p.error("definition for " + funcName + " is missing a body")
 	}
 	funcBody := &tp.Instruction{
-		Type:     tp.Instruction_BLOCK.Enum(),
+		Type: tp.Instruction_BLOCK.Enum(),
 		// Children: p.block(),
 		// use the wrapper to get a better error message
 		Children: p.function_body(*node.Name),

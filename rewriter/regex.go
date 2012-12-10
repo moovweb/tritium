@@ -7,10 +7,10 @@ import "fmt"
 import "sync"
 
 type RegexRewriter struct {
-	original []string
+	original  []string
 	rewritten []string
-	regex *rubex.Regexp
-	mu sync.Mutex
+	regex     *rubex.Regexp
+	mu        sync.Mutex
 }
 
 func NewRegexRewriter() *RegexRewriter {
@@ -26,7 +26,7 @@ func (sr *RegexRewriter) AddRewriteRule(original string, rewritten string) error
 		sr.AddRewriteRule("https:"+original, rewritten)
 	} else if strings.HasPrefix(original, "http:") || strings.HasPrefix(original, "https:") {
 		sr.original = append(sr.original, original)
-		sr.rewritten = append(sr.rewritten, rewritten)	
+		sr.rewritten = append(sr.rewritten, rewritten)
 	} else {
 		return errors.New("invalid url patten: " + original)
 	}
@@ -35,7 +35,7 @@ func (sr *RegexRewriter) AddRewriteRule(original string, rewritten string) error
 
 func (sr *RegexRewriter) Done() error {
 	patterns := make([]string, 0, initSize)
-	for _, cand := range(sr.original) {
+	for _, cand := range sr.original {
 		patterns = append(patterns, fmt.Sprintf("(%s)", cand))
 	}
 	sr.regex = rubex.MustCompile(strings.Join(patterns, "|"))
@@ -49,13 +49,13 @@ func (sr *RegexRewriter) RewriteUrl(url string) (rewritten string, err error) {
 	_ = sr.regex.FindStringSubmatchIndex(url)
 	return sr.rewritten[0], nil
 	/*
-	submatch := match[2:]
-	for index := 0; index < len(submatch) - 1; index += 2 {
-		if submatch[index] == 0 && submatch[index + 1] > 0 {
-			return sr.rewritten[index/2], nil
+		submatch := match[2:]
+		for index := 0; index < len(submatch) - 1; index += 2 {
+			if submatch[index] == 0 && submatch[index + 1] > 0 {
+				return sr.rewritten[index/2], nil
+			}
 		}
-	}
-	return "", errors.New("no matching url rewriting rule")
+		return "", errors.New("no matching url rewriting rule")
 	*/
 }
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"strconv"
 )
 
 import (
@@ -28,13 +29,14 @@ type WhaleContext struct {
 	Types                    []string
 	Exports                  [][]string
 	Logs                     []string
+	ImportedFiles            []string
 	Env                      map[string]string
 	MatchStack               []string
 	MatchShouldContinueStack []bool
 	Yields                   []*YieldBlock
 	*Whale
 	*tp.Transform
-	Rrules                   []*tp.RewriteRule
+	Rrules []*tp.RewriteRule
 
 	// Debug info
 	Filename          string
@@ -45,9 +47,11 @@ type WhaleContext struct {
 	HeaderContentType *rubex.Regexp
 
 	Deadline time.Time
+	Mobjects []MemoryObject
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
+const defaultMobjects = 4
 const TimeoutError = "EngineTimeout"
 
 func NewEngine(logger *golog.Logger) *Whale {
@@ -79,7 +83,10 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, r
 		InnerReplacer:            rubex.MustCompile(`[\\$](\d)`),
 		HeaderContentType:        rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
 		Deadline:                 deadline,
+		Mobjects:                 make([]MemoryObject, 0, defaultMobjects),
 	}
+	ctx.AddMemoryObject(ctx.InnerReplacer)
+	ctx.AddMemoryObject(ctx.HeaderContentType)
 	return
 }
 
@@ -110,6 +117,7 @@ func (eng *Whale) Free() {
 
 func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
 	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline)
+	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
 	scope := &Scope{Value: input.(string)}
@@ -120,6 +128,14 @@ func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input i
 	exports = ctx.Exports
 	logs = ctx.Logs
 	return
+}
+
+func (ctx *WhaleContext) Free() {
+    for _, o := range ctx.Mobjects {
+		if o != nil {
+			o.Free()
+		}
+	}
 }
 
 func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
@@ -139,7 +155,7 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 					errString = errString + "\n" + ins.Type.String() + " " + null.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
 				}
 				errString = errString + ctx.FileAndLine(ins) + "\n"
-		  }
+			}
 			panic(errString)
 		}
 	}()
@@ -183,9 +199,13 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 		obj := ctx.Objects[int(null.GetInt32(ins.ObjectId))]
 		curFile := ctx.Filename
 		ctx.Filename = null.GetString(obj.Name)
+		start := time.Now()
+		index := ctx.AddLog("__IMPORT__FILE__:" + ctx.Filename)
 		for _, child := range obj.Root.Children {
 			ctx.RunInstruction(scope, child)
 		}
+		timeSpent := time.Since(start).Seconds()
+		ctx.UpdateLog(index, "__IMPORT__FILE__:" + strconv.Itoa(int(timeSpent*1000)) + ":" + ctx.Filename)
 		ctx.Filename = curFile
 	case tp.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(null.GetInt32(ins.FunctionId))]
@@ -314,6 +334,7 @@ func (ctx *WhaleContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 		var err error
 		r, err = rubex.NewRegexp(pattern, mode)
 		if err == nil {
+			ctx.AddMemoryObject(r)
 			ctx.RegexpCache[sig] = r
 		}
 	}
@@ -325,6 +346,7 @@ func (ctx *WhaleContext) GetXpathExpr(p string) (e *xpath.Expression) {
 	if e == nil {
 		e = xpath.Compile(p)
 		if e != nil {
+			ctx.AddMemoryObject(e)
 			ctx.XPathCache[p] = e
 		} else {
 			ctx.AddLog("Invalid XPath used: " + p)
@@ -337,9 +359,18 @@ func (ctx *WhaleContext) AddExport(exports []string) {
 	ctx.Exports = append(ctx.Exports, exports)
 }
 
-func (ctx *WhaleContext) AddLog(log string) {
+func (ctx *WhaleContext) AddLog(log string) int {
 	//ctx.Log.Info("TRITIUM: " + log)
+	index := len(ctx.Logs)
 	ctx.Logs = append(ctx.Logs, log)
+	return index
+}
+
+func (ctx *WhaleContext) UpdateLog(index int, log string) {
+	//ctx.Log.Info("TRITIUM: " + log)
+	if index >= 0 && index < len(ctx.Logs) {
+		ctx.Logs[index] = log
+	}
 }
 
 func (ctx *WhaleContext) SetEnv(key, val string) {
@@ -417,4 +448,10 @@ func (ctx *WhaleContext) SetShouldContinue(cont bool) {
 }
 func (ctx *WhaleContext) GetRewriteRules() []*tp.RewriteRule {
 	return ctx.Rrules
+}
+func (ctx *WhaleContext) GetDeadline() *time.Time {
+	return &(ctx.Deadline)
+}
+func (ctx *WhaleContext) AddMemoryObject(o MemoryObject) {
+	ctx.Mobjects = append(ctx.Mobjects, o)
 }

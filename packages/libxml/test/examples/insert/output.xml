@@ -1,0 +1,22 @@
+<div class="insert">
+  <span></span>
+<a>one</a>
+</div>
+<div class="insert_at">
+<a>two</a>
+  <span></span>
+</div>
+<div class="insert_bottom">
+  <span></span>
+<a>three</a>
+</div>
+<div class="insert_top">
+<a>four</a>
+  <span></span>
+</div>
+<div class="insert_before_span">
+  <a>five</a><span></span>
+</div>
+<div class="insert_after_span">
+  <span></span><a>six</a>
+</div>

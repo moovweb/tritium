@@ -7,25 +7,24 @@ import (
 )
 
 import (
-	tp "tritium/proto"
 	yaml "goyaml"
+	tp "tritium/proto"
 )
 
-
 type TritiumTest_Hash struct {
-	Key              string
-	Value            string
+	Key   string
+	Value string
 }
 
 type TritiumTest struct {
-	Script           string
-	Input            string
-	Output           string
-	EnvProto         []*TritiumTest_Hash
-	ExportsProto     []*TritiumTest_Hash
-	Logs             []string
-	Transformer      *tp.Transform
-	Rrules           []*tp.RewriteRule
+	Script       string
+	Input        string
+	Output       string
+	EnvProto     []*TritiumTest_Hash
+	ExportsProto []*TritiumTest_Hash
+	Logs         []string
+	Transformer  *tp.Transform
+	Rrules       []*tp.RewriteRule
 }
 
 func (test *TritiumTest) Env() (env map[string]string) {

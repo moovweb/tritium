@@ -3,6 +3,7 @@ package main
 import "os"
 import "fmt"
 import "tritium/packager"
+
 //import . "tritium/linker"
 import s "tritium/spec"
 import "tritium/doc"

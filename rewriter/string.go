@@ -4,11 +4,12 @@ import "strings"
 import "errors"
 
 type StringRewriter struct {
-	original []string
+	original  []string
 	rewritten []string
 }
 
 const initSize = 4
+
 func NewStringRewriter() *StringRewriter {
 	sr := &StringRewriter{}
 	sr.original = make([]string, 0, initSize)
@@ -22,7 +23,7 @@ func (sr *StringRewriter) AddRewriteRule(original string, rewritten string) erro
 		sr.AddRewriteRule("https:"+original, rewritten)
 	} else if strings.HasPrefix(original, "http:") || strings.HasPrefix(original, "https:") {
 		sr.original = append(sr.original, original)
-		sr.rewritten = append(sr.rewritten, rewritten)	
+		sr.rewritten = append(sr.rewritten, rewritten)
 	} else {
 		return errors.New("invalid url patten: " + original)
 	}
@@ -34,7 +35,7 @@ func (sr *StringRewriter) Done() error {
 }
 
 func (sr *StringRewriter) RewriteUrl(url string) (rewritten string, err error) {
-	for index, cand := range(sr.original) {
+	for index, cand := range sr.original {
 		if strings.HasPrefix(url, cand) {
 			prefixLen := len(cand)
 			return sr.rewritten[index] + url[prefixLen:], nil
@@ -44,7 +45,7 @@ func (sr *StringRewriter) RewriteUrl(url string) (rewritten string, err error) {
 }
 
 func (sr *StringRewriter) RevertRewriteUrl(rewritten string) (url string, err error) {
-	for index, cand := range(sr.rewritten) {
+	for index, cand := range sr.rewritten {
 		if strings.HasPrefix(rewritten, cand) {
 			prefixLen := len(cand)
 			return sr.original[index] + rewritten[prefixLen:], nil

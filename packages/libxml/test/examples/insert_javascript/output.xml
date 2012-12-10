@@ -1,0 +1,34 @@
+<div class="insert">
+  <span></span>
+<script type="text/javascript">//<![CDATA[
+alert('Boo')
+//]]></script>
+</div>
+<div class="insert_at">
+<script type="text/javascript">//<![CDATA[
+alert('Boo')
+//]]></script>
+  <span></span>
+</div>
+<div class="insert_bottom">
+  <span></span>
+<script type="text/javascript">//<![CDATA[
+alert('Boo')
+//]]></script>
+</div>
+<div class="insert_top">
+<script type="text/javascript">//<![CDATA[
+alert('Boo')
+//]]></script>
+  <span></span>
+</div>
+<div class="insert_before_span">
+  <script type="text/javascript">//<![CDATA[
+alert('Boo')
+//]]></script><span></span>
+</div>
+<div class="insert_after_span">
+  <span></span><script type="text/javascript">//<![CDATA[
+alert('Boo')
+//]]></script>
+</div>
