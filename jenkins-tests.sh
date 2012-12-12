@@ -17,6 +17,7 @@ fi
 #
 source $HOME/gobuilds/tools/jenkins-env.sh
 [ ! -d $MOOV_HOME ] && mkdir -p $MOOV_HOME
+[ ! -d $TEST_HOME ] && mkdir -p $TEST_HOME
 
 
 # Apollo returns the versions in json format.  We pass them through
@@ -69,6 +70,11 @@ git clone git@github.com:moovweb/ambrosia
 [ $? != 0 ] && exit 1
 cd ambrosia
 
+# And copy ambrosia over to our testing sandbox (where the tester will run from)
+rm -rf $TEST_HOME/ambrosia
+git clone git@github.com:moovweb/ambrosia
+[ $? != 0 ] && exit 1
+
 
 export GOPATH=$MOOV_HOME
 
@@ -113,8 +119,9 @@ export GOPATH=$MOOV_HOME
 		# More debug info
 		git describe --tags
 
-		# Start testing
-		go test -v ./test/$MIXER_NAME
+		# Start testing, run the test from the master checkout of ambrosia, but use
+		# the test data from the version checked out.
+		go test $TEST_HOME/ambrosia/test -test.v --mixer=$MIXER_NAME --test-data=$MOOV_HOME/src/ambrosia/transform
 		if [ $? != 0 ]; then
 			echo "Test failures found!"
 			fail="$fail\nTest failures found in $MIXER_NAME-${version_list[$i]}"
