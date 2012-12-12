@@ -113,8 +113,9 @@ export GOPATH=$MOOV_HOME
 		# More debug info
 		git describe --tags
 
-		# Start testing
-		go test -v ./test/$MIXER_NAME
+		# Start testing, run the test from the master checkout of ambrosia, but use
+		# the test data from the version checked out.
+		go test $WORKSPACE/test -test.v --mixer=$MIXER_NAME --test-data=$MOOV_HOME/src/ambrosia/transform
 		if [ $? != 0 ]; then
 			echo "Test failures found!"
 			fail="$fail\nTest failures found in $MIXER_NAME-${version_list[$i]}"
