@@ -658,4 +658,4 @@
 @func Text.rewrite_link(Text %secure, Text %catchall) Text
 
 " Save a snapshot of the context "
-@func snap_shot(Text %name) Text Text
+@func snapshot(Text %name) Text Text

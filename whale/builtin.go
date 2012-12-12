@@ -89,7 +89,7 @@ func init() {
 	builtInFunctions["rewrite_cookie_domain.Text.Text.Text"] = rewrite_cookie_domain_Text_Text_Text
 	//TODO rewrite_link should be deprecated soon
 	builtInFunctions["rewrite_link.Text.Text"] = rewrite_to_proxy_Text_Text
-	builtInFunctions["snap_shot.Text"] = snap_shot_Text
+	builtInFunctions["snapshot.Text"] = snapshot_Text
 }
 
 func LookupBuiltIn(name string) builtInFunc {
