@@ -56,6 +56,7 @@ type EngineContext interface {
 	UsePackage(*tp.Package)
 	Logger() *golog.Logger
 	Debugger() steno.Debugger
+	RequestId() string
 
 	PushMatchStack(string)
 	PopMatchStack() string
