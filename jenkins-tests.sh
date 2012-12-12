@@ -122,7 +122,10 @@ export GOPATH=$MOOV_HOME
 
 		# Start testing, run the test from the master checkout of ambrosia, but use
 		# the test data from the version checked out.
-		go test $TEST_HOME/ambrosia/test -test.v --mixer=$MIXER_NAME --test-data=$MOOV_HOME/src/ambrosia/transform
+
+		# Need relative path to use go test...
+		REL_TEST_HOME=$(python -c "import os.path; print os.path.relpath('$TEST_HOME', '`pwd`')")
+		go test $REL_TEST_HOME/ambrosia/test -test.v --mixer=$MIXER_NAME --test-data=$MOOV_HOME/src/ambrosia/transform
 		if [ $? != 0 ]; then
 			echo "Test failures found!"
 			fail="$fail\nTest failures found in $MIXER_NAME-${version_list[$i]}"
