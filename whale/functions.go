@@ -911,17 +911,17 @@ func rewrite_cookie_domain_Text_Text_Text(ctx EngineContext, scope *Scope, ins *
 func snap_shot_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	name := args[0].(string)
 	location := ctx.FileAndLine(ins)
-	
+	reqId := ctx.RequestId()
 	if strVal, ok := scope.Value.(string); ok {
-		ctx.Debugger().LogSnapshot(name, location, strVal)
+		ctx.Debugger().LogSnapshot(reqId, name, location, strVal)
 	} else if node, ok := scope.Value.(xml.Node); ok {
-		ctx.Debugger().LogSnapshot(name, location, node.MyDocument().String())
+		ctx.Debugger().LogSnapshot(reqId, name, location, node.MyDocument().String())
 	} else if doc, ok := scope.Value.(xml.Document); ok {
-		ctx.Debugger().LogSnapshot(name, location, doc.String())
+		ctx.Debugger().LogSnapshot(reqId, name, location, doc.String())
 	} else if docFrag, ok := scope.Value.(*xml.DocumentFragment); ok {
-		ctx.Debugger().LogSnapshot(name, location, docFrag.String())
+		ctx.Debugger().LogSnapshot(reqId, name, location, docFrag.String())
 	} else if regex, ok := scope.Value.(*rubex.Regexp); ok {
-		ctx.Debugger().LogSnapshot(name, location, regex.String())
+		ctx.Debugger().LogSnapshot(reqId, name, location, regex.String())
 	}
 	return
 }
