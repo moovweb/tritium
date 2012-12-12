@@ -2,7 +2,7 @@ package checker
 
 import (
 	"io/ioutil"
-	"path/filepath"
+	//"path/filepath"
 	"strings"
 	"time"
 )
@@ -143,7 +143,7 @@ func (result *CheckResult) run_tests(test_type string, engine *whale.Whale, tran
 	}
 	return all_passed
 }
-
+/*
 func (result *CheckResult) CheckRewriters(req_tsf *proto.Transform, post_tsf *proto.Transform, rrules []*proto.RewriteRule, projectPath string, logger *golog.Logger) bool {
 	test_path := filepath.Join(projectPath, TEST_FILE)
 	test_cases, err := read_test_cases(test_path)
@@ -158,3 +158,4 @@ func (result *CheckResult) CheckRewriters(req_tsf *proto.Transform, post_tsf *pr
 
 	return passed_host && passed_link && passed_cookie
 }
+*/
