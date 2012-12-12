@@ -16,9 +16,7 @@ fi
 # Source jenkins-env to get some common vars setup
 #
 source $HOME/gobuilds/tools/jenkins-env.sh
-export TEST_HOME=$MOOV_HOME/ambrosia
 [ ! -d $MOOV_HOME ] && mkdir -p $MOOV_HOME
-[ ! -d $TEST_HOME ] && mkdir -p $TEST_HOME
 
 
 # Apollo returns the versions in json format.  We pass them through
@@ -63,6 +61,13 @@ export GOHATTAN_DATA=$WORKSPACE/.moovweb
 [ ! -d "$GOHATTAN_DATA/mixers" ] && mkdir -p $GOHATTAN_DATA/mixers
 
 
+# And copy ambrosia over to our testing sandbox (where the tester will run from)
+rm -rf $MOOV_HOME/ambrosia
+cd $MOOV_HOME
+git clone git@github.com:moovweb/ambrosia
+[ $? != 0 ] && exit 1
+cd $WORKSPACE
+
 # We also have to copy our current directory into moovweb, otherwise go doesn't
 # know where the "ambrosia/transform" import is....
 rm -rf $MOOV_HOME/src/ambrosia
@@ -70,11 +75,6 @@ cd $MOOV_HOME/src
 git clone git@github.com:moovweb/ambrosia
 [ $? != 0 ] && exit 1
 cd ambrosia
-
-# And copy ambrosia over to our testing sandbox (where the tester will run from)
-rm -rf $TEST_HOME/ambrosia
-git clone git@github.com:moovweb/ambrosia
-[ $? != 0 ] && exit 1
 
 
 export GOPATH=$MOOV_HOME
@@ -124,8 +124,8 @@ export GOPATH=$MOOV_HOME
 		# the test data from the version checked out.
 
 		# Need relative path to use go test...
-		REL_TEST_HOME=$(python -c "import os.path; print os.path.relpath('$TEST_HOME', '`pwd`')")
-		go test $REL_TEST_HOME/ambrosia/test -test.v --mixer=$MIXER_NAME --test-data=$MOOV_HOME/src/ambrosia/transform
+		TEST_DIR=$(python -c "import os.path; print os.path.relpath('$MOOV_HOME/ambrosia/test', '`pwd`')")
+		go test $TEST_DIR -test.v --mixer=$MIXER_NAME --test-data=$MOOV_HOME/src/ambrosia/transform
 		if [ $? != 0 ]; then
 			echo "Test failures found!"
 			fail="$fail\nTest failures found in $MIXER_NAME-${version_list[$i]}"
