@@ -17,6 +17,7 @@ import (
 	"tritium/packager"
 	tp "tritium/proto"
 	"tritium/whale"
+	"steno/dummy"
 )
 
 func All(command string, directory string, options ...string) {
@@ -29,12 +30,14 @@ func All(command string, directory string, options ...string) {
 	}
 
 	logger := golog.NewLogger("tritium")
+	debugger := &dummy.DummyDebugger{}
+	
 	logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO, true))
 	var eng tritium.Engine
 	if command == "test" {
-		eng = whale.NewEngine(logger)
+		eng = whale.NewEngine(logger, debugger)
 	} else if command == "debug" {
-		eng = lamprey.NewEngine(logger)
+		eng = lamprey.NewEngine(logger, debugger)
 	}
 
 	var pkg *tp.Package

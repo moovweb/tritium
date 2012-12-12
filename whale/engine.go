@@ -7,6 +7,7 @@ import (
 	"golog"
 	"rubex"
 	tp "tritium/proto"
+	"steno"
 )
 
 type Position int
@@ -54,6 +55,7 @@ type EngineContext interface {
 	FileAndLine(*tp.Instruction) string
 	UsePackage(*tp.Package)
 	Logger() *golog.Logger
+	Debugger() steno.Debugger
 
 	PushMatchStack(string)
 	PopMatchStack() string

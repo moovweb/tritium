@@ -11,6 +11,7 @@ import (
 	"golog"
 	tp "tritium/proto"
 	"tritium/whale"
+	"steno"
 )
 
 type Lamprey struct {
@@ -23,9 +24,9 @@ type Ctx struct {
 	level int
 }
 
-func NewEngine(logger *golog.Logger) *Lamprey {
+func NewEngine(logger *golog.Logger, debugger steno.Debugger) *Lamprey {
 	e := &Lamprey{}
-	e.Whale = whale.NewEngine(logger)
+	e.Whale = whale.NewEngine(logger, debugger)
 	return e
 }
 
