@@ -910,16 +910,18 @@ func rewrite_cookie_domain_Text_Text_Text(ctx EngineContext, scope *Scope, ins *
 
 func snap_shot_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	name := args[0].(string)
+	location := ctx.FileAndLine(ins)
+	
 	if strVal, ok := scope.Value.(string); ok {
-		ctx.Debugger().LogSnapshot(name, strVal)
+		ctx.Debugger().LogSnapshot(name, location, strVal)
 	} else if node, ok := scope.Value.(xml.Node); ok {
-		ctx.Debugger().LogSnapshot(name, node.MyDocument().String())
+		ctx.Debugger().LogSnapshot(name, location, node.MyDocument().String())
 	} else if doc, ok := scope.Value.(xml.Document); ok {
-		ctx.Debugger().LogSnapshot(name, doc.String())
+		ctx.Debugger().LogSnapshot(name, location, doc.String())
 	} else if docFrag, ok := scope.Value.(*xml.DocumentFragment); ok {
-		ctx.Debugger().LogSnapshot(name, docFrag.String())
+		ctx.Debugger().LogSnapshot(name, location, docFrag.String())
 	} else if regex, ok := scope.Value.(*rubex.Regexp); ok {
-		ctx.Debugger().LogSnapshot(name, regex.String())
+		ctx.Debugger().LogSnapshot(name, location, regex.String())
 	}
 	return
 }
