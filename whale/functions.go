@@ -907,3 +907,19 @@ func rewrite_cookie_domain_Text_Text_Text(ctx EngineContext, scope *Scope, ins *
 	}
 	return
 }
+
+func snap_shot_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	name := args[0].(string)
+	if strVal, ok := scope.Value.(string); ok {
+		ctx.Debugger().LogSnapshot(name, strVal)
+	} else if node, ok := scope.Value.(xml.Node); ok {
+		ctx.Debugger().LogSnapshot(name, node.MyDocument().String())
+	} else if doc, ok := scope.Value.(xml.Document); ok {
+		ctx.Debugger().LogSnapshot(name, doc.String())
+	} else if docFrag, ok := scope.Value.(*xml.DocumentFragment); ok {
+		ctx.Debugger().LogSnapshot(name, docFrag.String())
+	} else if regex, ok := scope.Value.(*rubex.Regexp); ok {
+		ctx.Debugger().LogSnapshot(name, regex.String())
+	}
+	return
+}
