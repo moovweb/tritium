@@ -16,6 +16,7 @@ fi
 # Source jenkins-env to get some common vars setup
 #
 source $HOME/gobuilds/tools/jenkins-env.sh
+export TEST_HOME=$MOOV_HOME/ambrosia
 [ ! -d $MOOV_HOME ] && mkdir -p $MOOV_HOME
 [ ! -d $TEST_HOME ] && mkdir -p $TEST_HOME
 
