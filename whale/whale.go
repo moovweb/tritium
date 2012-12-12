@@ -468,3 +468,7 @@ func (ctx *WhaleContext) GetMessagePath() (messagePath string) {
 	messagePath = ctx.MessagePath
 	return
 }
+func (ctx *WhaleContext) GetFileName() (fname string) {
+	fname = ctx.Filename
+	return
+}

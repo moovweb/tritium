@@ -13,6 +13,7 @@ import (
 	"time"
 	tp "tritium/proto"
 	"unicode/utf8"
+	"butler/null"
 )
 
 //The string value of me
@@ -910,18 +911,9 @@ func rewrite_cookie_domain_Text_Text_Text(ctx EngineContext, scope *Scope, ins *
 
 func snapshot_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	name := args[0].(string)
-	location := ctx.FileAndLine(ins)
+	lineNum := int(null.GetInt32(ins.LineNumber))
 	messagePath := ctx.GetMessagePath()
-	if strVal, ok := scope.Value.(string); ok {
-		ctx.Debugger().LogSnapshot(messagePath, name, location, strVal)
-	} else if node, ok := scope.Value.(xml.Node); ok {
-		ctx.Debugger().LogSnapshot(messagePath, name, location, node.MyDocument().String())
-	} else if doc, ok := scope.Value.(xml.Document); ok {
-		ctx.Debugger().LogSnapshot(messagePath, name, location, doc.String())
-	} else if docFrag, ok := scope.Value.(*xml.DocumentFragment); ok {
-		ctx.Debugger().LogSnapshot(messagePath, name, location, docFrag.String())
-	} else if regex, ok := scope.Value.(*rubex.Regexp); ok {
-		ctx.Debugger().LogSnapshot(messagePath, name, location, regex.String())
-	}
+	fname := ctx.GetFileName()
+	ctx.Debugger().LogSnapshot(messagePath, name, fname, lineNum, scope.Value)
 	return
 }

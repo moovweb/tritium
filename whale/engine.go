@@ -57,6 +57,7 @@ type EngineContext interface {
 	Logger() *golog.Logger
 	Debugger() steno.Debugger
 	GetMessagePath() string
+	GetFileName() string
 
 	PushMatchStack(string)
 	PopMatchStack() string
