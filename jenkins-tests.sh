@@ -52,8 +52,8 @@ echo -e "\n\n\nTesting $MIXER_NAME versions:  $VERSIONS\n\n\n"
 [ ! -d $MOOV_HOME/clibs ] && ln -s -f $CLIBS_HOME $MOOV_HOME/clibs
 export LD_LIBRARY_PATH=$MOOV_HOME/clibs/lib
 
-# Build everything, it'll clone all our required packages.
-python -u $TOOLS_DIR/build.py manhattan/targets/powermoov $GIT_BRANCH
+# Build the ambrosia test folder to pull in all its dependencies
+python -u $TOOLS_DIR/build.py ambrosia/test $GIT_BRANCH
 [ $? != 0 ] && exit 1
 
 # Create our data directory where all our stuff we'll be generated in.
