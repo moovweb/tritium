@@ -13,6 +13,7 @@ import (
 	"golog"
 	"rubex"
 	tp "tritium/proto"
+	"steno"
 )
 
 type Whale struct {
@@ -22,6 +23,7 @@ type Whale struct {
 	//OutputBuffer      []byte
 	//InnerReplacer     *rubex.Regexp
 	//HeaderContentType *rubex.Regexp
+	Debug steno.Debugger
 }
 
 type WhaleContext struct {
@@ -48,17 +50,19 @@ type WhaleContext struct {
 
 	Deadline time.Time
 	Mobjects []MemoryObject
+	MessagePath string
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
 const defaultMobjects = 4
 const TimeoutError = "EngineTimeout"
 
-func NewEngine(logger *golog.Logger) *Whale {
+func NewEngine(logger *golog.Logger, debugger steno.Debugger) *Whale {
 	e := &Whale{
 		//RegexpCache:       make(map[string]*rubex.Regexp),
 		//XPathCache:        make(map[string]*xpath.Expression),
 		Log: logger,
+		Debug: debugger,
 		//OutputBuffer:      make([]byte, OutputBufferSize),
 		//InnerReplacer:     rubex.MustCompile(`[\\$](\d)`),
 		//HeaderContentType: rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
@@ -66,7 +70,7 @@ func NewEngine(logger *golog.Logger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, rrules []*tp.RewriteRule, deadline time.Time) (ctx *WhaleContext) {
+func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, rrules []*tp.RewriteRule, deadline time.Time, messagePath string) (ctx *WhaleContext) {
 	ctx = &WhaleContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
@@ -84,6 +88,7 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, r
 		HeaderContentType:        rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
 		Deadline:                 deadline,
 		Mobjects:                 make([]MemoryObject, 0, defaultMobjects),
+		MessagePath:              messagePath,
 	}
 	ctx.AddMemoryObject(ctx.InnerReplacer)
 	ctx.AddMemoryObject(ctx.HeaderContentType)
@@ -115,8 +120,8 @@ func (eng *Whale) Free() {
 	*/
 }
 
-func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
-	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline)
+func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, messagePath string) (output string, exports [][]string, logs []string) {
+	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath)
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
@@ -454,4 +459,16 @@ func (ctx *WhaleContext) GetDeadline() *time.Time {
 }
 func (ctx *WhaleContext) AddMemoryObject(o MemoryObject) {
 	ctx.Mobjects = append(ctx.Mobjects, o)
+}
+func (ctx *WhaleContext) Debugger() (debugger steno.Debugger) {
+	debugger = ctx.Debug
+	return
+}
+func (ctx *WhaleContext) GetMessagePath() (messagePath string) {
+	messagePath = ctx.MessagePath
+	return
+}
+func (ctx *WhaleContext) GetFileName() (fname string) {
+	fname = ctx.Filename
+	return
 }

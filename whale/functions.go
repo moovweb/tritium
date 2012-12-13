@@ -13,6 +13,7 @@ import (
 	"time"
 	tp "tritium/proto"
 	"unicode/utf8"
+	"butler/null"
 )
 
 //The string value of me
@@ -905,5 +906,14 @@ func rewrite_cookie_domain_Text_Text_Text(ctx EngineContext, scope *Scope, ins *
 			scope.Value = newDomain
 		}
 	}
+	return
+}
+
+func snapshot_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	name := args[0].(string)
+	lineNum := int(null.GetInt32(ins.LineNumber))
+	messagePath := ctx.GetMessagePath()
+	fname := ctx.GetFileName()
+	ctx.Debugger().LogSnapshot(messagePath, name, fname, lineNum, scope.Value)
 	return
 }
