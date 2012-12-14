@@ -24,16 +24,17 @@ func Parse(data, file string) []*tp.ScriptObject {
 	objs := make([]*tp.ScriptObject, 0)
 	files := make(map[string]int)
 	objs = append(objs, ParseScript(data, file))
-	files[file] = 1
+	// files[file] = 1 // Don't register the top-level mixer scripts!
 	for i := 0; i < len(objs); i++ {
 		obj := objs[i]
 		for _, importFile := range obj.Imports() {
 			if files[importFile] == 0 {
 				objs = append(objs, ParseFile(importFile))
+				// register the user-accessible scripts to avoid duplicate imports
+				files[importFile] = 1
 			}
 		}
 	}
-
 	return objs
 }
 
