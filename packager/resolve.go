@@ -207,9 +207,9 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 
 	if err != nil {
 		//pkg.Log.Info("\t -- no user defined functions found")
-		msg := fmt.Sprintf("unable to open function definition file: %s", location)
+		// msg := fmt.Sprintf("unable to open function definition file: %s", location)
 		// println(msg)
-		panic(msg)
+		// panic(msg)
 		return
 	}
 	definitions := parser.ParseFile(location)
