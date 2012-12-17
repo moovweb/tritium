@@ -6,18 +6,19 @@ import (
 	tp "tritium/proto"
 )
 
-func RunStringWithPackage(src, path string, pkg *tp.Package) (*tp.Transform, error) {
-	objs := parser.Parse(src, path)
-	return runWithObjs(objs, pkg)
+func RunStringWithPackage(src, projdir, filename string, pkg *tp.Package) (*tp.Transform, error) {
+	objs := parser.Parse(src, projdir, filename)
+	return runWithObjs(objs, pkg, projdir)
 }
 
-func RunWithPackage(file string, pkg *tp.Package) (*tp.Transform, error) {
-	objs := parser.ParseFileSet(file)
-	return runWithObjs(objs, pkg)
+func RunWithPackage(projdir, filename string, pkg *tp.Package) (*tp.Transform, error) {
+	objs := parser.ParseFileSet(projdir, filename)
+	return runWithObjs(objs, pkg, projdir)
 }
 
-func runWithObjs(objs []*tp.ScriptObject, pkg *tp.Package) (*tp.Transform, error) {
-	ctx := NewObjectLinkingContext(pkg, objs)
+func runWithObjs(objs []*tp.ScriptObject, pkg *tp.Package, projdir string) (*tp.Transform, error) {
+	println("PROJECT DIR:", projdir)
+	ctx := NewObjectLinkingContext(pkg, objs, projdir)
 	ctx.Link()
 	if ctx.HasErrors() {
 		message := ""

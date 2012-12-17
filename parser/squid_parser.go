@@ -81,13 +81,13 @@ func (p *Parser) error(msg string) {
 	panic(fullMsg)
 }
 
-func MakeParser(src, fullpath string) *Parser {
+func MakeParser(src, dir, filename string) *Parser {
+	fullpath := filepath.Join(dir, filename)
 	fullpath, _ = filepath.Abs(fullpath)
-	d, f := filepath.Split(fullpath)
 	p := &Parser{
 		Tokenizer: MakeTokenizer([]byte(src)),
-		FileName:  f,
-		DirName:   d,
+		FileName:  filename,
+		DirName:   dir,
 		FullPath:  fullpath,
 		Lookahead: nil,
 		counter:   0,
@@ -180,7 +180,7 @@ func (p *Parser) statement() (node *tp.Instruction) {
 	switch p.peek().Lexeme {
 	case IMPORT:
 		token := p.pop() // pop the "@import" token (includes importee)
-		node = tp.MakeImport(filepath.Join(p.DirName, token.Value), token.LineNumber)
+		node = tp.MakeImport(token.Value, token.LineNumber)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	default:

@@ -3,6 +3,7 @@ package linker
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 )
 
 import (
@@ -14,18 +15,19 @@ import (
 type FuncMap map[string]int
 
 type LinkingContext struct {
-	objMap   map[string]int
-	funList  []FuncMap
-	textType int
-	types    []string
-	files    []string
-	Errors   []string
+	objMap        map[string]int
+	funList       []FuncMap
+	textType      int
+	types         []string
+	files         []string
+	Errors        []string
+	ScriptsFolder string
 	*tp.Transform
 }
 
 type LocalDef map[string]int
 
-func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject) *LinkingContext {
+func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject, projdir string) *LinkingContext {
 	// Setup object lookup map!
 	objScriptLookup := make(map[string]int, len(objs))
 	for index, obj := range objs {
@@ -34,6 +36,7 @@ func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject) *LinkingC
 	ctx := NewLinkingContext(pkg)
 	ctx.objMap = objScriptLookup
 	ctx.Objects = objs
+	ctx.ScriptsFolder = projdir
 	return ctx
 }
 
@@ -129,13 +132,13 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 	switch *ins.Type {
 	case tp.Instruction_IMPORT:
 		// set its import_id and blank the value field
-		importValue := null.GetString(ins.Value)
+		importValue := filepath.Join(ctx.ScriptsFolder, null.GetString(ins.Value)) // hmm, only have the relpath ... need the root as well
 		//println("import: ", importValue)
 		//println(null.GetInt32(ins.LineNumber))
 		importId, ok := ctx.objMap[importValue]
 		if ok != true {
-			ctx.error(ins, "Invalid import %q", ins.String())
-
+			// panic("HEY!\n" + ctx.Transform.GetPkg().GetPath() + "\n" + ins.String())
+			ctx.error(ins, "Invalid import `%s`", ins.String())
 		}
 		// Make sure this object is linked with the right scopeType
 		ctx.link(importId, scopeType)

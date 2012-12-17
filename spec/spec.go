@@ -37,7 +37,7 @@ func LoadSpec(dir string, pkg *tp.Package) (*Spec, error) {
 		transform.LoadFunctions(functionsFile, pkg)
 	}
 
-	script, err := linker.RunWithPackage(Join(dir, "main.ts"), pkg)
+	script, err := linker.RunWithPackage(dir, "main.ts", pkg)
 
 	spec := &Spec{
 		Location: dir,

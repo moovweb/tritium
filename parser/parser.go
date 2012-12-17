@@ -6,32 +6,33 @@ import (
 	tp "tritium/proto"
 )
 
-func ParseFile(file string) *tp.ScriptObject {
-	src, fullpath := readFile(file)
-	return ParseScript(src, fullpath)
+func ParseFile(projdir, filename string) *tp.ScriptObject {
+	src, _ := readFile(filepath.Join(projdir, filename))
+	return ParseScript(src, projdir, filename)
 }
 
-func ParseScript(src, path string) *tp.ScriptObject {
-	return MakeParser(src, path).Parse()
+func ParseScript(src, dir, filename string) *tp.ScriptObject {
+	return MakeParser(src, dir, filename).Parse()
 }
 
-func ParseFileSet(file string) []*tp.ScriptObject {
-	src, fullpath := readFile(file)
-	return Parse(src, fullpath)
+func ParseFileSet(projdir, filename string) []*tp.ScriptObject {
+	src, _ := readFile(filepath.Join(projdir, filename))
+	return Parse(src, projdir, filename)
 }
 
-func Parse(data, file string) []*tp.ScriptObject {
+func Parse(data, projdir, filename string) []*tp.ScriptObject {
 	objs := make([]*tp.ScriptObject, 0)
 	files := make(map[string]int)
-	objs = append(objs, ParseScript(data, file))
+	objs = append(objs, ParseScript(data, projdir, filename))
 	// files[file] = 1 // Don't register the top-level mixer scripts!
 	for i := 0; i < len(objs); i++ {
 		obj := objs[i]
 		for _, importFile := range obj.Imports() {
-			if files[importFile] == 0 {
-				objs = append(objs, ParseFile(importFile))
+			fullPath := filepath.Join(projdir, importFile)
+			if files[fullPath] == 0 {
+				objs = append(objs, ParseFile(projdir, importFile))
 				// register the user-accessible scripts to avoid duplicate imports
-				files[importFile] = 1
+				files[filepath.Join(projdir, importFile)] = 1
 			}
 		}
 	}

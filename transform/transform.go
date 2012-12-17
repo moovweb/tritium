@@ -6,10 +6,10 @@ import (
 	tp "tritium/proto"
 )
 
-func CompileString(data string, path string, pkg *tp.Package) (*tp.Transform, error) {
-	return linker.RunStringWithPackage(data, path, pkg)
+func CompileString(data , projdir, filename string, pkg *tp.Package) (*tp.Transform, error) {
+	return linker.RunStringWithPackage(data, projdir, filename, pkg)
 }
 
-func LoadFunctions(functionPath string, pack *tp.Package) {
-	packager.ReadPackageDefinitions(pack, functionPath)
+func LoadFunctions(functionsDir, functionsFile string, pack *tp.Package) {
+	packager.ReadPackageDefinitions(pack, functionsDir, functionsFile)
 }
