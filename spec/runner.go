@@ -13,7 +13,6 @@ import (
 	"runtime/debug"
 	"time"
 	"tritium"
-	"tritium/lamprey"
 	"tritium/packager"
 	tp "tritium/proto"
 	"tritium/whale"
@@ -36,8 +35,6 @@ func All(command string, directory string, options ...string) {
 	var eng tritium.Engine
 	if command == "test" {
 		eng = whale.NewEngine(logger, debugger)
-	} else if command == "debug" {
-		eng = lamprey.NewEngine(logger, debugger)
 	}
 
 	var pkg *tp.Package

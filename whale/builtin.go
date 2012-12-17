@@ -2,7 +2,7 @@ package whale
 
 import tp "tritium/proto"
 
-type builtInFunc func(EngineContext, *Scope, *tp.Instruction, []interface{}) interface{}
+type builtInFunc func(*EngineContext, *Scope, *tp.Instruction, []interface{}) interface{}
 
 var builtInFunctions map[string]builtInFunc
 
