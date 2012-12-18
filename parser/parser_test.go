@@ -5,5 +5,5 @@ import (
 )
 
 func TestParseRun(t *T) {
-	ParseFile("two.ts")
+	ParseFile(".", "two.ts")
 }
