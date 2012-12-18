@@ -137,7 +137,6 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		//println(null.GetInt32(ins.LineNumber))
 		importId, ok := ctx.objMap[importValue]
 		if ok != true {
-			// panic("HEY!\n" + ctx.Transform.GetPkg().GetPath() + "\n" + ins.String())
 			ctx.error(ins, "Invalid import `%s`", ins.String())
 		}
 		// Make sure this object is linked with the right scopeType

@@ -17,7 +17,6 @@ func RunWithPackage(projdir, filename string, pkg *tp.Package) (*tp.Transform, e
 }
 
 func runWithObjs(objs []*tp.ScriptObject, pkg *tp.Package, projdir string) (*tp.Transform, error) {
-	println("PROJECT DIR:", projdir)
 	ctx := NewObjectLinkingContext(pkg, objs, projdir)
 	ctx.Link()
 	if ctx.HasErrors() {

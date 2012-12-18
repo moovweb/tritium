@@ -7,7 +7,7 @@ import (
 )
 
 func ParseFile(projdir, filename string) *tp.ScriptObject {
-	src, _ := readFile(filepath.Join(projdir, filename))
+	src, _ := readFile(projdir, filename)
 	return ParseScript(src, projdir, filename)
 }
 
@@ -16,7 +16,7 @@ func ParseScript(src, dir, filename string) *tp.ScriptObject {
 }
 
 func ParseFileSet(projdir, filename string) []*tp.ScriptObject {
-	src, _ := readFile(filepath.Join(projdir, filename))
+	src, _ := readFile(projdir, filename)
 	return Parse(src, projdir, filename)
 }
 
@@ -39,15 +39,16 @@ func Parse(data, projdir, filename string) []*tp.ScriptObject {
 	return objs
 }
 
-func readFile(file string) (src, fullpath string) {
-	fullpath, err := filepath.Abs(file)
+func readFile(projdir, filename string) (src, fullpath string) {
+	fullpath = filepath.Join(projdir, filename)
+	fullpath, err := filepath.Abs(fullpath)
 	if err != nil {
-		panic("No tritium file found at: " + fullpath)
+		panic("No tritium file found at: " + filename)
 	}
-	srcBytes, err := ioutil.ReadFile(file)
+	srcBytes, err := ioutil.ReadFile(fullpath)
 
 	if err != nil {
-		panic("No tritium file found at: " + fullpath)
+		panic("No tritium file found at: " + filename)
 	}
 	src = string(srcBytes)
 	return
