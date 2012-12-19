@@ -165,13 +165,25 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			typeId, found := localScope[name]
 			if found {
 				returnType = typeId
+
+				// // LET LOCAL VARIABLES BE REASSIGNED!
+				// if len(ins.Arguments) > 0 {
+				// 	ctx.error(ins, "The local variable \"%%%s\" has been assigned before and cannot be reassigned!", name)
+				// } else {
+				// 	if ins.Children != nil {
+				// 		for _, child := range ins.Children {
+				// 			returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope, caller)
+				// 		}
+				// 	}
+				// }
+
 				if len(ins.Arguments) > 0 {
-					ctx.error(ins, "The local variable \"%%%s\" has been assigned before and cannot be reassigned!", name)
-				} else {
-					if ins.Children != nil {
-						for _, child := range ins.Children {
-							returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope, caller)
-						}
+					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller)
+				}
+
+				if ins.Children != nil {
+					for _, child := range ins.Children {
+						returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope, caller)
 					}
 				}
 
