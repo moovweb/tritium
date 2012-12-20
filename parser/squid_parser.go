@@ -13,12 +13,13 @@ import (
 
 type Parser struct {
 	*Tokenizer
-	FileName  string
-	DirName   string
-	FullPath  string
-	Lookahead *Token
-	counter   int
-	header    bool
+	ProjectPath string // the project path (probably absolute)
+	ScriptPath  string // the folder containing the script file being parsed (relative to the project path)
+	FileName    string // the base-name of the script file being parsed
+	FullPath    string
+	Lookahead   *Token
+	counter     int
+	header      bool
 }
 
 func (p *Parser) gensym() string {
@@ -81,16 +82,17 @@ func (p *Parser) error(msg string) {
 	panic(fullMsg)
 }
 
-func MakeParser(src, dir, filename string) *Parser {
-	fullpath := filepath.Join(dir, filename)
+func MakeParser(src, projectPath, scriptPath, fileName string) *Parser {
+	fullpath := filepath.Join(projectPath, scriptPath, fileName)
 	fullpath, _ = filepath.Abs(fullpath)
 	p := &Parser{
-		Tokenizer: MakeTokenizer([]byte(src)),
-		FileName:  filename,
-		DirName:   dir,
-		FullPath:  fullpath,
-		Lookahead: nil,
-		counter:   0,
+		Tokenizer:   MakeTokenizer([]byte(src)),
+		ProjectPath: projectPath, // the project path (probably absolute)
+		ScriptPath:  scriptPath,  // the folder containing the script file being parsed (relative to the project path)
+		FileName:    fileName,    // the base-name of the script file being parsed
+		FullPath:    fullpath,
+		Lookahead:   nil,
+		counter:     0,
 	}
 	p.pop()
 	return p
@@ -180,7 +182,8 @@ func (p *Parser) statement() (node *tp.Instruction) {
 	switch p.peek().Lexeme {
 	case IMPORT:
 		token := p.pop() // pop the "@import" token (includes importee)
-		node = tp.MakeImport(token.Value, token.LineNumber)
+		scriptLocationInProject := filepath.Join(p.ScriptPath, token.Value)
+		node = tp.MakeImport(scriptLocationInProject, token.LineNumber)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	default:
@@ -265,7 +268,7 @@ func (p *Parser) read() (node *tp.Instruction) {
 		p.error("unterminated argument list in read")
 	}
 	p.pop() // pop the rparen
-	contents, err := ioutil.ReadFile(filepath.Join(p.DirName, readPath))
+	contents, err := ioutil.ReadFile(filepath.Join(p.ProjectPath, p.ScriptPath, readPath))
 	if err != nil { // can't use p.error because it's not a syntax error
 		msg := fmt.Sprintf("%s:%d -- read could not open %s", p.FileName, readLineNo, readPath)
 		panic(msg)

@@ -6,49 +6,51 @@ import (
 	tp "tritium/proto"
 )
 
-func ParseFile(projdir, filename string) *tp.ScriptObject {
-	src, _ := readFile(projdir, filename)
-	return ParseScript(src, projdir, filename)
+func ParseFile(projectPath, scriptPath, fileName string) *tp.ScriptObject {
+	src, _ := readFile(projectPath, scriptPath, fileName)
+	return ParseScript(src, projectPath, scriptPath, fileName)
 }
 
-func ParseScript(src, dir, filename string) *tp.ScriptObject {
-	return MakeParser(src, dir, filename).Parse()
+func ParseScript(src, projectPath, scriptPath, fileName string) *tp.ScriptObject {
+	return MakeParser(src, projectPath, scriptPath, fileName).Parse()
 }
 
-func ParseFileSet(projdir, filename string) []*tp.ScriptObject {
-	src, _ := readFile(projdir, filename)
-	return Parse(src, projdir, filename)
+func ParseFileSet(projectPath, scriptPath, fileName string) []*tp.ScriptObject {
+	src, _ := readFile(projectPath, scriptPath, fileName)
+	return Parse(src, projectPath, scriptPath, fileName)
 }
 
-func Parse(data, projdir, filename string) []*tp.ScriptObject {
+func Parse(src, projectPath, scriptPath, fileName string) []*tp.ScriptObject {
 	objs := make([]*tp.ScriptObject, 0)
 	files := make(map[string]int)
-	objs = append(objs, ParseScript(data, projdir, filename))
+	objs = append(objs, ParseScript(src, projectPath, scriptPath, fileName))
 	// files[file] = 1 // Don't register the top-level mixer scripts!
 	for i := 0; i < len(objs); i++ {
 		obj := objs[i]
 		for _, importFile := range obj.Imports() {
-			fullPath := filepath.Join(projdir, importFile)
+			// importFile already is already prepended with the script path relative to the project folder
+			fullPath := filepath.Join(projectPath, importFile)
 			if files[fullPath] == 0 {
-				objs = append(objs, ParseFile(projdir, importFile))
+				objs = append(objs, ParseFile(projectPath, filepath.Dir(importFile), filepath.Base(importFile)))
 				// register the user-accessible scripts to avoid duplicate imports
-				files[filepath.Join(projdir, importFile)] = 1
+				files[filepath.Join(projectPath, importFile)] = 1
 			}
 		}
 	}
 	return objs
 }
 
-func readFile(projdir, filename string) (src, fullpath string) {
-	fullpath = filepath.Join(projdir, filename)
+func readFile(projectPath, scriptPath, fileName string) (src, fullpath string) {
+	scriptLocationInProject := filepath.Join(scriptPath, fileName)
+	fullpath = filepath.Join(projectPath, scriptPath, fileName)
 	fullpath, err := filepath.Abs(fullpath)
 	if err != nil {
-		panic("No tritium file found at: " + filename)
+		panic("No tritium file found at: " + scriptLocationInProject)
 	}
 	srcBytes, err := ioutil.ReadFile(fullpath)
 
 	if err != nil {
-		panic("No tritium file found at: " + filename)
+		panic("No tritium file found at: " + scriptLocationInProject)
 	}
 	src = string(srcBytes)
 	return

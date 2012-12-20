@@ -200,9 +200,9 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 }
 
-func ReadPackageDefinitions(pkg *tp.Package, dir, filename string) {
+func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName string) {
 	//pkg.Println(" -- reading definitions")
-	_, err := ioutil.ReadFile(filepath.Join(dir, filename))
+	_, err := ioutil.ReadFile(filepath.Join(projectPath, scriptPath, fileName))
 	//()("READING DEFINITIONS:", location)
 
 	if err != nil {
@@ -212,7 +212,7 @@ func ReadPackageDefinitions(pkg *tp.Package, dir, filename string) {
 		// panic(msg)
 		return
 	}
-	definitions := parser.ParseFile(dir, filename)
+	definitions := parser.ParseFile(projectPath, scriptPath, fileName)
 
 	// Create a map of pre-packaged function signatures
 	prepackaged := make(map[string]bool)
@@ -240,10 +240,10 @@ func ReadPackageDefinitions(pkg *tp.Package, dir, filename string) {
 			importExists, existsErr := exists(importPath)
 			if !importExists || (existsErr != nil) {
 				errURL := "http://help.moovweb.com/entries/22335641-importing-non-existent-files-in-functions-main-ts"
-				msg := fmt.Sprintf("\n********\nin file %s:\nattempting to import nonexistent file %s\nPlease consult %s for more information about this error.\n********\n", filename, importPath, errURL)
+				msg := fmt.Sprintf("\n********\nin file %s:\nattempting to import nonexistent file %s\nPlease consult %s for more information about this error.\n********\n", filepath.Join(scriptPath, fileName), importPath, errURL)
 				panic(msg)
 			}
-			ReadPackageDefinitions(pkg, dir, importPath)
+			ReadPackageDefinitions(pkg, projectPath, filepath.Join(scriptPath, filepath.Dir(importPath)), filepath.Base(importPath))
 		} else { // otherwise if it's not an import stub ...
 			//pkg.Log.Info("\t -- function: %v", function)
 			resolveDefinition(pkg, function)
@@ -338,7 +338,7 @@ func (pkg *Package) readHeaderFile(location string) {
 		return
 	}
 
-	stubs := parser.ParseFile(location, "headers.tf")
+	stubs := parser.ParseFile(location, ".", "headers.tf")
 	for _, function := range stubs.Functions {
 		// Verify that signatures for primitives refer to things that actually exist
 		stubStr := strings.Replace(function.Stub(pkg.Package), ",", ".", -1)

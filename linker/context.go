@@ -21,13 +21,14 @@ type LinkingContext struct {
 	types         []string
 	files         []string
 	Errors        []string
+	ProjectFolder string
 	ScriptsFolder string
 	*tp.Transform
 }
 
 type LocalDef map[string]int
 
-func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject, projdir string) *LinkingContext {
+func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject, projectPath, scriptPath string) *LinkingContext {
 	// Setup object lookup map!
 	objScriptLookup := make(map[string]int, len(objs))
 	for index, obj := range objs {
@@ -36,7 +37,8 @@ func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject, projdir s
 	ctx := NewLinkingContext(pkg)
 	ctx.objMap = objScriptLookup
 	ctx.Objects = objs
-	ctx.ScriptsFolder = projdir
+	ctx.ProjectFolder = projectPath
+	ctx.ScriptsFolder = scriptPath
 	return ctx
 }
 
@@ -132,7 +134,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 	switch *ins.Type {
 	case tp.Instruction_IMPORT:
 		// set its import_id and blank the value field
-		importValue := filepath.Join(ctx.ScriptsFolder, null.GetString(ins.Value)) // hmm, only have the relpath ... need the root as well
+		importValue := filepath.Join(ctx.ProjectFolder, null.GetString(ins.Value))
 		//println("import: ", importValue)
 		//println(null.GetInt32(ins.LineNumber))
 		importId, ok := ctx.objMap[importValue]
