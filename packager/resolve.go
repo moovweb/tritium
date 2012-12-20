@@ -200,7 +200,7 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 }
 
-func ReadPackageDefinitions(pkg *tp.Package, dir, filename string) {
+func ReadPackageDefinitions(pkg *tp.Package, dir, relDir, filename string) {
 	//pkg.Println(" -- reading definitions")
 	_, err := ioutil.ReadFile(filepath.Join(dir, filename))
 	//()("READING DEFINITIONS:", location)
@@ -237,13 +237,14 @@ func ReadPackageDefinitions(pkg *tp.Package, dir, filename string) {
 			importPath := function.GetDescription()
 			// Verify the existence of the imported file from here, so that we can
 			// report the name of the file that contains the import statement.
-			importExists, existsErr := exists(importPath)
+			importExists, existsErr := exists(filepath.Join(dir, importPath))
 			if !importExists || (existsErr != nil) {
+				fullPath := filepath.Join(relDir, filename)
 				errURL := "http://help.moovweb.com/entries/22335641-importing-non-existent-files-in-functions-main-ts"
-				msg := fmt.Sprintf("\n********\nin file %s:\nattempting to import nonexistent file %s\nPlease consult %s for more information about this error.\n********\n", filename, importPath, errURL)
+				msg := fmt.Sprintf("\n********\nin file %s:\nattempting to import nonexistent file %s\nPlease consult %s for more information about this error.\n********\n", fullPath, importPath, errURL)
 				panic(msg)
 			}
-			ReadPackageDefinitions(pkg, dir, importPath)
+			ReadPackageDefinitions(pkg, dir, relDir, importPath)
 		} else { // otherwise if it's not an import stub ...
 			//pkg.Log.Info("\t -- function: %v", function)
 			resolveDefinition(pkg, function)
