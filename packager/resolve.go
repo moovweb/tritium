@@ -19,7 +19,7 @@ import (
 	whale "tritium/whale"
 )
 
-func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
+func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string) {
 	linkingContext := linker.NewLinkingContext(pkg)
 
 	//	pkg.Log.Info("\t -- Resolving --\n")
@@ -74,7 +74,7 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
 		//pkg.Log.Info("Some insitruction: %v, %s", fun.Instruction, null.GetString(fun.Name) )
 		scopeTypeId := int(null.GetInt32(fun.ScopeTypeId))
 		//pkg.Log.Info("\t\t -- opening scope type : %v\n", scopeTypeId)
-		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope, *fun.Name)
+		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope, *fun.Name, path)
 
 		if linkingContext.HasErrors() {
 			message := ""
@@ -193,7 +193,7 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 	pkg.Log.Info("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
 
 	if inherit {
-		resolveDefinition(pkg.Package, newFun)
+		resolveDefinition(pkg.Package, newFun, "")
 		pkg.Package.Functions = append(pkg.Package.Functions, newFun)
 
 	}
@@ -246,7 +246,7 @@ func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName s
 			ReadPackageDefinitions(pkg, projectPath, filepath.Join(scriptPath, filepath.Dir(importPath)), filepath.Base(importPath))
 		} else { // otherwise if it's not an import stub ...
 			//pkg.Log.Info("\t -- function: %v", function)
-			resolveDefinition(pkg, function)
+			resolveDefinition(pkg, function, filepath.Join(scriptPath, fileName))
 
 			// After resolving a user-defined function, see if its fully resolved signature
 			// is the same as the signature of a prepackaged function. If so, throw an error.

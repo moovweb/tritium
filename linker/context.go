@@ -3,6 +3,7 @@ package linker
 import (
 	"fmt"
 	"log"
+	"strings"
 	// "path/filepath"
 )
 
@@ -113,8 +114,9 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 		//println("Linking", null.GetString(obj.Name))
 		obj.ScopeTypeId = proto.Int(scopeType)
 		obj.Linked = proto.Bool(true)
+		path := obj.GetName()
 		ctx.files = append(ctx.files, null.GetString(obj.Name))
-		ctx.ProcessInstruction(obj.Root, scopeType)
+		ctx.ProcessInstruction(obj.Root, scopeType, path)
 		ctx.files = ctx.files[:(len(ctx.files) - 1)]
 	} else {
 		if scopeType != int(null.GetInt32(obj.ScopeTypeId)) {
@@ -123,12 +125,12 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 	}
 }
 
-func (ctx *LinkingContext) ProcessInstruction(ins *tp.Instruction, scopeType int) (returnType int) {
+func (ctx *LinkingContext) ProcessInstruction(ins *tp.Instruction, scopeType int, path string) (returnType int) {
 	localScope := make(LocalDef, 0)
-	return ctx.ProcessInstructionWithLocalScope(ins, scopeType, localScope, "")
+	return ctx.ProcessInstructionWithLocalScope(ins, scopeType, localScope, "", path)
 }
 
-func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction, scopeType int, localScope LocalDef, caller string) (returnType int) {
+func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction, scopeType int, localScope LocalDef, caller string, path string) (returnType int) {
 	returnType = -1
 	ins.IsValid = proto.Bool(true)
 	switch *ins.Type {
@@ -152,14 +154,14 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		if name == "1" || name == "2" || name == "3" || name == "4" || name == "5" || name == "6" || name == "7" {
 			if len(ins.Arguments) > 0 {
 				// We are going to assign something to this variable
-				returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller)
+				returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path)
 				if returnType != ctx.textType {
 					ctx.error(ins, "Numeric local vars can ONLY be Text")
 				}
 			}
 			if ins.Children != nil {
 				for _, child := range ins.Children {
-					ctx.ProcessInstructionWithLocalScope(child, ctx.textType, localScope, caller)
+					ctx.ProcessInstructionWithLocalScope(child, ctx.textType, localScope, caller, path)
 				}
 			}
 			returnType = ctx.textType
@@ -172,7 +174,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 				} else {
 					if ins.Children != nil {
 						for _, child := range ins.Children {
-							returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope, caller)
+							returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope, caller, path)
 						}
 					}
 				}
@@ -184,7 +186,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 					if ins.Children != nil {
 						ctx.error(ins, "May not open a scope during initialization of local variable \"%%%s\".", name)
 					}
-					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller)
+					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path)
 					localScope[name] = returnType
 				} else {
 					println(ins.String())
@@ -201,7 +203,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		// process the args
 		if ins.Arguments != nil {
 			for _, arg := range ins.Arguments {
-				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope, caller)
+				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope, caller, path)
 				if argReturn == -1 {
 					ctx.error(ins, "Invalid argument object %q", arg.String())
 					return
@@ -217,14 +219,23 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 				message = message + funcName + "\n"
 			}
 			log.Printf("%s\n", message)
-			// var fileName string
-			// if len(ctx.files) > 0 {
-			// 	fileName = "in file " + ctx.files[(len(ctx.files) - 1)]
-			// } else {
-			// 	fileName = "in package " + *ctx.Pkg.Name
-			// }
-			// ctx.error(ins, "Could not find function %s.%s %s in file %s:%d\n(called from %s.%s)", ctx.types[scopeType], stub, fileName, ctx.Pkg.GetPath(), null.GetInt32(ins.LineNumber), ctx.types[scopeType], caller)
-			ctx.error(ins, "Could not find function %s.%s (called from %s.%s)", ctx.types[scopeType], stub, ctx.types[scopeType], caller)
+
+			location := ""
+			if len(path) > 0 {
+				location = path
+			} else {
+				location = "Package " + ctx.Pkg.GetName()
+			}
+			readableCalleeStub := strings.Replace(stub, ",", "(", 1)
+			if strings.Index(readableCalleeStub, "(") != -1 {
+				readableCalleeStub = readableCalleeStub + ")"
+			}
+			readableCallerStub := strings.Replace(caller, ",", "(", 1)
+			if strings.Index(readableCallerStub, "(") != -1 {
+				readableCallerStub = readableCallerStub + ")"
+      }
+			ctx.error(ins, "%s:%d: could not find function %s.%s (called from %s.%s)", location, ins.GetLineNumber(), ctx.types[scopeType], readableCalleeStub, ctx.types[scopeType], readableCallerStub)
+
 		} else {
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
@@ -249,7 +260,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 
 			if ins.Children != nil {
 				for _, child := range ins.Children {
-					ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope, stub) // thread the name of the caller through the linkages
+					ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope, stub, path) // thread the name of the caller through the linkages
 				}
 			}
 		}
@@ -258,7 +269,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 	case tp.Instruction_BLOCK:
 		if ins.Children != nil {
 			for _, child := range ins.Children {
-				returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope, caller)
+				returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope, caller, path)
 			}
 		}
 	}
