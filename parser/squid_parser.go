@@ -100,7 +100,8 @@ func MakeParser(src, projectPath, scriptPath, fileName string) *Parser {
 
 func (p *Parser) Parse() *tp.ScriptObject {
 	script := new(tp.ScriptObject)
-	script.Name = proto.String(p.FullPath)
+	// script.Name = proto.String(p.FullPath)
+	script.Name = proto.String(filepath.Join(p.ScriptPath, p.FileName))
 
 	stmts := tp.ListInstructions()
 	defs := make([]*tp.Function, 0) // Add a new constructor in instruction.go

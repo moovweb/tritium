@@ -3,7 +3,7 @@ package linker
 import (
 	"fmt"
 	"log"
-	"path/filepath"
+	// "path/filepath"
 )
 
 import (
@@ -134,10 +134,10 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 	switch *ins.Type {
 	case tp.Instruction_IMPORT:
 		// set its import_id and blank the value field
-		importValue := filepath.Join(ctx.ProjectFolder, null.GetString(ins.Value))
+		// importValue := filepath.Join(ctx.ProjectFolder, null.GetString(ins.Value))
 		//println("import: ", importValue)
 		//println(null.GetInt32(ins.LineNumber))
-		importId, ok := ctx.objMap[importValue]
+		importId, ok := ctx.objMap[null.GetString(ins.Value)]
 		if ok != true {
 			ctx.error(ins, "Invalid import `%s`", ins.String())
 		}

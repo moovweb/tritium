@@ -29,11 +29,11 @@ func Parse(src, projectPath, scriptPath, fileName string) []*tp.ScriptObject {
 		obj := objs[i]
 		for _, importFile := range obj.Imports() {
 			// importFile already is already prepended with the script path relative to the project folder
-			fullPath := filepath.Join(projectPath, importFile)
-			if files[fullPath] == 0 {
+			// fullPath := filepath.Join(filepath.Base(projectPath), importFile)
+			if files[importFile] == 0 {
 				objs = append(objs, ParseFile(projectPath, filepath.Dir(importFile), filepath.Base(importFile)))
 				// register the user-accessible scripts to avoid duplicate imports
-				files[filepath.Join(projectPath, importFile)] = 1
+				files[importFile] = 1
 			}
 		}
 	}
