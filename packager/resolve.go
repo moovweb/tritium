@@ -19,7 +19,7 @@ import (
 	whale "tritium/whale"
 )
 
-func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
+func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string) {
 	linkingContext := linker.NewLinkingContext(pkg)
 
 	//	pkg.Log.Info("\t -- Resolving --\n")
@@ -74,7 +74,7 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function) {
 		//pkg.Log.Info("Some insitruction: %v, %s", fun.Instruction, null.GetString(fun.Name) )
 		scopeTypeId := int(null.GetInt32(fun.ScopeTypeId))
 		//pkg.Log.Info("\t\t -- opening scope type : %v\n", scopeTypeId)
-		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope, *fun.Name)
+		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope, *fun.Name, path)
 
 		if linkingContext.HasErrors() {
 			message := ""
@@ -193,26 +193,26 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 	pkg.Log.Info("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
 
 	if inherit {
-		resolveDefinition(pkg.Package, newFun)
+		resolveDefinition(pkg.Package, newFun, "")
 		pkg.Package.Functions = append(pkg.Package.Functions, newFun)
 
 	}
 
 }
 
-func ReadPackageDefinitions(pkg *tp.Package, location string) {
+func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName string) {
 	//pkg.Println(" -- reading definitions")
-	_, err := ioutil.ReadFile(location)
+	_, err := ioutil.ReadFile(filepath.Join(projectPath, scriptPath, fileName))
 	//()("READING DEFINITIONS:", location)
 
 	if err != nil {
 		//pkg.Log.Info("\t -- no user defined functions found")
-		msg := fmt.Sprintf("unable to open function definition file: %s", location)
+		// msg := fmt.Sprintf("unable to open function definition file: %s", location)
 		// println(msg)
-		panic(msg)
+		// panic(msg)
 		return
 	}
-	definitions := parser.ParseFile(location)
+	definitions := parser.ParseFile(projectPath, scriptPath, fileName)
 
 	// Create a map of pre-packaged function signatures
 	prepackaged := make(map[string]bool)
@@ -240,13 +240,13 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 			importExists, existsErr := exists(importPath)
 			if !importExists || (existsErr != nil) {
 				errURL := "http://help.moovweb.com/entries/22335641-importing-non-existent-files-in-functions-main-ts"
-				msg := fmt.Sprintf("\n********\nin file %s:\nattempting to import nonexistent file %s\nPlease consult %s for more information about this error.\n********\n", location, importPath, errURL)
+				msg := fmt.Sprintf("\n********\nin file %s:\nattempting to import nonexistent file %s\nPlease consult %s for more information about this error.\n********\n", filepath.Join(scriptPath, fileName), importPath, errURL)
 				panic(msg)
 			}
-			ReadPackageDefinitions(pkg, importPath)
+			ReadPackageDefinitions(pkg, projectPath, filepath.Join(scriptPath, filepath.Dir(importPath)), filepath.Base(importPath))
 		} else { // otherwise if it's not an import stub ...
 			//pkg.Log.Info("\t -- function: %v", function)
-			resolveDefinition(pkg, function)
+			resolveDefinition(pkg, function, filepath.Join(scriptPath, fileName))
 
 			// After resolving a user-defined function, see if its fully resolved signature
 			// is the same as the signature of a prepackaged function. If so, throw an error.
@@ -338,7 +338,7 @@ func (pkg *Package) readHeaderFile(location string) {
 		return
 	}
 
-	stubs := parser.ParseFile(input_file)
+	stubs := parser.ParseFile(location, ".", "headers.tf")
 	for _, function := range stubs.Functions {
 		// Verify that signatures for primitives refer to things that actually exist
 		stubStr := strings.Replace(function.Stub(pkg.Package), ",", ".", -1)

@@ -6,46 +6,51 @@ import (
 	tp "tritium/proto"
 )
 
-func ParseFile(file string) *tp.ScriptObject {
-	src, fullpath := readFile(file)
-	return ParseScript(src, fullpath)
+func ParseFile(projectPath, scriptPath, fileName string) *tp.ScriptObject {
+	src, _ := readFile(projectPath, scriptPath, fileName)
+	return ParseScript(src, projectPath, scriptPath, fileName)
 }
 
-func ParseScript(src, path string) *tp.ScriptObject {
-	return MakeParser(src, path).Parse()
+func ParseScript(src, projectPath, scriptPath, fileName string) *tp.ScriptObject {
+	return MakeParser(src, projectPath, scriptPath, fileName).Parse()
 }
 
-func ParseFileSet(file string) []*tp.ScriptObject {
-	src, fullpath := readFile(file)
-	return Parse(src, fullpath)
+func ParseFileSet(projectPath, scriptPath, fileName string) []*tp.ScriptObject {
+	src, _ := readFile(projectPath, scriptPath, fileName)
+	return Parse(src, projectPath, scriptPath, fileName)
 }
 
-func Parse(data, file string) []*tp.ScriptObject {
+func Parse(src, projectPath, scriptPath, fileName string) []*tp.ScriptObject {
 	objs := make([]*tp.ScriptObject, 0)
 	files := make(map[string]int)
-	objs = append(objs, ParseScript(data, file))
-	files[file] = 1
+	objs = append(objs, ParseScript(src, projectPath, scriptPath, fileName))
+	// files[file] = 1 // Don't register the top-level mixer scripts!
 	for i := 0; i < len(objs); i++ {
 		obj := objs[i]
 		for _, importFile := range obj.Imports() {
+			// importFile already is already prepended with the script path relative to the project folder
+			// fullPath := filepath.Join(filepath.Base(projectPath), importFile)
 			if files[importFile] == 0 {
-				objs = append(objs, ParseFile(importFile))
+				objs = append(objs, ParseFile(projectPath, filepath.Dir(importFile), filepath.Base(importFile)))
+				// register the user-accessible scripts to avoid duplicate imports
+				files[importFile] = 1
 			}
 		}
 	}
-
 	return objs
 }
 
-func readFile(file string) (src, fullpath string) {
-	fullpath, err := filepath.Abs(file)
+func readFile(projectPath, scriptPath, fileName string) (src, fullpath string) {
+	scriptLocationInProject := filepath.Join(scriptPath, fileName)
+	fullpath = filepath.Join(projectPath, scriptPath, fileName)
+	fullpath, err := filepath.Abs(fullpath)
 	if err != nil {
-		panic("No tritium file found at: " + fullpath)
+		panic("No tritium file found at: " + scriptLocationInProject)
 	}
-	srcBytes, err := ioutil.ReadFile(file)
+	srcBytes, err := ioutil.ReadFile(fullpath)
 
 	if err != nil {
-		panic("No tritium file found at: " + fullpath)
+		panic("No tritium file found at: " + scriptLocationInProject)
 	}
 	src = string(srcBytes)
 	return

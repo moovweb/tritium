@@ -7,8 +7,9 @@
 # @description
 # The `$` selector is used to tell Tritium which node(s) you'd like to select to transform. The general process of transformation involves two basic steps: 1) selecting a node, and 2) performing some function on that node. We refer to the process of selecting a node for transformation as "opening a scope" throughout our documentation.
 # **Things to note**: If Tritium finds no matching node for the `%xpath` selector provided, it simply skips over that block of code. If Tritium finds more than one matching node for the `%xpath` selector provided, it will iterate over each element sequentially running the block of code inside the selector on each element.
-# ### Common uses include:
+# ### Common Uses
 # * Just about anything you want to do with Tritium.
+# 
 # In this example, we select every `div` element in the document and open a scope for manipulation.
 # @example
 # $("//div") {
@@ -33,9 +34,10 @@
 # @description
 # The `position` function is used to return a position type. Positions include: `before`, `after`, `above`, `below`, `top` and `bottom`.
 # **Things to note**: by default, the position type returned is "bottom". You can also specify which position type you'd like to return by passing it in as a parameter.
-# ### Common uses include:
+# ### Common Uses
 # * Some functions require position inputs as parameters. You can call `position()` to fulfill this requirement.
 # * When defining custom functions you may want to use a `position` type in your definition.
+# 
 # In this example, we move the current node to the bottom of its parent.
 # @example
 # move_to("..", position())
@@ -63,10 +65,11 @@
 # @args 
 # @description
 # The `index` function is used to return the order of which the node is transformed when selected using Tritium. Every time you use a Tritium selector that selects more than a single element, the Moovweb SDK will iterate over each element and run the inner block of code on each element one at a time. The index() function returns the order of that element in the execution queue.
-# ### Common uses include:
+# ### Common Uses
 # * Giving elements a unique attribute that corresponds to their index number.
 # * Referencing a certain element based on its order of execution.
 # * General order based logic, such as giving all odd numbered elements in the queue a certain class so you can style them differently.
+# 
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/index
 # @guidetext How indexing items works.
@@ -85,10 +88,11 @@
 # @args Text %value
 # @description
 # The `name` function replaces the name of the currently selected node with the input provided by the parameter `%value`. This means you are effectively changing the element that will be rendered in the DOM.
-# ### Common uses include:
+# ### Common Uses
 # * Changing tables and their inner rows and data cells to `div`s.
 # * Changing anchors that have been wrapped inside anchors to `div`s to avoid broken HTML.
 # * Changing between `div`s and `span`s depending on how you want the page to flow.
+# 
 # @example 
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/name
@@ -131,10 +135,15 @@
 # @description
 # The `copy_here` function copies the node specified by the input XPath selector to the current scope from which it is called.
 # **Things to note**: There is also an optional position variable (`%pos`) that can specify where in relation to the current node it should be placed such as: "before", "after", "top" or "bottom".
-# ### Common uses include:
+# ### Common Uses
 # * Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead.
 # * Duplicating useful information
+# 
+# The example below will create a copy the header and move it into the currently-selected div.
 # @example 
+# $("./div") {
+#   copy_here("/html/body/header")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/copy_here
 # @guidetext 
@@ -175,10 +184,15 @@
 # @description
 # The `copy_to` function copies the currently selected node to the node specified by the input `%xpath`.
 # **Things to note**: There is also an optional position parameter (`%pos`) that can be passed to specify where in relation to the target node it should be copied such as: "before", "after", "top" or "bottom".
-# ### Common uses include:
+# ### Common Uses
 # * Sometimes you can break page functionality by moving elements around so in some cases you might want to copy those elements instead.
 # * Duplicating useful information
+# 
+# The example below will copy the currently-selected div into the header of the DOM.
 # @example 
+# $("./div") {
+#   copy_to("/html/body/header")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/copy_to
 # @guidetext 
@@ -202,10 +216,16 @@
 # * `inject_bottom(Text %html)`
 # * `inject_before(Text %html)`
 # * `inject_after(Text %html)`
-# ### Common uses include:
+# 
+# ### Common Uses
 # * Injecting entire templates of code at once from another file using the `inject()` function in combination with the `read()` function.
 # * Fixing broken HTML
+# 
+# The example below will inject an `a` tag pointing to site.com into the bottom of the selected div.
 # @example 
+# $("./div") {
+#   inject("<a href="http://site.com">My new link!</a>")
+# }
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/packagestest/examples/node/inject
 # @guidetext 
@@ -244,10 +264,11 @@
 # The move_to command moves the currently selected node to the node specified by the %xpath input. 
 # The function takes one argument, the XPath destination of the current node.
 # **Things to note**: There is also an optional position parameter (%pos) that can be passed to specify where in relation to the target node it should be placed such as: "before", "after", "top" or "bottom".
-# ### Common uses include:
+# ### Common Uses
 # * Creating the proper structure for a page by moving the elements you want to keep into the proper place.
 # * Fixing the existing structure of a page by moving elements around.
 # * Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more.
+# 
 # The example below will take the currently-selected div and move it to the span child of its parent (i.e. a span sibling of the div).
 # @example 
 # $("./div") {
@@ -294,6 +315,7 @@
 # * Creating the proper structure for a page by moving the elements you want to keep into the proper place.
 # * Fixing the existing structure of a page by moving elements around.
 # * Creating the structure necessary for Uranium.js so you can use widgets like togglers, tabs, image carousels and more.
+# 
 # The example below will take the span sibling of the div and move it into the div.
 # @example 
 # $("./div") {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"strconv"
 )
 
 import (
@@ -13,6 +14,7 @@ import (
 	"rubex"
 	tp "tritium/proto"
 	mhclient "mirrorhttp/client"
+	"steno"
 )
 
 type Whale struct {
@@ -22,13 +24,15 @@ type Whale struct {
 	//OutputBuffer      []byte
 	//InnerReplacer     *rubex.Regexp
 	//HeaderContentType *rubex.Regexp
+	Debugger steno.Debugger
 }
 
-type WhaleContext struct {
+type EngineContext struct {
 	Functions                []*Function
 	Types                    []string
 	Exports                  [][]string
 	Logs                     []string
+	ImportedFiles            []string
 	Env                      map[string]string
 	MatchStack               []string
 	MatchShouldContinueStack []bool
@@ -47,17 +51,19 @@ type WhaleContext struct {
 
 	Deadline time.Time
 	Mobjects []MemoryObject
+	MessagePath string
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
 const defaultMobjects = 4
 const TimeoutError = "EngineTimeout"
 
-func NewEngine(logger *golog.Logger) *Whale {
+func NewEngine(logger *golog.Logger, debugger steno.Debugger) *Whale {
 	e := &Whale{
 		//RegexpCache:       make(map[string]*rubex.Regexp),
 		//XPathCache:        make(map[string]*xpath.Expression),
 		Log: logger,
+		Debugger: debugger,
 		//OutputBuffer:      make([]byte, OutputBufferSize),
 		//InnerReplacer:     rubex.MustCompile(`[\\$](\d)`),
 		//HeaderContentType: rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
@@ -65,8 +71,8 @@ func NewEngine(logger *golog.Logger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, rrules []*tp.RewriteRule, deadline time.Time) (ctx *WhaleContext) {
-	ctx = &WhaleContext{
+func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, rrules []*tp.RewriteRule, deadline time.Time, messagePath string) (ctx *EngineContext) {
+	ctx = &EngineContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
 		Logs:                     make([]string, 0),
@@ -83,6 +89,7 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, r
 		HeaderContentType:        rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
 		Deadline:                 deadline,
 		Mobjects:                 make([]MemoryObject, 0, defaultMobjects),
+		MessagePath:              messagePath,
 	}
 	ctx.AddMemoryObject(ctx.InnerReplacer)
 	ctx.AddMemoryObject(ctx.HeaderContentType)
@@ -114,8 +121,8 @@ func (eng *Whale) Free() {
 	*/
 }
 
-func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
-	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline)
+func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, messagePath string) (output string, exports [][]string, logs []string) {
+	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath)
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
@@ -129,9 +136,9 @@ func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input i
 	return
 }
 
-func (eng *Whale) TransformRequest(transforms []*tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
+func (eng *Whale) TransformRequest(transforms []*tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, messagePath string) (output string, exports [][]string, logs []string) {
 	uHttpRequest := input.(*mhclient.UpstreamHttpRequest)
-	newRequestHeader, export, logs := eng.Run(transforms[0], rrules, string(uHttpRequest.RawHeader), vars, deadline)
+	newRequestHeader, export, logs := eng.Run(transforms[0], rrules, string(uHttpRequest.RawHeader), vars, deadline, messagePath)
 	UpdateEnv(vars, export)
 	uHttpRequest.RawHeader = []byte(newRequestHeader)
 	uHttpRequest.Ssl = (vars["secure"] == "true")
@@ -139,27 +146,27 @@ func (eng *Whale) TransformRequest(transforms []*tp.Transform, rrules []*tp.Rewr
 	return
 }
 
-func (eng *Whale) TransformResponse(transforms []*tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
+func (eng *Whale) TransformResponse(transforms []*tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, messagePath string) (output string, exports [][]string, logs []string) {
 	uHttpResponse := input.(*mhclient.UpstreamHttpResponse)
 	httpHeader := string(uHttpResponse.RawHeader)
-	newHeader, export, logs := eng.Run(transforms[1], rrules, httpHeader, vars, deadline)
+	newHeader, export, logs := eng.Run(transforms[1], rrules, httpHeader, vars, deadline, messagePath)
 	UpdateEnv(vars, export)
 	uHttpResponse.RawHeader = []byte(newHeader)
 	vars["device_stylesheet"] = "main"
 	httpBody := string(uHttpResponse.Body)
-	newHttpBody, export, logs := eng.Run(transforms[2], rrules, httpBody, vars, deadline)
+	newHttpBody, export, logs := eng.Run(transforms[2], rrules, httpBody, vars, deadline, messagePath)
 	UpdateEnv(vars, export)
 	uHttpResponse.Body = []byte(newHttpBody)
 	vars["body_length"] = fmt.Sprintf("%d", len(newHttpBody))
 	vars["body"] = "true"
 	httpHeader = string(uHttpResponse.RawHeader)
-	newHeader, export, logs = eng.Run(transforms[3], rrules, httpHeader, vars, deadline)
+	newHeader, export, logs = eng.Run(transforms[3], rrules, httpHeader, vars, deadline, messagePath)
 	UpdateEnv(vars, export)
 	uHttpResponse.RawHeader = []byte(newHeader)
 	return
 }
 
-func (ctx *WhaleContext) Free() {
+func (ctx *EngineContext) Free() {
     for _, o := range ctx.Mobjects {
 		if o != nil {
 			o.Free()
@@ -167,7 +174,7 @@ func (ctx *WhaleContext) Free() {
 	}
 }
 
-func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
+func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
 	defer func() {
 		//TODO Stack traces seem to get truncated on syslog...
 		if x := recover(); x != nil {
@@ -228,9 +235,13 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 		obj := ctx.Objects[int(null.GetInt32(ins.ObjectId))]
 		curFile := ctx.Filename
 		ctx.Filename = null.GetString(obj.Name)
+		start := time.Now()
+		index := ctx.AddLog("__IMPORT__FILE__:" + ctx.Filename)
 		for _, child := range obj.Root.Children {
 			ctx.RunInstruction(scope, child)
 		}
+		timeSpent := time.Since(start).Seconds()
+		ctx.UpdateLog(index, "__IMPORT__FILE__:" + strconv.Itoa(int(timeSpent*1000)) + ":" + ctx.Filename)
 		ctx.Filename = curFile
 	case tp.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(null.GetInt32(ins.FunctionId))]
@@ -273,7 +284,7 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 	return
 }
 
-func (ctx *WhaleContext) ShouldContinue() (result bool) {
+func (ctx *EngineContext) ShouldContinue() (result bool) {
 	if len(ctx.MatchShouldContinueStack) > 0 {
 		result = ctx.MatchShouldContinueStack[len(ctx.MatchShouldContinueStack)-1]
 	} else {
@@ -282,15 +293,15 @@ func (ctx *WhaleContext) ShouldContinue() (result bool) {
 	return
 }
 
-func (ctx *WhaleContext) MatchTarget() string {
+func (ctx *EngineContext) MatchTarget() string {
 	return ctx.MatchStack[len(ctx.MatchStack)-1]
 }
 
-func (ctx *WhaleContext) PushYieldBlock(b *YieldBlock) {
+func (ctx *EngineContext) PushYieldBlock(b *YieldBlock) {
 	ctx.Yields = append(ctx.Yields, b)
 }
 
-func (ctx *WhaleContext) PopYieldBlock() (b *YieldBlock) {
+func (ctx *EngineContext) PopYieldBlock() (b *YieldBlock) {
 	num := len(ctx.Yields)
 	if num > 0 {
 		b = ctx.Yields[num-1]
@@ -299,11 +310,11 @@ func (ctx *WhaleContext) PopYieldBlock() (b *YieldBlock) {
 	return
 }
 
-func (ctx *WhaleContext) HasYieldBlock() bool {
+func (ctx *EngineContext) HasYieldBlock() bool {
 	return len(ctx.Yields) > 0
 }
 
-func (ctx *WhaleContext) TopYieldBlock() (b *YieldBlock) {
+func (ctx *EngineContext) TopYieldBlock() (b *YieldBlock) {
 	num := len(ctx.Yields)
 	if num > 0 {
 		b = ctx.Yields[num-1]
@@ -311,7 +322,7 @@ func (ctx *WhaleContext) TopYieldBlock() (b *YieldBlock) {
 	return
 }
 
-func (ctx *WhaleContext) Vars() map[string]interface{} {
+func (ctx *EngineContext) Vars() map[string]interface{} {
 	b := ctx.TopYieldBlock()
 	if b != nil {
 		return b.Vars
@@ -319,12 +330,12 @@ func (ctx *WhaleContext) Vars() map[string]interface{} {
 	return nil
 }
 
-func (ctx *WhaleContext) FileAndLine(ins *tp.Instruction) string {
+func (ctx *EngineContext) FileAndLine(ins *tp.Instruction) string {
 	lineNum := fmt.Sprintf("%d", null.GetInt32(ins.LineNumber))
 	return (ctx.Filename + ":" + lineNum)
 }
 
-func (ctx *WhaleContext) UsePackage(pkg *tp.Package) {
+func (ctx *EngineContext) UsePackage(pkg *tp.Package) {
 	ctx.Types = make([]string, len(pkg.Types))
 	for i, t := range pkg.Types {
 		ctx.Types[i] = null.GetString(t.Name)
@@ -345,7 +356,7 @@ func (ctx *WhaleContext) UsePackage(pkg *tp.Package) {
 	}
 }
 
-func (ctx *WhaleContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
+func (ctx *EngineContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 	sig := pattern + "/" + options
 	r = ctx.RegexpCache[sig]
 	if r == nil {
@@ -366,7 +377,7 @@ func (ctx *WhaleContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 	return
 }
 
-func (ctx *WhaleContext) GetXpathExpr(p string) (e *xpath.Expression) {
+func (ctx *EngineContext) GetXpathExpr(p string) (e *xpath.Expression) {
 	e = ctx.XPathCache[p]
 	if e == nil {
 		e = xpath.Compile(p)
@@ -380,32 +391,41 @@ func (ctx *WhaleContext) GetXpathExpr(p string) (e *xpath.Expression) {
 	return
 }
 
-func (ctx *WhaleContext) AddExport(exports []string) {
+func (ctx *EngineContext) AddExport(exports []string) {
 	ctx.Exports = append(ctx.Exports, exports)
 }
 
-func (ctx *WhaleContext) AddLog(log string) {
+func (ctx *EngineContext) AddLog(log string) int {
 	//ctx.Log.Info("TRITIUM: " + log)
+	index := len(ctx.Logs)
 	ctx.Logs = append(ctx.Logs, log)
+	return index
 }
 
-func (ctx *WhaleContext) SetEnv(key, val string) {
+func (ctx *EngineContext) UpdateLog(index int, log string) {
+	//ctx.Log.Info("TRITIUM: " + log)
+	if index >= 0 && index < len(ctx.Logs) {
+		ctx.Logs[index] = log
+	}
+}
+
+func (ctx *EngineContext) SetEnv(key, val string) {
 	ctx.Env[key] = val
 }
 
-func (ctx *WhaleContext) GetEnv(key string) (val string) {
+func (ctx *EngineContext) GetEnv(key string) (val string) {
 	val = ctx.Env[key]
 	return
 }
 
-func (ctx *WhaleContext) SetVar(key string, val interface{}) {
+func (ctx *EngineContext) SetVar(key string, val interface{}) {
 	b := ctx.TopYieldBlock()
 	if b != nil {
 		b.Vars[key] = val
 	}
 }
 
-func (ctx *WhaleContext) GetVar(key string) (val interface{}) {
+func (ctx *EngineContext) GetVar(key string) (val interface{}) {
 	b := ctx.TopYieldBlock()
 	if b != nil {
 		val = b.Vars[key]
@@ -413,33 +433,33 @@ func (ctx *WhaleContext) GetVar(key string) (val interface{}) {
 	return
 }
 
-func (ctx *WhaleContext) GetInnerReplacer() (r *rubex.Regexp) {
+func (ctx *EngineContext) GetInnerReplacer() (r *rubex.Regexp) {
 	r = ctx.InnerReplacer
 	//r = rubex.MustCompile(`[\\$](\d)`)
 	return
 }
 
-func (ctx *WhaleContext) GetHeaderContentTypeRegex() (r *rubex.Regexp) {
+func (ctx *EngineContext) GetHeaderContentTypeRegex() (r *rubex.Regexp) {
 	r = ctx.HeaderContentType
 	//r = rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE)
 	return
 }
 
-func (ctx *WhaleContext) GetOutputBuffer() (b []byte) {
+func (ctx *EngineContext) GetOutputBuffer() (b []byte) {
 	//b = ctx.OutputBuffer
 	return
 }
 
-func (ctx *WhaleContext) Logger() (logger *golog.Logger) {
+func (ctx *EngineContext) Logger() (logger *golog.Logger) {
 	logger = ctx.Log
 	return
 }
 
-func (ctx *WhaleContext) PushMatchStack(match string) {
+func (ctx *EngineContext) PushMatchStack(match string) {
 	ctx.MatchStack = append(ctx.MatchStack, match)
 }
 
-func (ctx *WhaleContext) PopMatchStack() (match string) {
+func (ctx *EngineContext) PopMatchStack() (match string) {
 	if num := len(ctx.MatchStack); num > 0 {
 		match = ctx.MatchStack[num-1]
 		ctx.MatchStack = ctx.MatchStack[:num-1]
@@ -447,27 +467,24 @@ func (ctx *WhaleContext) PopMatchStack() (match string) {
 	return
 }
 
-func (ctx *WhaleContext) PushShouldContinueStack(cont bool) {
+func (ctx *EngineContext) PushShouldContinueStack(cont bool) {
 	ctx.MatchShouldContinueStack = append(ctx.MatchShouldContinueStack, cont)
 }
-func (ctx *WhaleContext) PopShouldContinueStack() (cont bool) {
+
+func (ctx *EngineContext) PopShouldContinueStack() (cont bool) {
 	if num := len(ctx.MatchShouldContinueStack); num > 0 {
 		cont = ctx.MatchShouldContinueStack[num-1]
 		ctx.MatchShouldContinueStack = ctx.MatchShouldContinueStack[:num-1]
 	}
 	return
 }
-func (ctx *WhaleContext) SetShouldContinue(cont bool) {
+
+func (ctx *EngineContext) SetShouldContinue(cont bool) {
 	if num := len(ctx.MatchShouldContinueStack); num > 0 {
 		ctx.MatchShouldContinueStack[num-1] = cont
 	}
 }
-func (ctx *WhaleContext) GetRewriteRules() []*tp.RewriteRule {
-	return ctx.Rrules
-}
-func (ctx *WhaleContext) GetDeadline() *time.Time {
-	return &(ctx.Deadline)
-}
-func (ctx *WhaleContext) AddMemoryObject(o MemoryObject) {
+
+func (ctx *EngineContext) AddMemoryObject(o MemoryObject) {
 	ctx.Mobjects = append(ctx.Mobjects, o)
 }

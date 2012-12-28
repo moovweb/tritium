@@ -1,1 +1,0 @@
-set(read("../read.xml"))

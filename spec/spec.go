@@ -33,11 +33,11 @@ func LoadSpec(dir string, pkg *tp.Package) (*Spec, error) {
 	customFunctions, _ := Glob(Join(dir, "functions.ts"))
 
 	if len(customFunctions) == 1 {
-		functionsFile := customFunctions[0]
-		transform.LoadFunctions(functionsFile, pkg)
+		// functionsFile := customFunctions[0]
+		transform.LoadFunctions(dir, ".", "functions.ts", pkg)
 	}
 
-	script, err := linker.RunWithPackage(Join(dir, "main.ts"), pkg)
+	script, err := linker.RunWithPackage(dir, ".", "main.ts", pkg)
 
 	spec := &Spec{
 		Location: dir,

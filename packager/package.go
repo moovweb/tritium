@@ -245,7 +245,7 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 	entryPoint := filepath.Join(loadPath, "functions.ts")
 	pkg.Path = proto.String(entryPoint)
 
-	ReadPackageDefinitions(pkg.Package, entryPoint)
+	ReadPackageDefinitions(pkg.Package, loadPath, ".", "functions.ts")
 
 	if pkg.Options["generate_docs"] {
 		pkg.CollectFunctionDocs()

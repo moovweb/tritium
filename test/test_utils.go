@@ -13,6 +13,7 @@ import tp "tritium/proto"
 import "tritium/packager"
 import "golog"
 import "time"
+import "steno/dummy"
 
 func RunTest(path string) (result *spec.Result) {
 	result = spec.NewResult()
@@ -43,10 +44,10 @@ func RunTest(path string) (result *spec.Result) {
 		result.Error(path, fmt.Sprintf("Error loading test spec:\n%v\n", err.Error()))
 		return
 	}
-
-	eng := whale.NewEngine(logger)
+	debugger := &dummy.DummyDebugger{}
+	eng := whale.NewEngine(logger, debugger)
 	d, _ := time.ParseDuration("1m")
-	result.Merge(spec.Compare(eng.Run(spec.Script, nil, spec.Input, spec.Vars, time.Now().Add(d))))
+	result.Merge(spec.Compare(eng.Run(spec.Script, nil, spec.Input, spec.Vars, time.Now().Add(d), "test")))
 
 	return
 }
