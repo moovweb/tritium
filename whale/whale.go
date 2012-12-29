@@ -323,7 +323,7 @@ func (ctx *EngineContext) UsePackage(pkg *tp.Package) {
 
 func (ctx *EngineContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 	sig := pattern + "/" + options
-	obj, err := ctx.RegexpCache.Get(sig)
+	object, err := ctx.RegexpCache.Get(sig)
 	if err != nil {
 		mode := rubex.ONIG_OPTION_DEFAULT
 		if strings.Index(options, "i") >= 0 {
@@ -340,7 +340,7 @@ func (ctx *EngineContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 		}
 		return r
 	}
-	return obj.(*RegexpObject).Regexp
+	return object.(*RegexpObject).Regexp
 }
 
 func (ctx *EngineContext) GetXpathExpr(p string) (e *xpath.Expression) {
