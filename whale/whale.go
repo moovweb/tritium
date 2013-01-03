@@ -18,17 +18,10 @@ import (
 )
 
 type Whale struct {
-	//RegexpCache       map[string]*rubex.Regexp
-	//XPathCache        map[string]*xpath.Expression
 	Log *golog.Logger
-	//OutputBuffer      []byte
-	//InnerReplacer     *rubex.Regexp
-	//HeaderContentType *rubex.Regexp
 	Debugger steno.Debugger
 	RegexpCache       cache.Cache
 	XPathCache        cache.Cache
-	InnerReplacer     *rubex.Regexp
-	HeaderContentType *rubex.Regexp
 }
 
 type EngineContext struct {
@@ -44,6 +37,9 @@ type EngineContext struct {
 	*Whale
 	*tp.Transform
 	Rrules []*tp.RewriteRule
+
+	InnerReplacer     *rubex.Regexp
+	HeaderContentType *rubex.Regexp
 
 	// Debug info
 	Filename          string
@@ -61,11 +57,11 @@ func NewEngine(logger *golog.Logger, debugger steno.Debugger) *Whale {
 	e := &Whale{
 		Log: logger,
 		Debugger: debugger,
-		RegexpCache:              arc.NewSafeARCache(50),
-		XPathCache:               arc.NewSafeARCache(50),
-		InnerReplacer:            rubex.MustCompile(`[\\$](\d)`),
-		HeaderContentType:        rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
+		RegexpCache:              arc.NewARCache(200),
+		XPathCache:               arc.NewARCache(200),
 	}
+	e.RegexpCache.SetCleanFunc(CleanRegexpObject)
+	e.XPathCache.SetCleanFunc(CleanXpathExpObject)
 	return e
 }
 
@@ -86,34 +82,12 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, r
 		Mobjects:                 make([]MemoryObject, 0, defaultMobjects),
 		MessagePath:              messagePath,
 	}
-	ctx.AddMemoryObject(ctx.InnerReplacer)
-	ctx.AddMemoryObject(ctx.HeaderContentType)
 	return
 }
 
 func (eng *Whale) Free() {
-	/*
-		if eng.InnerReplacer != nil {
-			eng.InnerReplacer.Free()
-			eng.InnerReplacer = nil
-		}
-		if eng.HeaderContentType != nil {
-			eng.HeaderContentType.Free()
-			eng.HeaderContentType = nil
-		}
-		if eng.RegexpCache != nil {
-			for _, reg := range eng.RegexpCache {
-				reg.Free()
-			}
-			eng.RegexpCache = nil
-		}
-		if eng.XPathCache != nil {
-			for _, xpath := range eng.XPathCache {
-				xpath.Free()
-			}
-			eng.XPathCache = nil
-		}
-	*/
+	eng.RegexpCache.Reset()
+	eng.XPathCache.Reset()
 }
 
 func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string) (output string, exports [][]string, logs []string) {
@@ -335,7 +309,7 @@ func (ctx *EngineContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 		var err error
 		r, err = rubex.NewRegexp(pattern, mode)
 		if err == nil {
-			ctx.AddMemoryObject(r)
+			//ctx.AddMemoryObject(r)
 			ctx.RegexpCache.Set(sig, &RegexpObject{Regexp:r})
 		}
 		return r
@@ -348,7 +322,7 @@ func (ctx *EngineContext) GetXpathExpr(p string) (e *xpath.Expression) {
 	if err != nil {
 		e = xpath.Compile(p)
 		if e != nil {
-			ctx.AddMemoryObject(e)
+			//ctx.AddMemoryObject(e)
 			ctx.XPathCache.Set(p, &XpathExpObject{Expression: e})
 		} else {
 			ctx.AddLog("Invalid XPath used: " + p)
@@ -401,15 +375,11 @@ func (ctx *EngineContext) GetVar(key string) (val interface{}) {
 }
 
 func (ctx *EngineContext) GetInnerReplacer() (r *rubex.Regexp) {
-	r = ctx.InnerReplacer
-	//r = rubex.MustCompile(`[\\$](\d)`)
-	return
+	return ctx.GetRegexp(`[\\$](\d)`, "i")
 }
 
 func (ctx *EngineContext) GetHeaderContentTypeRegex() (r *rubex.Regexp) {
-	r = ctx.HeaderContentType
-	//r = rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE)
-	return
+	return ctx.GetRegexp(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, "i")
 }
 
 func (ctx *EngineContext) GetOutputBuffer() (b []byte) {
