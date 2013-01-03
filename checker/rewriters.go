@@ -108,7 +108,7 @@ func (result *CheckResult) run_tests(test_type string, engine *whale.Whale, tran
 		if test_type == "Cookie" {
 			req_cmd := "GET / HTTP/1.0\r\nHost: " + current_test.Host
 			// run the engine to populate the environment
-			_, exports, _ := engine.Run(req_transform, rrules, req_cmd, env, timeout, "test")
+			_, exports, _ := engine.Run(req_transform, rrules, req_cmd, env, timeout, "test", "test", "test")
 			for _, arr := range exports {
 				if len(arr) != 2 {
 				} else if arr[0] == "set-cookie" {
@@ -122,7 +122,7 @@ func (result *CheckResult) run_tests(test_type string, engine *whale.Whale, tran
 		}
 
 		http_cmd := create_cmd(current_test)
-		test_result, _, _ := engine.Run(transformer, rrules, http_cmd, env, timeout, "test")
+		test_result, _, _ := engine.Run(transformer, rrules, http_cmd, env, timeout, "test", "test", "test")
 		test_output := read_result_cmd(test_result)
 
 		test_passed := test_output == current_test.Expected
