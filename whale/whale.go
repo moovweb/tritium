@@ -57,8 +57,8 @@ func NewEngine(logger *golog.Logger, debugger steno.Debugger) *Whale {
 	e := &Whale{
 		Log: logger,
 		Debugger: debugger,
-		RegexpCache:              arc.NewARCache(200),
-		XPathCache:               arc.NewARCache(200),
+		RegexpCache:              arc.NewARCache(1000),
+		XPathCache:               arc.NewARCache(1000),
 	}
 	e.RegexpCache.SetCleanFunc(CleanRegexpObject)
 	e.XPathCache.SetCleanFunc(CleanXpathExpObject)
