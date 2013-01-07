@@ -250,21 +250,21 @@ func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName s
 
 			// After resolving a user-defined function, see if its fully resolved signature
 			// is the same as the signature of a prepackaged function. If so, throw an error.
-			var newSig string
-			newBaseSig := function.Stub(pkg)
-			if newBaseSig == "name,Text" ||
-				newBaseSig == "text" {
-				newSig = fmt.Sprintf("%s.%s", function.ScopeTypeString(pkg), function.Stub(pkg))
-			} else {
-				newSig = newBaseSig
-			}
-			// present := false
-			_, present := prepackaged[newSig]
-			if present {
-				msg := fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1)+")")
-				println(msg)
-				panic(msg)
-			}
+			// var newSig string
+			// newBaseSig := function.Stub(pkg)
+			// if newBaseSig == "name,Text" ||
+			// 	newBaseSig == "text" {
+			// 	newSig = fmt.Sprintf("%s.%s", function.ScopeTypeString(pkg), function.Stub(pkg))
+			// } else {
+			// 	newSig = newBaseSig
+			// }
+			// // present := false
+			// _, present := prepackaged[newSig]
+			// if present {
+			// 	msg := fmt.Sprintf("Attempt to redefine prepackaged function: %s", strings.Replace(newSig, ",", "(", 1)+")")
+			// 	println(msg)
+			// 	panic(msg)
+			// }
 
 			pkg.Functions = append(pkg.Functions, function)
 		}
