@@ -183,7 +183,12 @@ func (p *Parser) statement() (node *tp.Instruction) {
 	switch p.peek().Lexeme {
 	case IMPORT:
 		token := p.pop() // pop the "@import" token (includes importee)
-		scriptLocationInProject := filepath.Join(p.ScriptPath, token.Value)
+		scriptLocationInProject := filepath.Clean(filepath.Join(p.ScriptPath, token.Value))
+		// make sure that the importee is under the right subfolder
+		if !strings.HasPrefix(scriptLocationInProject, p.ScriptPath) {
+			msg := fmt.Sprintf("%s:%d -- imported file must exist under the `%s` folder", p.FileName, token.LineNumber, p.ScriptPath)
+			panic(msg)
+		}
 		node = tp.MakeImport(scriptLocationInProject, token.LineNumber)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
@@ -269,9 +274,22 @@ func (p *Parser) read() (node *tp.Instruction) {
 		p.error("unterminated argument list in read")
 	}
 	p.pop() // pop the rparen
+
+	// make sure we're not trying to read outside the project folder
+	fullReadPath := filepath.Clean(filepath.Join(p.ProjectPath, p.ScriptPath, readPath))
+	absReadPath, err := filepath.Abs(fullReadPath)
+	if err != nil {
+		msg := fmt.Sprintf("%s:%d -- `read` could not resolve the full path to %s", p.FileName, readLineNo, readPath)
+		panic(msg)
+	}
+	if !strings.HasPrefix(absReadPath, filepath.Join(p.ProjectPath)) {
+		msg := fmt.Sprintf("%s:%d -- `read` cannot open files outside the project folder", p.FileName, readLineNo)
+		panic(msg)
+	}
+
 	contents, err := ioutil.ReadFile(filepath.Join(p.ProjectPath, p.ScriptPath, readPath))
 	if err != nil { // can't use p.error because it's not a syntax error
-		msg := fmt.Sprintf("%s:%d -- read could not open %s", p.FileName, readLineNo, readPath)
+		msg := fmt.Sprintf("%s:%d -- `read` could not open %s", p.FileName, readLineNo, readPath)
 		panic(msg)
 	}
 	node = tp.MakeText(string(contents), readLineNo)
