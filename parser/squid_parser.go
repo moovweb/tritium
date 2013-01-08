@@ -85,6 +85,8 @@ func (p *Parser) error(msg string) {
 func MakeParser(src, projectPath, scriptPath, fileName string) *Parser {
 	fullpath := filepath.Join(projectPath, scriptPath, fileName)
 	fullpath, _ = filepath.Abs(fullpath)
+	scriptPath = filepath.Clean(scriptPath)
+	projectPath = filepath.Clean(projectPath)
 	p := &Parser{
 		Tokenizer:   MakeTokenizer([]byte(src)),
 		ProjectPath: projectPath, // the project path (probably absolute)
