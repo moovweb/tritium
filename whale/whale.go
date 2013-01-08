@@ -105,6 +105,10 @@ func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input i
 	return
 }
 
+func (eng *Whale) GetCacheStats() (int, int, int, int) {
+	return eng.RegexpCache.GetHitRate(), eng.RegexpCache.GetUsageRate(), eng.XPathCache.GetHitRate(), eng.XPathCache.GetUsageRate()
+}
+
 func (ctx *EngineContext) Free() {
     for _, o := range ctx.Mobjects {
 		if o != nil {
