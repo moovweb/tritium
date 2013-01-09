@@ -2,6 +2,7 @@ package proto;
 
 import "tritium.proto";
 import "rewrite_rule.proto";
+import "authentication.proto";
 
 message Slug {
 	required string name = 1;
@@ -9,4 +10,5 @@ message Slug {
 	repeated Transform transformers = 3;
 	repeated RewriteRule rrules = 4;
 	repeated string ssl_whitelist = 5;
+	optional Authentication authentication = 6;
 }
