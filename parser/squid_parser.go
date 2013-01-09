@@ -180,24 +180,7 @@ func (p *Parser) statement() (node *tp.Instruction) {
 	switch p.peek().Lexeme {
 	case IMPORT:
 		token := p.pop() // pop the "@import" token (includes importee)
-
-		// make sure we're in the project folder
-		scriptsIndex := strings.Index(p.DirName, "/scripts")
-		if scriptsIndex < 0 {
-			scriptsIndex := strings.Index(p.DirName, "/functions")
-		}
-		var projectPath string
-		if scriptsIndex > -1 {
-			projectPath = p.DirName[0:scriptsIndex]
-		} else {
-			panic(fmt.Sprintf("%s:%d -- source file does not seem to be inside the project folder", p.FileName, token.LineNumber))
-		}
-		fullImportPath := filepath.Clean(filepath.Join(p.DirName, token.Value))
-		if !strings.HasPrefix(fullImportPath, projectPath) {
-			panic(fmt.Sprintf("%s:%d -- imported files must exist inside the project folder", p.FileName, token.LineNumber))
-		}
-
-		node = tp.MakeImport(fullImportPath, token.LineNumber)
+		node = tp.MakeImport(filepath.Join(p.DirName, token.Value), token.LineNumber)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	default:
@@ -282,21 +265,7 @@ func (p *Parser) read() (node *tp.Instruction) {
 		p.error("unterminated argument list in read")
 	}
 	p.pop() // pop the rparen
-
-	// make sure we're in the project folder
-	scriptsIndex := strings.Index(p.DirName, "/scripts")
-	var projectPath string
-	if scriptsIndex > -1 {
-		projectPath = p.DirName[0:scriptsIndex]
-	} else {
-		panic(fmt.Sprintf("%s:%d -- source file does not seem to be inside the project folder", p.FileName, readLineNo))
-	}
-	fullReadPath := filepath.Clean(filepath.Join(p.DirName, readPath))
-	if !strings.HasPrefix(fullReadPath, projectPath) {
-		panic(fmt.Sprintf("%s:%d -- `read` cannot open files outside the project folder", p.FileName, readLineNo))
-	}
-
-	contents, err := ioutil.ReadFile(fullReadPath)
+	contents, err := ioutil.ReadFile(filepath.Join(p.DirName, readPath))
 	if err != nil { // can't use p.error because it's not a syntax error
 		msg := fmt.Sprintf("%s:%d -- read could not open %s", p.FileName, readLineNo, readPath)
 		panic(msg)
