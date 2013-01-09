@@ -184,7 +184,7 @@ func (p *Parser) statement() (node *tp.Instruction) {
 		// make sure we're in the project folder
 		scriptsIndex := strings.Index(p.DirName, "/scripts")
 		if scriptsIndex < 0 {
-			scriptsIndex := strings.Index(p.DirName, "/functions")
+			scriptsIndex = strings.Index(p.DirName, "/functions")
 		}
 		var projectPath string
 		if scriptsIndex > -1 {
