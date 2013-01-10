@@ -4,6 +4,7 @@ import (
 	"code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -186,12 +187,37 @@ func (p *Parser) statement() (node *tp.Instruction) {
 	case IMPORT:
 		token := p.pop() // pop the "@import" token (includes importee)
 		scriptLocationInProject := filepath.Clean(filepath.Join(p.ScriptPath, token.Value))
+
+		// extract the root script folder from the relative path of the importee
+		// (would be easier if filepath.FromSlash worked as advertised)
+		dir, base := filepath.Split(p.ScriptPath)
+		if len(dir) == 0 {
+			dir = base
+			base = ""
+		}
+		if dir[len(dir)-1] == os.PathSeparator {
+			dir = dir[0:len(dir)-1]
+		}
+		for len(base) > 0 {
+			dir, base = filepath.Split(dir)
+			if len(dir) == 0 {
+				dir = base
+				base = ""
+			}
+			if dir[len(dir)-1] == os.PathSeparator {
+				dir = dir[0:len(dir)-1]
+			}
+		}
+
 		// make sure that the importee is under the right subfolder
-		if !strings.HasPrefix(scriptLocationInProject, p.ScriptPath) {
-			msg := fmt.Sprintf("%s:%d -- imported file must exist under the `%s` folder", p.FileName, token.LineNumber, p.ScriptPath)
+		if !strings.HasPrefix(scriptLocationInProject, dir) {
+			msg := fmt.Sprintf("%s:%d -- imported file must exist under the `%s` folder", p.FileName, token.LineNumber, dir)
+			println(dir, base)
+			println(msg)
 			panic(msg)
 		}
 		node = tp.MakeImport(scriptLocationInProject, token.LineNumber)
+		// println("PROCESSED IMPORT", dir, base, scriptLocationInProject)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	default:
