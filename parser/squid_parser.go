@@ -279,7 +279,7 @@ func (p *Parser) read() (node *tp.Instruction) {
 	fullReadPath := filepath.Join(p.DirName, readPath)
 
 	dir := p.ProjectDir
-	if dir[len(dir)-1] == os.PathSeparator {
+	if len(dir) > 0 && dir[len(dir)-1] == os.PathSeparator {
 		dir = dir[0:len(dir)-1]
 	}
 	dir, _ = filepath.Split(dir)
@@ -288,7 +288,7 @@ func (p *Parser) read() (node *tp.Instruction) {
 		panic(msg)
 	}
 
-	contents, err := ioutil.ReadFile(filepath.Join(p.DirName, readPath))
+	contents, err := ioutil.ReadFile(fullReadPath)
 	if err != nil { // can't use p.error because it's not a syntax error
 		msg := fmt.Sprintf("%s:%d -- read could not open %s", p.FileName, readLineNo, readPath)
 		panic(msg)
