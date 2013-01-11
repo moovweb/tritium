@@ -6,8 +6,8 @@ import (
 	tp "tritium/proto"
 )
 
-func RunStringWithPackage(src, path string, pkg *tp.Package) (*tp.Transform, error) {
-	objs := parser.Parse(src, path)
+func RunStringWithPackage(src, path string, pkg *tp.Package, projDir string) (*tp.Transform, error) {
+	objs := parser.Parse(src, path, projDir)
 	return runWithObjs(objs, pkg)
 }
 

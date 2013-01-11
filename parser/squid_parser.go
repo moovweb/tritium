@@ -4,6 +4,7 @@ import (
 	"code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -14,6 +15,7 @@ import (
 type Parser struct {
 	*Tokenizer
 	FileName  string
+	ProjectDir string
 	DirName   string
 	FullPath  string
 	Lookahead *Token
@@ -81,13 +83,14 @@ func (p *Parser) error(msg string) {
 	panic(fullMsg)
 }
 
-func MakeParser(src, fullpath string) *Parser {
+func MakeParser(src, fullpath, projectDir string) *Parser {
 	fullpath, _ = filepath.Abs(fullpath)
 	d, f := filepath.Split(fullpath)
 	p := &Parser{
 		Tokenizer: MakeTokenizer([]byte(src)),
 		FileName:  f,
 		DirName:   d,
+		ProjectDir: projectDir,
 		FullPath:  fullpath,
 		Lookahead: nil,
 		counter:   0,
@@ -180,6 +183,13 @@ func (p *Parser) statement() (node *tp.Instruction) {
 	switch p.peek().Lexeme {
 	case IMPORT:
 		token := p.pop() // pop the "@import" token (includes importee)
+
+		fullImportPath := filepath.Join(p.DirName, token.Value)
+		if !strings.HasPrefix(fullImportPath, p.ProjectDir) {
+			msg := fmt.Sprintf("%s:%d -- imported file must exist under the `%s` folder", p.FileName, token.LineNumber, p.ProjectDir)
+			panic(msg)
+		}
+
 		node = tp.MakeImport(filepath.Join(p.DirName, token.Value), token.LineNumber)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
@@ -265,6 +275,19 @@ func (p *Parser) read() (node *tp.Instruction) {
 		p.error("unterminated argument list in read")
 	}
 	p.pop() // pop the rparen
+
+	fullReadPath := filepath.Join(p.DirName, readPath)
+
+	dir := p.ProjectDir
+	if dir[len(dir)-1] == os.PathSeparator {
+		dir = dir[0:len(dir)-1]
+	}
+	dir, _ = filepath.Split(dir)
+	if !strings.HasPrefix(fullReadPath, dir) {
+		msg := fmt.Sprintf("%s:%d -- `read` cannot open files outside the project folder", p.FileName, readLineNo)
+		panic(msg)
+	}
+
 	contents, err := ioutil.ReadFile(filepath.Join(p.DirName, readPath))
 	if err != nil { // can't use p.error because it's not a syntax error
 		msg := fmt.Sprintf("%s:%d -- read could not open %s", p.FileName, readLineNo, readPath)

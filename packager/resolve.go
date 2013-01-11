@@ -200,7 +200,7 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 }
 
-func ReadPackageDefinitions(pkg *tp.Package, location string) {
+func ReadPackageDefinitions(pkg *tp.Package, location, projDir string) {
 	//pkg.Println(" -- reading definitions")
 	_, err := ioutil.ReadFile(location)
 	//()("READING DEFINITIONS:", location)
@@ -212,7 +212,9 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 		// panic(msg)
 		return
 	}
-	definitions := parser.ParseFile(location)
+
+	definitions := parser.ParseWithProjectFolder(location, projDir)
+	// definitions := parser.ParseFile(location)
 
 	// Create a map of pre-packaged function signatures
 	prepackaged := make(map[string]bool)
@@ -243,7 +245,7 @@ func ReadPackageDefinitions(pkg *tp.Package, location string) {
 				msg := fmt.Sprintf("\n********\nin file %s:\nattempting to import nonexistent file %s\nPlease consult %s for more information about this error.\n********\n", location, importPath, errURL)
 				panic(msg)
 			}
-			ReadPackageDefinitions(pkg, importPath)
+			ReadPackageDefinitions(pkg, importPath, projDir)
 		} else { // otherwise if it's not an import stub ...
 			//pkg.Log.Info("\t -- function: %v", function)
 			resolveDefinition(pkg, function)
