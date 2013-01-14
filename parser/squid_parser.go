@@ -208,12 +208,17 @@ func (p *Parser) statement() (node *tp.Instruction) {
 				dir = dir[0:len(dir)-1]
 			}
 		}
-
+		// if dir == "." {
+		// 	wd, wdErr := os.Getwd()
+		// 	if wdErr != nil {
+		// 		msg := fmt.Sprintf("%s:%d -- @import could not determine current working directory!", p.FileName, token.Lexeme)
+		// 		panic(msg)
+		// 	}
+		// 	dir = wd
+		// }
 		// make sure that the importee is under the right subfolder
 		if !strings.HasPrefix(scriptLocationInProject, dir) {
 			msg := fmt.Sprintf("%s:%d -- imported file must exist under the `%s` folder", p.FileName, token.LineNumber, dir)
-			println(dir, base)
-			println(msg)
 			panic(msg)
 		}
 		node = tp.MakeImport(scriptLocationInProject, token.LineNumber)
@@ -528,7 +533,12 @@ func (p *Parser) definition() *tp.Function {
 	if p.peek().Lexeme != ID {
 		p.error("invalid function name in definition")
 	}
+
 	funcName := p.pop().Value
+	funcFile := ""
+	if len(p.ScriptPath) > 0 && p.ScriptPath != "." {
+		funcFile = filepath.Join(p.ScriptPath, p.FileName)
+	}
 
 	if p.peek().Lexeme != LPAREN {
 		p.error("parenthesized parameter list expected in function declaration")
@@ -551,6 +561,9 @@ func (p *Parser) definition() *tp.Function {
 	}
 
 	node.Name = proto.String(funcName)
+	if len(funcFile) > 0 {
+		node.Description = proto.String(funcFile)
+	}
 	node.Args = params
 	node.ScopeType = proto.String(contextType)
 	node.ReturnType = proto.String(returnType)
