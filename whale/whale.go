@@ -190,6 +190,8 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 		ctx.Filename = curFile
 	case tp.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(null.GetInt32(ins.FunctionId))]
+		curFile := ctx.Filename
+		ctx.Filename = fun.GetDescription()
 		args := make([]interface{}, len(ins.Arguments))
 		for i, argIns := range ins.Arguments {
 			args[i] = ctx.RunInstruction(scope, argIns)
@@ -224,6 +226,7 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 			// POP!
 			ctx.PopYieldBlock()
 		}
+		ctx.Filename = curFile
 	}
 
 	return
