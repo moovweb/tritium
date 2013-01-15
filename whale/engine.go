@@ -25,6 +25,7 @@ var Positions = map[string]Position{
 type YieldBlock struct {
 	Ins  *tp.Instruction
 	Vars map[string]interface{}
+	Filename string
 }
 
 type Function struct {

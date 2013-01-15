@@ -25,6 +25,7 @@ func this_(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interfa
 func yield_(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	myYieldBlock := ctx.PopYieldBlock()
 	if ctx.HasYieldBlock() {
+		ctx.Filename = myYieldBlock.Filename
 		for _, child := range myYieldBlock.Ins.Children {
 			returnValue = ctx.RunInstruction(scope, child)
 		}

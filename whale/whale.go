@@ -214,6 +214,7 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 			yieldBlock := &YieldBlock{
 				Ins:  ins,
 				Vars: vars,
+				Filename: ctx.Filename,
 			}
 			// PUSH!
 			ctx.PushYieldBlock(yieldBlock)
