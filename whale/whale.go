@@ -207,8 +207,6 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 			// We are using a user-defined function
 			//println("Resetting localvar")
 			// Setup the new local var
-			curFile := ctx.Filename
-			ctx.Filename = fun.GetFilename()
 			vars := make(map[string]interface{}, len(args))
 			for i, arg := range fun.Args {
 				vars[null.GetString(arg.Name)] = args[i]
@@ -219,12 +217,15 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 			}
 			// PUSH!
 			ctx.PushYieldBlock(yieldBlock)
+			curFile := ctx.Filename
+			ctx.Filename = fun.GetFilename()
 			for _, child := range fun.Instruction.Children {
 				returnValue = ctx.RunInstruction(scope, child)
 			}
+			ctx.Filename = curFile
 			// POP!
 			ctx.PopYieldBlock()
-			ctx.Filename = curFile
+
 		}
 	}
 
