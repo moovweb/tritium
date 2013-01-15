@@ -520,7 +520,7 @@ func (p *Parser) definition() *tp.Function {
 	isSignature := false
 	node := new(tp.Function)
 
-	p.pop() // pop the "@func" keyword
+	funcLineNo := p.pop().LineNumber // pop the `@func` keyword
 	contextType := ""
 	if p.peek().Lexeme == TYPE {
 		contextType = p.pop().Value
@@ -564,6 +564,7 @@ func (p *Parser) definition() *tp.Function {
 	if len(funcFile) > 0 {
 		node.Filename = proto.String(funcFile)
 	}
+	node.LineNumber = proto.Int32(funcLineNo)
 	node.Args = params
 	node.ScopeType = proto.String(contextType)
 	node.ReturnType = proto.String(returnType)

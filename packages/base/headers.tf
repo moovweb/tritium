@@ -352,23 +352,23 @@
 # However, in our second example, we log our variable $a before yielding, which means that even though the user's changes will take place. The variable will be logged before it is changed. So in our second example we will see "dog" rather than "dogcat".
 # @example
 # # first example 
-# @func XMLNode.foo { 
-#  $a = "dog" 
-#   yield() 
-#   log($a) 
-# }
+#   @func XMLNode.foo {
+#     $a = "dog"
+#     yield()
+#     log($a)
+#   }
 # # second example 
-# foo() { 
-#  $a = $a + "cat" 
-# }
-# @func XMLNode.foo { 
-#   $a = "dog"
-#   log($a) 
-#   yield() 
-# }
-# foo() { 
-#   $a = $a + "cat" 
-# }
+#   foo() {
+#    $a = $a + "cat"
+#   }
+#   @func XMLNode.foo {
+#     $a = "dog"
+#     log($a)
+#     yield()
+#   }
+#   foo() {
+#     $a = $a + "cat"
+#   }
 # @exampletext Tritium Tester Example
 # @examplelink
 # @guidetext Function Guide
