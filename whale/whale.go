@@ -208,7 +208,7 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 			//println("Resetting localvar")
 			// Setup the new local var
 			curFile := ctx.Filename
-			ctx.Filename = fun.GetDescription()
+			ctx.Filename = fun.GetFilename()
 			vars := make(map[string]interface{}, len(args))
 			for i, arg := range fun.Args {
 				vars[null.GetString(arg.Name)] = args[i]
