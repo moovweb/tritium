@@ -16,6 +16,7 @@ var _ = math.Inf
 type Function struct {
 	Name             *string              `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	Description      *string              `protobuf:"bytes,11,opt,name=description" json:"description,omitempty"`
+	Filename         *string              `protobuf:"bytes,12,opt,name=filename" json:"filename,omitempty"`
 	ScopeTypeId      *int32               `protobuf:"varint,2,opt,name=scope_type_id" json:"scope_type_id,omitempty"`
 	ScopeType        *string              `protobuf:"bytes,8,opt,name=scope_type" json:"scope_type,omitempty"`
 	ReturnTypeId     *int32               `protobuf:"varint,3,opt,name=return_type_id" json:"return_type_id,omitempty"`
@@ -42,6 +43,13 @@ func (this *Function) GetName() string {
 func (this *Function) GetDescription() string {
 	if this != nil && this.Description != nil {
 		return *this.Description
+	}
+	return ""
+}
+
+func (this *Function) GetFilename() string {
+	if this != nil && this.Filename != nil {
+		return *this.Filename
 	}
 	return ""
 }

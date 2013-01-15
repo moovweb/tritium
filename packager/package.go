@@ -248,6 +248,7 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 	ReadPackageDefinitions(pkg.Package, loadPath, ".", "functions.ts")
 
 	if pkg.Options["generate_docs"] {
+		println("*** GENERATING DOCS ***")
 		pkg.CollectFunctionDocs()
 	}
 

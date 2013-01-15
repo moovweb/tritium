@@ -562,7 +562,7 @@ func (p *Parser) definition() *tp.Function {
 
 	node.Name = proto.String(funcName)
 	if len(funcFile) > 0 {
-		node.Description = proto.String(funcFile)
+		node.Filename = proto.String(funcFile)
 	}
 	node.Args = params
 	node.ScopeType = proto.String(contextType)
