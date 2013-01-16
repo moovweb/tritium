@@ -139,9 +139,9 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 		}
 	}()
 
-	ctx.Whale.Debugger.TrapInstruction(ctx.MessagePath, ctx.Filename, ctx.Env, ins, scope.Value, scope.Index)
+	hasTrap := ctx.Whale.Debugger.TrapInstruction(ctx.MessagePath, ctx.Filename, ctx.Env, ins, scope.Value, scope.Index)
 
-	if time.Now().After(ctx.Deadline) {
+	if !hasTrap && time.Now().After(ctx.Deadline) {
 		panic(TimeoutError)
 	}
 
