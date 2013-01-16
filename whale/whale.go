@@ -47,6 +47,7 @@ type EngineContext struct {
 	Deadline time.Time
 	Mobjects []MemoryObject
 	MessagePath string
+	InDebug     bool
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -65,7 +66,7 @@ func NewEngine(logger *golog.Logger, debugger steno.Debugger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, rrules []*tp.RewriteRule, deadline time.Time, messagePath string) (ctx *EngineContext) {
+func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, rrules []*tp.RewriteRule, deadline time.Time, messagePath string, inDebug bool) (ctx *EngineContext) {
 	ctx = &EngineContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
@@ -81,6 +82,7 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, r
 		Deadline:                 deadline,
 		Mobjects:                 make([]MemoryObject, 0, defaultMobjects),
 		MessagePath:              messagePath,
+		InDebug:                  inDebug,
 	}
 	return
 }
@@ -90,8 +92,8 @@ func (eng *Whale) Free() {
 	eng.XPathCache.Reset()
 }
 
-func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string) (output string, exports [][]string, logs []string) {
-	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath)
+func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (output string, exports [][]string, logs []string) {
+	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, inDebug)
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
@@ -139,13 +141,9 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 		}
 	}()
 
-	hasTrap := ctx.Whale.Debugger.TrapInstruction(ctx.MessagePath, ctx.Filename, ctx.Env, ins, scope.Value, scope.Index)
-	if time.Now().After(ctx.Deadline) {
-		if hasTrap {
-			ctx.Deadline = time.Now().Add(60*time.Second)
-		} else {
-			panic(TimeoutError)
-		}
+	ctx.Whale.Debugger.TrapInstruction(ctx.MessagePath, ctx.Filename, ctx.Env, ins, scope.Value, scope.Index)
+	if time.Now().After(ctx.Deadline) && !ctx.InDebug {
+		panic(TimeoutError)
 	}
 
 	// If our object is invalid, then skip it
