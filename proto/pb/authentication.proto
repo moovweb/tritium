@@ -1,0 +1,7 @@
+package proto;
+
+message Authentication {
+	required string user = 1;
+	required string password = 2;
+	required string base64 = 3;
+}
