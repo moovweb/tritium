@@ -198,6 +198,7 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 		}
 
 		if null.GetBool(fun.BuiltIn) {
+			curFile := ctx.Filename
 			if f := builtInFunctions[fun.Name]; f != nil {
 				returnValue = f(ctx, scope, ins, args)
 				if returnValue == nil {
@@ -206,6 +207,7 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 			} else {
 				panic("missing function: " + fun.Name)
 			}
+			ctx.Filename = curFile
 		} else {
 			// We are using a user-defined function
 			//println("Resetting localvar")
