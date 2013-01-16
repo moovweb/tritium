@@ -182,7 +182,6 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 		curFile := ctx.Filename
 		ctx.Filename = null.GetString(obj.Name)
 		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, curFile, int(null.GetInt32(ins.LineNumber)))
-		ctx.AddLog("__IMPORT__FILE__:" + ctx.Filename)
 		for _, child := range obj.Root.Children {
 			ctx.RunInstruction(scope, child)
 		}
