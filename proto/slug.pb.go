@@ -14,13 +14,13 @@ var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Slug struct {
-	Name             *string         `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
-	Version          *string         `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
-	Transformers     []*Transform    `protobuf:"bytes,3,rep,name=transformers" json:"transformers,omitempty"`
-	Rrules           []*RewriteRule  `protobuf:"bytes,4,rep,name=rrules" json:"rrules,omitempty"`
-	SslWhitelist     []string        `protobuf:"bytes,5,rep,name=ssl_whitelist" json:"ssl_whitelist,omitempty"`
-	Authentication   *Authentication `protobuf:"bytes,6,opt,name=authentication" json:"authentication,omitempty"`
-	XXX_unrecognized []byte          `json:"-"`
+	Name             *string        `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
+	Version          *string        `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
+	Transformers     []*Transform   `protobuf:"bytes,3,rep,name=transformers" json:"transformers,omitempty"`
+	Rrules           []*RewriteRule `protobuf:"bytes,4,rep,name=rrules" json:"rrules,omitempty"`
+	SslWhitelist     []string       `protobuf:"bytes,5,rep,name=ssl_whitelist" json:"ssl_whitelist,omitempty"`
+	Credential       *Credential    `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
+	XXX_unrecognized []byte         `json:"-"`
 }
 
 func (this *Slug) Reset()         { *this = Slug{} }
@@ -41,9 +41,9 @@ func (this *Slug) GetVersion() string {
 	return ""
 }
 
-func (this *Slug) GetAuthentication() *Authentication {
+func (this *Slug) GetCredential() *Credential {
 	if this != nil {
-		return this.Authentication
+		return this.Credential
 	}
 	return nil
 }
