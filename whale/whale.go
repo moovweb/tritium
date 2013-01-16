@@ -140,9 +140,12 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 	}()
 
 	hasTrap := ctx.Whale.Debugger.TrapInstruction(ctx.MessagePath, ctx.Filename, ctx.Env, ins, scope.Value, scope.Index)
-
-	if !hasTrap && time.Now().After(ctx.Deadline) {
-		panic(TimeoutError)
+	if time.Now().After(ctx.Deadline) {
+		if hasTrap {
+			ctx.Deadline = time.Now().Add(60*time.Second)
+		} else {
+			panic(TimeoutError)
+		}
 	}
 
 	// If our object is invalid, then skip it
