@@ -1,6 +1,7 @@
 package whale
 
 import (
+	"fmt"
 	"strings"
 	"time"
 	"strconv"
@@ -120,6 +121,7 @@ func (ctx *EngineContext) Free() {
 }
 
 func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
+	thisFile := ctx.Filename
 	defer func() {
 		//TODO Stack traces seem to get truncated on syslog...
 		if x := recover(); x != nil {
@@ -135,7 +137,14 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 					ctx.HadError = true
 					errString = errString + "\n" + ins.Type.String() + " " + null.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
 				}
-				errString = errString + ctx.FileAndLine(ins) + "\n"
+				// errString = errString + ctx.FileAndLine(ins) + "\n"
+				if thisFile != "__rewriter__" {
+					errString = errString + fmt.Sprintf("%s:%d", thisFile, ins.GetLineNumber())
+					if callee := ins.GetValue(); len(callee) > 0 {
+						errString = errString + fmt.Sprintf(":\t%s", callee)
+					}
+					errString = errString + "\n"
+				}
 			}
 			panic(errString)
 		}
