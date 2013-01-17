@@ -12,7 +12,11 @@ func ParseFile(projectPath, scriptPath, fileName string) *tp.ScriptObject {
 }
 
 func ParseScript(src, projectPath, scriptPath, fileName string) *tp.ScriptObject {
-	return MakeParser(src, projectPath, scriptPath, fileName).Parse()
+	return MakeParser(src, projectPath, scriptPath, fileName, false).Parse()
+}
+
+func ParseRootScript(src, projectPath, scriptPath, fileName string) *tp.ScriptObject {
+	return MakeParser(src, projectPath, scriptPath, fileName, true).Parse()
 }
 
 func ParseFileSet(projectPath, scriptPath, fileName string) []*tp.ScriptObject {
@@ -23,7 +27,7 @@ func ParseFileSet(projectPath, scriptPath, fileName string) []*tp.ScriptObject {
 func Parse(src, projectPath, scriptPath, fileName string) []*tp.ScriptObject {
 	objs := make([]*tp.ScriptObject, 0)
 	files := make(map[string]int)
-	objs = append(objs, ParseScript(src, projectPath, scriptPath, fileName))
+	objs = append(objs, ParseRootScript(src, projectPath, scriptPath, fileName))
 	// files[file] = 1 // Don't register the top-level mixer scripts!
 	for i := 0; i < len(objs); i++ {
 		obj := objs[i]
