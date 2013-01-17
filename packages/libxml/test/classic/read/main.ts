@@ -1,0 +1,1 @@
+@import subfolder/read_from_subfolder.ts
