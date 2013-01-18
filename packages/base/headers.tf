@@ -343,7 +343,8 @@
 # @args
 # @description 
 # The yield() function is used to tell Moovweb where you want a new scope to be opened when using this function.
-# This allows you to execute Tritium in the function even after the user has opened a scope and executed several other functions. 
+# This allows you to execute Tritium in the function even after the user has opened a scope and executed several other functions.
+# To learn more, check out [our helpdesk post on how yield works](http://help.moovweb.com/entries/21633781-what-does-the-yield-function-do).
 # Common uses include:
 # * Any time you need to execute code after someone uses your function. 
 # * Error checking your function's use cases. 
