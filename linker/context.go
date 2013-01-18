@@ -25,6 +25,7 @@ type LinkingContext struct {
 	ProjectFolder string
 	ScriptsFolder string
 	*tp.Transform
+	Visiting      map[string]bool
 }
 
 type LocalDef map[string]int
@@ -40,6 +41,7 @@ func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject, projectPa
 	ctx.Objects = objs
 	ctx.ProjectFolder = projectPath
 	ctx.ScriptsFolder = scriptPath
+	ctx.Visiting = make(map[string]bool, 0)
 	return ctx
 }
 
@@ -135,6 +137,16 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 	ins.IsValid = proto.Bool(true)
 	switch *ins.Type {
 	case tp.Instruction_IMPORT:
+		importLocation := ins.GetValue()
+
+		// keep track of which files we're inside of, to detect circular imports
+		val, present := ctx.Visiting[importLocation]
+		if present && val {
+			ctx.error(ins, "Circular import detected: %s", importLocation)
+			panic(fmt.Sprintf("Circular import detected: %s", importLocation))
+		}
+		ctx.Visiting[importLocation] = true
+
 		// set its import_id and blank the value field
 		// importValue := filepath.Join(ctx.ProjectFolder, null.GetString(ins.Value))
 		//println("import: ", importValue)
@@ -145,6 +157,8 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		}
 		// Make sure this object is linked with the right scopeType
 		ctx.link(importId, scopeType)
+		// unset this after visiting an import
+		ctx.Visiting[importLocation] = false
 		//println("befor", ins.String())
 		ins.ObjectId = proto.Int(importId)
 		ins.Value = nil
