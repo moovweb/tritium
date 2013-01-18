@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"strconv"
 )
 
 import (
@@ -12,22 +13,24 @@ import (
 	"golog"
 	"rubex"
 	tp "tritium/proto"
+	"steno"
+	"go-cache"
+	"go-cache/arc"
 )
 
 type Whale struct {
-	//RegexpCache       map[string]*rubex.Regexp
-	//XPathCache        map[string]*xpath.Expression
 	Log *golog.Logger
-	//OutputBuffer      []byte
-	//InnerReplacer     *rubex.Regexp
-	//HeaderContentType *rubex.Regexp
+	Debugger steno.Debugger
+	RegexpCache       cache.Cache
+	XPathCache        cache.Cache
 }
 
-type WhaleContext struct {
+type EngineContext struct {
 	Functions                []*Function
 	Types                    []string
 	Exports                  [][]string
 	Logs                     []string
+	ImportedFiles            []string
 	Env                      map[string]string
 	MatchStack               []string
 	MatchShouldContinueStack []bool
@@ -36,36 +39,36 @@ type WhaleContext struct {
 	*tp.Transform
 	Rrules []*tp.RewriteRule
 
-	// Debug info
-	Filename          string
-	HadError          bool
-	RegexpCache       map[string]*rubex.Regexp
-	XPathCache        map[string]*xpath.Expression
 	InnerReplacer     *rubex.Regexp
 	HeaderContentType *rubex.Regexp
 
+	// Debug info
+	Filename          string
+	HadError          bool
 	Deadline time.Time
 	Mobjects []MemoryObject
+	MessagePath string
+	InDebug     bool
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
 const defaultMobjects = 4
 const TimeoutError = "EngineTimeout"
 
-func NewEngine(logger *golog.Logger) *Whale {
+func NewEngine(logger *golog.Logger, debugger steno.Debugger) *Whale {
 	e := &Whale{
-		//RegexpCache:       make(map[string]*rubex.Regexp),
-		//XPathCache:        make(map[string]*xpath.Expression),
 		Log: logger,
-		//OutputBuffer:      make([]byte, OutputBufferSize),
-		//InnerReplacer:     rubex.MustCompile(`[\\$](\d)`),
-		//HeaderContentType: rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
+		Debugger: debugger,
+		RegexpCache:              arc.NewARCache(1000),
+		XPathCache:               arc.NewARCache(1000),
 	}
+	e.RegexpCache.SetCleanFunc(CleanRegexpObject)
+	e.XPathCache.SetCleanFunc(CleanXpathExpObject)
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, rrules []*tp.RewriteRule, deadline time.Time) (ctx *WhaleContext) {
-	ctx = &WhaleContext{
+func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, rrules []*tp.RewriteRule, deadline time.Time, messagePath string, inDebug bool) (ctx *EngineContext) {
+	ctx = &EngineContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
 		Logs:                     make([]string, 0),
@@ -76,45 +79,22 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, r
 		MatchShouldContinueStack: make([]bool, 0),
 		Yields:                   make([]*YieldBlock, 0),
 		HadError:                 false,
-		RegexpCache:              make(map[string]*rubex.Regexp),
-		XPathCache:               make(map[string]*xpath.Expression),
-		InnerReplacer:            rubex.MustCompile(`[\\$](\d)`),
-		HeaderContentType:        rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE),
+		
 		Deadline:                 deadline,
 		Mobjects:                 make([]MemoryObject, 0, defaultMobjects),
+		MessagePath:              messagePath,
+		InDebug:                  inDebug,
 	}
-	ctx.AddMemoryObject(ctx.InnerReplacer)
-	ctx.AddMemoryObject(ctx.HeaderContentType)
 	return
 }
 
 func (eng *Whale) Free() {
-	/*
-		if eng.InnerReplacer != nil {
-			eng.InnerReplacer.Free()
-			eng.InnerReplacer = nil
-		}
-		if eng.HeaderContentType != nil {
-			eng.HeaderContentType.Free()
-			eng.HeaderContentType = nil
-		}
-		if eng.RegexpCache != nil {
-			for _, reg := range eng.RegexpCache {
-				reg.Free()
-			}
-			eng.RegexpCache = nil
-		}
-		if eng.XPathCache != nil {
-			for _, xpath := range eng.XPathCache {
-				xpath.Free()
-			}
-			eng.XPathCache = nil
-		}
-	*/
+	eng.RegexpCache.Reset()
+	eng.XPathCache.Reset()
 }
 
-func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time) (output string, exports [][]string, logs []string) {
-	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline)
+func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (output string, exports [][]string, logs []string) {
+	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, inDebug)
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.Pkg)
@@ -128,7 +108,11 @@ func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input i
 	return
 }
 
-func (ctx *WhaleContext) Free() {
+func (eng *Whale) GetCacheStats() (int, int, int, int) {
+	return eng.RegexpCache.GetHitRate(), eng.RegexpCache.GetUsageRate(), eng.XPathCache.GetHitRate(), eng.XPathCache.GetUsageRate()
+}
+
+func (ctx *EngineContext) Free() {
     for _, o := range ctx.Mobjects {
 		if o != nil {
 			o.Free()
@@ -136,7 +120,8 @@ func (ctx *WhaleContext) Free() {
 	}
 }
 
-func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
+func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
+	thisFile := ctx.Filename
 	defer func() {
 		//TODO Stack traces seem to get truncated on syslog...
 		if x := recover(); x != nil {
@@ -152,13 +137,21 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 					ctx.HadError = true
 					errString = errString + "\n" + ins.Type.String() + " " + null.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
 				}
-				errString = errString + ctx.FileAndLine(ins) + "\n"
+				// errString = errString + ctx.FileAndLine(ins) + "\n"
+				if thisFile != "__rewriter__" {
+					errString = errString + fmt.Sprintf("%s:%d", thisFile, ins.GetLineNumber())
+					if callee := ins.GetValue(); len(callee) > 0 {
+						errString = errString + fmt.Sprintf(":\t%s", callee)
+					}
+					errString = errString + "\n"
+				}
 			}
 			panic(errString)
 		}
 	}()
 
-	if time.Now().After(ctx.Deadline) {
+	ctx.Whale.Debugger.TrapInstruction(ctx.MessagePath, ctx.Filename, ctx.Env, ins, scope.Value, scope.Index)
+	if time.Now().After(ctx.Deadline) && !ctx.InDebug {
 		panic(TimeoutError)
 	}
 
@@ -197,9 +190,11 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 		obj := ctx.Objects[int(null.GetInt32(ins.ObjectId))]
 		curFile := ctx.Filename
 		ctx.Filename = null.GetString(obj.Name)
+		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, curFile, int(null.GetInt32(ins.LineNumber)))
 		for _, child := range obj.Root.Children {
 			ctx.RunInstruction(scope, child)
 		}
+		ctx.Whale.Debugger.LogImportDone(ctx.MessagePath, ctx.Filename, curFile, int(null.GetInt32(ins.LineNumber)))
 		ctx.Filename = curFile
 	case tp.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(null.GetInt32(ins.FunctionId))]
@@ -209,6 +204,7 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 		}
 
 		if null.GetBool(fun.BuiltIn) {
+			curFile := ctx.Filename
 			if f := builtInFunctions[fun.Name]; f != nil {
 				returnValue = f(ctx, scope, ins, args)
 				if returnValue == nil {
@@ -217,6 +213,7 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 			} else {
 				panic("missing function: " + fun.Name)
 			}
+			ctx.Filename = curFile
 		} else {
 			// We are using a user-defined function
 			//println("Resetting localvar")
@@ -228,21 +225,26 @@ func (ctx *WhaleContext) RunInstruction(scope *Scope, ins *tp.Instruction) (retu
 			yieldBlock := &YieldBlock{
 				Ins:  ins,
 				Vars: vars,
+				Filename: ctx.Filename,
 			}
 			// PUSH!
 			ctx.PushYieldBlock(yieldBlock)
+			curFile := ctx.Filename
+			ctx.Filename = fun.GetFilename()
 			for _, child := range fun.Instruction.Children {
 				returnValue = ctx.RunInstruction(scope, child)
 			}
+			ctx.Filename = curFile
 			// POP!
 			ctx.PopYieldBlock()
+
 		}
 	}
 
 	return
 }
 
-func (ctx *WhaleContext) ShouldContinue() (result bool) {
+func (ctx *EngineContext) ShouldContinue() (result bool) {
 	if len(ctx.MatchShouldContinueStack) > 0 {
 		result = ctx.MatchShouldContinueStack[len(ctx.MatchShouldContinueStack)-1]
 	} else {
@@ -251,15 +253,15 @@ func (ctx *WhaleContext) ShouldContinue() (result bool) {
 	return
 }
 
-func (ctx *WhaleContext) MatchTarget() string {
+func (ctx *EngineContext) MatchTarget() string {
 	return ctx.MatchStack[len(ctx.MatchStack)-1]
 }
 
-func (ctx *WhaleContext) PushYieldBlock(b *YieldBlock) {
+func (ctx *EngineContext) PushYieldBlock(b *YieldBlock) {
 	ctx.Yields = append(ctx.Yields, b)
 }
 
-func (ctx *WhaleContext) PopYieldBlock() (b *YieldBlock) {
+func (ctx *EngineContext) PopYieldBlock() (b *YieldBlock) {
 	num := len(ctx.Yields)
 	if num > 0 {
 		b = ctx.Yields[num-1]
@@ -268,11 +270,11 @@ func (ctx *WhaleContext) PopYieldBlock() (b *YieldBlock) {
 	return
 }
 
-func (ctx *WhaleContext) HasYieldBlock() bool {
+func (ctx *EngineContext) HasYieldBlock() bool {
 	return len(ctx.Yields) > 0
 }
 
-func (ctx *WhaleContext) TopYieldBlock() (b *YieldBlock) {
+func (ctx *EngineContext) TopYieldBlock() (b *YieldBlock) {
 	num := len(ctx.Yields)
 	if num > 0 {
 		b = ctx.Yields[num-1]
@@ -280,7 +282,7 @@ func (ctx *WhaleContext) TopYieldBlock() (b *YieldBlock) {
 	return
 }
 
-func (ctx *WhaleContext) Vars() map[string]interface{} {
+func (ctx *EngineContext) Vars() map[string]interface{} {
 	b := ctx.TopYieldBlock()
 	if b != nil {
 		return b.Vars
@@ -288,12 +290,12 @@ func (ctx *WhaleContext) Vars() map[string]interface{} {
 	return nil
 }
 
-func (ctx *WhaleContext) FileAndLine(ins *tp.Instruction) string {
-	lineNum := fmt.Sprintf("%d", null.GetInt32(ins.LineNumber))
+func (ctx *EngineContext) FileAndLine(ins *tp.Instruction) string {
+	lineNum := strconv.Itoa(int(null.GetInt32(ins.LineNumber)))
 	return (ctx.Filename + ":" + lineNum)
 }
 
-func (ctx *WhaleContext) UsePackage(pkg *tp.Package) {
+func (ctx *EngineContext) UsePackage(pkg *tp.Package) {
 	ctx.Types = make([]string, len(pkg.Types))
 	for i, t := range pkg.Types {
 		ctx.Types[i] = null.GetString(t.Name)
@@ -314,10 +316,10 @@ func (ctx *WhaleContext) UsePackage(pkg *tp.Package) {
 	}
 }
 
-func (ctx *WhaleContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
+func (ctx *EngineContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 	sig := pattern + "/" + options
-	r = ctx.RegexpCache[sig]
-	if r == nil {
+	object, err := ctx.RegexpCache.Get(sig)
+	if err != nil {
 		mode := rubex.ONIG_OPTION_DEFAULT
 		if strings.Index(options, "i") >= 0 {
 			mode = rubex.ONIG_OPTION_IGNORECASE
@@ -328,53 +330,64 @@ func (ctx *WhaleContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 		var err error
 		r, err = rubex.NewRegexp(pattern, mode)
 		if err == nil {
-			ctx.AddMemoryObject(r)
-			ctx.RegexpCache[sig] = r
+			//ctx.AddMemoryObject(r)
+			ctx.RegexpCache.Set(sig, &RegexpObject{Regexp:r})
 		}
+		return r
 	}
-	return
+	return object.(*RegexpObject).Regexp
 }
 
-func (ctx *WhaleContext) GetXpathExpr(p string) (e *xpath.Expression) {
-	e = ctx.XPathCache[p]
-	if e == nil {
+func (ctx *EngineContext) GetXpathExpr(p string) (e *xpath.Expression) {
+	object, err := ctx.XPathCache.Get(p)
+	if err != nil {
 		e = xpath.Compile(p)
 		if e != nil {
-			ctx.AddMemoryObject(e)
-			ctx.XPathCache[p] = e
+			//ctx.AddMemoryObject(e)
+			ctx.XPathCache.Set(p, &XpathExpObject{Expression: e})
 		} else {
 			ctx.AddLog("Invalid XPath used: " + p)
 		}
+		return e
 	}
-	return
+	return object.(*XpathExpObject).Expression
 }
 
-func (ctx *WhaleContext) AddExport(exports []string) {
+func (ctx *EngineContext) AddExport(exports []string) {
 	ctx.Exports = append(ctx.Exports, exports)
 }
 
-func (ctx *WhaleContext) AddLog(log string) {
+func (ctx *EngineContext) AddLog(log string) int {
 	//ctx.Log.Info("TRITIUM: " + log)
+	index := len(ctx.Logs)
 	ctx.Logs = append(ctx.Logs, log)
+	return index
 }
 
-func (ctx *WhaleContext) SetEnv(key, val string) {
+func (ctx *EngineContext) UpdateLog(index int, log string) {
+	//ctx.Log.Info("TRITIUM: " + log)
+	if index >= 0 && index < len(ctx.Logs) {
+		ctx.Logs[index] = log
+	}
+}
+
+func (ctx *EngineContext) SetEnv(key, val string) {
 	ctx.Env[key] = val
 }
 
-func (ctx *WhaleContext) GetEnv(key string) (val string) {
+func (ctx *EngineContext) GetEnv(key string) (val string) {
 	val = ctx.Env[key]
 	return
 }
 
-func (ctx *WhaleContext) SetVar(key string, val interface{}) {
+func (ctx *EngineContext) SetVar(key string, val interface{}) {
 	b := ctx.TopYieldBlock()
 	if b != nil {
 		b.Vars[key] = val
 	}
 }
 
-func (ctx *WhaleContext) GetVar(key string) (val interface{}) {
+func (ctx *EngineContext) GetVar(key string) (val interface{}) {
 	b := ctx.TopYieldBlock()
 	if b != nil {
 		val = b.Vars[key]
@@ -382,33 +395,29 @@ func (ctx *WhaleContext) GetVar(key string) (val interface{}) {
 	return
 }
 
-func (ctx *WhaleContext) GetInnerReplacer() (r *rubex.Regexp) {
-	r = ctx.InnerReplacer
-	//r = rubex.MustCompile(`[\\$](\d)`)
-	return
+func (ctx *EngineContext) GetInnerReplacer() (r *rubex.Regexp) {
+	return ctx.GetRegexp(`[\\$](\d)`, "i")
 }
 
-func (ctx *WhaleContext) GetHeaderContentTypeRegex() (r *rubex.Regexp) {
-	r = ctx.HeaderContentType
-	//r = rubex.MustCompileWithOption(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, rubex.ONIG_OPTION_IGNORECASE)
-	return
+func (ctx *EngineContext) GetHeaderContentTypeRegex() (r *rubex.Regexp) {
+	return ctx.GetRegexp(`<meta\s+http-equiv="content-type"\s+content="(.*?)"`, "i")
 }
 
-func (ctx *WhaleContext) GetOutputBuffer() (b []byte) {
+func (ctx *EngineContext) GetOutputBuffer() (b []byte) {
 	//b = ctx.OutputBuffer
 	return
 }
 
-func (ctx *WhaleContext) Logger() (logger *golog.Logger) {
+func (ctx *EngineContext) Logger() (logger *golog.Logger) {
 	logger = ctx.Log
 	return
 }
 
-func (ctx *WhaleContext) PushMatchStack(match string) {
+func (ctx *EngineContext) PushMatchStack(match string) {
 	ctx.MatchStack = append(ctx.MatchStack, match)
 }
 
-func (ctx *WhaleContext) PopMatchStack() (match string) {
+func (ctx *EngineContext) PopMatchStack() (match string) {
 	if num := len(ctx.MatchStack); num > 0 {
 		match = ctx.MatchStack[num-1]
 		ctx.MatchStack = ctx.MatchStack[:num-1]
@@ -416,27 +425,24 @@ func (ctx *WhaleContext) PopMatchStack() (match string) {
 	return
 }
 
-func (ctx *WhaleContext) PushShouldContinueStack(cont bool) {
+func (ctx *EngineContext) PushShouldContinueStack(cont bool) {
 	ctx.MatchShouldContinueStack = append(ctx.MatchShouldContinueStack, cont)
 }
-func (ctx *WhaleContext) PopShouldContinueStack() (cont bool) {
+
+func (ctx *EngineContext) PopShouldContinueStack() (cont bool) {
 	if num := len(ctx.MatchShouldContinueStack); num > 0 {
 		cont = ctx.MatchShouldContinueStack[num-1]
 		ctx.MatchShouldContinueStack = ctx.MatchShouldContinueStack[:num-1]
 	}
 	return
 }
-func (ctx *WhaleContext) SetShouldContinue(cont bool) {
+
+func (ctx *EngineContext) SetShouldContinue(cont bool) {
 	if num := len(ctx.MatchShouldContinueStack); num > 0 {
 		ctx.MatchShouldContinueStack[num-1] = cont
 	}
 }
-func (ctx *WhaleContext) GetRewriteRules() []*tp.RewriteRule {
-	return ctx.Rrules
-}
-func (ctx *WhaleContext) GetDeadline() *time.Time {
-	return &(ctx.Deadline)
-}
-func (ctx *WhaleContext) AddMemoryObject(o MemoryObject) {
+
+func (ctx *EngineContext) AddMemoryObject(o MemoryObject) {
 	ctx.Mobjects = append(ctx.Mobjects, o)
 }

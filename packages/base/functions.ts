@@ -7,7 +7,7 @@
 # @description
 # The read function allows you to insert a file or external HTML document into existing markup.
 # The function takes one argument - the file to be read. It should be referenced relative to the current file.
-# ### Common uses include:
+# ### Common Uses
 # * Injecting a header scaffold on a page
 # * Add radically different markup for a page
 # 
@@ -29,7 +29,7 @@
 # @description
 # The `export` function is used when you want to change the outgoing response header.
 # **Things to note**: You cannot currently export the status of the response header (e.g. 200, 302, etc.).
-# ### Common uses include:
+# ### Common Uses
 # * Malformed HTML or Javascript with the wrong `content-type` set.
 # * Setting the Cache-Time of the page.
 # * Setting the Location for a redirect.
@@ -59,7 +59,7 @@
 # @description
 # The `regexp` function is used to parse expressions and turn them into regular expressions. Regular Expressions are incredibly powerful for selecting and modifying groups of text.
 # *Related functions*: [match(target, comparitor)][1], [with(text)][2], [not(text)][3]
-# ### Common uses include:
+# ### Common Uses
 # * Removing extra text when transitioning from desktop to mobile sites.
 # * Modifying text to be more clear and concise to fit a smaller viewport.
 # * Changing instructions such as "click" to "tap" for mobile devices.
@@ -81,6 +81,13 @@
   regexp(%exp, "")
 }
 
+"References to the assets folder without hard-coding a path - [click for example](http://beta.moovweb.com/learn/training/function_guides/asset). @example `asset(\"images/icon.png\")` points to *assets/images/icon*, including the domain if necessary."
+@func asset(Text %name) {
+  concat($asset_host, %name) {
+    yield()
+  }
+}
+
 "Prints the time a block took to run. @example `html() { bm(\"TIME\") }` will print the time it took to parse the HTML in the server logs in the format 'TIME: x ms'."
 # @abstract The `bm` function prints in the terminal output the time a block took to run.
 # @name bm
@@ -91,7 +98,7 @@
 # The `bm` function is used to test the performance of your code by the proxy. From our experience, the majority of your performance boost will come from optimizing the images, scripts, and stylesheets of the proxied website. However, there are ways to improve performance of the execution of the proxy, such as using XPath selectors instead of CSS selectors and avoiding deep searches for content in the DOM.
 # **Things to note**: The `bm()` measurements vary between trials, so you may have to run several samples to get an accurate representation of execution speed.
 # *Related functions*: [time()][1]
-# ### Common uses include:
+# ### Common Uses
 # * Measuring the time it takes for a block of code to run.
 # 
 # [1]: #time()%20Text
@@ -121,7 +128,7 @@
 # The `match` function is used for pseudo-logic in Tritium. With `match()`, you have the equivalent of `if-else` and `case` statements in many other programming languages. `Match` is used to test the content of variables with strings, regular expressions, and other variables, and then run code according to whether or not the match is successful.
 # **Things to note**: If you have more than one variable or regular expression to test againt, you can simply provide the `match` function with the variable in question, and then use embedded `with()` statements for each case. You can also provide a final `else()` statement to serve as a catchall for all unsuccessful matches.
 # *Related functions*: [with(text)][1], [else()][2], [not(text)][3], [match_not(target, comparitor)][4]
-# ### Common uses include:
+# ### Common Uses
 # * Matching on the `$path` of the response to `@import` page-specific Tritium scripts.
 # * Matching attributes with specific content to change them in some way.
 # * Simulating `if-then-else` statements and boolean (`true/false`) logic to evaluate different Tritium.
@@ -159,7 +166,7 @@
 # The `match` function is used for pseudo-logic in Tritium. With `match()`, you have the equivalent of `if-else` and `case` statements in many other programming languages. `Match` is used to test the content of variables with strings, regular expressions, and other variables, then run code according to whether or not the match is successful.
 # **Things to note**: If you have more than one variable or regular expression to test against, you can simply provide the match function with the variable in question and then use embedded `with()` statements for each case. You can also provide a final `else()` statement to serve as a catchall for all unsuccessful matches.
 # *Related functions*: [with(text)][1], [else()][2], [not(text)][3], [match_not(target, comparitor)][4]
-# ### Common uses include:
+# ### Common Uses
 # * Matching on the `$path` of the response to `@import` page-specific Tritium scripts.
 # * Matching attributes with specific content to change them in some way.
 # * Simulating `if-then-else` statements and boolean (`true/false`) logic to evaluate different Tritium.
@@ -197,7 +204,7 @@
 # The `match_not` function is used for pseudo-logic in Tritium. With `match()`, you have the equivalent of `if-else` and `case` statements in many other programming languages. `Match` is used to test the content of variables with strings, regular expressions, and other variables, then run code according to whether or not the match is successful. `Match_not()` essentially inverts what you would expect from the `match` function. This means that if a match is not successful, then the block of code inside a `match_not()` or `with()` statement will run.
 # **Things to note**: If you have more than one variable or regular expression to test againt, you can simply provide the `match_not` function with the variable in question, then use embedded `with()` statements for each case. You can also provide a final `else()` statement to serve as a catchall for all unsuccessful matches.
 # *Related functions*: [with(text)][1], [else()][2], [not(text)][3], [match(target)][4]
-# ### Common uses include:
+# ### Common Uses
 # * Matching on the `$path` of the response to `@import` page-specific Tritium scripts.
 # * Matching attributes with specific content to change them in some way.
 # * Simulating `if-then-else` statements and boolean (`true/false`) logic to evaluate different Tritium.
@@ -235,7 +242,7 @@
 # The `match_not` function is used for pseudo-logic in Tritium. With `match()`, you have the equivalent of `if-else` and `case` statements in many other programming languages. `Match` is used to test the content of variables with strings, regular expressions, and other variables, then run code according to whether or not the match is successful. `Match_not()` essentially inverts what you would expect from the `match` function. This means that if a match is not successful, then the block of code inside that `match_not()` or `with()` statement will run.
 # **Things to note**: If you have more than one variable or regular expression to test againt, you can simply provide the `match_not` function with the variable in question and then use embeded `with()` statements for each case. You can also provide a final `else()` statement to serve as a catchall for all unsuccessful matches.
 # *Related functions*: [with(text)][1], [else()][2], [not(text)][3], [match(target)][4]
-# ### Common uses include:
+# ### Common Uses
 # * Matching on the `$path` of the response to `@import` page-specific Tritium scripts.
 # * Matching attributes with specific content to change them in some way.
 # * Simulating `if-then-else` statements and boolean (`true/false`) logic to evaluate different Tritium.
@@ -263,31 +270,6 @@
   }
 }
 
-"References to the assets folder without hard-coding a path - [click for example](http://console.moovweb.com/learn/training/function_guides/asset). @example `asset(\"images/icon.png\")` points to *assets/images/icon*, including the domain if necessary."
-@func asset(Text %name) {
-  match($__abs_asset_host__) {
-    with("") {
-      #check if not checked yet
-      match($asset_host) {
-        with(/^(http:|https:|)\/\//) {
-          #nothing
-        }
-        else() {
-          $asset_host = concat("//", $host, $asset_host)
-        }
-        $__abs_asset_host__ = "true"
-      }
-      $asset_url = concat($asset_host, %name)
-    }
-    else() {
-      $asset_url = concat($asset_host, %name)
-    }
-  }
-  #no yield
-  #what scope does it open anyway
-  $asset_url
-}
-
 "Similar to `remove()`, but works in the text scope. @example Given `<div>Dog</div>`, `$(\"./div\") { text() { clear() } }` will return `<div></div>`."
 # @abstract Similar to `remove()` but works in a text scope.
 # @name clear
@@ -297,7 +279,7 @@
 # @description 
 # The `clear` function is used to remove text from inside a text scope.
 # *Related functions*: [remove()][1]
-# ### Common uses include:
+# ### Common Uses
 # * Clearing extra white space inside nodes
 # * Clearing text links to turn them into icons
 # 
@@ -330,7 +312,7 @@
 # The `text()` function is used to either set the text of the current node or to open the text scope of the current node for modification.
 # **Things to note**: The `text()` function is different from the `inner()` function in that it will only return an array of the text nodes inside the element from which it is called. `inner()`, on the other hand, will return the entire inner HTML of the node from which it is called.
 # *Related functions*: [inner()][1]
-# ### Common uses include:
+# ### Common Uses
 # * Opening the scope for the use of text scope functions such as `replace`, `set`, `length`, `append`, `prepend`, `clear` and more.
 # * Setting the text of the current node.
 # 
@@ -362,7 +344,7 @@
 # The `replace` function is used to alter existing text nodes by replacing them based on either regular expressions or specific strings.
 # **Things to note**: Unless otherwise specified by the Regular Expression, all matches found by the `%search` parameter will be replaced.
 # *Related functions*: [text()][1], [inner()][2]
-# ### Common uses include:
+# ### Common Uses
 # * Replacing desktop instructions like "click" to mobile instructions like "tap"
 # * Removing extra or unnecessary text
 # * Rewriting attributes based on some standard set via a regular expression.
@@ -396,7 +378,7 @@
 # @description 
 # The `replace` function is used to alter existing text nodes by replacing them based on either regular expressions or specific strings.
 # **Things to note**: Unless otherwise specified by the Regular Expression, all matches found by the `%search` parameter will be replaced.
-# ### Common uses include:
+# ### Common Uses
 # * Replacing desktop instructions like "click" to mobile instructions like "tap"
 # * Removing extra or unnecessary text
 # * Rewriting attributes based on some standard set via a regular expression.
@@ -426,7 +408,7 @@
 # @args 
 # @description 
 # The `length` function is used to return the length of the current text node or the provided input string.
-# ### Common uses include:
+# ### Common Uses
 # * Validating an input string to make sure it is either a minimum or maximum number of characters.
 # * Finding the length of a string.
 # 

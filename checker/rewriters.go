@@ -2,7 +2,7 @@ package checker
 
 import (
 	"io/ioutil"
-	"path/filepath"
+	//"path/filepath"
 	"strings"
 	"time"
 )
@@ -108,7 +108,7 @@ func (result *CheckResult) run_tests(test_type string, engine *whale.Whale, tran
 		if test_type == "Cookie" {
 			req_cmd := "GET / HTTP/1.0\r\nHost: " + current_test.Host
 			// run the engine to populate the environment
-			_, exports, _ := engine.Run(req_transform, rrules, req_cmd, env, timeout)
+			_, exports, _ := engine.Run(req_transform, rrules, req_cmd, env, timeout, "test", "test", "test", false)
 			for _, arr := range exports {
 				if len(arr) != 2 {
 				} else if arr[0] == "set-cookie" {
@@ -122,7 +122,7 @@ func (result *CheckResult) run_tests(test_type string, engine *whale.Whale, tran
 		}
 
 		http_cmd := create_cmd(current_test)
-		test_result, _, _ := engine.Run(transformer, rrules, http_cmd, env, timeout)
+		test_result, _, _ := engine.Run(transformer, rrules, http_cmd, env, timeout, "test", "test", "test", false)
 		test_output := read_result_cmd(test_result)
 
 		test_passed := test_output == current_test.Expected
@@ -143,7 +143,7 @@ func (result *CheckResult) run_tests(test_type string, engine *whale.Whale, tran
 	}
 	return all_passed
 }
-
+/*
 func (result *CheckResult) CheckRewriters(req_tsf *proto.Transform, post_tsf *proto.Transform, rrules []*proto.RewriteRule, projectPath string, logger *golog.Logger) bool {
 	test_path := filepath.Join(projectPath, TEST_FILE)
 	test_cases, err := read_test_cases(test_path)
@@ -158,3 +158,4 @@ func (result *CheckResult) CheckRewriters(req_tsf *proto.Transform, post_tsf *pr
 
 	return passed_host && passed_link && passed_cookie
 }
+*/

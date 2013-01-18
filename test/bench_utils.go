@@ -6,6 +6,7 @@ import "fmt"
 import "tritium/spec"
 import "golog"
 import "time"
+import "steno/dummy"
 
 func RunBenchmarkSuite(directoryFromRoot string, b *testing.B) {
 	b.StopTimer()
@@ -33,13 +34,13 @@ func RunBenchmark(path string, b *testing.B) {
 	if err != nil {
 		panic(fmt.Sprintf("Error loading test spec at (%v) :\n%v\n", path, err.Error()))
 	}
-
-	eng := whale.NewEngine(logger)
+	debugger := &dummy.DummyDebugger{}
+	eng := whale.NewEngine(logger, debugger)
 
 	b.StartTimer()
 	d, _ := time.ParseDuration("1m")
 
 	for i := 0; i < b.N; i++ {
-		eng.Run(spec.Script, nil, spec.Input, spec.Vars, time.Now().Add(d))
+		eng.Run(spec.Script, nil, spec.Input, spec.Vars, time.Now().Add(d), "test", "test", "test", false)
 	}
 }

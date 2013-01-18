@@ -2,7 +2,7 @@ package whale
 
 import tp "tritium/proto"
 
-type builtInFunc func(EngineContext, *Scope, *tp.Instruction, []interface{}) interface{}
+type builtInFunc func(*EngineContext, *Scope, *tp.Instruction, []interface{}) interface{}
 
 var builtInFunctions map[string]builtInFunc
 
@@ -89,6 +89,7 @@ func init() {
 	builtInFunctions["rewrite_cookie_domain.Text.Text.Text"] = rewrite_cookie_domain_Text_Text_Text
 	//TODO rewrite_link should be deprecated soon
 	builtInFunctions["rewrite_link.Text.Text"] = rewrite_to_proxy_Text_Text
+	builtInFunctions["snapshot.Text"] = snapshot_Text
 }
 
 func LookupBuiltIn(name string) builtInFunc {

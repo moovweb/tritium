@@ -5,8 +5,8 @@ import (
 	tp "tritium/proto"
 )
 
-func CheckFile(path string) *CheckResult {
-	objs := parser.ParseFileSet(path)
+func CheckFile(projectPath, scriptPath, fileName string) *CheckResult {
+	objs := parser.ParseFileSet(projectPath, scriptPath, fileName)
 	return CheckBeforeLinking(objs)
 }
 

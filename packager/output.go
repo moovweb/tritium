@@ -85,7 +85,7 @@ func (pkg *Package) Merge(otherPackage *tp.Package) {
 		if null.GetBool(function.BuiltIn) {
 			pkg.resolveHeader(function)
 		} else {
-			resolveDefinition(pkg.Package, function)
+			resolveDefinition(pkg.Package, function, "")
 		}
 		pkg.Package.Functions = append(pkg.Package.Functions, function)
 	}

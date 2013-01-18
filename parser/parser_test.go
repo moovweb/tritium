@@ -2,8 +2,10 @@ package parser
 
 import (
 	. "testing"
+  "os"
 )
 
 func TestParseRun(t *T) {
-	ParseFile("two.ts")
+  wd, _ := os.Getwd()
+	ParseFile(wd, "scripts", "two.ts")
 }

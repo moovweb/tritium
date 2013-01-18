@@ -13,10 +13,10 @@ import (
 	"runtime/debug"
 	"time"
 	"tritium"
-	"tritium/lamprey"
 	"tritium/packager"
 	tp "tritium/proto"
 	"tritium/whale"
+	"steno/dummy"
 )
 
 func All(command string, directory string, options ...string) {
@@ -29,12 +29,12 @@ func All(command string, directory string, options ...string) {
 	}
 
 	logger := golog.NewLogger("tritium")
+	debugger := &dummy.DummyDebugger{}
+	
 	logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO, true))
 	var eng tritium.Engine
 	if command == "test" {
-		eng = whale.NewEngine(logger)
-	} else if command == "debug" {
-		eng = lamprey.NewEngine(logger)
+		eng = whale.NewEngine(logger, debugger)
 	}
 
 	var pkg *tp.Package
@@ -124,7 +124,7 @@ func RunSpec(dir string, pkg *tp.Package, eng tritium.Engine, logger *golog.Logg
 		result.Error(dir, err.Error())
 	} else {
 		d, _ := time.ParseDuration("1m")
-		result.Merge(spec.Compare(eng.Run(spec.Script, nil, spec.Input, spec.Vars, time.Now().Add(d))))
+		result.Merge(spec.Compare(eng.Run(spec.Script, nil, spec.Input, spec.Vars, time.Now().Add(d), "test", "test", "test", false)))
 	}
 	return
 }

@@ -13,17 +13,19 @@ import (
 	"time"
 	tp "tritium/proto"
 	"unicode/utf8"
+	"butler/null"
 )
 
 //The string value of me
-func this_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func this_(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = scope.Value
 	return
 }
 
-func yield_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func yield_(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	myYieldBlock := ctx.PopYieldBlock()
 	if ctx.HasYieldBlock() {
+		ctx.Filename = myYieldBlock.Filename
 		for _, child := range myYieldBlock.Ins.Children {
 			returnValue = ctx.RunInstruction(scope, child)
 		}
@@ -38,7 +40,7 @@ func yield_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interfa
 	return
 }
 
-func var_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func var_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	val := ctx.GetEnv(args[0].(string))
 	returnValue = val
 	if len(ins.Children) > 0 {
@@ -52,7 +54,7 @@ func var_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []inter
 	return
 }
 
-func var_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func var_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	ctx.SetEnv(args[0].(string), args[1].(string))
 	returnValue = args[1].(string)
 	if len(ins.Children) > 0 {
@@ -66,7 +68,7 @@ func var_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []
 	return
 }
 
-func match_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func match_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	// Setup stacks
 	against, ok := args[0].(string)
 	if !ok {
@@ -91,7 +93,7 @@ func match_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []int
 	return
 }
 
-func with_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func with_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
 	if ctx.ShouldContinue() {
 		if args[0].(string) == ctx.MatchTarget() {
@@ -105,7 +107,7 @@ func with_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []inte
 	return
 }
 
-func with_Regexp(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func with_Regexp(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
 	if ctx.ShouldContinue() {
 		//println(matcher.MatchAgainst, matchWith)
@@ -120,7 +122,7 @@ func with_Regexp(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	return
 }
 
-func not_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func not_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
 	if ctx.ShouldContinue() {
 		if args[0].(string) != ctx.MatchTarget() {
@@ -134,7 +136,7 @@ func not_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []inter
 	return
 }
 
-func not_Regexp(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func not_Regexp(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
 	if ctx.ShouldContinue() {
 		//println(matcher.MatchAgainst, matchWith)
@@ -149,7 +151,7 @@ func not_Regexp(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []int
 	return
 }
 
-func else_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func else_(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
 	if ctx.ShouldContinue() {
 		ctx.SetShouldContinue(false)
@@ -161,14 +163,14 @@ func else_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interfac
 	return
 }
 
-func regexp_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func regexp_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	pattern := args[0].(string)
 	options := args[1].(string)
 	returnValue = ctx.GetRegexp(pattern, options)
 	return
 }
 
-func export_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func export_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	val := make([]string, 2)
 	val[0] = args[0].(string)
 	ts := &Scope{Value: ""}
@@ -180,58 +182,58 @@ func export_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	return
 }
 
-func log_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func log_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	ctx.AddLog(args[0].(string))
 	returnValue = args[0].(string)
 	return
 }
 
-func concat_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func concat_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = args[0].(string) + args[1].(string)
 	return
 }
 
-func concat_Text_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func concat_Text_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = args[0].(string) + args[1].(string) + args[2].(string)
 	return
 }
 
-func downcase_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func downcase_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = strings.ToLower(args[0].(string))
 	return
 }
 
-func upcase_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func upcase_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = strings.ToUpper(args[0].(string))
 	return
 }
 
-func set_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func set_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	scope.Value = args[0].(string)
 	return
 }
 
-func append_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func append_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	scope.Value = scope.Value.(string) + args[0].(string)
 	return
 }
 
-func prepend_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func prepend_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	scope.Value = args[0].(string) + scope.Value.(string)
 	return
 }
 
-func index_XMLNode(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func index_XMLNode(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = fmt.Sprintf("%d", scope.Index+1)
 	return
 }
 
-func index_Node(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func index_Node(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = fmt.Sprintf("%d", scope.Index+1)
 	return
 }
 
-func replace_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func replace_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	ts := &Scope{Value: ""}
 	for _, child := range ins.Children {
 		ctx.RunInstruction(ts, child)
@@ -240,7 +242,7 @@ func replace_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []i
 	return
 }
 
-func replace_Regexp(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func replace_Regexp(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	regexp := args[0].(*rubex.Regexp)
 	scope.Value = regexp.GsubFunc(scope.Value.(string), func(match string, captures map[string]string) string {
 		usesGlobal := (ctx.GetEnv("use_global_replace_vars") == "true")
@@ -275,7 +277,7 @@ func replace_Regexp(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 	return
 }
 
-func capture_Regexp(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func capture_Regexp(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	regexp := args[0].(*rubex.Regexp)
 	scope.Value = regexp.GsubFunc(scope.Value.(string), func(match string, captures map[string]string) string {
 		usesGlobal := (ctx.GetEnv("use_global_replace_vars") == "true")
@@ -298,7 +300,7 @@ func capture_Regexp(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 	return
 }
 
-func convert_encoding_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func convert_encoding_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	input := scope.Value.(string)
 	fromCode := args[0].(string)
 	toCode := args[1].(string)
@@ -314,7 +316,7 @@ func convert_encoding_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruc
 	return
 }
 
-func xml_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func xml_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	input := scope.Value.(string)
 	doc, err := xml.Parse([]byte(input), nil, nil, xml.DefaultParseOption, nil)
 	if err != nil {
@@ -341,7 +343,7 @@ func xml_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []
 	return
 }
 
-func html_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
 	outputEncoding := args[1].(string)
@@ -373,7 +375,7 @@ func html_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, ar
 	return
 }
 
-func html_fragment_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
 	outputEncoding := args[1].(string)
@@ -402,7 +404,7 @@ func html_fragment_doc_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instru
 	return
 }
 
-func select_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func select_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	xpathStr := args[0].(string)
 	expr := ctx.GetXpathExpr(xpathStr)
@@ -410,7 +412,7 @@ func select_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 		returnValue = "false"
 		return
 	}
-	nodes, err := node.SearchByDeadline(expr, ctx.GetDeadline())
+	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
 	if err != nil {
 		ctx.Logger().Error("select err: %s", err.Error())
 		returnValue = "false"
@@ -443,13 +445,13 @@ func select_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	return
 }
 
-func remove_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func remove_(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	node.Remove()
 	return
 }
 
-func remove_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func remove_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 
 	xpathStr := args[0].(string)
@@ -458,7 +460,7 @@ func remove_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 		returnValue = "0"
 		return
 	}
-	nodes, err := node.SearchByDeadline(expr, ctx.GetDeadline())
+	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
 	if err != nil {
 		ctx.Logger().Error("select err: %s", err.Error())
 		returnValue = "false"
@@ -480,12 +482,12 @@ func remove_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	return
 }
 
-func position_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func position_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = Positions[args[0].(string)]
 	return
 }
 
-func insert_at_Position_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func insert_at_Position_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	position := args[0].(Position)
 	tagName := args[1].(string)
@@ -499,7 +501,7 @@ func insert_at_Position_Text(ctx EngineContext, scope *Scope, ins *tp.Instructio
 	return
 }
 
-func attribute_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func attribute_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	name := args[0].(string)
 	attr := node.Attribute(name)
@@ -520,7 +522,7 @@ func attribute_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 	return
 }
 
-func value(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func value(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	ts := &Scope{Value: node.Content()}
 	for _, child := range ins.Children {
@@ -535,12 +537,12 @@ func value(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interfac
 	return
 }
 
-func move_XMLNode_XMLNode_Position(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func move_XMLNode_XMLNode_Position(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	MoveFunc(args[0].(xml.Node), args[1].(xml.Node), args[2].(Position))
 	return
 }
 
-func inner(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func inner(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	ts := &Scope{Value: node.InnerHtml()}
 	for _, child := range ins.Children {
@@ -552,7 +554,7 @@ func inner(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interfac
 	return
 }
 
-func equal_XMLNode_XMLNode(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func equal_XMLNode_XMLNode(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
 	node1 := args[0].(xml.Node)
 	node2 := args[1].(xml.Node)
@@ -562,7 +564,7 @@ func equal_XMLNode_XMLNode(ctx EngineContext, scope *Scope, ins *tp.Instruction,
 	return
 }
 
-func move_children_to_XMLNode_Position(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func move_children_to_XMLNode_Position(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	destNode := args[0].(xml.Node)
 	if destNode.NodeType() == xml.XML_ELEMENT_NODE {
@@ -579,7 +581,7 @@ func move_children_to_XMLNode_Position(ctx EngineContext, scope *Scope, ins *tp.
 	return
 }
 
-func name(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func name(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	ts := &Scope{Value: node.Name()}
 	for _, child := range ins.Children {
@@ -590,7 +592,7 @@ func name(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface
 	return
 }
 
-func text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	ts := &Scope{Value: node.Content()}
 	for _, child := range ins.Children {
@@ -602,7 +604,7 @@ func text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface
 	return
 }
 
-func inner_text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func inner_text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	ts := &Scope{Value: node.Content()}
 	for _, child := range ins.Children {
@@ -614,7 +616,7 @@ func inner_text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []int
 	return
 }
 
-func dup(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func dup(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	newNode := node.Duplicate(1)
 	if newNode.NodeType() == xml.XML_ELEMENT_NODE {
@@ -627,7 +629,7 @@ func dup(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{
 	return
 }
 
-func fetch_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func fetch_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	xpathStr := args[0].(string)
 	expr := ctx.GetXpathExpr(xpathStr)
@@ -636,7 +638,7 @@ func fetch_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []int
 		return
 	}
 
-	nodes, err := node.SearchByDeadline(expr, ctx.GetDeadline())
+	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
 	if err == nil && len(nodes) > 0 {
 		node := nodes[0]
 		returnValue = node.String()
@@ -654,12 +656,12 @@ func fetch_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []int
 	return
 }
 
-func deprecated_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func deprecated_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	ctx.Logger().Info(args[0].(string))
 	return
 }
 
-func cdata_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func cdata_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	if node.NodeType() == xml.XML_ELEMENT_NODE {
 		content := args[0].(string)
@@ -673,7 +675,7 @@ func cdata_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []int
 	return
 }
 
-func inject_at_Position_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func inject_at_Position_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	position := args[0].(Position)
 	input := args[1].(string)
@@ -700,20 +702,20 @@ func inject_at_Position_Text(ctx EngineContext, scope *Scope, ins *tp.Instructio
 	return
 }
 
-func path(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func path(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = scope.Value.(xml.Node).Path()
 	return
 }
 
-func css_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func css_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = css.Convert(args[0].(string), css.LOCAL)
 	return
 }
 
-func wrap_text_children_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func wrap_text_children_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
 	node := scope.Value.(xml.Node)
-	if textNodes, err := node.SearchByDeadline("./text()", ctx.GetDeadline()); err == nil {
+	if textNodes, err := node.SearchByDeadline("./text()", &ctx.Deadline); err == nil {
 		tagName := args[0].(string)
 		tag := fmt.Sprintf("<%s />", tagName)
 		for index, textNode := range textNodes {
@@ -731,7 +733,7 @@ func wrap_text_children_Text(ctx EngineContext, scope *Scope, ins *tp.Instructio
 	return
 }
 
-func guess_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func guess_encoding(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = ""
 	input := scope.Value.(string)
 
@@ -787,7 +789,7 @@ func guess_encoding(ctx EngineContext, scope *Scope, ins *tp.Instruction, args [
 	return
 }
 
-func length_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func length_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	input := args[0].(string)
 	var length int
 	if ctx.GetEnv("charset_determined") == "utf-8" || ctx.GetEnv("charset_determined") == "utf8" {
@@ -799,7 +801,7 @@ func length_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	return
 }
 
-func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func time_(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	start := time.Now()
 	for _, child := range ins.Children {
 		ctx.RunInstruction(scope, child)
@@ -810,7 +812,7 @@ func time_(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interfac
 	return
 }
 
-func rewrite_to_upstream_Text_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func rewrite_to_upstream_Text_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	//rewrite_type := args[0].(string)
 	secure := args[1].(string)
 	catchAll := args[2].(string)
@@ -824,7 +826,7 @@ func rewrite_to_upstream_Text_Text_Text(ctx EngineContext, scope *Scope, ins *tp
 
 	key, append_proto, append_slashes := GenerateHostMapKey(host, secure)
 
-	rrules := ctx.GetRewriteRules()
+	rrules := ctx.Rrules
 	returnValue = "false"
 	if len(rrules) > 0 {
 		for _, rr := range rrules {
@@ -841,12 +843,12 @@ func rewrite_to_upstream_Text_Text_Text(ctx EngineContext, scope *Scope, ins *tp
 	return
 }
 
-func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func rewrite_to_proxy_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	secure := args[0].(string)
 	catchAll := args[1].(string)
 	link := strings.ToLower(scope.Value.(string))
 	key, append_proto, append_slashes := GenerateHostMapKey(link, secure)
-	rrules := ctx.GetRewriteRules()
+	rrules := ctx.Rrules
 	returnValue = "false"
 	if len(rrules) > 0 {
 		for _, rr := range rrules {
@@ -868,13 +870,13 @@ func rewrite_to_proxy_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruc
 	return
 }
 
-func rewrite_cookie_domain_Text_Text_Text(ctx EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func rewrite_cookie_domain_Text_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	host := args[0].(string)
 	secure := args[1].(string)
 	catchAll := args[2].(string)
 	domain := strings.ToLower(scope.Value.(string))
 	key, _, _ := GenerateHostMapKey(host, secure)
-	rrules := ctx.GetRewriteRules()
+	rrules := ctx.Rrules
 	returnValue = "false"
 	if len(rrules) > 0 {
 		newDomain := domain
@@ -905,5 +907,14 @@ func rewrite_cookie_domain_Text_Text_Text(ctx EngineContext, scope *Scope, ins *
 			scope.Value = newDomain
 		}
 	}
+	return
+}
+
+func snapshot_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	name := args[0].(string)
+	lineNum := int(null.GetInt32(ins.LineNumber))
+	messagePath := ctx.MessagePath
+	fname := ctx.Filename
+	ctx.Debugger.LogSnapshot(messagePath, name, fname, lineNum, scope.Value)
 	return
 }

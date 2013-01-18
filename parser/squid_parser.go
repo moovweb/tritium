@@ -4,6 +4,7 @@ import (
 	"code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -13,12 +14,14 @@ import (
 
 type Parser struct {
 	*Tokenizer
-	FileName  string
-	DirName   string
-	FullPath  string
-	Lookahead *Token
-	counter   int
-	header    bool
+	ProjectPath string // the project path (probably absolute)
+	ScriptPath  string // the folder containing the script file being parsed (relative to the project path)
+	FileName    string // the base-name of the script file being parsed
+	FullPath    string
+	Lookahead   *Token
+	counter     int
+	header      bool
+	RootFile    bool
 }
 
 func (p *Parser) gensym() string {
@@ -81,16 +84,20 @@ func (p *Parser) error(msg string) {
 	panic(fullMsg)
 }
 
-func MakeParser(src, fullpath string) *Parser {
+func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool) *Parser {
+	fullpath := filepath.Join(projectPath, scriptPath, fileName)
 	fullpath, _ = filepath.Abs(fullpath)
-	d, f := filepath.Split(fullpath)
+	scriptPath = filepath.Clean(scriptPath)
+	projectPath = filepath.Clean(projectPath)
 	p := &Parser{
-		Tokenizer: MakeTokenizer([]byte(src)),
-		FileName:  f,
-		DirName:   d,
-		FullPath:  fullpath,
-		Lookahead: nil,
-		counter:   0,
+		Tokenizer:   MakeTokenizer([]byte(src)),
+		ProjectPath: projectPath, // the project path (probably absolute)
+		ScriptPath:  scriptPath,  // the folder containing the script file being parsed (relative to the project path)
+		FileName:    fileName,    // the base-name of the script file being parsed
+		FullPath:    fullpath,
+		Lookahead:   nil,
+		counter:     0,
+		RootFile:    isRootFile,
 	}
 	p.pop()
 	return p
@@ -98,7 +105,12 @@ func MakeParser(src, fullpath string) *Parser {
 
 func (p *Parser) Parse() *tp.ScriptObject {
 	script := new(tp.ScriptObject)
-	script.Name = proto.String(p.FullPath)
+	// script.Name = proto.String(p.FullPath)
+	if !p.RootFile {
+		script.Name = proto.String(filepath.Join(p.ScriptPath, p.FileName))
+	} else {
+		script.Name = proto.String("__rewriter__")
+	}
 
 	stmts := tp.ListInstructions()
 	defs := make([]*tp.Function, 0) // Add a new constructor in instruction.go
@@ -180,7 +192,43 @@ func (p *Parser) statement() (node *tp.Instruction) {
 	switch p.peek().Lexeme {
 	case IMPORT:
 		token := p.pop() // pop the "@import" token (includes importee)
-		node = tp.MakeImport(filepath.Join(p.DirName, token.Value), token.LineNumber)
+		scriptLocationInProject := filepath.Clean(filepath.Join(p.ScriptPath, token.Value))
+
+		// extract the root script folder from the relative path of the importee
+		// (would be easier if filepath.FromSlash worked as advertised)
+		dir, base := filepath.Split(p.ScriptPath)
+		if len(dir) == 0 {
+			dir = base
+			base = ""
+		}
+		if dir[len(dir)-1] == os.PathSeparator {
+			dir = dir[0:len(dir)-1]
+		}
+		for len(base) > 0 {
+			dir, base = filepath.Split(dir)
+			if len(dir) == 0 {
+				dir = base
+				base = ""
+			}
+			if dir[len(dir)-1] == os.PathSeparator {
+				dir = dir[0:len(dir)-1]
+			}
+		}
+		// if dir == "." {
+		// 	wd, wdErr := os.Getwd()
+		// 	if wdErr != nil {
+		// 		msg := fmt.Sprintf("%s:%d -- @import could not determine current working directory!", p.FileName, token.Lexeme)
+		// 		panic(msg)
+		// 	}
+		// 	dir = wd
+		// }
+		// make sure that the importee is under the right subfolder
+		if !strings.HasPrefix(scriptLocationInProject, dir) {
+			msg := fmt.Sprintf("%s:%d -- imported file must exist under the `%s` folder", p.FileName, token.LineNumber, dir)
+			panic(msg)
+		}
+		node = tp.MakeImport(scriptLocationInProject, token.LineNumber)
+		// println("PROCESSED IMPORT", dir, base, scriptLocationInProject)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	default:
@@ -265,9 +313,22 @@ func (p *Parser) read() (node *tp.Instruction) {
 		p.error("unterminated argument list in read")
 	}
 	p.pop() // pop the rparen
-	contents, err := ioutil.ReadFile(filepath.Join(p.DirName, readPath))
+
+	// make sure we're not trying to read outside the project folder
+	fullReadPath := filepath.Clean(filepath.Join(p.ProjectPath, p.ScriptPath, readPath))
+	absReadPath, err := filepath.Abs(fullReadPath)
+	if err != nil {
+		msg := fmt.Sprintf("%s:%d -- `read` could not resolve the full path to %s", p.FileName, readLineNo, readPath)
+		panic(msg)
+	}
+	if !strings.HasPrefix(absReadPath, filepath.Join(p.ProjectPath)) {
+		msg := fmt.Sprintf("%s:%d -- `read` cannot open files outside the project folder", p.FileName, readLineNo)
+		panic(msg)
+	}
+
+	contents, err := ioutil.ReadFile(filepath.Join(p.ProjectPath, p.ScriptPath, readPath))
 	if err != nil { // can't use p.error because it's not a syntax error
-		msg := fmt.Sprintf("%s:%d -- read could not open %s", p.FileName, readLineNo, readPath)
+		msg := fmt.Sprintf("%s:%d -- `read` could not open %s", p.FileName, readLineNo, readPath)
 		panic(msg)
 	}
 	node = tp.MakeText(string(contents), readLineNo)
@@ -465,7 +526,7 @@ func (p *Parser) definition() *tp.Function {
 	isSignature := false
 	node := new(tp.Function)
 
-	p.pop() // pop the "@func" keyword
+	funcLineNo := p.pop().LineNumber // pop the `@func` keyword
 	contextType := ""
 	if p.peek().Lexeme == TYPE {
 		contextType = p.pop().Value
@@ -478,7 +539,12 @@ func (p *Parser) definition() *tp.Function {
 	if p.peek().Lexeme != ID {
 		p.error("invalid function name in definition")
 	}
+
 	funcName := p.pop().Value
+	funcFile := ""
+	if len(p.ScriptPath) > 0 && p.ScriptPath != "." {
+		funcFile = filepath.Join(p.ScriptPath, p.FileName)
+	}
 
 	if p.peek().Lexeme != LPAREN {
 		p.error("parenthesized parameter list expected in function declaration")
@@ -501,6 +567,10 @@ func (p *Parser) definition() *tp.Function {
 	}
 
 	node.Name = proto.String(funcName)
+	if len(funcFile) > 0 {
+		node.Filename = proto.String(funcFile)
+	}
+	node.LineNumber = proto.Int32(funcLineNo)
 	node.Args = params
 	node.ScopeType = proto.String(contextType)
 	node.ReturnType = proto.String(returnType)

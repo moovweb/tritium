@@ -52,14 +52,21 @@ echo -e "\n\n\nTesting $MIXER_NAME versions:  $VERSIONS\n\n\n"
 [ ! -d $MOOV_HOME/clibs ] && ln -s -f $CLIBS_HOME $MOOV_HOME/clibs
 export LD_LIBRARY_PATH=$MOOV_HOME/clibs/lib
 
-# Build everything, it'll clone all our required packages.
-python -u $TOOLS_DIR/build.py manhattan/targets/powermoov $GIT_BRANCH
+# Build the ambrosia test folder to pull in all its dependencies
+python -u $TOOLS_DIR/build.py ambrosia/test $GIT_BRANCH
 [ $? != 0 ] && exit 1
 
 # Create our data directory where all our stuff we'll be generated in.
 export GOHATTAN_DATA=$WORKSPACE/.moovweb
 [ ! -d "$GOHATTAN_DATA/mixers" ] && mkdir -p $GOHATTAN_DATA/mixers
 
+
+# And copy ambrosia over to our testing sandbox (where the tester will run from)
+rm -rf $MOOV_HOME/ambrosia
+cd $MOOV_HOME
+git clone git@github.com:moovweb/ambrosia
+[ $? != 0 ] && exit 1
+cd $WORKSPACE
 
 # We also have to copy our current directory into moovweb, otherwise go doesn't
 # know where the "ambrosia/transform" import is....
@@ -113,8 +120,12 @@ export GOPATH=$MOOV_HOME
 		# More debug info
 		git describe --tags
 
-		# Start testing
-		go test -v ./test/$MIXER_NAME
+		# Start testing, run the test from the master checkout of ambrosia, but use
+		# the test data from the version checked out.
+
+		# Need relative path to use go test...
+		TEST_DIR=$(python -c "import os.path; print os.path.relpath('$MOOV_HOME/ambrosia/test', '`pwd`')")
+		go test $TEST_DIR -test.v --mixer=$MIXER_NAME --test-data=$MOOV_HOME/src/ambrosia/transform
 		if [ $? != 0 ]; then
 			echo "Test failures found!"
 			fail="$fail\nTest failures found in $MIXER_NAME-${version_list[$i]}"
