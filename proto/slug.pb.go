@@ -19,6 +19,7 @@ type Slug struct {
 	Transformers     []*Transform   `protobuf:"bytes,3,rep,name=transformers" json:"transformers,omitempty"`
 	Rrules           []*RewriteRule `protobuf:"bytes,4,rep,name=rrules" json:"rrules,omitempty"`
 	SslWhitelist     []string       `protobuf:"bytes,5,rep,name=ssl_whitelist" json:"ssl_whitelist,omitempty"`
+	Credential       *Credential    `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
 	XXX_unrecognized []byte         `json:"-"`
 }
 
@@ -38,6 +39,13 @@ func (this *Slug) GetVersion() string {
 		return *this.Version
 	}
 	return ""
+}
+
+func (this *Slug) GetCredential() *Credential {
+	if this != nil {
+		return this.Credential
+	}
+	return nil
 }
 
 func init() {
