@@ -10,7 +10,6 @@ import (
 import (
 	"butler/null"
 	"gokogiri/xpath"
-	"golog"
 	"rubex"
 	tp "tritium/proto"
 	"steno"
@@ -19,7 +18,6 @@ import (
 )
 
 type Whale struct {
-	Log *golog.Logger
 	Debugger steno.Debugger
 	RegexpCache       cache.Cache
 	XPathCache        cache.Cache
@@ -56,9 +54,8 @@ const OutputBufferSize = 500 * 1024 //500KB
 const defaultMobjects = 4
 const TimeoutError = "EngineTimeout"
 
-func NewEngine(logger *golog.Logger, debugger steno.Debugger) *Whale {
+func NewEngine(debugger steno.Debugger) *Whale {
 	e := &Whale{
-		Log: logger,
 		Debugger: debugger,
 		RegexpCache:              arc.NewARCache(1000),
 		XPathCache:               arc.NewARCache(1000),
@@ -347,7 +344,7 @@ func (ctx *EngineContext) GetXpathExpr(p string) (e *xpath.Expression) {
 			//ctx.AddMemoryObject(e)
 			ctx.XPathCache.Set(p, &XpathExpObject{Expression: e})
 		} else {
-			ctx.Debugger.LogXPathErrorMessage(ctx.MessagePath, "Invalid XPath used: %s", p)
+			ctx.Debugger.LogTritiumErrorMessage(ctx.MessagePath, "Invalid XPath used: %s", p)
 		}
 		return e
 	}
@@ -406,11 +403,6 @@ func (ctx *EngineContext) GetHeaderContentTypeRegex() (r *rubex.Regexp) {
 
 func (ctx *EngineContext) GetOutputBuffer() (b []byte) {
 	//b = ctx.OutputBuffer
-	return
-}
-
-func (ctx *EngineContext) Logger() (logger *golog.Logger) {
-	logger = ctx.Log
 	return
 }
 
