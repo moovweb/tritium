@@ -49,6 +49,7 @@ type EngineContext struct {
 	Mobjects []MemoryObject
 	MessagePath string
 	InDebug     bool
+	CurrentDoc  interface{}
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -150,7 +151,7 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 		}
 	}()
 
-	ctx.Whale.Debugger.TrapInstruction(ctx.MessagePath, ctx.Filename, ctx.Env, ins, scope.Value, scope.Index)
+	ctx.Whale.Debugger.TrapInstruction(ctx.MessagePath, ctx.Filename, ctx.Env, ins, scope.Value, scope.Index, ctx.CurrentDoc)
 	if time.Now().After(ctx.Deadline) && !ctx.InDebug {
 		panic(TimeoutError)
 	}

@@ -331,6 +331,7 @@ func xml_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args [
 		return
 	}
 	ctx.AddMemoryObject(doc)
+	ctx.CurrentDoc = doc
 	ns := &Scope{Value: doc}
 
 	for _, child := range ins.Children {
@@ -338,6 +339,7 @@ func xml_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args [
 	}
 
 	scope.Value = doc.String()
+	ctx.CurrentDoc = nil
 	returnValue = scope.Value
 	//doc.Free()
 	return
@@ -361,6 +363,7 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, a
 		return
 	}
 	ctx.AddMemoryObject(doc)
+	ctx.CurrentDoc = doc
 	ns := &Scope{Value: doc}
 
 	for _, child := range ins.Children {
@@ -370,6 +373,7 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, a
 		//ctx.Log.Warn("executing html:" + err.Error())
 	}
 	scope.Value = doc.String()
+	ctx.CurrentDoc = nil
 	returnValue = scope.Value
 	//doc.Free()
 	return
@@ -393,12 +397,14 @@ func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instr
 		return
 	}
 	ctx.AddMemoryObject(fragment.Node.MyDocument())
+	ctx.CurrentDoc = fragment
 	ns := &Scope{Value: fragment}
 	for _, child := range ins.Children {
 		ctx.RunInstruction(ns, child)
 	}
 	//output is always utf-8 because the content is internal to Doc.
 	scope.Value = ns.Value.(*xml.DocumentFragment).String()
+	ctx.CurrentDoc = nil
 	returnValue = scope.Value
 	//fragment.Node.MyDocument().Free()
 	return
