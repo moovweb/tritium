@@ -139,12 +139,20 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 					errString = errString + "\n" + ins.Type.String() + " " + null.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
 				}
 				// errString = errString + ctx.FileAndLine(ins) + "\n"
-				if thisFile != "__rewriter__" {
-					errString = errString + fmt.Sprintf("%s:%d", thisFile, ins.GetLineNumber())
-					if callee := ins.GetValue(); len(callee) > 0 {
-						errString = errString + fmt.Sprintf(":\t%s", callee)
+				if len(thisFile) > 0 && thisFile != "__rewriter__" {
+					switch(ins.GetType()) {
+					case tp.Instruction_IMPORT:
+						errString = errString + fmt.Sprintf("%s:%d", thisFile, ins.GetLineNumber())
+						errString = errString + fmt.Sprintf(":\t@import %s\n", ctx.Objects[int(ins.GetObjectId())].GetName())
+					case tp.Instruction_FUNCTION_CALL:
+						errString = errString + fmt.Sprintf("%s:%d", thisFile, ins.GetLineNumber())
+						if callee := ins.GetValue(); len(callee) > 0 {
+							errString = errString + fmt.Sprintf(":\t%s\n", callee)
+						}
+					default:
+						// do nothing
+						// errString = errString + fmt.Sprintf(":\t%s", tp.Instruction_InstructionType_name[int32(ins.GetType())])
 					}
-					errString = errString + "\n"
 				}
 			}
 			panic(errString)
