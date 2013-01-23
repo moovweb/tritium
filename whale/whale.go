@@ -347,7 +347,7 @@ func (ctx *EngineContext) GetXpathExpr(p string) (e *xpath.Expression) {
 			//ctx.AddMemoryObject(e)
 			ctx.XPathCache.Set(p, &XpathExpObject{Expression: e})
 		} else {
-			ctx.AddLog("Invalid XPath used: " + p)
+			ctx.Debugger.LogXPathErrorMessage(ctx.MessagePath, "Invalid XPath used: %s", p)
 		}
 		return e
 	}
