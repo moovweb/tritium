@@ -34,7 +34,7 @@ func All(command string, directory string, options ...string) {
 	logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO, true))
 	var eng tritium.Engine
 	if command == "test" {
-		eng = whale.NewEngine(logger, debugger)
+		eng = whale.NewEngine(debugger)
 	}
 
 	var pkg *tp.Package
