@@ -915,12 +915,3 @@ func rewrite_cookie_domain_Text_Text_Text(ctx *EngineContext, scope *Scope, ins 
 	}
 	return
 }
-
-func snapshot_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	name := args[0].(string)
-	lineNum := int(null.GetInt32(ins.LineNumber))
-	messagePath := ctx.MessagePath
-	fname := ctx.Filename
-	ctx.Debugger.LogSnapshot(messagePath, name, fname, lineNum, scope.Value)
-	return
-}
