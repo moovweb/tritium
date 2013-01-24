@@ -35,7 +35,7 @@ func RunBenchmark(path string, b *testing.B) {
 		panic(fmt.Sprintf("Error loading test spec at (%v) :\n%v\n", path, err.Error()))
 	}
 	debugger := &dummy.DummyDebugger{}
-	eng := whale.NewEngine(logger, debugger)
+	eng := whale.NewEngine(debugger)
 
 	b.StartTimer()
 	d, _ := time.ParseDuration("1m")

@@ -13,7 +13,6 @@ import (
 	"time"
 	tp "tritium/proto"
 	"unicode/utf8"
-	"butler/null"
 )
 
 //The string value of me
@@ -34,7 +33,7 @@ func yield_(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interf
 			returnValue = "false"
 		}
 	} else {
-		ctx.Logger().Error("yield() failure")
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "yield(): %s", "no block")
 	}
 	ctx.PushYieldBlock(myYieldBlock)
 	return
@@ -70,10 +69,7 @@ func var_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args [
 
 func match_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	// Setup stacks
-	against, ok := args[0].(string)
-	if !ok {
-		ctx.Logger().Error("AH!")
-	}
+	against := args[0].(string)
 	ctx.PushMatchStack(against)
 	ctx.PushShouldContinueStack(true)
 
@@ -320,13 +316,13 @@ func xml_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args [
 	input := scope.Value.(string)
 	doc, err := xml.Parse([]byte(input), nil, nil, xml.DefaultParseOption, nil)
 	if err != nil {
-		ctx.Logger().Error("xml err: %s", err.Error())
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "xml err: %s", err.Error())
 		returnValue = "false"
 		return
 	}
 
 	if doc == nil {
-		ctx.Logger().Error("xml err: nil doc")
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "xml err: %s", "nil doc")
 		returnValue = "false"
 		return
 	}
@@ -353,12 +349,12 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, a
 	input := scope.Value.(string)
 	doc, err := html.Parse([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
 	if err != nil {
-		ctx.Logger().Error("html_doc err: %s", err.Error())
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "html_doc err: %s", err.Error())
 		returnValue = "false"
 		return
 	}
 	if doc == nil {
-		ctx.Logger().Error("html_doc err: nil doc")
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "html_doc err: %s", "nil doc")
 		returnValue = "false"
 		return
 	}
@@ -387,12 +383,12 @@ func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instr
 	input := scope.Value.(string)
 	fragment, err := html.ParseFragment([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
 	if err != nil {
-		ctx.Logger().Error("html_fragment err: %s", err.Error())
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "html_fragment err: %s", err.Error())
 		returnValue = "false"
 		return
 	}
 	if fragment == nil {
-		ctx.Logger().Error("html_fragment err: nil fragment")
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "html_fragment err: %s", "nil fragment")
 		returnValue = "false"
 		return
 	}
@@ -420,7 +416,7 @@ func select_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []i
 	}
 	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
 	if err != nil {
-		ctx.Logger().Error("select err: %s", err.Error())
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "select err: %s", err.Error())
 		returnValue = "false"
 		return
 	}
@@ -468,7 +464,7 @@ func remove_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []i
 	}
 	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
 	if err != nil {
-		ctx.Logger().Error("select err: %s", err.Error())
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "select err: %s", err.Error())
 		returnValue = "false"
 		return
 	}
@@ -663,7 +659,7 @@ func fetch_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []in
 }
 
 func deprecated_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	ctx.Logger().Info(args[0].(string))
+	ctx.Debugger.LogTritiumWarnMessage(ctx.MessagePath, "deprecated: %s", args[0].(string))
 	return
 }
 
@@ -913,14 +909,5 @@ func rewrite_cookie_domain_Text_Text_Text(ctx *EngineContext, scope *Scope, ins 
 			scope.Value = newDomain
 		}
 	}
-	return
-}
-
-func snapshot_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-	name := args[0].(string)
-	lineNum := int(null.GetInt32(ins.LineNumber))
-	messagePath := ctx.MessagePath
-	fname := ctx.Filename
-	ctx.Debugger.LogSnapshot(messagePath, name, fname, lineNum, scope.Value)
 	return
 }
