@@ -243,7 +243,7 @@ func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName s
 				msg := fmt.Sprintf("\n********\nin file %s:\nattempting to import nonexistent file %s\nPlease consult %s for more information about this error.\n********\n", filepath.Join(scriptPath, fileName), importPath, errURL)
 				panic(msg)
 			}
-			ReadPackageDefinitions(pkg, projectPath, filepath.Join(scriptPath, filepath.Dir(importPath)), filepath.Base(importPath))
+			ReadPackageDefinitions(pkg, projectPath, filepath.Dir(importPath), filepath.Base(importPath))
 		} else { // otherwise if it's not an import stub ...
 			//pkg.Log.Info("\t -- function: %v", function)
 			resolveDefinition(pkg, function, filepath.Join(scriptPath, fileName))
