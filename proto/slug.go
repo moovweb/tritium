@@ -4,6 +4,7 @@ import (
 	pb "code.google.com/p/goprotobuf/proto"
 	"io/ioutil"
 	"strings"
+	"time"
 )
 
 func NewSlug(name string, version string, stages int) (slug *Slug, err error) {
@@ -67,4 +68,28 @@ func findNearestInstruction(ins *Instruction, target int) int {
 	}
 
 	return 0
+}
+
+type SlugInfo struct {
+	Slug      *Slug
+	SlugSize  int
+	Timestamp time.Time
+	Customer  string
+	Project   string
+}
+
+func (si *SlugInfo) Size() int {
+	return si.SlugSize
+}
+
+func (si *SlugInfo) Reset() {
+	if si.Slug != nil {
+		si.Slug.Reset()
+	}
+}
+
+func NewSlugInfo() *SlugInfo {
+	slugInfo := &SlugInfo{}
+	//runtime.SetFinalizer(slugInfo, (*SlugInfo).Reset)
+	return slugInfo
 }

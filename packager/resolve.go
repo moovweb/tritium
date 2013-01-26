@@ -237,13 +237,13 @@ func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName s
 			importPath := function.GetDescription()
 			// Verify the existence of the imported file from here, so that we can
 			// report the name of the file that contains the import statement.
-			importExists, existsErr := exists(importPath)
+			importExists, existsErr := exists(filepath.Join(projectPath, importPath))
 			if !importExists || (existsErr != nil) {
 				errURL := "http://help.moovweb.com/entries/22335641-importing-non-existent-files-in-functions-main-ts"
 				msg := fmt.Sprintf("\n********\nin file %s:\nattempting to import nonexistent file %s\nPlease consult %s for more information about this error.\n********\n", filepath.Join(scriptPath, fileName), importPath, errURL)
 				panic(msg)
 			}
-			ReadPackageDefinitions(pkg, projectPath, filepath.Join(scriptPath, filepath.Dir(importPath)), filepath.Base(importPath))
+			ReadPackageDefinitions(pkg, projectPath, filepath.Dir(importPath), filepath.Base(importPath))
 		} else { // otherwise if it's not an import stub ...
 			//pkg.Log.Info("\t -- function: %v", function)
 			resolveDefinition(pkg, function, filepath.Join(scriptPath, fileName))
