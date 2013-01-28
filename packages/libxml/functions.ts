@@ -490,6 +490,31 @@
   }
 }
 
+"Inserts javascript (specified by **%js**) in a script tag within the currently-selected node at the position specified by **%pos**. @example `$(\"div\") { insert_javascript_at(position(\"top\"), \"alert('Boo')\") }` will insert the javascript specified at the top of the div."
+# @abstract Inserts javascript in the current node at the position specified.
+# @name insert_javascript_at
+# @category Create,Javascript
+# @scope XNLNode
+# @args Text %pos,Text %js
+# @description 
+# The `insert_javascript_at` function wraps the specified JavaScript (`%js`) in a `script` tag and inserts it in the specified position (`%pos`) of the current node.
+# **Things to note**: this version of the function accepts a text argument denoting the position.
+# Acceptable positions: `top`, `bottom`, `before` and `after`.
+# The following example inserts a `script` tag containing `alert('Boo')` at the top of the selected element.
+# @example
+# insert_javascript_at("top", "alert('Boo')")
+# @exampletext Tritium Tester Example
+# @examplelink test/examples/insert_javascript
+# @guidetext 
+# @guidelink 
+@func XMLNode.insert_javascript_at(Text %pos, Text %js) {
+  insert_at(position(%pos), "script") {
+    attribute("type", "text/javascript")
+    cdata(concat("//<![CDATA[\n", %js, "\n//]]>"))
+    yield()
+  }
+}
+
 "Inserts javascript (specified by **%js**) in a script tag within the currently-selected node. @example `$(\"div\") { insert_javascript(\"alert('Boo')\") }` will insert the javascript at the bottom of the div."
 # @abstract Inserts javascript in a script tag in the current node.
 # @name insert_javascript
@@ -770,6 +795,27 @@
 // POSITIONALS
 // siblings of these are in node, but these use Inner so are here.
 
+"Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node) - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
+# @hide
+# @abstract Inserts a tag with the (optional) content at the position specified.
+# @name insert_at
+# @category Create
+# @scope XMLNode
+# @args Position %pos,Text %tag,Text %content
+# @description 
+# @example
+# insert_at(position(top), "div", "Content")
+# @exampletext Tritium Tester Example
+# @examplelink test/examples/insert
+# @guidetext Uses of the various insert functions.
+# @guidelink http://console.moovweb.com/learn/training/function_guides/insert
+@func XMLNode.insert_at(Position %pos, Text %tag, Text %inner) {
+  insert_at(%pos, %tag) {
+    inner(%inner)
+    yield()
+  }
+}
+
 "Inserts a tag (specified by **%tag**) with content (**%content**) at a position specified by **%pos** (relative to the currently-selected node) - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
 # @abstract Inserts a tag with the (optional) content at the location given.
 # @name insert_at
@@ -793,27 +839,6 @@
 @func XMLNode.insert_at(Text %pos, Text %tag, Text %content) {
   insert_at(position(%pos), %tag) {
     inner(%content)
-    yield()
-  }
-}
-
-"Inserts a tag (specified by **%tag**) with content (**%inner**) at a position specified by **%pos** (relative to the currently-selected node) - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_at(\"top\", \"div\", \"Some text\")` will insert `<div>Some text</div>` at the top of the current node."
-# @hide
-# @abstract Inserts a tag with the (optional) content at the position specified.
-# @name insert_at
-# @category Create
-# @scope XMLNode
-# @args Position %pos,Text %tag,Text %content
-# @description 
-# @example
-# insert_at(position(top), "div", "Content")
-# @exampletext Tritium Tester Example
-# @examplelink test/examples/insert
-# @guidetext Uses of the various insert functions.
-# @guidelink http://console.moovweb.com/learn/training/function_guides/insert
-@func XMLNode.insert_at(Position %pos, Text %tag, Text %inner) {
-  insert_at(%pos, %tag) {
-    inner(%inner)
     yield()
   }
 }
