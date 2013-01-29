@@ -306,16 +306,29 @@ func (p *Parser) read() (node *tp.Instruction) {
 	}
 	p.pop() // pop the lparen
 	if p.peek().Lexeme != STRING {
-		p.error("read requires a literal string argument")
+		p.error("`read` requires a literal string argument")
 	}
 	readPath := p.pop().Value
+	readDir  := ""
+	if p.peek().Lexeme == COMMA {
+		p.pop()
+		if p.peek().Lexeme != STRING {
+			p.error("second argument to `read` must be a literal string")
+		}
+		readDir = p.pop().Value
+	}
 	if p.peek().Lexeme != RPAREN {
 		p.error("unterminated argument list in read")
 	}
 	p.pop() // pop the rparen
 
 	// make sure we're not trying to read outside the project folder
-	fullReadPath := filepath.Clean(filepath.Join(p.ProjectPath, p.ScriptPath, readPath))
+	fullReadPath := ""
+	if len(readDir) > 0 {
+		fullReadPath = filepath.Clean(filepath.Join(p.ProjectPath, readDir, readPath))
+	} else {
+		fullReadPath = filepath.Clean(filepath.Join(p.ProjectPath, p.ScriptPath, readPath))
+	}
 	absReadPath, err := filepath.Abs(fullReadPath)
 	if err != nil {
 		msg := fmt.Sprintf("%s:%d -- `read` could not resolve the full path to %s", p.FileName, readLineNo, readPath)
@@ -326,9 +339,15 @@ func (p *Parser) read() (node *tp.Instruction) {
 		panic(msg)
 	}
 
-	contents, err := ioutil.ReadFile(filepath.Join(p.ProjectPath, p.ScriptPath, readPath))
+	contents, err := ioutil.ReadFile(absReadPath)
 	if err != nil { // can't use p.error because it's not a syntax error
-		msg := fmt.Sprintf("%s:%d -- `read` could not open %s", p.FileName, readLineNo, readPath)
+		var msgPath string
+		if len(readDir) == 0 {
+			msgPath = filepath.Join(p.ScriptPath, readPath)
+		} else {
+			msgPath = filepath.Join(readDir, readPath)
+		}
+		msg := fmt.Sprintf("%s:%d -- `read` could not open %s", p.FileName, readLineNo, msgPath)
 		panic(msg)
 	}
 	node = tp.MakeText(string(contents), readLineNo)
