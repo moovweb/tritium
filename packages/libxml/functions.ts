@@ -877,6 +877,13 @@
   }
 }
 
+@func XMLNode.insert_at(Text %pos, Text %tag) {
+  insert_at(position(%pos), %tag) {
+    inner("")
+    yield()
+  }
+}
+
 "Inserts a tag (specified by **%tag**) with content (**%inner**) at the bottom of the currently-selected node - [click for example](http://console.moovweb.com/learn/training/function_guides/insert). @example `insert_bottom(\"div\", \"Some text\")` will insert `<div>Some text</div>` at the bottom of the current node."
 # @hide
 # @abstract Inserts a tag with the (optional) content into bottom of the current node.
