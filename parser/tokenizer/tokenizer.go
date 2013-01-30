@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"rubex"
 	"strings"
+	"strconv"
 )
 
 // Type tags so we know what kind of token we have
@@ -33,10 +34,11 @@ const (
 	READ
 	EOF
 	ERROR
+	NUM_LEXEMES
 )
 
-var LexemeName [22]string
-var matcher [22]*rubex.Regexp
+var LexemeName [NUM_LEXEMES]string
+var matcher [NUM_LEXEMES]*rubex.Regexp
 var symbolLexeme map[string]Lexeme
 var symbolPattern *rubex.Regexp
 var numberPattern *rubex.Regexp
@@ -227,37 +229,73 @@ func (t *Tokenizer) popError(message string) *Token {
 // Helper for unquoting strings. The main difficulty is that Go strings are
 // exclusively double-quoted, so single-quoted strings need to be converted
 // before being passed to strconv.Unquote(...).
+func unEscape(chars string) rune {
+  var converted byte
+  if chars[0] == '\\' {
+    switch chars[1] {
+    case 'n':
+      converted = '\n'
+    case 't':
+      converted = '\t'
+    case 'b':
+      converted = '\b'
+    case 'r':
+      converted = '\r'
+    case 'f':
+      converted = '\f'
+    case 'v':
+      converted = '\v'
+    case 'a':
+      converted = '\a'
+    case '\\':
+      converted = '\\'
+    default:
+      converted = chars[1]
+    }
+  } else {
+    converted = chars[0]
+  }
+  return rune(converted)
+}
+
+// A better string unquoter that handles unicode sequences. Can't use Go's
+// standard unquoter because we need to handle single-quoted strings too.
 func unquote(chars []byte) (string, bool) {
-	chars = chars[1 : len(chars)-1]
-	converted := make([]byte, 0)
-	for i := 0; i < len(chars); i++ {
-		if chars[i] == '\\' {
-			i++
-			switch chars[i] {
-			case 'n':
-				converted = append(converted, '\n')
-			case 't':
-				converted = append(converted, '\t')
-			case 'b':
-				converted = append(converted, '\b')
-			case 'r':
-				converted = append(converted, '\r')
-			case 'f':
-				converted = append(converted, '\f')
-			case 'v':
-				converted = append(converted, '\v')
-			case 'a':
-				converted = append(converted, '\a')
-			case '\\':
-				converted = append(converted, '\\')
-			default:
-				converted = append(converted, chars[i])
-			}
-		} else {
-			converted = append(converted, chars[i])
-		}
-	}
-	return string(converted), false
+	println("UNQUOTING:", string(chars))
+  if len(chars) == 2 { // it's just the quotes
+    return string(chars), false
+  }
+
+  remainder := string(chars[1:len(chars)-1])
+  quotemark := chars[0]
+  result    := make([]rune, 0)
+
+  var unquotedRune rune
+  var err error
+  if remainder[0] == '\\' && remainder[1] != 'u' {
+    result = append(result, unEscape(remainder[0:2]))
+    remainder = remainder[2:len(remainder)]
+  } else {
+	  unquotedRune, _, remainder, err = strconv.UnquoteChar(remainder, quotemark)
+	  if err != nil {
+	    return "", true
+	  }
+  	result = append(result, unquotedRune)
+  }
+  for len(remainder) > 0 {
+    if remainder[0] == '\\' && remainder[1] != 'u' {
+      result = append(result, unEscape(remainder[0:2]))
+      remainder = remainder[2:len(remainder)]
+    } else {
+	    unquotedRune, _, remainder, err = strconv.UnquoteChar(remainder, quotemark)
+	    if err != nil {
+	      return "", true
+	    }
+	    result = append(result, unquotedRune)
+	  }
+  }
+
+  return string(result), false
 }
 
 // The heart of the tokenizer. This function tries to munch off a token from
@@ -277,7 +315,7 @@ func (t *Tokenizer) munch() *Token {
 			unquoted, err := unquote(c)
 
 			if err {
-				return t.popError("Couldn't unquote string literal")
+				return t.popError("unable to interpret string literal")
 			}
 
 			// Increment line count by the number of lines the string literal spans
@@ -334,7 +372,7 @@ func (t *Tokenizer) munch() *Token {
 			var err bool
 			tok.Value, err = unquote(c)
 			if err {
-				tok = t.popError("illegal escape sequences in import path")
+				tok = t.popError("illegal characters in import path")
 			}
 			t.Source = t.Source[len(c):]
 		} else {
