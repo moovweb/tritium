@@ -261,9 +261,11 @@ func unEscape(chars string) rune {
 // A better string unquoter that handles unicode sequences. Can't use Go's
 // standard unquoter because we need to handle single-quoted strings too.
 func unquote(chars []byte) (string, bool) {
-	println("UNQUOTING:", string(chars))
+  if !(chars[0] == '"' || chars[0] == '\'') { // it's not quoted
+  	return string(chars), false
+  }
   if len(chars) == 2 { // it's just the quotes
-    return string(chars), false
+    return "", false
   }
 
   remainder := string(chars[1:len(chars)-1])
@@ -294,7 +296,6 @@ func unquote(chars []byte) (string, bool) {
 	    result = append(result, unquotedRune)
 	  }
   }
-
   return string(result), false
 }
 
