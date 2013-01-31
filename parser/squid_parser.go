@@ -238,19 +238,26 @@ func (p *Parser) statement() (node *tp.Instruction) {
 }
 
 func (p *Parser) expression() (node *tp.Instruction) {
-	node = p.term()
-	rest := tp.ListInstructions()
+	terms := tp.ListInstructions(p.term())
 	for p.peek().Lexeme == PLUS {
 		p.pop() // pop the plus sign
 		switch p.peek().Lexeme {
 		case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
-			rest = append(rest, p.term())
+			rhs := p.term()
+			last := len(terms)-1
+			if terms[last].GetType() == tp.Instruction_TEXT && rhs.GetType() == tp.Instruction_TEXT {
+				terms[last] = tp.MakeText(terms[last].GetValue() + rhs.GetValue(), terms[last].GetLineNumber())
+			} else {
+				terms = append(terms, rhs)
+			}
 		default:
 			p.error("argument to + must be a self-contained expression")
 		}
 	}
-	if len(rest) > 0 {
-		node = tp.FoldLeft("concat", node, rest)
+	if len(terms) > 1 {
+		node = tp.FoldLeft("concat", terms[0], terms[1:len(terms)])
+	} else {
+		node = terms[0]
 	}
 	return node
 }
