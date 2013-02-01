@@ -26,7 +26,7 @@ type Parser struct {
 
 func (p *Parser) gensym() string {
 	p.counter++
-	return p.FullPath + string(p.counter)
+	return fmt.Sprintf("__TRITIUM_INTERNAL__%s:%s", filepath.Join(p.ScriptPath, p.FileName), string(p.counter))
 }
 
 func (p *Parser) peek() *Token {
