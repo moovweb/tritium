@@ -1,6 +1,5 @@
 *.tpkg
 *.to
-*.tf
 *.6
 *_test/
 _obj/
@@ -12,3 +11,4 @@ pkg
 BUILD_VERSION
 src/tritium/main/tritium
 log/*
+*.swp
