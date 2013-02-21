@@ -7,6 +7,7 @@ import (
 	"gokogiri/html"
 	"gokogiri/xml"
 	"icu4go"
+	"net/url"
 	"rubex"
 	"strconv"
 	"strings"
@@ -372,6 +373,83 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, a
 	ctx.CurrentDoc = nil
 	returnValue = scope.Value
 	//doc.Free()
+	return
+}
+
+func url_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	urlStr := args[0].(string)
+	urlParsed, err := url.Parse(urlStr)
+	if err != nil {
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "url parse err: %s", err.Error())
+		returnValue = "false"
+		return
+	}
+	ns := &Scope{Value: urlParsed}
+	for _, child := range ins.Children {
+		println(fmt.Sprintf("%v", child))
+		ctx.RunInstruction(ns, child)
+	}
+	returnValue = ns.Value
+	return
+}
+
+func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	component := args[0].(string)
+	url := scope.Value.(*url.URL)
+	ns := &Scope{}
+	returnValue = ""
+	switch(component) {
+	case("scheme"):
+		ns.Value = url.Scheme
+	case("host"):
+		ns.Value = url.Host
+	case("path"):
+		ns.Value = url.Path
+	case("fragment"):
+		ns.Value = url.Fragment
+	}
+	if ns.Value != nil {
+		for _, child := range ins.Children {
+			ctx.RunInstruction(ns, child)
+		}
+		returnValue = ns.Value
+	}
+	return
+}
+
+func param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	parameter := args[0].(string)
+	url := scope.Value.(*url.URL)
+	params := url.Query()
+
+	ns := &Scope{Value: params.Get(parameter)}
+	for _, child := range ins.Children {
+		ctx.RunInstruction(ns, child)
+	}
+
+	// write the ns.Value back to params
+	params.Set(parameter, ns.Value.(string))
+	// write params back to url.RawQuery
+	url.RawQuery = params.Encode()
+
+	scope.Value = ns.Value.(string)
+	returnValue = scope.Value
+	return
+}
+
+func remove_param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	parameter := args[0].(string)
+	url := scope.Value.(*url.URL)
+	params := url.Query()
+
+	if params.Get(parameter) != "" {
+		params.Del(parameter)
+		// write params back to url.RawQuery
+		url.RawQuery = params.Encode()
+		returnValue = "true"
+	} else {
+		returnValue = "false"
+	}
 	return
 }
 

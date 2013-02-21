@@ -1,0 +1,5 @@
+name: url
+dependencies:
+  - base
+types:
+  - URL

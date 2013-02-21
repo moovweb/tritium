@@ -16,6 +16,12 @@ func init() {
 	builtInFunctions["var_Text_Text"] = var_Text_Text
 	builtInFunctions["match_Text"] = match_Text
 	builtInFunctions["html_doc_Text_Text"] = html_doc_Text_Text
+
+	builtInFunctions["url.Text"] = url_Text
+	builtInFunctions["comp.Text"] = comp_Text
+	builtInFunctions["param.Text"] = param_Text
+	builtInFunctions["remove_param.Text"] = remove_param_Text
+
 	builtInFunctions["xml"] = xml_Text_Text
 	builtInFunctions["select.Text"] = select_Text
 	builtInFunctions["export.Text"] = export_Text
