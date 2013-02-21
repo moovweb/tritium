@@ -62,6 +62,25 @@ func OutputPackage(pkgPath, outPath string) (pkg *Package, newFilePath string) {
 	newOutputFile := filepath.Join(outPath, name)
 	os.Rename(pkg.OutputFile, newOutputFile)
 
+	//return pkg, newOutputFile
+	return OutputPackage2(pkgPath, outPath)
+}
+
+func OutputPackage2(pkgPath, outPath string) (pkg *Package, newFilePath string) {
+	pkg = BuildPackage2(pkgPath)
+
+	_, err := os.Stat(outPath)
+	if err != nil {
+		creationErr := os.MkdirAll(outPath, os.FileMode(0777))
+		if creationErr != nil {
+			panic("Could not make path(" + outPath + "). Error: " + creationErr.Error())
+		}
+	}
+
+	_, name := filepath.Split(pkg.OutputFile)
+	newOutputFile := filepath.Join(outPath, name)
+	os.Rename(pkg.OutputFile, newOutputFile)
+
 	return pkg, newOutputFile
 }
 
@@ -74,6 +93,11 @@ func BuildPackage(path string) *Package {
 	return buildPackage(path, options)
 }
 
+func BuildPackage2(path string) *Package {
+	options := BuildOptions()
+	return buildPackage2(path, options)
+}
+
 func BuildDefaultPackage() *Package {
 	// println("BUILD DEFAULT PACKAGE")
 	return BuildPackage(DefaultPackagePath)
@@ -84,6 +108,18 @@ func buildPackage(path string, options PackageOptions) *Package {
 
 	pkg := NewPackage(path, options)
 	rootName := "libxml"
+
+	pkg.Name = proto.String(rootName)
+	pkg.Load(rootName)
+
+	return pkg
+}
+
+func buildPackage2(path string, options PackageOptions) *Package {
+	// Terrible directory handling here... has to be executed from Tritium root
+
+	pkg := NewPackage(path, options)
+	rootName := "url"
 
 	pkg.Name = proto.String(rootName)
 	pkg.Load(rootName)
