@@ -386,7 +386,6 @@ func url_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []inte
 	}
 	ns := &Scope{Value: urlParsed}
 	for _, child := range ins.Children {
-		println(fmt.Sprintf("%v", child))
 		ctx.RunInstruction(ns, child)
 	}
 	returnValue = ns.Value
