@@ -388,7 +388,13 @@ func url_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []inte
 	for _, child := range ins.Children {
 		ctx.RunInstruction(ns, child)
 	}
-	returnValue = ns.Value
+
+	// return the modified URL string (allow strings as well?)
+	if urlVal, isURL := ns.Value.(*url.URL); isURL {
+		returnValue = urlVal.String()
+	} else if urlStr, isStr := ns.Value.(string); isStr {
+		returnValue = urlStr
+	}
 	return
 }
 
@@ -396,7 +402,6 @@ func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []int
 	component := args[0].(string)
 	url := scope.Value.(*url.URL)
 	ns := &Scope{}
-	returnValue = ""
 	switch(component) {
 	case("scheme"):
 		ns.Value = url.Scheme
@@ -411,7 +416,22 @@ func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []int
 		for _, child := range ins.Children {
 			ctx.RunInstruction(ns, child)
 		}
-		returnValue = ns.Value
+
+		// write value back to URL (as long as it's a string)
+		if newVal, ok := ns.Value.(string); ok {
+			switch(component) {
+			case("scheme"):
+				url.Scheme = newVal
+			case("host"):
+				url.Host = newVal
+			case("path"):
+				url.Path = newVal
+			case("fragment"):
+				url.Fragment = newVal
+			}
+
+			returnValue = newVal
+		}
 	}
 	return
 }
@@ -426,13 +446,15 @@ func param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []in
 		ctx.RunInstruction(ns, child)
 	}
 
-	// write the ns.Value back to params
-	params.Set(parameter, ns.Value.(string))
-	// write params back to url.RawQuery
-	url.RawQuery = params.Encode()
+	// if child instructions result in a string:
+	if newVal, ok := ns.Value.(string); ok {
+		// write the ns.Value back to params
+		params.Set(parameter, newVal)
+		// write params back to url.RawQuery
+		url.RawQuery = params.Encode()
 
-	scope.Value = ns.Value.(string)
-	returnValue = scope.Value
+		returnValue = newVal
+	}
 	return
 }
 
