@@ -11,7 +11,7 @@
   }
 }
 
-@func URL.path() {
+@func URL.pat() {
   comp("path") {
     yield()
   }
@@ -37,8 +37,8 @@
   }
 }
 
-@func URL.path(Text %val) {
-  path() {
+@func URL.pat(Text %val) {
+  pat() {
     set(%val)
     yield()
   }
