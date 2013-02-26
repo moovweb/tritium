@@ -400,17 +400,17 @@ func url_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []inte
 
 func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	component := args[0].(string)
-	url := scope.Value.(*url.URL)
+	u := scope.Value.(*url.URL)
 	ns := &Scope{}
 	switch(component) {
 	case("scheme"):
-		ns.Value = url.Scheme
+		ns.Value = u.Scheme
 	case("host"):
-		ns.Value = url.Host
+		ns.Value = u.Host
 	case("path"):
-		ns.Value = url.Path
+		ns.Value = u.Path
 	case("fragment"):
-		ns.Value = url.Fragment
+		ns.Value = u.Fragment
 	}
 	if ns.Value != nil {
 		for _, child := range ins.Children {
@@ -421,13 +421,13 @@ func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []int
 		if newVal, ok := ns.Value.(string); ok {
 			switch(component) {
 			case("scheme"):
-				url.Scheme = newVal
+				u.Scheme = newVal
 			case("host"):
-				url.Host = newVal
+				u.Host = newVal
 			case("path"):
-				url.Path = newVal
+				u.Path = newVal
 			case("fragment"):
-				url.Fragment = newVal
+				u.Fragment = newVal
 			}
 
 			returnValue = newVal
@@ -438,8 +438,8 @@ func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []int
 
 func param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	parameter := args[0].(string)
-	url := scope.Value.(*url.URL)
-	params := url.Query()
+	u := scope.Value.(*url.URL)
+	params := u.Query()
 
 	ns := &Scope{Value: params.Get(parameter)}
 	for _, child := range ins.Children {
@@ -450,8 +450,8 @@ func param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	if newVal, ok := ns.Value.(string); ok {
 		// write the ns.Value back to params
 		params.Set(parameter, newVal)
-		// write params back to url.RawQuery
-		url.RawQuery = params.Encode()
+		// write params back to u.RawQuery
+		u.RawQuery = params.Encode()
 
 		returnValue = newVal
 	}
@@ -460,13 +460,13 @@ func param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []in
 
 func remove_param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	parameter := args[0].(string)
-	url := scope.Value.(*url.URL)
-	params := url.Query()
+	u := scope.Value.(*url.URL)
+	params := u.Query()
 
 	if params.Get(parameter) != "" {
 		params.Del(parameter)
-		// write params back to url.RawQuery
-		url.RawQuery = params.Encode()
+		// write params back to u.RawQuery
+		u.RawQuery = params.Encode()
 		returnValue = "true"
 	} else {
 		returnValue = "false"
