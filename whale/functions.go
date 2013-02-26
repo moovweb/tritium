@@ -411,6 +411,12 @@ func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []int
 		ns.Value = u.Path
 	case("fragment"):
 		ns.Value = u.Fragment
+	case("userinfo"):
+		if u.User != nil {
+			ns.Value = u.User.String()
+		} else {
+			ns.Value = ""
+		}
 	}
 	if ns.Value != nil {
 		for _, child := range ins.Children {
@@ -428,6 +434,18 @@ func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []int
 				u.Path = newVal
 			case("fragment"):
 				u.Fragment = newVal
+			case("userinfo"):
+				if newVal == "" {
+					// remove the userinfo
+					u.User = nil
+				} else {
+					info := strings.Split(newVal, ":")
+					newUserinfo := url.User(info[0])
+					if len(info) == 2 {
+						newUserinfo = url.UserPassword(info[0], info[1])
+					}
+					u.User = newUserinfo
+				}
 			}
 
 			returnValue = newVal

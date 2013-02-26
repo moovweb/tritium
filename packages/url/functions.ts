@@ -5,6 +5,66 @@
   }
 }
 
+@func URL.userinfo() {
+  comp("userinfo") {
+    yield()
+  }
+}
+
+@func URL.username() {
+  %user = ""
+  userinfo() {
+    capture(/^(\w+)/) {
+      %user {
+        set(%1)
+      }
+    }
+    %user {
+      yield()
+    }
+    # write the value of %user back to userinfo
+    match(%user) {
+      with("") {
+        replace(/^\w+/, "") # user is empty, so remove it (w/colon) from userinfo
+      } else() {
+        match(this()) {
+          replace(/^\w+/, %user)
+        }
+      }
+    }
+  }
+  %user # return just the user, not the entire userinfo
+}
+
+@func URL.password() {
+  %password = ""
+  userinfo() {
+    capture(/\:(\w+)/) {
+      %password {
+        set(%1)
+      }
+    }
+    %password {
+      yield()
+    }
+    # write the value of %password back to userinfo
+    match(%password) {
+      with("") {
+        replace(/\:[\w]+$/, "") # password is empty, so remove it (w/colon) from userinfo
+      } else() {
+        match(this()) {
+          with(/\:[\w]+$/) {
+            replace(/\:[\w]+$/, ":"+%password)
+          } else() {
+            append(":"+%password)
+          }
+        }
+      }
+    }
+  }
+  %password # return just the password, not the entire userinfo
+}
+
 @func URL.host() {
   comp("host") {
     yield()
@@ -25,7 +85,7 @@
     # write the value of %port back to the host
     match(%port) {
       with("") {
-        replace(/\:[\d]+$/, "") # port is empty, so remove it (w/colon) from h
+        replace(/\:[\d]+$/, "") # port is empty, so remove it (w/colon) from host
       } else() {
         match(this()) {
           with(/\:[\d]+$/) {
@@ -54,6 +114,27 @@
 
 @func URL.scheme(Text %val) {
   scheme() {
+    set(%val)
+    yield()
+  }
+}
+
+@func URL.userinfo(Text %val) {
+  userinfo() {
+    set(%val)
+    yield()
+  }
+}
+
+@func URL.username(Text %val) {
+  username() {
+    set(%val)
+    yield()
+  }
+}
+
+@func URL.password(Text %val) {
+  password() {
     set(%val)
     yield()
   }
