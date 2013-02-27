@@ -2,6 +2,7 @@
 $test_url = "http://sergey:brin@google.com/query.aspx?foo=bar&baz=true#frag"
 
 $new_test_url = url($test_url) {
+  $info = userinfo()
   $user_1 = username() # sergey
   $pw_1 = password() # brin
   userinfo("foo:bar")
