@@ -63,6 +63,35 @@
   }
 }
 
+@func URL.domain() {
+  %domain = ""
+  host() {
+    capture(/^([^\:]+)/) { # go up to colon or end if it doesn't exist
+      %domain {
+        set(%1)
+      }
+    }
+    %domain {
+      yield()
+    }
+    # write the value of %domain back to host
+    match(%domain) {
+      with("") {
+        replace(/^[^\:]+/, "") # domain is empty, so remove it (w/out colon) from host
+      } else() {
+        match(this()) {
+          with(/\:/) { # if host has a colon, replace everything before it
+            replace(/[\S]+\:/, %domain + ":")
+          } else() { # no colon, so just set host to domain
+            set(%domain)
+          }
+        }
+      }
+    }
+  }
+  %domain # return just the password, not the entire host
+}
+
 @func URL.port() {
   %port = ""
   host() {
@@ -127,6 +156,13 @@
 
 @func URL.password(Text %val) {
   password() {
+    set(%val)
+    yield()
+  }
+}
+
+@func URL.domain(Text %val) {
+  domain() {
     set(%val)
     yield()
   }
