@@ -14,7 +14,7 @@
 @func URL.username() {
   %user = ""
   userinfo() {
-    capture(/^(\w+)/) {
+    capture(/^([^\:]+)/) { # go up to the colon (or end if it doesn't exist)
       %user {
         set(%1)
       }
@@ -23,15 +23,7 @@
       yield()
     }
     # write the value of %user back to userinfo
-    match(%user) {
-      with("") {
-        replace(/^\w+/, "") # user is empty, so remove it (w/colon) from userinfo
-      } else() {
-        match(this()) {
-          replace(/^\w+/, %user)
-        }
-      }
-    }
+    replace(/^[^\:]+/, %user) # replace up to colon (or end)
   }
   %user # return just the user, not the entire userinfo
 }
@@ -39,7 +31,7 @@
 @func URL.password() {
   %password = ""
   userinfo() {
-    capture(/\:(\w+)/) {
+    capture(/\:(\S+)/) {
       %password {
         set(%1)
       }
@@ -50,11 +42,11 @@
     # write the value of %password back to userinfo
     match(%password) {
       with("") {
-        replace(/\:[\w]+$/, "") # password is empty, so remove it (w/colon) from userinfo
+        replace(/\:[\S]+/, "") # password is empty, so remove it (w/colon) from userinfo
       } else() {
         match(this()) {
-          with(/\:[\w]+$/) {
-            replace(/\:[\w]+$/, ":"+%password)
+          with(/\:[\S]+$/) {
+            replace(/\:[\S]+/, ":"+%password)
           } else() {
             append(":"+%password)
           }
@@ -74,7 +66,7 @@
 @func URL.port() {
   %port = ""
   host() {
-    capture(/\:([\d]+)$/) {
+    capture(/\:([\S]+)/) {
       %port {
         set(%1)
       }
@@ -85,11 +77,11 @@
     # write the value of %port back to the host
     match(%port) {
       with("") {
-        replace(/\:[\d]+$/, "") # port is empty, so remove it (w/colon) from host
+        replace(/\:[\S]+/, "") # port is empty, so remove it (w/colon) from host
       } else() {
         match(this()) {
-          with(/\:[\d]+$/) {
-            replace(/\:[\d]+$/, ":"+%port)
+          with(/\:[\S]+/) {
+            replace(/\:[\S]+/, ":"+%port)
           } else() {
             append(":"+%port)
           }
