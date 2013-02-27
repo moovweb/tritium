@@ -202,3 +202,14 @@
     yield()
   }
 }
+
+# relevant scope helpers
+@func URL.absolutize() {
+  match(host(), "") {
+    host($host)
+  }
+}
+
+@func URL.relativize() {
+  host("")
+}
