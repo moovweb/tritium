@@ -61,7 +61,8 @@ func NewLinkingContext(pkg *tp.Package) *LinkingContext {
 
 			funScopeId := null.GetInt32(fun.ScopeTypeId)
 			inherited := false
-			if implements != nil {
+			// funScopeId is ancestor of typeId
+			if (implements != nil) && pkg.AncestorOf(funScopeId, int32(typeId)) {
 				_, inherited = implements[stub]
 			}
 			if (funScopeId == int32(typeId)) || inherited {
