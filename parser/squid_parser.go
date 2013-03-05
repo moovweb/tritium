@@ -115,6 +115,18 @@ func (p *Parser) Parse() *tp.ScriptObject {
 	stmts := tp.ListInstructions()
 	defs := make([]*tp.Function, 0) // Add a new constructor in instruction.go
 
+	// Look for the module declaration first.
+	if p.peek().Lexeme == MODULE {
+		p.pop() // pop the `@module` keyword
+		if p.peek().Lexeme != ID {
+			p.error("module name must be a lowercase identifier")
+		}
+		moduleName := p.pop().Value
+		script.Module = proto.String(moduleName)
+	} else {
+		script.Module = proto.String("tritium")
+	}
+
 	for p.peek().Lexeme != EOF {
 		switch p.peek().Lexeme {
 		case FUNC:
