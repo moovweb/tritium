@@ -15,19 +15,19 @@ $url3 = url($test_url) {
   port("8080")
 }
 $url4 = url($test_url) {
-  pat("")
+  path("")
 }
 $url5 = url($test_url) {
-  pat("")
+  path("")
   param("foo", "bar")
 }
 $url6 = url($test_url) {
-  pat("")
+  path("")
   param("foo", "bar")
   port("80")
 }
 $url7 = url($test_url) {
-  pat("")
+  path("")
   scheme("ftp")
   param("hello", "goodbye")
 }

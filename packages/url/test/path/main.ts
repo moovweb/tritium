@@ -2,22 +2,20 @@
 $test_url = "http://www.google.com/query.aspx?foo=bar&baz=true#frag"
 
 $new_url = url($test_url) {
-  $old_frag = fragment()
-  fragment("frag_2")
+  $old_path = path()
+  path() {
+    append("new_query.aspx")
+  }
 }
 
-match($old_frag) {
-  with("frag") {
+append("su")
+match($old_path) {
+  with("/query.aspx") {
+    append("cc")
     match($new_url) {
-      with(/frag_2/) {
-        append("success")
-      }
-      else() {
-        append("failure")
+      with(/new\_query\.aspx/) {
+        append("ess")
       }
     }
-  }
-  else() {
-    append("failure")
   }
 }

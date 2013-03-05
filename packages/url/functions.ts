@@ -121,7 +121,7 @@
   %port # return just the port, not the entire host
 }
 
-@func URL.pat() {
+@func URL.path() {
   comp("path") {
     yield()
   }
@@ -182,8 +182,8 @@
   }
 }
 
-@func URL.pat(Text %val) {
-  pat() {
+@func URL.path(Text %val) {
+  path() {
     set(%val)
     yield()
   }
