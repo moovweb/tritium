@@ -280,10 +280,32 @@ func (p *Parser) term() (node *tp.Instruction) {
 		node = p.literal()
 	case READ:
 		node = p.read()
+	case ID, TYPE:
+		names := p.name()
+		last := len(names)-1
+		/*
+		if only one name:
+			if followed by var:
+				it's module.var
+			else if followed by paren:
+				it's funcall(...) or typecast(...)
+		else if [type, id]:
+			it's Type.funcall(...)
+		else if [id, id]:
+			it's module.funcall(...)
+		else if [id, type]:
+			it's module.typecast(...)
+		else if [id, type, id]:
+			it's module.type.funcall(...)
+
+		*/
+
 	case ID:
-		node = p.call()
+		// node = p.call()
+		node = p.identifier()
 	case TYPE:
-		node = p.cast()
+		// node = p.cast()
+		node = p.typename()
 	case GVAR, LVAR:
 		node = p.variable()
 	case LPAREN:
@@ -371,6 +393,20 @@ func (p *Parser) read() (node *tp.Instruction) {
 	}
 	node = tp.MakeText(string(contents), readLineNo)
 	return node
+}
+
+func (p *Parser) name() (names []*Token) {
+	names = make([]string, 0)
+	names = append(names, p.pop())
+
+	for p.peek().Lexeme == DOT {
+		p.pop() // pop the dot
+		if next := p.peek().Lexeme; next == ID || next == TYPE {
+			names = append(names, p.pop())
+		}
+	}
+
+	return names
 }
 
 func (p *Parser) call() (node *tp.Instruction) {
