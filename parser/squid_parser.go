@@ -283,27 +283,6 @@ func (p *Parser) term() (node *tp.Instruction) {
 	case ID, TYPE:
 		names := p.name()
 		next := p.peek().Lexeme
-
-		switch len(names) {
-		case 1:
-			if next == GVAR {
-				if names[0].Lexeme != ID {
-					p.error("global variable reference may only be qualified by a module name")
-				}
-				node = p.variable()
-				node.ModuleQualifier = names[0].Value
-			} else if next == LPAREN {
-				if names[0].Lexeme == ID {
-					node = p.call(names[0])
-				} else if names[0].Lexeme == TYPE {
-					node = p.cast(names[0])
-				}
-			}
-		case 2:
-		case 3:
-		default:
-		}
-
 		/*
 		if only one name:
 			if followed by var:
@@ -318,8 +297,53 @@ func (p *Parser) term() (node *tp.Instruction) {
 			it's module.typecast(...)
 		else if [id, type, id]:
 			it's module.type.funcall(...)
-
+		else:
+			error
 		*/
+		switch len(names) {
+		case 1:
+			n0 := names[0]
+			if next == GVAR {
+				if n0.Lexeme != ID {
+					p.error("global variable reference may only be qualified by a module name")
+				}
+				node = p.variable()
+				node.ModuleQualifier = n0.Value
+			} else if next == LPAREN {
+				if n0.Lexeme == ID {
+					node = p.call(n0)
+				} else if n0.Lexeme == TYPE {
+					node = p.cast(n0)
+				}
+			}
+		case 2:
+			n0, n1 := names[0], names[1]
+			if n0.Lexeme == TYPE && n1.Lexeme == ID {
+				node = p.call(n1)
+				node.TypeQualifier = n0.Value
+			} else if n0.Lexeme == ID && n1.Lexeme == ID {
+				node = p.call(n1)
+				node.ModuleQualifier = n0.Value
+			} else if n0.Lexeme == ID && n1.Lexeme == TYPE {
+				node = p.cast(n1)
+				node.ModuleQualifier = n0.Value
+			} else {
+				p.error("attemtping to look up a module inside of a type")
+			}
+		case 3:
+			n0, n1, n2 := names[0], names[1], names[2]
+			if n0.Lexeme == ID && n1.Lexeme == TYPE && n2.Lexeme == ID {
+				node = p.call(n2)
+				node.ModuleQualifier = n0.Value
+				Node.TypeQualifier = n1.Value
+			} else {
+				p.error("invalid name resolution (should be `moduleName.TypeName.functionName`)")
+			}
+		default:
+			p.error("invalid name resolution (too many qualifiers)")
+		}
+
+
 
 	case ID:
 		node = p.call()
