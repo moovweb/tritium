@@ -282,7 +282,28 @@ func (p *Parser) term() (node *tp.Instruction) {
 		node = p.read()
 	case ID, TYPE:
 		names := p.name()
-		last := len(names)-1
+		next := p.peek().Lexeme
+
+		switch len(names) {
+		case 1:
+			if next == GVAR {
+				if names[0].Lexeme != ID {
+					p.error("global variable reference may only be qualified by a module name")
+				}
+				node = p.variable()
+				node.ModuleQualifier = names[0].Value
+			} else if next == LPAREN {
+				if names[0].Lexeme == ID {
+					node = p.call(names[0])
+				} else if names[0].Lexeme == TYPE {
+					node = p.cast(names[0])
+				}
+			}
+		case 2:
+		case 3:
+		default:
+		}
+
 		/*
 		if only one name:
 			if followed by var:
@@ -301,11 +322,9 @@ func (p *Parser) term() (node *tp.Instruction) {
 		*/
 
 	case ID:
-		// node = p.call()
-		node = p.identifier()
+		node = p.call()
 	case TYPE:
-		// node = p.cast()
-		node = p.typename()
+		node = p.cast()
 	case GVAR, LVAR:
 		node = p.variable()
 	case LPAREN:
