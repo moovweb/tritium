@@ -315,6 +315,9 @@ func (p *Parser) term() (node *tp.Instruction) {
 				} else if n0.Lexeme == TYPE {
 					node = p.cast(n0)
 				}
+			} else {
+				// error
+				p.error("parenthesized argument list expected in call to " + n0.Value)
 			}
 		case 2:
 			n0, n1 := names[0], names[1]
@@ -342,13 +345,10 @@ func (p *Parser) term() (node *tp.Instruction) {
 		default:
 			p.error("invalid name resolution (too many qualifiers)")
 		}
-
-
-
-	case ID:
-		node = p.call()
-	case TYPE:
-		node = p.cast()
+	// case ID:
+	// 	node = p.call()
+	// case TYPE:
+	// 	node = p.cast()
 	case GVAR, LVAR:
 		node = p.variable()
 	case LPAREN:
@@ -452,15 +452,15 @@ func (p *Parser) name() (names []*Token) {
 	return names
 }
 
-func (p *Parser) call() (node *tp.Instruction) {
-	funcName := p.pop().Value // grab the function name
-	funcLineNo := p.peek().LineNumber
+func (p *Parser) call(funcName *Token) (node *tp.Instruction) {
+	funcNameStr := funcName.Value // grab the function name
+	funcLineNo  := funcName.LineNumber
 	if p.peek().Lexeme != LPAREN {
-		p.error("parenthesized argument list expected in call to " + funcName)
+		p.error("parenthesized argument list expected in call to " + funcNameStr)
 	}
 	p.pop() // pop the lparen
 
-	ords, kwdnames, kwdvals := p.arguments(funcName) // gather the arguments
+	ords, kwdnames, kwdvals := p.arguments(funcNameStr) // gather the arguments
 	numArgs := len(ords)
 
 	// TO DO: integrate this block for better variadic concat/log expansions
@@ -477,7 +477,7 @@ func (p *Parser) call() (node *tp.Instruction) {
 
 	// this will never happen because p.arguments() only returns when it encounters an rparen
 	if p.peek().Lexeme != RPAREN {
-		p.error("unterminated argument list in call to " + funcName)
+		p.error("unterminated argument list in call to " + funcNameStr)
 	}
 	p.pop() // pop the rparen
 	var block []*tp.Instruction
@@ -572,16 +572,16 @@ func (p *Parser) arguments(funcName string) (ords []*tp.Instruction, kwdnames []
 	return ords, kwdnames, kwdvals
 }
 
-func (p *Parser) cast() (node *tp.Instruction) {
-	typeName := p.pop().Value // grab the function name
-	typeLineNo := p.peek().LineNumber
+func (p *Parser) cast(typeName *Token) (node *tp.Instruction) {
+	typeNameStr := typeName.Value // grab the function name
+	typeLineNo  := typeName.LineNumber
 	if p.peek().Lexeme != LPAREN {
-		p.error("parenthesized argument needed for typecast to " + typeName)
+		p.error("parenthesized argument needed for typecast to " + typeNameStr)
 	}
 	p.pop() // pop the lparen
 	expr := p.expression()
 	if p.peek().Lexeme != RPAREN {
-		p.error("single argument to " + typeName + " typecast is missing closing parenthesis")
+		p.error("single argument to " + typeNameStr + " typecast is missing closing parenthesis")
 	}
 	p.pop() // pop the rparen
 	var block []*tp.Instruction
@@ -589,7 +589,7 @@ func (p *Parser) cast() (node *tp.Instruction) {
 		block = p.block()
 	}
 
-	node = tp.MakeFunctionCall(typeName, tp.ListInstructions(expr), block, typeLineNo)
+	node = tp.MakeFunctionCall(typeNameStr, tp.ListInstructions(expr), block, typeLineNo)
 	return node
 }
 
