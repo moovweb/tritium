@@ -285,8 +285,8 @@ func (p *Parser) term() (node *tp.Instruction) {
 				if n0.Lexeme != ID {
 					p.error("global variable reference may only be qualified by a module name")
 				}
-				node = p.variable()
-				node.ModuleQualifier = proto.String(n0.Value)
+				node = p.variable(n0.Value) // qualified global variable
+				node.ModuleQualifier = proto.String("tritium") // $name syntax should always work by calling tritium.var("name"...)
 			} else if next == LPAREN {
 				if n0.Lexeme == ID {
 					node = p.call(n0)
@@ -333,8 +333,8 @@ func (p *Parser) term() (node *tp.Instruction) {
 	// case TYPE:
 	// 	node = p.cast()
 	case GVAR, LVAR:
-		node = p.variable()
-		node.ModuleQualifier = proto.String(p.Module)
+		node = p.variable("") // unqualified vars remain unchanged (breaks too much existing stuff)
+		node.ModuleQualifier = proto.String("tritium") // again, $name should always work as tritium.var("name"...)
 	case LPAREN:
 		p.pop() // pop the lparen
 		node = p.expression()
@@ -577,7 +577,7 @@ func (p *Parser) cast(typeName *Token) (node *tp.Instruction) {
 	return node
 }
 
-func (p *Parser) variable() (node *tp.Instruction) {
+func (p *Parser) variable(modName string) (node *tp.Instruction) {
 	token := p.pop()
 	lexeme, name, lineNo := token.Lexeme, token.Value, token.LineNumber
 	sigil := "$"
@@ -601,7 +601,11 @@ func (p *Parser) variable() (node *tp.Instruction) {
 	if lexeme == LVAR {
 		node = tp.MakeLocalVar(name, val, block, lineNo)
 	} else {
-		args := tp.ListInstructions(tp.MakeText(name, lineNo))
+		fullVarName := name
+		if len(modName) > 0 {
+			fullVarName = fmt.Sprintf("%s.%s", modName, name)
+		}
+		args := tp.ListInstructions(tp.MakeText(fullVarName, lineNo))
 		if val != nil {
 			args = append(args, val)
 		}
