@@ -7,6 +7,7 @@ import (
 	"gokogiri/html"
 	"gokogiri/xml"
 	"icu4go"
+	"net/url"
 	"rubex"
 	"strconv"
 	"strings"
@@ -372,6 +373,122 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, a
 	ctx.CurrentDoc = nil
 	returnValue = scope.Value
 	//doc.Free()
+	return
+}
+
+func url_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	urlStr := args[0].(string)
+	urlParsed, err := url.Parse(urlStr)
+	if err != nil {
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "url parse err: %s", err.Error())
+		returnValue = "false"
+		return
+	}
+	ns := &Scope{Value: urlParsed}
+	for _, child := range ins.Children {
+		ctx.RunInstruction(ns, child)
+	}
+
+	// return the modified URL string (allow strings as well?)
+	if urlVal, isURL := ns.Value.(*url.URL); isURL {
+		returnValue = urlVal.String()
+	} else if urlStr, isStr := ns.Value.(string); isStr {
+		returnValue = urlStr
+	}
+	return
+}
+
+func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	component := args[0].(string)
+	u := scope.Value.(*url.URL)
+	ns := &Scope{}
+	switch(component) {
+	case("scheme"):
+		ns.Value = u.Scheme
+	case("host"):
+		ns.Value = u.Host
+	case("path"):
+		ns.Value = u.Path
+	case("fragment"):
+		ns.Value = u.Fragment
+	case("userinfo"):
+		if u.User != nil {
+			ns.Value = u.User.String()
+		} else {
+			ns.Value = ""
+		}
+	}
+	if ns.Value != nil {
+		for _, child := range ins.Children {
+			ctx.RunInstruction(ns, child)
+		}
+
+		// write value back to URL (as long as it's a string)
+		if newVal, ok := ns.Value.(string); ok {
+			switch(component) {
+			case("scheme"):
+				u.Scheme = newVal
+			case("host"):
+				u.Host = newVal
+			case("path"):
+				u.Path = newVal
+			case("fragment"):
+				u.Fragment = newVal
+			case("userinfo"):
+				if newVal == "" {
+					// remove the userinfo
+					u.User = nil
+				} else {
+					info := strings.Split(newVal, ":")
+					newUserinfo := url.User(info[0])
+					if len(info) == 2 {
+						newUserinfo = url.UserPassword(info[0], info[1])
+					}
+					u.User = newUserinfo
+				}
+			}
+
+			returnValue = newVal
+		}
+	}
+	return
+}
+
+func param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	parameter := args[0].(string)
+	u := scope.Value.(*url.URL)
+	params := u.Query()
+
+	ns := &Scope{Value: params.Get(parameter)}
+	for _, child := range ins.Children {
+		ctx.RunInstruction(ns, child)
+	}
+
+	// if child instructions result in a string:
+	if newVal, ok := ns.Value.(string); ok {
+		// write the ns.Value back to params
+		params.Set(parameter, newVal)
+		// write params back to u.RawQuery
+		u.RawQuery = params.Encode()
+
+		returnValue = newVal
+	}
+	return
+}
+
+func remove_param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	parameter := args[0].(string)
+	u := scope.Value.(*url.URL)
+	params := u.Query()
+
+	if params.Get(parameter) != "" {
+		params.Del(parameter)
+		// write params back to u.RawQuery
+		u.RawQuery = params.Encode()
+		returnValue = "true"
+	} else {
+		returnValue = "false"
+	}
 	return
 }
 
