@@ -308,7 +308,7 @@ func (p *Parser) term() (node *tp.Instruction) {
 					p.error("global variable reference may only be qualified by a module name")
 				}
 				node = p.variable()
-				node.ModuleQualifier = n0.Value
+				node.ModuleQualifier = proto.String(n0.Value)
 			} else if next == LPAREN {
 				if n0.Lexeme == ID {
 					node = p.call(n0)
@@ -323,13 +323,13 @@ func (p *Parser) term() (node *tp.Instruction) {
 			n0, n1 := names[0], names[1]
 			if n0.Lexeme == TYPE && n1.Lexeme == ID {
 				node = p.call(n1)
-				node.TypeQualifier = n0.Value
+				node.TypeQualifier = proto.String(n0.Value)
 			} else if n0.Lexeme == ID && n1.Lexeme == ID {
 				node = p.call(n1)
-				node.ModuleQualifier = n0.Value
+				node.ModuleQualifier = proto.String(n0.Value)
 			} else if n0.Lexeme == ID && n1.Lexeme == TYPE {
 				node = p.cast(n1)
-				node.ModuleQualifier = n0.Value
+				node.ModuleQualifier = proto.String(n0.Value)
 			} else {
 				p.error("attemtping to look up a module inside of a type")
 			}
@@ -337,8 +337,8 @@ func (p *Parser) term() (node *tp.Instruction) {
 			n0, n1, n2 := names[0], names[1], names[2]
 			if n0.Lexeme == ID && n1.Lexeme == TYPE && n2.Lexeme == ID {
 				node = p.call(n2)
-				node.ModuleQualifier = n0.Value
-				Node.TypeQualifier = n1.Value
+				node.ModuleQualifier = proto.String(n0.Value)
+				node.TypeQualifier = proto.String(n1.Value)
 			} else {
 				p.error("invalid name resolution (should be `moduleName.TypeName.functionName`)")
 			}
@@ -439,7 +439,7 @@ func (p *Parser) read() (node *tp.Instruction) {
 }
 
 func (p *Parser) name() (names []*Token) {
-	names = make([]string, 0)
+	names = make([]*Token, 0)
 	names = append(names, p.pop())
 
 	for p.peek().Lexeme == DOT {
@@ -513,21 +513,21 @@ func (p *Parser) call(funcName *Token) (node *tp.Instruction) {
 				inner = append(inner, v)
 			}
 		}
-		theCall := tp.MakeFunctionCall(funcName, ords, inner, funcLineNo)
+		theCall := tp.MakeFunctionCall(funcNameStr, ords, inner, funcLineNo)
 		outer = append(outer, theCall)
 		node = tp.MakeBlock(outer, funcLineNo)
 
-	} else if funcName == "concat" && numArgs > 2 {
+	} else if funcNameStr == "concat" && numArgs > 2 {
 		// expand variadic concat into nested binary concats
 		lhs := tp.FoldLeft("concat", ords[0], ords[1:numArgs-1])
 		rhs := ords[numArgs-1]
 		node = tp.MakeFunctionCall("concat", tp.ListInstructions(lhs, rhs), block, funcLineNo)
-	} else if funcName == "log" && numArgs > 1 {
+	} else if funcNameStr == "log" && numArgs > 1 {
 		// expand variadic log into composition of log and concat
 		cats := tp.FoldLeft("concat", ords[0], ords[1:])
 		node = tp.MakeFunctionCall("log", tp.ListInstructions(cats), block, funcLineNo)
 	} else {
-		node = tp.MakeFunctionCall(funcName, ords, block, funcLineNo)
+		node = tp.MakeFunctionCall(funcNameStr, ords, block, funcLineNo)
 	}
 	return node
 }
