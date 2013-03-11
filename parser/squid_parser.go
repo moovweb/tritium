@@ -118,7 +118,9 @@ func (p *Parser) Parse() *tp.ScriptObject {
 	defs := make([]*tp.Function, 0) // Add a new constructor in instruction.go
 
 	// Look for the module declaration first.
+	var moduleLineNum int32
 	if p.peek().Lexeme == MODULE {
+		moduleLineNum = p.peek().LineNumber
 		p.pop() // pop the `@module` keyword
 		if p.peek().Lexeme != ID {
 			p.error("module name must be a lowercase identifier")
@@ -176,6 +178,10 @@ func (p *Parser) Parse() *tp.ScriptObject {
 
 	script.Functions = defs
 	script.Root = tp.MakeBlock(stmts, line)
+
+	if defs == nil && p.Module != "tritium" {
+		panic(fmt.Sprintf("%s: %d -- custom modules may only be declared in function definition files", p.FileName, moduleLineNum))
+	}
 
 	return script
 }
@@ -292,21 +298,23 @@ func (p *Parser) term() (node *tp.Instruction) {
 				// error
 				p.error("parenthesized argument list expected in call to " + n0.Value)
 			}
+		// OMIT THE CASES FOR EXPLICIT TYPE QUALIFICATION
 		case 2:
 			n0, n1 := names[0], names[1]
-			if n0.Lexeme == TYPE && n1.Lexeme == ID {
+			/* if n0.Lexeme == TYPE && n1.Lexeme == ID {
 				node = p.call(n1)
 				node.ModuleQualifier = proto.String(p.Module)
 				node.TypeQualifier = proto.String(n0.Value)
-			} else if n0.Lexeme == ID && n1.Lexeme == ID {
+			} else */ if n0.Lexeme == ID && n1.Lexeme == ID {
 				node = p.call(n1)
 				node.ModuleQualifier = proto.String(n0.Value)
 			} else if n0.Lexeme == ID && n1.Lexeme == TYPE {
 				node = p.cast(n1)
 				node.ModuleQualifier = proto.String(n0.Value)
 			} else {
-				p.error("attemtping to look up a module inside of a type")
+				p.error("invalid name resolution (only modules may be used as qualifiers")
 			}
+		/*
 		case 3:
 			n0, n1, n2 := names[0], names[1], names[2]
 			if n0.Lexeme == ID && n1.Lexeme == TYPE && n2.Lexeme == ID {
@@ -316,6 +324,7 @@ func (p *Parser) term() (node *tp.Instruction) {
 			} else {
 				p.error("invalid name resolution (should be `moduleName.TypeName.functionName`)")
 			}
+		*/
 		default:
 			p.error("invalid name resolution (too many qualifiers)")
 		}
@@ -617,6 +626,7 @@ func (p *Parser) block() (stmts []*tp.Instruction) {
 func (p *Parser) definition() *tp.Function {
 	isSignature := false
 	node := new(tp.Function)
+	node.Module = proto.String(p.Module)
 
 	funcLineNo := p.pop().LineNumber // pop the `@func` keyword
 	contextType := ""
