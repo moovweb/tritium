@@ -22,6 +22,7 @@ type Parser struct {
 	counter     int
 	header      bool
 	RootFile    bool
+	Module      string
 }
 
 func (p *Parser) gensym() string {
@@ -98,6 +99,7 @@ func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool) 
 		Lookahead:   nil,
 		counter:     0,
 		RootFile:    isRootFile,
+		Module:      "tritium",
 	}
 	p.pop()
 	return p
@@ -123,6 +125,7 @@ func (p *Parser) Parse() *tp.ScriptObject {
 		}
 		moduleName := p.pop().Value
 		script.Module = proto.String(moduleName)
+		p.Module = moduleName
 	} else {
 		script.Module = proto.String("tritium")
 	}
@@ -175,29 +178,6 @@ func (p *Parser) Parse() *tp.ScriptObject {
 	script.Root = tp.MakeBlock(stmts, line)
 
 	return script
-
-	// switch p.peek().Lexeme {
-	// case FUNC:
-	//  for p.peek().Lexeme != EOF {
-	//    defs = append(defs, p.definition())
-	//  }
-	//  if len(defs) == 0 {
-	//    defs = nil
-	//  }
-	//  script.Functions = defs
-	// default:
-	//  for p.peek().Lexeme != EOF {
-	//    stmts = append(stmts, p.statement())
-	//  }
-	//  line := int32(0)
-	//  if len(stmts) == 0 {
-	//    stmts = nil
-	//  } else {
-	//    line = *stmts[0].LineNumber
-	//  }
-	//  script.Root = tp.MakeBlock(stmts, line)
-	// }
-	// return script
 }
 
 func (p *Parser) statement() (node *tp.Instruction) {
@@ -226,14 +206,6 @@ func (p *Parser) statement() (node *tp.Instruction) {
 				dir = dir[0:len(dir)-1]
 			}
 		}
-		// if dir == "." {
-		// 	wd, wdErr := os.Getwd()
-		// 	if wdErr != nil {
-		// 		msg := fmt.Sprintf("%s:%d -- @import could not determine current working directory!", p.FileName, token.Lexeme)
-		// 		panic(msg)
-		// 	}
-		// 	dir = wd
-		// }
 		// make sure that the importee is under the right subfolder
 		if !strings.HasPrefix(scriptLocationInProject, dir) {
 			msg := fmt.Sprintf("%s:%d -- imported file must exist under the `%s` folder", p.FileName, token.LineNumber, dir)
@@ -315,6 +287,7 @@ func (p *Parser) term() (node *tp.Instruction) {
 				} else if n0.Lexeme == TYPE {
 					node = p.cast(n0)
 				}
+				node.ModuleQualifier = proto.String(p.Module)
 			} else {
 				// error
 				p.error("parenthesized argument list expected in call to " + n0.Value)
@@ -323,6 +296,7 @@ func (p *Parser) term() (node *tp.Instruction) {
 			n0, n1 := names[0], names[1]
 			if n0.Lexeme == TYPE && n1.Lexeme == ID {
 				node = p.call(n1)
+				node.ModuleQualifier = proto.String(p.Module)
 				node.TypeQualifier = proto.String(n0.Value)
 			} else if n0.Lexeme == ID && n1.Lexeme == ID {
 				node = p.call(n1)
@@ -351,6 +325,7 @@ func (p *Parser) term() (node *tp.Instruction) {
 	// 	node = p.cast()
 	case GVAR, LVAR:
 		node = p.variable()
+		node.ModuleQualifier = proto.String(p.Module)
 	case LPAREN:
 		p.pop() // pop the lparen
 		node = p.expression()
