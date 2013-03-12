@@ -2,4 +2,4 @@ name: tritium
 dependencies:
   - libxml
   - url
-  - jsonlib
+  - json

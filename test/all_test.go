@@ -15,7 +15,7 @@ func TestURL(t *testing.T) {
 }
 
 func TestJsonLib(t *testing.T) {
-	RunTestSuite("packages/jsonlib", t)
+	RunTestSuite("packages/json", t)
 }
 
 func BenchmarkBase(b *testing.B) {
@@ -31,5 +31,5 @@ func BenchmarkURL(b *testing.B) {
 }
 
 func BenchmarkJsonLib(b *testing.B) {
-	RunBenchmarkSuite("packages/jsonlib", b)
+	RunBenchmarkSuite("packages/json", b)
 }
