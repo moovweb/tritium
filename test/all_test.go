@@ -31,5 +31,5 @@ func BenchmarkURL(b *testing.B) {
 }
 
 func BenchmarkJsonLib(b *testing.B) {
-	RunBenchmarkSuite("packages/jsonlib")
+	RunBenchmarkSuite("packages/jsonlib", b)
 }
