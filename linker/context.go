@@ -234,26 +234,31 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		}
 		// look up the function wrt the current context type + function name
 		funcId, ok := ctx.funList[scopeType][stub]
-		if ok != true {
+		if !ok {
 
-			stubComponents := strings.SplitN(stub, ".", 2)
-			ns, basicStub := stubComponents[0], stubComponents[1]
-			readableCalleeStub := strings.Replace(basicStub, ",", "(", 1)
-			if strings.Index(readableCalleeStub, "(") != -1 {
-				readableCalleeStub = readableCalleeStub + ")"
-			}
-			stubComponents = strings.SplitN(caller, ".", 2)
-			nsCaller, basicStubCaller := stubComponents[0], stubComponents[1]
-			readableCallerStub := strings.Replace(basicStubCaller, ",", "(", 1)
-			if strings.Index(readableCallerStub, "(") != -1 {
-				readableCallerStub = readableCallerStub + ")"
-      }
+			// stubComponents := strings.SplitN(stub, ".", 2)
+			// ns, basicStub := stubComponents[0], stubComponents[1]
+			// readableCalleeStub := strings.Replace(basicStub, ",", "(", 1)
+			// if strings.Index(readableCalleeStub, "(") != -1 {
+			// 	readableCalleeStub = readableCalleeStub + ")"
+			// }
+			// stubComponents = strings.SplitN(caller, ".", 2)
+			// nsCaller, basicStubCaller := stubComponents[0], stubComponents[1]
+			// readableCallerStub := strings.Replace(basicStubCaller, ",", "(", 1)
+			// if strings.Index(readableCallerStub, "(") != -1 {
+			// 	readableCallerStub = readableCallerStub + ")"
+      // }
+
+      readableCalleeStub := readableStub(stub)
+      readableCallerStub := readableStub(caller)
 
 			message := fmt.Sprintf("Available functions in %s.%s:\n", ns, ctx.types[scopeType])
+			ns := strings.SplitN(stub, ".", 2)[0]
+			nsCaller := strings.SplitN(caller, ".", 2)[0]
 			nsPrefix := ns + "."
 			for funcName, _ := range ctx.funList[scopeType] {
 				if strings.HasPrefix(funcName, nsPrefix) {
-					message = message + funcName + "\n"
+					message += "\t" + nsPrefix + readableStub(funcName) + "\n"
 				}
 			}
 			log.Printf("%s\n", message)
@@ -318,4 +323,13 @@ func (ctx *LinkingContext) error(obj interface{}, format string, data ...interfa
 		ins.IsValid = proto.Bool(false)
 	}
 	log.Printf("%s\n", message)
+}
+
+func readableStub(stub string) string {
+	basicStub := strings.SplitN(stub, ".", 2)[1]
+	betterStub := strings.Replace(basicStub, ",", "(", 1)
+	if strings.Index(betterStub, "(") != -1 {
+		betterStub = betterStub + ")"
+	}
+	return betterStub
 }
