@@ -3,14 +3,20 @@ package proto
 import pb "code.google.com/p/goprotobuf/proto"
 import "butler/null"
 
-func (fun *Function) Stub(pkg *Package) string {
-	ns := fun.GetNamespace()
-	if len(ns) == 0 {
-		ns = "tritium"
+func (f *Function) Stub(pkg *Package) string {
+	ns, rest := f.StubComponents(pkg)
+	return ns + "." + rest
+}
+
+func (f *Function) StubComponents(pkg *Package) (namespace, rest string) {
+	namespace = f.GetNamespace()
+	if len(namespace) == 0 {
+		namespace = "tritium"
 	}
-	name := ns + "." + fun.GetName()
+
+	rest = f.GetName()
 	args := ""
-	for _, arg := range fun.Args {
+	for _, arg := range f.Args {
 		argName := null.GetString(arg.TypeString)
 		if argName == "" {
 			t := pkg.Types[int(null.GetInt32(arg.TypeId))]
@@ -18,7 +24,8 @@ func (fun *Function) Stub(pkg *Package) string {
 		}
 		args = args + "," + argName
 	}
-	return name + args
+	rest += args
+	return
 }
 
 // We need this for inherited function resolution. 
