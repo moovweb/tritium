@@ -329,7 +329,9 @@ func readableStub(stub string) string {
 	basicStub := strings.SplitN(stub, ".", 2)[1]
 	betterStub := strings.Replace(basicStub, ",", "(", 1)
 	if strings.Index(betterStub, "(") != -1 {
-		betterStub = betterStub + ")"
-	}
+		betterStub += ")"
+	} else {
+		betterStub += "()"
+	} 
 	return betterStub
 }
