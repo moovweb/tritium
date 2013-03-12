@@ -74,7 +74,7 @@ func (f *FunctionDefinition) setID() {
 
 func Generate(outputFile string) {
 	// Need to define packages in order of dependence
-	packages := []string{"base", "node", "libxml"}
+	packages := []string{"base", "node", "url", "libxml", "tritium"}
 
 	definitions := &DefinitionList{
 		Definitions: make(map[string]map[string]*FunctionDefinition),
