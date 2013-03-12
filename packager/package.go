@@ -83,7 +83,7 @@ func buildPackage(path string, options PackageOptions) *Package {
 	// Terrible directory handling here... has to be executed from Tritium root
 
 	pkg := NewPackage(path, options)
-	rootName := "libxml"
+	rootName := "tritium"
 
 	pkg.Name = proto.String(rootName)
 	pkg.Load(rootName)

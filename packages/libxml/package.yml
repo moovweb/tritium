@@ -1,7 +1,6 @@
 name: libxml
 dependencies:
   - node
-  - url
 types:
   - XMLNode < Node
   - Attribute
