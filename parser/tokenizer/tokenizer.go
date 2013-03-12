@@ -27,7 +27,7 @@ const (
 	LVAR
 	KWD
 	ID
-	MODULE
+	NAMESPACE
 	FUNC
 	TYPE
 	PATH
@@ -63,7 +63,7 @@ func init() {
 	LexemeName[LVAR] = "local variable"
 	LexemeName[KWD] = "keyword argument"
 	LexemeName[ID] = "identifier"
-	LexemeName[MODULE] = "`@module` directive"
+	LexemeName[NAMESPACE] = "`@namespace` directive"
 	LexemeName[FUNC] = "`@func` directive"
 	LexemeName[TYPE] = "type name"
 	LexemeName[PATH] = "path"
@@ -384,8 +384,8 @@ func (t *Tokenizer) munch() *Token {
 		return tok
 	} else if t.hasPrefix("@func") {
 		return t.popToken(FUNC, "", 5)
-	} else if t.hasPrefix("@module") {
-		return t.popToken(MODULE, "", 7)
+	} else if t.hasPrefix("@namespace") {
+		return t.popToken(NAMESPACE, "", 10)
 	} else {
 		return t.popError("unrecognized token")
 	}

@@ -4,11 +4,11 @@ import pb "code.google.com/p/goprotobuf/proto"
 import "butler/null"
 
 func (fun *Function) Stub(pkg *Package) string {
-	mod := fun.GetModule()
-	if len(mod) == 0 {
-		mod = "tritium"
+	ns := fun.GetNamespace()
+	if len(ns) == 0 {
+		ns = "tritium"
 	}
-	name := mod + "." + fun.GetName()
+	name := ns + "." + fun.GetName()
 	args := ""
 	for _, arg := range fun.Args {
 		argName := null.GetString(arg.TypeString)

@@ -22,7 +22,7 @@ type Parser struct {
 	counter     int
 	header      bool
 	RootFile    bool
-	Module      string
+	Namespaces  []string
 }
 
 func (p *Parser) gensym() string {
@@ -99,10 +99,27 @@ func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool) 
 		Lookahead:   nil,
 		counter:     0,
 		RootFile:    isRootFile,
-		Module:      "tritium",
+		Namespaces:  make([]string, 0),
 	}
+	p.Namespaces = append(p.Namespaces, "tritium")
 	p.pop()
 	return p
+}
+
+func (p *Parser) pushNamespace(ns string) string {
+	p.Namespaces = append(p.Namespaces, ns)
+	return ns
+}
+
+func (p *Parser) popNamespace() string {
+	last := len(p.Namespaces)-1
+	ns := p.Namespaces[last]
+	p.Namespaces = p.Namespaces[:last]
+	return ns
+}
+
+func (p *Parser) currentNamespace() string {
+	return p.Namespaces[len(p.Namespaces)-1]
 }
 
 func (p *Parser) Parse() *tp.ScriptObject {
@@ -118,19 +135,17 @@ func (p *Parser) Parse() *tp.ScriptObject {
 	defs := make([]*tp.Function, 0) // Add a new constructor in instruction.go
 
 	// Look for the module declaration first.
-	var moduleLineNum int32
-	if p.peek().Lexeme == MODULE {
-		moduleLineNum = p.peek().LineNumber
-		p.pop() // pop the `@module` keyword
+	if p.peek().Lexeme == NAMESPACE {
+		p.pop() // pop the `@namespace` keyword
 		if p.peek().Lexeme != ID {
-			p.error("module name must be a lowercase identifier")
+			p.error("namespace must be a lowercase identifier")
 		}
-		moduleName := p.pop().Value
-		script.Module = proto.String(moduleName)
-		p.Module = moduleName
-	} else {
+		ns := p.pop().Value
+		// script.Namespace = proto.String(ns)
+		p.Namespaces[0] = ns
+	}/* else {
 		script.Module = proto.String("tritium")
-	}
+	}*/
 
 	for p.peek().Lexeme != EOF {
 		switch p.peek().Lexeme {
@@ -179,9 +194,9 @@ func (p *Parser) Parse() *tp.ScriptObject {
 	script.Functions = defs
 	script.Root = tp.MakeBlock(stmts, line)
 
-	if defs == nil && p.Module != "tritium" {
-		panic(fmt.Sprintf("%s: %d -- custom modules may only be declared in function definition files", p.FileName, moduleLineNum))
-	}
+	// if defs == nil && p.currentNamespace() != "tritium" {
+	// 	panic(fmt.Sprintf("%s: %d -- custom modules may only be declared in function definition files", p.FileName, moduleLineNum))
+	// }
 
 	return script
 }
@@ -221,6 +236,8 @@ func (p *Parser) statement() (node *tp.Instruction) {
 		// println("PROCESSED IMPORT", dir, base, scriptLocationInProject)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
+	case NAMESPACE:
+		p.error("namespace declaration must occur at the top of a file or code block")
 	default:
 		p.error("statement must consist of import or expression")
 	}
@@ -283,17 +300,17 @@ func (p *Parser) term() (node *tp.Instruction) {
 			n0 := names[0]
 			if next == GVAR {
 				if n0.Lexeme != ID {
-					p.error("global variable reference may only be qualified by a module name")
+					p.error("global variable reference may only be qualified by a namespace")
 				}
 				node = p.variable(n0.Value) // qualified global variable
-				node.ModuleQualifier = proto.String("tritium") // $name syntax should always work by calling tritium.var("name"...)
+				// node.Namespace = proto.String("tritium") // $name syntax should always work by calling tritium.var("name"...)
 			} else if next == LPAREN {
 				if n0.Lexeme == ID {
 					node = p.call(n0)
 				} else if n0.Lexeme == TYPE {
 					node = p.cast(n0)
 				}
-				node.ModuleQualifier = proto.String(p.Module)
+				node.Namespace = proto.String(p.currentNamespace())
 			} else {
 				// error
 				p.error("parenthesized argument list expected in call to " + n0.Value)
@@ -303,23 +320,23 @@ func (p *Parser) term() (node *tp.Instruction) {
 			n0, n1 := names[0], names[1]
 			/* if n0.Lexeme == TYPE && n1.Lexeme == ID {
 				node = p.call(n1)
-				node.ModuleQualifier = proto.String(p.Module)
+				node.Namespace = proto.String(p.Module)
 				node.TypeQualifier = proto.String(n0.Value)
 			} else */ if n0.Lexeme == ID && n1.Lexeme == ID {
 				node = p.call(n1)
-				node.ModuleQualifier = proto.String(n0.Value)
+				node.Namespace = proto.String(n0.Value)
 			} else if n0.Lexeme == ID && n1.Lexeme == TYPE {
 				node = p.cast(n1)
-				node.ModuleQualifier = proto.String(n0.Value)
+				node.Namespace = proto.String(n0.Value)
 			} else {
-				p.error("invalid name resolution (only modules may be used as qualifiers")
+				p.error("invalid name resolution (only namespaces may be used as qualifiers")
 			}
 		/*
 		case 3:
 			n0, n1, n2 := names[0], names[1], names[2]
 			if n0.Lexeme == ID && n1.Lexeme == TYPE && n2.Lexeme == ID {
 				node = p.call(n2)
-				node.ModuleQualifier = proto.String(n0.Value)
+				node.Namespace = proto.String(n0.Value)
 				node.TypeQualifier = proto.String(n1.Value)
 			} else {
 				p.error("invalid name resolution (should be `moduleName.TypeName.functionName`)")
@@ -334,7 +351,7 @@ func (p *Parser) term() (node *tp.Instruction) {
 	// 	node = p.cast()
 	case GVAR, LVAR:
 		node = p.variable("") // unqualified vars remain unchanged (breaks too much existing stuff)
-		node.ModuleQualifier = proto.String("tritium") // again, $name should always work as tritium.var("name"...)
+		node.Namespace = proto.String("tritium") // again, $name should always work as tritium.var("name"...)
 	case LPAREN:
 		p.pop() // pop the lparen
 		node = p.expression()
@@ -446,18 +463,6 @@ func (p *Parser) call(funcName *Token) (node *tp.Instruction) {
 
 	ords, kwdnames, kwdvals := p.arguments(funcNameStr) // gather the arguments
 	numArgs := len(ords)
-
-	// TO DO: integrate this block for better variadic concat/log expansions
-	// if funcName == "concat" && numArgs > 2 {
-	//   // expand variadic concat into nested binary concats
-	//   lhs := tp.FoldLeft("concat", ords[0], ords[1:numArgs-1])
-	//   rhs := ords[numArgs-1]
-	//   node = tp.MakeFunctionCall("concat", tp.ListInstructions(lhs,rhs), block, funcLineNo)
-	// } else if funcName == "log" && numArgs > 1 {
-	//   // expand variadic log into composition of log and concat
-	//   cats := tp.FoldLeft("concat", ords[0], ords[1:])
-	//   node = tp.MakeFunctionCall("log", tp.ListInstructions(cats), block, funcLineNo)
-	// }
 
 	// this will never happen because p.arguments() only returns when it encounters an rparen
 	if p.peek().Lexeme != RPAREN {
@@ -577,7 +582,7 @@ func (p *Parser) cast(typeName *Token) (node *tp.Instruction) {
 	return node
 }
 
-func (p *Parser) variable(modName string) (node *tp.Instruction) {
+func (p *Parser) variable(ns string) (node *tp.Instruction) {
 	token := p.pop()
 	lexeme, name, lineNo := token.Lexeme, token.Value, token.LineNumber
 	sigil := "$"
@@ -602,8 +607,8 @@ func (p *Parser) variable(modName string) (node *tp.Instruction) {
 		node = tp.MakeLocalVar(name, val, block, lineNo)
 	} else {
 		fullVarName := name
-		if len(modName) > 0 {
-			fullVarName = fmt.Sprintf("%s.%s", modName, name)
+		if len(ns) > 0 {
+			fullVarName = fmt.Sprintf("%s.%s", ns, name)
 		}
 		args := tp.ListInstructions(tp.MakeText(fullVarName, lineNo))
 		if val != nil {
@@ -617,10 +622,27 @@ func (p *Parser) variable(modName string) (node *tp.Instruction) {
 func (p *Parser) block() (stmts []*tp.Instruction) {
 	stmts = tp.ListInstructions()
 	p.pop() // pop the lbrace
+
+	// check for a localized namespace declaration at the top of the block
+	pushedNamespace := false
+	if p.peek().Lexeme == NAMESPACE {
+		p.pop() // pop the `@namespace` keyword
+		if p.peek().Lexeme != ID {
+			p.error("namespace must be a lowercase identifier")
+		}
+		ns := p.pop().Value
+		// script.Namespace = proto.String(ns)
+		p.pushNamespace(ns)
+		pushedNamespace = true
+	}
+
 	for p.peek().Lexeme != RBRACE {
 		stmts = append(stmts, p.statement())
 	}
 	p.pop() // pop the rbrace
+	if pushedNamespace {
+		p.popNamespace() // restore the previous namespace if we pushed a new one
+	}
 	if len(stmts) == 0 {
 		stmts = nil
 	}
@@ -630,7 +652,7 @@ func (p *Parser) block() (stmts []*tp.Instruction) {
 func (p *Parser) definition() *tp.Function {
 	isSignature := false
 	node := new(tp.Function)
-	node.Module = proto.String(p.Module)
+	node.Namespace = proto.String(p.currentNamespace())
 
 	funcLineNo := p.pop().LineNumber // pop the `@func` keyword
 	contextType := ""

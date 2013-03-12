@@ -216,11 +216,11 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			ins.YieldTypeId = proto.Int32(int32(scopeType))
 		}
 		// unqualifiedStub := stub
-		mod := ins.GetModuleQualifier()
-		if len(mod) == 0 {
-			mod = "tritium"
+		ns := ins.GetNamespace()
+		if len(ns) == 0 {
+			ns = "tritium"
 		}
-		stub = mod + "." + stub
+		stub = ns + "." + stub
 		// process the args
 		if ins.Arguments != nil {
 			for _, arg := range ins.Arguments {
@@ -255,7 +255,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			if strings.Index(readableCallerStub, "(") != -1 {
 				readableCallerStub = readableCallerStub + ")"
       }
-			ctx.error(ins, "%s:%d: could not find function %s.%s.%s (called from %s.%s)", location, ins.GetLineNumber(), mod, ctx.types[scopeType], readableCalleeStub, ctx.types[scopeType], readableCallerStub)
+			ctx.error(ins, "%s:%d: could not find function %s.%s.%s (called from %s.%s)", location, ins.GetLineNumber(), ns, ctx.types[scopeType], readableCalleeStub, ctx.types[scopeType], readableCallerStub)
 
 		} else {
 			ins.FunctionId = proto.Int32(int32(funcId))

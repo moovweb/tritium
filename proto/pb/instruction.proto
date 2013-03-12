@@ -21,7 +21,7 @@ message Instruction {
 	optional bool is_valid = 9;
 
 	// used for function calls and variable references
-	optional string module_qualifier = 10;
+	optional string namespace = 10;
 	optional string type_qualifier = 11;
 
 	enum InstructionType {

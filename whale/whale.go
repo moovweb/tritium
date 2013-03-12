@@ -309,11 +309,11 @@ func (ctx *EngineContext) UsePackage(pkg *tp.Package) {
 
 	ctx.Functions = make([]*Function, len(pkg.Functions))
 	for i, f := range pkg.Functions {
-		mod := f.GetModule()
-		if len(mod) == 0 {
-			mod = "tritium"
+		ns := f.GetNamespace()
+		if len(ns) == 0 {
+			ns = "tritium"
 		}
-		name := mod + "." + f.GetName()
+		name := ns + "." + f.GetName()
 		// name := null.GetString(f.Name)
 		for _, a := range f.Args {
 			typeString := ctx.Types[int(null.GetInt32(a.TypeId))]
