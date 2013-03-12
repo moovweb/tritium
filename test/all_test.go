@@ -14,6 +14,10 @@ func TestURL(t *testing.T) {
 	RunTestSuite("packages/url", t)
 }
 
+func TestJsonLib(t *testing.T) {
+	RunTestSuite("packages/jsonlib", t)
+}
+
 func BenchmarkBase(b *testing.B) {
 	RunBenchmarkSuite("packages/base", b)
 }
@@ -24,4 +28,8 @@ func BenchmarkLibXML(b *testing.B) {
 
 func BenchmarkURL(b *testing.B) {
 	RunBenchmarkSuite("packages/url", b)
+}
+
+func BenchmarkJsonLib(b *testing.B) {
+	RunBenchmarkSuite("packages/jsonlib")
 }

@@ -22,6 +22,8 @@ func init() {
 	builtInFunctions["param.Text"] = param_Text
 	builtInFunctions["remove_param.Text"] = remove_param_Text
 
+	builtInFunctions["to_json_v1"] = to_json_v1_
+
 	builtInFunctions["xml"] = xml_Text_Text
 	builtInFunctions["select.Text"] = select_Text
 	builtInFunctions["export.Text"] = export_Text
