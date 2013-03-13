@@ -65,13 +65,17 @@
 # * Changing instructions such as "click" to "tap" for mobile devices.
 # * Fixing malformed HTML before the document is parsed so your selectors work properly.
 # 
-# In the following example, we use the string `true` and turn it into a regular expression to use in a `match-with` statement. If the string `true` is anywhere in the text we are matching, the code in the `with()` statement will run.
-# [1]: #match(Text%20%target,%20Regexp%20%comparitor)
-# [2]: #with(Text%20%text)%20Text
-# [3]: #not(Text%20%text)%20Text
+# In the following example, we set a variable then try to match four digits in a row. When run, the first log message should be printed. Note that we escape the forward slash.
+# [1]: #match(Text%20%25target,%20Regexp%20%25comparitor)
+# [2]: #with(Text%20%25text)%20Text
+# [3]: #not(Text%20%25text)%20Text
 # @example
-# with(regexp("true")) {
-#   # run this code if your text matches the string "true"
+# $var = "123456"
+# match($var, regexp("\\d{4}")) {
+#   log("My regular expression matched four digits in a row")
+# }
+# match($var, regexp("\\d{9}")) {
+#   log("My regular expression matched nine digits in a row")
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/regexp
@@ -135,10 +139,10 @@
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
 # 
 # In the following example, we match the `$path` variable to see if it matches the string `product`. Since it does, the log "Match successful!" will output to the terminal.
-# [1]: #with(Text%20%text)%20Text
+# [1]: #with(Text%20%25text)%20Text
 # [2]: #else()%20Text
-# [3]: #not(Text%20%text)%20Text
-# [4]: #match_not(Text%20%target,%20Text%20%comparitor)
+# [3]: #not(Text%20%25text)%20Text
+# [4]: #match_not(Text%20%25target,%20Text%20%25comparitor)
 # @example
 # $path = "product"
 # match($path, "product") {
@@ -173,10 +177,10 @@
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
 # 
 # In the following example, we match the `$path` variable to see if it matches the string `product`. Since it does, the log "Match successful!" will output to the terminal.
-# [1]: #with(Text%20%text)%20Text
+# [1]: #with(Text%20%25text)%20Text
 # [2]: #else()%20Text
-# [3]: #not(Text%20%text)%20Text
-# [4]: #match_not(Text%20%target,%20Text%20%comparitor)
+# [3]: #not(Text%20%25text)%20Text
+# [4]: #match_not(Text%20%25target,%20Text%20%25comparitor)
 # @example
 # $path = "product"
 # match($path, /product/) {
@@ -211,10 +215,10 @@
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
 # 
 # In the following example, we match the `$path` variable to see if it matches the string "price". Since it does not, the log "Match successful!" will output to your terminal.
-# [1]: #with(Text%20%text)%20Text
+# [1]: #with(Text%20%25text)%20Text
 # [2]: #else()%20Text
-# [3]: #not(Text%20%text)%20Text
-# [4]: #match(Text%20%target)%20Text
+# [3]: #not(Text%20%25text)%20Text
+# [4]: #match(Text%20%25target)%20Text
 # @example
 # $path = "product"
 # match_not($path, "price") {
@@ -249,10 +253,10 @@
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
 # 
 # In the following example, we match the `$path` variable to see if it matches the string "price". Since it does not, the log "Match successful!" will output to your terminal.
-# [1]: #with(Text%20%text)%20Text
+# [1]: #with(Text%20%25text)%20Text
 # [2]: #else()%20Text
-# [3]: #not(Text%20%text)%20Text
-# [4]: #match(Text%20%target)%20Text
+# [3]: #not(Text%20%25text)%20Text
+# [4]: #match(Text%20%25target)%20Text
 # @example
 # $path = "product"
 # match_not($path, /price/) {

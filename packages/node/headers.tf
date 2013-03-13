@@ -108,7 +108,7 @@
 # * Selecting any HTML element in Tritium using XPath
 # 
 # The example below selects the `html` and `body`
-# [1]: #Node.$(Text%20%xpath)
+# [1]: #Node.$(Text%20%25xpath)
 # @example
 # select("/html/body") {
 #   remove()

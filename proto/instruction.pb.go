@@ -74,6 +74,8 @@ type Instruction struct {
 	LineNumber       *int32                       `protobuf:"varint,7,opt,name=line_number" json:"line_number,omitempty"`
 	YieldTypeId      *int32                       `protobuf:"varint,8,opt,name=yield_type_id" json:"yield_type_id,omitempty"`
 	IsValid          *bool                        `protobuf:"varint,9,opt,name=is_valid" json:"is_valid,omitempty"`
+	Namespace        *string                      `protobuf:"bytes,10,opt,name=namespace" json:"namespace,omitempty"`
+	TypeQualifier    *string                      `protobuf:"bytes,11,opt,name=type_qualifier" json:"type_qualifier,omitempty"`
 	XXX_unrecognized []byte                       `json:"-"`
 }
 
@@ -128,6 +130,20 @@ func (this *Instruction) GetIsValid() bool {
 		return *this.IsValid
 	}
 	return false
+}
+
+func (this *Instruction) GetNamespace() string {
+	if this != nil && this.Namespace != nil {
+		return *this.Namespace
+	}
+	return ""
+}
+
+func (this *Instruction) GetTypeQualifier() string {
+	if this != nil && this.TypeQualifier != nil {
+		return *this.TypeQualifier
+	}
+	return ""
 }
 
 func init() {
