@@ -350,8 +350,8 @@ func (p *Parser) term() (node *tp.Instruction) {
 	// case TYPE:
 	// 	node = p.cast()
 	case GVAR, LVAR:
-		node = p.variable("") // unqualified vars remain unchanged (breaks too much existing stuff)
-		node.Namespace = proto.String("tritium") // again, $name should always work as tritium.var("name"...)
+		node = p.variable(p.currentNamespace()) // unqualified vars are fetched from the current namespace
+		// node.Namespace = proto.String("tritium") // again, $name should always work as tritium.var("name"...)
 	case LPAREN:
 		p.pop() // pop the lparen
 		node = p.expression()
@@ -607,7 +607,8 @@ func (p *Parser) variable(ns string) (node *tp.Instruction) {
 		node = tp.MakeLocalVar(name, val, block, lineNo)
 	} else {
 		fullVarName := name
-		if len(ns) > 0 {
+		// if the namespace is 'tritium', leave it off -- necessary to avoid breaking all that global capture stuff
+		if ns != "tritium" {
 			fullVarName = fmt.Sprintf("%s.%s", ns, name)
 		}
 		args := tp.ListInstructions(tp.MakeText(fullVarName, lineNo))
