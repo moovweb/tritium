@@ -1,19 +1,21 @@
 package whale
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/url"
+	"strconv"
+	"strings"
+	"time"
+	"unicode/utf8"
+
 	"goconv"
 	"gokogiri/css"
 	"gokogiri/html"
 	"gokogiri/xml"
 	"icu4go"
-	"net/url"
 	"rubex"
-	"strconv"
-	"strings"
-	"time"
 	tp "tritium/proto"
-	"unicode/utf8"
 )
 
 //The string value of me
@@ -374,6 +376,25 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, a
 	returnValue = scope.Value
 	//doc.Free()
 	return
+}
+
+func to_json_v1_(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	for n := node.FirstChild(); n != nil; n = n.NextSibling() {
+		// Ignore all non-jsony nodes, and return as soon as we find a good one.
+		if jsonStruct := NodeToJson(n); jsonStruct != nil {
+			jsonData, err := json.Marshal(jsonStruct)
+			if err != nil {
+				ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json marshal err: %s", err.Error())
+				return "{ \"engine_error\": \"Internal engine error while converting to json, " +
+					"check logs for more details.\" }"
+			}
+			return string(jsonData)
+		}
+	}
+
+	// No json found, return an empty hash.
+	return "{}"
 }
 
 func url_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {

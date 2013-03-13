@@ -11,4 +11,5 @@ pkg
 BUILD_VERSION
 src/tritium/main/tritium
 log/*
+.sandbox
 *.swp

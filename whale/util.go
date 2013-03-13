@@ -1,8 +1,9 @@
 package whale
 
 import (
-	"gokogiri/xml"
 	"strings"
+
+	"gokogiri/xml"
 )
 
 func MoveFunc(what, where xml.Node, position Position) {
