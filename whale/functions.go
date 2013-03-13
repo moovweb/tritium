@@ -376,7 +376,7 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, a
 	return
 }
 
-func url_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func url_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	urlStr := args[0].(string)
 	urlParsed, err := url.Parse(urlStr)
 	if err != nil {
@@ -398,20 +398,20 @@ func url_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []inte
 	return
 }
 
-func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func comp_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	component := args[0].(string)
 	u := scope.Value.(*url.URL)
 	ns := &Scope{}
-	switch(component) {
-	case("scheme"):
+	switch component {
+	case "scheme":
 		ns.Value = u.Scheme
-	case("host"):
+	case "host":
 		ns.Value = u.Host
-	case("path"):
+	case "path":
 		ns.Value = u.Path
-	case("fragment"):
+	case "fragment":
 		ns.Value = u.Fragment
-	case("userinfo"):
+	case "userinfo":
 		if u.User != nil {
 			ns.Value = u.User.String()
 		} else {
@@ -425,16 +425,16 @@ func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []int
 
 		// write value back to URL (as long as it's a string)
 		if newVal, ok := ns.Value.(string); ok {
-			switch(component) {
-			case("scheme"):
+			switch component {
+			case "scheme":
 				u.Scheme = newVal
-			case("host"):
+			case "host":
 				u.Host = newVal
-			case("path"):
+			case "path":
 				u.Path = newVal
-			case("fragment"):
+			case "fragment":
 				u.Fragment = newVal
-			case("userinfo"):
+			case "userinfo":
 				if newVal == "" {
 					// remove the userinfo
 					u.User = nil
@@ -454,7 +454,7 @@ func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []int
 	return
 }
 
-func param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func param_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	parameter := args[0].(string)
 	u := scope.Value.(*url.URL)
 	params := u.Query()
@@ -476,7 +476,7 @@ func param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	return
 }
 
-func remove_param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func remove_param_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	parameter := args[0].(string)
 	u := scope.Value.(*url.URL)
 	params := u.Query()

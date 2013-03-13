@@ -17,10 +17,10 @@ func init() {
 	builtInFunctions["tritium.match_Text"] = match_Text
 	builtInFunctions["tritium.html_doc_Text_Text"] = html_doc_Text_Text
 
-	builtInFunctions["tritium.url.Text"] = url_Text
-	builtInFunctions["tritium.comp.Text"] = comp_Text
-	builtInFunctions["tritium.param.Text"] = param_Text
-	builtInFunctions["tritium.remove_param.Text"] = remove_param_Text
+	builtInFunctions["tritium.url_v1.Text"] = url_v1_Text
+	builtInFunctions["tritium.comp_v1.Text"] = comp_v1_Text
+	builtInFunctions["tritium.param_v1.Text"] = param_v1_Text
+	builtInFunctions["tritium.remove_param_v1.Text"] = remove_param_v1_Text
 
 	builtInFunctions["tritium.xml"] = xml_Text_Text
 	builtInFunctions["tritium.select.Text"] = select_Text
