@@ -19,6 +19,7 @@ type ScriptObject struct {
 	Functions        []*Function  `protobuf:"bytes,3,rep,name=functions" json:"functions,omitempty"`
 	ScopeTypeId      *int32       `protobuf:"varint,4,opt,name=scope_type_id" json:"scope_type_id,omitempty"`
 	Linked           *bool        `protobuf:"varint,5,opt,name=linked" json:"linked,omitempty"`
+	Module           *string      `protobuf:"bytes,6,opt,name=module" json:"module,omitempty"`
 	XXX_unrecognized []byte       `json:"-"`
 }
 
@@ -54,6 +55,13 @@ func (this *ScriptObject) GetLinked() bool {
 		return *this.Linked
 	}
 	return false
+}
+
+func (this *ScriptObject) GetModule() string {
+	if this != nil && this.Module != nil {
+		return *this.Module
+	}
+	return ""
 }
 
 func init() {

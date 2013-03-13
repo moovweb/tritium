@@ -7,6 +7,7 @@ message Function {
   optional string description = 11;
   optional string filename = 12;
   optional int32 line_number = 13;
+  optional string namespace = 14;
 
 	// Linked
 	optional int32 scope_type_id = 2;

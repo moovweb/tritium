@@ -341,6 +341,7 @@ func (pkg *Package) readHeaderFile(location string) {
 	stubs := parser.ParseFile(location, ".", "headers.tf")
 	for _, function := range stubs.Functions {
 		// Verify that signatures for primitives refer to things that actually exist
+		// println("HEY, LINKING BUILTIN:", function.Stub(pkg.Package))
 		stubStr := strings.Replace(function.Stub(pkg.Package), ",", ".", -1)
 		if whale.LookupBuiltIn(stubStr) == nil {
 			// TODO: figure out why the panic string is suppressed so that we can remove the println

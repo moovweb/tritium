@@ -27,6 +27,7 @@ const (
 	LVAR
 	KWD
 	ID
+	NAMESPACE
 	FUNC
 	TYPE
 	PATH
@@ -47,28 +48,29 @@ var regexpBackQuotePattern *rubex.Regexp
 
 func init() {
 	// Is there a more elegant way to do this?
-	LexemeName[LPAREN] = "LPAREN"
-	LexemeName[RPAREN] = "RPAREN"
-	LexemeName[LBRACE] = "LBRACE"
-	LexemeName[RBRACE] = "RBRACE"
-	LexemeName[COMMA] = "COMMA"
-	LexemeName[DOT] = "DOT"
-	LexemeName[EQUAL] = "EQUAL"
-	LexemeName[PLUS] = "PLUS"
-	LexemeName[STRING] = "STRING"
-	LexemeName[REGEXP] = "REGEXP"
-	LexemeName[POS] = "POSITION"
-	LexemeName[GVAR] = "GLOBAL VAR"
-	LexemeName[LVAR] = "LOCAL VAR"
-	LexemeName[KWD] = "KEYWORD"
-	LexemeName[ID] = "FUNCTION NAME"
-	LexemeName[FUNC] = "FUNC KEYWORD"
-	LexemeName[TYPE] = "TYPE NAME"
-	LexemeName[PATH] = "PATH"
-	LexemeName[IMPORT] = "IMPORT KEYWORD"
-	LexemeName[READ] = "READ MACRO"
-	LexemeName[EOF] = "END OF FILE"
-	LexemeName[ERROR] = "LEXICAL ERROR"
+	LexemeName[LPAREN] = "`(`"
+	LexemeName[RPAREN] = "`)`"
+	LexemeName[LBRACE] = "`{`"
+	LexemeName[RBRACE] = "`}`"
+	LexemeName[COMMA] = "`,`"
+	LexemeName[DOT] = "`.`"
+	LexemeName[EQUAL] = "`=`"
+	LexemeName[PLUS] = "`+`"
+	LexemeName[STRING] = "string literal"
+	LexemeName[REGEXP] = "regular expression"
+	LexemeName[POS] = "position keyword"
+	LexemeName[GVAR] = "global variable"
+	LexemeName[LVAR] = "local variable"
+	LexemeName[KWD] = "keyword argument"
+	LexemeName[ID] = "identifier"
+	LexemeName[NAMESPACE] = "`@namespace` directive"
+	LexemeName[FUNC] = "`@func` directive"
+	LexemeName[TYPE] = "type name"
+	LexemeName[PATH] = "path"
+	LexemeName[IMPORT] = "`@import` directive"
+	LexemeName[READ] = "`read` macro"
+	LexemeName[EOF] = "end of file"
+	LexemeName[ERROR] = "lexical error"
 
 	matcher[STRING] = rubex.MustCompile(`\A"(\\.|[^"\\])*"|\A'(\\.|[^'\\])*'`)
 
@@ -382,6 +384,8 @@ func (t *Tokenizer) munch() *Token {
 		return tok
 	} else if t.hasPrefix("@func") {
 		return t.popToken(FUNC, "", 5)
+	} else if t.hasPrefix("@namespace") {
+		return t.popToken(NAMESPACE, "", 10)
 	} else {
 		return t.popError("unrecognized token")
 	}

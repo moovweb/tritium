@@ -18,6 +18,7 @@ type Function struct {
 	Description      *string              `protobuf:"bytes,11,opt,name=description" json:"description,omitempty"`
 	Filename         *string              `protobuf:"bytes,12,opt,name=filename" json:"filename,omitempty"`
 	LineNumber       *int32               `protobuf:"varint,13,opt,name=line_number" json:"line_number,omitempty"`
+	Namespace        *string              `protobuf:"bytes,14,opt,name=namespace" json:"namespace,omitempty"`
 	ScopeTypeId      *int32               `protobuf:"varint,2,opt,name=scope_type_id" json:"scope_type_id,omitempty"`
 	ScopeType        *string              `protobuf:"bytes,8,opt,name=scope_type" json:"scope_type,omitempty"`
 	ReturnTypeId     *int32               `protobuf:"varint,3,opt,name=return_type_id" json:"return_type_id,omitempty"`
@@ -60,6 +61,13 @@ func (this *Function) GetLineNumber() int32 {
 		return *this.LineNumber
 	}
 	return 0
+}
+
+func (this *Function) GetNamespace() string {
+	if this != nil && this.Namespace != nil {
+		return *this.Namespace
+	}
+	return ""
 }
 
 func (this *Function) GetScopeTypeId() int32 {

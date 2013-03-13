@@ -823,7 +823,7 @@
 # @scope XMLNode
 # @args Text %pos,Text %tag,Text %content*
 # @description 
-# The `insert_at` function inserts a new node of type `%tag` into the document at the position `%pos` containing `%content`.
+# The `insert_at` function inserts a new node of type `%tag` into the document at the position `%pos` containing `%content`. The `%content` parameter is optional.
 # **Things to note**: the position (`%pos`) is relative to the current node.
 # There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, `insert_at("top", "div", "Hello, Tritium!", class: "one")` will add a class of "one" to the new `div` node.
 # ### Common use examples include:
