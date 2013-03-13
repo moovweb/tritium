@@ -1,19 +1,21 @@
 package whale
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/url"
+	"strconv"
+	"strings"
+	"time"
+	"unicode/utf8"
+
 	"goconv"
 	"gokogiri/css"
 	"gokogiri/html"
 	"gokogiri/xml"
 	"icu4go"
-	"net/url"
 	"rubex"
-	"strconv"
-	"strings"
-	"time"
 	tp "tritium/proto"
-	"unicode/utf8"
 )
 
 //The string value of me
@@ -376,6 +378,25 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, a
 	return
 }
 
+func to_json_v1_(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	for n := node.FirstChild(); n != nil; n = n.NextSibling() {
+		// Ignore all non-jsony nodes, and return as soon as we find a good one.
+		if jsonStruct := NodeToJson(n); jsonStruct != nil {
+			jsonData, err := json.Marshal(jsonStruct)
+			if err != nil {
+				ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json marshal err: %s", err.Error())
+				return "{ \"engine_error\": \"Internal engine error while converting to json, " +
+					"check logs for more details.\" }"
+			}
+			return string(jsonData)
+		}
+	}
+
+	// No json found, return an empty hash.
+	return "{}"
+}
+
 func url_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	urlStr := args[0].(string)
 	urlParsed, err := url.Parse(urlStr)
@@ -402,16 +423,16 @@ func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []int
 	component := args[0].(string)
 	u := scope.Value.(*url.URL)
 	ns := &Scope{}
-	switch(component) {
-	case("scheme"):
+	switch component {
+	case ("scheme"):
 		ns.Value = u.Scheme
-	case("host"):
+	case ("host"):
 		ns.Value = u.Host
-	case("path"):
+	case ("path"):
 		ns.Value = u.Path
-	case("fragment"):
+	case ("fragment"):
 		ns.Value = u.Fragment
-	case("userinfo"):
+	case ("userinfo"):
 		if u.User != nil {
 			ns.Value = u.User.String()
 		} else {
@@ -425,16 +446,16 @@ func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []int
 
 		// write value back to URL (as long as it's a string)
 		if newVal, ok := ns.Value.(string); ok {
-			switch(component) {
-			case("scheme"):
+			switch component {
+			case ("scheme"):
 				u.Scheme = newVal
-			case("host"):
+			case ("host"):
 				u.Host = newVal
-			case("path"):
+			case ("path"):
 				u.Path = newVal
-			case("fragment"):
+			case ("fragment"):
 				u.Fragment = newVal
-			case("userinfo"):
+			case ("userinfo"):
 				if newVal == "" {
 					// remove the userinfo
 					u.User = nil
