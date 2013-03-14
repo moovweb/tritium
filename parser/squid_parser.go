@@ -23,6 +23,7 @@ type Parser struct {
 	header      bool
 	RootFile    bool
 	Namespaces  []string
+	Defspace    string
 }
 
 func (p *Parser) gensym() string {
@@ -99,11 +100,16 @@ func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool) 
 		Lookahead:   nil,
 		counter:     0,
 		RootFile:    isRootFile,
-		Namespaces:  make([]string, 0),
+		Namespaces:  make([]string, 1),
+		Defspace:    "tritium",
 	}
-	p.Namespaces = append(p.Namespaces, "tritium")
+	p.Namespaces[0] = "tritium"
 	p.pop()
 	return p
+}
+
+func (p *Parser) updateDefspace() {
+	p.Defspace = strings.Split(p.Namespaces[len(p.Namespaces)-1], ",")[0]
 }
 
 func (p *Parser) pushNamespace(ns string) string {
@@ -115,6 +121,7 @@ func (p *Parser) popNamespace() string {
 	last := len(p.Namespaces)-1
 	ns := p.Namespaces[last]
 	p.Namespaces = p.Namespaces[:last]
+	p.updateDefspace()
 	return ns
 }
 
@@ -122,44 +129,39 @@ func (p *Parser) currentNamespace() string {
 	return p.Namespaces[len(p.Namespaces)-1]
 }
 
-func (p *Parser) namespaces() {
-	p.pop() // pop the `@namespace` keyword
+func (p *Parser) collectNamespaces() string {
+	p.pop() // pop the `@namespace` or `@include` keyword (should be peeked by the caller)
 	nsList := make([]string, 0)
 
 	if p.peek().Lexeme != ID {
-		p.error(fmt.Sprintf("namespaces must be lowercase; `%s` is not a valid name for a namespace", p.peek().Value))
+		p.error(fmt.Sprintf("namespaces must be lowercase identifiers; `%s` is not a valid name for a namespace", p.peek().Value))
 	}
 	nsList = append(nsList, p.pop().Value)
 	for p.peek().Lexeme == COMMA {
 		p.pop() // pop the comma
 		if p.peek().Lexeme != ID {
-			p.error(fmt.Sprintf("namespaces must be lowercase; `%s` is not a valid name for a namespace", p.peek().Value))
+			p.error(fmt.Sprintf("namespaces must be lowercase identifiers; `%s` is not a valid name for a namespace", p.peek().Value))
 		}
 		nsList = append(nsList, p.pop().Value)
 	}
 
-	p.pushNamespace(strings.Join(nsList, ","))
+	return strings.Join(nsList, ",")
 }
 
-func (p *Parser) useNamespaces(push bool) {
-	p.pop() // pop the `@use` keyword
-	nsList := make([]string, 0)
+func (p *Parser) namespaces() {
+	p.pushNamespace(p.collectNamespaces())
+	p.updateDefspace()
+}
 
-	if p.peek().Lexeme != ID {
-		p.error(fmt.Sprintf("namespaces must be lowercase; `%s` is not a valid name for a namespace", p.peek().Value))
+func (p *Parser) include(dup bool) {
+	inclusions := p.collectNamespaces()
+	top := len(p.Namespaces)-1
+	if dup {
+		p.pushNamespace(p.Namespaces[top]) // dup the topmost namespace set
+		top = len(p.Namespaces)-1 // length has changed
 	}
-	nsList = append(nsList, p.pop().Value)
-	for p.peek().Lexeme == COMMA {
-		p.pop() // pop the comma
-		if p.peek().Lexeme != ID {
-			p.error(fmt.Sprintf("namespaces must be lowercase; `%s` is not a valid name for a namespace", p.peek().Value))
-		}
-		nsList = append(nsList, p.pop().Value)
-	}
-	if push {
-		p.pushNamespace(p.Namespaces[len(p.Namespaces)-1]) // dup the topmost namespace set
-	}
-	p.Namespaces[len(p.Namespaces)-1] += "," + strings.Join(nsList, ",")
+	// the included namespaces should be searched first, so put them at the front of the list
+	p.Namespaces[top] = inclusions + "," + p.Namespaces[top]
 }
 
 func (p *Parser) Parse() *tp.ScriptObject {
@@ -179,8 +181,8 @@ func (p *Parser) Parse() *tp.ScriptObject {
 		p.namespaces()
 	}
 
-	if p.peek().Lexeme == USE {
-		p.useNamespaces(false)
+	if p.peek().Lexeme == INCLUDE {
+		p.include(false)
 	}
 
 	for p.peek().Lexeme != EOF {
@@ -276,6 +278,8 @@ func (p *Parser) statement() (node *tp.Instruction) {
 		node = p.expression()
 	case NAMESPACE:
 		p.error("`@namespace` directive must occur at the top of a file or code block")
+	case INCLUDE:
+		p.error("`@include` directive must occur at the top of a file or code block (but after the `@namespace` declaration)")
 	default:
 		p.error("statement must consist of import or expression")
 	}
@@ -670,15 +674,14 @@ func (p *Parser) block() (stmts []*tp.Instruction) {
 		pushedNamespace = true
 	}
 
-	if p.peek().Lexeme == USE {
-		push := false
+	if p.peek().Lexeme == INCLUDE {
+		dup := false
 		if !pushedNamespace {
-			push = true
+			dup = true
 			pushedNamespace = true
 		}
-		p.useNamespaces(push)
+		p.include(dup)
 	}
-
 
 	for p.peek().Lexeme != RBRACE {
 		stmts = append(stmts, p.statement())
@@ -697,7 +700,7 @@ func (p *Parser) definition() *tp.Function {
 	isSignature := false
 	node := new(tp.Function)
 	// functions should be injected only into the first specified namespace
-	node.Namespace = proto.String(strings.Split(p.currentNamespace(), ",")[0])
+	node.Namespace = proto.String(p.Defspace)
 
 	funcLineNo := p.pop().LineNumber // pop the `@func` keyword
 	contextType := ""
