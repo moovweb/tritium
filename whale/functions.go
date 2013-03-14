@@ -378,9 +378,21 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, a
 	return
 }
 
-func to_json_v1_(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func to_json_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
-	for n := node.FirstChild(); n != nil; n = n.NextSibling() {
+	xpathStr := args[0].(string)
+	expr := ctx.GetXpathExpr(xpathStr)
+	if expr == nil {
+		return "{}"
+	}
+
+	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
+	if err != nil {
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "to_json err: %s", err.Error())
+		return "{}"
+	}
+
+	for _, n := range nodes {
 		// Ignore all non-jsony nodes, and return as soon as we find a good one.
 		if jsonStruct := NodeToJson(n); jsonStruct != nil {
 			jsonData, err := json.Marshal(jsonStruct)

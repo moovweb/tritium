@@ -97,7 +97,7 @@ func init() {
 	//TODO rewrite_link should be deprecated soon
 	builtInFunctions["tritium.rewrite_link.Text.Text"] = rewrite_to_proxy_Text_Text
 
-	builtInFunctions["tritium.to_json_v1"] = to_json_v1_
+	builtInFunctions["tritium.to_json_v1.Text"] = to_json_v1_Text
 }
 
 func LookupBuiltIn(name string) builtInFunc {
