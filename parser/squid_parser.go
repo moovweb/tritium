@@ -141,27 +141,6 @@ func (p *Parser) namespaces() {
 	p.pushNamespace(strings.Join(nsList, ","))
 }
 
-func (p *Parser) useNamespaces(push bool) {
-	p.pop() // pop the `@use` keyword
-	nsList := make([]string, 0)
-
-	if p.peek().Lexeme != ID {
-		p.error(fmt.Sprintf("namespaces must be lowercase; `%s` is not a valid name for a namespace", p.peek().Value))
-	}
-	nsList = append(nsList, p.pop().Value)
-	for p.peek().Lexeme == COMMA {
-		p.pop() // pop the comma
-		if p.peek().Lexeme != ID {
-			p.error(fmt.Sprintf("namespaces must be lowercase; `%s` is not a valid name for a namespace", p.peek().Value))
-		}
-		nsList = append(nsList, p.pop().Value)
-	}
-	if push {
-		p.pushNamespace(p.Namespaces[len(p.Namespaces)-1]) // dup the topmost namespace set
-	}
-	p.Namespaces[len(p.Namespaces)-1] += "," + strings.Join(nsList, ",")
-}
-
 func (p *Parser) Parse() *tp.ScriptObject {
 	script := new(tp.ScriptObject)
 	// script.Name = proto.String(p.FullPath)
@@ -177,10 +156,6 @@ func (p *Parser) Parse() *tp.ScriptObject {
 	// Look for the namespace directive first.
 	if p.peek().Lexeme == NAMESPACE {
 		p.namespaces()
-	}
-
-	if p.peek().Lexeme == USE {
-		p.useNamespaces(false)
 	}
 
 	for p.peek().Lexeme != EOF {
@@ -669,16 +644,6 @@ func (p *Parser) block() (stmts []*tp.Instruction) {
 		p.namespaces()
 		pushedNamespace = true
 	}
-
-	if p.peek().Lexeme == USE {
-		push := false
-		if !pushedNamespace {
-			push = true
-			pushedNamespace = true
-		}
-		p.useNamespaces(push)
-	}
-
 
 	for p.peek().Lexeme != RBRACE {
 		stmts = append(stmts, p.statement())
