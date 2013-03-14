@@ -392,7 +392,7 @@ func (p *Parser) term() (node *tp.Instruction) {
 	// case TYPE:
 	// 	node = p.cast()
 	case GVAR, LVAR:
-		node = p.variable(p.currentNamespace()) // unqualified vars are fetched from the current namespace
+		node = p.variable(p.Defspace) // unqualified vars are fetched from the current namespace
 		// node.Namespace = proto.String("tritium") // again, $name should always work as tritium.var("name"...)
 	case LPAREN:
 		p.pop() // pop the lparen
@@ -625,7 +625,7 @@ func (p *Parser) cast(typeName *Token) (node *tp.Instruction) {
 }
 
 func (p *Parser) variable(ns string) (node *tp.Instruction) {
-	ns = strings.Split(ns, ",")[0] // only use the first namespace -- can't efficiently search namespaces for global vars
+	// ns = strings.Split(ns, ",")[0] // only use the first namespace -- can't efficiently search namespaces for global vars
 	token := p.pop()
 	lexeme, name, lineNo := token.Lexeme, token.Value, token.LineNumber
 	sigil := "$"
