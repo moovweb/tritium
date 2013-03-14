@@ -2,6 +2,7 @@ package whale
 
 import (
 	"encoding/json"
+	"encoding/base64"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -1061,3 +1062,28 @@ func rewrite_cookie_domain_Text_Text_Text(ctx *EngineContext, scope *Scope, ins 
 	}
 	return
 }
+
+func base64_v1_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	method := args[0].(string)
+	str := args[1].(string)
+	ns := &Scope{Value: str}
+	switch method {
+	case "decode":
+		data, err := base64.StdEncoding.DecodeString(str)
+		if err != nil {
+			ctx.Debugger.LogErrorMessage(ctx.MessagePath, "String decode error: %s", err.Error())
+			ns.Value = ""
+		} else {
+			ns.Value = string(data)
+		}
+	case "encode":
+		data := []byte(str)
+		ns.Value = base64.StdEncoding.EncodeToString(data)
+	}
+	for _, child := range ins.Children {
+		ctx.RunInstruction(ns, child)
+	}
+	returnValue = ns.Value
+	return
+}
+
