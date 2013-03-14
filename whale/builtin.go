@@ -17,11 +17,6 @@ func init() {
 	builtInFunctions["tritium.match_Text"] = match_Text
 	builtInFunctions["tritium.html_doc_Text_Text"] = html_doc_Text_Text
 
-	builtInFunctions["tritium.url_v1.Text"] = url_v1_Text
-	builtInFunctions["tritium.comp_v1.Text"] = comp_v1_Text
-	builtInFunctions["tritium.param_v1.Text"] = param_v1_Text
-	builtInFunctions["tritium.remove_param_v1.Text"] = remove_param_v1_Text
-
 	builtInFunctions["tritium.xml"] = xml_Text_Text
 	builtInFunctions["tritium.select.Text"] = select_Text
 	builtInFunctions["tritium.export.Text"] = export_Text
@@ -97,7 +92,14 @@ func init() {
 	//TODO rewrite_link should be deprecated soon
 	builtInFunctions["tritium.rewrite_link.Text.Text"] = rewrite_to_proxy_Text_Text
 
+	builtInFunctions["tritium.url_v1.Text"] = url_v1_Text
+	builtInFunctions["tritium.comp_v1.Text"] = comp_v1_Text
+	builtInFunctions["tritium.param_v1.Text"] = param_v1_Text
+	builtInFunctions["tritium.remove_param_v1.Text"] = remove_param_v1_Text
+
 	builtInFunctions["tritium.to_json_v1.Text"] = to_json_v1_Text
+
+	builtInFunctions["tritium.base64_v1.Text.Text"] = base64_v1_Text_Text
 }
 
 func LookupBuiltIn(name string) builtInFunc {

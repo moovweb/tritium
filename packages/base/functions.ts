@@ -454,3 +454,45 @@
 @func Text.dump() {
   this()
 }
+
+# @abstract The `encode64` function encodes the specified string using a base64 encoder.
+# @name encode64
+# @category Text
+# @scope Global
+# @args Text %str
+# @description
+# The `encode64` function encodes the specified string using a base64 encoder.
+# 
+# In the following example, we encode `%password`.
+# @example
+# $encoded_password = encode64(%password)
+# @exampletext 
+# @examplelink 
+# @guidetext 
+# @guidelink 
+@func encode64(Text %str) {
+  base64_v1("encode", %str) {
+    yield()
+  }
+}
+
+# @abstract The `decode64` function decodes the specified string using a base64 decoder.
+# @name decode64
+# @category Text
+# @scope Global
+# @args Text %str
+# @description
+# The `decode64` function decodes the specified string using a base64 decoder.
+# 
+# In the following example, we decode `%encoded_password`.
+# @example
+# $decoded_password = decode64(%encoded_password)
+# @exampletext 
+# @examplelink 
+# @guidetext 
+# @guidelink 
+@func decode64(Text %str) {
+  base64_v1("decode", %str) {
+    yield()
+  }
+}
