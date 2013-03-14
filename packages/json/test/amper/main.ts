@@ -1,6 +1,6 @@
 html() {
   $("/html/body") {
-    $result = to_json_v1()
+    $result = to_json_v1("./hash")
   }
 }
 set($result)
