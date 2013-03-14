@@ -1,20 +1,20 @@
 package proto
 
-import pb "code.google.com/p/goprotobuf/proto"
-import "butler/null"
+import (
+	"fmt"
+)
+
+import (
+	pb "code.google.com/p/goprotobuf/proto"
+	"butler/null"
+)
 
 func (f *Function) Stub(pkg *Package) string {
-	ns, rest := f.StubComponents(pkg)
-	return ns + "." + rest
-}
-
-func (f *Function) StubComponents(pkg *Package) (namespace, rest string) {
-	namespace = f.GetNamespace()
-	if len(namespace) == 0 {
-		namespace = "tritium"
+	ns := f.GetNamespace()
+	if len(ns) == 0 {
+		ns = "tritium"
 	}
-
-	rest = f.GetName()
+	fname := fmt.Sprintf("%s.%s", ns, f.GetName())
 	args := ""
 	for _, arg := range f.Args {
 		argName := null.GetString(arg.TypeString)
@@ -24,8 +24,7 @@ func (f *Function) StubComponents(pkg *Package) (namespace, rest string) {
 		}
 		args = args + "," + argName
 	}
-	rest += args
-	return
+	return fname + args
 }
 
 // We need this for inherited function resolution. 

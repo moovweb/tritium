@@ -122,6 +122,25 @@ func (p *Parser) currentNamespace() string {
 	return p.Namespaces[len(p.Namespaces)-1]
 }
 
+func (p *Parser) namespaces() {
+	p.pop() // pop the `@namespace` keyword
+	nsList := make([]string, 0)
+
+	if p.peek().Lexeme != ID {
+		p.error(fmt.Sprintf("namespaces must be lowercase; `%s` is not a valid name for a namespace", p.peek().Value))
+	}
+	nsList = append(nsList, p.pop().Value)
+	for p.peek().Lexeme == COMMA {
+		p.pop() // pop the comma
+		if p.peek().Lexeme != ID {
+			p.error(fmt.Sprintf("namespaces must be lowercase; `%s` is not a valid name for a namespace", p.peek().Value))
+		}
+		nsList = append(nsList, p.pop().Value)
+	}
+
+	p.pushNamespace(strings.Join(nsList, ","))
+}
+
 func (p *Parser) Parse() *tp.ScriptObject {
 	script := new(tp.ScriptObject)
 	// script.Name = proto.String(p.FullPath)
@@ -134,18 +153,10 @@ func (p *Parser) Parse() *tp.ScriptObject {
 	stmts := tp.ListInstructions()
 	defs := make([]*tp.Function, 0) // Add a new constructor in instruction.go
 
-	// Look for the module declaration first.
+	// Look for the namespace directive first.
 	if p.peek().Lexeme == NAMESPACE {
-		p.pop() // pop the `@namespace` keyword
-		if p.peek().Lexeme != ID {
-			p.error("namespace must be a lowercase identifier")
-		}
-		ns := p.pop().Value
-		// script.Namespace = proto.String(ns)
-		p.Namespaces[0] = ns
-	}/* else {
-		script.Module = proto.String("tritium")
-	}*/
+		p.namespaces()
+	}
 
 	for p.peek().Lexeme != EOF {
 		switch p.peek().Lexeme {
@@ -153,17 +164,19 @@ func (p *Parser) Parse() *tp.ScriptObject {
 			defs = append(defs, p.definition())
 
 			// Is this still necessary, now that new doc tools are being developed?
-			if len(stmts) > 0 {
-				previousStatement := stmts[len(stmts)-1]
-				if *previousStatement.Type == tp.Instruction_TEXT {
-					defs[len(defs)-1].Description = previousStatement.Value
-					if len(stmts) > 1 {
-						stmts = stmts[:len(stmts)-2]
-					} else if len(stmts) == 1 {
-						stmts = stmts[0:0]
-					}
-				}
-			}
+			// You know what, I'm just gonna comment this out. I'm sure it'll be fine.
+
+			// if len(stmts) > 0 {
+			// 	previousStatement := stmts[len(stmts)-1]
+			// 	if *previousStatement.Type == tp.Instruction_TEXT {
+			// 		defs[len(defs)-1].Description = previousStatement.Value
+			// 		if len(stmts) > 1 {
+			// 			stmts = stmts[:len(stmts)-2]
+			// 		} else if len(stmts) == 1 {
+			// 			stmts = stmts[0:0]
+			// 		}
+			// 	}
+			// }
 		default:
 			stmt := p.statement()
 			stmts = append(stmts, stmt)
@@ -237,7 +250,7 @@ func (p *Parser) statement() (node *tp.Instruction) {
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	case NAMESPACE:
-		p.error("namespace declaration must occur at the top of a file or code block")
+		p.error("`@namespace` directive must occur at the top of a file or code block")
 	default:
 		p.error("statement must consist of import or expression")
 	}
@@ -258,7 +271,7 @@ func (p *Parser) expression() (node *tp.Instruction) {
 				terms = append(terms, rhs)
 			}
 		default:
-			p.error("argument to + must be a self-contained expression")
+			p.error("argument to `+` must be a self-contained expression")
 		}
 	}
 	if len(terms) > 1 {
@@ -583,6 +596,7 @@ func (p *Parser) cast(typeName *Token) (node *tp.Instruction) {
 }
 
 func (p *Parser) variable(ns string) (node *tp.Instruction) {
+	ns = strings.Split(ns, ",")[0] // only use the first namespace -- can't efficiently search namespaces for global vars
 	token := p.pop()
 	lexeme, name, lineNo := token.Lexeme, token.Value, token.LineNumber
 	sigil := "$"
@@ -627,13 +641,7 @@ func (p *Parser) block() (stmts []*tp.Instruction) {
 	// check for a localized namespace declaration at the top of the block
 	pushedNamespace := false
 	if p.peek().Lexeme == NAMESPACE {
-		p.pop() // pop the `@namespace` keyword
-		if p.peek().Lexeme != ID {
-			p.error("namespace must be a lowercase identifier")
-		}
-		ns := p.pop().Value
-		// script.Namespace = proto.String(ns)
-		p.pushNamespace(ns)
+		p.namespaces()
 		pushedNamespace = true
 	}
 
@@ -653,7 +661,8 @@ func (p *Parser) block() (stmts []*tp.Instruction) {
 func (p *Parser) definition() *tp.Function {
 	isSignature := false
 	node := new(tp.Function)
-	node.Namespace = proto.String(p.currentNamespace())
+	// functions should be injected only into the first specified namespace
+	node.Namespace = proto.String(strings.Split(p.currentNamespace(), ",")[0])
 
 	funcLineNo := p.pop().LineNumber // pop the `@func` keyword
 	contextType := ""
@@ -671,6 +680,7 @@ func (p *Parser) definition() *tp.Function {
 
 	funcName := p.pop().Value
 	funcFile := ""
+
 	if len(p.ScriptPath) > 0 && p.ScriptPath != "." {
 		funcFile = filepath.Join(p.ScriptPath, p.FileName)
 	}

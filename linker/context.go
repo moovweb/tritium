@@ -215,12 +215,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		if stub == "yield" {
 			ins.YieldTypeId = proto.Int32(int32(scopeType))
 		}
-		// unqualifiedStub := stub
-		ns := ins.GetNamespace()
-		if len(ns) == 0 {
-			ns = "tritium"
-		}
-		stub = ns + "." + stub
+		namespaces := ins.Namespaces()
 		// process the args
 		if ins.Arguments != nil {
 			for _, arg := range ins.Arguments {
@@ -232,36 +227,19 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 				stub = stub + "," + ctx.types[argReturn]
 			}
 		}
-		// look up the function wrt the current context type + function name
-		funcId, ok := ctx.funList[scopeType][stub]
-		if !ok {
-
-			// stubComponents := strings.SplitN(stub, ".", 2)
-			// ns, basicStub := stubComponents[0], stubComponents[1]
-			// readableCalleeStub := strings.Replace(basicStub, ",", "(", 1)
-			// if strings.Index(readableCalleeStub, "(") != -1 {
-			// 	readableCalleeStub = readableCalleeStub + ")"
-			// }
-			// stubComponents = strings.SplitN(caller, ".", 2)
-			// nsCaller, basicStubCaller := stubComponents[0], stubComponents[1]
-			// readableCallerStub := strings.Replace(basicStubCaller, ",", "(", 1)
-			// if strings.Index(readableCallerStub, "(") != -1 {
-			// 	readableCallerStub = readableCallerStub + ")"
-      // }
-
-      readableCalleeStub := readableStub(stub)
-      readableCallerStub := readableStub(caller)
-
-			message := fmt.Sprintf("Available functions in %s.%s:\n", ns, ctx.types[scopeType])
-			ns := strings.SplitN(stub, ".", 2)[0]
-			nsCaller := strings.SplitN(caller, ".", 2)[0]
-			nsPrefix := ns + "."
-			for funcName, _ := range ctx.funList[scopeType] {
-				if strings.HasPrefix(funcName, nsPrefix) {
-					message += "\t" + nsPrefix + readableStub(funcName) + "\n"
-				}
+		// for each namespace specified by the user, look up the function wrt the current context type + function name
+		var funcId int
+		var ok bool
+		for _, ns := range namespaces {
+			funcId, ok = ctx.funList[scopeType][ns + "." + stub]
+			if ok {
+				break
 			}
-			log.Printf("%s\n", message)
+		}
+
+		if !ok {
+      readableCalleeStub := readableStub(stub)
+			readableCallerStub := readableStub(caller)
 
 			location := ""
 			if len(path) > 0 {
@@ -269,7 +247,30 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			} else {
 				location = "Package " + ctx.Pkg.GetName()
 			}
-			ctx.error(ins, "%s:%d: could not find function %s.%s.%s (called from %s.%s.%s)", location, ins.GetLineNumber(), ns, ctx.types[scopeType], readableCalleeStub, nsCaller, ctx.types[scopeType], readableCallerStub)
+
+			msg := fmt.Sprintf("%s:%d: function %s.%s does not exist in namespace %s", location, ins.GetLineNumber(), ctx.types[scopeType], readableCalleeStub, namespaces[0])
+			for i := 1; i < len(namespaces)-1; i++ {
+				msg += ", " + namespaces[i]
+			}
+			if len(namespaces) > 1 {
+				msg += " or " + namespaces[len(namespaces)-1]
+			}
+			msg += fmt.Sprintf("; (called from %s.%s).", ctx.types[scopeType], readableCallerStub)
+
+			ctx.error(ins, msg)
+
+			// message := fmt.Sprintf("Available functions in %s.%s:\n", ns, ctx.types[scopeType])
+			// ns := strings.SplitN(stub, ".", 2)[0]
+			// nsPrefix := ns + "."
+			// for funcName, _ := range ctx.funList[scopeType] {
+			// 	if strings.HasPrefix(funcName, nsPrefix) {
+			// 		message += "\t" + nsPrefix + readableStub(funcName) + "\n"
+			// 	}
+			// }
+			// log.Printf("%s\n", message)
+
+
+			// ctx.error(ins, "%s:%d: could not find function %s.%s.%s (called from %s.%s.%s)", location, ins.GetLineNumber(), ns, ctx.types[scopeType], readableCalleeStub, callerNamespace, ctx.types[scopeType], readableCallerStub)
 
 		} else {
 			ins.FunctionId = proto.Int32(int32(funcId))
@@ -326,8 +327,7 @@ func (ctx *LinkingContext) error(obj interface{}, format string, data ...interfa
 }
 
 func readableStub(stub string) string {
-	basicStub := strings.SplitN(stub, ".", 2)[1]
-	betterStub := strings.Replace(basicStub, ",", "(", 1)
+	betterStub := strings.Replace(stub, ",", "(", 1)
 	if strings.Index(betterStub, "(") != -1 {
 		betterStub += ")"
 	} else {
