@@ -28,7 +28,7 @@ const (
 	KWD
 	ID
 	NAMESPACE
-	INCLUDE
+	OPEN
 	FUNC
 	TYPE
 	PATH
@@ -65,7 +65,7 @@ func init() {
 	LexemeName[KWD] = "keyword argument"
 	LexemeName[ID] = "identifier"
 	LexemeName[NAMESPACE] = "`@namespace` directive"
-	LexemeName[INCLUDE] = "`@include` directive"
+	LexemeName[OPEN] = "`@include` directive"
 	LexemeName[FUNC] = "`@func` directive"
 	LexemeName[TYPE] = "type name"
 	LexemeName[PATH] = "path"
@@ -388,8 +388,8 @@ func (t *Tokenizer) munch() *Token {
 		return t.popToken(FUNC, "", 5)
 	} else if t.hasPrefix("@namespace") {
 		return t.popToken(NAMESPACE, "", 10)
-	} else if t.hasPrefix("@include") {
-		return t.popToken(INCLUDE, "", 8)
+	} else if t.hasPrefix("@open") {
+		return t.popToken(OPEN, "", 5)
 	} else {
 		return t.popError("unrecognized token")
 	}

@@ -153,7 +153,7 @@ func (p *Parser) namespaces() {
 	p.updateDefspace()
 }
 
-func (p *Parser) include(dup bool) {
+func (p *Parser) open(dup bool) {
 	inclusions := p.collectNamespaces()
 	top := len(p.Namespaces)-1
 	if dup {
@@ -181,29 +181,12 @@ func (p *Parser) Parse() *tp.ScriptObject {
 		p.namespaces()
 	}
 
-	if p.peek().Lexeme == INCLUDE {
-		p.include(false)
-	}
-
 	for p.peek().Lexeme != EOF {
 		switch p.peek().Lexeme {
 		case FUNC:
 			defs = append(defs, p.definition())
-
-			// Is this still necessary, now that new doc tools are being developed?
-			// You know what, I'm just gonna comment this out. I'm sure it'll be fine.
-
-			// if len(stmts) > 0 {
-			// 	previousStatement := stmts[len(stmts)-1]
-			// 	if *previousStatement.Type == tp.Instruction_TEXT {
-			// 		defs[len(defs)-1].Description = previousStatement.Value
-			// 		if len(stmts) > 1 {
-			// 			stmts = stmts[:len(stmts)-2]
-			// 		} else if len(stmts) == 1 {
-			// 			stmts = stmts[0:0]
-			// 		}
-			// 	}
-			// }
+		case OPEN:
+			p.open(false)
 		default:
 			stmt := p.statement()
 			stmts = append(stmts, stmt)
@@ -278,8 +261,6 @@ func (p *Parser) statement() (node *tp.Instruction) {
 		node = p.expression()
 	case NAMESPACE:
 		p.error("`@namespace` directive must occur at the top of a file or code block")
-	case INCLUDE:
-		p.error("`@include` directive must occur at the top of a file or code block (but after the `@namespace` declaration)")
 	default:
 		p.error("statement must consist of import or expression")
 	}
@@ -674,17 +655,17 @@ func (p *Parser) block() (stmts []*tp.Instruction) {
 		pushedNamespace = true
 	}
 
-	if p.peek().Lexeme == INCLUDE {
-		dup := false
-		if !pushedNamespace {
-			dup = true
-			pushedNamespace = true
-		}
-		p.include(dup)
-	}
-
 	for p.peek().Lexeme != RBRACE {
-		stmts = append(stmts, p.statement())
+		if p.peek().Lexeme == OPEN {
+			dup := false
+			if !pushedNamespace {
+				dup = true
+				pushedNamespace = true
+			}
+			p.open(dup)
+		} else {
+			stmts = append(stmts, p.statement())
+		}
 	}
 	p.pop() // pop the rbrace
 	if pushedNamespace {
