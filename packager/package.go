@@ -245,7 +245,11 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 	entryPoint := filepath.Join(loadPath, "functions.ts")
 	pkg.Path = proto.String(entryPoint)
 
-	ReadPackageDefinitions(pkg.Package, loadPath, ".", "functions.ts")
+	// println("func ReadPackageDefinitions")
+	// println("loadpath:", loadPath)
+	// println()
+	projPath, scriptPath := filepath.Split(loadPath)
+	ReadPackageDefinitions(pkg.Package, projPath, scriptPath, "functions.ts")
 
 	if pkg.Options["generate_docs"] {
 		println("*** GENERATING DOCS ***")
@@ -285,7 +289,9 @@ func NewRootPackage(rootPackagePath string, name string, dataPath string) *Packa
 }
 
 func BuildRootPackage(rootPackage *Package, rootPackagePath string, name string) (loadError *Error) {
-	// println("BUILD ROOT PACKAGE", rootPackagePath)
+	// println("func BuildRootPackage")
+	// println("root package path and name:", rootPackagePath, name)
+	// println()
 	error := rootPackage.LoadFromPath(rootPackagePath, name)
 
 	if error != nil {
