@@ -47,6 +47,10 @@ func BuildMixer(buildPath string, name string, dataPath string) *Mixer {
 		DefinitionPath: path,
 		DataPath:       dataPath,
 	}
+	// println("func BuildMixer")
+	// println("build path:", buildPath)
+	// println("definition path:", path)
+	// println()
 
 	rewritersDirectory := filepath.Join(path, "/rewriters")
 	mixer.Rewriters = tp.CollectFiles(rewritersDirectory)
