@@ -100,7 +100,7 @@ export GOPATH=$MOOV_HOME
 		echo "Running tests for $MIXER_NAME-${version_list[$i]}..."
 		
 		# Copy mixer over
-		cp "$MASTER_MIXERS/$MIXER_NAME-${version_list[$i]}.mxr" "$GOHATTAN_DATA/mixers/"
+		cp "$MASTER_MIXERS/$MIXER_NAME/$MIXER_NAME-${version_list[$i]}.mxr" "$GOHATTAN_DATA/mixers/"
 		if [ $? != 0 ]; then
 			echo "Couldn't find mixer in jenkins, does it exist?"
 			fail="$fail\nFailed to test mixer: $MIXER_NAME-${version_list[$i]}"
