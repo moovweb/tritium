@@ -1,4 +1,4 @@
-package packager
+package legacy
 
 import (
 	"io/ioutil"

@@ -13,7 +13,7 @@ import (
 	"runtime/debug"
 	"time"
 	"tritium"
-	"tritium/packager"
+	"tritium/packager/legacy"
 	tp "tritium/proto"
 	"tritium/whale"
 	"steno/dummy"
@@ -48,7 +48,7 @@ func All(command string, directory string, options ...string) {
 
 		pkg = mixer.Package
 	} else {
-		bigPackage := packager.BuildDefaultPackage()
+		bigPackage := legacy.BuildDefaultPackage()
 		pkg = bigPackage.Package
 	}
 

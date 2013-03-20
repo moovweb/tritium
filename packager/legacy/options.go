@@ -1,4 +1,4 @@
-package packager
+package legacy
 
 type PackageOptions map[string]bool
 

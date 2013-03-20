@@ -10,7 +10,7 @@ import "runtime"
 import "fmt"
 import "tritium/spec"
 import tp "tritium/proto"
-import "tritium/packager"
+import "tritium/packager/legacy"
 import "golog"
 import "time"
 import "steno/dummy"
@@ -89,7 +89,7 @@ func initializePackage() {
 		panic("Can't find root tritium directory to build default package")
 	}
 
-	tpkg := packager.LoadDefaultPackage(&packagesPath)
+	tpkg := legacy.LoadDefaultPackage(&packagesPath)
 	pkg = tpkg.Package
 }
 
