@@ -7,6 +7,11 @@ import "package.proto";
 message Mixer {
   required string name = 1;
   required string version = 2;
-  repeated File rewriters = 3; // Probably shouldn't be here anymore? --AL 2013/03/19
+  repeated File rewriters = 3; // Probably shouldn't be here anymore? -- AL 2013/03/19
   optional Package package = 4;  // Package dependencies get merged together
+
+  // For the new packaging system -- AL 2013/03/21
+  optional int32 packaging_method = 5; // if > 0, then we're using the new system!
+  repeated string dependencies = 6; // array of strings of the form "name x.y"
+  optional bool is_transformer = 7; // mixers containing the rewriters need to be treated specially
 }
