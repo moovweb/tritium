@@ -54,6 +54,8 @@ const OutputBufferSize = 500 * 1024 //500KB
 const defaultMobjects = 4
 const TimeoutError = "EngineTimeout"
 
+var TritiumLogRewritersAsImports = false
+
 func NewEngine(debugger steno.Debugger) *Whale {
 	e := &Whale{
 		Debugger: debugger,
@@ -99,6 +101,9 @@ func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input i
 	scope := &Scope{Value: input.(string)}
 	obj := transform.Objects[0]
 	ctx.Filename = null.GetString(obj.Name)
+	if TritiumLogRewritersAsImports {
+		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, ctx.Filename, int(null.GetInt32(obj.Root.LineNumber)))
+	}
 	ctx.RunInstruction(scope, obj.Root)
 	output = scope.Value.(string)
 	exports = ctx.Exports
@@ -155,7 +160,6 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 			panic(errString)
 		}
 	}()
-
 	ctx.Whale.Debugger.TrapInstruction(ctx.MessagePath, ctx.Filename, ctx.Env, ins, scope.Value, scope.Index, ctx.CurrentDoc)
 	if time.Now().After(ctx.Deadline) && !ctx.InDebug {
 		panic(TimeoutError)

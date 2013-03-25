@@ -26,6 +26,8 @@ type Parser struct {
 	Defspace    string
 }
 
+var TritiumParserShowRewriterFileName = false
+
 func (p *Parser) gensym() string {
 	p.counter++
 	return fmt.Sprintf("__TRITIUM_INTERNAL__%s:%s", filepath.Join(p.ScriptPath, p.FileName), string(p.counter))
@@ -167,7 +169,8 @@ func (p *Parser) open(dup bool) {
 func (p *Parser) Parse() *tp.ScriptObject {
 	script := new(tp.ScriptObject)
 	// script.Name = proto.String(p.FullPath)
-	if !p.RootFile {
+	
+	if !p.RootFile || TritiumParserShowRewriterFileName {
 		script.Name = proto.String(filepath.Join(p.ScriptPath, p.FileName))
 	} else {
 		script.Name = proto.String("__rewriter__")
