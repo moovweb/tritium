@@ -1112,7 +1112,6 @@ func header_comp_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, 
 	attr := args[0].(string)
 	headersRegex := regexp.MustCompile(`(?m)^(\S+?):\s+(.+?)$`)
 	headerParsed := headersRegex.FindStringSubmatch(header)
-	hasSlashR := false
 	replaceMe := ""
 	if len(headerParsed) != 3 {
 		return ""
@@ -1123,8 +1122,8 @@ func header_comp_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, 
 		replaceMe = headerParsed[1]
 	case "value":
 		replaceMe = headerParsed[2]
-		if hasSlashR = strings.HasSuffix(replaceMe, "\r"); hasSlashR {
-			replaceMe = strings.TrimSpace(replaceMe)
+		if strings.HasSuffix(replaceMe, "\r") {
+			replaceMe = replaceMe[:len(replaceMe)-1]
 		}
 	case "this":
 		replaceMe = header
@@ -1135,13 +1134,9 @@ func header_comp_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, 
 			ctx.RunInstruction(ns, child)
 		}
 	}
-	// return the resultant ns.Value
-	returnValue = ns.Value
-
-	if hasSlashR {
-		ns.Value = ns.Value.(string) + "\r"
-	}
 	// set the value of the container scope to the header replaced with the new ns.Value
 	scope.Value = strings.Replace(header, replaceMe, ns.Value.(string), -1)
+	// return the resultant ns.Value
+	returnValue = ns.Value
 	return
 }
