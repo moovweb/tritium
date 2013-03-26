@@ -100,6 +100,9 @@ func init() {
 	builtInFunctions["tritium.to_json_v1.Text"] = to_json_v1_Text
 
 	builtInFunctions["tritium.base64_v1.Text.Text"] = base64_v1_Text_Text
+
+	builtInFunctions["tritium.parse_headers_v1"] = parse_headers_v1
+	builtInFunctions["tritium.header_comp_v1.Text"] = header_comp_v1_Text
 }
 
 func LookupBuiltIn(name string) builtInFunc {
