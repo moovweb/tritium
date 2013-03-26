@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"text/template"
+	"io/ioutil"
 )
 
 import (
@@ -16,6 +17,8 @@ import (
 	"rubex"
 	tp "tritium/proto"
 )
+
+var WriteRewritersToProjectDir = false
 
 func runTemplate(name string, rawTemplate []byte, project *project.Project) ([]byte, error) {
 	segmentTemplate := template.New(name)
@@ -81,6 +84,9 @@ func Generate(project *project.Project, mixer *tp.Mixer) (map[string][]byte, err
 			finalError = err
 		} else {
 			renderedSegments[segment] = renderedSegment
+			if WriteRewritersToProjectDir {
+				ioutil.WriteFile(filepath.Join(project.Path, project.ScriptPath, segment), renderedSegment, 0644)
+			}
 		}
 	}
 
