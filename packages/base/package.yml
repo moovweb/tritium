@@ -5,3 +5,4 @@ types:
   - Base
   - Text
   - Regexp
+  - Header

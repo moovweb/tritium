@@ -659,3 +659,7 @@
 @func Text.rewrite_link(Text %secure, Text %catchall) Text
 
 @func base64_v1(Text %method, Text %str) Text Text
+
+@func Text.parse_headers_v1() Text Header
+
+@func Header.header_comp_v1(Text %attr) Text Text

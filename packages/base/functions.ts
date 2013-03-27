@@ -496,3 +496,64 @@
     yield()
   }
 }
+
+@func Text.parse_headers() {
+  parse_headers_v1() {
+    yield()
+  }
+}
+
+@func Header.name() {
+  header_comp_v1("name") {
+    yield()
+  }
+}
+@func Header.value() {
+  header_comp_v1("value") {
+    yield()
+  }
+}
+@func Header.this() {
+  header_comp_v1("this") {
+    yield()
+  }
+}
+@func Header.name(Text %val) {
+  name() {
+    set(%val)
+    yield()
+  }
+}
+@func Header.value(Text %val) {
+  value() {
+    set(%val)
+    yield()
+  }
+}
+@func Header.this(Text %val) {
+  this() {
+    set(%val)
+    yield()
+  }
+}
+
+@func Text.parse_headers(Regexp %regex) {
+  parse_headers() {
+    match(this(), %regex) {
+      yield()
+    }
+  }
+}
+@func Header.remove() {
+  this("")
+}
+
+@func Text.add_header(Text %name, Text %value) {
+  append("\r\n" + %name + ": " + %value)
+}
+
+@func Text.remove_header(Regexp %regex) {
+  parse_headers(%regex) {
+    remove()
+  }
+}

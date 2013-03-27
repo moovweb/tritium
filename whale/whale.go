@@ -2,25 +2,25 @@ package whale
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
-	"strconv"
 )
 
 import (
 	"butler/null"
-	"gokogiri/xpath"
-	"rubex"
-	tp "tritium/proto"
-	"steno"
 	"go-cache"
 	"go-cache/arc"
+	"gokogiri/xpath"
+	"rubex"
+	"steno"
+	tp "tritium/proto"
 )
 
 type Whale struct {
-	Debugger steno.Debugger
-	RegexpCache       cache.Cache
-	XPathCache        cache.Cache
+	Debugger    steno.Debugger
+	RegexpCache cache.Cache
+	XPathCache  cache.Cache
 }
 
 type EngineContext struct {
@@ -41,10 +41,10 @@ type EngineContext struct {
 	HeaderContentType *rubex.Regexp
 
 	// Debug info
-	Filename          string
-	HadError          bool
-	Deadline time.Time
-	Mobjects []MemoryObject
+	Filename    string
+	HadError    bool
+	Deadline    time.Time
+	Mobjects    []MemoryObject
 	MessagePath string
 	InDebug     bool
 	CurrentDoc  interface{}
@@ -58,9 +58,9 @@ var TritiumLogRewritersAsImports = false
 
 func NewEngine(debugger steno.Debugger) *Whale {
 	e := &Whale{
-		Debugger: debugger,
-		RegexpCache:              arc.NewARCache(1000),
-		XPathCache:               arc.NewARCache(1000),
+		Debugger:    debugger,
+		RegexpCache: arc.NewARCache(1000),
+		XPathCache:  arc.NewARCache(1000),
 	}
 	e.RegexpCache.SetCleanFunc(CleanRegexpObject)
 	e.XPathCache.SetCleanFunc(CleanXpathExpObject)
@@ -79,11 +79,11 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, r
 		MatchShouldContinueStack: make([]bool, 0),
 		Yields:                   make([]*YieldBlock, 0),
 		HadError:                 false,
-		
-		Deadline:                 deadline,
-		Mobjects:                 make([]MemoryObject, 0, defaultMobjects),
-		MessagePath:              messagePath,
-		InDebug:                  inDebug,
+
+		Deadline:    deadline,
+		Mobjects:    make([]MemoryObject, 0, defaultMobjects),
+		MessagePath: messagePath,
+		InDebug:     inDebug,
 	}
 	return
 }
@@ -116,7 +116,7 @@ func (eng *Whale) GetCacheStats() (int, int, int, int) {
 }
 
 func (ctx *EngineContext) Free() {
-    for _, o := range ctx.Mobjects {
+	for _, o := range ctx.Mobjects {
 		if o != nil {
 			o.Free()
 		}
@@ -142,7 +142,7 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 				}
 				// errString = errString + ctx.FileAndLine(ins) + "\n"
 				if len(thisFile) > 0 && thisFile != "__rewriter__" {
-					switch(ins.GetType()) {
+					switch ins.GetType() {
 					case tp.Instruction_IMPORT:
 						errString = errString + fmt.Sprintf("%s:%d", thisFile, ins.GetLineNumber())
 						errString = errString + fmt.Sprintf(":\t@import %s\n", ctx.Objects[int(ins.GetObjectId())].GetName())
@@ -233,8 +233,8 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 				vars[null.GetString(arg.Name)] = args[i]
 			}
 			yieldBlock := &YieldBlock{
-				Ins:  ins,
-				Vars: vars,
+				Ins:      ins,
+				Vars:     vars,
 				Filename: ctx.Filename,
 			}
 			// PUSH!
@@ -346,7 +346,7 @@ func (ctx *EngineContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 		r, err = rubex.NewRegexp(pattern, mode)
 		if err == nil {
 			//ctx.AddMemoryObject(r)
-			ctx.RegexpCache.Set(sig, &RegexpObject{Regexp:r})
+			ctx.RegexpCache.Set(sig, &RegexpObject{Regexp: r})
 		}
 		return r
 	}
