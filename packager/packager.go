@@ -51,7 +51,7 @@ func New(relSrcDir string) *Packager {
 
 	pkgr.Mixer           = tp.NewMixer(absSrcDir)
 	pkgr.PackagerVersion = proto.Int32(1)
-	pkgr.ReadDependenciesFile()
+	pkgr.readDependenciesFile()
 
 	pkgr.Mixer.Package      = new(tp.Package)
 	pkgr.Mixer.Package.Name = proto.String(pkgr.Mixer.GetName())
@@ -60,7 +60,7 @@ func New(relSrcDir string) *Packager {
 	return pkgr
 }
 
-func (pkgr *Packager) ReadDependenciesFile() {
+func (pkgr *Packager) readDependenciesFile() {
 	depPath := filepath.Join(pkgr.MixerDir, DEPS_FILE)
 	depPathExists, existsErr := fileutil.Exists(depPath)
 	if existsErr != nil {
@@ -73,19 +73,49 @@ func (pkgr *Packager) ReadDependenciesFile() {
 	if readErr != nil {
 		panic(fmt.Sprintf("error reading dependencies file for `%s`", pkgr.Mixer.GetName()))
 	}
-
-	depmap := make(map[string]string)
-	yaml.Unmarshal(data, &depmap)
-	pkgr.Dependencies = depmap
-	// pkgr.Dependencies = make([]string, 0)
-
-	// for name, version := range depmap {
-	// 	pkgr.Dependencies = append(pkgr.Dependencies, fmt.Sprintf("%s:%s", name, version))
-	// }
+	pkgr.Dependencies = make(map[string]string)
+	yaml.Unmarshal(data, &pkgr.Dependencies)
 }
 
-func (pkgr *Packager) BuildMixer() *tp.Mixer {
-
-
-	return pkgr.Mixer
+func (pkgr *Packager) Build() {
+	pkgr.resolveDependencies()
+	pkgr.resolveTypes()
+	pkgr.buildLib()
 }
+
+func (pkgr *Packager) resolveDependencies() {
+	for name, version := range pkgr.Dependencies {
+		needed := pkgr.loadDependency(name, version)
+		needed.Build()
+		pkgr.merge(needed)
+	}
+}
+
+func (pkgr *Packager) loadDependency(name, specifiedVersion string) *Packager {
+	foundMixerSrc := false
+	foundCompiledMixer := false
+	for _, incPath := range pkgr.IncludePaths {
+		depPath := filepath.Join(incPath, name)
+		there, err := fileutil.Exists(depPath)
+		if !there || err != nil {
+			continue
+		}
+		foundMixerSrc = true
+		needed := New(depPath)
+		if needed.GetVersion() != specifiedVersion {
+			continue
+		}
+		needed.Build()
+		return needed
+	}
+
+	// TODO: check if the dependency is among the compiled mixers
+
+	if foundMixerSrc || foundCompiledMixer {
+		panic(fmt.Sprintf("version %s needed for dependency `%s` of `%s`",
+		      specifiedVersion, name, pkgr.GetName()))
+	}
+	panic(fmt.Sprintf("unable to find dependency `%s` of `%s`", name, pkgr.GetName()))
+	return nil
+}
+
