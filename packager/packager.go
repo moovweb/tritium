@@ -23,6 +23,7 @@ type Packager struct {
 	Dependencies  map[string]string
 	TypeMap       map[string]int
 	ExtensionMap  map[string]string
+	TypeList      []string
 	*tp.Mixer
 }
 
@@ -84,6 +85,7 @@ func (pkgr *Packager) readDependenciesFile() {
 func (pkgr *Packager) Build() {
 	pkgr.resolveDependencies()
 	pkgr.resolveTypes()
+	pkgr.populateTypeList()
 	pkgr.buildLib()
 }
 
@@ -123,6 +125,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 
 func (pkgr *Packager) resolveTypes() {
 	var typeDecs []string
+
 	// see whether a type declarations file exists; if so, read it
 	typeFilePath := filepath.Join(pkgr.MixerDir, LIB_DIR, TYPES_FILE)		
 	there, existsErr := fileutil.Exists(typeFilePath)
@@ -140,20 +143,9 @@ func (pkgr *Packager) resolveTypes() {
 			pkgr.ExtensionMap = make(map[string]string)
 		}
 
-		// comb out the types that don't extend anything
-		// for i, typeDec := range typeDecs {
-		// 	if !strings.Contains(typeDec, "<") {
-		// 		_, isThere := pkgr.TypeMap[typeDec]
-		// 		if !isThere {
-		// 			pkgr.TypeMap[typeDec] = len(pkgr.TypeMap)
-		// 			pkgr.ExtensionMap[typeDec] = ""
-		// 		}
-		// 		typeDecs[i] = "" // so we can more easily skip over it in the next loop
-		// 	}
-		// }
-
-		// now handle the types that extend others
+		// now resolve the type declarations
 		for _, typeDec := range typeDecs {
+
 			// if the type doesn't extend anything ...
 			if !strings.Contains(typeDec, "<") {
 				_, isThere := pkgr.TypeMap[typeDec]
@@ -164,8 +156,11 @@ func (pkgr *Packager) resolveTypes() {
 				} else if extendee := pkgr.ExtensionMap[typeDec]; extendee != "" {
 					panic(fmt.Sprintf("type declaration %s conflicts with previous declaration %s < %s", typeDec, typeDec, extendee))
 				}
-				// else the declaration is a duplicate, so do nothing
-			} else { // it's an extension
+				// if we get to this point, the declaration is a duplicate, so do nothing
+
+			// else it's an extension
+			} else {
+				// parse the supertype and subtype
 				splitted := strings.Split(typeDec, "<")
 				if len(splitted) != 2 {
 					panic(fmt.Sprintf("invalid syntax in type declaration `%s`; only one extension is permitted per declaration", typeDec))
@@ -194,14 +189,33 @@ func (pkgr *Packager) resolveTypes() {
 			}
 		} 
 
+		println()
+		println("TYPES:")
 		for name, id := range pkgr.TypeMap {
 			println(name, id)
 		}
+		println()
+		println("EXTENSIONS:")
 		for sub, super := range pkgr.ExtensionMap {
-			println(sub, "<", super)
+			if super != "" {
+				println(sub, "<", super)
+			} else {
+				println(sub)
+			}
 		}
 	}
+}
 
+func (pkgr *Packager) populateTypeList() {
+	pkgr.TypeList = make([]string, len(pkgr.TypeMap))
+	for name, id := range pkgr.TypeMap {
+		pkgr.TypeList[id] = name
+	}
+	println()
+	println("TYPES IN ORDER:")
+	for _, name := range pkgr.TypeList {
+		println(name)
+	}
 }
 
 func (pkgr *Packager) buildLib() {
