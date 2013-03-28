@@ -187,7 +187,7 @@ func (pkgr *Packager) resolveTypes() {
 				pkgr.TypeMap[sub] = len(pkgr.TypeMap)
 				pkgr.ExtensionMap[sub] = super
 			}
-		} 
+		}
 
 		println()
 		println("TYPES:")
@@ -207,9 +207,15 @@ func (pkgr *Packager) resolveTypes() {
 }
 
 func (pkgr *Packager) populateTypeList() {
-	pkgr.TypeList = make([]string, len(pkgr.TypeMap))
+	numTypes := len(pkgr.TypeMap)
+	pkgr.TypeList = make([]string, numTypes)
+	pkgr.Package.Types = make([]*tp.Type, numTypes)
 	for name, id := range pkgr.TypeMap {
 		pkgr.TypeList[id] = name
+		pkgr.Package.Types[id] = &tp.Type{
+			Name: proto.String(name),
+			Implements: proto.Int32(int32(pkgr.TypeMap[pkgr.ExtensionMap[name]])),
+		}
 	}
 	println()
 	println("TYPES IN ORDER:")
@@ -223,5 +229,30 @@ func (pkgr *Packager) buildLib() {
 }
 
 func (pkgr *Packager) mergeWith(dep *Packager) {
-	return
+	// should be safe to share maps -- dependencies won't be used after they're resolved
+
+	if pkgr.TypeMap == nil {
+		pkgr.TypeMap = dep.TypeMap
+	} else {
+		for name, _ := range dep.TypeMap {
+			_, alreadyDeclared := pkgr.TypeMap[name]
+			if alreadyDeclared {
+				panic(fmt.Sprintf("redeclaration of type `%s` in different packages", name))
+			} else {
+				// should be safe to append, since inheritance requires supertypes to
+				// be declared either in the same mixer, or in a dependency, so the
+				// invariant that subtypes come after their supertypes is maintained
+				pkgr.TypeMap[name] = len(pkgr.TypeMap)
+			}
+		}
+	}
+
+	if pkgr.ExtensionMap == nil {
+		pkgr.ExtensionMap = dep.ExtensionMap
+	} else {
+		// the previous step ensured that there are no conflicts, so just blaze ahead
+		for sub, super := range dep.ExtensionMap {
+			pkgr.ExtensionMap[sub] = super
+		}
+	}
 }
