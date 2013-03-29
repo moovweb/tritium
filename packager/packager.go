@@ -12,6 +12,7 @@ import (
 	// data "butler/data"
 	fileutil "butler/fileutil"
 	"tritium/parser"
+	"tritium/whale"
 	proto "code.google.com/p/goprotobuf/proto"
 	tp "tritium/proto"
 	yaml "goyaml"
@@ -231,7 +232,7 @@ func (pkgr *Packager) buildLib() {
 		return
 	}
 
-	pkgr.resolveDefinitions(pkgr.LibDir, ENTRY_FILE)
+	pkgr.resolveFunctions(pkgr.LibDir, ENTRY_FILE)
 }
 
 func (pkgr *Packager) mergeWith(dep *Packager) {
@@ -263,12 +264,12 @@ func (pkgr *Packager) mergeWith(dep *Packager) {
 	}
 }
 
-func (pkgr *Packager) resolveDefinitions(dirName, fileName string) {
+func (pkgr *Packager) resolveFunctions(dirName, fileName string) {
 	// the existence of `fileName` should be verified by the caller
 	defs := parser.ParseFile(pkgr.MixerDir, dirName, fileName)
 
 	for _, f := range defs.Functions {
-		// if it's an import
+		// if it's an import stub ...
 		if f.GetName() == "@import" {
 			importPath := f.GetDescription()
 			importExists, _ := fileutil.Exists(filepath.Join(pkgr.MixerDir, importPath))
@@ -278,12 +279,48 @@ func (pkgr *Packager) resolveDefinitions(dirName, fileName string) {
 				panic(msg)
 			}
 			println("importing", importPath)
-			pkgr.resolveDefinitions(filepath.Dir(importPath), filepath.Base(importPath))
+			pkgr.resolveFunctions(filepath.Dir(importPath), filepath.Base(importPath))
+			continue // to forgo appending it to the comprehensive list of functions
 
-		// otherwise it's not an import
+		// otherwise it's a proper function definition -- see if it's native
+		} else if f.GetBuiltIn() {
+			println("resolving declaration for native function", f.Stub(pkgr.Package))
+			pkgr.resolveNativeDeclaration(f, filepath.Join(dirName, fileName))
+
+		// otherwise it's a user-defined function
 		} else {
-			println("resolving def for", f.Stub(pkgr.Package))
+			println("resolving user-defined function", f.Stub(pkgr.Package))
+			// pkgr.resolveUserDefinition(f)
 		}
+
+		pkgr.Package.Functions = append(pkgr.Package.Functions, f)
+	}
+}
+
+func (pkgr *Packager) resolveNativeDeclaration(f *tp.Function, path string) {
+	// first we should check that the signature refers to something that actually exists
+	sigStr := strings.Replace(f.Stub(pkgr.Package), ",", ".", -1)
+	if whale.LookupBuiltIn(sigStr) == nil {
+		panic(fmt.Sprintf("attempt to provide signature for nonexistent native function `%s` in `%s`", sigStr, path))
 	}
 
+	// now turn the type names into the appropriate numeric ids
+	if returnType := f.GetReturnType(); len(returnType) > 0 {
+		f.ReturnTypeId = proto.Int32(int32(pkgr.TypeMap[returnType]))
+		f.ReturnType = nil
+	}
+	if scopeType := f.GetScopeType(); len(scopeType) > 0 {
+		f.ScopeTypeId = proto.Int32(int32(pkgr.TypeMap[scopeType]))
+		f.ScopeType = nil
+	}
+	if opensType := f.GetOpensType(); len(opensType) > 0 {
+		f.OpensTypeId = proto.Int32(int32(pkgr.TypeMap[opensType]))
+		f.OpensType = nil
+	}
+	for _, arg := range f.Args {
+		if typeName := arg.GetTypeString(); len(typeName) > 0 {
+			arg.TypeId = proto.Int32(int32(pkgr.TypeMap[typeName]))
+			arg.TypeString = nil
+		}
+	}
 }
