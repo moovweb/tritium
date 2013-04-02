@@ -283,7 +283,7 @@ func (pkgr *Packager) mergeWith(dep *Packager) {
 		}
 	}
 
-	if pkgr.TypeMap == nil {
+	if len(pkgr.TypeMap) == 0 {
 		pkgr.TypeMap = dep.TypeMap
 	} else {
 		for name, _ := range dep.TypeMap {
@@ -299,7 +299,7 @@ func (pkgr *Packager) mergeWith(dep *Packager) {
 		}
 	}
 
-	if pkgr.SuperclassOf == nil {
+	if len(pkgr.SuperclassOf) == 0 {
 		pkgr.SuperclassOf = dep.SuperclassOf
 	} else {
 		// the previous step ensured that there are no conflicts, so just add the maps
@@ -309,7 +309,7 @@ func (pkgr *Packager) mergeWith(dep *Packager) {
 	}
 
 	// Don't forget to merge the function lists too!
-	if pkgr.Mixer.Package.Functions == nil {
+	if len(pkgr.Mixer.Package.Functions) == 0 {
 		pkgr.Mixer.Package.Functions = dep.Mixer.Package.Functions
 	} else {
 		for _, f := range dep.Mixer.Package.Functions {
