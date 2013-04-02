@@ -376,8 +376,9 @@ func (pkgr *Packager) resolveFunctions(dirName, fileName string) {
 	}
 }
 
-// can't re-use the legacy resolver because it's a method of a type that provides
-// its own helpers and contextual data, all of which would be too hard to reproduce
+// can't re-use the legacy native function resolver because it's a method of a
+// type that provides its own helpers and contextual data, all of which would
+// be too hard to reproduce
 func (pkgr *Packager) resolveNativeDeclaration(f *tp.Function, path string) {
 	// first we should check that the signature refers to something that actually exists
 	sigStr := strings.Replace(f.Stub(pkgr.Package), ",", ".", -1)
@@ -408,8 +409,4 @@ func (pkgr *Packager) resolveNativeDeclaration(f *tp.Function, path string) {
 
 func (pkgr *Packager) resolveUserDefinition(f *tp.Function, path string) {
 	legacy.ResolveDefinition(pkgr.Package, f, path)
-}
-
-func (pkgr *Packager) loadHttpTransformers() {
-	pkgr.Mixer.Rewriters = tp.CollectFiles(filepath.Join(pkgr.MixerDir, SCRIPTS_DIR))
 }
