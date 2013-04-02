@@ -41,6 +41,7 @@ func (pkg *Package) FindDescendantType(thisType int32) int {
 			// The implements field defaults to 0. Base doesn't implement Base. Text doesn't implement Base
 			// TODO(SJ): make the default value -1 so I know if its not set versus something is inheriting from base
 			// pkg.Log.Info("=== %v is ancestor of %v === (%v is of type %v and implements : %v)\n", thisType, someType, null.GetString(someType.Name), index, implements)
+			// println("CHECK:", someType.GetName(), "implements", pkg.GetTypeName(someType.GetImplements()))
 			return index
 		}
 	}

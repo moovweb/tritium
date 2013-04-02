@@ -99,6 +99,11 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string) {
 	//pkg.Log.Info("\t\t -- done --\n")
 }
 
+// export so it can be re-used by the new packager
+func ResolveDefinition(pkg *tp.Package, fn *tp.Function, path string) {
+	resolveDefinition(pkg, fn, path)
+}
+
 func (pkg *Package) inheritFunctions() {
 	pkg.Log.Info("pkg types: %v", pkg.Types)
 	for _, function := range pkg.Functions {
@@ -113,8 +118,8 @@ func (pkg *Package) inheritFunctions() {
 func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 	// Check if this function contains any types that have descendants
-	name := fun.Stub(pkg.Package)
-	pkg.Log.Info("Checking for inheritance on function: %v", name)
+	// name := fun.Stub(pkg.Package)
+	// pkg.Log.Info("Checking for inheritance on function: %v", name)
 
 	newFun := &tp.Function{}
 	inherit := false
@@ -128,12 +133,12 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 	if newType != -1 {
 		if !inherit {
-			pkg.Log.Info("\t -- ScopeType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
+			// pkg.Log.Info("\t -- ScopeType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
 			newFun = fun.Clone()
 			// pkg.Log.Info("\t -- New fun: %v", newFun)
 			inherit = true
 		}
-		pkg.Log.Info("\t -- Resetting scopeId")
+		// pkg.Log.Info("\t -- Resetting scopeId")
 		newFun.ScopeTypeId = proto.Int32(int32(newType))
 	}
 
@@ -144,12 +149,12 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 	if newType != -1 {
 		if !inherit {
-			pkg.Log.Info("\t -- ReturnType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
+			// pkg.Log.Info("\t -- ReturnType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
 			newFun = fun.Clone()
 			// pkg.Log.Info("\t -- New fun: %v", newFun)
 			inherit = true
 		}
-		pkg.Log.Info("\t -- Resetting returnId")
+		// pkg.Log.Info("\t -- Resetting returnId")
 		newFun.ReturnTypeId = proto.Int32(int32(newType))
 	}
 
@@ -161,12 +166,12 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 	if newType != -1 {
 
 		if !inherit {
-			pkg.Log.Info("\t -- OpensType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
+			// pkg.Log.Info("\t -- OpensType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
 			newFun = fun.Clone()
 			// pkg.Log.Info("\t -- New fun: %v", newFun)
 			inherit = true
 		}
-		pkg.Log.Info("\t -- Resetting openTypeId")
+		// pkg.Log.Info("\t -- Resetting openTypeId")
 		newFun.OpensTypeId = proto.Int32(int32(newType))
 	}
 
@@ -179,25 +184,31 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 		if newType != -1 {
 
 			if !inherit {
-				pkg.Log.Info("\t -- ArgType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
+				// pkg.Log.Info("\t -- ArgType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
 				newFun = fun.Clone()
 				// pkg.Log.Info("\t -- New fun: %v", newFun)
 				inherit = true
 			}
-			pkg.Log.Info("\t -- Resetting argument")
+			// pkg.Log.Info("\t -- Resetting argument")
 			newFun.Args[index].TypeId = proto.Int32(int32(newType))
 		}
 
 	}
 
-	pkg.Log.Info("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
+	// pkg.Log.Info("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
 
 	if inherit {
 		resolveDefinition(pkg.Package, newFun, "")
 		pkg.Package.Functions = append(pkg.Package.Functions, newFun)
+		// println("replicated", pkg.Package.GetTypeName(newFun.GetScopeTypeId()), newFun.Stub(pkg.Package))
 
 	}
 
+}
+
+// oy, gotta export this one too
+func (pkg *Package) ResolveFunctionDescendants(fn *tp.Function) {
+	pkg.resolveFunctionDescendants(fn)
 }
 
 func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName string) {
