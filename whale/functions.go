@@ -1090,7 +1090,11 @@ func base64_v1_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, 
 
 func parse_headers_v1(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	httpStr := scope.Value.(string)
-	headersRegex := regexp.MustCompile(`(?m)^\S+?:\s+.+?$`)
+
+	// remove \r (will add them back later)
+	httpStr = strings.Replace(httpStr, "\r", "", -1)
+
+	headersRegex := regexp.MustCompile(`(?m)^\S+?:\s?[^\n]+`)
 	// replace headers with result of eval'd instructions
 	newHttpStr := headersRegex.ReplaceAllStringFunc(httpStr, func (header string) string {
 		ns := &Scope{Value: header}
@@ -1099,9 +1103,17 @@ func parse_headers_v1(ctx *EngineContext, scope *Scope, ins *tp.Instruction, arg
 		}
 		return ns.Value.(string)
 	})
+
 	// remove empty lines (in the case that a header is blanked)
-	replaceEmptyLinesRegex := regexp.MustCompile(`(?m)$[\r\n\s]*$`)
-	scope.Value = replaceEmptyLinesRegex.ReplaceAllString(newHttpStr, "")
+	replaceEmptyLinesRegex := regexp.MustCompile(`\n+`)
+	newHttpStr = replaceEmptyLinesRegex.ReplaceAllString(newHttpStr, "\n")
+
+	// trim leading/trailing spaces (e.g. if last header is removed)
+	newHttpStr = strings.TrimRight(newHttpStr, "\r\n")
+
+	// replace all \n with \r\n
+	scope.Value = strings.Replace(newHttpStr, "\n", "\r\n", -1)
+
 	// return the entire http
 	returnValue = scope.Value
 	return
