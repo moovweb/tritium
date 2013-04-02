@@ -20,28 +20,31 @@ import (
 )
 
 type Packager struct {
-	MixerDir      string
-	LibDir        string
-	IncludePaths  []string
-	IsTransformer bool
-	Dependencies  map[string]string
-	AlreadyLoaded map[string]bool           // to avoid redundant loading of dependencies
-	NowVisiting   map[string]bool           // to prevent circular dependencies
-	TypeMap       map[string]int
-	SuperclassOf  map[string]string
-	SubclassesOf  map[string][]string       // might not need this
-	Extensions    []string                  // type extensions in *this* mixer, not dependencies
-	FunctionsWith map[string][]*tp.Function // for each type, maintain a list of functions that use it
-	TypeList      []string
+	MixerDir          string
+	LibDir            string
+	IncludePaths      []string
+	IsHttpTransformer bool
+	IsStandardLibrary bool
+	Dependencies      map[string]string
+	AlreadyLoaded     map[string]bool           // to avoid redundant loading of dependencies
+	NowVisiting       map[string]bool           // to prevent circular dependencies
+	TypeMap           map[string]int
+	SuperclassOf      map[string]string
+	SubclassesOf      map[string][]string       // might not need this
+	Extensions        []string                  // type extensions in *this* mixer, not dependencies
+	FunctionsWith     map[string][]*tp.Function // for each type, maintain a list of functions that use it
+	TypeList          []string
 	*tp.Mixer
 }
 
 const (
-	PACKAGER_VERSION = 1
-	SCRIPTS_DIR      = "scripts"
-	ENTRY_FILE       = "main.ts"
-	DEPS_FILE        = "dependencies.yml"
-	TYPES_FILE       = "types.yml"
+	PACKAGER_VERSION            = 1
+	SCRIPTS_DIR                 = "scripts"
+	ENTRY_FILE                  = "main.ts"
+	DEPS_FILE                   = "dependencies.yml"
+	TYPES_FILE                  = "types.yml"
+	HTTP_TRANSFORMERS_SIGNATURE = ".http-transformers"
+	STANDARD_LIBRARY_SIGNATURE  = ".standard-library"
 )
 
 func New(relSrcDir, libDir string) *Packager {
@@ -71,6 +74,15 @@ func New(relSrcDir, libDir string) *Packager {
 	pkgr.Mixer.Package.Name = proto.String(pkgr.Mixer.GetName())
 	pkgr.Mixer.Package.Path = proto.String(pkgr.MixerDir)
 
+	// TODO: need a real way to sign our special sauce
+	tSigThere, _ := fileutil.Exists(filepath.Join(pkgr.MixerDir, HTTP_TRANSFORMERS_SIGNATURE))
+	if tSigThere {
+		pkgr.IsHttpTransformer = true
+	}
+	sSigThere, _ := fileutil.Exists(filepath.Join(pkgr.MixerDir, STANDARD_LIBRARY_SIGNATURE))
+	if sSigThere {
+		pkgr.IsStandardLibrary = true
+	}
 
 	return pkgr
 }
@@ -94,6 +106,12 @@ func (pkgr *Packager) Build() {
 	pkgr.resolveTypeDeclarations()
 	pkgr.populateTypeList()
 	pkgr.buildLib()
+	if pkgr.IsHttpTransformer {
+		pkgr.Mixer.Rewriters = tp.CollectFiles(filepath.Join(pkgr.MixerDir, SCRIPTS_DIR))
+	}
+	if pkgr.IsStandardLibrary {
+		pkgr.Mixer.Package.StandardLibraryCutoff = proto.Int32(int32(len(pkgr.Mixer.Package.Functions)))
+	}
 }
 
 func (pkgr *Packager) resolveDependencies() {
@@ -133,6 +151,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 			needed.NowVisiting = pkgr.NowVisiting
 			needed.NowVisiting[depName] = true
 		}
+
 		needed.Build()
 		pkgr.mergeWith(needed)
 		// now pop the dependency stack
@@ -316,6 +335,10 @@ func (pkgr *Packager) mergeWith(dep *Packager) {
 			pkgr.Mixer.Package.Functions = append(pkgr.Mixer.Package.Functions, f)
 		}
 	}
+	if dep.IsStandardLibrary {
+		pkgr.Mixer.Package.StandardLibraryCutoff = proto.Int32(int32(len(pkgr.Mixer.Package.Functions)))
+	}
+
 	// Don't need to merge the protobuf type lists because those get rebuilt from the Packager type maps.
 }
 
@@ -385,4 +408,8 @@ func (pkgr *Packager) resolveNativeDeclaration(f *tp.Function, path string) {
 
 func (pkgr *Packager) resolveUserDefinition(f *tp.Function, path string) {
 	legacy.ResolveDefinition(pkgr.Package, f, path)
+}
+
+func (pkgr *Packager) loadHttpTransformers() {
+	pkgr.Mixer.Rewriters = tp.CollectFiles(filepath.Join(pkgr.MixerDir, SCRIPTS_DIR))
 }

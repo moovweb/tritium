@@ -38,12 +38,13 @@ func (this *Type) GetImplements() int32 {
 }
 
 type Package struct {
-	Name             *string     `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Functions        []*Function `protobuf:"bytes,2,rep,name=functions" json:"functions,omitempty"`
-	Types            []*Type     `protobuf:"bytes,3,rep,name=types" json:"types,omitempty"`
-	Dependencies     []string    `protobuf:"bytes,4,rep,name=dependencies" json:"dependencies,omitempty"`
-	Path             *string     `protobuf:"bytes,5,opt,name=path" json:"path,omitempty"`
-	XXX_unrecognized []byte      `json:"-"`
+	Name                  *string     `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Functions             []*Function `protobuf:"bytes,2,rep,name=functions" json:"functions,omitempty"`
+	Types                 []*Type     `protobuf:"bytes,3,rep,name=types" json:"types,omitempty"`
+	Dependencies          []string    `protobuf:"bytes,4,rep,name=dependencies" json:"dependencies,omitempty"`
+	Path                  *string     `protobuf:"bytes,5,opt,name=path" json:"path,omitempty"`
+	StandardLibraryCutoff *int32      `protobuf:"varint,6,opt,name=standard_library_cutoff" json:"standard_library_cutoff,omitempty"`
+	XXX_unrecognized      []byte      `json:"-"`
 }
 
 func (this *Package) Reset()         { *this = Package{} }
@@ -62,6 +63,13 @@ func (this *Package) GetPath() string {
 		return *this.Path
 	}
 	return ""
+}
+
+func (this *Package) GetStandardLibraryCutoff() int32 {
+	if this != nil && this.StandardLibraryCutoff != nil {
+		return *this.StandardLibraryCutoff
+	}
+	return 0
 }
 
 func init() {

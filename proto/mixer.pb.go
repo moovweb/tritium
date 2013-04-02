@@ -19,7 +19,6 @@ type Mixer struct {
 	Rewriters        []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
 	Package          *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
 	PackagerVersion  *int32   `protobuf:"varint,5,opt,name=packager_version" json:"packager_version,omitempty"`
-	IsTransformer    *bool    `protobuf:"varint,6,opt,name=is_transformer" json:"is_transformer,omitempty"`
 	XXX_unrecognized []byte   `json:"-"`
 }
 
@@ -53,13 +52,6 @@ func (this *Mixer) GetPackagerVersion() int32 {
 		return *this.PackagerVersion
 	}
 	return 0
-}
-
-func (this *Mixer) GetIsTransformer() bool {
-	if this != nil && this.IsTransformer != nil {
-		return *this.IsTransformer
-	}
-	return false
 }
 
 func init() {

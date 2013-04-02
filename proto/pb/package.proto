@@ -25,4 +25,7 @@ message Package {
 
 	// The following field is for nicer error messages
 	optional string path = 5;
+
+	// for extracting standard tritium funcs from user-defined funcs
+	optional int32 standard_library_cutoff = 6;
 }

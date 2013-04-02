@@ -13,5 +13,5 @@ message Mixer {
   // For the new packaging system -- AL 2013/03/21
   optional int32 packager_version = 5; // if > 0, then we're using the new system!
   //repeated string dependencies = 6; // array of strings of the form "name:x.y" PROBABLY DON'T NEED
-  optional bool is_transformer = 6; // mixers containing the rewriters need to be treated specially
+  // optional bool is_transformer = 6; // mixers containing the rewriters need to be treated specially DON'T NEED YET
 }
