@@ -24,7 +24,6 @@ type Packager struct {
 	LibDir            string
 	IncludePaths      []string
 	IsHttpTransformer bool
-	IsStandardLibrary bool
 	Dependencies      map[string]string
 	AlreadyLoaded     map[string]bool           // to avoid redundant loading of dependencies
 	NowVisiting       map[string]bool           // to prevent circular dependencies
@@ -44,7 +43,6 @@ const (
 	DEPS_FILE                   = "dependencies.yml"
 	TYPES_FILE                  = "types.yml"
 	HTTP_TRANSFORMERS_SIGNATURE = ".http-transformers"
-	STANDARD_LIBRARY_SIGNATURE  = ".standard-library"
 )
 
 func New(relSrcDir, libDir string) *Packager {
@@ -70,21 +68,30 @@ func New(relSrcDir, libDir string) *Packager {
 	pkgr.readDependenciesFile()
 	pkgr.AlreadyLoaded   = make(map[string]bool)
 
-	pkgr.Mixer.Package      = new(tp.Package)
-	pkgr.Mixer.Package.Name = proto.String(pkgr.Mixer.GetName())
-	pkgr.Mixer.Package.Path = proto.String(pkgr.MixerDir)
+	pkgr.Mixer.Package           = new(tp.Package)
+	pkgr.Mixer.Package.Functions = make([]*tp.Function, 0)
 
 	// TODO: need a real way to sign our special sauce
 	tSigThere, _ := fileutil.Exists(filepath.Join(pkgr.MixerDir, HTTP_TRANSFORMERS_SIGNATURE))
 	if tSigThere {
 		pkgr.IsHttpTransformer = true
 	}
-	sSigThere, _ := fileutil.Exists(filepath.Join(pkgr.MixerDir, STANDARD_LIBRARY_SIGNATURE))
-	if sSigThere {
-		pkgr.IsStandardLibrary = true
-	}
 
 	return pkgr
+}
+
+func NewDependencyOf(relSrcDir, libDir string, pkgr *Packager) *Packager {
+	// dependency resolution is cumulative, so their stuff should be appended to
+	// whatever has already been resolved
+	dep := New(relSrcDir, libDir)
+	dep.AlreadyLoaded           = pkgr.AlreadyLoaded
+	dep.TypeMap                 = pkgr.TypeMap
+	dep.SuperclassOf            = pkgr.SuperclassOf
+	dep.SubclassesOf            = pkgr.SubclassesOf
+	dep.Extensions              = pkgr.Extensions
+	dep.FunctionsWith           = pkgr.FunctionsWith
+	dep.Mixer.Package.Functions = pkgr.Mixer.Package.Functions
+	return dep
 }
 
 func (pkgr *Packager) readDependenciesFile() {
@@ -108,9 +115,12 @@ func (pkgr *Packager) Build() {
 	pkgr.buildLib()
 	if pkgr.IsHttpTransformer {
 		pkgr.Mixer.Rewriters = tp.CollectFiles(filepath.Join(pkgr.MixerDir, SCRIPTS_DIR))
-	}
-	if pkgr.IsStandardLibrary {
-		pkgr.Mixer.Package.StandardLibraryCutoff = proto.Int32(int32(len(pkgr.Mixer.Package.Functions)))
+		if pkgr.Mixer.Package.Dependencies == nil {
+			pkgr.Mixer.Package.Dependencies = make([]string, 0)
+		}
+		for name, version := range pkgr.Dependencies {
+			pkgr.Mixer.Package.Dependencies = append(pkgr.Mixer.Package.Dependencies, fmt.Sprintf("%s:%s", name, version))
+		}
 	}
 }
 
@@ -135,27 +145,30 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 			continue
 		}
 		foundMixerSrc = true
-		needed := New(depPath, "lib")
+		needed := NewDependencyOf(depPath, "lib", pkgr)
+
 		if needed.GetVersion() != specifiedVersion {
 			continue
 		}
 		// circular dependency check
-		depName := needed.Mixer.GetName()
 		if pkgr.NowVisiting == nil {
 			pkgr.NowVisiting = make(map[string]bool)
-			pkgr.NowVisiting[pkgr.Mixer.GetName()] = true
+			pkgr.NowVisiting[pkgr.GetName()] = true
 		}
-		if pkgr.NowVisiting[depName] {
-			panic(fmt.Sprintf("circular dependency on %s", depName))
-		} else {
-			needed.NowVisiting = pkgr.NowVisiting
-			needed.NowVisiting[depName] = true
+		if pkgr.NowVisiting[needed.GetName()] {
+			panic(fmt.Sprintf("circular dependency on %s", needed.GetName()))
 		}
+		// pass the dependency stack downwards ...
+		needed.NowVisiting = pkgr.NowVisiting
+		// ... and push the current mixer onto it
+		needed.NowVisiting[needed.GetName()] = true
 
 		needed.Build()
 		pkgr.mergeWith(needed)
-		// now pop the dependency stack
-		needed.NowVisiting[depName] = false
+
+		// pop the dependency stack
+		needed.NowVisiting[needed.GetName()] = false
+		// don't need to pass it back up because maps are shared and not reallocated
 		return
 	}
 
@@ -235,21 +248,6 @@ func (pkgr *Packager) resolveTypeDeclarations() {
 			pkgr.SuperclassOf[sub] = super
 		}
 	}
-
-	// println()
-	// println("TYPES:")
-	// for name, id := range pkgr.TypeMap {
-	// 	println(name, id)
-	// }
-	// println()
-	// println("EXTENSIONS:")
-	// for sub, super := range pkgr.SuperclassOf {
-	// 	if super != "" {
-	// 		println(sub, "<", super)
-	// 	} else {
-	// 		println(sub)
-	// 	}
-	// }
 }
 
 func (pkgr *Packager) populateTypeList() {
@@ -263,16 +261,9 @@ func (pkgr *Packager) populateTypeList() {
 			Implements: proto.Int32(int32(pkgr.TypeMap[pkgr.SuperclassOf[name]])),
 		}
 	}
-	// println()
-	// println("TYPES IN ORDER:")
-	// for _, typeObj := range pkgr.Package.Types {
-	// 	println(typeObj.GetName())
-	// }
 }
 
 func (pkgr *Packager) buildLib() {
-	// println("***")
-	// println("***")
 	// tritium libraries are optional -- compile them if they're there, otherwise do nothing
 	libPath := filepath.Join(pkgr.MixerDir, pkgr.LibDir, ENTRY_FILE)
 	there, _ := fileutil.Exists(libPath)
@@ -285,61 +276,22 @@ func (pkgr *Packager) buildLib() {
 	legacyPackage := &legacy.Package{}
 	legacyPackage.Package = pkgr.Package
 	for _, f := range pkgr.Package.Functions {
-		// println()
-		// println("considering", pkgr.Package.GetTypeName(f.GetScopeTypeId()), f.Stub(pkgr.Package), "for replication")
 		legacyPackage.ResolveFunctionDescendants(f)
 	}
 }
 
 func (pkgr *Packager) mergeWith(dep *Packager) {
-	// should be safe to share maps -- dependencies won't be used after they're resolved
-
-	if len(pkgr.AlreadyLoaded) == 0 {
-		pkgr.AlreadyLoaded = dep.AlreadyLoaded
-	} else {
-		for name, isLoaded := range dep.AlreadyLoaded {
-			pkgr.AlreadyLoaded[name] = isLoaded
-		}
-	}
-
-	if len(pkgr.TypeMap) == 0 {
-		pkgr.TypeMap = dep.TypeMap
-	} else {
-		for name, _ := range dep.TypeMap {
-			_, alreadyDeclared := pkgr.TypeMap[name]
-			if alreadyDeclared {
-				panic(fmt.Sprintf("redeclaration of type `%s` in different packages", name))
-			} else {
-				// should be safe to append because inheritance requires supertypes to
-				// be declared either in the same mixer or in a dependency, thereby
-				// maintaining the invariant that subtypes come after their supertypes
-				pkgr.TypeMap[name] = len(pkgr.TypeMap)
-			}
-		}
-	}
-
-	if len(pkgr.SuperclassOf) == 0 {
-		pkgr.SuperclassOf = dep.SuperclassOf
-	} else {
-		// the previous step ensured that there are no conflicts, so just add the maps
-		for sub, super := range dep.SuperclassOf {
-			pkgr.SuperclassOf[sub] = super
-		}
-	}
-
-	// Don't forget to merge the function lists too!
-	if len(pkgr.Mixer.Package.Functions) == 0 {
-		pkgr.Mixer.Package.Functions = dep.Mixer.Package.Functions
-	} else {
-		for _, f := range dep.Mixer.Package.Functions {
-			pkgr.Mixer.Package.Functions = append(pkgr.Mixer.Package.Functions, f)
-		}
-	}
-	if dep.IsStandardLibrary {
-		pkgr.Mixer.Package.StandardLibraryCutoff = proto.Int32(int32(len(pkgr.Mixer.Package.Functions)))
-	}
-
-	// Don't need to merge the protobuf type lists because those get rebuilt from the Packager type maps.
+	// Dependency loading is cumulative; tables are passed down and populated on
+	// the way back up, then passed down again. So the tables that percolate up
+	// are the most populated versions; just use those.
+	pkgr.AlreadyLoaded           = dep.AlreadyLoaded
+	pkgr.NowVisiting             = dep.NowVisiting
+	pkgr.TypeMap                 = dep.TypeMap
+	pkgr.SuperclassOf            = dep.SuperclassOf
+	pkgr.SubclassesOf            = dep.SubclassesOf
+	pkgr.Extensions              = dep.Extensions
+	pkgr.FunctionsWith           = dep.FunctionsWith
+	pkgr.Mixer.Package.Functions = dep.Mixer.Package.Functions
 }
 
 func (pkgr *Packager) resolveFunctions(dirName, fileName string) {
@@ -357,18 +309,15 @@ func (pkgr *Packager) resolveFunctions(dirName, fileName string) {
 				msg := fmt.Sprintf("\n********\nin file %s:\nattempting to import nonexistent file %s\nPlease consult %s for more information about this error.\n********\n", relPath, importPath, errURL)
 				panic(msg)
 			}
-			// println("importing", importPath)
 			pkgr.resolveFunctions(filepath.Dir(importPath), filepath.Base(importPath))
 			continue // to forgo appending it to the comprehensive list of functions
 
 		// otherwise it's a proper function definition -- see if it's native
 		} else if f.GetBuiltIn() {
-			// println("resolving declaration for native function", pkgr.Package.GetTypeName(f.GetScopeTypeId()), f.Stub(pkgr.Package))
 			pkgr.resolveNativeDeclaration(f, relPath)
 
 		// otherwise it's a user-defined function
 		} else {
-			// println("resolving user-defined function", pkgr.Package.GetTypeName(f.GetScopeTypeId()), f.Stub(pkgr.Package))
 			pkgr.resolveUserDefinition(f, relPath)
 		}
 
