@@ -7,7 +7,7 @@ import "package.proto";
 message Mixer {
   required string name = 1;
   required string version = 2;
-  repeated File rewriters = 3; // Probably shouldn't be here anymore? -- AL 2013/03/19
+  repeated File rewriters = 3;
   optional Package package = 4;  // Package dependencies get merged together
 
   // For the new packaging system -- AL 2013/03/21
