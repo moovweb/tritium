@@ -836,8 +836,14 @@ func inject_at_Position_Text(ctx *EngineContext, scope *Scope, ins *tp.Instructi
 
 	nodes, err := node.Coerce(input)
 	if err == nil {
-		for _, n := range nodes {
-			MoveFunc(n, node, position)
+		if position == BOTTOM || position == BEFORE {
+			for _, n := range nodes {
+				MoveFunc(n, node, position)
+			}
+		} else {
+			for index := len(nodes)-1; index >= 0; index -- {
+				MoveFunc(nodes[index], node, position)
+			}
 		}
 	}
 	if len(nodes) > 0 {
