@@ -12,4 +12,7 @@ message Mixer {
 
   // For the new packaging system -- AL 2013/03/21
   optional int32 packager_version = 5; // if > 0, then we're using the new system!
+  // need this information for function relocation and elimination of redundant dependencies
+  repeated string dependency_names = 6;
+  repeated int32 dependency_offsets = 7;
 }

@@ -359,3 +359,7 @@ func (pkgr *Packager) resolveNativeDeclaration(f *tp.Function, path string) {
 func (pkgr *Packager) resolveUserDefinition(f *tp.Function, path string) {
 	legacy.ResolveDefinition(pkgr.Package, f, path)
 }
+
+func CombineMultipleMixers([]*tp.Mixer) *tp.Mixer {
+	return nil
+}
