@@ -16,4 +16,5 @@ message Mixer {
   repeated string submixer_names = 6;
   repeated string submixer_versions = 7;
   repeated int32 submixer_offsets = 8;
+  repeated int32 submixer_lengths = 9;
 }

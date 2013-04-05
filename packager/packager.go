@@ -93,6 +93,7 @@ func NewDependencyOf(relSrcDir, libDir string, pkgr *Packager) *Packager {
 	dep.Mixer.SubmixerNames     = pkgr.Mixer.SubmixerNames
 	dep.Mixer.SubmixerVersions  = pkgr.Mixer.SubmixerVersions
 	dep.Mixer.SubmixerOffsets   = pkgr.Mixer.SubmixerOffsets
+	dep.Mixer.SubmixerLengths   = pkgr.Mixer.SubmixerLengths
 	dep.Mixer.Package.Functions = pkgr.Mixer.Package.Functions
 	return dep
 }
@@ -113,12 +114,15 @@ func (pkgr *Packager) readDependenciesFile() {
 
 func (pkgr *Packager) Build() {
 	pkgr.resolveDependencies()
+	thisOffset := int32(len(pkgr.Mixer.Package.Functions))
 	pkgr.Mixer.SubmixerNames    = append(pkgr.Mixer.SubmixerNames, pkgr.GetName())
 	pkgr.Mixer.SubmixerVersions = append(pkgr.Mixer.SubmixerVersions, pkgr.GetVersion())
-	pkgr.Mixer.SubmixerOffsets  = append(pkgr.Mixer.SubmixerOffsets, int32(len(pkgr.Mixer.Package.Functions)))
+	pkgr.Mixer.SubmixerOffsets  = append(pkgr.Mixer.SubmixerOffsets, thisOffset)
 	pkgr.resolveTypeDeclarations()
 	pkgr.populateTypeList()
 	pkgr.buildLib()
+	// length of Functions array has changed; recompute it and subtract the last offset to get the length of this component
+	pkgr.Mixer.SubmixerLengths  = append(pkgr.Mixer.SubmixerLengths, int32(len(pkgr.Mixer.Package.Functions))-thisOffset)
 	if pkgr.IsHttpTransformer {
 		pkgr.Mixer.Rewriters = tp.CollectFiles(filepath.Join(pkgr.MixerDir, SCRIPTS_DIR))
 		if pkgr.Mixer.Package.Dependencies == nil {
@@ -300,6 +304,7 @@ func (pkgr *Packager) mergeWith(dep *Packager) {
 	pkgr.Mixer.SubmixerNames     = dep.Mixer.SubmixerNames
 	pkgr.Mixer.SubmixerVersions  = dep.Mixer.SubmixerVersions
 	pkgr.Mixer.SubmixerOffsets   = dep.Mixer.SubmixerOffsets
+	pkgr.Mixer.SubmixerLengths   = dep.Mixer.SubmixerLengths
 	pkgr.Mixer.Package.Functions = dep.Mixer.Package.Functions
 }
 
@@ -370,5 +375,35 @@ func (pkgr *Packager) resolveUserDefinition(f *tp.Function, path string) {
 }
 
 func MergeCompiledMixers(mixers ...*tp.Mixer) *tp.Mixer {
+	switch len(mixers) {
+		case 0: return nil
+		case 1: return mixers[0]
+	}
+
+	// first, rest   := mixers[0], mixers[1:]
+	// result         = new(tp.Mixer)
+	// result.Package = first.Package
+
+	// // set up the relocation table for submixer functions
+	// newOffsetOf := map[string]int32
+	// for i, name := range first.SubmixerNames {
+	// 	newOffsetOf[name] = first.SubmixerOffsets[i]
+	// }
+
+	// top := len(result.Package.Functions)
+
+	// // now relocate the rest of the submixer function call targets one by one
+	// for _, mxr := range rest {
+	// 	for i, name := range mxr.SubmixerNames {
+	// 		// TODO: compare version numbers ... can't robustly allow conflicting versions to coexist
+	// 		offset, there := newOffsetOf[name]
+	// 		if !there {
+	// 			top += SubmixerLengths[i]
+	// 			newOffsetOf[name] = top
+	// 		}
+	// 	}
+
+	// }
+
 	return nil
 }

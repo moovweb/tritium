@@ -14,15 +14,16 @@ var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Mixer struct {
-	Name              *string  `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
-	Version           *string  `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
-	Rewriters         []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
-	Package           *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
-	PackagerVersion   *int32   `protobuf:"varint,5,opt,name=packager_version" json:"packager_version,omitempty"`
-	SubmixerNames   []string `protobuf:"bytes,6,rep,name=submixer_names" json:"submixer_names,omitempty"`
+	Name             *string  `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
+	Version          *string  `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
+	Rewriters        []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
+	Package          *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
+	PackagerVersion  *int32   `protobuf:"varint,5,opt,name=packager_version" json:"packager_version,omitempty"`
+	SubmixerNames    []string `protobuf:"bytes,6,rep,name=submixer_names" json:"submixer_names,omitempty"`
 	SubmixerVersions []string `protobuf:"bytes,7,rep,name=submixer_versions" json:"submixer_versions,omitempty"`
-	SubmixerOffsets []int32  `protobuf:"varint,8,rep,name=submixer_offsets" json:"submixer_offsets,omitempty"`
-	XXX_unrecognized  []byte   `json:"-"`
+	SubmixerOffsets  []int32  `protobuf:"varint,8,rep,name=submixer_offsets" json:"submixer_offsets,omitempty"`
+	SubmixerLengths  []int32  `protobuf:"varint,9,rep,name=submixer_lengths" json:"submixer_lengths,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (this *Mixer) Reset()         { *this = Mixer{} }
