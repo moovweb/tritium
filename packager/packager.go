@@ -90,6 +90,9 @@ func NewDependencyOf(relSrcDir, libDir string, pkgr *Packager) *Packager {
 	dep.SubclassesOf            = pkgr.SubclassesOf
 	dep.Extensions              = pkgr.Extensions
 	dep.FunctionsWith           = pkgr.FunctionsWith
+	dep.Mixer.SubmixerNames     = pkgr.Mixer.SubmixerNames
+	dep.Mixer.SubmixerVersions  = pkgr.Mixer.SubmixerVersions
+	dep.Mixer.SubmixerOffsets   = pkgr.Mixer.SubmixerOffsets
 	dep.Mixer.Package.Functions = pkgr.Mixer.Package.Functions
 	return dep
 }
@@ -110,6 +113,9 @@ func (pkgr *Packager) readDependenciesFile() {
 
 func (pkgr *Packager) Build() {
 	pkgr.resolveDependencies()
+	pkgr.Mixer.SubmixerNames    = append(pkgr.Mixer.SubmixerNames, pkgr.GetName())
+	pkgr.Mixer.SubmixerVersions = append(pkgr.Mixer.SubmixerVersions, pkgr.GetVersion())
+	pkgr.Mixer.SubmixerOffsets  = append(pkgr.Mixer.SubmixerOffsets, int32(len(pkgr.Mixer.Package.Functions)))
 	pkgr.resolveTypeDeclarations()
 	pkgr.populateTypeList()
 	pkgr.buildLib()
@@ -291,6 +297,9 @@ func (pkgr *Packager) mergeWith(dep *Packager) {
 	pkgr.SubclassesOf            = dep.SubclassesOf
 	pkgr.Extensions              = dep.Extensions
 	pkgr.FunctionsWith           = dep.FunctionsWith
+	pkgr.Mixer.SubmixerNames     = dep.Mixer.SubmixerNames
+	pkgr.Mixer.SubmixerVersions  = dep.Mixer.SubmixerVersions
+	pkgr.Mixer.SubmixerOffsets   = dep.Mixer.SubmixerOffsets
 	pkgr.Mixer.Package.Functions = dep.Mixer.Package.Functions
 }
 
@@ -360,6 +369,6 @@ func (pkgr *Packager) resolveUserDefinition(f *tp.Function, path string) {
 	legacy.ResolveDefinition(pkgr.Package, f, path)
 }
 
-func CombineMultipleMixers([]*tp.Mixer) *tp.Mixer {
+func MergeCompiledMixers(mixers ...*tp.Mixer) *tp.Mixer {
 	return nil
 }

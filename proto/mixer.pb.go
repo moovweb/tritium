@@ -19,8 +19,9 @@ type Mixer struct {
 	Rewriters         []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
 	Package           *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
 	PackagerVersion   *int32   `protobuf:"varint,5,opt,name=packager_version" json:"packager_version,omitempty"`
-	DependencyNames   []string `protobuf:"bytes,6,rep,name=dependency_names" json:"dependency_names,omitempty"`
-	DependencyOffsets []int32  `protobuf:"varint,7,rep,name=dependency_offsets" json:"dependency_offsets,omitempty"`
+	SubmixerNames   []string `protobuf:"bytes,6,rep,name=submixer_names" json:"submixer_names,omitempty"`
+	SubmixerVersions []string `protobuf:"bytes,7,rep,name=submixer_versions" json:"submixer_versions,omitempty"`
+	SubmixerOffsets []int32  `protobuf:"varint,8,rep,name=submixer_offsets" json:"submixer_offsets,omitempty"`
 	XXX_unrecognized  []byte   `json:"-"`
 }
 
