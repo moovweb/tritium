@@ -98,6 +98,10 @@ func NewDependencyOf(relSrcDir, libDir string, pkgr *Packager) *Packager {
 	return dep
 }
 
+func NewFromCompiledMixer(mxr *tp.Mixer) *Packager {
+	return nil
+}
+
 func (pkgr *Packager) readDependenciesFile() {
 	depPath := filepath.Join(pkgr.MixerDir, DEPS_FILE)
 	depPathExists, _ := fileutil.Exists(depPath)
@@ -380,30 +384,79 @@ func MergeCompiledMixers(mixers ...*tp.Mixer) *tp.Mixer {
 		case 1: return mixers[0]
 	}
 
-	// first, rest   := mixers[0], mixers[1:]
-	// result         = new(tp.Mixer)
-	// result.Package = first.Package
+	first, rest   := mixers[0], mixers[1:]
+	result         = new(tp.Mixer)
+	result.Package = first.Package
 
-	// // set up the relocation table for submixer functions
-	// newOffsetOf := map[string]int32
-	// for i, name := range first.SubmixerNames {
-	// 	newOffsetOf[name] = first.SubmixerOffsets[i]
-	// }
+	// set up the relocation table for submixer functions
+	newOffsetOf := map[string]int32
+	for i, name := range first.SubmixerNames {
+		newOffsetOf[name] = first.SubmixerOffsets[i]
+	}
+	// set up type lookup tables too, to ensure no inheritance conflicts
+	masterTypeMap    := map[string]int
+	masterExtensions := map[string]string
+	for i, t := range first.Package.Types {
+		masterTypeMap[t.GetName()]    = i
+		masterExtensions[t.GetName()] = first.Package.Types[t.GetImplements()].GetName()
+	}
 
-	// top := len(result.Package.Functions)
+	top := len(result.Package.Functions)
 
-	// // now relocate the rest of the submixer function call targets one by one
-	// for _, mxr := range rest {
-	// 	for i, name := range mxr.SubmixerNames {
-	// 		// TODO: compare version numbers ... can't robustly allow conflicting versions to coexist
-	// 		offset, there := newOffsetOf[name]
-	// 		if !there {
-	// 			top += SubmixerLengths[i]
-	// 			newOffsetOf[name] = top
-	// 		}
-	// 	}
-
-	// }
-
+	for _, mxr := range rest {
+		// for each mixer, extend the relocation table for each of its submixers
+		for i, name := range mxr.SubmixerNames {
+			// TODO: compare version numbers ... can't robustly allow conflicting versions to coexist
+			offset, there := newOffsetOf[name]
+			if !there {
+				newOffsetOf[name] = top
+				top += mxr.SubmixerLengths[i]
+			}
+		}
+		// now merge in this mixer's types and check for conflicts
+		thisTypeMap := map[string]int
+		for i, t := range mxr.Package.Types {
+			thisTypeMap[t.GetName()] = i
+		}
+		for typeName, id := range thisTypeMap {
+			existingId, there := masterTypeMap[typeName]
+			if !there {
+				masterTypeMap[typeName] = len(masterTypeMap)
+			}
+		}
+	}
 	return nil
 }
+
+// func mergeTypeHierarchies(tmap map[string]int, exts map[string]string, types []*tp.Type) {
+// 	candidatesMap  := make(map[string]int)
+// 	candidatesExts := make(map[string]string)
+
+// 	for i, t := range types {
+// 		candidatesMap[t.GetName()] = i
+// 	}
+// 	for name, id := range candidatesMap {
+// 		extId := types[id].GetImplements()
+// 		if extId != 0 {
+// 			candidatesExts[name] = candidatesMap[extId]
+// 		} else {
+// 			candidatesExts[name] = ""
+// 		}
+// 	}
+
+// 	for name, id := range candidatesMap {
+// 		existingId, there := tmap[name]
+// 		candidateSuper, isExtended := candidatesExts[name]
+// 		if !there {
+// 			tmap[name] = len(tmap)
+// 			if isExtended {
+// 				exts[name] = candidateSuper
+// 			}
+// 		} else {
+// 			if isExtended {
+// 				existingSuper, alreadyExtended := exts[name]
+// 				if alreadyExtended && existingSuper != candidateSuper {
+// 					panic("conflicting type extensions across different compiled mixers")
+// 				} else if !alreadyExtended {
+					
+// 	}
