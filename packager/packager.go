@@ -9,7 +9,7 @@ import (
 )
 
 import (
-	// data "butler/data"
+	// "butler/mixer"
 	fileutil "butler/fileutil"
 	"tritium/parser"
 	"tritium/whale"
@@ -33,6 +33,7 @@ type Packager struct {
 	Extensions        []string                  // type extensions in *this* mixer, not dependencies
 	FunctionsWith     map[string][]*tp.Function // for each type, maintain a list of functions that use it
 	TypeList          []string
+	AddressOf         map[string]int            // map function signatures to their locations in the table
 	*tp.Mixer
 }
 
@@ -64,7 +65,7 @@ func New(relSrcDir, libDir string) *Packager {
 	pkgr.IncludePaths[0] = wd
 
 	pkgr.Mixer           = tp.NewMixer(absSrcDir)
-	pkgr.PackagerVersion = proto.Int32(1)
+	pkgr.PackagerVersion = proto.Int32(PACKAGER_VERSION)
 	pkgr.readDependenciesFile()
 	pkgr.AlreadyLoaded   = make(map[string]bool)
 
@@ -75,6 +76,31 @@ func New(relSrcDir, libDir string) *Packager {
 	tSigThere, _ := fileutil.Exists(filepath.Join(pkgr.MixerDir, HTTP_TRANSFORMERS_SIGNATURE))
 	if tSigThere {
 		pkgr.IsHttpTransformer = true
+	}
+
+	return pkgr
+}
+
+func NewFromCompiledMixer(mxr *tp.Mixer) *Packager {
+	pkgr := new(Packager)
+	pkgr.AlreadyLoaded   = make(map[string]bool)
+	pkgr.Mixer           = mxr
+
+	// now reconstruct all the type information
+	pkgr.TypeMap  = make(map[string]int)
+	pkgr.TypeList = make([]string, len(mxr.Package.Types))
+
+	for i, t := range mxr.Package.Types {
+		pkgr.TypeMap[t.GetName()] = i
+		pkgr.TypeList[i]          = t.GetName()
+		if super := t.GetImplements(); super != 0 {
+			if pkgr.SuperclassOf == nil {
+				pkgr.SuperclassOf = make(map[string]string)
+			}
+			nameOfSuper := pkgr.TypeList[super]
+			pkgr.SuperclassOf[t.GetName()] = nameOfSuper
+			pkgr.Extensions = append(pkgr.Extensions, fmt.Sprintf("%s < %s", t.GetName(), nameOfSuper))
+		}
 	}
 
 	return pkgr
@@ -95,11 +121,27 @@ func NewDependencyOf(relSrcDir, libDir string, pkgr *Packager) *Packager {
 	dep.Mixer.SubmixerOffsets   = pkgr.Mixer.SubmixerOffsets
 	dep.Mixer.SubmixerLengths   = pkgr.Mixer.SubmixerLengths
 	dep.Mixer.Package.Functions = pkgr.Mixer.Package.Functions
+	dep.AddressOf               = pkgr.AddressOf
 	return dep
 }
 
-func NewFromCompiledMixer(mxr *tp.Mixer) *Packager {
-	return nil
+func (pkgr *Packager) mergeWith(dep *Packager) {
+	// Dependency loading is cumulative; tables are passed down and populated on
+	// the way back up, then passed down again. So the tables that percolate up
+	// are the most populated versions; just use those.
+	pkgr.AlreadyLoaded           = dep.AlreadyLoaded
+	pkgr.NowVisiting             = dep.NowVisiting
+	pkgr.TypeMap                 = dep.TypeMap
+	pkgr.SuperclassOf            = dep.SuperclassOf
+	pkgr.SubclassesOf            = dep.SubclassesOf
+	pkgr.Extensions              = dep.Extensions
+	pkgr.FunctionsWith           = dep.FunctionsWith
+	pkgr.Mixer.SubmixerNames     = dep.Mixer.SubmixerNames
+	pkgr.Mixer.SubmixerVersions  = dep.Mixer.SubmixerVersions
+	pkgr.Mixer.SubmixerOffsets   = dep.Mixer.SubmixerOffsets
+	pkgr.Mixer.SubmixerLengths   = dep.Mixer.SubmixerLengths
+	pkgr.Mixer.Package.Functions = dep.Mixer.Package.Functions
+	pkgr.AddressOf               = dep.AddressOf
 }
 
 func (pkgr *Packager) readDependenciesFile() {
@@ -187,6 +229,13 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 	}
 
 	// TODO: check if the dependency is among the compiled mixers
+	// mxr, mxErr := mixer.GetMixer(name, specifiedVersion)
+	// if mxErr == nil {
+	// 	// stuff
+	// 	foundCompiledMixer = true
+	// 	needed := NewFromCompiledMixer(mxr)
+	// 	return
+	// }
 
 	if foundMixerSrc || foundCompiledMixer {
 		panic(fmt.Sprintf("version %s needed for dependency `%s` of `%s`",
@@ -294,24 +343,6 @@ func (pkgr *Packager) buildLib() {
 	}
 }
 
-func (pkgr *Packager) mergeWith(dep *Packager) {
-	// Dependency loading is cumulative; tables are passed down and populated on
-	// the way back up, then passed down again. So the tables that percolate up
-	// are the most populated versions; just use those.
-	pkgr.AlreadyLoaded           = dep.AlreadyLoaded
-	pkgr.NowVisiting             = dep.NowVisiting
-	pkgr.TypeMap                 = dep.TypeMap
-	pkgr.SuperclassOf            = dep.SuperclassOf
-	pkgr.SubclassesOf            = dep.SubclassesOf
-	pkgr.Extensions              = dep.Extensions
-	pkgr.FunctionsWith           = dep.FunctionsWith
-	pkgr.Mixer.SubmixerNames     = dep.Mixer.SubmixerNames
-	pkgr.Mixer.SubmixerVersions  = dep.Mixer.SubmixerVersions
-	pkgr.Mixer.SubmixerOffsets   = dep.Mixer.SubmixerOffsets
-	pkgr.Mixer.SubmixerLengths   = dep.Mixer.SubmixerLengths
-	pkgr.Mixer.Package.Functions = dep.Mixer.Package.Functions
-}
-
 func (pkgr *Packager) resolveFunctions(dirName, fileName string) {
 	// the existence of `fileName` should be verified by the caller
 	relPath := filepath.Join(dirName, fileName)
@@ -339,6 +370,10 @@ func (pkgr *Packager) resolveFunctions(dirName, fileName string) {
 			pkgr.resolveUserDefinition(f, relPath)
 		}
 
+		if pkgr.AddressOf == nil {
+			pkgr.AddressOf = make(map[string]int)
+		}
+		pkgr.AddressOf[f.FullSignature(pkgr.Mixer.Package)] = len(pkgr.Package.Functions)
 		pkgr.Package.Functions = append(pkgr.Package.Functions, f)
 	}
 }
@@ -378,55 +413,44 @@ func (pkgr *Packager) resolveUserDefinition(f *tp.Function, path string) {
 	legacy.ResolveDefinition(pkgr.Package, f, path)
 }
 
-func MergeCompiledMixers(mixers ...*tp.Mixer) *tp.Mixer {
-	switch len(mixers) {
-		case 0: return nil
-		case 1: return mixers[0]
-	}
+// func MergeCompiledMixers(mixers ...*tp.Mixer) *tp.Mixer {
+// 	switch len(mixers) {
+// 		case 0: return nil
+// 		case 1: return mixers[0]
+// 	}
 
-	first, rest   := mixers[0], mixers[1:]
-	result         = new(tp.Mixer)
-	result.Package = first.Package
+// 	first, rest   := mixers[0], mixers[1:]
+// 	result         = new(tp.Mixer)
+// 	result.Package = first.Package
 
-	// set up the relocation table for submixer functions
-	newOffsetOf := map[string]int32
-	for i, name := range first.SubmixerNames {
-		newOffsetOf[name] = first.SubmixerOffsets[i]
-	}
-	// set up type lookup tables too, to ensure no inheritance conflicts
-	masterTypeMap    := map[string]int
-	masterExtensions := map[string]string
-	for i, t := range first.Package.Types {
-		masterTypeMap[t.GetName()]    = i
-		masterExtensions[t.GetName()] = first.Package.Types[t.GetImplements()].GetName()
-	}
+// 	// set up the relocation table for submixer functions
+// 	newOffsetOf := map[string]int32
+// 	for i, name := range first.SubmixerNames {
+// 		newOffsetOf[name] = first.SubmixerOffsets[i]
+// 	}
+// 	// set up type lookup tables too, to ensure no inheritance conflicts
+// 	masterTypeMap    := map[string]int
+// 	masterExtensions := map[string]string
+// 	for i, t := range first.Package.Types {
+// 		masterTypeMap[t.GetName()]    = i
+// 		masterExtensions[t.GetName()] = first.Package.Types[t.GetImplements()].GetName()
+// 	}
 
-	top := len(result.Package.Functions)
+// 	top := len(result.Package.Functions)
 
-	for _, mxr := range rest {
-		// for each mixer, extend the relocation table for each of its submixers
-		for i, name := range mxr.SubmixerNames {
-			// TODO: compare version numbers ... can't robustly allow conflicting versions to coexist
-			offset, there := newOffsetOf[name]
-			if !there {
-				newOffsetOf[name] = top
-				top += mxr.SubmixerLengths[i]
-			}
-		}
-		// now merge in this mixer's types and check for conflicts
-		thisTypeMap := map[string]int
-		for i, t := range mxr.Package.Types {
-			thisTypeMap[t.GetName()] = i
-		}
-		for typeName, id := range thisTypeMap {
-			existingId, there := masterTypeMap[typeName]
-			if !there {
-				masterTypeMap[typeName] = len(masterTypeMap)
-			}
-		}
-	}
-	return nil
-}
+// 	for _, mxr := range rest {
+// 		// for each mixer, extend the relocation table for each of its submixers
+// 		for i, name := range mxr.SubmixerNames {
+// 			// TODO: compare version numbers ... can't robustly allow conflicting versions to coexist
+// 			offset, there := newOffsetOf[name]
+// 			if !there {
+// 				newOffsetOf[name] = top
+// 				top += mxr.SubmixerLengths[i]
+// 			}
+// 		}
+// 	}
+// 	return nil
+// }
 
 // func mergeTypeHierarchies(tmap map[string]int, exts map[string]string, types []*tp.Type) {
 // 	candidatesMap  := make(map[string]int)
@@ -458,5 +482,5 @@ func MergeCompiledMixers(mixers ...*tp.Mixer) *tp.Mixer {
 // 				if alreadyExtended && existingSuper != candidateSuper {
 // 					panic("conflicting type extensions across different compiled mixers")
 // 				} else if !alreadyExtended {
-					
+
 // 	}

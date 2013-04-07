@@ -28,13 +28,16 @@ func (f *Function) Stub(pkg *Package) string {
 }
 
 // prettier signatures than what `Stub` provides
-func (f *Function) Signature(pkg *Package) string {
-
+func (f *Function) FullSignature(pkg *Package) string {
 	ns := f.GetNamespace()
 	if len(ns) == 0 {
 		ns = "tritium"
 	}
 
+	return fmt.Sprintf("%s.%s", ns, f.BaseSignature(pkg))
+}
+
+func (f *Function) BaseSignature(pkg *Package) string {
 	args := "("
 	for i, arg := range f.Args {
 		argName := null.GetString(arg.TypeString)
@@ -47,9 +50,9 @@ func (f *Function) Signature(pkg *Package) string {
 		}
 		args += argName
 	}
-	return ns + ": " + pkg.GetTypeName(f.GetScopeTypeId()) + "." + f.GetName() + args + ")"
-
+	return fmt.Sprintf("%s.%s%s)", pkg.GetTypeName(f.GetScopeTypeId()), f.GetName(), args)
 }
+
 
 // We need this for inherited function resolution. 
 // - for now we just make duplicated functions for the package w the types changed
