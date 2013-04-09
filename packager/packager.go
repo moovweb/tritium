@@ -254,7 +254,6 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		// stuff
 		foundCompiledMixer = true
 		needed := NewFromCompiledMixer(mxr)
-		println(needed.GetName())
 		pkgr.mergeCompiled(needed)
 		return
 	}
@@ -439,16 +438,16 @@ func (pkgr *Packager) mergeCompiled(dep *Packager) {
 func (pkgr *Packager) mergeAndRelocateTypes(dep *Packager) {
 	typeRelocations   := make([]int, len(dep.TypeList))
 
-	for name, id := range dep.TypeMap {
+	for id, name := range dep.TypeList {
 		existingId, there := pkgr.TypeMap[name]
 		if there {
 			typeRelocations[id] = existingId
 			// TODO: check for conflicts
 		} else {
-			newId := len(pkgr.TypeMap)
 			if pkgr.TypeMap == nil {
 				pkgr.TypeMap = make(map[string]int)
 			}
+			newId := len(pkgr.TypeMap)
 			pkgr.TypeMap[name]  = newId
 			typeRelocations[id] = newId
 			super, isExtended := dep.SuperclassOf[name]
