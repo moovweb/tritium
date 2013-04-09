@@ -83,8 +83,9 @@ func New(relSrcDir, libDir string) *Packager {
 
 func NewFromCompiledMixer(mxr *tp.Mixer) *Packager {
 	pkgr := new(Packager)
-	pkgr.AlreadyLoaded   = make(map[string]bool)
-	pkgr.Mixer           = mxr
+	pkgr.AlreadyLoaded     = make(map[string]bool)
+	pkgr.IsHttpTransformer = mxr.GetIsHttpTransformer()
+	pkgr.Mixer             = mxr
 
 	// now reconstruct all the type information
 	pkgr.TypeMap  = make(map[string]int)
@@ -182,6 +183,7 @@ func (pkgr *Packager) Build() {
 	// pkgr.Mixer.Submixers = append(pkgr.Mixer.Submixers, info)
 
 	if pkgr.IsHttpTransformer {
+		pkgr.Mixer.IsHttpTransformer = proto.Bool(true)
 		pkgr.Mixer.Rewriters = tp.CollectFiles(filepath.Join(pkgr.MixerDir, SCRIPTS_DIR))
 		if pkgr.Mixer.Package.Dependencies == nil {
 			pkgr.Mixer.Package.Dependencies = make([]string, 0)
@@ -254,7 +256,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		// stuff
 		foundCompiledMixer = true
 		needed := NewFromCompiledMixer(mxr)
-		pkgr.mergeCompiled(needed)
+		pkgr.MergeCompiled(needed)
 		return
 	}
 
@@ -434,20 +436,29 @@ func (pkgr *Packager) resolveUserDefinition(f *tp.Function, path string) {
 	legacy.ResolveDefinition(pkgr.Package, f, path)
 }
 
-func (pkgr *Packager) mergeCompiled(dep *Packager) {
+func (pkgr *Packager) MergeCompiled(dep *Packager) {
 	pkgr.mergeAndRelocateTypes(dep)
 	pkgr.mergeAndRelocateCalls(dep)
 }
 
 func (pkgr *Packager) mergeAndRelocateTypes(dep *Packager) {
-	typeRelocations   := make([]int, len(dep.TypeList))
+	typeRelocations   := make(map[int]int)
+	typeRelocations[-1] = -1
 
 	for id, name := range dep.TypeList {
-		_, there := pkgr.TypeMap[name]
+		existingId, there := pkgr.TypeMap[name]
 		if there {
+			depSuper, depExtended := dep.SuperclassOf[name]
+			pkgrSuper, pkgrExtended := pkgr.SuperclassOf[name]
+			if depExtended && pkgrExtended && depSuper == pkgrSuper {
+				typeRelocations[id] = existingId
+			} else if !depExtended && !pkgrExtended {
+				typeRelocations[id] = existingId
+			} else {
 			// typeRelocations[id] = existingId
 			// TODO: check for conflicts
-			panic(fmt.Sprintf("redeclaration of %s in compiled mixer %s", name, dep.GetName()))
+				panic(fmt.Sprintf("redeclaration of %s in compiled mixer %s", name, dep.GetName()))
+			}
 		} else {
 			if pkgr.TypeMap == nil {
 				pkgr.TypeMap = make(map[string]int)
@@ -465,7 +476,13 @@ func (pkgr *Packager) mergeAndRelocateTypes(dep *Packager) {
 		}
 	}
 	pkgr.populateTypeList()
-
+	for i, t := range pkgr.Mixer.Package.Types {
+		println(i, t.GetName(), t.GetImplements())
+	}
+	println()
+	for i, j := range typeRelocations {
+		println(i, j)
+	}
 	for _, f := range dep.Mixer.Package.Functions {
 		f.RelocateTypes(typeRelocations)
 	}

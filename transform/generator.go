@@ -70,8 +70,13 @@ func Generate(project *project.Project, mixer *tp.Mixer) (map[string][]byte, err
 
 	renderedSegments := make(map[string][]byte, 4)
 
+	rewritersContainer := mixer
+	if mixer.GetPackagerVersion() > 0 {
+		rewritersContainer = project.HttpTransformers
+	}
+
 	for _, segment := range segments {
-		rawTemplate, err := getRawTemplate(segment, mixer)
+		rawTemplate, err := getRawTemplate(segment, rewritersContainer)
 
 		if err != nil {
 			panic(err)
@@ -95,6 +100,9 @@ func Generate(project *project.Project, mixer *tp.Mixer) (map[string][]byte, err
 
 func getRawTemplate(segmentName string, mixer *tp.Mixer) (rawTemplate []uint8, err error) {
 
+	if mixer == nil {
+		println("WHAT?!")
+	}
 	for _, segment := range mixer.Rewriters {
 		_, thisName := filepath.Split(null.GetString(segment.Path))
 		if thisName == segmentName {

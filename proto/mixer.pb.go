@@ -14,12 +14,13 @@ var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Mixer struct {
-	Name             *string  `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
-	Version          *string  `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
-	Rewriters        []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
-	Package          *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
-	PackagerVersion  *int32   `protobuf:"varint,5,opt,name=packager_version" json:"packager_version,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	Name              *string  `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
+	Version           *string  `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
+	Rewriters         []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
+	Package           *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
+	PackagerVersion   *int32   `protobuf:"varint,5,opt,name=packager_version" json:"packager_version,omitempty"`
+	IsHttpTransformer *bool    `protobuf:"varint,6,opt,name=is_http_transformer" json:"is_http_transformer,omitempty"`
+	XXX_unrecognized  []byte   `json:"-"`
 }
 
 func (this *Mixer) Reset()         { *this = Mixer{} }
@@ -52,6 +53,13 @@ func (this *Mixer) GetPackagerVersion() int32 {
 		return *this.PackagerVersion
 	}
 	return 0
+}
+
+func (this *Mixer) GetIsHttpTransformer() bool {
+	if this != nil && this.IsHttpTransformer != nil {
+		return *this.IsHttpTransformer
+	}
+	return false
 }
 
 type SubmixerInfo struct {

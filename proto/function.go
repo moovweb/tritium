@@ -114,11 +114,11 @@ func (f *Function) RelocateCallsBy(offset int) {
 	})
 }
 
-func (f *Function) RelocateTypes(relocations []int) {
-	f.ScopeTypeId  = pb.Int32(int32(relocations[f.GetScopeTypeId()]))
-	f.ReturnTypeId = pb.Int32(int32(relocations[f.GetReturnTypeId()]))
-	f.OpensTypeId  = pb.Int32(int32(relocations[f.GetOpensTypeId()]))
+func (f *Function) RelocateTypes(relocations map[int]int) {
+	f.ScopeTypeId  = pb.Int32(int32(relocations[int(f.GetScopeTypeId())]))
+	f.ReturnTypeId = pb.Int32(int32(relocations[int(f.GetReturnTypeId())]))
+	f.OpensTypeId  = pb.Int32(int32(relocations[int(f.GetOpensTypeId())]))
 	for _, arg := range f.Args {
-		arg.TypeId = pb.Int32(int32(relocations[arg.GetTypeId()]))
+		arg.TypeId = pb.Int32(int32(relocations[int(arg.GetTypeId())]))
 	}
 }
