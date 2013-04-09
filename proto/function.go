@@ -101,3 +101,24 @@ func (fun *Function) DebugInfo(pkg *Package) string {
 
 	return "@func " + scopeType + "." + name + "(" + args + ") " + returnType + " " + openType
 }
+
+func (f *Function) RelocateCallsBy(offset int) {
+	if f.Instruction == nil {
+		return
+	}
+	f.Instruction.IterateAll(func (ins *Instruction) {
+		if ins.GetType() != Instruction_FUNCTION_CALL {
+			return
+		}
+		ins.FunctionId = pb.Int32(ins.GetFunctionId() + int32(offset))
+	})
+}
+
+func (f *Function) RelocateTypes(relocations []int) {
+	f.ScopeTypeId  = pb.Int32(int32(relocations[f.GetScopeTypeId()]))
+	f.ReturnTypeId = pb.Int32(int32(relocations[f.GetReturnTypeId()]))
+	f.OpensTypeId  = pb.Int32(int32(relocations[f.GetOpensTypeId()]))
+	for _, arg := range f.Args {
+		arg.TypeId = pb.Int32(int32(relocations[arg.GetTypeId()]))
+	}
+}

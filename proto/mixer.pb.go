@@ -19,10 +19,6 @@ type Mixer struct {
 	Rewriters        []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
 	Package          *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
 	PackagerVersion  *int32   `protobuf:"varint,5,opt,name=packager_version" json:"packager_version,omitempty"`
-	SubmixerNames    []string `protobuf:"bytes,6,rep,name=submixer_names" json:"submixer_names,omitempty"`
-	SubmixerVersions []string `protobuf:"bytes,7,rep,name=submixer_versions" json:"submixer_versions,omitempty"`
-	SubmixerOffsets  []int32  `protobuf:"varint,8,rep,name=submixer_offsets" json:"submixer_offsets,omitempty"`
-	SubmixerLengths  []int32  `protobuf:"varint,9,rep,name=submixer_lengths" json:"submixer_lengths,omitempty"`
 	XXX_unrecognized []byte   `json:"-"`
 }
 
@@ -54,6 +50,46 @@ func (this *Mixer) GetPackage() *Package {
 func (this *Mixer) GetPackagerVersion() int32 {
 	if this != nil && this.PackagerVersion != nil {
 		return *this.PackagerVersion
+	}
+	return 0
+}
+
+type SubmixerInfo struct {
+	Name             *string `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
+	Version          *string `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
+	Offset           *int32  `protobuf:"varint,3,req,name=offset" json:"offset,omitempty"`
+	Length           *int32  `protobuf:"varint,4,req,name=length" json:"length,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (this *SubmixerInfo) Reset()         { *this = SubmixerInfo{} }
+func (this *SubmixerInfo) String() string { return proto1.CompactTextString(this) }
+func (*SubmixerInfo) ProtoMessage()       {}
+
+func (this *SubmixerInfo) GetName() string {
+	if this != nil && this.Name != nil {
+		return *this.Name
+	}
+	return ""
+}
+
+func (this *SubmixerInfo) GetVersion() string {
+	if this != nil && this.Version != nil {
+		return *this.Version
+	}
+	return ""
+}
+
+func (this *SubmixerInfo) GetOffset() int32 {
+	if this != nil && this.Offset != nil {
+		return *this.Offset
+	}
+	return 0
+}
+
+func (this *SubmixerInfo) GetLength() int32 {
+	if this != nil && this.Length != nil {
+		return *this.Length
 	}
 	return 0
 }

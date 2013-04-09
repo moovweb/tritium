@@ -46,20 +46,21 @@ func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject, projectPa
 }
 
 func NewLinkingContext(pkg *tp.Package) *LinkingContext {
+	println(".")
 	// Setup the function map!
 	functionLookup := make([]FuncMap, len(pkg.Types))
 	types := make([]string, len(pkg.Types))
 
 	for typeId, typeObj := range pkg.Types {
 		funcMap := make(FuncMap)
-		types[typeId] = null.GetString(typeObj.Name)
+		types[typeId] = typeObj.GetName()
 		//println("Type:",null.GetString(typeObj.Name))
 		//println("Implements:", null.GetInt32(typeObj.Implements))
-		implements := functionLookup[null.GetInt32(typeObj.Implements)]
+		implements := functionLookup[typeObj.GetImplements()]
 		for index, fun := range pkg.Functions {
 			stub := fun.Stub(pkg)
 
-			funScopeId := null.GetInt32(fun.ScopeTypeId)
+			funScopeId := fun.GetScopeTypeId()
 			inherited := false
 			// funScopeId is ancestor of typeId
 			if (implements != nil) && pkg.AncestorOf(funScopeId, int32(typeId)) {
@@ -273,6 +274,10 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			// ctx.error(ins, "%s:%d: could not find function %s.%s.%s (called from %s.%s.%s)", location, ins.GetLineNumber(), ns, ctx.types[scopeType], readableCalleeStub, callerNamespace, ctx.types[scopeType], readableCallerStub)
 
 		} else {
+			println()
+			println("processed call to", ctx.types[scopeType], stub)
+			println("call target is", funcId, ":", ctx.Transform.Pkg.Functions[funcId].FullSignature(ctx.Transform.Pkg))
+
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
 			returnType = int(null.GetInt32(fun.ReturnTypeId))
