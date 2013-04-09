@@ -289,6 +289,8 @@ func (pkgr *Packager) resolveTypeDeclarations() {
 
 	// now resolve the type declarations
 	for _, typeDec := range typeDecs {
+		// TODO: this logic is more complicated than it needs to be. Should really
+		// just disallow any duplicate declarations. Anyway....
 
 		// if the type doesn't extend anything ...
 		if !strings.Contains(typeDec, "<") {
@@ -298,7 +300,7 @@ func (pkgr *Packager) resolveTypeDeclarations() {
 				pkgr.SuperclassOf[typeDec] = ""
 				// if the type has already been declared, check for a semantic conflict
 			} else if extendee := pkgr.SuperclassOf[typeDec]; extendee != "" {
-				panic(fmt.Sprintf("type declaration %s conflicts with previous declaration %s < %s", typeDec, typeDec, extendee))
+				panic(fmt.Sprintf("type declaration `%s` conflicts with previous declaration `%s < %s`", typeDec, typeDec, extendee))
 			}
 			// if we get to this point, the declaration is a duplicate, so do nothing
 
@@ -318,14 +320,16 @@ func (pkgr *Packager) resolveTypeDeclarations() {
 			// check for conflicts with previous declarations
 			// (and incidentally ensure that subtypes always have a higher id than their supertypes
 			extendee, subHasAlreadyExtended := pkgr.SuperclassOf[sub]				
-			if subHasAlreadyExtended && extendee != super {
+			if subHasAlreadyExtended /* && extendee != super */ {
 				var previousDec string
 				if extendee == "" {
-					previousDec = sub + " (extends nothing)"
+					previousDec = fmt.Sprintf("`%s` (extends nothing)", sub)
+				} else if extendee == super {
+					previousDec = fmt.Sprintf("`%s < %s` (duplicates not allowed)", sub, extendee)
 				} else {
-					previousDec = fmt.Sprintf("%s < %s", sub, extendee)
+					previousDec = fmt.Sprintf("`%s < %s`", sub, extendee)
 				}
-				panic(fmt.Sprintf("type declaration `%s` conflicts with previous declaration `%s`", typeDec, previousDec))
+				panic(fmt.Sprintf("type declaration `%s` conflicts with previous declaration %s", typeDec, previousDec))
 			}
 			// if we get this far, we can proceed with the type extension
 			pkgr.TypeMap[sub] = len(pkgr.TypeMap)
@@ -439,10 +443,11 @@ func (pkgr *Packager) mergeAndRelocateTypes(dep *Packager) {
 	typeRelocations   := make([]int, len(dep.TypeList))
 
 	for id, name := range dep.TypeList {
-		existingId, there := pkgr.TypeMap[name]
+		_, there := pkgr.TypeMap[name]
 		if there {
-			typeRelocations[id] = existingId
+			// typeRelocations[id] = existingId
 			// TODO: check for conflicts
+			panic(fmt.Sprintf("redeclaration of %s in compiled mixer %s", name, dep.GetName()))
 		} else {
 			if pkgr.TypeMap == nil {
 				pkgr.TypeMap = make(map[string]int)
