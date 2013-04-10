@@ -274,9 +274,9 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			// ctx.error(ins, "%s:%d: could not find function %s.%s.%s (called from %s.%s.%s)", location, ins.GetLineNumber(), ns, ctx.types[scopeType], readableCalleeStub, callerNamespace, ctx.types[scopeType], readableCallerStub)
 
 		} else {
-			println()
-			println("processed call to", ctx.types[scopeType], stub)
-			println("call target is", funcId, ":", ctx.Transform.Pkg.Functions[funcId].FullSignature(ctx.Transform.Pkg))
+			// println()
+			// println("processed call to", ctx.types[scopeType], stub)
+			// println("call target is", funcId, ":", ctx.Transform.Pkg.Functions[funcId].FullSignature(ctx.Transform.Pkg))
 
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]

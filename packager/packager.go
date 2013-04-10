@@ -455,8 +455,6 @@ func (pkgr *Packager) mergeAndRelocateTypes(dep *Packager) {
 			} else if !depExtended && !pkgrExtended {
 				typeRelocations[id] = existingId
 			} else {
-			// typeRelocations[id] = existingId
-			// TODO: check for conflicts
 				panic(fmt.Sprintf("redeclaration of %s in compiled mixer %s", name, dep.GetName()))
 			}
 		} else {
