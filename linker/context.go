@@ -46,7 +46,6 @@ func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject, projectPa
 }
 
 func NewLinkingContext(pkg *tp.Package) *LinkingContext {
-	println(".")
 	// Setup the function map!
 	functionLookup := make([]FuncMap, len(pkg.Types))
 	types := make([]string, len(pkg.Types))
@@ -54,8 +53,6 @@ func NewLinkingContext(pkg *tp.Package) *LinkingContext {
 	for typeId, typeObj := range pkg.Types {
 		funcMap := make(FuncMap)
 		types[typeId] = typeObj.GetName()
-		//println("Type:",null.GetString(typeObj.Name))
-		//println("Implements:", null.GetInt32(typeObj.Implements))
 		implements := functionLookup[typeObj.GetImplements()]
 		for index, fun := range pkg.Functions {
 			stub := fun.Stub(pkg)
@@ -67,7 +64,6 @@ func NewLinkingContext(pkg *tp.Package) *LinkingContext {
 				_, inherited = implements[stub]
 			}
 			if (funScopeId == int32(typeId)) || inherited {
-				//println(null.GetString(typeObj.Name), ":", stub)
 				funcMap[stub] = index
 			}
 		}
@@ -87,22 +83,6 @@ func NewLinkingContext(pkg *tp.Package) *LinkingContext {
 	// Find Text type int -- need its ID to deal with Text literals during processing
 	ctx.textType = pkg.GetTypeId("Text")
 
-	// println("TYPES")
-	// for i, t := range types {
-	// 	println(i, ":", t)
-	// }
-	// println()
-
-	// println("FUNCTIONS")
-	// for t, fm := range functionLookup {
-	// 	println("TYPE", t)
-	// 	for n, f:= range fm {
-	// 		println(n, ":", f)
-	// 	}
-	// 	println()
-	// }
-	// println()
-
 	return ctx
 }
 
@@ -112,10 +92,7 @@ func (ctx *LinkingContext) Link() {
 
 func (ctx *LinkingContext) link(objId, scopeType int) {
 	obj := ctx.Objects[objId]
-	//println("link object", objId)
-	//println(obj.String())
 	if null.GetBool(obj.Linked) == false {
-		//println("Linking", null.GetString(obj.Name))
 		obj.ScopeTypeId = proto.Int(scopeType)
 		obj.Linked = proto.Bool(true)
 		path := obj.GetName()
@@ -149,10 +126,6 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		}
 		ctx.Visiting[importLocation] = true
 
-		// set its import_id and blank the value field
-		// importValue := filepath.Join(ctx.ProjectFolder, null.GetString(ins.Value))
-		//println("import: ", importValue)
-		//println(null.GetInt32(ins.LineNumber))
 		importId, ok := ctx.objMap[null.GetString(ins.Value)]
 		if ok != true {
 			ctx.error(ins, "Invalid import `%s`", ins.String())
@@ -161,10 +134,8 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		ctx.link(importId, scopeType)
 		// unset this after visiting an import
 		ctx.Visiting[importLocation] = false
-		//println("befor", ins.String())
 		ins.ObjectId = proto.Int(importId)
 		ins.Value = nil
-		//println("after", ins.String())
 	case tp.Instruction_LOCAL_VAR:
 		name := null.GetString(ins.Value)
 		if name == "1" || name == "2" || name == "3" || name == "4" || name == "5" || name == "6" || name == "7" {
@@ -205,7 +176,6 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path)
 					localScope[name] = returnType
 				} else {
-					println(ins.String())
 					ctx.error(ins, "I've never seen the variable \"%%%s\" before! Please assign a value before usage.", name)
 				}
 			}
@@ -274,10 +244,6 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			// ctx.error(ins, "%s:%d: could not find function %s.%s.%s (called from %s.%s.%s)", location, ins.GetLineNumber(), ns, ctx.types[scopeType], readableCalleeStub, callerNamespace, ctx.types[scopeType], readableCallerStub)
 
 		} else {
-			// println()
-			// println("processed call to", ctx.types[scopeType], stub)
-			// println("call target is", funcId, ":", ctx.Transform.Pkg.Functions[funcId].FullSignature(ctx.Transform.Pkg))
-
 			ins.FunctionId = proto.Int32(int32(funcId))
 			fun := ctx.Pkg.Functions[funcId]
 			returnType = int(null.GetInt32(fun.ReturnTypeId))

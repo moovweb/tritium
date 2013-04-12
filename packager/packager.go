@@ -485,13 +485,6 @@ func (pkgr *Packager) mergeAndRelocateTypes(dep *Packager) {
 		}
 	}
 	pkgr.populateTypeList()
-	for i, t := range pkgr.Mixer.Package.Types {
-		println(i, t.GetName(), t.GetImplements())
-	}
-	println()
-	for i, j := range typeRelocations {
-		println(i, j)
-	}
 	for _, f := range dep.Mixer.Package.Functions {
 		f.RelocateTypes(typeRelocations)
 	}
