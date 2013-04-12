@@ -18,7 +18,7 @@ import (
 	proto "code.google.com/p/goprotobuf/proto"
 	tp "tritium/proto"
 	yaml "goyaml"
-	// "golog"
+	"golog"
 )
 
 type downloader func (string, string) (*tp.Mixer, error)
@@ -37,6 +37,7 @@ type Packager struct {
 	// Extensions        []string                  // type extensions in *this* mixer, not dependencies
 	// FunctionsWith     map[string][]*tp.Function // for each type, maintain a list of functions that use it
 	TypeList          []string
+	Logger            *golog.Logger
 	downloader        downloader
 	*tp.Mixer
 }
@@ -50,7 +51,7 @@ const (
 	HTTP_TRANSFORMERS_SIGNATURE = ".http-transformers"
 )
 
-func New(relSrcDir, libDir string, mixerDownloader downloader) *Packager {
+func New(relSrcDir, libDir string, logger *golog.Logger, mixerDownloader downloader) *Packager {
 	pkgr := new(Packager)
 
 	wd, wdErr := os.Getwd()
@@ -72,6 +73,7 @@ func New(relSrcDir, libDir string, mixerDownloader downloader) *Packager {
 	pkgr.PackagerVersion = proto.Int32(PACKAGER_VERSION)
 	pkgr.readDependenciesFile()
 	pkgr.AlreadyLoaded   = make(map[string]bool)
+	pkgr.Logger          = logger
 	pkgr.downloader      = mixerDownloader
 
 	pkgr.Mixer.Package           = new(tp.Package)
@@ -128,7 +130,7 @@ func NewFromCompiledMixer(mxr *tp.Mixer) *Packager {
 func NewDependencyOf(relSrcDir, libDir string, pkgr *Packager) *Packager {
 	// dependency resolution is cumulative, so their stuff should be appended to
 	// whatever has already been resolved
-	dep := New(relSrcDir, libDir, pkgr.downloader)
+	dep := New(relSrcDir, libDir, pkgr.Logger, pkgr.downloader)
 	dep.AlreadyLoaded           = pkgr.AlreadyLoaded
 	dep.TypeMap                 = pkgr.TypeMap
 	dep.SuperclassOf            = pkgr.SuperclassOf
@@ -252,22 +254,27 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		needed.NowVisiting[needed.GetName()] = false
 		// don't need to pass it back up because maps are shared, and extending
 		// them doesn't invalidate references to them (unlike slices)
+		pkgr.Logger.Info("  - built dependency `%s (%s)` from source", name, specifiedVersion)
 		return
 	}
 
+	// if a mixer src dir isn't found, try to grab a compiled version locally
 	mxr, mxErr := mixer.GetMixer(name, specifiedVersion)
 	if mxErr == nil {
 		foundCompiledMixer = true
 		needed := NewFromCompiledMixer(mxr)
 		pkgr.MergeCompiled(needed)
+		pkgr.Logger.Info("  - loaded dependency `%s (%s)` from local compiled mixer", name, specifiedVersion)
 		return
 	}
 
+	// otherwise, try to download a compiled version from apollo
 	mxr, mxErr = pkgr.downloader(name, specifiedVersion)
 	if mxErr == nil {
 		foundCompiledMixer = true
 		needed := NewFromCompiledMixer(mxr)
 		pkgr.MergeCompiled(needed)
+		pkgr.Logger.Info("  - loaded dependency `%s (%s)` from downloaded mixer", name, specifiedVersion)
 		return
 	}
 
