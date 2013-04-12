@@ -21,6 +21,8 @@ import (
 	// "golog"
 )
 
+type downloader func (string, string) (*tp.Mixer, error)
+
 type Packager struct {
 	MixerDir          string
 	LibDir            string
@@ -35,7 +37,7 @@ type Packager struct {
 	// Extensions        []string                  // type extensions in *this* mixer, not dependencies
 	// FunctionsWith     map[string][]*tp.Function // for each type, maintain a list of functions that use it
 	TypeList          []string
-	// Logger            *golog.Logger
+	downloader        downloader
 	*tp.Mixer
 }
 
@@ -48,7 +50,7 @@ const (
 	HTTP_TRANSFORMERS_SIGNATURE = ".http-transformers"
 )
 
-func New(relSrcDir, libDir string /*, logger *golog.Logger*/) *Packager {
+func New(relSrcDir, libDir string, mixerDownloader downloader) *Packager {
 	pkgr := new(Packager)
 
 	wd, wdErr := os.Getwd()
@@ -70,7 +72,7 @@ func New(relSrcDir, libDir string /*, logger *golog.Logger*/) *Packager {
 	pkgr.PackagerVersion = proto.Int32(PACKAGER_VERSION)
 	pkgr.readDependenciesFile()
 	pkgr.AlreadyLoaded   = make(map[string]bool)
-	// pkgr.Logger          = logger
+	pkgr.downloader      = mixerDownloader
 
 	pkgr.Mixer.Package           = new(tp.Package)
 	pkgr.Mixer.Package.Functions = make([]*tp.Function, 0)
@@ -126,7 +128,7 @@ func NewFromCompiledMixer(mxr *tp.Mixer) *Packager {
 func NewDependencyOf(relSrcDir, libDir string, pkgr *Packager) *Packager {
 	// dependency resolution is cumulative, so their stuff should be appended to
 	// whatever has already been resolved
-	dep := New(relSrcDir, libDir/*, pkgr.Logger*/)
+	dep := New(relSrcDir, libDir, pkgr.downloader)
 	dep.AlreadyLoaded           = pkgr.AlreadyLoaded
 	dep.TypeMap                 = pkgr.TypeMap
 	dep.SuperclassOf            = pkgr.SuperclassOf
@@ -260,18 +262,14 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		pkgr.MergeCompiled(needed)
 		return
 	}
-	// Couldn't find mixer locally, let's fetch it from apollo.
-	// s = houston.NewApolloSession(constants.VERSION, pkgr.Logger)
-	// dlErr := s.DownloadMixer(mixerName, mixerVersion, os.Stdout)
-	// if dlErr == nil {
-	// 	mxr, mxErr = mixer.GetMixer(mixerName, mixerVersion)
-	// 	if mxErr == nil {
-	// 		foundCompiledMixer = true
-	// 		needed := NewFromCompiledMixer(mxr)
-	// 		pkgr.MergeCompiled(needed)
-	// 		return
-	// 	}
-	// }
+
+	mxr, mxErr = pkgr.downloader(name, specifiedVersion)
+	if mxErr == nil {
+		foundCompiledMixer = true
+		needed := NewFromCompiledMixer(mxr)
+		pkgr.MergeCompiled(needed)
+		return
+	}
 
 	if foundMixerSrc || foundCompiledMixer {
 		panic(fmt.Sprintf("version %s needed for dependency `%s` of `%s`",
