@@ -73,6 +73,9 @@ func Generate(project *project.Project, mixer *tp.Mixer) (map[string][]byte, err
 	rewritersContainer := mixer
 	if mixer.GetPackagerVersion() > 0 {
 		rewritersContainer = project.HttpTransformers
+		if rewritersContainer == nil {
+			return nil, errors.New("Project does not contain any HTTP transformers.")
+		}
 	}
 
 	for _, segment := range segments {
@@ -100,9 +103,6 @@ func Generate(project *project.Project, mixer *tp.Mixer) (map[string][]byte, err
 
 func getRawTemplate(segmentName string, mixer *tp.Mixer) (rawTemplate []uint8, err error) {
 
-	if mixer == nil {
-		println("WHAT?!")
-	}
 	for _, segment := range mixer.Rewriters {
 		_, thisName := filepath.Split(null.GetString(segment.Path))
 		if thisName == segmentName {
