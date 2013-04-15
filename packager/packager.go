@@ -455,6 +455,12 @@ func (pkgr *Packager) resolveUserDefinition(f *tp.Function, path string) {
 }
 
 func (pkgr *Packager) MergeCompiled(dep *Packager) {
+	errMsg := "may not combine legacy mixer %s (%s) with other mixers"
+	if pkgr.GetPackagerVersion() == 0 {
+		panic(fmt.Sprintf(errMsg, pkgr.GetName(), pkgr.GetVersion()))
+	} else if dep.GetPackagerVersion() == 0 {
+		panic(fmt.Sprintf(errMsg, dep.GetName(), dep.GetVersion()))
+	}
 	pkgr.mergeAndRelocateTypes(dep)
 	pkgr.mergeAndRelocateCalls(dep)
 }
