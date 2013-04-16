@@ -1,8 +1,8 @@
 package whale
 
 import (
-	"encoding/json"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -829,7 +829,10 @@ func cdata_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	return
 }
 
-func inject_at_Position_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+// Fixes a bug in inject_at where if position is AFTER or TOP, the elements
+// are added in reverse order.
+func inject_at_v1_Position_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+
 	node := scope.Value.(xml.Node)
 	position := args[0].(Position)
 	input := args[1].(string)
@@ -841,9 +844,38 @@ func inject_at_Position_Text(ctx *EngineContext, scope *Scope, ins *tp.Instructi
 				MoveFunc(n, node, position)
 			}
 		} else {
-			for index := len(nodes)-1; index >= 0; index -- {
+			for index := len(nodes) - 1; index >= 0; index-- {
 				MoveFunc(nodes[index], node, position)
 			}
+		}
+	}
+	if len(nodes) > 0 {
+		first := nodes[0]
+		if first.NodeType() == xml.XML_ELEMENT_NODE {
+			// successfully ran scope
+			returnValue = "true"
+			ns := &Scope{Value: first}
+			for _, child := range ins.Children {
+				ctx.RunInstruction(ns, child)
+			}
+		}
+	} else {
+		returnValue = "false"
+	}
+	return
+}
+
+// Buggy, look at inject_at_v2 for fixed version.
+// kept for backwards compatibility.
+func inject_at_Position_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	position := args[0].(Position)
+	input := args[1].(string)
+
+	nodes, err := node.Coerce(input)
+	if err == nil {
+		for _, n := range nodes {
+			MoveFunc(n, node, position)
 		}
 	}
 	if len(nodes) > 0 {
@@ -1102,7 +1134,7 @@ func parse_headers_v1(ctx *EngineContext, scope *Scope, ins *tp.Instruction, arg
 
 	headersRegex := regexp.MustCompile(`(?m)^\S+?:\s?[^\n]+`)
 	// replace headers with result of eval'd instructions
-	newHttpStr := headersRegex.ReplaceAllStringFunc(httpStr, func (header string) string {
+	newHttpStr := headersRegex.ReplaceAllStringFunc(httpStr, func(header string) string {
 		ns := &Scope{Value: header}
 		for _, child := range ins.Children {
 			ctx.RunInstruction(ns, child)

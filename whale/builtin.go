@@ -74,6 +74,7 @@ func init() {
 	builtInFunctions["tritium.else"] = else_
 
 	builtInFunctions["tritium.inject_at.Position.Text"] = inject_at_Position_Text
+	builtInFunctions["tritium.inject_at_v1.Position.Text"] = inject_at_v1_Position_Text
 
 	builtInFunctions["tritium.not.Text"] = not_Text
 	builtInFunctions["tritium.not.Regexp"] = not_Regexp
