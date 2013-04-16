@@ -90,13 +90,36 @@ func (ctx *LinkingContext) Link() {
 	ctx.link(0, ctx.Pkg.GetTypeId("Text"))
 }
 
+// The next two functions are for linking the rewriter roots and imports separately,
+// in order to prevent the core rewriter functions from being hijacked by user
+// definitions. (Assumes that a rewriter has at most one import.)
+
+func (ctx *LinkingContext) LinkRoot() {
+	obj := ctx.Objects[0]
+	obj.ScopeTypeId = proto.Int(ctx.textType)
+	obj.Linked = proto.Bool(true)
+	path := obj.GetName()
+	ctx.files = append(ctx.files, path)
+	localScope := make(LocalDef, 0)
+	ctx.ProcessInstructionWithLocalScope(obj.Root, ctx.textType, localScope, "", path, true)
+	ctx.files = ctx.files[:len(ctx.files)-1]
+}
+
+func (ctx *LinkingContext) LinkRest() {
+	obj := ctx.Objects[1]
+	path := obj.GetName()
+	ctx.Visiting[path] = true
+	ctx.link(1, int(obj.GetScopeTypeId()))
+	ctx.Visiting[path] = false
+}
+
 func (ctx *LinkingContext) link(objId, scopeType int) {
 	obj := ctx.Objects[objId]
 	if null.GetBool(obj.Linked) == false {
 		obj.ScopeTypeId = proto.Int(scopeType)
 		obj.Linked = proto.Bool(true)
 		path := obj.GetName()
-		ctx.files = append(ctx.files, null.GetString(obj.Name))
+		ctx.files = append(ctx.files, path)
 		ctx.ProcessInstruction(obj.Root, scopeType, path)
 		ctx.files = ctx.files[:(len(ctx.files) - 1)]
 	} else {
@@ -108,10 +131,10 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 
 func (ctx *LinkingContext) ProcessInstruction(ins *tp.Instruction, scopeType int, path string) (returnType int) {
 	localScope := make(LocalDef, 0)
-	return ctx.ProcessInstructionWithLocalScope(ins, scopeType, localScope, "", path)
+	return ctx.ProcessInstructionWithLocalScope(ins, scopeType, localScope, "", path, false)
 }
 
-func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction, scopeType int, localScope LocalDef, caller string, path string) (returnType int) {
+func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction, scopeType int, localScope LocalDef, caller string, path string, justRoot bool) (returnType int) {
 	returnType = -1
 	ins.IsValid = proto.Bool(true)
 	switch *ins.Type {
@@ -126,14 +149,23 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		}
 		ctx.Visiting[importLocation] = true
 
-		importId, ok := ctx.objMap[null.GetString(ins.Value)]
+		importId, ok := ctx.objMap[importLocation]
 		if ok != true {
 			ctx.error(ins, "Invalid import `%s`", ins.String())
 		}
-		// Make sure this object is linked with the right scopeType
-		ctx.link(importId, scopeType)
-		// unset this after visiting an import
+		// if we're linking the whole tree, then recurse
+		if !justRoot {
+			// Make sure this object is linked with the right scopeType
+			ctx.link(importId, scopeType)
+
+		// otherwise just set the script object's scope type
+		} else {
+			ctx.Objects[importId].ScopeTypeId = proto.Int(scopeType)
+		}
+
+		// pop the import stack (for circular import detection)
 		ctx.Visiting[importLocation] = false
+
 		ins.ObjectId = proto.Int(importId)
 		ins.Value = nil
 	case tp.Instruction_LOCAL_VAR:
@@ -141,14 +173,14 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		if name == "1" || name == "2" || name == "3" || name == "4" || name == "5" || name == "6" || name == "7" {
 			if len(ins.Arguments) > 0 {
 				// We are going to assign something to this variable
-				returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path)
+				returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path, false)
 				if returnType != ctx.textType {
 					ctx.error(ins, "Numeric local vars can ONLY be Text")
 				}
 			}
 			if ins.Children != nil {
 				for _, child := range ins.Children {
-					ctx.ProcessInstructionWithLocalScope(child, ctx.textType, localScope, caller, path)
+					ctx.ProcessInstructionWithLocalScope(child, ctx.textType, localScope, caller, path, false)
 				}
 			}
 			returnType = ctx.textType
@@ -161,7 +193,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 				} else {
 					if ins.Children != nil {
 						for _, child := range ins.Children {
-							returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope, caller, path)
+							returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope, caller, path, false)
 						}
 					}
 				}
@@ -173,7 +205,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 					if ins.Children != nil {
 						ctx.error(ins, "May not open a scope during initialization of local variable \"%%%s\".", name)
 					}
-					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path)
+					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path, false)
 					localScope[name] = returnType
 				} else {
 					ctx.error(ins, "I've never seen the variable \"%%%s\" before! Please assign a value before usage.", name)
@@ -187,10 +219,11 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			ins.YieldTypeId = proto.Int32(int32(scopeType))
 		}
 		namespaces := ins.Namespaces()
+		ins.Namespace = nil
 		// process the args
 		if ins.Arguments != nil {
 			for _, arg := range ins.Arguments {
-				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope, caller, path)
+				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope, caller, path, false)
 				if argReturn == -1 {
 					ctx.error(ins, "Invalid argument object %q", arg.String())
 					return
@@ -267,7 +300,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 
 			if ins.Children != nil {
 				for _, child := range ins.Children {
-					ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope, stub, path) // thread the name of the caller through the linkages
+					ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope, stub, path, false) // thread the name of the caller through the linkages
 				}
 			}
 		}
@@ -276,7 +309,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 	case tp.Instruction_BLOCK:
 		if ins.Children != nil {
 			for _, child := range ins.Children {
-				returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope, caller, path)
+				returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope, caller, path, false)
 			}
 		}
 	}

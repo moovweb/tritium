@@ -74,7 +74,7 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string) {
 		//pkg.Log.Info("Some insitruction: %v, %s", fun.Instruction, null.GetString(fun.Name) )
 		scopeTypeId := int(null.GetInt32(fun.ScopeTypeId))
 		//pkg.Log.Info("\t\t -- opening scope type : %v\n", scopeTypeId)
-		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope, *fun.Name, path)
+		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope, *fun.Name, path, false)
 
 		if linkingContext.HasErrors() {
 			message := ""
