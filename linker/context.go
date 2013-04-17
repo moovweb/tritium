@@ -106,11 +106,13 @@ func (ctx *LinkingContext) LinkRoot() {
 }
 
 func (ctx *LinkingContext) LinkRest() {
-	obj := ctx.Objects[1]
-	path := obj.GetName()
-	ctx.Visiting[path] = true
-	ctx.link(1, int(obj.GetScopeTypeId()))
-	ctx.Visiting[path] = false
+	if len(ctx.Objects) > 1 {
+		obj := ctx.Objects[1]
+		path := obj.GetName()
+		ctx.Visiting[path] = true
+		ctx.link(1, int(obj.GetScopeTypeId()))
+		ctx.Visiting[path] = false
+	}
 }
 
 func (ctx *LinkingContext) link(objId, scopeType int) {
@@ -173,14 +175,14 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		if name == "1" || name == "2" || name == "3" || name == "4" || name == "5" || name == "6" || name == "7" {
 			if len(ins.Arguments) > 0 {
 				// We are going to assign something to this variable
-				returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path, false)
+				returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path, justRoot)
 				if returnType != ctx.textType {
 					ctx.error(ins, "Numeric local vars can ONLY be Text")
 				}
 			}
 			if ins.Children != nil {
 				for _, child := range ins.Children {
-					ctx.ProcessInstructionWithLocalScope(child, ctx.textType, localScope, caller, path, false)
+					ctx.ProcessInstructionWithLocalScope(child, ctx.textType, localScope, caller, path, justRoot)
 				}
 			}
 			returnType = ctx.textType
@@ -193,7 +195,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 				} else {
 					if ins.Children != nil {
 						for _, child := range ins.Children {
-							returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope, caller, path, false)
+							returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope, caller, path, justRoot)
 						}
 					}
 				}
@@ -205,7 +207,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 					if ins.Children != nil {
 						ctx.error(ins, "May not open a scope during initialization of local variable \"%%%s\".", name)
 					}
-					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path, false)
+					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path, justRoot)
 					localScope[name] = returnType
 				} else {
 					ctx.error(ins, "I've never seen the variable \"%%%s\" before! Please assign a value before usage.", name)
@@ -223,7 +225,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		// process the args
 		if ins.Arguments != nil {
 			for _, arg := range ins.Arguments {
-				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope, caller, path, false)
+				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope, caller, path, justRoot)
 				if argReturn == -1 {
 					ctx.error(ins, "Invalid argument object %q", arg.String())
 					return
@@ -300,7 +302,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 
 			if ins.Children != nil {
 				for _, child := range ins.Children {
-					ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope, stub, path, false) // thread the name of the caller through the linkages
+					ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope, stub, path, justRoot) // thread the name of the caller through the linkages
 				}
 			}
 		}
@@ -309,7 +311,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 	case tp.Instruction_BLOCK:
 		if ins.Children != nil {
 			for _, child := range ins.Children {
-				returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope, caller, path, false)
+				returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope, caller, path, justRoot)
 			}
 		}
 	}
