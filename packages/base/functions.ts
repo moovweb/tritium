@@ -557,3 +557,10 @@
     remove()
   }
 }
+@func Text.remove_header(Text %name) {
+  parse_headers() {
+    match(name(), regexp(%name, "i")) {
+      remove()
+    }
+  }
+}
