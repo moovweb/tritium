@@ -399,9 +399,12 @@
 # 
 # In the following example, we use the string "true" and turn it into a regular expression to use in a `match-with` statement. We are also accepting any combination of upper and lower case because of the `i` flag. If the string "true" is anywhere in the text we are matching, the code in the `with()` statement will run.
 # @example
-# with(regexp("true", "i")) {
-# # run this code if your text matches the string "true"
-# # the "i" indicates that the match is case insensitive
+# $var = "123456"
+# match($var, regexp("\\d{4}")) {
+#   log("My regular expression matched four digits in a row")
+# }
+# match($var, regexp("\\d{9}")) {
+#   log("My regular expression matched nine digits in a row")
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/regexp
