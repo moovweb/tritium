@@ -11,4 +11,5 @@ message ScriptObject {
 	repeated Function functions = 3;
 	optional int32 scope_type_id = 4;
 	optional bool linked = 5;
+  optional string module = 6;
 }

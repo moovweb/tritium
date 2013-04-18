@@ -1,12 +1,22 @@
 package proto
 
-import pb "code.google.com/p/goprotobuf/proto"
-import "butler/null"
+import (
+	"fmt"
+)
 
-func (fun *Function) Stub(pkg *Package) string {
-	name := null.GetString(fun.Name)
+import (
+	pb "code.google.com/p/goprotobuf/proto"
+	"butler/null"
+)
+
+func (f *Function) Stub(pkg *Package) string {
+	ns := f.GetNamespace()
+	if len(ns) == 0 {
+		ns = "tritium"
+	}
+	fname := fmt.Sprintf("%s.%s", ns, f.GetName())
 	args := ""
-	for _, arg := range fun.Args {
+	for _, arg := range f.Args {
 		argName := null.GetString(arg.TypeString)
 		if argName == "" {
 			t := pkg.Types[int(null.GetInt32(arg.TypeId))]
@@ -14,7 +24,7 @@ func (fun *Function) Stub(pkg *Package) string {
 		}
 		args = args + "," + argName
 	}
-	return name + args
+	return fname + args
 }
 
 // We need this for inherited function resolution. 

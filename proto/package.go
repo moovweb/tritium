@@ -46,3 +46,15 @@ func (pkg *Package) FindDescendantType(thisType int32) int {
 	}
 	return -1
 }
+
+// assumes that the ID of a given type will be >= to the IDs of its ancestors
+func (pkg *Package) AncestorOf(anc, dec int32) bool {
+	for dec >= anc {
+		if dec == anc {
+			return true
+		} else {
+			dec = pkg.Types[dec].GetImplements()
+		}
+	}
+	return false
+}

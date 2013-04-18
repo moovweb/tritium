@@ -660,3 +660,9 @@
 
 " Rewrite a link from upstream to proxy, where **%secure** is either 'true' or 'false' and **%catchall** is a catchall suffix. @example `rewrite_link(\"true\", \".moovapp.com\")` will rewrite secure links to include the catchall '.moovapp.com' at the end."
 @func Text.rewrite_link(Text %secure, Text %catchall) Text
+
+@func base64_v1(Text %method, Text %str) Text Text
+
+@func Text.parse_headers_v1() Text Header
+
+@func Header.header_comp_v1(Text %attr) Text Text

@@ -17,7 +17,7 @@
 # * Selecting items without being familiar with XPath
 # 
 # The following example selects every item with the `ID` "one".
-# [1]: #css(Text%20%selector)%20Text%20Text
+# [1]: #css(Text%20%25selector)%20Text%20Text
 # @example
 # $$("#one")
 # @exampletext Tritium Tester Example
@@ -225,7 +225,7 @@
 # In the `functions/main.ts` file, you can see the `sass` function being used in the `add_assets` function, which inserts a link to the main stylesheet.
 # *Related functions*: [asset(name)][1]
 # The following example will insert a `link` tag with an `href` pointing to the `assets/stylesheets/.css/main.css` file of the project.
-# [1]: #asset(Text%20%name)
+# [1]: #asset(Text%20%25name)
 # @example
 # insert("link", rel: "stylesheet", type: "text/css", href: sass("main")
 # @exampletext Tritium Tester Example
@@ -249,7 +249,7 @@
 # The function takes two arguments. The first is the `%name` of the attribute and the second is the `%value` for that attribute.
 # *Related functions*: [attribute(name, value)][1]
 # The following example will take the `a` tag and set an `href` attribute with the value `http://example.com`.
-# [1]: #XMLNode.attribute(Text%20%name,%20Text%20%value)
+# [1]: #XMLNode.attribute(Text%20%25name,%20Text%20%25value)
 # @example
 # $("./a") {
 #   set("href", "http://example.com")
@@ -823,7 +823,7 @@
 # @scope XMLNode
 # @args Text %pos,Text %tag,Text %content*
 # @description 
-# The `insert_at` function inserts a new node of type `%tag` into the document at the position `%pos` containing `%content`.
+# The `insert_at` function inserts a new node of type `%tag` into the document at the position `%pos` containing `%content`. The `%content` parameter is optional.
 # **Things to note**: the position (`%pos`) is relative to the current node.
 # There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, `insert_at("top", "div", "Hello, Tritium!", class: "one")` will add a class of "one" to the new `div` node.
 # ### Common use examples include:
@@ -873,13 +873,6 @@
 @func XMLNode.insert(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
     inner(%inner)
-    yield()
-  }
-}
-
-@func XMLNode.insert_at(Text %pos, Text %tag) {
-  insert_at(position(%pos), %tag) {
-    inner("")
     yield()
   }
 }

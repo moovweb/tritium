@@ -1,6 +1,10 @@
 package proto
 
 import (
+	"strings"
+)
+
+import (
 	"butler/null"
 	pb "code.google.com/p/goprotobuf/proto"
 )
@@ -124,4 +128,15 @@ func (instr *Instruction) ConcatList(more []*Instruction) {
 
 func (instr *Instruction) ConcatBlock(more *Instruction) {
 	instr.Append(more.Children...)
+}
+
+func (instr *Instruction) Namespaces() (nsList []string) {
+	ns := instr.GetNamespace()
+	if len(ns) == 0 {
+		nsList = make([]string, 1)
+		nsList[0] = "tritium"
+	} else {
+		nsList = strings.Split(ns, ",")
+	}
+	return
 }

@@ -108,7 +108,7 @@
 # * Selecting any HTML element in Tritium using XPath
 # 
 # The example below selects the `html` and `body`
-# [1]: #Node.$(Text%20%xpath)
+# [1]: #Node.$(Text%20%25xpath)
 # @example
 # select("/html/body") {
 #   remove()
@@ -291,6 +291,8 @@
 # @guidetext 
 # @guidelink 
 @func Node.inject_at(Position %pos, Text %html) Text
+
+@func Node.inject_at_v1(Position %pos, Text %html) Text
 
 " Replaces the current value with the one specified by %value - [click for example](http://console.moovweb.com/learn/training/function_guides/rename). @example `name() { set(\"div\") }`. "
 # @abstract Replaces the current interior of the node.

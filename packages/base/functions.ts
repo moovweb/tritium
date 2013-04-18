@@ -66,9 +66,9 @@
 # * Fixing malformed HTML before the document is parsed so your selectors work properly.
 # 
 # In the following example, we set a variable then try to match four digits in a row. When run, the first log message should be printed. Note that we escape the forward slash.
-# [1]: #match(Text%20%target,%20Regexp%20%comparitor)
-# [2]: #with(Text%20%text)%20Text
-# [3]: #not(Text%20%text)%20Text
+# [1]: #match(Text%20%25target,%20Regexp%20%25comparitor)
+# [2]: #with(Text%20%25text)%20Text
+# [3]: #not(Text%20%25text)%20Text
 # @example
 # $var = "123456"
 # match($var, regexp("\\d{4}")) {
@@ -139,10 +139,10 @@
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
 # 
 # In the following example, we match the `$path` variable to see if it matches the string `product`. Since it does, the log "Match successful!" will output to the terminal.
-# [1]: #with(Text%20%text)%20Text
+# [1]: #with(Text%20%25text)%20Text
 # [2]: #else()%20Text
-# [3]: #not(Text%20%text)%20Text
-# [4]: #match_not(Text%20%target,%20Text%20%comparitor)
+# [3]: #not(Text%20%25text)%20Text
+# [4]: #match_not(Text%20%25target,%20Text%20%25comparitor)
 # @example
 # $path = "product"
 # match($path, "product") {
@@ -177,10 +177,10 @@
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
 # 
 # In the following example, we match the `$path` variable to see if it matches the string `product`. Since it does, the log "Match successful!" will output to the terminal.
-# [1]: #with(Text%20%text)%20Text
+# [1]: #with(Text%20%25text)%20Text
 # [2]: #else()%20Text
-# [3]: #not(Text%20%text)%20Text
-# [4]: #match_not(Text%20%target,%20Text%20%comparitor)
+# [3]: #not(Text%20%25text)%20Text
+# [4]: #match_not(Text%20%25target,%20Text%20%25comparitor)
 # @example
 # $path = "product"
 # match($path, /product/) {
@@ -215,10 +215,10 @@
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
 # 
 # In the following example, we match the `$path` variable to see if it matches the string "price". Since it does not, the log "Match successful!" will output to your terminal.
-# [1]: #with(Text%20%text)%20Text
+# [1]: #with(Text%20%25text)%20Text
 # [2]: #else()%20Text
-# [3]: #not(Text%20%text)%20Text
-# [4]: #match(Text%20%target)%20Text
+# [3]: #not(Text%20%25text)%20Text
+# [4]: #match(Text%20%25target)%20Text
 # @example
 # $path = "product"
 # match_not($path, "price") {
@@ -253,10 +253,10 @@
 # * Matching the `$status`, `$content-type`, or other information from the incoming response headers.
 # 
 # In the following example, we match the `$path` variable to see if it matches the string "price". Since it does not, the log "Match successful!" will output to your terminal.
-# [1]: #with(Text%20%text)%20Text
+# [1]: #with(Text%20%25text)%20Text
 # [2]: #else()%20Text
-# [3]: #not(Text%20%text)%20Text
-# [4]: #match(Text%20%target)%20Text
+# [3]: #not(Text%20%25text)%20Text
+# [4]: #match(Text%20%25target)%20Text
 # @example
 # $path = "product"
 # match_not($path, /price/) {
@@ -453,4 +453,114 @@
 }
 @func Text.dump() {
   this()
+}
+
+# @abstract The `encode64` function encodes the specified string using a base64 encoder.
+# @name encode64
+# @category Text
+# @scope Global
+# @args Text %str
+# @description
+# The `encode64` function encodes the specified string using a base64 encoder.
+# 
+# In the following example, we encode `%password`.
+# @example
+# $encoded_password = encode64(%password)
+# @exampletext 
+# @examplelink 
+# @guidetext 
+# @guidelink 
+@func encode64(Text %str) {
+  base64_v1("encode", %str) {
+    yield()
+  }
+}
+
+# @abstract The `decode64` function decodes the specified string using a base64 decoder.
+# @name decode64
+# @category Text
+# @scope Global
+# @args Text %str
+# @description
+# The `decode64` function decodes the specified string using a base64 decoder.
+# 
+# In the following example, we decode `%encoded_password`.
+# @example
+# $decoded_password = decode64(%encoded_password)
+# @exampletext 
+# @examplelink 
+# @guidetext 
+# @guidelink 
+@func decode64(Text %str) {
+  base64_v1("decode", %str) {
+    yield()
+  }
+}
+
+@func Text.parse_headers() {
+  parse_headers_v1() {
+    yield()
+  }
+}
+
+@func Header.name() {
+  header_comp_v1("name") {
+    yield()
+  }
+}
+@func Header.value() {
+  header_comp_v1("value") {
+    yield()
+  }
+}
+@func Header.this() {
+  header_comp_v1("this") {
+    yield()
+  }
+}
+@func Header.name(Text %val) {
+  name() {
+    set(%val)
+    yield()
+  }
+}
+@func Header.value(Text %val) {
+  value() {
+    set(%val)
+    yield()
+  }
+}
+@func Header.this(Text %val) {
+  this() {
+    set(%val)
+    yield()
+  }
+}
+
+@func Text.parse_headers(Regexp %regex) {
+  parse_headers() {
+    match(this(), %regex) {
+      yield()
+    }
+  }
+}
+@func Header.remove() {
+  this("")
+}
+
+@func Text.add_header(Text %name, Text %value) {
+  append("\r\n" + %name + ": " + %value)
+}
+
+@func Text.remove_header(Regexp %regex) {
+  parse_headers(%regex) {
+    remove()
+  }
+}
+@func Text.remove_header(Text %name) {
+  parse_headers() {
+    match(name(), regexp(%name, "i")) {
+      remove()
+    }
+  }
 }

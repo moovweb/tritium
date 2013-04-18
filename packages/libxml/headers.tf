@@ -14,7 +14,7 @@
 # * Selecting items without being familiar with XPath
 # 
 # The example below will remove any element on the page with an `id` of "one".
-# [1]: #XMLNode.$$(Text%20%css_selector)
+# [1]: #XMLNode.$$(Text%20%25css_selector)
 # @example
 # css("#one") {
 #   remove()
@@ -147,7 +147,7 @@
 # * Opening the inner scope to replace contents
 # 
 # The following example will open the scope of the current `div` and replace everything with "NEW".
-# [1]: #XMLNode.inner()%20Text%20Text
+# [1]: #XMLNode.inner(Text%20%25html)
 # @example
 # $("./div") {
 #   inner() {

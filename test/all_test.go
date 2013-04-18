@@ -10,10 +10,26 @@ func TestLibXML(t *testing.T) {
 	RunTestSuite("packages/libxml", t)
 }
 
+func TestURL(t *testing.T) {
+	RunTestSuite("packages/url", t)
+}
+
+func TestJsonLib(t *testing.T) {
+	RunTestSuite("packages/json", t)
+}
+
 func BenchmarkBase(b *testing.B) {
 	RunBenchmarkSuite("packages/base", b)
 }
 
 func BenchmarkLibXML(b *testing.B) {
 	RunBenchmarkSuite("packages/libxml", b)
+}
+
+func BenchmarkURL(b *testing.B) {
+	RunBenchmarkSuite("packages/url", b)
+}
+
+func BenchmarkJsonLib(b *testing.B) {
+	RunBenchmarkSuite("packages/json", b)
 }
