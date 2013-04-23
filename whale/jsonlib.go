@@ -54,9 +54,12 @@ func json_to_node(jsonVal interface{}, jsonDoc *xml.XmlDocument) xml.Node  {
   return div
 }
 
-// Converting XML nodes back to JSON (version 2; goes with the preceding json_to_node function)
+// Converting XML nodes back to JSON (goes with the preceding json_to_node function)
 
 func node_to_json(node xml.Node) interface{} {
+	if node == nil {
+		return nil
+	}
 	if node.Attribute("data-json-null") != nil {
 		return nil
 	}
@@ -69,7 +72,7 @@ func node_to_json(node xml.Node) interface{} {
 	if node.Attribute("data-json-number") != nil {
 		f, err := strconv.ParseFloat(node.Content(), 64)
 		if err != nil {
-			// something
+			return nil
 		}
 		return f
 	}
@@ -95,7 +98,7 @@ func node_to_json(node xml.Node) interface{} {
 		}
 		return hash
 	}
-	// signal an error if we reach this point
+	// TODO: log a debugging message
 	return nil
 }
 

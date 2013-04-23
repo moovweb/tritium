@@ -381,29 +381,40 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, a
 }
 
 func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	// unmarshal the json
 	jsonSrc := scope.Value.(string)
 	var jsonVal interface{}
 	err := json.Unmarshal([]byte(jsonSrc), &jsonVal)
 	if err != nil {
 		// invalid JSON -- log an error message and keep going
 		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json_decoding err: %s", err.Error())
-		returnValue = "false"
+		returnValue = "null"
 		return
 	}
+
+	// convert to an xml doc and run the supplied block on it
 	newDoc := xml.CreateEmptyDocument(nil, nil)
 	ctx.AddMemoryObject(newDoc)
-	json_to_node(jsonVal, newDoc)
-	newScope := &Scope{Value: newDoc}
+	jsonNodes := json_to_node(jsonVal, newDoc)
+	newScope := &Scope{Value: jsonNodes}
 	for _, childInstr := range ins.Children {
 		ctx.RunInstruction(newScope, childInstr)
 	}
-	returnValue = "true" // maybe convert back to json src?
+
+	// returnValue = jsonNodes.String()
+
+	// convert back to native Go data structures and re-marshal
+	jsonVal = node_to_json(jsonNodes)
+	jsonOut, err := json.MarshalIndent(jsonVal, "", "  ")
+	if err != nil {
+		// invalid JSON -- log an error message and keep going
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json_encoding err: %s", err.Error())
+		returnValue = "null"
+		return
+	}
+	returnValue = string(jsonOut)
 	return
 }
-
-// func to_json_v2_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
-// 	// bah, do this later
-// }
 
 func to_json_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
