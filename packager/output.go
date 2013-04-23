@@ -96,5 +96,5 @@ func (pkg *Package) Merge(otherPackage *tp.Package) {
 
 	otherName := null.GetString(otherPackage.Name)
 	pkg.Dependencies = append(pkg.Dependencies, otherName)
-	pkg.Log.Info("Added dependency (" + otherName + ") to " + null.GetString(pkg.Name) + "'s loaded dependencies")
+	pkg.Log.Infof("Added dependency (" + otherName + ") to " + null.GetString(pkg.Name) + "'s loaded dependencies")
 }
