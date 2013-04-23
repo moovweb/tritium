@@ -380,6 +380,31 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, a
 	return
 }
 
+func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	jsonSrc := scope.Value.(string)
+	var jsonVal interface{}
+	err := json.Unmarshal([]byte(jsonSrc), &jsonVal)
+	if err != nil {
+		// invalid JSON -- log an error message and keep going
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json_decoding err: %s", err.Error())
+		returnValue = "false"
+		return
+	}
+	newDoc := xml.CreateEmptyDocument(nil, nil)
+	ctx.AddMemoryObject(newDoc)
+	json_to_node(jsonVal, newDoc)
+	newScope := &Scope{Value: newDoc}
+	for _, childInstr := range ins.Children {
+		ctx.RunInstruction(newScope, childInstr)
+	}
+	returnValue = "true" // maybe convert back to json src?
+	return
+}
+
+// func to_json_v2_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+// 	// bah, do this later
+// }
+
 func to_json_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	xpathStr := args[0].(string)
