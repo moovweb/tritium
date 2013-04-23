@@ -11,12 +11,12 @@ import (
 	xmlhelp "gokogiri/help"
 	"golog"
 	"runtime/debug"
+	"steno/dummy"
 	"time"
 	"tritium"
 	"tritium/packager/legacy"
 	tp "tritium/proto"
 	"tritium/whale"
-	"steno/dummy"
 )
 
 func All(command string, directory string, options ...string) {
@@ -30,7 +30,7 @@ func All(command string, directory string, options ...string) {
 
 	logger := golog.NewLogger("tritium")
 	debugger := &dummy.DummyDebugger{}
-	
+
 	logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO, true))
 	var eng tritium.Engine
 	if command == "test" {
@@ -111,9 +111,9 @@ func RunSpec(dir string, pkg *tp.Package, eng tritium.Engine, logger *golog.Logg
 		if x := recover(); x != nil {
 			err, ok := x.(error)
 			if ok {
-				logger.Error(dir + " === " + err.Error() + "\n\n" + string(debug.Stack()))
+				logger.Errorf(dir + " === " + err.Error() + "\n\n" + string(debug.Stack()))
 			} else {
-				logger.Error(dir + " === " + x.(string) + "\n\n" + string(debug.Stack()))
+				logger.Errorf(dir + " === " + x.(string) + "\n\n" + string(debug.Stack()))
 			}
 		}
 		print(result.CharStatus())
