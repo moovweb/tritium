@@ -12,46 +12,45 @@ import (
 
 // Converting JSON to XML nodes
 
-func json_to_node(jsonVal interface{}, jsonDoc *xml.XmlDocument) xml.Node  {
-	div := jsonDoc.CreateElementNode("div")
+func json_to_node(jsonVal interface{}, jsonDoc *xml.XmlDocument) (jsonNode xml.Node)  {
   switch jsonVal.(type) {
   case nil:
-  	// generates <div data-json-null></div>
-    div.SetAttr("data-json-null", "")
+  	// generates <null />
+    jsonNode = jsonDoc.CreateElementNode("null")
   case bool:
-  	// generates <div data-json-true></div> or <div data-json-false></div>
-    if jsonVal == true {
-    	div.SetAttr("data-json-true", "")
+  	// generates <true /> or <false />
+    if jsonVal == false {
+    	jsonNode = jsonDoc.CreateElementNode("false")
     } else {
-    	div.SetAttr("data-json-false", "")
+    	jsonNode = jsonDoc.CreateElementNode("true")
     }
   case float64:
-  	// generates <div data-json-number>[num]</div>
-    div.SetAttr("data-json-number", "")
-    div.SetContent(fmt.Sprintf("%v", jsonVal.(float64)))
+  	// generates <number>[digits]</number>
+    jsonNode = jsonDoc.CreateElementNode("number")
+    jsonNode.SetContent(fmt.Sprintf("%v", jsonVal.(float64)))
   case string:
-  	// generates <div data-json-string>[str]</div>
-    div.SetAttr("data-json-string", "")
-    div.SetContent(jsonVal.(string))
+  	// generates <string>[chars]</string>
+    jsonNode = jsonDoc.CreateElementNode("string")
+    jsonNode.SetContent(jsonVal.(string))
   case []interface{}:
-  	// generates <div data-json-array>[json nodes]...</div>
-    div.SetAttr("data-json-array", "")
+  	// generates <array>[json nodes]...</array>
+    jsonNode = jsonDoc.CreateElementNode("array")
     for _, elem := range jsonVal.([]interface{}) {
       elemNode := json_to_node(elem, jsonDoc)
-      div.AddChild(elemNode) // maybe use MoveFunc?
+      jsonNode.AddChild(elemNode)
     }
   case map[string]interface{}:
-  	// generates <div data-json-object><div data-json-name="key1">[json node]</div>...</div>
-    div.SetAttr("data-json-object", "")
+  	// generates <object><member name="key1">[json node]</member>...</object>
+    jsonNode = jsonDoc.CreateElementNode("object")
     for name, value := range jsonVal.(map[string]interface{}) {
-      pairNode := jsonDoc.CreateElementNode("div")
-      pairNode.SetAttr("data-json-name", name)
+      memberNode := jsonDoc.CreateElementNode("member")
+      memberNode.SetAttr("name", name)
       valueNode := json_to_node(value, jsonDoc)
-      pairNode.AddChild(valueNode)
-      div.AddChild(pairNode)
+      memberNode.AddChild(valueNode)
+      jsonNode.AddChild(memberNode)
     }
   }
-  return div
+  return
 }
 
 // Converting XML nodes back to JSON (goes with the preceding json_to_node function)
@@ -60,46 +59,40 @@ func node_to_json(node xml.Node) interface{} {
 	if node == nil {
 		return nil
 	}
-	if node.Attribute("data-json-null") != nil {
-		return nil
-	}
-	if node.Attribute("data-json-false") != nil {
-		return false
-	}
-	if node.Attribute("data-json-true") != nil {
-		return true
-	}
-	if node.Attribute("data-json-number") != nil {
-		f, err := strconv.ParseFloat(node.Content(), 64)
-		if err != nil {
-			return nil
-		}
-		return f
-	}
-	if node.Attribute("data-json-string") != nil {
-		return node.Content()
-	}
-	if node.Attribute("data-json-array") != nil {
-		length := node.CountChildren()
-		array, i := make([]interface{}, length), 0
-		for elem := node.FirstChild(); elem != nil; elem = elem.NextSibling() {
-			array[i] = node_to_json(elem)
-			i++
-		}
-		return array
-	}
-	if node.Attribute("data-json-object") != nil {
-		hash := make(map[string]interface{})
-		for pair := node.FirstChild(); pair != nil; pair = pair.NextSibling() {
-			if pair.Attribute("data-json-name") == nil {
-				continue // just skip nodes that aren't key-value pairs
-			}
-			hash[pair.Attr("data-json-name")] = node_to_json(pair.FirstChild())
-		}
-		return hash
-	}
-	// TODO: log a debugging message
-	return nil
+  switch node.Name() {
+  case "null":
+    return nil
+  case "false":
+    return false
+  case "true":
+    return true
+  case "number":
+    f, err := strconv.ParseFloat(node.Content(), 64)
+    if err != nil {
+      return nil
+    }
+    return f
+  case "string":
+    return node.Content()
+  case "array":
+    length := node.CountChildren()
+    array := make([]interface{}, length)
+    for elem, i := node.FirstChild(), 0; elem != nil; elem, i = elem.NextSibling(), i+1 {
+      array[i] = node_to_json(elem)
+    }
+    return array
+  case "object":
+    object := make(map[string]interface{})
+    for member := node.FirstChild(); member != nil; member = member.NextSibling() {
+      if member.Attribute("name") == nil {
+        continue // just skip nodes that aren't name-value pairs
+      }
+      object[member.Attr("name")] = node_to_json(member.FirstChild())
+    }
+    return object
+  }
+  // TODO: log a debugging message if we get to this point
+  return nil
 }
 
 

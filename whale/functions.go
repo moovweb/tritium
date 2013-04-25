@@ -396,15 +396,16 @@ func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args 
 	newDoc := xml.CreateEmptyDocument(nil, nil)
 	ctx.AddMemoryObject(newDoc)
 	jsonNodes := json_to_node(jsonVal, newDoc)
-	newScope := &Scope{Value: jsonNodes}
+	// put the jsonNodes under a new root node to get the xpath searches to be correctly scoped
+	jsonRoot := newDoc.CreateElementNode("json")
+	jsonRoot.AddChild(jsonNodes)
+	newScope := &Scope{Value: jsonRoot}
 	for _, childInstr := range ins.Children {
 		ctx.RunInstruction(newScope, childInstr)
 	}
 
-	// returnValue = jsonNodes.String()
-
 	// convert back to native Go data structures and re-marshal
-	jsonVal = node_to_json(jsonNodes)
+	jsonVal = node_to_json(jsonRoot.FirstChild())
 	jsonOut, err := json.MarshalIndent(jsonVal, "", "  ")
 	if err != nil {
 		// invalid JSON -- log an error message and keep going
