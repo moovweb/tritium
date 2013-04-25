@@ -414,7 +414,7 @@ func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args 
 		return
 	}
 	scope.Value = string(jsonOut)
-	returnValue = "true"
+	returnValue = string(jsonOut)
 	return
 }
 
