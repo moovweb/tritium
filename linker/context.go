@@ -221,7 +221,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			ins.YieldTypeId = proto.Int32(int32(scopeType))
 		}
 		namespaces := ins.Namespaces()
-		ins.Namespace = nil
+		// ins.Namespace = nil // need to figure out where to do this step
 		// process the args
 		if ins.Arguments != nil {
 			for _, arg := range ins.Arguments {
