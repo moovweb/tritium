@@ -240,7 +240,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 			pkgr.NowVisiting[pkgr.GetName()] = true
 		}
 		if pkgr.NowVisiting[needed.GetName()] {
-			panic(fmt.Sprintf("circular dependency on %s", needed.GetName()))
+			panic(fmt.Sprintf("circular dependency on `%s`", needed.GetName()))
 		}
 		// pass the dependency stack downwards ...
 		needed.NowVisiting = pkgr.NowVisiting
@@ -254,7 +254,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		needed.NowVisiting[needed.GetName()] = false
 		// don't need to pass it back up because maps are shared, and extending
 		// them doesn't invalidate references to them (unlike slices)
-		pkgr.Logger.Infof("  - built dependency `%s (%s)` from source", name, specifiedVersion)
+		pkgr.Logger.Infof("  - built dependency `%s` (%s) from source", name, specifiedVersion)
 		return
 	}
 
@@ -264,7 +264,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		foundCompiledMixer = true
 		needed := NewFromCompiledMixer(mxr)
 		pkgr.MergeCompiled(needed)
-		pkgr.Logger.Infof("  - loaded dependency `%s (%s)` from local compiled mixer", name, specifiedVersion)
+		pkgr.Logger.Infof("  - loaded dependency `%s` (%s) from local compiled mixer", name, specifiedVersion)
 		return
 	}
 
@@ -274,7 +274,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		foundCompiledMixer = true
 		needed := NewFromCompiledMixer(mxr)
 		pkgr.MergeCompiled(needed)
-		pkgr.Logger.Infof("  - loaded dependency `%s (%s)` from downloaded mixer", name, specifiedVersion)
+		pkgr.Logger.Infof("  - loaded dependency `%s` (%s) from downloaded mixer", name, specifiedVersion)
 		return
 	}
 
