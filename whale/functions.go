@@ -388,7 +388,7 @@ func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args 
 	if err != nil {
 		// invalid JSON -- log an error message and keep going
 		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json_decoding err: %s", err.Error())
-		returnValue = "false"
+		returnValue = "null"
 		return
 	}
 

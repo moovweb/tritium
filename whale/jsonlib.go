@@ -84,7 +84,8 @@ func node_to_json(node xml.Node) interface{} {
   case "object":
     object := make(map[string]interface{})
     for member := node.FirstChild(); member != nil; member = member.NextSibling() {
-      if member.Attribute("name") == nil {
+      if member.Name() != "member" || member.Attribute("name") == nil {
+        // TODO: log a debugging message here
         continue // just skip nodes that aren't name-value pairs
       }
       object[member.Attr("name")] = node_to_json(member.FirstChild())
