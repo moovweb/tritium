@@ -63,11 +63,13 @@ func New(relSrcDir, libDir string, logger *golog.Logger, mixerDownloader downloa
 	if absErr != nil {
 		panic("unable to absolutize mixer source directory for mixer creation")
 	}
+	absSrcDir = filepath.Clean(absSrcDir)
 
 	pkgr.MixerDir        = absSrcDir
 	pkgr.LibDir          = libDir
-	pkgr.IncludePaths    = make([]string, 1)
+	pkgr.IncludePaths    = make([]string, 2) // support more in the future as a command-line option
 	pkgr.IncludePaths[0] = wd
+	pkgr.IncludePaths[1] = filepath.Dir(absSrcDir)
 
 	pkgr.Mixer           = tp.NewMixer(absSrcDir)
 	pkgr.PackagerVersion = proto.Int32(PACKAGER_VERSION)
