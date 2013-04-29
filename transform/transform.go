@@ -2,7 +2,7 @@ package transform
 
 import (
 	"tritium/linker"
-	"tritium/packager"
+	"tritium/packager/legacy"
 	tp "tritium/proto"
 )
 
@@ -11,5 +11,5 @@ func CompileString(data , projectPath, scriptPath, fileName string, pkg *tp.Pack
 }
 
 func LoadFunctions(projectPath, functionsPath, functionsFile string, pack *tp.Package) {
-	packager.ReadPackageDefinitions(pack, projectPath, functionsPath, functionsFile)
+	legacy.ReadPackageDefinitions(pack, projectPath, functionsPath, functionsFile)
 }

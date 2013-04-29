@@ -739,7 +739,7 @@ func (p *Parser) definition() *tp.Function {
 
 	if isSignature {
 		if p.peek().Lexeme == LBRACE {
-			p.error("body not permitted in signature for " + funcName)
+			p.error("body not permitted in signature for built-in " + funcName)
 		}
 		node.BuiltIn = proto.Bool(true)
 		return node

@@ -1,4 +1,4 @@
-package packager
+package legacy
 
 import (
 	proto "code.google.com/p/goprotobuf/proto"

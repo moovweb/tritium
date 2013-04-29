@@ -380,6 +380,44 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, a
 	return
 }
 
+func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	// unmarshal the json
+	jsonSrc := scope.Value.(string)
+	var jsonVal interface{}
+	err := json.Unmarshal([]byte(jsonSrc), &jsonVal)
+	if err != nil {
+		// invalid JSON -- log an error message and keep going
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json_decoding err: %s", err.Error())
+		returnValue = "null"
+		return
+	}
+
+	// convert to an xml doc and run the supplied block on it
+	newDoc := xml.CreateEmptyDocument(nil, nil)
+	ctx.AddMemoryObject(newDoc)
+	jsonNodes := json_to_node(jsonVal, newDoc)
+	// put the jsonNodes under a new root node to get the xpath searches to be correctly scoped
+	jsonRoot := newDoc.CreateElementNode("json")
+	jsonRoot.AddChild(jsonNodes)
+	newScope := &Scope{Value: jsonRoot}
+	for _, childInstr := range ins.Children {
+		ctx.RunInstruction(newScope, childInstr)
+	}
+
+	// convert back to native Go data structures and re-marshal
+	jsonVal = node_to_json(jsonRoot.FirstChild())
+	jsonOut, err := json.MarshalIndent(jsonVal, "", "  ")
+	if err != nil {
+		// invalid JSON -- log an error message and keep going
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json_encoding err: %s", err.Error())
+		returnValue = "null"
+		return
+	}
+	scope.Value = string(jsonOut)
+	returnValue = string(jsonOut)
+	return
+}
+
 func to_json_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	xpathStr := args[0].(string)

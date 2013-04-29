@@ -14,11 +14,13 @@ var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Mixer struct {
-	Name             *string  `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
-	Version          *string  `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
-	Rewriters        []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
-	Package          *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	Name              *string  `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
+	Version           *string  `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
+	Rewriters         []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
+	Package           *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
+	PackagerVersion   *int32   `protobuf:"varint,5,opt,name=packager_version" json:"packager_version,omitempty"`
+	IsHttpTransformer *bool    `protobuf:"varint,6,opt,name=is_http_transformer" json:"is_http_transformer,omitempty"`
+	XXX_unrecognized  []byte   `json:"-"`
 }
 
 func (this *Mixer) Reset()         { *this = Mixer{} }
@@ -44,6 +46,60 @@ func (this *Mixer) GetPackage() *Package {
 		return this.Package
 	}
 	return nil
+}
+
+func (this *Mixer) GetPackagerVersion() int32 {
+	if this != nil && this.PackagerVersion != nil {
+		return *this.PackagerVersion
+	}
+	return 0
+}
+
+func (this *Mixer) GetIsHttpTransformer() bool {
+	if this != nil && this.IsHttpTransformer != nil {
+		return *this.IsHttpTransformer
+	}
+	return false
+}
+
+type SubmixerInfo struct {
+	Name             *string `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
+	Version          *string `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
+	Offset           *int32  `protobuf:"varint,3,req,name=offset" json:"offset,omitempty"`
+	Length           *int32  `protobuf:"varint,4,req,name=length" json:"length,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (this *SubmixerInfo) Reset()         { *this = SubmixerInfo{} }
+func (this *SubmixerInfo) String() string { return proto1.CompactTextString(this) }
+func (*SubmixerInfo) ProtoMessage()       {}
+
+func (this *SubmixerInfo) GetName() string {
+	if this != nil && this.Name != nil {
+		return *this.Name
+	}
+	return ""
+}
+
+func (this *SubmixerInfo) GetVersion() string {
+	if this != nil && this.Version != nil {
+		return *this.Version
+	}
+	return ""
+}
+
+func (this *SubmixerInfo) GetOffset() int32 {
+	if this != nil && this.Offset != nil {
+		return *this.Offset
+	}
+	return 0
+}
+
+func (this *SubmixerInfo) GetLength() int32 {
+	if this != nil && this.Length != nil {
+		return *this.Length
+	}
+	return 0
 }
 
 func init() {

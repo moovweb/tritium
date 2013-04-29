@@ -157,44 +157,49 @@ func (t *Tokenizer) discardComment() {
 }
 
 // Helper for discarding block comments.
-// TO DO: ERROR HANDLING FOR UNTERMINATED COMMENTS
 func (t *Tokenizer) discardBlockComment() {
-	depth, i, length := 1, 2, len(t.Source)
-	error := false
-	for depth > 0 {
-		if i >= length {
-			error = true
-			break
-		}
-		switch t.Source[i] {
-		case '\n':
-			t.LineNumber++
-		case '/':
-			i++
-			if i >= length {
-				error = true
-				break
-			}
-			if t.Source[i] == '*' {
-				depth++
-			}
-		case '*':
-			i++
-			if i >= length {
-				error = true
-				break
-			}
-			if t.Source[i] == '/' {
-				depth--
-			}
-		}
-		i++
-	}
-	t.Source = t.Source[i:]
-	if error {
+	terminator := bytes.Index(t.Source, []byte("*/"))
+	if terminator == -1 {
 		t.Lookahead = &Token{Lexeme: ERROR, Value: "unterminated comment", ExtraValue: "", LineNumber: t.LineNumber}
 		t.unterminatedComment = true
 	}
+	t.Source = t.Source[terminator+2:]
+	// depth, i, length := 1, 2, len(t.Source)
+	// error := false
+	// for depth > 0 {
+	// 	if i >= length {
+	// 		error = true
+	// 		break
+	// 	}
+	// 	switch t.Source[i] {
+	// 	case '\n':
+	// 		t.LineNumber++
+	// 	case '/':
+	// 		i++
+	// 		if i >= length {
+	// 			error = true
+	// 			break
+	// 		}
+	// 		if t.Source[i] == '*' {
+	// 			depth++
+	// 		}
+	// 	case '*':
+	// 		i++
+	// 		if i >= length {
+	// 			error = true
+	// 			break
+	// 		}
+	// 		if t.Source[i] == '/' {
+	// 			depth--
+	// 		}
+	// 	}
+	// 	i++
+	// }
+	// t.Source = t.Source[i:]
+	// if error {
+	// 	t.Lookahead = &Token{Lexeme: ERROR, Value: "unterminated comment", ExtraValue: "", LineNumber: t.LineNumber}
+	// 	t.unterminatedComment = true
+	// }
 }
 
 // Discard all leading whitespace and comments from the source text. Need to

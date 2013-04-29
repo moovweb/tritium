@@ -70,8 +70,16 @@ func Generate(project *project.Project, mixer *tp.Mixer) (map[string][]byte, err
 
 	renderedSegments := make(map[string][]byte, 4)
 
+	rewritersContainer := mixer
+	// if mixer.GetPackagerVersion() > 0 {
+	// 	rewritersContainer = project.HttpTransformers
+	// 	if rewritersContainer == nil {
+	// 		return nil, errors.New("Project does not contain any HTTP transformers.")
+	// 	}
+	// }
+
 	for _, segment := range segments {
-		rawTemplate, err := getRawTemplate(segment, mixer)
+		rawTemplate, err := getRawTemplate(segment, rewritersContainer)
 
 		if err != nil {
 			panic(err)
