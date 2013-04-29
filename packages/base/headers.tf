@@ -647,6 +647,30 @@
 @func Text.append(Text %text_to_append) Text
 
 " Captures all instances of the regular expression **%search**. "
+# @abstract The `capture` function grabs all instances of the regular expression specified.
+# @name capture
+# @category Modify,Text
+# @scope Text
+# @args Regexp %search
+# @description 
+# The `capture` function is used to grab a specific block of text, which is matched via a regular expression.
+# ### Common Uses
+# * Grabbing specific items from a string of text
+# * Separating out capture groups in a regular expression
+# 
+# In this example, the capture function will grab any string of 8 characters and log it the terminal.
+# @example
+  $$("#my_div") {
+    text() {
+      capture(/(\w{8})/) {
+        log("Words with more than 8 letters: " + %1)
+      }
+    }
+  }
+# @exampletext Tritium Tester Example
+# @examplelink test/examples/text/capture
+# @guidetext 
+# @guidelink 
 @func Text.capture(Regexp %search) Text Text
 
 " Rewrite a host/referer/origin from proxy to upstream "
