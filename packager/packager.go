@@ -28,6 +28,7 @@ type Packager struct {
 	LibDir            string
 	IncludePaths      []string
 	IsHttpTransformer bool
+	MayBuildHttpTransformers bool
 	Dependencies      map[string]string
 	AlreadyLoaded     map[string]bool           // to avoid redundant loading of dependencies
 	NowVisiting       map[string]bool           // to prevent circular dependencies
@@ -51,7 +52,7 @@ const (
 	HTTP_TRANSFORMERS_SIGNATURE = ".http-transformers"
 )
 
-func New(relSrcDir, libDir string, logger *golog.Logger, mixerDownloader downloader) *Packager {
+func New(relSrcDir, libDir string, mayBuildHttpTransformers bool, logger *golog.Logger, mixerDownloader downloader) *Packager {
 	pkgr := new(Packager)
 
 	wd, wdErr := os.Getwd()
@@ -81,10 +82,13 @@ func New(relSrcDir, libDir string, logger *golog.Logger, mixerDownloader downloa
 	pkgr.Mixer.Package           = new(tp.Package)
 	pkgr.Mixer.Package.Functions = make([]*tp.Function, 0)
 
-	// TODO: need a real way to sign our special sauce
+	pkgr.MayBuildHttpTransformers = mayBuildHttpTransformers
 	tSigThere, _ := fileutil.Exists(filepath.Join(pkgr.MixerDir, HTTP_TRANSFORMERS_SIGNATURE))
 	if tSigThere {
 		pkgr.IsHttpTransformer = true
+		if !pkgr.MayBuildHttpTransformers {
+			panic("you are not authorized to build HTTP transformer mixers")
+		}
 	}
 
 	return pkgr
@@ -132,7 +136,7 @@ func NewFromCompiledMixer(mxr *tp.Mixer) *Packager {
 func NewDependencyOf(relSrcDir, libDir string, pkgr *Packager) *Packager {
 	// dependency resolution is cumulative, so their stuff should be appended to
 	// whatever has already been resolved
-	dep := New(relSrcDir, libDir, pkgr.Logger, pkgr.downloader)
+	dep := New(relSrcDir, libDir, pkgr.MayBuildHttpTransformers, pkgr.Logger, pkgr.downloader)
 	dep.AlreadyLoaded           = pkgr.AlreadyLoaded
 	dep.TypeMap                 = pkgr.TypeMap
 	dep.SuperclassOf            = pkgr.SuperclassOf
@@ -291,7 +295,7 @@ func (pkgr *Packager) resolveTypeDeclarations() {
 	var typeDecs []string
 
 	// see whether a type declarations file exists; if so, read it
-	typeFilePath := filepath.Join(pkgr.MixerDir, pkgr.LibDir, TYPES_FILE)		
+	typeFilePath := filepath.Join(pkgr.MixerDir, pkgr.LibDir, TYPES_FILE)
 	there, _ := fileutil.Exists(typeFilePath)
 	if !there {
 		return
@@ -341,7 +345,7 @@ func (pkgr *Packager) resolveTypeDeclarations() {
 			}
 			// check for conflicts with previous declarations
 			// (and incidentally ensure that subtypes always have a higher id than their supertypes
-			extendee, subHasAlreadyExtended := pkgr.SuperclassOf[sub]				
+			extendee, subHasAlreadyExtended := pkgr.SuperclassOf[sub]
 			if subHasAlreadyExtended /* && extendee != super */ {
 				var previousDec string
 				if extendee == "" {
