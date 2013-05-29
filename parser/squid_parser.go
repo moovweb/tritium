@@ -169,7 +169,7 @@ func (p *Parser) open(dup bool) {
 func (p *Parser) Parse() *tp.ScriptObject {
 	script := new(tp.ScriptObject)
 	// script.Name = proto.String(p.FullPath)
-	
+
 	if !p.RootFile || TritiumParserShowRewriterFileName {
 		script.Name = proto.String(filepath.Join(p.ScriptPath, p.FileName))
 	} else {
@@ -427,6 +427,9 @@ func (p *Parser) read() (node *tp.Instruction) {
 			p.error("second argument to `read` must be a literal string")
 		}
 		readDir = p.pop().Value
+		if filepath.IsAbs(readDir) {
+			panic(fmt.Sprintf("%s:%d -- second argument to `read` must be a relative path", p.FileName, readLineNo))
+		}
 	}
 	if p.peek().Lexeme != RPAREN {
 		p.error("unterminated argument list in read")
@@ -739,7 +742,7 @@ func (p *Parser) definition() *tp.Function {
 
 	if isSignature {
 		if p.peek().Lexeme == LBRACE {
-			p.error("body not permitted in signature for " + funcName)
+			p.error("body not permitted in signature for built-in " + funcName)
 		}
 		node.BuiltIn = proto.Bool(true)
 		return node

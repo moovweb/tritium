@@ -99,6 +99,7 @@ func init() {
 	builtInFunctions["tritium.remove_param_v1.Text"] = remove_param_v1_Text
 
 	builtInFunctions["tritium.to_json_v1.Text"] = to_json_v1_Text
+	builtInFunctions["tritium.json_to_xml_v1"] = json_to_xml_v1
 
 	builtInFunctions["tritium.base64_v1.Text.Text"] = base64_v1_Text_Text
 

@@ -1,4 +1,4 @@
-package packager
+package legacy
 
 import (
 	"fmt"
@@ -22,8 +22,8 @@ import (
 func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string) {
 	linkingContext := linker.NewLinkingContext(pkg)
 
-	//	pkg.Log.Info("\t -- Resolving --\n")
-	//	pkg.Log.Info("\t\t -- function: %v\n", fun)
+	//	pkg.Log.Infof("\t -- Resolving --\n")
+	//	pkg.Log.Infof("\t\t -- function: %v\n", fun)
 
 	// Re-uses linker's logic to resolve function definitions
 	if null.GetBool(fun.BuiltIn) == false {
@@ -71,10 +71,10 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string) {
 			localScope[null.GetString(arg.Name)] = argTypeId
 		}
 
-		//pkg.Log.Info("Some insitruction: %v, %s", fun.Instruction, null.GetString(fun.Name) )
+		//pkg.Log.Infof("Some insitruction: %v, %s", fun.Instruction, null.GetString(fun.Name) )
 		scopeTypeId := int(null.GetInt32(fun.ScopeTypeId))
-		//pkg.Log.Info("\t\t -- opening scope type : %v\n", scopeTypeId)
-		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope, *fun.Name, path)
+		//pkg.Log.Infof("\t\t -- opening scope type : %v\n", scopeTypeId)
+		returnType := linkingContext.ProcessInstructionWithLocalScope(fun.Instruction, scopeTypeId, localScope, *fun.Name, path, false)
 
 		if linkingContext.HasErrors() {
 			message := ""
@@ -96,11 +96,16 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string) {
 		}
 
 	}
-	//pkg.Log.Info("\t\t -- done --\n")
+	//pkg.Log.Infof("\t\t -- done --\n")
+}
+
+// export so it can be re-used by the new packager
+func ResolveDefinition(pkg *tp.Package, fn *tp.Function, path string) {
+	resolveDefinition(pkg, fn, path)
 }
 
 func (pkg *Package) inheritFunctions() {
-	pkg.Log.Info("pkg types: %v", pkg.Types)
+	pkg.Log.Infof("pkg types: %v", pkg.Types)
 	for _, function := range pkg.Functions {
 		pkg.resolveFunctionDescendants(function)
 	}
@@ -113,8 +118,8 @@ func (pkg *Package) inheritFunctions() {
 func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 	// Check if this function contains any types that have descendants
-	name := fun.Stub(pkg.Package)
-	pkg.Log.Info("Checking for inheritance on function: %v", name)
+	// name := fun.Stub(pkg.Package)
+	// pkg.Log.Infof("Checking for inheritance on function: %v", name)
 
 	newFun := &tp.Function{}
 	inherit := false
@@ -128,12 +133,12 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 	if newType != -1 {
 		if !inherit {
-			pkg.Log.Info("\t -- ScopeType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
+			// pkg.Log.Infof("\t -- ScopeType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
 			newFun = fun.Clone()
-			// pkg.Log.Info("\t -- New fun: %v", newFun)
+			// pkg.Log.Infof("\t -- New fun: %v", newFun)
 			inherit = true
 		}
-		pkg.Log.Info("\t -- Resetting scopeId")
+		// pkg.Log.Infof("\t -- Resetting scopeId")
 		newFun.ScopeTypeId = proto.Int32(int32(newType))
 	}
 
@@ -144,12 +149,12 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 	if newType != -1 {
 		if !inherit {
-			pkg.Log.Info("\t -- ReturnType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
+			// pkg.Log.Infof("\t -- ReturnType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
 			newFun = fun.Clone()
-			// pkg.Log.Info("\t -- New fun: %v", newFun)
+			// pkg.Log.Infof("\t -- New fun: %v", newFun)
 			inherit = true
 		}
-		pkg.Log.Info("\t -- Resetting returnId")
+		// pkg.Log.Infof("\t -- Resetting returnId")
 		newFun.ReturnTypeId = proto.Int32(int32(newType))
 	}
 
@@ -161,12 +166,12 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 	if newType != -1 {
 
 		if !inherit {
-			pkg.Log.Info("\t -- OpensType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
+			// pkg.Log.Infof("\t -- OpensType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
 			newFun = fun.Clone()
-			// pkg.Log.Info("\t -- New fun: %v", newFun)
+			// pkg.Log.Infof("\t -- New fun: %v", newFun)
 			inherit = true
 		}
-		pkg.Log.Info("\t -- Resetting openTypeId")
+		// pkg.Log.Infof("\t -- Resetting openTypeId")
 		newFun.OpensTypeId = proto.Int32(int32(newType))
 	}
 
@@ -179,25 +184,30 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 		if newType != -1 {
 
 			if !inherit {
-				pkg.Log.Info("\t -- ArgType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
+				// pkg.Log.Infof("\t -- ArgType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
 				newFun = fun.Clone()
-				// pkg.Log.Info("\t -- New fun: %v", newFun)
+				// pkg.Log.Infof("\t -- New fun: %v", newFun)
 				inherit = true
 			}
-			pkg.Log.Info("\t -- Resetting argument")
+			// pkg.Log.Infof("\t -- Resetting argument")
 			newFun.Args[index].TypeId = proto.Int32(int32(newType))
 		}
 
 	}
 
-	pkg.Log.Info("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
+	// pkg.Log.Infof("\t -- Old function: %v\n\t -- New function: %v\n", fun, newFun)
 
 	if inherit {
 		resolveDefinition(pkg.Package, newFun, "")
 		pkg.Package.Functions = append(pkg.Package.Functions, newFun)
-
+		// println("replicated", pkg.Package.GetTypeName(newFun.GetScopeTypeId()), newFun.Stub(pkg.Package))
 	}
 
+}
+
+// oy, gotta export this one too
+func (pkg *Package) ResolveFunctionDescendants(fn *tp.Function) {
+	pkg.resolveFunctionDescendants(fn)
 }
 
 func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName string) {
@@ -206,7 +216,7 @@ func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName s
 	//()("READING DEFINITIONS:", location)
 
 	if err != nil {
-		//pkg.Log.Info("\t -- no user defined functions found")
+		//pkg.Log.Infof("\t -- no user defined functions found")
 		// msg := fmt.Sprintf("unable to open function definition file: %s", location)
 		// println(msg)
 		// panic(msg)
@@ -245,7 +255,7 @@ func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName s
 			}
 			ReadPackageDefinitions(pkg, projectPath, filepath.Dir(importPath), filepath.Base(importPath))
 		} else { // otherwise if it's not an import stub ...
-			//pkg.Log.Info("\t -- function: %v", function)
+			//pkg.Log.Infof("\t -- function: %v", function)
 			resolveDefinition(pkg, function, filepath.Join(scriptPath, fileName))
 
 			// After resolving a user-defined function, see if its fully resolved signature
@@ -307,7 +317,7 @@ func (pkg *Package) loadPackageDependency(name string) *Error {
 func (pkg *Package) loadedDependency(name string) bool {
 	for _, dependency := range pkg.Dependencies {
 		if name == dependency {
-			pkg.Log.Info("Already loaded dependency:" + name)
+			pkg.Log.Infof("Already loaded dependency:" + name)
 			return true
 		}
 	}
@@ -334,7 +344,7 @@ func (pkg *Package) readHeaderFile(location string) {
 	input_file := filepath.Join(location, "headers.tf")
 
 	if _, err := os.Open(input_file); err != nil {
-		pkg.Log.Info("Warning -- found no headers.tf")
+		pkg.Log.Infof("Warning -- found no headers.tf")
 		return
 	}
 

@@ -120,3 +120,13 @@ func (m *Mixer) packageSummary(printFunctions bool) string {
 	}
 	return summary
 }
+
+func (mxr *Mixer) Clone() *Mixer {
+	bytes, err := pb.Marshal(mxr)
+	if err != nil {
+		panic("internal error: unable to copy mixer " + mxr.GetName())
+	}
+	copy := new(Mixer)
+	pb.Unmarshal(bytes, copy)
+	return copy
+}

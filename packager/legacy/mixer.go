@@ -1,4 +1,4 @@
-package packager
+package legacy
 
 // TODO(SJ): add hooks to check features here
 import (

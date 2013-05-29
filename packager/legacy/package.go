@@ -1,4 +1,4 @@
-package packager
+package legacy
 
 import (
 	proto "code.google.com/p/goprotobuf/proto"
@@ -178,7 +178,7 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 	// println("LOAD FROM PATH", loadPath)
 	fullName := loadPath + ":" + name
 	pkg.Println(fullName)
-	pkg.Log.Info("\n\n\n\nLoading:%v", fullName)
+	pkg.Log.Infof("\n\n\n\nLoading:%v", fullName)
 
 	loaded := pkg.loadedDependency(name)
 	if loaded {
