@@ -284,7 +284,6 @@
 # The `clear` function is used to remove text from inside a text scope.
 # *Related functions*: [remove()][1]
 # ### Common Uses
-# * Clearing extra white space inside nodes
 # * Clearing text links to turn them into icons
 # 
 # In the following example, we simply clear any existing text inside the node with an ID of `my_div`.
