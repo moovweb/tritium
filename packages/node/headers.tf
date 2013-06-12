@@ -21,10 +21,10 @@
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/index
 # @guidetext How indexing items works.
-# @guidelink http://console.moovweb.com/learn/training/function_guides/index_func
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/index_func
 @func index(Node %node) Text
 
-" Selects an element to pass it to a function - [click for example](http://console.moovweb.com/learn/training/function_guides/fetch). @example Given `<div>Dog</div>`, `$(\"./div\") { $var = fetch(text()) }` will set 'var' to be 'Dog'. "
+" Selects an element to pass it to a function - [click for example](http://console.moovweb.com/learn/tutorials/function_guides/fetch). @example Given `<div>Dog</div>`, `$(\"./div\") { $var = fetch(text()) }` will set 'var' to be 'Dog'. "
 # @abstract Retrieves information from the node specified.
 # @name fetch
 # @category Misc
@@ -45,7 +45,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/fetch
 # @guidetext Using fetch.
-# @guidelink http://console.moovweb.com/learn/training/function_guides/fetch
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/fetch
 @func Node.fetch(Text %selector) Text Text
 
 " Returns the current node. "
@@ -145,7 +145,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/text
 # @guidetext The two main uses of text.
-# @guidelink http://console.moovweb.com/learn/training/function_guides/text
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/text
 @func Node.text() Text Text
 
 " Moves the first node (**%what**) to the second node (**%where**), at a specified position (**%pos**). "
@@ -194,7 +194,7 @@
 # @guidelink 
 @func Node.dup() Node Node
 
-" Opens a scope to rename the current node - [click for example](http://console.moovweb.com/learn/training/function_guides/rename). @example `name() { set(\"div\") }` renames the current node to 'div'. "
+" Opens a scope to rename the current node - [click for example](http://console.moovweb.com/learn/tutorials/function_guides/rename). @example `name() { set(\"div\") }` renames the current node to 'div'. "
 # @abstract Opens a scope to rename the current node.
 # @name name
 # @category Modify
@@ -215,10 +215,10 @@
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/node/name
 # @guidetext Uses for the name function.
-# @guidelink http://console.moovweb.com/learn/training/function_guides/rename
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/rename
 @func Node.name() Text Text
 
-" Removes the current node from the tree - [click for example](http://console.moovweb.com/learn/training/function_guides/removing). @example `$(\"//table\") { remove() }` will remove all the tables from the HTML. "
+" Removes the current node from the tree - [click for example](http://console.moovweb.com/learn/tutorials/function_guides/removing). @example `$(\"//table\") { remove() }` will remove all the tables from the HTML. "
 # @abstract Removes the current node from the tree.
 # @name remove
 # @category Modify
@@ -238,7 +238,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/remove
 # @guidetext Discussion of the remove function.
-# @guidelink http://console.moovweb.com/learn/training/function_guides/removing
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/removing
 @func Node.remove() Text Node
 
 " Returns the XPath of the current node. @example From any node, using `log(path())` will return the path to the node in the logs. "
@@ -264,14 +264,14 @@
 # @guidelink 
 @func Node.path() Text Text
 
-//" Injects HTML (specified by **%html**) into the current node - [click for example](http://console.moovweb.com/learn/training/function_guides/inject). @example `inject(\"<div>New Div</div>\")` will insert your new HTML into the current node."
+//" Injects HTML (specified by **%html**) into the current node - [click for example](http://console.moovweb.com/learn/tutorials/function_guides/inject). @example `inject(\"<div>New Div</div>\")` will insert your new HTML into the current node."
 //@func Node.inject(Text %html) Text
 
 " Creates a new node (specified by **%tag_name**) and inserts it at the location specified by **%pos**. @example `insert_at(\"top\", \"div\")` inserts a div at the top of the current node. "
 # @hide
 @func Node.insert_at(Position %pos, Text %tag_name) Text
 
-" Injects HTML (specified by **%html**) into the current node at the location specified by **%pos** - [click for example](http://console.moovweb.com/learn/training/function_guides/inject). @example `inject_at(\"top\", read(\"file.html\"))` injects the file specified at the top of the current node."
+" Injects HTML (specified by **%html**) into the current node at the location specified by **%pos** - [click for example](http://console.moovweb.com/learn/tutorials/function_guides/inject). @example `inject_at(\"top\", read(\"file.html\"))` injects the file specified at the top of the current node."
 # @abstract Injects HTML into the current node at the position specified.
 # @name inject_at
 # @category Create
@@ -294,7 +294,7 @@
 
 @func Node.inject_at_v1(Position %pos, Text %html) Text
 
-" Replaces the current value with the one specified by %value - [click for example](http://console.moovweb.com/learn/training/function_guides/rename). @example `name() { set(\"div\") }`. "
+" Replaces the current value with the one specified by %value - [click for example](http://console.moovweb.com/learn/tutorials/function_guides/rename). @example `name() { set(\"div\") }`. "
 # @abstract Replaces the current interior of the node.
 # @name set
 # @category Modify
@@ -314,5 +314,5 @@
 # @exampletext Tritium Tester Example
 # @examplelink ../../libxml/test/examples/set
 # @guidetext An example also using the name function.
-# @guidelink http://console.moovweb.com/learn/training/function_guides/rename
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/rename
 @func Node.set(Text %value) Text

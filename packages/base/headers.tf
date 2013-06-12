@@ -68,7 +68,7 @@
 # @guidelink 
 @func time() Text
 
-" Specifies a target (specified by **%target**) to be searched. To be used in conjunction with `with()` - [click for example](http://console.moovweb.com/learn/training/function_guides/match). @example `match($path) { with(/product/) }` will match the path of the url to see if the regular expression 'product' matches."
+" Specifies a target (specified by **%target**) to be searched. To be used in conjunction with `with()` - [click for example](http://console.moovweb.com/learn/tutorials/function_guides/match). @example `match($path) { with(/product/) }` will match the path of the url to see if the regular expression 'product' matches."
 # @abstract The `match` function is used for logic to check against the content of strings and variables.
 # @name match
 # @category Environment,Text
@@ -97,7 +97,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/match
 # @guidetext Function Guide
-# @guidelink http://console.moovweb.com/learn/training/function_guides/match
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/match
 @func match(Text %match_target) Text
 
 " Writes out a string (**%log_message**) to the console and debug log. @example `log(\"Importing home-page\")`. "
@@ -119,7 +119,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/log
 # @guidetext Function Guide
-# @guidelink http://console.moovweb.com/learn/training/function_guides/log
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/log
 @func log(Text %log_message) Text Text
 
 " Returns the warning **%message** when a function is deprecated. Mostly useful when defining functions. @example `@func XMLNode.old() { deprecated(\"WARNING! This function has been deprecated\") }` will print out a server log message whenever the function is used. "
@@ -148,7 +148,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/not
 # @guidetext Function Guide
-# @guidelink http://console.moovweb.com/learn/training/function_guides/match
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/match
 @func not(Text %text) Text
 
 " Used with `match()` as an opposite of `with()`. @example `match($var) { not(/hi/) }` will check that the '$var' is not set to 'hi'. "
@@ -174,7 +174,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/not
 # @guidetext Function Guide
-# @guidelink http://console.moovweb.com/learn/training/function_guides/match
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/match
 @func not(Regexp %regexp) Text
 
 " Used with `match()`. Allows the match function to specify what is being matched. @example `match($path) { with(\"product\") }` will check the path of the url matches 'product'."
@@ -203,7 +203,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/with
 # @guidetext Function Guide
-# @guidelink http://console.moovweb.com/learn/training/function_guides/match
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/match
 @func with(Text %text) Text
 
 " Used with `match()`. Allows the match function to specify what is being matched. @example `match($path) { with(/product/) }` will check the path of the url matches the regular expression 'product'."
@@ -232,7 +232,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/with
 # @guidetext Function Guide
-# @guidelink http://console.moovweb.com/learn/training/function_guides/match
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/match
 @func with(Regexp %regexp) Text
 
 " Convert from one encoding to another. (If you want a list of encodings, you can run `iconv -l` on your command line.) @example `text() { convert_encoding(\"gbk\", \"utf-8\") }` will convert the text from gbk to utf-8."
@@ -332,7 +332,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/else
 # @guidetext Function Guide
-# @guidelink http://console.moovweb.com/learn/training/function_guides/match
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/match
 @func else() Text
 
 " Only used within functions - enables functions within the scope of the current function to be performed. @example To learn more, check out [our helpdesk post on how yield works](http://help.moovweb.com/entries/21633781-what-does-the-yield-function-do)."
@@ -409,10 +409,10 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/regexp
 # @guidetext Replacing Text With Regexp
-# @guidelink  http://console.moovweb.com/learn/training/function_guides/replace
+# @guidelink  http://console.moovweb.com/learn/tutorials/function_guides/replace
 @func regexp(Text %expression, Text %options) Regexp Text
 
-" Concatenates two (or more) strings. - [click for example](http://console.moovweb.com/learn/training/function_guides/concat)@example `concat(\"dog\", \"cat\")` is equivalent to `\"dog\" + \"cat\"`. "
+" Concatenates two (or more) strings. - [click for example](http://console.moovweb.com/learn/tutorials/function_guides/concat)@example `concat(\"dog\", \"cat\")` is equivalent to `\"dog\" + \"cat\"`. "
 # @abstract The `concat` function is used to concatenate two or more strings.
 # @name concat
 # @category Text
@@ -435,7 +435,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/concat
 # @guidetext Function Guide
-# @guidelink  http://console.moovweb.com/learn/training/function_guides/concat
+# @guidelink  http://console.moovweb.com/learn/tutorials/function_guides/concat
 @func concat(Text %a, Text %b) Text Text
 
 " This is a the way that we have Tritium communicate variables back to its execution environment. @example `export(\"Content-Type\", \"application/js\")` changes the content-type. "
@@ -460,7 +460,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/export
 # @guidetext Useful Environment Variables
-# @guidelink http://console.moovweb.com/learn/reference/configuration/index#Environment+Variables
+# @guidelink http://console.moovweb.com/learn/docs/configuration/index#Environment+Variables
 @func export(Text %key_name) Text Text
 
 " Returns **%input_string** in all caps. @example `upcase(\"dog\")` will return 'DOG'. "
@@ -538,7 +538,7 @@
 # @guidelink 
 @func Text.set(Text %value) Text
 
-" Replaces all instances of the regular expression **%search**. This yields to a Text scope that allows you to set the replacement string using `set()` - [click for example](http://console.moovweb.com/learn/training/function_guides/replace). @example `replace(/bad/) { set(\"good\") }`."
+" Replaces all instances of the regular expression **%search**. This yields to a Text scope that allows you to set the replacement string using `set()` - [click for example](http://console.moovweb.com/learn/tutorials/function_guides/replace). @example `replace(/bad/) { set(\"good\") }`."
 # @abstract Opens a scope to all instances of the regular expression provided that you can then replace using the `set()` function.
 # @name replace
 # @category Modify,Text
@@ -564,10 +564,10 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/replace
 # @guidetext Function Guide
-# @guidelink http://console.moovweb.com/learn/training/function_guides/replace
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/replace
 @func Text.replace(Regexp %search) Text Text
 
-" Replaces all instances of the text **%search**. This yields to a Text scope that allows you to set the replacement string using `set()` - [click for example](http://console.moovweb.com/learn/training/function_guides/replace). @example `replace(\"bad\") { set(\"good\") }`."
+" Replaces all instances of the text **%search**. This yields to a Text scope that allows you to set the replacement string using `set()` - [click for example](http://console.moovweb.com/learn/tutorials/function_guides/replace). @example `replace(\"bad\") { set(\"good\") }`."
 # @abstract Opens a scope to all instances of the regular expression provided that you can then `replace` using the `set()` function.
 # @name replace
 # @category Modify,Text
@@ -593,7 +593,7 @@
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/replace
 # @guidetext Function Guide
-# @guidelink http://console.moovweb.com/learn/training/function_guides/replace
+# @guidelink http://console.moovweb.com/learn/tutorials/function_guides/replace
 @func Text.replace(Text %search) Text Text
 
 " Adds **%text_to_prepend** to the beginning of the text. @example Given `<div>Dog</div>`, `$(\"./div\") { text() { prepend(\"Super-\") } }` will change the text to 'Super-Dog'."
