@@ -1,0 +1,6 @@
+package proto;
+
+message CustomPath {
+	required string origin = 1;
+	required string target = 2;
+}

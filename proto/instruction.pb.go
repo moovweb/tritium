@@ -79,69 +79,83 @@ type Instruction struct {
 	XXX_unrecognized []byte                       `json:"-"`
 }
 
-func (this *Instruction) Reset()         { *this = Instruction{} }
-func (this *Instruction) String() string { return proto1.CompactTextString(this) }
-func (*Instruction) ProtoMessage()       {}
+func (m *Instruction) Reset()         { *m = Instruction{} }
+func (m *Instruction) String() string { return proto1.CompactTextString(m) }
+func (*Instruction) ProtoMessage()    {}
 
-func (this *Instruction) GetType() Instruction_InstructionType {
-	if this != nil && this.Type != nil {
-		return *this.Type
+func (m *Instruction) GetType() Instruction_InstructionType {
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
 	return 0
 }
 
-func (this *Instruction) GetValue() string {
-	if this != nil && this.Value != nil {
-		return *this.Value
+func (m *Instruction) GetValue() string {
+	if m != nil && m.Value != nil {
+		return *m.Value
 	}
 	return ""
 }
 
-func (this *Instruction) GetObjectId() int32 {
-	if this != nil && this.ObjectId != nil {
-		return *this.ObjectId
+func (m *Instruction) GetObjectId() int32 {
+	if m != nil && m.ObjectId != nil {
+		return *m.ObjectId
 	}
 	return 0
 }
 
-func (this *Instruction) GetFunctionId() int32 {
-	if this != nil && this.FunctionId != nil {
-		return *this.FunctionId
+func (m *Instruction) GetChildren() []*Instruction {
+	if m != nil {
+		return m.Children
+	}
+	return nil
+}
+
+func (m *Instruction) GetArguments() []*Instruction {
+	if m != nil {
+		return m.Arguments
+	}
+	return nil
+}
+
+func (m *Instruction) GetFunctionId() int32 {
+	if m != nil && m.FunctionId != nil {
+		return *m.FunctionId
 	}
 	return 0
 }
 
-func (this *Instruction) GetLineNumber() int32 {
-	if this != nil && this.LineNumber != nil {
-		return *this.LineNumber
+func (m *Instruction) GetLineNumber() int32 {
+	if m != nil && m.LineNumber != nil {
+		return *m.LineNumber
 	}
 	return 0
 }
 
-func (this *Instruction) GetYieldTypeId() int32 {
-	if this != nil && this.YieldTypeId != nil {
-		return *this.YieldTypeId
+func (m *Instruction) GetYieldTypeId() int32 {
+	if m != nil && m.YieldTypeId != nil {
+		return *m.YieldTypeId
 	}
 	return 0
 }
 
-func (this *Instruction) GetIsValid() bool {
-	if this != nil && this.IsValid != nil {
-		return *this.IsValid
+func (m *Instruction) GetIsValid() bool {
+	if m != nil && m.IsValid != nil {
+		return *m.IsValid
 	}
 	return false
 }
 
-func (this *Instruction) GetNamespace() string {
-	if this != nil && this.Namespace != nil {
-		return *this.Namespace
+func (m *Instruction) GetNamespace() string {
+	if m != nil && m.Namespace != nil {
+		return *m.Namespace
 	}
 	return ""
 }
 
-func (this *Instruction) GetTypeQualifier() string {
-	if this != nil && this.TypeQualifier != nil {
-		return *this.TypeQualifier
+func (m *Instruction) GetTypeQualifier() string {
+	if m != nil && m.TypeQualifier != nil {
+		return *m.TypeQualifier
 	}
 	return ""
 }

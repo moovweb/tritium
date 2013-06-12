@@ -19,13 +19,20 @@ type Transform struct {
 	XXX_unrecognized []byte          `json:"-"`
 }
 
-func (this *Transform) Reset()         { *this = Transform{} }
-func (this *Transform) String() string { return proto1.CompactTextString(this) }
-func (*Transform) ProtoMessage()       {}
+func (m *Transform) Reset()         { *m = Transform{} }
+func (m *Transform) String() string { return proto1.CompactTextString(m) }
+func (*Transform) ProtoMessage()    {}
 
-func (this *Transform) GetPkg() *Package {
-	if this != nil {
-		return this.Pkg
+func (m *Transform) GetObjects() []*ScriptObject {
+	if m != nil {
+		return m.Objects
+	}
+	return nil
+}
+
+func (m *Transform) GetPkg() *Package {
+	if m != nil {
+		return m.Pkg
 	}
 	return nil
 }

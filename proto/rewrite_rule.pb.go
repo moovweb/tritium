@@ -60,36 +60,36 @@ type RewriteRule struct {
 	XXX_unrecognized []byte                     `json:"-"`
 }
 
-func (this *RewriteRule) Reset()         { *this = RewriteRule{} }
-func (this *RewriteRule) String() string { return proto1.CompactTextString(this) }
-func (*RewriteRule) ProtoMessage()       {}
+func (m *RewriteRule) Reset()         { *m = RewriteRule{} }
+func (m *RewriteRule) String() string { return proto1.CompactTextString(m) }
+func (*RewriteRule) ProtoMessage()    {}
 
 const Default_RewriteRule_Direction RewriteRule_RuleDirection = RewriteRule_BIDIRECTIONAL
 
-func (this *RewriteRule) GetProxy() string {
-	if this != nil && this.Proxy != nil {
-		return *this.Proxy
+func (m *RewriteRule) GetProxy() string {
+	if m != nil && m.Proxy != nil {
+		return *m.Proxy
 	}
 	return ""
 }
 
-func (this *RewriteRule) GetUpstream() string {
-	if this != nil && this.Upstream != nil {
-		return *this.Upstream
+func (m *RewriteRule) GetUpstream() string {
+	if m != nil && m.Upstream != nil {
+		return *m.Upstream
 	}
 	return ""
 }
 
-func (this *RewriteRule) GetDirection() RewriteRule_RuleDirection {
-	if this != nil && this.Direction != nil {
-		return *this.Direction
+func (m *RewriteRule) GetDirection() RewriteRule_RuleDirection {
+	if m != nil && m.Direction != nil {
+		return *m.Direction
 	}
 	return Default_RewriteRule_Direction
 }
 
-func (this *RewriteRule) GetCookieDomain() string {
-	if this != nil && this.CookieDomain != nil {
-		return *this.CookieDomain
+func (m *RewriteRule) GetCookieDomain() string {
+	if m != nil && m.CookieDomain != nil {
+		return *m.CookieDomain
 	}
 	return ""
 }

@@ -23,41 +23,48 @@ type Mixer struct {
 	XXX_unrecognized  []byte   `json:"-"`
 }
 
-func (this *Mixer) Reset()         { *this = Mixer{} }
-func (this *Mixer) String() string { return proto1.CompactTextString(this) }
-func (*Mixer) ProtoMessage()       {}
+func (m *Mixer) Reset()         { *m = Mixer{} }
+func (m *Mixer) String() string { return proto1.CompactTextString(m) }
+func (*Mixer) ProtoMessage()    {}
 
-func (this *Mixer) GetName() string {
-	if this != nil && this.Name != nil {
-		return *this.Name
+func (m *Mixer) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
-func (this *Mixer) GetVersion() string {
-	if this != nil && this.Version != nil {
-		return *this.Version
+func (m *Mixer) GetVersion() string {
+	if m != nil && m.Version != nil {
+		return *m.Version
 	}
 	return ""
 }
 
-func (this *Mixer) GetPackage() *Package {
-	if this != nil {
-		return this.Package
+func (m *Mixer) GetRewriters() []*File {
+	if m != nil {
+		return m.Rewriters
 	}
 	return nil
 }
 
-func (this *Mixer) GetPackagerVersion() int32 {
-	if this != nil && this.PackagerVersion != nil {
-		return *this.PackagerVersion
+func (m *Mixer) GetPackage() *Package {
+	if m != nil {
+		return m.Package
+	}
+	return nil
+}
+
+func (m *Mixer) GetPackagerVersion() int32 {
+	if m != nil && m.PackagerVersion != nil {
+		return *m.PackagerVersion
 	}
 	return 0
 }
 
-func (this *Mixer) GetIsHttpTransformer() bool {
-	if this != nil && this.IsHttpTransformer != nil {
-		return *this.IsHttpTransformer
+func (m *Mixer) GetIsHttpTransformer() bool {
+	if m != nil && m.IsHttpTransformer != nil {
+		return *m.IsHttpTransformer
 	}
 	return false
 }
@@ -70,34 +77,34 @@ type SubmixerInfo struct {
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (this *SubmixerInfo) Reset()         { *this = SubmixerInfo{} }
-func (this *SubmixerInfo) String() string { return proto1.CompactTextString(this) }
-func (*SubmixerInfo) ProtoMessage()       {}
+func (m *SubmixerInfo) Reset()         { *m = SubmixerInfo{} }
+func (m *SubmixerInfo) String() string { return proto1.CompactTextString(m) }
+func (*SubmixerInfo) ProtoMessage()    {}
 
-func (this *SubmixerInfo) GetName() string {
-	if this != nil && this.Name != nil {
-		return *this.Name
+func (m *SubmixerInfo) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
-func (this *SubmixerInfo) GetVersion() string {
-	if this != nil && this.Version != nil {
-		return *this.Version
+func (m *SubmixerInfo) GetVersion() string {
+	if m != nil && m.Version != nil {
+		return *m.Version
 	}
 	return ""
 }
 
-func (this *SubmixerInfo) GetOffset() int32 {
-	if this != nil && this.Offset != nil {
-		return *this.Offset
+func (m *SubmixerInfo) GetOffset() int32 {
+	if m != nil && m.Offset != nil {
+		return *m.Offset
 	}
 	return 0
 }
 
-func (this *SubmixerInfo) GetLength() int32 {
-	if this != nil && this.Length != nil {
-		return *this.Length
+func (m *SubmixerInfo) GetLength() int32 {
+	if m != nil && m.Length != nil {
+		return *m.Length
 	}
 	return 0
 }

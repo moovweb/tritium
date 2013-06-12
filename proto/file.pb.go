@@ -19,20 +19,20 @@ type File struct {
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (this *File) Reset()         { *this = File{} }
-func (this *File) String() string { return proto1.CompactTextString(this) }
-func (*File) ProtoMessage()       {}
+func (m *File) Reset()         { *m = File{} }
+func (m *File) String() string { return proto1.CompactTextString(m) }
+func (*File) ProtoMessage()    {}
 
-func (this *File) GetPath() string {
-	if this != nil && this.Path != nil {
-		return *this.Path
+func (m *File) GetPath() string {
+	if m != nil && m.Path != nil {
+		return *m.Path
 	}
 	return ""
 }
 
-func (this *File) GetData() []byte {
-	if this != nil {
-		return this.Data
+func (m *File) GetData() []byte {
+	if m != nil {
+		return m.Data
 	}
 	return nil
 }

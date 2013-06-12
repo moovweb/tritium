@@ -3,6 +3,7 @@ package proto;
 import "tritium.proto";
 import "rewrite_rule.proto";
 import "credentials.proto";
+import "custom_path.proto";
 
 message Slug {
 	required string name = 1;
@@ -11,4 +12,5 @@ message Slug {
 	repeated RewriteRule rrules = 4;
 	repeated string ssl_whitelist = 5;
 	optional Credentials credentials = 6;
+	repeated CustomPath custom_paths = 7;
 }

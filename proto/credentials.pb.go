@@ -20,27 +20,27 @@ type Credentials struct {
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (this *Credentials) Reset()         { *this = Credentials{} }
-func (this *Credentials) String() string { return proto1.CompactTextString(this) }
-func (*Credentials) ProtoMessage()       {}
+func (m *Credentials) Reset()         { *m = Credentials{} }
+func (m *Credentials) String() string { return proto1.CompactTextString(m) }
+func (*Credentials) ProtoMessage()    {}
 
-func (this *Credentials) GetUser() string {
-	if this != nil && this.User != nil {
-		return *this.User
+func (m *Credentials) GetUser() string {
+	if m != nil && m.User != nil {
+		return *m.User
 	}
 	return ""
 }
 
-func (this *Credentials) GetPassword() string {
-	if this != nil && this.Password != nil {
-		return *this.Password
+func (m *Credentials) GetPassword() string {
+	if m != nil && m.Password != nil {
+		return *m.Password
 	}
 	return ""
 }
 
-func (this *Credentials) GetBase64() string {
-	if this != nil && this.Base64 != nil {
-		return *this.Base64
+func (m *Credentials) GetBase64() string {
+	if m != nil && m.Base64 != nil {
+		return *m.Base64
 	}
 	return ""
 }
