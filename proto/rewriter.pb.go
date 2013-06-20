@@ -19,15 +19,22 @@ type Rewriter struct {
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (this *Rewriter) Reset()         { *this = Rewriter{} }
-func (this *Rewriter) String() string { return proto1.CompactTextString(this) }
-func (*Rewriter) ProtoMessage()       {}
+func (m *Rewriter) Reset()         { *m = Rewriter{} }
+func (m *Rewriter) String() string { return proto1.CompactTextString(m) }
+func (*Rewriter) ProtoMessage()    {}
 
-func (this *Rewriter) GetName() string {
-	if this != nil && this.Name != nil {
-		return *this.Name
+func (m *Rewriter) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
+}
+
+func (m *Rewriter) GetTemplates() []*File {
+	if m != nil {
+		return m.Templates
+	}
+	return nil
 }
 
 func init() {

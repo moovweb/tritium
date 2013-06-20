@@ -1,6 +1,10 @@
 package proto
 
 import (
+	"strings"
+)
+
+import (
 	"butler/null"
 	pb "code.google.com/p/goprotobuf/proto"
 )
@@ -17,15 +21,11 @@ func (ins *Instruction) Iterate(itFunc func(*Instruction)) {
 
 func (ins *Instruction) IterateAll(itFunc func(*Instruction)) {
 	itFunc(ins)
-	if ins.Arguments != nil {
-		for _, child := range ins.Arguments {
-			child.Iterate(itFunc)
-		}
+	for _, child := range ins.Arguments {
+		child.IterateAll(itFunc)
 	}
-	if ins.Children != nil {
-		for _, child := range ins.Children {
-			child.Iterate(itFunc)
-		}
+	for _, child := range ins.Children {
+		child.IterateAll(itFunc)
 	}
 }
 
@@ -124,4 +124,15 @@ func (instr *Instruction) ConcatList(more []*Instruction) {
 
 func (instr *Instruction) ConcatBlock(more *Instruction) {
 	instr.Append(more.Children...)
+}
+
+func (instr *Instruction) Namespaces() (nsList []string) {
+	ns := instr.GetNamespace()
+	if len(ns) == 0 {
+		nsList = make([]string, 1)
+		nsList[0] = "tritium"
+	} else {
+		nsList = strings.Split(ns, ",")
+	}
+	return
 }

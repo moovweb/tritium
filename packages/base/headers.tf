@@ -399,9 +399,12 @@
 # 
 # In the following example, we use the string "true" and turn it into a regular expression to use in a `match-with` statement. We are also accepting any combination of upper and lower case because of the `i` flag. If the string "true" is anywhere in the text we are matching, the code in the `with()` statement will run.
 # @example
-# with(regexp("true", "i")) {
-# # run this code if your text matches the string "true"
-# # the "i" indicates that the match is case insensitive
+# $var = "123456"
+# match($var, regexp("\\d{4}")) {
+#   log("My regular expression matched four digits in a row")
+# }
+# match($var, regexp("\\d{9}")) {
+#   log("My regular expression matched nine digits in a row")
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/regexp
@@ -644,26 +647,28 @@
 @func Text.append(Text %text_to_append) Text
 
 " Captures all instances of the regular expression **%search**. "
-# @abstract The `capture` function is used to capture matching groups of a regular expression.
+# @abstract The `capture` function grabs all instances of the regular expression specified.
 # @name capture
 # @category Modify,Text
 # @scope Text
-# @args Text %regex
+# @args Regexp %search
 # @description 
-# The `capture` function will store any matches for the regular expression provided in correspondeing variables: $1, $2, $3 and so forth depending on the order in which they are matched.
+# The `capture` function is used to grab a specific block of text, which is matched via a regular expression.
 # ### Common Uses
-# * Storing relevant pieces of information from a string.
-# * Finding the value of a cookie and writing logic based on that value.
+# * Grabbing specific items from a string of text
+# * Separating out capture groups in a regular expression
 # 
-# In this example, we are using the $cookie environment variable (which is a string of all your cookies) to capture the value of a specific cookie.
+# In this example, the capture function will grab any string of 8 characters and log it the terminal.
 # @example
-  $value = $cookie {
-    capture(/nameOfCookie=(.*?)(;|$)/)
-    set($1)
+  $$("#my_div") {
+    text() {
+      capture(/(\w{8})/) {
+        log("Words with more than 8 letters: " + %1)
+      }
+    }
   }
-  log("Cookie value: " + $value)
-# @exampletext
-# @examplelink
+# @exampletext Tritium Tester Example
+# @examplelink test/examples/text/capture
 # @guidetext 
 # @guidelink 
 @func Text.capture(Regexp %search) Text Text
@@ -679,3 +684,9 @@
 
 " Rewrite a link from upstream to proxy, where **%secure** is either 'true' or 'false' and **%catchall** is a catchall suffix. @example `rewrite_link(\"true\", \".moovapp.com\")` will rewrite secure links to include the catchall '.moovapp.com' at the end."
 @func Text.rewrite_link(Text %secure, Text %catchall) Text
+
+@func base64_v1(Text %method, Text %str) Text Text
+
+@func Text.parse_headers_v1() Text Header
+
+@func Header.header_comp_v1(Text %attr) Text Text

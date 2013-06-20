@@ -14,36 +14,99 @@ var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Mixer struct {
-	Name             *string  `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
-	Version          *string  `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
-	Rewriters        []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
-	Package          *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	Name              *string  `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
+	Version           *string  `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
+	Rewriters         []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
+	Package           *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
+	PackagerVersion   *int32   `protobuf:"varint,5,opt,name=packager_version" json:"packager_version,omitempty"`
+	IsHttpTransformer *bool    `protobuf:"varint,6,opt,name=is_http_transformer" json:"is_http_transformer,omitempty"`
+	XXX_unrecognized  []byte   `json:"-"`
 }
 
-func (this *Mixer) Reset()         { *this = Mixer{} }
-func (this *Mixer) String() string { return proto1.CompactTextString(this) }
-func (*Mixer) ProtoMessage()       {}
+func (m *Mixer) Reset()         { *m = Mixer{} }
+func (m *Mixer) String() string { return proto1.CompactTextString(m) }
+func (*Mixer) ProtoMessage()    {}
 
-func (this *Mixer) GetName() string {
-	if this != nil && this.Name != nil {
-		return *this.Name
+func (m *Mixer) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
-func (this *Mixer) GetVersion() string {
-	if this != nil && this.Version != nil {
-		return *this.Version
+func (m *Mixer) GetVersion() string {
+	if m != nil && m.Version != nil {
+		return *m.Version
 	}
 	return ""
 }
 
-func (this *Mixer) GetPackage() *Package {
-	if this != nil {
-		return this.Package
+func (m *Mixer) GetRewriters() []*File {
+	if m != nil {
+		return m.Rewriters
 	}
 	return nil
+}
+
+func (m *Mixer) GetPackage() *Package {
+	if m != nil {
+		return m.Package
+	}
+	return nil
+}
+
+func (m *Mixer) GetPackagerVersion() int32 {
+	if m != nil && m.PackagerVersion != nil {
+		return *m.PackagerVersion
+	}
+	return 0
+}
+
+func (m *Mixer) GetIsHttpTransformer() bool {
+	if m != nil && m.IsHttpTransformer != nil {
+		return *m.IsHttpTransformer
+	}
+	return false
+}
+
+type SubmixerInfo struct {
+	Name             *string `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
+	Version          *string `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
+	Offset           *int32  `protobuf:"varint,3,req,name=offset" json:"offset,omitempty"`
+	Length           *int32  `protobuf:"varint,4,req,name=length" json:"length,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *SubmixerInfo) Reset()         { *m = SubmixerInfo{} }
+func (m *SubmixerInfo) String() string { return proto1.CompactTextString(m) }
+func (*SubmixerInfo) ProtoMessage()    {}
+
+func (m *SubmixerInfo) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
+	}
+	return ""
+}
+
+func (m *SubmixerInfo) GetVersion() string {
+	if m != nil && m.Version != nil {
+		return *m.Version
+	}
+	return ""
+}
+
+func (m *SubmixerInfo) GetOffset() int32 {
+	if m != nil && m.Offset != nil {
+		return *m.Offset
+	}
+	return 0
+}
+
+func (m *SubmixerInfo) GetLength() int32 {
+	if m != nil && m.Length != nil {
+		return *m.Length
+	}
+	return 0
 }
 
 func init() {

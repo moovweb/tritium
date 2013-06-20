@@ -1,20 +1,20 @@
 package proto
 
-import pb "code.google.com/p/goprotobuf/proto"
-import "butler/null"
+import (
+	"fmt"
+)
+
+import (
+	pb "code.google.com/p/goprotobuf/proto"
+	"butler/null"
+)
 
 func (f *Function) Stub(pkg *Package) string {
-	ns, rest := f.StubComponents(pkg)
-	return ns + "." + rest
-}
-
-func (f *Function) StubComponents(pkg *Package) (namespace, rest string) {
-	namespace = f.GetNamespace()
-	if len(namespace) == 0 {
-		namespace = "tritium"
+	ns := f.GetNamespace()
+	if len(ns) == 0 {
+		ns = "tritium"
 	}
-
-	rest = f.GetName()
+	fname := fmt.Sprintf("%s.%s", ns, f.GetName())
 	args := ""
 	for _, arg := range f.Args {
 		argName := null.GetString(arg.TypeString)
@@ -24,9 +24,35 @@ func (f *Function) StubComponents(pkg *Package) (namespace, rest string) {
 		}
 		args = args + "," + argName
 	}
-	rest += args
-	return
+	return fname + args
 }
+
+// prettier signatures than what `Stub` provides
+func (f *Function) FullSignature(pkg *Package) string {
+	ns := f.GetNamespace()
+	if len(ns) == 0 {
+		ns = "tritium"
+	}
+
+	return fmt.Sprintf("%s.%s", ns, f.BaseSignature(pkg))
+}
+
+func (f *Function) BaseSignature(pkg *Package) string {
+	args := "("
+	for i, arg := range f.Args {
+		argName := null.GetString(arg.TypeString)
+		if argName == "" {
+			t := pkg.Types[int(null.GetInt32(arg.TypeId))]
+			argName = null.GetString(t.Name)
+		}
+		if i != 0 {
+			args += ","
+		}
+		args += argName
+	}
+	return fmt.Sprintf("%s.%s%s)", pkg.GetTypeName(f.GetScopeTypeId()), f.GetName(), args)
+}
+
 
 // We need this for inherited function resolution. 
 // - for now we just make duplicated functions for the package w the types changed
@@ -74,4 +100,25 @@ func (fun *Function) DebugInfo(pkg *Package) string {
 	}
 
 	return "@func " + scopeType + "." + name + "(" + args + ") " + returnType + " " + openType
+}
+
+func (f *Function) RelocateCallsBy(offset int) {
+	if f.Instruction == nil {
+		return
+	}
+	f.Instruction.IterateAll(func (ins *Instruction) {
+		if ins.GetType() != Instruction_FUNCTION_CALL {
+			return
+		}
+		ins.FunctionId = pb.Int32(ins.GetFunctionId() + int32(offset))
+	})
+}
+
+func (f *Function) RelocateTypes(relocations map[int]int) {
+	f.ScopeTypeId  = pb.Int32(int32(relocations[int(f.GetScopeTypeId())]))
+	f.ReturnTypeId = pb.Int32(int32(relocations[int(f.GetReturnTypeId())]))
+	f.OpensTypeId  = pb.Int32(int32(relocations[int(f.GetOpensTypeId())]))
+	for _, arg := range f.Args {
+		arg.TypeId = pb.Int32(int32(relocations[int(arg.GetTypeId())]))
+	}
 }

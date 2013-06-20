@@ -1,7 +1,7 @@
-@func Text.url(Text %url) Text URL
+@func Text.url_v1(Text %url) Text URL
 
-@func URL.comp(Text %url) Text Text
+@func URL.comp_v1(Text %url_component) Text Text
 
-@func URL.param(Text %key) Text Text
+@func URL.param_v1(Text %key) Text Text
 
-@func URL.remove_param(Text %key) Text
+@func URL.remove_param_v1(Text %key) Text

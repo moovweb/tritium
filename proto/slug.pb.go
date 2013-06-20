@@ -23,27 +23,48 @@ type Slug struct {
 	XXX_unrecognized []byte         `json:"-"`
 }
 
-func (this *Slug) Reset()         { *this = Slug{} }
-func (this *Slug) String() string { return proto1.CompactTextString(this) }
-func (*Slug) ProtoMessage()       {}
+func (m *Slug) Reset()         { *m = Slug{} }
+func (m *Slug) String() string { return proto1.CompactTextString(m) }
+func (*Slug) ProtoMessage()    {}
 
-func (this *Slug) GetName() string {
-	if this != nil && this.Name != nil {
-		return *this.Name
+func (m *Slug) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
-func (this *Slug) GetVersion() string {
-	if this != nil && this.Version != nil {
-		return *this.Version
+func (m *Slug) GetVersion() string {
+	if m != nil && m.Version != nil {
+		return *m.Version
 	}
 	return ""
 }
 
-func (this *Slug) GetCredentials() *Credentials {
-	if this != nil {
-		return this.Credentials
+func (m *Slug) GetTransformers() []*Transform {
+	if m != nil {
+		return m.Transformers
+	}
+	return nil
+}
+
+func (m *Slug) GetRrules() []*RewriteRule {
+	if m != nil {
+		return m.Rrules
+	}
+	return nil
+}
+
+func (m *Slug) GetSslWhitelist() []string {
+	if m != nil {
+		return m.SslWhitelist
+	}
+	return nil
+}
+
+func (m *Slug) GetCredentials() *Credentials {
+	if m != nil {
+		return m.Credentials
 	}
 	return nil
 }

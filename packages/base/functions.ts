@@ -284,7 +284,6 @@
 # The `clear` function is used to remove text from inside a text scope.
 # *Related functions*: [remove()][1]
 # ### Common Uses
-# * Clearing extra white space inside nodes
 # * Clearing text links to turn them into icons
 # 
 # In the following example, we simply clear any existing text inside the node with an ID of `my_div`.
@@ -453,4 +452,114 @@
 }
 @func Text.dump() {
   this()
+}
+
+# @abstract The `encode64` function encodes the specified string using a base64 encoder.
+# @name encode64
+# @category Text
+# @scope Global
+# @args Text %str
+# @description
+# The `encode64` function encodes the specified string using a base64 encoder.
+# 
+# In the following example, we encode `%password`.
+# @example
+# $encoded_password = encode64(%password)
+# @exampletext 
+# @examplelink 
+# @guidetext 
+# @guidelink 
+@func encode64(Text %str) {
+  base64_v1("encode", %str) {
+    yield()
+  }
+}
+
+# @abstract The `decode64` function decodes the specified string using a base64 decoder.
+# @name decode64
+# @category Text
+# @scope Global
+# @args Text %str
+# @description
+# The `decode64` function decodes the specified string using a base64 decoder.
+# 
+# In the following example, we decode `%encoded_password`.
+# @example
+# $decoded_password = decode64(%encoded_password)
+# @exampletext 
+# @examplelink 
+# @guidetext 
+# @guidelink 
+@func decode64(Text %str) {
+  base64_v1("decode", %str) {
+    yield()
+  }
+}
+
+@func Text.parse_headers() {
+  parse_headers_v1() {
+    yield()
+  }
+}
+
+@func Header.name() {
+  header_comp_v1("name") {
+    yield()
+  }
+}
+@func Header.value() {
+  header_comp_v1("value") {
+    yield()
+  }
+}
+@func Header.this() {
+  header_comp_v1("this") {
+    yield()
+  }
+}
+@func Header.name(Text %val) {
+  name() {
+    set(%val)
+    yield()
+  }
+}
+@func Header.value(Text %val) {
+  value() {
+    set(%val)
+    yield()
+  }
+}
+@func Header.this(Text %val) {
+  this() {
+    set(%val)
+    yield()
+  }
+}
+
+@func Text.parse_headers(Regexp %regex) {
+  parse_headers() {
+    match(this(), %regex) {
+      yield()
+    }
+  }
+}
+@func Header.remove() {
+  this("")
+}
+
+@func Text.add_header(Text %name, Text %value) {
+  append("\r\n" + %name + ": " + %value)
+}
+
+@func Text.remove_header(Regexp %regex) {
+  parse_headers(%regex) {
+    remove()
+  }
+}
+@func Text.remove_header(Text %name) {
+  parse_headers() {
+    match(name(), regexp(%name, "i")) {
+      remove()
+    }
+  }
 }

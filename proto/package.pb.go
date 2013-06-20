@@ -19,20 +19,20 @@ type Type struct {
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (this *Type) Reset()         { *this = Type{} }
-func (this *Type) String() string { return proto1.CompactTextString(this) }
-func (*Type) ProtoMessage()       {}
+func (m *Type) Reset()         { *m = Type{} }
+func (m *Type) String() string { return proto1.CompactTextString(m) }
+func (*Type) ProtoMessage()    {}
 
-func (this *Type) GetName() string {
-	if this != nil && this.Name != nil {
-		return *this.Name
+func (m *Type) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
-func (this *Type) GetImplements() int32 {
-	if this != nil && this.Implements != nil {
-		return *this.Implements
+func (m *Type) GetImplements() int32 {
+	if m != nil && m.Implements != nil {
+		return *m.Implements
 	}
 	return 0
 }
@@ -46,20 +46,41 @@ type Package struct {
 	XXX_unrecognized []byte      `json:"-"`
 }
 
-func (this *Package) Reset()         { *this = Package{} }
-func (this *Package) String() string { return proto1.CompactTextString(this) }
-func (*Package) ProtoMessage()       {}
+func (m *Package) Reset()         { *m = Package{} }
+func (m *Package) String() string { return proto1.CompactTextString(m) }
+func (*Package) ProtoMessage()    {}
 
-func (this *Package) GetName() string {
-	if this != nil && this.Name != nil {
-		return *this.Name
+func (m *Package) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
-func (this *Package) GetPath() string {
-	if this != nil && this.Path != nil {
-		return *this.Path
+func (m *Package) GetFunctions() []*Function {
+	if m != nil {
+		return m.Functions
+	}
+	return nil
+}
+
+func (m *Package) GetTypes() []*Type {
+	if m != nil {
+		return m.Types
+	}
+	return nil
+}
+
+func (m *Package) GetDependencies() []string {
+	if m != nil {
+		return m.Dependencies
+	}
+	return nil
+}
+
+func (m *Package) GetPath() string {
+	if m != nil && m.Path != nil {
+		return *m.Path
 	}
 	return ""
 }

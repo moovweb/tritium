@@ -31,97 +31,104 @@ type Function struct {
 	XXX_unrecognized []byte               `json:"-"`
 }
 
-func (this *Function) Reset()         { *this = Function{} }
-func (this *Function) String() string { return proto1.CompactTextString(this) }
-func (*Function) ProtoMessage()       {}
+func (m *Function) Reset()         { *m = Function{} }
+func (m *Function) String() string { return proto1.CompactTextString(m) }
+func (*Function) ProtoMessage()    {}
 
-func (this *Function) GetName() string {
-	if this != nil && this.Name != nil {
-		return *this.Name
+func (m *Function) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
 
-func (this *Function) GetDescription() string {
-	if this != nil && this.Description != nil {
-		return *this.Description
+func (m *Function) GetDescription() string {
+	if m != nil && m.Description != nil {
+		return *m.Description
 	}
 	return ""
 }
 
-func (this *Function) GetFilename() string {
-	if this != nil && this.Filename != nil {
-		return *this.Filename
+func (m *Function) GetFilename() string {
+	if m != nil && m.Filename != nil {
+		return *m.Filename
 	}
 	return ""
 }
 
-func (this *Function) GetLineNumber() int32 {
-	if this != nil && this.LineNumber != nil {
-		return *this.LineNumber
+func (m *Function) GetLineNumber() int32 {
+	if m != nil && m.LineNumber != nil {
+		return *m.LineNumber
 	}
 	return 0
 }
 
-func (this *Function) GetNamespace() string {
-	if this != nil && this.Namespace != nil {
-		return *this.Namespace
+func (m *Function) GetNamespace() string {
+	if m != nil && m.Namespace != nil {
+		return *m.Namespace
 	}
 	return ""
 }
 
-func (this *Function) GetScopeTypeId() int32 {
-	if this != nil && this.ScopeTypeId != nil {
-		return *this.ScopeTypeId
+func (m *Function) GetScopeTypeId() int32 {
+	if m != nil && m.ScopeTypeId != nil {
+		return *m.ScopeTypeId
 	}
 	return 0
 }
 
-func (this *Function) GetScopeType() string {
-	if this != nil && this.ScopeType != nil {
-		return *this.ScopeType
+func (m *Function) GetScopeType() string {
+	if m != nil && m.ScopeType != nil {
+		return *m.ScopeType
 	}
 	return ""
 }
 
-func (this *Function) GetReturnTypeId() int32 {
-	if this != nil && this.ReturnTypeId != nil {
-		return *this.ReturnTypeId
+func (m *Function) GetReturnTypeId() int32 {
+	if m != nil && m.ReturnTypeId != nil {
+		return *m.ReturnTypeId
 	}
 	return 0
 }
 
-func (this *Function) GetReturnType() string {
-	if this != nil && this.ReturnType != nil {
-		return *this.ReturnType
+func (m *Function) GetReturnType() string {
+	if m != nil && m.ReturnType != nil {
+		return *m.ReturnType
 	}
 	return ""
 }
 
-func (this *Function) GetOpensTypeId() int32 {
-	if this != nil && this.OpensTypeId != nil {
-		return *this.OpensTypeId
+func (m *Function) GetOpensTypeId() int32 {
+	if m != nil && m.OpensTypeId != nil {
+		return *m.OpensTypeId
 	}
 	return 0
 }
 
-func (this *Function) GetOpensType() string {
-	if this != nil && this.OpensType != nil {
-		return *this.OpensType
+func (m *Function) GetOpensType() string {
+	if m != nil && m.OpensType != nil {
+		return *m.OpensType
 	}
 	return ""
 }
 
-func (this *Function) GetBuiltIn() bool {
-	if this != nil && this.BuiltIn != nil {
-		return *this.BuiltIn
+func (m *Function) GetBuiltIn() bool {
+	if m != nil && m.BuiltIn != nil {
+		return *m.BuiltIn
 	}
 	return false
 }
 
-func (this *Function) GetInstruction() *Instruction {
-	if this != nil {
-		return this.Instruction
+func (m *Function) GetArgs() []*Function_Argument {
+	if m != nil {
+		return m.Args
+	}
+	return nil
+}
+
+func (m *Function) GetInstruction() *Instruction {
+	if m != nil {
+		return m.Instruction
 	}
 	return nil
 }
@@ -133,27 +140,27 @@ type Function_Argument struct {
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (this *Function_Argument) Reset()         { *this = Function_Argument{} }
-func (this *Function_Argument) String() string { return proto1.CompactTextString(this) }
-func (*Function_Argument) ProtoMessage()       {}
+func (m *Function_Argument) Reset()         { *m = Function_Argument{} }
+func (m *Function_Argument) String() string { return proto1.CompactTextString(m) }
+func (*Function_Argument) ProtoMessage()    {}
 
-func (this *Function_Argument) GetTypeId() int32 {
-	if this != nil && this.TypeId != nil {
-		return *this.TypeId
+func (m *Function_Argument) GetTypeId() int32 {
+	if m != nil && m.TypeId != nil {
+		return *m.TypeId
 	}
 	return 0
 }
 
-func (this *Function_Argument) GetTypeString() string {
-	if this != nil && this.TypeString != nil {
-		return *this.TypeString
+func (m *Function_Argument) GetTypeString() string {
+	if m != nil && m.TypeString != nil {
+		return *m.TypeString
 	}
 	return ""
 }
 
-func (this *Function_Argument) GetName() string {
-	if this != nil && this.Name != nil {
-		return *this.Name
+func (m *Function_Argument) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
 	}
 	return ""
 }
@@ -163,9 +170,16 @@ type FunctionArray struct {
 	XXX_unrecognized []byte      `json:"-"`
 }
 
-func (this *FunctionArray) Reset()         { *this = FunctionArray{} }
-func (this *FunctionArray) String() string { return proto1.CompactTextString(this) }
-func (*FunctionArray) ProtoMessage()       {}
+func (m *FunctionArray) Reset()         { *m = FunctionArray{} }
+func (m *FunctionArray) String() string { return proto1.CompactTextString(m) }
+func (*FunctionArray) ProtoMessage()    {}
+
+func (m *FunctionArray) GetFunctions() []*Function {
+	if m != nil {
+		return m.Functions
+	}
+	return nil
+}
 
 func init() {
 }

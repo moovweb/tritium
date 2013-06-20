@@ -1,19 +1,23 @@
 package whale
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
+	"net/url"
+	"regexp"
+	"strconv"
+	"strings"
+	"time"
+	"unicode/utf8"
+
 	"goconv"
 	"gokogiri/css"
 	"gokogiri/html"
 	"gokogiri/xml"
 	"icu4go"
-	"net/url"
 	"rubex"
-	"strconv"
-	"strings"
-	"time"
 	tp "tritium/proto"
-	"unicode/utf8"
 )
 
 //The string value of me
@@ -376,7 +380,76 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, a
 	return
 }
 
-func url_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	// unmarshal the json
+	jsonSrc := scope.Value.(string)
+	var jsonVal interface{}
+	err := json.Unmarshal([]byte(jsonSrc), &jsonVal)
+	if err != nil {
+		// invalid JSON -- log an error message and keep going
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json_decoding err: %s", err.Error())
+		returnValue = "null"
+		return
+	}
+
+	// convert to an xml doc and run the supplied block on it
+	newDoc := xml.CreateEmptyDocument(nil, nil)
+	ctx.AddMemoryObject(newDoc)
+	jsonNodes := json_to_node(jsonVal, newDoc)
+	// put the jsonNodes under a new root node to get the xpath searches to be correctly scoped
+	jsonRoot := newDoc.CreateElementNode("json")
+	jsonRoot.AddChild(jsonNodes)
+	newScope := &Scope{Value: jsonRoot}
+	for _, childInstr := range ins.Children {
+		ctx.RunInstruction(newScope, childInstr)
+	}
+
+	// convert back to native Go data structures and re-marshal
+	jsonVal = node_to_json(jsonRoot.FirstChild())
+	jsonOut, err := json.MarshalIndent(jsonVal, "", "  ")
+	if err != nil {
+		// invalid JSON -- log an error message and keep going
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json_encoding err: %s", err.Error())
+		returnValue = "null"
+		return
+	}
+	scope.Value = string(jsonOut)
+	returnValue = string(jsonOut)
+	return
+}
+
+func to_json_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(xml.Node)
+	xpathStr := args[0].(string)
+	expr := ctx.GetXpathExpr(xpathStr)
+	if expr == nil {
+		return "{}"
+	}
+
+	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
+	if err != nil {
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "to_json err: %s", err.Error())
+		return "{}"
+	}
+
+	for _, n := range nodes {
+		// Ignore all non-jsony nodes, and return as soon as we find a good one.
+		if jsonStruct := NodeToJson(n); jsonStruct != nil {
+			jsonData, err := json.Marshal(jsonStruct)
+			if err != nil {
+				ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json marshal err: %s", err.Error())
+				return "{ \"engine_error\": \"Internal engine error while converting to json, " +
+					"check logs for more details.\" }"
+			}
+			return string(jsonData)
+		}
+	}
+
+	// No json found, return an empty hash.
+	return "{}"
+}
+
+func url_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	urlStr := args[0].(string)
 	urlParsed, err := url.Parse(urlStr)
 	if err != nil {
@@ -398,20 +471,20 @@ func url_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []inte
 	return
 }
 
-func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func comp_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	component := args[0].(string)
 	u := scope.Value.(*url.URL)
 	ns := &Scope{}
-	switch(component) {
-	case("scheme"):
+	switch component {
+	case "scheme":
 		ns.Value = u.Scheme
-	case("host"):
+	case "host":
 		ns.Value = u.Host
-	case("path"):
+	case "path":
 		ns.Value = u.Path
-	case("fragment"):
+	case "fragment":
 		ns.Value = u.Fragment
-	case("userinfo"):
+	case "userinfo":
 		if u.User != nil {
 			ns.Value = u.User.String()
 		} else {
@@ -425,16 +498,16 @@ func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []int
 
 		// write value back to URL (as long as it's a string)
 		if newVal, ok := ns.Value.(string); ok {
-			switch(component) {
-			case("scheme"):
+			switch component {
+			case "scheme":
 				u.Scheme = newVal
-			case("host"):
+			case "host":
 				u.Host = newVal
-			case("path"):
+			case "path":
 				u.Path = newVal
-			case("fragment"):
+			case "fragment":
 				u.Fragment = newVal
-			case("userinfo"):
+			case "userinfo":
 				if newVal == "" {
 					// remove the userinfo
 					u.User = nil
@@ -454,7 +527,7 @@ func comp_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []int
 	return
 }
 
-func param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func param_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	parameter := args[0].(string)
 	u := scope.Value.(*url.URL)
 	params := u.Query()
@@ -476,7 +549,7 @@ func param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	return
 }
 
-func remove_param_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+func remove_param_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	parameter := args[0].(string)
 	u := scope.Value.(*url.URL)
 	params := u.Query()
@@ -794,6 +867,44 @@ func cdata_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []in
 	return
 }
 
+// Fixes a bug in inject_at where if position is AFTER or TOP, the elements
+// are added in reverse order.
+func inject_at_v1_Position_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+
+	node := scope.Value.(xml.Node)
+	position := args[0].(Position)
+	input := args[1].(string)
+
+	nodes, err := node.Coerce(input)
+	if err == nil {
+		if position == BOTTOM || position == BEFORE {
+			for _, n := range nodes {
+				MoveFunc(n, node, position)
+			}
+		} else {
+			for index := len(nodes) - 1; index >= 0; index-- {
+				MoveFunc(nodes[index], node, position)
+			}
+		}
+	}
+	if len(nodes) > 0 {
+		first := nodes[0]
+		if first.NodeType() == xml.XML_ELEMENT_NODE {
+			// successfully ran scope
+			returnValue = "true"
+			ns := &Scope{Value: first}
+			for _, child := range ins.Children {
+				ctx.RunInstruction(ns, child)
+			}
+		}
+	} else {
+		returnValue = "false"
+	}
+	return
+}
+
+// Buggy, look at inject_at_v2 for fixed version.
+// kept for backwards compatibility.
 func inject_at_Position_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	position := args[0].(Position)
@@ -1026,5 +1137,94 @@ func rewrite_cookie_domain_Text_Text_Text(ctx *EngineContext, scope *Scope, ins 
 			scope.Value = newDomain
 		}
 	}
+	return
+}
+
+func base64_v1_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	method := args[0].(string)
+	str := args[1].(string)
+	ns := &Scope{Value: str}
+	switch method {
+	case "decode":
+		data, err := base64.StdEncoding.DecodeString(str)
+		if err != nil {
+			ctx.Debugger.LogErrorMessage(ctx.MessagePath, "String decode error: %s", err.Error())
+			ns.Value = ""
+		} else {
+			ns.Value = string(data)
+		}
+	case "encode":
+		data := []byte(str)
+		ns.Value = base64.StdEncoding.EncodeToString(data)
+	}
+	for _, child := range ins.Children {
+		ctx.RunInstruction(ns, child)
+	}
+	returnValue = ns.Value
+	return
+}
+
+func parse_headers_v1(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	httpStr := scope.Value.(string)
+
+	// remove \r (will add them back later)
+	httpStr = strings.Replace(httpStr, "\r", "", -1)
+
+	headersRegex := regexp.MustCompile(`(?m)^\S+?:\s?[^\n]+`)
+	// replace headers with result of eval'd instructions
+	newHttpStr := headersRegex.ReplaceAllStringFunc(httpStr, func(header string) string {
+		ns := &Scope{Value: header}
+		for _, child := range ins.Children {
+			ctx.RunInstruction(ns, child)
+		}
+		return ns.Value.(string)
+	})
+
+	// remove empty lines (in the case that a header is blanked)
+	replaceEmptyLinesRegex := regexp.MustCompile(`\n+`)
+	newHttpStr = replaceEmptyLinesRegex.ReplaceAllString(newHttpStr, "\n")
+
+	// trim leading/trailing spaces (e.g. if last header is removed)
+	newHttpStr = strings.TrimRight(newHttpStr, "\r\n")
+
+	// replace all \n with \r\n
+	scope.Value = strings.Replace(newHttpStr, "\n", "\r\n", -1)
+
+	// return the entire http
+	returnValue = scope.Value
+	return
+}
+
+func header_comp_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	header := scope.Value.(string)
+	attr := args[0].(string)
+	headersRegex := regexp.MustCompile(`(?m)^(\S+?):\s+(.+?)$`)
+	headerParsed := headersRegex.FindStringSubmatch(header)
+	replaceMe := ""
+	if len(headerParsed) != 3 {
+		return ""
+	}
+	ns := &Scope{}
+	switch attr {
+	case "name":
+		replaceMe = headerParsed[1]
+	case "value":
+		replaceMe = headerParsed[2]
+		if strings.HasSuffix(replaceMe, "\r") {
+			replaceMe = replaceMe[:len(replaceMe)-1]
+		}
+	case "this":
+		replaceMe = header
+	}
+	ns.Value = replaceMe
+	if ns.Value != "" {
+		for _, child := range ins.Children {
+			ctx.RunInstruction(ns, child)
+		}
+	}
+	// set the value of the container scope to the header replaced with the new ns.Value
+	scope.Value = strings.Replace(header, replaceMe, ns.Value.(string), -1)
+	// return the resultant ns.Value
+	returnValue = ns.Value
 	return
 }

@@ -52,21 +52,18 @@ func NewLinkingContext(pkg *tp.Package) *LinkingContext {
 
 	for typeId, typeObj := range pkg.Types {
 		funcMap := make(FuncMap)
-		types[typeId] = null.GetString(typeObj.Name)
-		//println("Type:",null.GetString(typeObj.Name))
-		//println("Implements:", null.GetInt32(typeObj.Implements))
-		implements := functionLookup[null.GetInt32(typeObj.Implements)]
+		types[typeId] = typeObj.GetName()
+		implements := functionLookup[typeObj.GetImplements()]
 		for index, fun := range pkg.Functions {
 			stub := fun.Stub(pkg)
 
-			funScopeId := null.GetInt32(fun.ScopeTypeId)
+			funScopeId := fun.GetScopeTypeId()
 			inherited := false
 			// funScopeId is ancestor of typeId
 			if (implements != nil) && pkg.AncestorOf(funScopeId, int32(typeId)) {
 				_, inherited = implements[stub]
 			}
 			if (funScopeId == int32(typeId)) || inherited {
-				//println(null.GetString(typeObj.Name), ":", stub)
 				funcMap[stub] = index
 			}
 		}
@@ -86,22 +83,6 @@ func NewLinkingContext(pkg *tp.Package) *LinkingContext {
 	// Find Text type int -- need its ID to deal with Text literals during processing
 	ctx.textType = pkg.GetTypeId("Text")
 
-	// println("TYPES")
-	// for i, t := range types {
-	// 	println(i, ":", t)
-	// }
-	// println()
-
-	// println("FUNCTIONS")
-	// for t, fm := range functionLookup {
-	// 	println("TYPE", t)
-	// 	for n, f:= range fm {
-	// 		println(n, ":", f)
-	// 	}
-	// 	println()
-	// }
-	// println()
-
 	return ctx
 }
 
@@ -109,16 +90,38 @@ func (ctx *LinkingContext) Link() {
 	ctx.link(0, ctx.Pkg.GetTypeId("Text"))
 }
 
+// The next two functions are for linking the rewriter roots and imports separately,
+// in order to prevent the core rewriter functions from being hijacked by user
+// definitions. (Assumes that a rewriter has at most one import.)
+
+func (ctx *LinkingContext) LinkRoot() {
+	obj := ctx.Objects[0]
+	obj.ScopeTypeId = proto.Int(ctx.textType)
+	obj.Linked = proto.Bool(true)
+	path := obj.GetName()
+	ctx.files = append(ctx.files, path)
+	localScope := make(LocalDef, 0)
+	ctx.ProcessInstructionWithLocalScope(obj.Root, ctx.textType, localScope, "", path, true)
+	ctx.files = ctx.files[:len(ctx.files)-1]
+}
+
+func (ctx *LinkingContext) LinkRest() {
+	if len(ctx.Objects) > 1 {
+		obj := ctx.Objects[1]
+		path := obj.GetName()
+		ctx.Visiting[path] = true
+		ctx.link(1, int(obj.GetScopeTypeId()))
+		ctx.Visiting[path] = false
+	}
+}
+
 func (ctx *LinkingContext) link(objId, scopeType int) {
 	obj := ctx.Objects[objId]
-	//println("link object", objId)
-	//println(obj.String())
 	if null.GetBool(obj.Linked) == false {
-		//println("Linking", null.GetString(obj.Name))
 		obj.ScopeTypeId = proto.Int(scopeType)
 		obj.Linked = proto.Bool(true)
 		path := obj.GetName()
-		ctx.files = append(ctx.files, null.GetString(obj.Name))
+		ctx.files = append(ctx.files, path)
 		ctx.ProcessInstruction(obj.Root, scopeType, path)
 		ctx.files = ctx.files[:(len(ctx.files) - 1)]
 	} else {
@@ -130,10 +133,10 @@ func (ctx *LinkingContext) link(objId, scopeType int) {
 
 func (ctx *LinkingContext) ProcessInstruction(ins *tp.Instruction, scopeType int, path string) (returnType int) {
 	localScope := make(LocalDef, 0)
-	return ctx.ProcessInstructionWithLocalScope(ins, scopeType, localScope, "", path)
+	return ctx.ProcessInstructionWithLocalScope(ins, scopeType, localScope, "", path, false)
 }
 
-func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction, scopeType int, localScope LocalDef, caller string, path string) (returnType int) {
+func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction, scopeType int, localScope LocalDef, caller string, path string, justRoot bool) (returnType int) {
 	returnType = -1
 	ins.IsValid = proto.Bool(true)
 	switch *ins.Type {
@@ -148,35 +151,38 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		}
 		ctx.Visiting[importLocation] = true
 
-		// set its import_id and blank the value field
-		// importValue := filepath.Join(ctx.ProjectFolder, null.GetString(ins.Value))
-		//println("import: ", importValue)
-		//println(null.GetInt32(ins.LineNumber))
-		importId, ok := ctx.objMap[null.GetString(ins.Value)]
+		importId, ok := ctx.objMap[importLocation]
 		if ok != true {
 			ctx.error(ins, "Invalid import `%s`", ins.String())
 		}
-		// Make sure this object is linked with the right scopeType
-		ctx.link(importId, scopeType)
-		// unset this after visiting an import
+		// if we're linking the whole tree, then recurse
+		if !justRoot {
+			// Make sure this object is linked with the right scopeType
+			ctx.link(importId, scopeType)
+
+		// otherwise just set the script object's scope type
+		} else {
+			ctx.Objects[importId].ScopeTypeId = proto.Int(scopeType)
+		}
+
+		// pop the import stack (for circular import detection)
 		ctx.Visiting[importLocation] = false
-		//println("befor", ins.String())
+
 		ins.ObjectId = proto.Int(importId)
 		ins.Value = nil
-		//println("after", ins.String())
 	case tp.Instruction_LOCAL_VAR:
 		name := null.GetString(ins.Value)
 		if name == "1" || name == "2" || name == "3" || name == "4" || name == "5" || name == "6" || name == "7" {
 			if len(ins.Arguments) > 0 {
 				// We are going to assign something to this variable
-				returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path)
+				returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path, justRoot)
 				if returnType != ctx.textType {
 					ctx.error(ins, "Numeric local vars can ONLY be Text")
 				}
 			}
 			if ins.Children != nil {
 				for _, child := range ins.Children {
-					ctx.ProcessInstructionWithLocalScope(child, ctx.textType, localScope, caller, path)
+					ctx.ProcessInstructionWithLocalScope(child, ctx.textType, localScope, caller, path, justRoot)
 				}
 			}
 			returnType = ctx.textType
@@ -189,7 +195,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 				} else {
 					if ins.Children != nil {
 						for _, child := range ins.Children {
-							returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope, caller, path)
+							returnType = ctx.ProcessInstructionWithLocalScope(child, typeId, localScope, caller, path, justRoot)
 						}
 					}
 				}
@@ -201,10 +207,9 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 					if ins.Children != nil {
 						ctx.error(ins, "May not open a scope during initialization of local variable \"%%%s\".", name)
 					}
-					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path)
+					returnType = ctx.ProcessInstructionWithLocalScope(ins.Arguments[0], scopeType, localScope, caller, path, justRoot)
 					localScope[name] = returnType
 				} else {
-					println(ins.String())
 					ctx.error(ins, "I've never seen the variable \"%%%s\" before! Please assign a value before usage.", name)
 				}
 			}
@@ -215,16 +220,12 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		if stub == "yield" {
 			ins.YieldTypeId = proto.Int32(int32(scopeType))
 		}
-		// unqualifiedStub := stub
-		ns := ins.GetNamespace()
-		if len(ns) == 0 {
-			ns = "tritium"
-		}
-		stub = ns + "." + stub
+		namespaces := ins.Namespaces()
+		// ins.Namespace = nil // need to figure out where to do this step
 		// process the args
 		if ins.Arguments != nil {
 			for _, arg := range ins.Arguments {
-				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope, caller, path)
+				argReturn := ctx.ProcessInstructionWithLocalScope(arg, scopeType, localScope, caller, path, justRoot)
 				if argReturn == -1 {
 					ctx.error(ins, "Invalid argument object %q", arg.String())
 					return
@@ -232,36 +233,19 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 				stub = stub + "," + ctx.types[argReturn]
 			}
 		}
-		// look up the function wrt the current context type + function name
-		funcId, ok := ctx.funList[scopeType][stub]
-		if !ok {
-
-			// stubComponents := strings.SplitN(stub, ".", 2)
-			// ns, basicStub := stubComponents[0], stubComponents[1]
-			// readableCalleeStub := strings.Replace(basicStub, ",", "(", 1)
-			// if strings.Index(readableCalleeStub, "(") != -1 {
-			// 	readableCalleeStub = readableCalleeStub + ")"
-			// }
-			// stubComponents = strings.SplitN(caller, ".", 2)
-			// nsCaller, basicStubCaller := stubComponents[0], stubComponents[1]
-			// readableCallerStub := strings.Replace(basicStubCaller, ",", "(", 1)
-			// if strings.Index(readableCallerStub, "(") != -1 {
-			// 	readableCallerStub = readableCallerStub + ")"
-      // }
-
-      readableCalleeStub := readableStub(stub)
-      readableCallerStub := readableStub(caller)
-
-			message := fmt.Sprintf("Available functions in %s.%s:\n", ns, ctx.types[scopeType])
-			ns := strings.SplitN(stub, ".", 2)[0]
-			nsCaller := strings.SplitN(caller, ".", 2)[0]
-			nsPrefix := ns + "."
-			for funcName, _ := range ctx.funList[scopeType] {
-				if strings.HasPrefix(funcName, nsPrefix) {
-					message += "\t" + nsPrefix + readableStub(funcName) + "\n"
-				}
+		// for each namespace specified by the user, look up the function wrt the current context type + function name
+		var funcId int
+		var ok bool
+		for _, ns := range namespaces {
+			funcId, ok = ctx.funList[scopeType][ns + "." + stub]
+			if ok {
+				break
 			}
-			log.Printf("%s\n", message)
+		}
+
+		if !ok {
+      readableCalleeStub := readableStub(stub)
+			readableCallerStub := readableStub(caller)
 
 			location := ""
 			if len(path) > 0 {
@@ -269,7 +253,30 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			} else {
 				location = "Package " + ctx.Pkg.GetName()
 			}
-			ctx.error(ins, "%s:%d: could not find function %s.%s.%s (called from %s.%s.%s)", location, ins.GetLineNumber(), ns, ctx.types[scopeType], readableCalleeStub, nsCaller, ctx.types[scopeType], readableCallerStub)
+
+			msg := fmt.Sprintf("%s:%d: function %s.%s does not exist in namespace %s", location, ins.GetLineNumber(), ctx.types[scopeType], readableCalleeStub, namespaces[0])
+			for i := 1; i < len(namespaces)-1; i++ {
+				msg += ", " + namespaces[i]
+			}
+			if len(namespaces) > 1 {
+				msg += " or " + namespaces[len(namespaces)-1]
+			}
+			msg += fmt.Sprintf("; (called from %s.%s).", ctx.types[scopeType], readableCallerStub)
+
+			ctx.error(ins, msg)
+
+			// message := fmt.Sprintf("Available functions in %s.%s:\n", ns, ctx.types[scopeType])
+			// ns := strings.SplitN(stub, ".", 2)[0]
+			// nsPrefix := ns + "."
+			// for funcName, _ := range ctx.funList[scopeType] {
+			// 	if strings.HasPrefix(funcName, nsPrefix) {
+			// 		message += "\t" + nsPrefix + readableStub(funcName) + "\n"
+			// 	}
+			// }
+			// log.Printf("%s\n", message)
+
+
+			// ctx.error(ins, "%s:%d: could not find function %s.%s.%s (called from %s.%s.%s)", location, ins.GetLineNumber(), ns, ctx.types[scopeType], readableCalleeStub, callerNamespace, ctx.types[scopeType], readableCallerStub)
 
 		} else {
 			ins.FunctionId = proto.Int32(int32(funcId))
@@ -295,7 +302,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 
 			if ins.Children != nil {
 				for _, child := range ins.Children {
-					ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope, stub, path) // thread the name of the caller through the linkages
+					ctx.ProcessInstructionWithLocalScope(child, opensScopeType, localScope, stub, path, justRoot) // thread the name of the caller through the linkages
 				}
 			}
 		}
@@ -304,7 +311,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 	case tp.Instruction_BLOCK:
 		if ins.Children != nil {
 			for _, child := range ins.Children {
-				returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope, caller, path)
+				returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope, caller, path, justRoot)
 			}
 		}
 	}
@@ -326,8 +333,7 @@ func (ctx *LinkingContext) error(obj interface{}, format string, data ...interfa
 }
 
 func readableStub(stub string) string {
-	basicStub := strings.SplitN(stub, ".", 2)[1]
-	betterStub := strings.Replace(basicStub, ",", "(", 1)
+	betterStub := strings.Replace(stub, ",", "(", 1)
 	if strings.Index(betterStub, "(") != -1 {
 		betterStub += ")"
 	} else {

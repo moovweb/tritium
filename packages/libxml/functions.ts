@@ -469,7 +469,7 @@
 # @abstract Inserts javascript in the current node at the position specified.
 # @name insert_javascript_at
 # @category Create,Javascript
-# @scope XNLNode
+# @scope XMLNode
 # @args Position %pos,Text %js
 # @description 
 # The `insert_javascript_at` function wraps the specified JavaScript (`%js`) in a `script` tag and inserts it in the specified position (`%pos`) of the current node.
@@ -494,7 +494,7 @@
 # @abstract Inserts javascript in the current node at the position specified.
 # @name insert_javascript_at
 # @category Create,Javascript
-# @scope XNLNode
+# @scope XMLNode
 # @args Text %pos,Text %js
 # @description 
 # The `insert_javascript_at` function wraps the specified JavaScript (`%js`) in a `script` tag and inserts it in the specified position (`%pos`) of the current node.
@@ -519,7 +519,7 @@
 # @abstract Inserts javascript in a script tag in the current node.
 # @name insert_javascript
 # @category Create,Javascript
-# @scope XNLNode
+# @scope XMLNode
 # @args Text %js
 # @description 
 # The `insert_javascript` function inserts javascript into the currently-selected node. It wraps the specified JavaScript (`%js`) in a `script` tag and inserts it into the current node.
@@ -873,13 +873,6 @@
 @func XMLNode.insert(Text %tag, Text %inner) {
   insert_at(position("bottom"), %tag) {
     inner(%inner)
-    yield()
-  }
-}
-
-@func XMLNode.insert_at(Text %pos, Text %tag) {
-  insert_at(position(%pos), %tag) {
-    inner("")
     yield()
   }
 }
