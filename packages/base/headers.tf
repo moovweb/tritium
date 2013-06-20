@@ -644,6 +644,28 @@
 @func Text.append(Text %text_to_append) Text
 
 " Captures all instances of the regular expression **%search**. "
+# @abstract The `capture` function is used to capture matching groups of a regular expression.
+# @name capture
+# @category Modify,Text
+# @scope Text
+# @args Text %regex
+# @description 
+# The `capture` function will store any matches for the regular expression provided in correspondeing variables: $1, $2, $3 and so forth depending on the order in which they are matched.
+# ### Common Uses
+# * Storing relevant pieces of information from a string.
+# * Finding the value of a cookie and writing logic based on that value.
+# 
+# In this example, we are using the $cookie environment variable (which is a string of all your cookies) to capture the value of a specific cookie.
+# @example
+  $value = $cookie {
+    capture(/nameOfCookie=(.*?)(;|$)/)
+    set($1)
+  }
+  log("Cookie value: " + $value)
+# @exampletext
+# @examplelink
+# @guidetext 
+# @guidelink 
 @func Text.capture(Regexp %search) Text Text
 
 " Rewrite a host/referer/origin from proxy to upstream "
