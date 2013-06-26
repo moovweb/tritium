@@ -590,6 +590,7 @@ func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instr
 	}
 	//output is always utf-8 because the content is internal to Doc.
 	scope.Value = ns.Value.(*xml.DocumentFragment).String()
+	//TODO(NOJ): Why are we setting currentdoc to nil instead of what it used to be?
 	ctx.CurrentDoc = nil
 	returnValue = scope.Value
 	//fragment.Node.MyDocument().Free()
