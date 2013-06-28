@@ -6,7 +6,7 @@ import (
 	tp "tritium/proto"
 )
 
-func CompileString(data , projectPath, scriptPath, fileName string, pkg *tp.Package) (*tp.Transform, error) {
+func CompileString(data, projectPath, scriptPath, fileName string, pkg *tp.Package) (*tp.Transform, error) {
 	return linker.RunStringWithPackage(data, projectPath, scriptPath, fileName, pkg)
 }
 
