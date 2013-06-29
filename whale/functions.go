@@ -621,8 +621,17 @@ func select_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []i
 		if node != nil && node.IsValid() {
 			t := node.NodeType()
 			if t == xml.XML_DOCUMENT_NODE || t == xml.XML_HTML_DOCUMENT_NODE {
-				node = node.MyDocument().Root()
-				t = node.NodeType()
+				// We need to create a new temp variable to assign the Root() to because
+				// if we assign it directly to the node interface, we can't know whether
+				// it is nil or not because the interface will contain the type info
+				// regardless of whether the actual value is nil or not.
+				// More info:
+				// http://stackoverflow.com/questions/11023593/inconsistent-nil-for-pointer-receiver-go-bug
+				enode := node.MyDocument().Root()
+				if enode != nil {
+					node = enode
+					t = node.NodeType()
+				}
 			}
 			if t == xml.XML_ELEMENT_NODE {
 				ns := &Scope{Value: node, Index: index}
