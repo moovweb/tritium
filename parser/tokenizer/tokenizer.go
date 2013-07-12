@@ -363,7 +363,7 @@ func (t *Tokenizer) munch() *Token {
 	} else if c := matcher[LVAR].Find(src); len(c) > 0 {
 		return t.popToken(LVAR, string(c[1:]), len(c))
 	} else if c := string(matcher[ID].Find(src)); len(c) > 0 {
-		if matcher[POS].MatchString(c) {
+		if c == "top" || c == "bottom" || c == "before" || c == "after" {
 			return t.popToken(POS, c, len(c))
 		} else if c == "read" {
 			return t.popToken(READ, "", len(c))
