@@ -1,5 +1,5 @@
 Tritium is a magical language that functions as a document modifying language.
-It's javascript-like (except, without all that function() noise!) and simple to
+It's JavaScript-like (except, without all that function() noise!) and simple to
 learn.
 
 Currently, it focuses on modifying XML documents only (HTML and XHTML count too). 
