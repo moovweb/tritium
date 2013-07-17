@@ -1,6 +1,7 @@
 package packager
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -515,4 +516,62 @@ func (pkgr *Packager) mergeAndRelocateCalls(dep *Packager) {
 		f.RelocateCallsBy(offset)
 	}
 	pkgr.Mixer.Package.Functions = append(pkgr.Mixer.Package.Functions, dep.Mixer.Package.Functions...)
+}
+
+func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransformer, combinedMixer *tp.Mixer, successMsg string, err error) {
+	// convert mixers to packagers, fish out the http transformers so we can
+	// compile them separately, and guard agains multiple transformers
+	packagesFromMixers := make([]*Packager, len(mixers))
+	for i, mxr := range mixers {
+	  packagesFromMixers[i] = NewFromCompiledMixer(mxr)
+	}
+	foundTransformer := false
+	foundLegacyMixer := false
+	var legacyMixerName string
+	var first *Packager
+	var rest []*Packager
+	for i, pkgr := range packagesFromMixers {
+		if pkgr.GetPackagerVersion() == 0 {
+			legacyMixerName = fmt.Sprintf("`%s` (%s)", pkgr.GetName(), pkgr.GetVersion())
+			foundLegacyMixer = true
+		}
+		if pkgr.IsHttpTransformer {
+			if foundTransformer {
+				err = errors.New("Conflicting HTTP transformer mixers specified in project.")
+				return
+			}
+			first = pkgr
+			rest = append(packagesFromMixers[:i], packagesFromMixers[i+1:]...)
+			foundTransformer = true
+		}
+	}
+	if foundLegacyMixer {
+		if len(mixers) > 1 {
+			err = errors.New(fmt.Sprintf("Legacy mixer %s may not be used with other mixers.", legacyMixerName))
+			return
+		}
+		first = packagesFromMixers[0]
+	} else if !foundTransformer && transformerRequired {
+		// TODO: provide a link to docs in the following error message
+		err = errors.New("Your project must specify an HTTP transformer mixer in the Mixer.lock file.")
+		return
+	}
+	// stash a copy of the mixer that has the transformers
+	if transformerRequired {
+		httpTransformer = first.Mixer.Clone()
+		successMsg = fmt.Sprintf("Mixer %s (%s) successfully loaded.", first.GetName(), first.GetVersion())
+	}
+	if len(rest) == 0 && first == nil && transformerRequired == false {
+		first = packagesFromMixers[0]
+		if len(packagesFromMixers) > 1 {
+			rest = packagesFromMixers[1:]
+		}
+	}
+	// now merge the rest of the mixers into the transformer mixer!
+	for _, pkgr := range rest {
+		first.MergeCompiled(pkgr)
+		successMsg += fmt.Sprintf("\nMixer %s (%s) successfully loaded.", pkgr.GetName(), pkgr.GetVersion())
+	}
+	combinedMixer = first.Mixer
+	return
 }
