@@ -24,6 +24,7 @@ type Parser struct {
 	RootFile    bool
 	Namespaces  []string
 	Defspace    string
+	inFunc      bool
 }
 
 var TritiumParserShowRewriterFileName = false
@@ -104,6 +105,7 @@ func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool) 
 		RootFile:    isRootFile,
 		Namespaces:  make([]string, 1),
 		Defspace:    "tritium",
+		inFunc:      false,
 	}
 	p.Namespaces[0] = "tritium"
 	p.pop()
@@ -230,6 +232,9 @@ func (p *Parser) Parse() *tp.ScriptObject {
 func (p *Parser) statement() (node *tp.Instruction) {
 	switch p.peek().Lexeme {
 	case IMPORT:
+		if p.inFunc {
+			p.error("imports not allowed inside function definitions")
+		}
 		token := p.pop() // pop the "@import" token (includes importee)
 		scriptLocationInProject := filepath.Clean(filepath.Join(p.ScriptPath, token.Value))
 
@@ -762,6 +767,7 @@ func (p *Parser) definition() *tp.Function {
 }
 
 func (p *Parser) function_body(funcName string) (stmts []*tp.Instruction) {
+	p.inFunc = true
 	// catch a parsing error and add extra error info about the surrounding definition
 	defer func() {
 		if r := recover(); r != nil {
@@ -773,6 +779,7 @@ func (p *Parser) function_body(funcName string) (stmts []*tp.Instruction) {
 	}()
 
 	stmts = p.block()
+	p.inFunc = false
 	return stmts
 }
 
