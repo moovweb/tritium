@@ -471,6 +471,73 @@ func url_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []i
 	return
 }
 
+func url_in_Attribute_v1(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	//get the attribute node
+	attrNode := scope.Value.(*xml.AttributeNode)
+	// get the value of the node as a string
+	urlStr := attrNode.String()
+	// parse it and catch errors
+	urlParsed, err := url.Parse(urlStr)
+	if err != nil {
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "url parse err: %s", err.Error())
+		returnValue = "false"
+		return
+	}
+
+	// make a new scope and run the passed block (held in ins.Children) with the new scope
+	ns := &Scope{Value: urlParsed}
+	for _, child := range ins.Children {
+		ctx.RunInstruction(ns, child)
+	}
+
+	// set the return value to the new string
+	if urlVal, isURL := ns.Value.(*url.URL); isURL {
+		returnValue = urlVal.String()
+	} else if urlStr, isStr := ns.Value.(string); isStr {
+		returnValue = urlStr
+	}
+
+	// set the attribute to the new value
+	attrNode.SetValue(returnValue)
+	return
+}
+
+func url_in_XMLNode_v1(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
+	// get the attribute node of the current XMLNode with the name given by the argument
+	attrNode := scope.Value.(xml.Node).Attribute(args[0].(string))
+	// if the attribute doesn't exist, perform a no-op
+	if attrNode == nil {
+		returnValue = "false"
+		return
+	}
+	// get the value of the attribute as a string
+	urlStr := attrNode.String()
+	// parse it and catch errors
+	urlParsed, err := url.Parse(urlStr)
+	if err != nil {
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "url parse err: %s", err.Error())
+		returnValue = "false"
+		return
+	}
+
+	// make a new scope and run the passed block (held in ins.Children) with the new scope
+	ns := &Scope{Value: urlParsed}
+	for _, child := range ins.Children {
+		ctx.RunInstruction(ns, child)
+	}
+
+	// set the return value to the new string
+	if urlVal, isURL := ns.Value.(*url.URL); isURL {
+		returnValue = urlVal.String()
+	} else if urlStr, isStr := ns.Value.(string); isStr {
+		returnValue = urlStr
+	}
+
+	// set the attribute to the new value
+	attrNode.SetValue(returnValue)
+	return
+}
+
 func comp_v1_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	component := args[0].(string)
 	u := scope.Value.(*url.URL)
