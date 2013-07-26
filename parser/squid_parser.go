@@ -233,7 +233,7 @@ func (p *Parser) statement() (node *tp.Instruction) {
 	switch p.peek().Lexeme {
 	case IMPORT:
 		if p.inFunc {
-			p.error("imports not allowed inside function definitions")
+			panic(fmt.Sprintf("|%s:%d -- imports not allowed inside function definitions", p.FileName, p.peek().LineNumber))
 		}
 		token := p.pop() // pop the "@import" token (includes importee)
 		scriptLocationInProject := filepath.Clean(filepath.Join(p.ScriptPath, token.Value))
@@ -771,6 +771,11 @@ func (p *Parser) function_body(funcName string) (stmts []*tp.Instruction) {
 	// catch a parsing error and add extra error info about the surrounding definition
 	defer func() {
 		if r := recover(); r != nil {
+			// stupid hack for handling the 'import in a function' error
+			fullMessage := r.(string)
+			if fullMessage[0] == '|' {
+				panic(fullMessage[1:])
+			}
 			// pull out the actual message without the filename/line-no
 			msg := strings.Split(strings.Split(r.(string), "-- ")[1], "; ")[0]
 			// re-throw the error with the current filename, line-no, and function-name
