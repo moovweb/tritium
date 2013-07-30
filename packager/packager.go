@@ -6,41 +6,41 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
 	"sort"
+	"strings"
 )
 
 import (
-	"butler/mixer"
 	fileutil "butler/fileutil"
-	"tritium/parser"
-	"tritium/whale"
-	"tritium/packager/legacy"
+	"butler/mixer"
 	proto "code.google.com/p/goprotobuf/proto"
-	tp "tritium/proto"
-	yaml "goyaml"
 	"golog"
+	yaml "goyaml"
+	"tritium/packager/legacy"
+	"tritium/parser"
+	tp "tritium/proto"
+	"tritium/whale"
 )
 
-type downloader func (string, string) (*tp.Mixer, error)
+type downloader func(string, string) (*tp.Mixer, error)
 
 type Packager struct {
-	MixerDir          string
-	LibDir            string
-	IncludePaths      []string
-	IsHttpTransformer bool
+	MixerDir                 string
+	LibDir                   string
+	IncludePaths             []string
+	IsHttpTransformer        bool
 	MayBuildHttpTransformers bool
-	Dependencies      map[string]string
-	AlreadyLoaded     map[string]bool           // to avoid redundant loading of dependencies
-	NowVisiting       map[string]bool           // to prevent circular dependencies
-	TypeMap           map[string]int
-	SuperclassOf      map[string]string
+	Dependencies             map[string]string
+	AlreadyLoaded            map[string]bool // to avoid redundant loading of dependencies
+	NowVisiting              map[string]bool // to prevent circular dependencies
+	TypeMap                  map[string]int
+	SuperclassOf             map[string]string
 	// SubclassesOf      map[string][]string       // might not need this
 	// Extensions        []string                  // type extensions in *this* mixer, not dependencies
 	// FunctionsWith     map[string][]*tp.Function // for each type, maintain a list of functions that use it
-	TypeList          []string
-	Logger            *golog.Logger
-	downloader        downloader
+	TypeList   []string
+	Logger     *golog.Logger
+	downloader downloader
 	*tp.Mixer
 }
 
@@ -67,20 +67,20 @@ func New(relSrcDir, libDir string, mayBuildHttpTransformers bool, logger *golog.
 	}
 	absSrcDir = filepath.Clean(absSrcDir)
 
-	pkgr.MixerDir        = absSrcDir
-	pkgr.LibDir          = libDir
-	pkgr.IncludePaths    = make([]string, 2) // support more in the future as a command-line option
+	pkgr.MixerDir = absSrcDir
+	pkgr.LibDir = libDir
+	pkgr.IncludePaths = make([]string, 2) // support more in the future as a command-line option
 	pkgr.IncludePaths[0] = wd
 	pkgr.IncludePaths[1] = filepath.Dir(absSrcDir)
 
-	pkgr.Mixer           = tp.NewMixer(absSrcDir)
+	pkgr.Mixer = tp.NewMixer(absSrcDir)
 	pkgr.PackagerVersion = proto.Int32(PACKAGER_VERSION)
 	pkgr.readDependenciesFile()
-	pkgr.AlreadyLoaded   = make(map[string]bool)
-	pkgr.Logger          = logger
-	pkgr.downloader      = mixerDownloader
+	pkgr.AlreadyLoaded = make(map[string]bool)
+	pkgr.Logger = logger
+	pkgr.downloader = mixerDownloader
 
-	pkgr.Mixer.Package           = new(tp.Package)
+	pkgr.Mixer.Package = new(tp.Package)
 	pkgr.Mixer.Package.Functions = make([]*tp.Function, 0)
 
 	pkgr.MayBuildHttpTransformers = mayBuildHttpTransformers
@@ -97,17 +97,17 @@ func New(relSrcDir, libDir string, mayBuildHttpTransformers bool, logger *golog.
 
 func NewFromCompiledMixer(mxr *tp.Mixer) *Packager {
 	pkgr := new(Packager)
-	pkgr.AlreadyLoaded     = make(map[string]bool)
+	pkgr.AlreadyLoaded = make(map[string]bool)
 	pkgr.IsHttpTransformer = mxr.GetIsHttpTransformer()
-	pkgr.Mixer             = mxr
+	pkgr.Mixer = mxr
 
 	// now reconstruct all the type information
-	pkgr.TypeMap  = make(map[string]int)
+	pkgr.TypeMap = make(map[string]int)
 	pkgr.TypeList = make([]string, len(mxr.Package.Types))
 
 	for i, t := range mxr.Package.Types {
 		pkgr.TypeMap[t.GetName()] = i
-		pkgr.TypeList[i]          = t.GetName()
+		pkgr.TypeList[i] = t.GetName()
 		if super := t.GetImplements(); super != 0 {
 			if pkgr.SuperclassOf == nil {
 				pkgr.SuperclassOf = make(map[string]string)
@@ -138,9 +138,9 @@ func NewDependencyOf(relSrcDir, libDir string, pkgr *Packager) *Packager {
 	// dependency resolution is cumulative, so their stuff should be appended to
 	// whatever has already been resolved
 	dep := New(relSrcDir, libDir, pkgr.MayBuildHttpTransformers, pkgr.Logger, pkgr.downloader)
-	dep.AlreadyLoaded           = pkgr.AlreadyLoaded
-	dep.TypeMap                 = pkgr.TypeMap
-	dep.SuperclassOf            = pkgr.SuperclassOf
+	dep.AlreadyLoaded = pkgr.AlreadyLoaded
+	dep.TypeMap = pkgr.TypeMap
+	dep.SuperclassOf = pkgr.SuperclassOf
 	// dep.SubclassesOf            = pkgr.SubclassesOf
 	// dep.Extensions              = pkgr.Extensions
 	// dep.FunctionsWith           = pkgr.FunctionsWith
@@ -153,10 +153,10 @@ func (pkgr *Packager) mergeWith(dep *Packager) {
 	// Dependency loading is cumulative; tables are passed down and populated on
 	// the way back up, then passed down again. So the tables that percolate up
 	// are the most populated versions; just use those.
-	pkgr.AlreadyLoaded           = dep.AlreadyLoaded
-	pkgr.NowVisiting             = dep.NowVisiting
-	pkgr.TypeMap                 = dep.TypeMap
-	pkgr.SuperclassOf            = dep.SuperclassOf
+	pkgr.AlreadyLoaded = dep.AlreadyLoaded
+	pkgr.NowVisiting = dep.NowVisiting
+	pkgr.TypeMap = dep.TypeMap
+	pkgr.SuperclassOf = dep.SuperclassOf
 	// pkgr.SubclassesOf            = dep.SubclassesOf
 	// pkgr.Extensions              = dep.Extensions
 	// pkgr.FunctionsWith           = dep.FunctionsWith
@@ -287,7 +287,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 
 	if foundMixerSrc || foundCompiledMixer {
 		panic(fmt.Sprintf("version %s needed for dependency `%s` of `%s`",
-		      specifiedVersion, name, pkgr.GetName()))
+			specifiedVersion, name, pkgr.GetName()))
 	}
 	panic(fmt.Sprintf("unable to find dependency `%s` of `%s`", name, pkgr.GetName()))
 }
@@ -331,7 +331,7 @@ func (pkgr *Packager) resolveTypeDeclarations() {
 			}
 			// if we get to this point, the declaration is a duplicate, so do nothing
 
-		// else it's an extension
+			// else it's an extension
 		} else {
 			// parse the supertype and subtype
 			splitted := strings.Split(typeDec, "<")
@@ -372,7 +372,7 @@ func (pkgr *Packager) populateTypeList() {
 	for name, id := range pkgr.TypeMap {
 		pkgr.TypeList[id] = name
 		pkgr.Package.Types[id] = &tp.Type{
-			Name: proto.String(name),
+			Name:       proto.String(name),
 			Implements: proto.Int32(int32(pkgr.TypeMap[pkgr.SuperclassOf[name]])),
 		}
 	}
@@ -413,11 +413,11 @@ func (pkgr *Packager) resolveFunctions(dirName, fileName string) {
 			pkgr.resolveFunctions(filepath.Dir(importPath), filepath.Base(importPath))
 			continue // to forgo appending it to the comprehensive list of functions
 
-		// otherwise it's a proper function definition -- see if it's native
+			// otherwise it's a proper function definition -- see if it's native
 		} else if f.GetBuiltIn() {
 			pkgr.resolveNativeDeclaration(f, relPath)
 
-		// otherwise it's a user-defined function
+			// otherwise it's a user-defined function
 		} else {
 			pkgr.resolveUserDefinition(f, relPath)
 		}
@@ -473,7 +473,7 @@ func (pkgr *Packager) MergeCompiled(dep *Packager) {
 }
 
 func (pkgr *Packager) mergeAndRelocateTypes(dep *Packager) {
-	typeRelocations   := make(map[int]int)
+	typeRelocations := make(map[int]int)
 	typeRelocations[-1] = -1
 
 	for id, name := range dep.TypeList {
@@ -493,7 +493,7 @@ func (pkgr *Packager) mergeAndRelocateTypes(dep *Packager) {
 				pkgr.TypeMap = make(map[string]int)
 			}
 			newId := len(pkgr.TypeMap)
-			pkgr.TypeMap[name]  = newId
+			pkgr.TypeMap[name] = newId
 			typeRelocations[id] = newId
 			super, isExtended := dep.SuperclassOf[name]
 			if isExtended {
@@ -523,7 +523,7 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 	// compile them separately, and guard agains multiple transformers
 	packagesFromMixers := make([]*Packager, len(mixers))
 	for i, mxr := range mixers {
-	  packagesFromMixers[i] = NewFromCompiledMixer(mxr)
+		packagesFromMixers[i] = NewFromCompiledMixer(mxr)
 	}
 	foundTransformer := false
 	foundLegacyMixer := false
@@ -552,8 +552,8 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 		}
 		first = packagesFromMixers[0]
 	} else if !foundTransformer && transformerRequired {
-		// TODO: provide a link to docs in the following error message
-		err = errors.New("Your project must specify an HTTP transformer mixer in the Mixer.lock file.")
+		err = errors.New("Your project must specify an HTTP transformer mixer in the Mixer.lock file.\n" +
+			"       Visit https://console.moovweb.com/learn/docs/local/mixers#The+Core+Mixer for more info.")
 		return
 	}
 	// stash a copy of the mixer that has the transformers
