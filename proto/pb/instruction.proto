@@ -24,6 +24,8 @@ message Instruction {
 	optional string namespace = 10;
 	optional string type_qualifier = 11;
 
+	optional bool is_user_called = 12;
+
 	enum InstructionType {
 		BLOCK = 0;
 		FUNCTION_CALL = 1;

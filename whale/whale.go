@@ -12,6 +12,7 @@ import (
 	"go-cache"
 	"go-cache/arc"
 	"gokogiri/xpath"
+	"moovhelper"
 	"rubex"
 	"steno"
 	tp "tritium/proto"
@@ -241,8 +242,15 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 			ctx.PushYieldBlock(yieldBlock)
 			curFile := ctx.Filename
 			ctx.Filename = fun.GetFilename()
+			// if it's a user-called function, save the curfile:linenumber
+			if null.GetBool(ins.IsUserCalled) == true {
+				ctx.Env[moovhelper.MtkNodeAttr] = fmt.Sprintf("%s:%d", curFile, *ins.LineNumber)
+			}
 			for _, child := range fun.Instruction.Children {
 				returnValue = ctx.RunInstruction(scope, child)
+			}
+			if null.GetBool(ins.IsUserCalled) == true {
+				delete(ctx.Env, moovhelper.MtkNodeAttr)
 			}
 			ctx.Filename = curFile
 			// POP!

@@ -16,6 +16,7 @@ import (
 	"gokogiri/html"
 	"gokogiri/xml"
 	"icu4go"
+	"moovhelper"
 	"rubex"
 	tp "tritium/proto"
 )
@@ -633,6 +634,15 @@ func select_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []i
 					node = enode
 					t = node.NodeType()
 				}
+			}
+			// add mtk attribute to matching nodes
+			if ctx.Env[moovhelper.MtkNodeAttr] != "" {
+				attrValue := ctx.Env[moovhelper.MtkNodeAttr]
+				attr := node.Attribute(moovhelper.MtkNodeAttr)
+				if attr != nil {
+					attrValue = attr.Value()+" "+attrValue
+				}
+				node.SetAttr(moovhelper.MtkNodeAttr, attrValue)
 			}
 			if t == xml.XML_ELEMENT_NODE {
 				ns := &Scope{Value: node, Index: index}

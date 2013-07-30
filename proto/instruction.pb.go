@@ -76,6 +76,7 @@ type Instruction struct {
 	IsValid          *bool                        `protobuf:"varint,9,opt,name=is_valid" json:"is_valid,omitempty"`
 	Namespace        *string                      `protobuf:"bytes,10,opt,name=namespace" json:"namespace,omitempty"`
 	TypeQualifier    *string                      `protobuf:"bytes,11,opt,name=type_qualifier" json:"type_qualifier,omitempty"`
+	IsUserCalled     *bool                        `protobuf:"varint,12,opt,name=is_user_called" json:"is_user_called"`
 	XXX_unrecognized []byte                       `json:"-"`
 }
 

@@ -27,6 +27,7 @@ type Parser struct {
 }
 
 var TritiumParserShowRewriterFileName = false
+var IncludeSourceMap = false
 
 func (p *Parser) gensym() string {
 	p.counter++
@@ -546,6 +547,10 @@ func (p *Parser) call(funcName *Token) (node *tp.Instruction) {
 		node = tp.MakeFunctionCall("log", tp.ListInstructions(cats), block, funcLineNo)
 	} else {
 		node = tp.MakeFunctionCall(funcNameStr, ords, block, funcLineNo)
+	}
+	// if it's not a root file, we can assume that it's a user-called function
+	if p.RootFile == false && IncludeSourceMap == true {
+		node.IsUserCalled = proto.Bool(true)
 	}
 	return node
 }
