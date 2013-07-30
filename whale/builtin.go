@@ -97,6 +97,8 @@ func init() {
 	builtInFunctions["tritium.comp_v1.Text"] = comp_v1_Text
 	builtInFunctions["tritium.param_v1.Text"] = param_v1_Text
 	builtInFunctions["tritium.remove_param_v1.Text"] = remove_param_v1_Text
+	builtInFunctions["tritium.attr_url"] = url_in_Attribute_v1
+	builtInFunctions["tritium.xmlnode_url.Text"] = url_in_XMLNode_v1
 
 	builtInFunctions["tritium.to_json_v1.Text"] = to_json_v1_Text
 	builtInFunctions["tritium.json_to_xml_v1"] = json_to_xml_v1
