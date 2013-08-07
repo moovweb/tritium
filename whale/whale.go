@@ -356,7 +356,7 @@ func (ctx *EngineContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 			//ctx.AddMemoryObject(r)
 			ctx.RegexpCache.Set(sig, &RegexpObject{Regexp: r})
 		} else {
-			panic(fmt.Sprintf("invalid regular expression: /%s/%s", pattern, options))
+			panic(fmt.Sprintf("%s: /%s/%s", err.Error(), pattern, options))
 		}
 		return r
 	}
