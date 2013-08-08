@@ -21,6 +21,8 @@ import (
 	tp "tritium/proto"
 )
 
+const isUserCalledEnvKey = "MtkIsUserCalled"
+
 //The string value of me
 func this_(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = scope.Value
@@ -615,6 +617,15 @@ func select_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []i
 
 	if len(nodes) == 0 {
 		returnValue = "0"
+		// add mtk attribute to zero-match node
+		if ctx.Env[isUserCalledEnvKey] != "" {
+			attrValue := ctx.Env[isUserCalledEnvKey]
+			attr := node.Attribute(moovhelper.MtkZeroMatchAttr)
+			if attr != nil {
+				attrValue = attr.Value()+" "+attrValue
+			}
+			node.SetAttr(moovhelper.MtkZeroMatchAttr, attrValue)
+		}
 	} else {
 		returnValue = fmt.Sprintf("%d", len(nodes))
 	}
@@ -635,14 +646,14 @@ func select_Text(ctx *EngineContext, scope *Scope, ins *tp.Instruction, args []i
 					t = node.NodeType()
 				}
 			}
-			// add mtk attribute to matching nodes
-			if ctx.Env[moovhelper.MtkNodeAttr] != "" {
-				attrValue := ctx.Env[moovhelper.MtkNodeAttr]
-				attr := node.Attribute(moovhelper.MtkNodeAttr)
+			// add mtk attribute to matched nodes
+			if ctx.Env[isUserCalledEnvKey] != "" {
+				attrValue := ctx.Env[isUserCalledEnvKey]
+				attr := node.Attribute(moovhelper.MtkSourceAttr)
 				if attr != nil {
 					attrValue = attr.Value()+" "+attrValue
 				}
-				node.SetAttr(moovhelper.MtkNodeAttr, attrValue)
+				node.SetAttr(moovhelper.MtkSourceAttr, attrValue)
 			}
 			if t == xml.XML_ELEMENT_NODE {
 				ns := &Scope{Value: node, Index: index}
