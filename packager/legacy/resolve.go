@@ -86,7 +86,7 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string) {
 
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
 		if fun.Instruction != nil {
-			fun.Instruction.Iterate(func(ins *tp.Instruction) {
+			fun.Instruction.IterateAll(func(ins *tp.Instruction) {
 				if *ins.Type == tp.Instruction_FUNCTION_CALL {
 					if null.GetString(ins.Value) == "yield" {
 						fun.OpensTypeId = ins.YieldTypeId
