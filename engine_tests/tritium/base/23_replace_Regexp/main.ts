@@ -1,0 +1,3 @@
+replace(/foo/) {
+  set("bar")
+}

@@ -1,0 +1,1 @@
+set(downcase(this()))
