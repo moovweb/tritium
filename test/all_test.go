@@ -1,6 +1,13 @@
 package test
 
 import "testing"
+import "flag"
+
+var cengine bool
+
+func init () {
+	flag.BoolVar(&cengine, "cengine", cengine, "Use caesium c engine to run tests.")
+}
 
 func TestBase(t *testing.T) {
 	RunTestSuite("packages/base", t) // legacy

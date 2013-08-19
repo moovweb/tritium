@@ -1,19 +1,22 @@
 package test
 
-import "path/filepath"
-import "tritium/whale"
-import "testing"
+import (
+	"flag"
+	"fmt"
+	"path/filepath"
+	"runtime"
+	"testing"
+	"time"
 
-//import "log4go"
-//import "runtime/debug"
-import "runtime"
-import "fmt"
-import "tritium/spec"
-import tp "tritium/proto"
-import "tritium/packager/legacy"
-import "golog"
-import "time"
-import "steno/dummy"
+	"golog"
+	"steno/dummy"
+	"tritium"
+	"tritium/czm"
+	"tritium/packager/legacy"
+	tp "tritium/proto"
+	"tritium/spec"
+	"tritium/whale"
+)
 
 func RunTest(path string) (result *spec.Result) {
 	result = spec.NewResult()
@@ -45,7 +48,13 @@ func RunTest(path string) (result *spec.Result) {
 		return
 	}
 	debugger := &dummy.DummyDebugger{}
-	eng := whale.NewEngine(debugger)
+	var eng tritium.Engine
+	flag.Parse()
+	if cengine {
+		eng = &czm.Cengine{}
+	} else {
+		eng = whale.NewEngine(debugger)
+	}
 	d, _ := time.ParseDuration("1m")
 	result.Merge(spec.Compare(eng.Run(spec.Script, nil, spec.Input, spec.Vars, time.Now().Add(d), "test", "test", "test", false)))
 
