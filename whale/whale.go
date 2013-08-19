@@ -165,10 +165,6 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 		panic(TimeoutError)
 	}
 
-	// If our object is invalid, then skip it
-	if null.GetBool(ins.IsValid) == false {
-		panic("Invalid instruction. Should have stopped before linking!")
-	}
 	indent := ""
 	for i := 0; i < len(ctx.Yields); i++ {
 		indent += "\t"
