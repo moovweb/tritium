@@ -28,8 +28,16 @@ func (m *Package) ISetNthFunction(index int, value protoface.Function) {
 	m.GetFunctions()[index] = value
 }
 
-func (m *Package) IGetTypes() []protoface.Type {
-	return m.GetTypes()
+// func (m *Package) IGetTypes() []protoface.Type {
+// 	return m.GetTypes()
+// }
+
+func (m *Package) IGetNthType(index int) protoface.Type {
+	return m.GetTypes()[index]
+}
+
+func (m *Package) IGetNthType(index int, value protoface.Type) {
+	m.GetTypes()[index] = value
 }
 
 func (m *Package) IGetDependencies() []string {
