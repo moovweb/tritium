@@ -12,8 +12,16 @@ func (m *ScriptObject) IGetRoot() protoface.Instruction {
 	return m.GetRoot()
 }
 
-func (m *ScriptObject) IGetFunctions() []protoface.Function {
-	return m.GetFunctions()
+// func (m *ScriptObject) IGetFunctions() []protoface.Function {
+// 	return m.GetFunctions()
+// }
+
+func (m *ScriptObject) IGetNthFunctions(index int) protoface.Function {
+	return m.GetFunctions()[index]
+}
+
+func (m *ScriptObject) IGetNthFunctions(index int, value protoface.Function) {
+	m.GetFunctions()[index] = value
 }
 
 func (m *ScriptObject) IGetScopeTypeId() int32 {
