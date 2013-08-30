@@ -16,12 +16,28 @@ func (m *Instruction) IGetObjectId() int32 {
 	return m.GetObjectId()
 }
 
-func (m *Instruction) IGetChildren() []protoface.Instruction {
-	return m.GetGhildren()
+// func (m *Instruction) IGetChildren() []protoface.Instruction {
+// 	return m.GetGhildren()
+// }
+
+func (m *Instruction) IGetChildren(index int) protoface.Instruction {
+	return m.GetGhildren()[index]
 }
 
-func (m *Instruction) IGetArguments() []protoface.Instruction {
-	return m.GetArguments()
+func (m *Instruction) IGetChildren(index int, value protoface.Instruction) {
+	m.GetGhildren()[index] = value
+}
+
+// func (m *Instruction) IGetArguments() []protoface.Instruction {
+// 	return m.GetArguments()
+// }
+
+func (m *Instruction) IGetArguments(int index) protoface.Instruction {
+	return m.GetArguments()[index]
+}
+
+func (m *Instruction) IGetArguments(int index, value protoface.Instruction) {
+	m.GetArguments()[index] = value
 }
 
 func (m *Instruction) IGetFunctinoId() int32 {

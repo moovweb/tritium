@@ -16,8 +16,16 @@ func (m *Package) IGetName() string {
 	return m.GetName()
 }
 
-func (m *Package) IGetFunctions() []protoface.Function {
-	return m.GetFunctions()
+// func (m *Package) IGetFunctions() []protoface.Function {
+// 	return m.GetFunctions()
+// }
+
+func (m *Package) IGetNthFunction(index int) protoface.Function {
+	return m.GetFunctions()[index]
+}
+
+func (m *Package) ISetNthFunction(index int, value protoface.Function) {
+	m.GetFunctions()[index] = value
 }
 
 func (m *Package) IGetTypes() []protoface.Type {
