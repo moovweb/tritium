@@ -1,8 +1,8 @@
 package proto
 
 import(
-	"slugtest/protoface"
-	)
+	"tritium/protoface"
+)
 
 func (m *ScriptObject) IGetName() string {
 	return m.GetName()
@@ -16,12 +16,12 @@ func (m *ScriptObject) IGetRoot() protoface.Instruction {
 // 	return m.GetFunctions()
 // }
 
-func (m *ScriptObject) IGetNthFunctions(index int) protoface.Function {
+func (m *ScriptObject) IGetNthFunction(index int) protoface.Function {
 	return m.GetFunctions()[index]
 }
 
-func (m *ScriptObject) IGetNthFunctions(index int, value protoface.Function) {
-	m.GetFunctions()[index] = value
+func (m *ScriptObject) ISetNthFunction(index int, value protoface.Function) {
+	m.GetFunctions()[index] = value.(*Function)
 }
 
 func (m *ScriptObject) IGetScopeTypeId() int32 {

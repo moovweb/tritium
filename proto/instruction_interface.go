@@ -1,46 +1,47 @@
 package proto
 
 import(
-	"slugtest/protoface"
-	)
+	"tritium/protoface"
+)
 
 func (m *Instruction) IGetType() protoface.Instruction_InstructionType {
-	return m.GetType()
+	if m != nil && m.Type != nil {
+		return protoface.Instruction_InstructionType(*m.Type)
+	}
+	return 0
 }
 
 func (m *Instruction) IGetValue() string {
-	return m.GetValue()
+	if m != nil && m.Value != nil {
+		return *m.Value
+	}
+	return ""
 }
 
 func (m *Instruction) IGetObjectId() int32 {
-	return m.GetObjectId()
+	if m != nil && m.ObjectId != nil {
+		return *m.ObjectId
+	}
+	return 0
 }
 
-// func (m *Instruction) IGetChildren() []protoface.Instruction {
-// 	return m.GetGhildren()
-// }
-
-func (m *Instruction) IGetChildren(index int) protoface.Instruction {
-	return m.GetGhildren()[index]
+func (m *Instruction) IGetNthChild(index int) protoface.Instruction {
+	return m.GetChildren()[index]
 }
 
-func (m *Instruction) IGetChildren(index int, value protoface.Instruction) {
-	m.GetGhildren()[index] = value
+func (m *Instruction) ISetNthChild(index int, value protoface.Instruction) {
+	m.GetChildren()[index] = value.(*Instruction)
 }
 
-// func (m *Instruction) IGetArguments() []protoface.Instruction {
-// 	return m.GetArguments()
-// }
-
-func (m *Instruction) IGetArguments(int index) protoface.Instruction {
+func (m *Instruction) IGetNthArgument(index int) protoface.Instruction {
 	return m.GetArguments()[index]
 }
 
-func (m *Instruction) IGetArguments(int index, value protoface.Instruction) {
-	m.GetArguments()[index] = value
+func (m *Instruction) ISetNthArgument(index int, value protoface.Instruction) {
+	m.GetArguments()[index] = value.(*Instruction)
 }
 
-func (m *Instruction) IGetFunctinoId() int32 {
+func (m *Instruction) IGetFunctionId() int32 {
 	return m.GetFunctionId()
 }
 

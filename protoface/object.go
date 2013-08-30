@@ -2,12 +2,12 @@ package protoface
 
 type ScriptObject interface {
 	ProtoBuff
-	func IGetName() string
-	func IGetRoot() *Instruction
-	// func IGetFunctions() []*Function
-	func IGetNthFunctions(index int) Function
-	func ISetNthFunctions(index int, value Function)
-	func IGetScopeTypeId() int32
-	func IGetLinked() bool
-	func IGetModule() string
+	IGetName() string
+	IGetRoot() Instruction
+	// IGetFunctions() []*Function
+	IGetNthFunction(index int) Function
+	ISetNthFunction(index int, value Function)
+	IGetScopeTypeId() int32
+	IGetLinked() bool
+	IGetModule() string
 }

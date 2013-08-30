@@ -1,11 +1,11 @@
 package proto
 
 import(
-	"slugtest/protoface"
-	)
+	"tritium/protoface"
+)
 
 func (m *Type) IGetName() string {
-	return m.GetString()
+	return m.GetName()
 }
 
 func (m *Type) IGetImplements() int32 {
@@ -25,7 +25,7 @@ func (m *Package) IGetNthFunction(index int) protoface.Function {
 }
 
 func (m *Package) ISetNthFunction(index int, value protoface.Function) {
-	m.GetFunctions()[index] = value
+	m.GetFunctions()[index] = value.(*Function)
 }
 
 // func (m *Package) IGetTypes() []protoface.Type {
@@ -36,8 +36,8 @@ func (m *Package) IGetNthType(index int) protoface.Type {
 	return m.GetTypes()[index]
 }
 
-func (m *Package) IGetNthType(index int, value protoface.Type) {
-	m.GetTypes()[index] = value
+func (m *Package) ISetNthType(index int, value protoface.Type) {
+	m.GetTypes()[index] = value.(*Type)
 }
 
 func (m *Package) IGetDependencies() []string {

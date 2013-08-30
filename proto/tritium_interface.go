@@ -1,7 +1,7 @@
 package proto
 
 import(
-	"slugtest/protoface"
+	"tritium/protoface"
 )
 
 func (m *Transform) IGetNthObject(n int) protoface.ScriptObject {
@@ -9,7 +9,7 @@ func (m *Transform) IGetNthObject(n int) protoface.ScriptObject {
 }
 
 func (m *Transform) ISetNthObject(n int, s protoface.ScriptObject) {
-	m.GetObjects()[n] = s
+	m.GetObjects()[n] = s.(*ScriptObject)
 }
 
 func (m *Transform) IGetPkg() protoface.Package {

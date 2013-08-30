@@ -2,21 +2,21 @@ package protoface
 
 type Instruction_InstructionType int32
 
-type Instruction struct {
+type Instruction interface {
 	ProtoBuff
-	func IGetType() Instruction_InstructionType
-	func IGetValue() string
-	func IGetObjectId() int32
-	// func IGetChildren() []*Instruction
-	func IGetNthChild(index int) Instruction
-	func ISetNthChild(index int, value Instruction)
-	// func IGetArguments() []*Instruction
-	func IGetNthArgument(index int) Instruction
-	func ISetNthArgument(index int, value Instruction)
-	func IGetFunctionId() int32
-	func IGetLineNumber() int32
-	func IGetYieldTypeId() int32
-	func IGetIsValid() bool
-	func IGetNameSpace() string
-	func IGetTypeQualifier() string
+	IGetType() Instruction_InstructionType
+	IGetValue() string
+	IGetObjectId() int32
+	// IGetChildren() []*Instruction
+	IGetNthChild(index int) Instruction
+	ISetNthChild(index int, value Instruction)
+	// IGetArguments() []*Instruction
+	IGetNthArgument(index int) Instruction
+	ISetNthArgument(index int, value Instruction)
+	IGetFunctionId() int32
+	IGetLineNumber() int32
+	IGetYieldTypeId() int32
+	IGetIsValid() bool
+	IGetNamespace() string
+	IGetTypeQualifier() string
 }
