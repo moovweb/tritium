@@ -7,9 +7,11 @@ import (
 import (
 	pb "code.google.com/p/goprotobuf/proto"
 	"butler/null"
+	"tritium/protoface"
 )
 
-func (f *Function) Stub(pkg *Package) string {
+func (f *Function) Stub(pkg2 protoface.Package) string {
+	pkg := pkg2.(*Package)
 	ns := f.GetNamespace()
 	if len(ns) == 0 {
 		ns = "tritium"
@@ -28,7 +30,8 @@ func (f *Function) Stub(pkg *Package) string {
 }
 
 // prettier signatures than what `Stub` provides
-func (f *Function) FullSignature(pkg *Package) string {
+func (f *Function) FullSignature(pkg2 protoface.Package) string {
+	pkg := pkg2.(*Package)
 	ns := f.GetNamespace()
 	if len(ns) == 0 {
 		ns = "tritium"
@@ -37,7 +40,8 @@ func (f *Function) FullSignature(pkg *Package) string {
 	return fmt.Sprintf("%s.%s", ns, f.BaseSignature(pkg))
 }
 
-func (f *Function) BaseSignature(pkg *Package) string {
+func (f *Function) BaseSignature(pkg2 protoface.Package) string {
+	pkg := pkg2.(*Package)
 	args := "("
 	for i, arg := range f.Args {
 		argName := null.GetString(arg.TypeString)
@@ -58,7 +62,7 @@ func (f *Function) BaseSignature(pkg *Package) string {
 // - for now we just make duplicated functions for the package w the types changed
 // - this way, the engine can play dumb
 
-func (fun *Function) Clone() *Function {
+func (fun *Function) Clone() protoface.Function {
 	bytes, err := pb.Marshal(fun)
 
 	if err != nil {
@@ -74,17 +78,21 @@ func (fun *Function) Clone() *Function {
 func (fun *Function) NameString() string {
 	return null.GetString(fun.Name)
 }
-func (fun *Function) ReturnTypeString(pkg *Package) string {
+func (fun *Function) ReturnTypeString(pkg2 protoface.Package) string {
+	pkg := pkg2.(*Package)
 	return pkg.GetTypeName(null.GetInt32(fun.ReturnTypeId))
 }
-func (fun *Function) ScopeTypeString(pkg *Package) string {
+func (fun *Function) ScopeTypeString(pkg2 protoface.Package) string {
+	pkg := pkg2.(*Package)
 	return pkg.GetTypeName(null.GetInt32(fun.ScopeTypeId))
 }
-func (fun *Function) OpensTypeString(pkg *Package) string {
+func (fun *Function) OpensTypeString(pkg2 protoface.Package) string {
+	pkg := pkg2.(*Package)
 	return pkg.GetTypeName(null.GetInt32(fun.OpensTypeId))
 }
 
-func (fun *Function) DebugInfo(pkg *Package) string {
+func (fun *Function) DebugInfo(pkg2 protoface.Package) string {
+	pkg := pkg2.(*Package)
 	name := fun.NameString()
 	scopeType := fun.ScopeTypeString(pkg)
 	returnType := fun.ReturnTypeString(pkg)

@@ -18,6 +18,19 @@ type Function interface {
 	IGetNthArg(index int) Function_Argument
 	ISetNthArg(index int, value Function_Argument)
 	IGetInstruction() Instruction
+
+	// extra custom stuff
+	Stub(pkg Package) string
+	FullSignature(pkg Package) string
+	BaseSignature(pkg Package) string
+	Clone() Function
+	NameString() string
+	ReturnTypeString(pkg Package) string
+	ScopeTypeString(pkg Package) string
+	OpensTypeString(pkg Package) string
+	DebugInfo(pkg Package) string
+	RelocateCallsBy(offset int)
+	RelocateTypes(relocations map[int]int)
 }
 
 type Function_Argument interface {
