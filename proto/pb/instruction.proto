@@ -1,6 +1,4 @@
 package proto;
-option optimize_for = SPEED;
-option butt_poop = CHUNKY;
 
 option optimize_for = SPEED;
 
