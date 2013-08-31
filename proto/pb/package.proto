@@ -1,5 +1,7 @@
 package proto;
 
+option optimize_for = SPEED;
+
 import "function.proto";
 
 // Core data types must be enumerated in the message

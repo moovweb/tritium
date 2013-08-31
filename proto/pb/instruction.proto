@@ -2,6 +2,8 @@ package proto;
 option optimize_for = SPEED;
 option butt_poop = CHUNKY;
 
+option optimize_for = SPEED;
+
 message Instruction {
 	required InstructionType type = 1;
 	optional string value = 2;
