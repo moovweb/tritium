@@ -1,5 +1,7 @@
 package proto;
 
+option optimize_for = SPEED;
+
 message Instruction {
 	required InstructionType type = 1;
 	optional string value = 2;

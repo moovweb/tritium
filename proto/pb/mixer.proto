@@ -1,5 +1,7 @@
 package proto;
 
+option optimize_for = SPEED;
+
 import "file.proto";
 import "rewriter.proto";
 import "package.proto";
