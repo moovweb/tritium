@@ -9,12 +9,16 @@ type Type interface {
 type Package interface {
 	ProtoBuff
 	IGetName() string
-	// IGetFunctions() []*Function
 	IGetNthFunction(index int) Function
 	ISetNthFunction(index int, value Function)
-	// IGetTypes() []*Type
 	IGetNthType(index int) Type
 	ISetNthType(index int, value Type)
 	IGetDependencies() []string
 	IGetPath() string
+
+	GetTypeId(string) int
+	GetTypeName(int32) string
+	GetProtoTypeId(*string) *int32
+	FindDescendantType(int32) int
+	AncestorOf(int32, int32) bool
 }
