@@ -1,0 +1,39 @@
+package proto;
+
+option optimize_for = SPEED;
+
+import "instruction.proto";
+
+message Function {
+	optional string name = 1;
+  // optional string description = 11;
+  // optional string filename = 12;
+  // optional int32 line_number = 13;
+  // optional string namespace = 14;
+
+	// Linked
+	// optional int32 scope_type_id = 2;
+	// optional string scope_type = 8;
+	// optional int32 return_type_id = 3;
+	// optional string return_type = 9;
+	// optional int32 opens_type_id = 4;
+	// optional string opens_type = 10;
+
+	// Only informative post-linking
+	optional bool built_in = 5;
+
+	repeated Argument args = 6;
+
+	// Only for non-built-in functions
+	optional Instruction instruction = 7;
+
+	message Argument {
+		optional int32 type_id = 1;
+		optional string type_string = 2;
+		optional string name = 3;
+	}
+}
+
+message FunctionArray {
+        repeated Function functions = 1;
+}

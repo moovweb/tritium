@@ -1,0 +1,31 @@
+package proto;
+
+option optimize_for = SPEED;
+
+import "function.proto";
+
+// Core data types must be enumerated in the message
+message Type {
+	optional string name = 1;
+	optional int32 implements = 2;
+}
+
+/* 
+	Structure representing a package of Tritium
+	types and functions.
+	
+	This is both used to store different packages headers and info (base, libxml, node, etc)
+	and is used in an Transform to bundle together needed headers, functions, etc
+*/
+message Package {
+	optional string name = 1;
+	repeated Function functions = 2;
+	repeated Type types = 3;
+
+	// Only used in non-linked combined packages
+	repeated string dependencies = 4;
+
+	// The following field is for nicer error messages
+	optional string path = 5;
+
+}

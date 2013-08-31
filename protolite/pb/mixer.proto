@@ -1,0 +1,28 @@
+package proto;
+
+option optimize_for = SPEED;
+
+import "file.proto";
+import "rewriter.proto";
+import "package.proto";
+
+message Mixer {
+  required string name = 1;
+  required string version = 2;
+  repeated File rewriters = 3;
+  optional Package package = 4;  // Package dependencies get merged together
+
+  // For the new packaging system -- AL 2013/03/21
+  optional int32 packager_version = 5; // if > 0, then we're using the new system!
+  optional bool is_http_transformer = 6;
+  // eventually need this information for function relocation and elimination of redundant dependencies
+  // but not just yet!
+  // repeated SubmixerInfo submixers = 7;
+}
+
+message SubmixerInfo {
+  required string name = 1;
+  required string version = 2;
+  required int32 offset = 3;
+  required int32 length = 4;
+}

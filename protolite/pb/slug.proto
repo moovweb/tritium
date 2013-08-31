@@ -1,0 +1,16 @@
+package proto;
+
+option optimize_for = SPEED;
+
+import "tritium.proto";
+import "rewrite_rule.proto";
+import "credentials.proto";
+
+message Slug {
+	required string name = 1;
+	required string version = 2;
+	repeated Transform transformers = 3;
+	repeated RewriteRule rrules = 4;
+	repeated string ssl_whitelist = 5;
+	optional Credentials credentials = 6;
+}

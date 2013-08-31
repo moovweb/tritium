@@ -1,0 +1,8 @@
+package proto;
+
+option optimize_for = SPEED;
+
+message File {
+        required string path = 1;
+        required bytes data = 2;
+}

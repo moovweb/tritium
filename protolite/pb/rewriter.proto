@@ -1,0 +1,10 @@
+package proto;
+
+option optimize_for = SPEED;
+
+import "file.proto";
+
+message Rewriter {
+        required string name = 1;
+        repeated File templates = 2;
+}
