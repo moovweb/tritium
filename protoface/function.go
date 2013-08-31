@@ -14,12 +14,10 @@ type Function interface {
 	IGetOpensTypeId() int32
 	IGetOpensType() string
 	IGetBuiltIn() bool
-	//IGetArgs() []*Function_Argument
 	IGetNthArg(index int) Function_Argument
 	ISetNthArg(index int, value Function_Argument)
 	IGetInstruction() Instruction
 
-	// extra custom stuff
 	Stub(pkg Package) string
 	FullSignature(pkg Package) string
 	BaseSignature(pkg Package) string
@@ -42,7 +40,6 @@ type Function_Argument interface {
 
 type Function_Array interface {
 	ProtoBuff
-	// IGetFunctions() []*Function
 	IGetNthFunction(index int) Function
 	ISetNthFunction(index int, value Function)
 }

@@ -7,10 +7,8 @@ type Instruction interface {
 	IGetType() Instruction_InstructionType
 	IGetValue() string
 	IGetObjectId() int32
-	// IGetChildren() []*Instruction
 	IGetNthChild(index int) Instruction
 	ISetNthChild(index int, value Instruction)
-	// IGetArguments() []*Instruction
 	IGetNthArgument(index int) Instruction
 	ISetNthArgument(index int, value Instruction)
 	IGetFunctionId() int32
@@ -19,4 +17,9 @@ type Instruction interface {
 	IGetIsValid() bool
 	IGetNamespace() string
 	IGetTypeQualifier() string
+
+	Iterate(f func(Instruction))
+	IterateAll(f func(Instruction))
+	GetFunction(pkg Package) Function
+	Namespaces() []string
 }

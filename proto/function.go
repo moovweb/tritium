@@ -114,7 +114,8 @@ func (f *Function) RelocateCallsBy(offset int) {
 	if f.Instruction == nil {
 		return
 	}
-	f.Instruction.IterateAll(func (ins *Instruction) {
+	f.Instruction.IterateAll(func (ins2 protoface.Instruction) {
+		ins := ins2.(*Instruction)
 		if ins.GetType() != Instruction_FUNCTION_CALL {
 			return
 		}

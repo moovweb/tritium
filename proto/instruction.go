@@ -5,11 +5,11 @@ import (
 )
 
 import (
-	"butler/null"
 	pb "code.google.com/p/goprotobuf/proto"
+	"tritium/protoface"
 )
 
-func (ins *Instruction) Iterate(itFunc func(*Instruction)) {
+func (ins *Instruction) Iterate(itFunc func(protoface.Instruction)) {
 	itFunc(ins)
 	if ins.Children == nil {
 		return
@@ -19,7 +19,7 @@ func (ins *Instruction) Iterate(itFunc func(*Instruction)) {
 	}
 }
 
-func (ins *Instruction) IterateAll(itFunc func(*Instruction)) {
+func (ins *Instruction) IterateAll(itFunc func(protoface.Instruction)) {
 	itFunc(ins)
 	for _, child := range ins.Arguments {
 		child.IterateAll(itFunc)
@@ -105,8 +105,9 @@ func MakeBlock(children []*Instruction, lineNum int32) *Instruction {
 	}
 }
 
-func (ins *Instruction) GetFunction(pkg *Package) *Function {
-	funId := null.GetInt32(ins.FunctionId)
+func (ins *Instruction) GetFunction(pkg2 protoface.Package) protoface.Function {
+	pkg := pkg2.(*Package)
+	funId := ins.GetFunctionId()
 	return pkg.Functions[int(funId)]
 }
 
