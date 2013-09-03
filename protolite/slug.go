@@ -36,7 +36,7 @@ func (slug *Slug) WriteFile(filename string) (err error) {
 func (slug *Slug) FindInstruction(fileName string, lineNumber int) int {
 	for _, tf := range slug.Transformers {
 		for _, obj := range tf.Objects {
-			if obj.GetName() != fileName {
+			if obj.IGetName() != fileName {
 				continue
 			}
 			root := obj.GetRoot()
@@ -50,7 +50,7 @@ func (slug *Slug) FindInstruction(fileName string, lineNumber int) int {
 }
 
 func findNearestInstruction(ins *Instruction, target int) int {
-	current := int32(ins.GetLineNumber())
+	current := int32(ins.IGetLineNumber())
 
 	if int32(target) <= current {
 		return int(current)

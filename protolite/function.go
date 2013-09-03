@@ -12,11 +12,11 @@ import (
 
 func (f *Function) Stub(pkg2 protoface.Package) string {
 	pkg := pkg2.(*Package)
-	ns := f.GetNamespace()
+	ns := f.IGetNamespace()
 	if len(ns) == 0 {
 		ns = "tritium"
 	}
-	fname := fmt.Sprintf("%s.%s", ns, f.GetName())
+	fname := fmt.Sprintf("%s.%s", ns, f.IGetName())
 	args := ""
 	for _, arg := range f.Args {
 		argName := null.GetString(arg.TypeString)
@@ -32,7 +32,7 @@ func (f *Function) Stub(pkg2 protoface.Package) string {
 // prettier signatures than what `Stub` provides
 func (f *Function) FullSignature(pkg2 protoface.Package) string {
 	pkg := pkg2.(*Package)
-	ns := f.GetNamespace()
+	ns := f.IGetNamespace()
 	if len(ns) == 0 {
 		ns = "tritium"
 	}
@@ -54,7 +54,7 @@ func (f *Function) BaseSignature(pkg2 protoface.Package) string {
 		}
 		args += argName
 	}
-	return fmt.Sprintf("%s.%s%s)", pkg.GetTypeName(f.GetScopeTypeId()), f.GetName(), args)
+	return fmt.Sprintf("%s.%s%s)", pkg.GetTypeName(f.IGetScopeTypeId()), f.IGetName(), args)
 }
 
 
@@ -80,15 +80,15 @@ func (fun *Function) NameString() string {
 }
 func (fun *Function) ReturnTypeString(pkg2 protoface.Package) string {
 	pkg := pkg2.(*Package)
-	return pkg.GetTypeName(null.GetInt32(fun.ReturnTypeId))
+	return pkg.GetTypeName(fun.IGetReturnTypeId())
 }
 func (fun *Function) ScopeTypeString(pkg2 protoface.Package) string {
 	pkg := pkg2.(*Package)
-	return pkg.GetTypeName(null.GetInt32(fun.ScopeTypeId))
+	return pkg.GetTypeName(fun.IGetScopeTypeId())
 }
 func (fun *Function) OpensTypeString(pkg2 protoface.Package) string {
 	pkg := pkg2.(*Package)
-	return pkg.GetTypeName(null.GetInt32(fun.OpensTypeId))
+	return pkg.GetTypeName(fun.IGetOpensTypeId())
 }
 
 func (fun *Function) DebugInfo(pkg2 protoface.Package) string {
@@ -124,10 +124,11 @@ func (f *Function) RelocateCallsBy(offset int) {
 }
 
 func (f *Function) RelocateTypes(relocations map[int]int) {
-	f.ScopeTypeId  = pb.Int32(int32(relocations[int(f.GetScopeTypeId())]))
-	f.ReturnTypeId = pb.Int32(int32(relocations[int(f.GetReturnTypeId())]))
-	f.OpensTypeId  = pb.Int32(int32(relocations[int(f.GetOpensTypeId())]))
-	for _, arg := range f.Args {
-		arg.TypeId = pb.Int32(int32(relocations[int(arg.GetTypeId())]))
-	}
+	// f.ScopeTypeId  = pb.Int32(int32(relocations[int(f.GetScopeTypeId())]))
+	// f.ReturnTypeId = pb.Int32(int32(relocations[int(f.GetReturnTypeId())]))
+	// f.OpensTypeId  = pb.Int32(int32(relocations[int(f.GetOpensTypeId())]))
+	// for _, arg := range f.Args {
+	// 	arg.TypeId = pb.Int32(int32(relocations[int(arg.GetTypeId())]))
+	// }
+	
 }

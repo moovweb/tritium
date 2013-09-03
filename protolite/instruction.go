@@ -34,17 +34,18 @@ func ListInstructions(instrs ...*Instruction) []*Instruction {
 }
 
 func FoldLeft(funcName string, base *Instruction, seq []*Instruction) (acc *Instruction) {
-	for acc = base; len(seq) > 0; seq = seq[1:] {
-		acc = MakeFunctionCall(funcName, ListInstructions(acc, seq[0]), nil, *base.LineNumber)
-	}
-	return acc
+	// for acc = base; len(seq) > 0; seq = seq[1:] {
+	// 	acc = MakeFunctionCall(funcName, ListInstructions(acc, seq[0]), nil, *base.LineNumber)
+	// }
+	// return acc
+	return nil
 }
 
 func MakeText(text string, lineNum int32) *Instruction {
 	return &Instruction{
 		Type:       Instruction_TEXT.Enum(),
 		Value:      pb.String(text),
-		LineNumber: pb.Int32(lineNum),
+		// LineNumber: pb.Int32(lineNum),
 	}
 }
 
@@ -52,7 +53,7 @@ func MakePosition(pos string, lineNum int32) *Instruction {
 	return &Instruction{
 		Type:       Instruction_POSITION.Enum(),
 		Value:      pb.String(pos),
-		LineNumber: pb.Int32(lineNum),
+		// LineNumber: pb.Int32(lineNum),
 	}
 }
 
@@ -60,7 +61,7 @@ func MakeComment(comment string, lineNum int32) *Instruction {
 	return &Instruction{
 		Type:       Instruction_COMMENT.Enum(),
 		Value:      pb.String(comment),
-		LineNumber: pb.Int32(lineNum),
+		// LineNumber: pb.Int32(lineNum),
 	}
 }
 
@@ -68,7 +69,7 @@ func MakeImport(path string, lineNum int32) *Instruction {
 	return &Instruction{
 		Type:       Instruction_IMPORT.Enum(),
 		Value:      pb.String(path),
-		LineNumber: pb.Int32(lineNum),
+		// LineNumber: pb.Int32(lineNum),
 	}
 }
 
@@ -77,7 +78,7 @@ func MakeLocalVar(name string, val *Instruction, block []*Instruction, lineNum i
 		Type:       Instruction_LOCAL_VAR.Enum(),
 		Value:      pb.String(name),
 		Children:   block,
-		LineNumber: pb.Int32(lineNum),
+		// LineNumber: pb.Int32(lineNum),
 	}
 	if val == nil {
 		node.Arguments = nil
@@ -93,7 +94,7 @@ func MakeFunctionCall(name string, args []*Instruction, block []*Instruction, li
 		Value:      pb.String(name),
 		Arguments:  args,
 		Children:   block,
-		LineNumber: pb.Int32(lineNum),
+		// LineNumber: pb.Int32(lineNum),
 	}
 }
 
@@ -101,7 +102,7 @@ func MakeBlock(children []*Instruction, lineNum int32) *Instruction {
 	return &Instruction{
 		Type:       Instruction_BLOCK.Enum(),
 		Children:   children,
-		LineNumber: pb.Int32(lineNum),
+		// LineNumber: pb.Int32(lineNum),
 	}
 }
 
@@ -128,7 +129,7 @@ func (instr *Instruction) ConcatBlock(more *Instruction) {
 }
 
 func (instr *Instruction) Namespaces() (nsList []string) {
-	ns := instr.GetNamespace()
+	ns := instr.IGetNamespace()
 	if len(ns) == 0 {
 		nsList = make([]string, 1)
 		nsList[0] = "tritium"

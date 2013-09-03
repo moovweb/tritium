@@ -14,6 +14,7 @@ func (m *ScriptObject) IGetRoot() protoface.Instruction {
 
 func (m *ScriptObject) IGetNthFunction(index int) protoface.Function {
 	return nil
+}
 
 func (m *ScriptObject) ISetNthFunction(index int, value protoface.Function) {
 	return
