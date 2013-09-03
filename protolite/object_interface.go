@@ -5,33 +5,28 @@ import(
 )
 
 func (m *ScriptObject) IGetName() string {
-	return m.GetName()
+	return ""
 }
 
 func (m *ScriptObject) IGetRoot() protoface.Instruction {
 	return m.GetRoot()
 }
 
-// func (m *ScriptObject) IGetFunctions() []protoface.Function {
-// 	return m.GetFunctions()
-// }
-
 func (m *ScriptObject) IGetNthFunction(index int) protoface.Function {
-	return m.GetFunctions()[index]
-}
+	return nil
 
 func (m *ScriptObject) ISetNthFunction(index int, value protoface.Function) {
-	m.GetFunctions()[index] = value.(*Function)
+	return
 }
 
 func (m *ScriptObject) IGetScopeTypeId() int32 {
-	return m.GetScopeTypeId()
+	return 0
 }
 
 func (m *ScriptObject) IGetLinked() bool {
-	return m.GetLinked()
+	return false
 }
 
 func (m *ScriptObject) IGetModule() string {
-	return m.GetModule()
+	return ""
 }

@@ -46,21 +46,21 @@ func (m *Instruction) IGetFunctionId() int32 {
 }
 
 func (m *Instruction) IGetLineNumber() int32 {
-	return m.GetLineNumber()
+	return 0
 }
 
 func (m *Instruction) IGetYieldTypeId() int32 {
-	return m.GetYieldTypeId()
+	return 0
 }
 
 func (m *Instruction) IGetIsValid() bool {
-	return m.GetIsValid()
+	return false
 }
 
 func (m *Instruction) IGetNamespace() string {
-	return m.GetNamespace()
+	return ""
 }
 
 func (m *Instruction) IGetTypeQualifier() string {
-	return m.GetTypeQualifier()
+	return ""
 }

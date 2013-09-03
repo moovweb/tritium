@@ -9,44 +9,44 @@ func (m *Function) IGetName() string {
 }
 
 func (m *Function) IGetDescription() string {
-	return m.GetDescription()
+	return ""
 }
 
 func (m *Function) IGetFilename() string {
-	return m.GetFilename()
+	return ""
 }
 
 func (m *Function) IGetLineNumber() int32 {
-	return m.GetLineNumber()
+	return 0
 }
 
 
 func (m *Function) IGetNamespace() string {
-	return m.GetNamespace()
+	return ""
 }
 
 func (m *Function) IGetScopeTypeId() int32 {
-	return m.GetScopeTypeId()
+	return 0
 }
 
 func (m *Function) IGetScopeType() string {
-	return m.GetScopeType()
+	return ""
 }
 
 func (m *Function) IGetReturnTypeId() int32 {
-	return m.GetReturnTypeId()
+	return 0
 }
 
 func (m *Function) IGetReturnType() string {
-	return m.GetReturnType()
+	return ""
 }
 
 func (m *Function) IGetOpensTypeId() int32 {
-	return m.GetOpensTypeId()
+	return 0
 }
 
 func (m *Function) IGetOpensType() string {
-	return m.GetOpensType()
+	return ""
 }
 
 func (m *Function) IGetBuiltIn() bool {
