@@ -9,7 +9,7 @@ import (
 	"tritium/protoface"
 )
 
-func (ins *Instruction) Iterate(itFunc func(protoface.Instruction)) {
+func (ins *Instruction) Iterate(itFunc func(*Instruction)) {
 	itFunc(ins)
 	if ins.Children == nil {
 		return
@@ -19,7 +19,7 @@ func (ins *Instruction) Iterate(itFunc func(protoface.Instruction)) {
 	}
 }
 
-func (ins *Instruction) IterateAll(itFunc func(protoface.Instruction)) {
+func (ins *Instruction) IterateAll(itFunc func(*Instruction)) {
 	itFunc(ins)
 	for _, child := range ins.Arguments {
 		child.IterateAll(itFunc)

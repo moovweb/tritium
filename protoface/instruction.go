@@ -18,8 +18,8 @@ type Instruction interface {
 	IGetNamespace() string
 	IGetTypeQualifier() string
 
-	Iterate(f func(Instruction))
-	IterateAll(f func(Instruction))
+	// Iterate(f func(Instruction))
+	// IterateAll(f func(Instruction))
 	GetFunction(pkg Package) Function
 	Namespaces() []string
 }

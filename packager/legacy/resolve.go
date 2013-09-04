@@ -134,7 +134,7 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 	if newType != -1 {
 		if !inherit {
 			// pkg.Log.Infof("\t -- ScopeType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
-			newFun = fun.Clone()
+			newFun = fun.Clone().(*tp.Function)
 			// pkg.Log.Infof("\t -- New fun: %v", newFun)
 			inherit = true
 		}
@@ -150,7 +150,7 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 	if newType != -1 {
 		if !inherit {
 			// pkg.Log.Infof("\t -- ReturnType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
-			newFun = fun.Clone()
+			newFun = fun.Clone().(*tp.Function)
 			// pkg.Log.Infof("\t -- New fun: %v", newFun)
 			inherit = true
 		}
@@ -167,7 +167,7 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 		if !inherit {
 			// pkg.Log.Infof("\t -- OpensType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
-			newFun = fun.Clone()
+			newFun = fun.Clone().(*tp.Function)
 			// pkg.Log.Infof("\t -- New fun: %v", newFun)
 			inherit = true
 		}
@@ -185,7 +185,7 @@ func (pkg *Package) resolveFunctionDescendants(fun *tp.Function) {
 
 			if !inherit {
 				// pkg.Log.Infof("\t -- ArgType : Found ancestral type. Cloning function %v\n", null.GetString(fun.Name))
-				newFun = fun.Clone()
+				newFun = fun.Clone().(*tp.Function)
 				// pkg.Log.Infof("\t -- New fun: %v", newFun)
 				inherit = true
 			}
