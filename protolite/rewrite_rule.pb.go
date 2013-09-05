@@ -13,58 +13,19 @@ var _ = proto1.Marshal
 var _ = &json.SyntaxError{}
 var _ = math.Inf
 
-type RewriteRule_RuleDirection int32
-
-const (
-	RewriteRule_BIDIRECTIONAL     RewriteRule_RuleDirection = 0
-	RewriteRule_PROXY_TO_UPSTREAM RewriteRule_RuleDirection = 1
-	RewriteRule_UPSTREAM_TO_PROXY RewriteRule_RuleDirection = 2
-)
-
-var RewriteRule_RuleDirection_name = map[int32]string{
-	0: "BIDIRECTIONAL",
-	1: "PROXY_TO_UPSTREAM",
-	2: "UPSTREAM_TO_PROXY",
-}
-var RewriteRule_RuleDirection_value = map[string]int32{
-	"BIDIRECTIONAL":     0,
-	"PROXY_TO_UPSTREAM": 1,
-	"UPSTREAM_TO_PROXY": 2,
-}
-
-func (x RewriteRule_RuleDirection) Enum() *RewriteRule_RuleDirection {
-	p := new(RewriteRule_RuleDirection)
-	*p = x
-	return p
-}
-func (x RewriteRule_RuleDirection) String() string {
-	return proto1.EnumName(RewriteRule_RuleDirection_name, int32(x))
-}
-func (x RewriteRule_RuleDirection) MarshalJSON() ([]byte, error) {
-	return json.Marshal(x.String())
-}
-func (x *RewriteRule_RuleDirection) UnmarshalJSON(data []byte) error {
-	value, err := proto1.UnmarshalJSONEnum(RewriteRule_RuleDirection_value, data, "RewriteRule_RuleDirection")
-	if err != nil {
-		return err
-	}
-	*x = RewriteRule_RuleDirection(value)
-	return nil
-}
-
 type RewriteRule struct {
-	Proxy            *string                    `protobuf:"bytes,1,opt,name=proxy" json:"proxy,omitempty"`
-	Upstream         *string                    `protobuf:"bytes,2,opt,name=upstream" json:"upstream,omitempty"`
-	Direction        *RewriteRule_RuleDirection `protobuf:"varint,3,opt,name=direction,enum=proto.RewriteRule_RuleDirection,def=0" json:"direction,omitempty"`
-	CookieDomain     *string                    `protobuf:"bytes,4,opt,name=cookie_domain" json:"cookie_domain,omitempty"`
-	XXX_unrecognized []byte                     `json:"-"`
+	Proxy            *string `protobuf:"bytes,1,opt,name=proxy" json:"proxy,omitempty"`
+	Upstream         *string `protobuf:"bytes,2,opt,name=upstream" json:"upstream,omitempty"`
+	Direction        *int32  `protobuf:"varint,3,opt,name=direction,def=0" json:"direction,omitempty"`
+	CookieDomain     *string `protobuf:"bytes,4,opt,name=cookie_domain" json:"cookie_domain,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *RewriteRule) Reset()         { *m = RewriteRule{} }
 func (m *RewriteRule) String() string { return proto1.CompactTextString(m) }
 func (*RewriteRule) ProtoMessage()    {}
 
-const Default_RewriteRule_Direction RewriteRule_RuleDirection = RewriteRule_BIDIRECTIONAL
+const Default_RewriteRule_Direction int32 = 0
 
 func (m *RewriteRule) GetProxy() string {
 	if m != nil && m.Proxy != nil {
@@ -80,7 +41,7 @@ func (m *RewriteRule) GetUpstream() string {
 	return ""
 }
 
-func (m *RewriteRule) GetDirection() RewriteRule_RuleDirection {
+func (m *RewriteRule) GetDirection() int32 {
 	if m != nil && m.Direction != nil {
 		return *m.Direction
 	}
@@ -95,5 +56,4 @@ func (m *RewriteRule) GetCookieDomain() string {
 }
 
 func init() {
-	proto1.RegisterEnum("proto.RewriteRule_RuleDirection", RewriteRule_RuleDirection_name, RewriteRule_RuleDirection_value)
 }

@@ -17,6 +17,7 @@ import (
 	parser "tritium/parser"
 	tp "tritium/proto"
 	whale "tritium/whale"
+	"tritium/constants"
 )
 
 func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string) {
@@ -87,7 +88,7 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string) {
 		fun.ReturnTypeId = proto.Int32(int32(returnType))
 		if fun.Instruction != nil {
 			fun.Instruction.IterateAll(func(ins *tp.Instruction) {
-				if *ins.Type == tp.Instruction_FUNCTION_CALL {
+				if *ins.Type == constants.Instruction_FUNCTION_CALL {
 					if null.GetString(ins.Value) == "yield" {
 						fun.OpensTypeId = ins.YieldTypeId
 					}
@@ -403,7 +404,7 @@ func (pkg *Package) CollectFunctionDocs() {
 		}
 
 		for _, instruction := range function.Instruction.Children {
-			if *instruction.Type == tp.Instruction_TEXT {
+			if *instruction.Type == constants.Instruction_TEXT {
 				function.Description = instruction.Value
 			}
 		}

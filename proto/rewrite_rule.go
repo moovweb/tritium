@@ -1,5 +1,10 @@
 package proto
 
+import (
+	"tritium/constants"
+	pb "code.google.com/p/goprotobuf/proto"
+)
+
 const (
 	RuleBidirection = "=>"
 	RuleToProxy     = "<-"
@@ -19,11 +24,11 @@ func ReadRewriteRules(rules []string) []*RewriteRule {
 			*(newRule.Upstream) = rules[4*i+2]
 			*(newRule.CookieDomain) = rules[4*i+3]
 			if direction == RuleToProxy {
-				newRule.Direction = RewriteRule_UPSTREAM_TO_PROXY.Enum()
+				newRule.Direction = pb.Int32(constants.RewriteRule_UPSTREAM_TO_PROXY)
 			} else if direction == RuleToUpstream {
-				newRule.Direction = RewriteRule_PROXY_TO_UPSTREAM.Enum()
+				newRule.Direction = pb.Int32(constants.RewriteRule_PROXY_TO_UPSTREAM)
 			} else {
-				newRule.Direction = RewriteRule_BIDIRECTIONAL.Enum()
+				newRule.Direction = pb.Int32(constants.RewriteRule_BIDIRECTIONAL)
 			}
 			rrules = append(rrules, newRule)
 		}

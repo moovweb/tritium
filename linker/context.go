@@ -11,6 +11,7 @@ import (
 	"butler/null"
 	proto "code.google.com/p/goprotobuf/proto"
 	tp "tritium/proto"
+	"tritium/constants"
 )
 
 type FuncMap map[string]int
@@ -140,7 +141,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 	returnType = -1
 	ins.IsValid = proto.Bool(true)
 	switch *ins.Type {
-	case tp.Instruction_IMPORT:
+	case constants.Instruction_IMPORT:
 		importLocation := ins.GetValue()
 
 		// keep track of which files we're inside of, to detect circular imports
@@ -170,7 +171,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 
 		ins.ObjectId = proto.Int(importId)
 		ins.Value = nil
-	case tp.Instruction_LOCAL_VAR:
+	case constants.Instruction_LOCAL_VAR:
 		name := null.GetString(ins.Value)
 		if name == "1" || name == "2" || name == "3" || name == "4" || name == "5" || name == "6" || name == "7" {
 			if len(ins.Arguments) > 0 {
@@ -215,7 +216,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			}
 		}
 
-	case tp.Instruction_FUNCTION_CALL:
+	case constants.Instruction_FUNCTION_CALL:
 		stub := null.GetString(ins.Value)
 		if stub == "yield" {
 			ins.YieldTypeId = proto.Int32(int32(scopeType))
@@ -306,9 +307,9 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 				}
 			}
 		}
-	case tp.Instruction_TEXT:
+	case constants.Instruction_TEXT:
 		returnType = ctx.textType
-	case tp.Instruction_BLOCK:
+	case constants.Instruction_BLOCK:
 		if ins.Children != nil {
 			for _, child := range ins.Children {
 				returnType = ctx.ProcessInstructionWithLocalScope(child, scopeType, localScope, caller, path, justRoot)

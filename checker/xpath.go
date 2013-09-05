@@ -4,6 +4,7 @@ import (
 	"butler/null"
 	"gokogiri/xpath"
 	tp "tritium/proto"
+	"tritium/constants"
 )
 
 var xpath_funcs []string = []string{
@@ -19,7 +20,7 @@ var xpath_funcs []string = []string{
 
 func (result *CheckResult) CheckXpath(script *tp.ScriptObject) {
 	iterate(script, func(ins *tp.Instruction) {
-		if *ins.Type == tp.Instruction_FUNCTION_CALL {
+		if *ins.Type == constants.Instruction_FUNCTION_CALL {
 			name := null.GetString(ins.Value)
 			// These all take xpath as the first param
 			for _, xpath_func := range xpath_funcs {

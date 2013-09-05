@@ -4,12 +4,13 @@ import (
 	"butler/null"
 	. "rubex"
 	tp "tritium/proto"
+	"tritium/constants"
 )
 
 func (result *CheckResult) CheckForSelectText(script *tp.ScriptObject) {
 	tester := MustCompile("([^\\[\\(^]|^)(text|comment)\\(\\)([^=]|$)")
 	iterate(script, func(ins *tp.Instruction) {
-		if *ins.Type == tp.Instruction_FUNCTION_CALL {
+		if *ins.Type == constants.Instruction_FUNCTION_CALL {
 			name := null.GetString(ins.Value)
 			if name == "$" || name == "select" || name == "move_here" || name == "move_to" || name == "move" {
 
@@ -27,12 +28,12 @@ func (result *CheckResult) CheckForSelectText(script *tp.ScriptObject) {
 
 func (result *CheckResult) CheckForNotMisuse(script *tp.ScriptObject) {
 	iterate(script, func(ins *tp.Instruction) {
-		if *ins.Type == tp.Instruction_FUNCTION_CALL {
+		if *ins.Type == constants.Instruction_FUNCTION_CALL {
 			name := null.GetString(ins.Value)
 			if name == "match" || name == "with" {
 				if ins.Arguments != nil {
 					for _, arg := range ins.Arguments {
-						if *arg.Type == tp.Instruction_FUNCTION_CALL {
+						if *arg.Type == constants.Instruction_FUNCTION_CALL {
 							if null.GetString(arg.Value) == "not" {
 								result.AddScriptWarning(script, ins, "Possible misuse of not()– remember not is the opposite of with!")
 							}
@@ -48,7 +49,7 @@ func (result *CheckResult) CheckForNotMisuse(script *tp.ScriptObject) {
 
 func (result *CheckResult) CheckForLocationExport(script *tp.ScriptObject) {
 	iterate(script, func(ins *tp.Instruction) {
-		if *ins.Type == tp.Instruction_FUNCTION_CALL {
+		if *ins.Type == constants.Instruction_FUNCTION_CALL {
 			name := null.GetString(ins.Value)
 			if name == "export" {
 				if ins.Arguments != nil {

@@ -19,6 +19,7 @@ import (
 	"moovhelper"
 	"rubex"
 	tp "tritium/proto"
+	"tritium/constants"
 )
 
 const isUserCalledEnvKey = "MtkIsUserCalled"
@@ -1091,7 +1092,7 @@ func rewrite_to_upstream_Text_Text_Text(ctx *EngineContext, scope *Scope, ins *t
 	returnValue = "false"
 	if len(rrules) > 0 {
 		for _, rr := range rrules {
-			if *rr.Direction == tp.RewriteRule_UPSTREAM_TO_PROXY {
+			if *rr.Direction == constants.RewriteRule_UPSTREAM_TO_PROXY {
 				continue
 			}
 			if key == *rr.Proxy {
@@ -1113,7 +1114,7 @@ func rewrite_to_proxy_Text_Text(ctx *EngineContext, scope *Scope, ins *tp.Instru
 	returnValue = "false"
 	if len(rrules) > 0 {
 		for _, rr := range rrules {
-			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
+			if *rr.Direction == constants.RewriteRule_PROXY_TO_UPSTREAM {
 				continue
 			}
 			if key == *rr.Upstream {
@@ -1143,7 +1144,7 @@ func rewrite_cookie_domain_Text_Text_Text(ctx *EngineContext, scope *Scope, ins 
 		newDomain := domain
 		found := false
 		for _, rr := range rrules {
-			if *rr.Direction == tp.RewriteRule_PROXY_TO_UPSTREAM {
+			if *rr.Direction == constants.RewriteRule_PROXY_TO_UPSTREAM {
 				continue
 			}
 			if key == *rr.Upstream {

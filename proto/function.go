@@ -8,6 +8,7 @@ import (
 	pb "code.google.com/p/goprotobuf/proto"
 	"butler/null"
 	"tritium/protoface"
+	"tritium/constants"
 )
 
 func (f *Function) Stub(pkg2 protoface.Package) string {
@@ -115,7 +116,7 @@ func (f *Function) RelocateCallsBy(offset int) {
 		return
 	}
 	f.Instruction.IterateAll(func (ins *Instruction) {
-		if ins.GetType() != Instruction_FUNCTION_CALL {
+		if ins.GetType() != constants.Instruction_FUNCTION_CALL {
 			return
 		}
 		ins.FunctionId = pb.Int32(ins.GetFunctionId() + int32(offset))

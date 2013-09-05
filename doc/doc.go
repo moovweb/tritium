@@ -14,6 +14,7 @@ import (
 	yaml "goyaml"
 	"tritium/packager"
 	tp "tritium/proto"
+	"tritium/constants"
 )
 
 func Process(pkg *tp.Package) string {
@@ -340,7 +341,7 @@ func getBody(name string, fun *tp.Function) (body string) {
 	if fun.Instruction != nil {
 		if len(fun.Instruction.Children) > 0 {
 			for _, instruction := range fun.Instruction.Children {
-				if *instruction.Type != tp.Instruction_TEXT {
+				if *instruction.Type != constants.Instruction_TEXT {
 					start = int(null.GetInt32(instruction.LineNumber))
 					break
 				}

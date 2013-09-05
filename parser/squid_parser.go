@@ -10,6 +10,7 @@ import (
 	"strings"
 	tp "tritium/proto"
 	. "tritium/parser/tokenizer"
+	"tritium/constants"
 )
 
 type Parser struct {
@@ -197,7 +198,7 @@ func (p *Parser) Parse() *tp.ScriptObject {
 			stmt := p.statement()
 			stmts = append(stmts, stmt)
 			// need to intersperse imports with definitions
-			if tp.Instruction_InstructionType_name[int32(stmt.GetType())] == "IMPORT" {
+			if constants.Instruction_InstructionType_name[int32(stmt.GetType())] == "IMPORT" {
 				// Make a special function stub that represents the import.
 				// Need to do this because we can't mix definitions and instructions in
 				// the same array.
@@ -284,7 +285,7 @@ func (p *Parser) expression() (node *tp.Instruction) {
 		case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 			rhs := p.term()
 			last := len(terms)-1
-			if terms[last].GetType() == tp.Instruction_TEXT && rhs.GetType() == tp.Instruction_TEXT {
+			if terms[last].GetType() == constants.Instruction_TEXT && rhs.GetType() == constants.Instruction_TEXT {
 				terms[last] = tp.MakeText(terms[last].GetValue() + rhs.GetValue(), terms[last].GetLineNumber())
 			} else {
 				terms = append(terms, rhs)
@@ -762,7 +763,7 @@ func (p *Parser) definition() *tp.Function {
 		p.error("definition for " + funcName + " is missing a body")
 	}
 	funcBody := &tp.Instruction{
-		Type: tp.Instruction_BLOCK.Enum(),
+		Type: proto.Int32(constants.Instruction_BLOCK),
 		// Children: p.block(),
 		// use the wrapper to get a better error message
 		Children: p.function_body(*node.Name),

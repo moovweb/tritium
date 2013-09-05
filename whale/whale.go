@@ -15,6 +15,7 @@ import (
 	"rubex"
 	"steno"
 	tp "tritium/proto"
+	"tritium/constants"
 )
 
 type Whale struct {
@@ -138,22 +139,21 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 			if errString != TimeoutError {
 				if ctx.HadError == false {
 					ctx.HadError = true
-					errString = errString + "\n" + ins.Type.String() + " " + null.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
+					errString = errString + "\n" + constants.Instruction_InstructionType_name[ins.GetType()] + " " + null.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
 				}
 				// errString = errString + ctx.FileAndLine(ins) + "\n"
 				if len(thisFile) > 0 && thisFile != "__rewriter__" {
 					switch ins.GetType() {
-					case tp.Instruction_IMPORT:
+					case constants.Instruction_IMPORT:
 						errString = errString + fmt.Sprintf("%s:%d", thisFile, ins.GetLineNumber())
 						errString = errString + fmt.Sprintf(":\t@import %s\n", ctx.Objects[int(ins.GetObjectId())].GetName())
-					case tp.Instruction_FUNCTION_CALL:
+					case constants.Instruction_FUNCTION_CALL:
 						errString = errString + fmt.Sprintf("%s:%d", thisFile, ins.GetLineNumber())
 						if callee := ins.GetValue(); len(callee) > 0 {
 							errString = errString + fmt.Sprintf(":\t%s\n", callee)
 						}
 					default:
 						// do nothing
-						// errString = errString + fmt.Sprintf(":\t%s", tp.Instruction_InstructionType_name[int32(ins.GetType())])
 					}
 				}
 			}
@@ -172,13 +172,13 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 
 	returnValue = ""
 	switch *ins.Type {
-	case tp.Instruction_BLOCK:
+	case constants.Instruction_BLOCK:
 		for _, child := range ins.Children {
 			returnValue = ctx.RunInstruction(scope, child)
 		}
-	case tp.Instruction_TEXT:
+	case constants.Instruction_TEXT:
 		returnValue = null.GetString(ins.Value)
-	case tp.Instruction_LOCAL_VAR:
+	case constants.Instruction_LOCAL_VAR:
 		name := null.GetString(ins.Value)
 		vars := ctx.Vars()
 		if len(ins.Arguments) > 0 {
@@ -192,7 +192,7 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 			vars[name] = ts.Value
 		}
 		returnValue = vars[name]
-	case tp.Instruction_IMPORT:
+	case constants.Instruction_IMPORT:
 		obj := ctx.Objects[int(null.GetInt32(ins.ObjectId))]
 		curFile := ctx.Filename
 		ctx.Filename = null.GetString(obj.Name)
@@ -202,7 +202,7 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 		}
 		ctx.Whale.Debugger.LogImportDone(ctx.MessagePath, ctx.Filename, curFile, int(null.GetInt32(ins.LineNumber)))
 		ctx.Filename = curFile
-	case tp.Instruction_FUNCTION_CALL:
+	case constants.Instruction_FUNCTION_CALL:
 		fun := ctx.Functions[int(null.GetInt32(ins.FunctionId))]
 		args := make([]interface{}, len(ins.Arguments))
 		for i, argIns := range ins.Arguments {

@@ -4,9 +4,9 @@ import(
 	"tritium/protoface"
 )
 
-func (m *Instruction) IGetType() protoface.Instruction_InstructionType {
+func (m *Instruction) IGetType() int32 {
 	if m != nil && m.Type != nil {
-		return protoface.Instruction_InstructionType(*m.Type)
+		return *m.Type
 	}
 	return 0
 }

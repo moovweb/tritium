@@ -3,7 +3,7 @@ package proto;
 option optimize_for = SPEED;
 
 message Instruction {
-	required InstructionType type = 1;
+	required int32 type = 1;
 	optional string value = 2;
 	 // only used if we are an import and we're all linked into an Transform
 	optional int32 object_id = 3;
@@ -27,14 +27,4 @@ message Instruction {
 	// optional string type_qualifier = 11;
 
 	// optional bool is_user_called = 12;
-
-	enum InstructionType {
-		BLOCK = 0;
-		FUNCTION_CALL = 1;
-		IMPORT = 2;
-		TEXT = 3;
-		LOCAL_VAR = 4;
-		POSITION = 5;
-		COMMENT = 6;
-	}
 }

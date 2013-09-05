@@ -7,6 +7,7 @@ import (
 import (
 	pb "code.google.com/p/goprotobuf/proto"
 	"tritium/protoface"
+	"tritium/constants"
 )
 
 func (ins *Instruction) Iterate(itFunc func(*Instruction)) {
@@ -42,7 +43,7 @@ func FoldLeft(funcName string, base *Instruction, seq []*Instruction) (acc *Inst
 
 func MakeText(text string, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       Instruction_TEXT.Enum(),
+		Type:       pb.Int32(constants.Instruction_TEXT),
 		Value:      pb.String(text),
 		LineNumber: pb.Int32(lineNum),
 	}
@@ -50,7 +51,7 @@ func MakeText(text string, lineNum int32) *Instruction {
 
 func MakePosition(pos string, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       Instruction_POSITION.Enum(),
+		Type:       pb.Int32(constants.Instruction_POSITION),
 		Value:      pb.String(pos),
 		LineNumber: pb.Int32(lineNum),
 	}
@@ -58,7 +59,7 @@ func MakePosition(pos string, lineNum int32) *Instruction {
 
 func MakeComment(comment string, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       Instruction_COMMENT.Enum(),
+		Type:       pb.Int32(constants.Instruction_COMMENT),
 		Value:      pb.String(comment),
 		LineNumber: pb.Int32(lineNum),
 	}
@@ -66,7 +67,7 @@ func MakeComment(comment string, lineNum int32) *Instruction {
 
 func MakeImport(path string, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       Instruction_IMPORT.Enum(),
+		Type:       pb.Int32(constants.Instruction_IMPORT),
 		Value:      pb.String(path),
 		LineNumber: pb.Int32(lineNum),
 	}
@@ -74,7 +75,7 @@ func MakeImport(path string, lineNum int32) *Instruction {
 
 func MakeLocalVar(name string, val *Instruction, block []*Instruction, lineNum int32) *Instruction {
 	node := &Instruction{
-		Type:       Instruction_LOCAL_VAR.Enum(),
+		Type:       pb.Int32(constants.Instruction_LOCAL_VAR),
 		Value:      pb.String(name),
 		Children:   block,
 		LineNumber: pb.Int32(lineNum),
@@ -89,7 +90,7 @@ func MakeLocalVar(name string, val *Instruction, block []*Instruction, lineNum i
 
 func MakeFunctionCall(name string, args []*Instruction, block []*Instruction, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       Instruction_FUNCTION_CALL.Enum(),
+		Type:       pb.Int32(constants.Instruction_FUNCTION_CALL),
 		Value:      pb.String(name),
 		Arguments:  args,
 		Children:   block,
@@ -99,7 +100,7 @@ func MakeFunctionCall(name string, args []*Instruction, block []*Instruction, li
 
 func MakeBlock(children []*Instruction, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       Instruction_BLOCK.Enum(),
+		Type:       pb.Int32(constants.Instruction_BLOCK),
 		Children:   children,
 		LineNumber: pb.Int32(lineNum),
 	}

@@ -1,10 +1,8 @@
 package protoface
 
-type Instruction_InstructionType int32
-
 type Instruction interface {
 	ProtoBuff
-	IGetType() Instruction_InstructionType
+	IGetType() int32
 	IGetValue() string
 	IGetObjectId() int32
 	IGetNthChild(index int) Instruction
