@@ -10,7 +10,7 @@ import (
 import (
 	"golog"
 	"goyaml"
-	"tritium/proto"
+	"tritium/protoface"
 	"tritium/whale"
 )
 
@@ -92,7 +92,7 @@ func read_cookie_results(result string) string {
 }
 
 //TODO Passing in request tsf every time because of the hack mentioned inside.
-func (result *CheckResult) run_tests(test_type string, engine *whale.Whale, transformer *proto.Transform, req_transform *proto.Transform, rrules []*proto.RewriteRule, tests []RewriteTestCase, create_cmd create_http_cmd, read_result_cmd read_cmd_transform, logger *golog.Logger) bool {
+func (result *CheckResult) run_tests(test_type string, engine *whale.Whale, transformer protoface.Transform, req_transform protoface.Transform, rrules []protoface.RewriteRule, tests []RewriteTestCase, create_cmd create_http_cmd, read_result_cmd read_cmd_transform, logger *golog.Logger) bool {
 	all_passed := true
 
 	for i, current_test := range tests {

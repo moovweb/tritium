@@ -216,7 +216,7 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 
 		if fun.IGetBuiltIn() {
 			curFile := ctx.Filename
-			if f := builtInFunctions[fun.IGetName()]; f != nil {
+			if f := builtInFunctions[fun.Name]; f != nil {
 				returnValue = f(ctx, scope, ins, args)
 				if returnValue == nil {
 					returnValue = ""

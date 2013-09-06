@@ -24,6 +24,7 @@ type SlugInfo interface {
 	Reset()
 	IGetSlug() Slug
 	IGetSize() int
+	Size() int
 	IGetTimestamp() time.Time
 	IGetCustomer() string
 	IGetProject() string
