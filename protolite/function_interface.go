@@ -61,6 +61,10 @@ func (m *Function) ISetNthArg(index int, value protoface.Function_Argument) {
 	m.GetArgs()[index] = value.(*Function_Argument)
 }
 
+func (m *Function) INumArgs() int {
+	return len(m.Args)
+}
+
 func (m *Function) IGetInstruction() protoface.Instruction {
 	return m.GetInstruction()
 }

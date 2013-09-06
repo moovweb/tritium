@@ -33,12 +33,20 @@ func (m *Instruction) ISetNthChild(index int, value protoface.Instruction) {
 	m.GetChildren()[index] = value.(*Instruction)
 }
 
+func (m *Instruction) INumChildren() int {
+	return len(m.Children)
+}
+
 func (m *Instruction) IGetNthArgument(index int) protoface.Instruction {
 	return m.GetArguments()[index]
 }
 
 func (m *Instruction) ISetNthArgument(index int, value protoface.Instruction) {
 	m.GetArguments()[index] = value.(*Instruction)
+}
+
+func (m *Instruction) INumArgs() int {
+	return len(m.Arguments)
 }
 
 func (m *Instruction) IGetFunctionId() int32 {
@@ -63,4 +71,8 @@ func (m *Instruction) IGetNamespace() string {
 
 func (m *Instruction) IGetTypeQualifier() string {
 	return ""
+}
+
+func (m *Instruction) IGetIsUserCalled() bool {
+	return false
 }

@@ -16,6 +16,7 @@ type Function interface {
 	IGetBuiltIn() bool
 	IGetNthArg(index int) Function_Argument
 	ISetNthArg(index int, value Function_Argument)
+	INumArgs() int
 	IGetInstruction() Instruction
 
 	Stub(pkg Package) string

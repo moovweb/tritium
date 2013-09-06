@@ -28,6 +28,14 @@ func (m *Slug) ISetNthRrule(index int, value protoface.RewriteRule) {
 	m.GetRrules()[index] = value.(*RewriteRule)
 }
 
+func (m *Slug) IGetRrules() []protoface.RewriteRule {
+	interfaces := make([]protoface.RewriteRule, len(m.Rrules))
+	for i, v := range m.Rrules {
+		interfaces[i] = v
+	}
+	return interfaces
+}
+
 func (m *Slug) IGetSslWhitelist() []string {
 	return m.GetSslWhitelist()
 }

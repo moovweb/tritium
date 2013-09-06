@@ -8,13 +8,13 @@ import (
 )
 
 import (
-	"butler/null"
 	"go-cache"
 	"go-cache/arc"
 	"gokogiri/xpath"
 	"rubex"
 	"steno"
-	tp "tritium/proto"
+	// tp "tritium/proto"
+	"tritium/protoface"
 	"tritium/constants"
 )
 
@@ -35,8 +35,8 @@ type EngineContext struct {
 	MatchShouldContinueStack []bool
 	Yields                   []*YieldBlock
 	*Whale
-	*tp.Transform
-	Rrules []*tp.RewriteRule
+	protoface.Transform
+	Rrules []protoface.RewriteRule
 
 	InnerReplacer     *rubex.Regexp
 	HeaderContentType *rubex.Regexp
@@ -68,7 +68,7 @@ func NewEngine(debugger steno.Debugger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform *tp.Transform, rrules []*tp.RewriteRule, deadline time.Time, messagePath string, inDebug bool) (ctx *EngineContext) {
+func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath string, inDebug bool) (ctx *EngineContext) {
 	ctx = &EngineContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
@@ -94,18 +94,18 @@ func (eng *Whale) Free() {
 	eng.XPathCache.Reset()
 }
 
-func (eng *Whale) Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (output string, exports [][]string, logs []string) {
+func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (output string, exports [][]string, logs []string) {
 	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, inDebug)
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
-	ctx.UsePackage(transform.Pkg)
+	ctx.UsePackage(transform.IGetPkg())
 	scope := &Scope{Value: input.(string)}
-	obj := transform.Objects[0]
-	ctx.Filename = null.GetString(obj.Name)
+	obj := transform.IGetNthObject(0)
+	ctx.Filename = obj.IGetName()
 	if TritiumLogRewritersAsImports {
-		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, ctx.Filename, int(null.GetInt32(obj.Root.LineNumber)))
+		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, ctx.Filename, int(obj.IGetRoot().IGetLineNumber()))
 	}
-	ctx.RunInstruction(scope, obj.Root)
+	ctx.RunInstruction(scope, obj.IGetRoot())
 	output = scope.Value.(string)
 	exports = ctx.Exports
 	logs = ctx.Logs
@@ -124,7 +124,7 @@ func (ctx *EngineContext) Free() {
 	}
 }
 
-func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (returnValue interface{}) {
+func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction) (returnValue interface{}) {
 	thisFile := ctx.Filename
 	defer func() {
 		//TODO Stack traces seem to get truncated on syslog...
@@ -139,17 +139,17 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 			if errString != TimeoutError {
 				if ctx.HadError == false {
 					ctx.HadError = true
-					errString = errString + "\n" + constants.Instruction_InstructionType_name[ins.GetType()] + " " + null.GetString(ins.Value) + "\n\n\nTritium Stack\n=========\n\n"
+					errString = errString + "\n" + constants.Instruction_InstructionType_name[ins.IGetType()] + " " + ins.IGetValue() + "\n\n\nTritium Stack\n=========\n\n"
 				}
 				// errString = errString + ctx.FileAndLine(ins) + "\n"
 				if len(thisFile) > 0 && thisFile != "__rewriter__" {
-					switch ins.GetType() {
+					switch ins.IGetType() {
 					case constants.Instruction_IMPORT:
-						errString = errString + fmt.Sprintf("%s:%d", thisFile, ins.GetLineNumber())
-						errString = errString + fmt.Sprintf(":\t@import %s\n", ctx.Objects[int(ins.GetObjectId())].GetName())
+						errString = errString + fmt.Sprintf("%s:%d", thisFile, ins.IGetLineNumber())
+						errString = errString + fmt.Sprintf(":\t@import %s\n", ctx.Transform.IGetNthObject(int(ins.IGetObjectId())).IGetName())
 					case constants.Instruction_FUNCTION_CALL:
-						errString = errString + fmt.Sprintf("%s:%d", thisFile, ins.GetLineNumber())
-						if callee := ins.GetValue(); len(callee) > 0 {
+						errString = errString + fmt.Sprintf("%s:%d", thisFile, ins.IGetLineNumber())
+						if callee := ins.IGetValue(); len(callee) > 0 {
 							errString = errString + fmt.Sprintf(":\t%s\n", callee)
 						}
 					default:
@@ -171,53 +171,58 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 	}
 
 	returnValue = ""
-	switch *ins.Type {
+	switch ins.IGetType() {
 	case constants.Instruction_BLOCK:
-		for _, child := range ins.Children {
+		for i := 0; i < ins.INumChildren(); i++ {
+			child := ins.IGetNthChild(i)
 			returnValue = ctx.RunInstruction(scope, child)
 		}
 	case constants.Instruction_TEXT:
-		returnValue = null.GetString(ins.Value)
+		returnValue = ins.IGetValue()
 	case constants.Instruction_LOCAL_VAR:
-		name := null.GetString(ins.Value)
+		name := ins.IGetValue()
 		vars := ctx.Vars()
-		if len(ins.Arguments) > 0 {
-			vars[name] = ctx.RunInstruction(scope, ins.Arguments[0])
+		if ins.INumArgs() > 0 {
+			vars[name] = ctx.RunInstruction(scope, ins.IGetNthArgument(0))
 		}
-		if len(ins.Children) > 0 {
+		if ins.INumChildren() > 0 {
 			ts := &Scope{Value: ctx.Vars()[name]}
-			for _, child := range ins.Children {
+			for i := 0; i < ins.INumChildren(); i++ {
+				child := ins.IGetNthChild(i)
 				ctx.RunInstruction(ts, child)
 			}
 			vars[name] = ts.Value
 		}
 		returnValue = vars[name]
 	case constants.Instruction_IMPORT:
-		obj := ctx.Objects[int(null.GetInt32(ins.ObjectId))]
+		obj := ctx.IGetNthObject(int(ins.IGetObjectId()))
 		curFile := ctx.Filename
-		ctx.Filename = null.GetString(obj.Name)
-		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, curFile, int(null.GetInt32(ins.LineNumber)))
-		for _, child := range obj.Root.Children {
+		ctx.Filename = obj.IGetName()
+		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, curFile, int(ins.IGetLineNumber()))
+		root := obj.IGetRoot()
+		for i := 0; i < root.INumChildren(); i++ {
+			child := root.IGetNthChild(i)
 			ctx.RunInstruction(scope, child)
 		}
-		ctx.Whale.Debugger.LogImportDone(ctx.MessagePath, ctx.Filename, curFile, int(null.GetInt32(ins.LineNumber)))
+		ctx.Whale.Debugger.LogImportDone(ctx.MessagePath, ctx.Filename, curFile, int(ins.IGetLineNumber()))
 		ctx.Filename = curFile
 	case constants.Instruction_FUNCTION_CALL:
-		fun := ctx.Functions[int(null.GetInt32(ins.FunctionId))]
-		args := make([]interface{}, len(ins.Arguments))
-		for i, argIns := range ins.Arguments {
+		fun := ctx.Functions[int(ins.IGetFunctionId())]
+		args := make([]interface{}, ins.INumArgs())
+		for i := 0; i < len(args); i++ {
+			argIns := ins.IGetNthArgument(i)
 			args[i] = ctx.RunInstruction(scope, argIns)
 		}
 
-		if null.GetBool(fun.BuiltIn) {
+		if fun.IGetBuiltIn() {
 			curFile := ctx.Filename
-			if f := builtInFunctions[fun.Name]; f != nil {
+			if f := builtInFunctions[fun.IGetName()]; f != nil {
 				returnValue = f(ctx, scope, ins, args)
 				if returnValue == nil {
 					returnValue = ""
 				}
 			} else {
-				panic("missing function: " + fun.Name)
+				panic("missing function: " + fun.IGetName())
 			}
 			ctx.Filename = curFile
 		} else {
@@ -225,8 +230,9 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 			//println("Resetting localvar")
 			// Setup the new local var
 			vars := make(map[string]interface{}, len(args))
-			for i, arg := range fun.Args {
-				vars[null.GetString(arg.Name)] = args[i]
+			for i := 0; i < fun.INumArgs(); i++ {
+				arg := fun.IGetNthArg(i)
+				vars[arg.IGetName()] = args[i]
 			}
 			yieldBlock := &YieldBlock{
 				Ins:      ins,
@@ -236,15 +242,16 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins *tp.Instruction) (ret
 			// PUSH!
 			ctx.PushYieldBlock(yieldBlock)
 			curFile := ctx.Filename
-			ctx.Filename = fun.GetFilename()
+			ctx.Filename = fun.IGetFilename()
 			// if it's a user-called function, save the curfile:linenumber
-			if null.GetBool(ins.IsUserCalled) == true {
-				ctx.Env[isUserCalledEnvKey] = fmt.Sprintf("%s:%d", curFile, *ins.LineNumber)
+			if ins.IGetIsUserCalled() == true {
+				ctx.Env[isUserCalledEnvKey] = fmt.Sprintf("%s:%d", curFile, ins.IGetLineNumber())
 			}
-			for _, child := range fun.Instruction.Children {
+			for i := 0; i < fun.IGetInstruction().INumChildren(); i++ {
+				child := fun.IGetInstruction().IGetNthChild(i)
 				returnValue = ctx.RunInstruction(scope, child)
 			}
-			if null.GetBool(ins.IsUserCalled) == true {
+			if ins.IGetIsUserCalled() == true {
 				delete(ctx.Env, isUserCalledEnvKey)
 			}
 			ctx.Filename = curFile
@@ -303,27 +310,33 @@ func (ctx *EngineContext) Vars() map[string]interface{} {
 	return nil
 }
 
-func (ctx *EngineContext) FileAndLine(ins *tp.Instruction) string {
-	lineNum := strconv.Itoa(int(null.GetInt32(ins.LineNumber)))
+func (ctx *EngineContext) FileAndLine(ins protoface.Instruction) string {
+	lineNum := strconv.Itoa(int(ins.IGetLineNumber()))
 	return (ctx.Filename + ":" + lineNum)
 }
 
-func (ctx *EngineContext) UsePackage(pkg *tp.Package) {
-	ctx.Types = make([]string, len(pkg.Types))
-	for i, t := range pkg.Types {
-		ctx.Types[i] = null.GetString(t.Name)
+func (ctx *EngineContext) UsePackage(pkg protoface.Package) {
+	pkgTypes := pkg.IGetTypes()
+	ctx.Types = make([]string, len(pkgTypes))
+	for i, t := range pkgTypes {
+		ctx.Types[i] = t.IGetName()
 	}
 
-	ctx.Functions = make([]*Function, len(pkg.Functions))
-	for i, f := range pkg.Functions {
-		ns := f.GetNamespace()
+	pkgFunctions := pkg.IGetFunctions()
+	ctx.Functions = make([]*Function, len(pkgFunctions))
+	for i, f := range pkgFunctions {
+		ns := f.IGetNamespace()
 		if len(ns) == 0 {
 			ns = "tritium"
 		}
-		name := ns + "." + f.GetName()
-		// name := null.GetString(f.Name)
-		for _, a := range f.Args {
-			typeString := ctx.Types[int(null.GetInt32(a.TypeId))]
+		name := ns + "." + f.IGetName()
+		// for _, a := range f.Args {
+		// 	typeString := ctx.Types[int(null.GetInt32(a.TypeId))]
+		// 	name = name + "." + typeString
+		// }
+		for i := 0; i < f.INumArgs(); i++ {
+			a := f.IGetNthArg(i)
+			typeString := ctx.Types[int(a.IGetTypeId())]
 			name = name + "." + typeString
 		}
 		fun := &Function{

@@ -11,8 +11,10 @@ type Package interface {
 	IGetName() string
 	IGetNthFunction(index int) Function
 	ISetNthFunction(index int, value Function)
+	IGetFunctions() []Function
 	IGetNthType(index int) Type
 	ISetNthType(index int, value Type)
+	IGetTypes() []Type
 	IGetDependencies() []string
 	IGetPath() string
 

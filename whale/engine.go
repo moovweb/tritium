@@ -1,7 +1,7 @@
 package whale
 
 import (
-	tp "tritium/proto"
+	"tritium/protoface"
 )
 
 type Position int
@@ -23,14 +23,14 @@ var Positions = map[string]Position{
 }
 
 type YieldBlock struct {
-	Ins  *tp.Instruction
+	Ins  protoface.Instruction
 	Vars map[string]interface{}
 	Filename string
 }
 
 type Function struct {
 	Name string
-	*tp.Function
+	protoface.Function
 }
 
 type Scope struct {

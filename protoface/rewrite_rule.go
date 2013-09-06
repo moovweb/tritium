@@ -1,11 +1,10 @@
 package protoface
 
-type RewriteRule_RuleDirection int32
 
 type RewriteRule interface {
 	ProtoBuff
 	IGetProxy() string
 	IGetUpstream() string
-	IGetDirection() RewriteRule_RuleDirection
+	IGetDirection() int32
 	IGetCookieDomain() string
 }

@@ -2,11 +2,12 @@ package tritium
 
 import (
 	"time"
-	tp "tritium/proto"
+	// tp "tritium/proto"
+	"tritium/protoface"
 )
 
 type Engine interface {
-	Run(transform *tp.Transform, rrules []*tp.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (output string, exports [][]string, logs []string)
+	Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (output string, exports [][]string, logs []string)
 	GetCacheStats() (int, int, int, int)
 	Free()
 }

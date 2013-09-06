@@ -16,9 +16,13 @@ func (m *Package) IGetName() string {
 	return m.GetName()
 }
 
-// func (m *Package) IGetFunctions() []protoface.Function {
-// 	return m.GetFunctions()
-// }
+func (m *Package) IGetFunctions() []protoface.Function {
+	interfaces := make([]protoface.Function, len(m.Functions))
+	for i, v := range m.Functions {
+		interfaces[i] = v
+	}
+	return interfaces
+}
 
 func (m *Package) IGetNthFunction(index int) protoface.Function {
 	return m.GetFunctions()[index]
@@ -28,9 +32,13 @@ func (m *Package) ISetNthFunction(index int, value protoface.Function) {
 	m.GetFunctions()[index] = value.(*Function)
 }
 
-// func (m *Package) IGetTypes() []protoface.Type {
-// 	return m.GetTypes()
-// }
+func (m *Package) IGetTypes() []protoface.Type {
+	interfaces := make([]protoface.Type, len(m.Types))
+	for i, v := range m.Types {
+		interfaces[i] = v
+	}
+	return interfaces
+}
 
 func (m *Package) IGetNthType(index int) protoface.Type {
 	return m.GetTypes()[index]

@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"strings"
 	"time"
+	"tritium/protoface"
 )
 
 func NewSlug(name string, version string, stages int) (slug *Slug, err error) {
@@ -92,4 +93,24 @@ func NewSlugInfo() *SlugInfo {
 	slugInfo := &SlugInfo{}
 	//runtime.SetFinalizer(slugInfo, (*SlugInfo).Reset)
 	return slugInfo
+}
+
+func (si *SlugInfo) IGetSlug() protoface.Slug {
+	return si.Slug
+}
+
+func (si *SlugInfo) IGetSize() int {
+	return si.Size()
+}
+
+func (si *SlugInfo) IGetTimestamp() time.Time {
+	return si.Timestamp
+}
+
+func (si *SlugInfo) IGetCustomer() string {
+	return si.Customer
+}
+
+func (si *SlugInfo) IGetProject() string {
+	return si.Project
 }

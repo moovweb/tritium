@@ -1,8 +1,9 @@
 package whale
 
-import tp "tritium/proto"
+// import tp "tritium/proto"
+import "tritium/protoface"
 
-type builtInFunc func(*EngineContext, *Scope, *tp.Instruction, []interface{}) interface{}
+type builtInFunc func(*EngineContext, *Scope, protoface.Instruction, []interface{}) interface{}
 
 var builtInFunctions map[string]builtInFunc
 
