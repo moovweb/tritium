@@ -693,6 +693,15 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 	return
 }
 
+func must_select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	returnValue = select_Text(ctx, scope, ins, args)
+	returnStr := returnValue.(string)
+	if returnStr == "0" {
+		ctx.AddLog("SELECTOR FAILED")
+	}
+	return
+}
+
 func remove_(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	node.Remove()
