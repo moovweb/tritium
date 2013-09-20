@@ -51,7 +51,8 @@ func init() {
 	//builtInFunctions["tritium.this"] = this_
 	builtInFunctions["tritium.position.Text"] = position_Text
 	builtInFunctions["tritium.select.Text"] = select_Text
-	builtInFunctions["tritium.must_select.Text"] = must_select_Text
+	// builtInFunctions["tritium.must_select.Text"] = must_select_Text
+	builtInFunctions["tritium.must_select_v1.Text.Text"] = must_select_v1_Text_Text
 	builtInFunctions["tritium.text"] = text
 	builtInFunctions["tritium.move.Node.Node.Position"] = move_XMLNode_XMLNode_Position
 	builtInFunctions["tritium.move.XMLNode.XMLNode.Position"] = move_XMLNode_XMLNode_Position // not defined

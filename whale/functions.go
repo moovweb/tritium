@@ -693,11 +693,21 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 	return
 }
 
-func must_select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+// func must_select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+// 	returnValue = select_Text(ctx, scope, ins, args)
+// 	returnStr := returnValue.(string)
+// 	if returnStr == "0" {
+// 		ctx.AddLog("SELECTOR FAILED: " + args[0].(string))
+// 	}
+// 	return
+// }
+
+// takes an additional string argument containing the desired warning message
+func must_select_v1_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = select_Text(ctx, scope, ins, args)
 	returnStr := returnValue.(string)
 	if returnStr == "0" {
-		ctx.AddLog("SELECTOR FAILED")
+		ctx.AddLog(args[1].(string) + args[0].(string))
 	}
 	return
 }
