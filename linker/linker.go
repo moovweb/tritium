@@ -7,12 +7,12 @@ import (
 )
 
 func RunStringWithPackage(src, projectPath, scriptPath, fileName string, pkg *tp.Package) (*tp.Transform, error) {
-	objs := parser.Parse(src, projectPath, scriptPath, fileName)
+	objs := parser.Parse(src, projectPath, scriptPath, fileName, false)
 	return runWithObjs(objs, pkg, projectPath, scriptPath)
 }
 
 func RunWithPackage(projectPath, scriptPath, fileName string, pkg *tp.Package) (*tp.Transform, error) {
-	objs := parser.ParseFileSet(projectPath, scriptPath, fileName)
+	objs := parser.ParseFileSet(projectPath, scriptPath, fileName, false)
 	return runWithObjs(objs, pkg, projectPath, scriptPath)
 }
 

@@ -26,6 +26,7 @@ type Parser struct {
 	Namespaces  []string
 	Defspace    string
 	inFunc      bool
+	CompilingMixer bool
 }
 
 var TritiumParserShowRewriterFileName = false
@@ -91,7 +92,7 @@ func (p *Parser) error(msg string) {
 	panic(fullMsg)
 }
 
-func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool) *Parser {
+func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool, compilingMixer bool) *Parser {
 	fullpath := filepath.Join(projectPath, scriptPath, fileName)
 	fullpath, _ = filepath.Abs(fullpath)
 	scriptPath = filepath.Clean(scriptPath)
@@ -108,6 +109,7 @@ func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool) 
 		Namespaces:  make([]string, 1),
 		Defspace:    "tritium",
 		inFunc:      false,
+		CompilingMixer: compilingMixer,
 	}
 	p.Namespaces[0] = "tritium"
 	p.pop()
@@ -555,7 +557,7 @@ func (p *Parser) call(funcName *Token) (node *tp.Instruction) {
 		node = tp.MakeFunctionCall(funcNameStr, ords, block, funcLineNo)
 	}
 	// if it's not a root file, we can assume that it's a user-called function
-	if p.RootFile == false /* && IncludeSelectorInfo == true */ {
+	if !p.CompilingMixer /* p.RootFile == false && IncludeSelectorInfo == true */ {
 		node.IsUserCalled = proto.Bool(true)
 	}
 	return node

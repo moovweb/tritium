@@ -6,7 +6,7 @@ import (
 )
 
 func CheckFile(projectPath, scriptPath, fileName string) *CheckResult {
-	objs := parser.ParseFileSet(projectPath, scriptPath, fileName)
+	objs := parser.ParseFileSet(projectPath, scriptPath, fileName, false)
 	return CheckBeforeLinking(objs)
 }
 

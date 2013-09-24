@@ -6,28 +6,28 @@ import (
 	tp "tritium/proto"
 )
 
-func ParseFile(projectPath, scriptPath, fileName string) *tp.ScriptObject {
+func ParseFile(projectPath, scriptPath, fileName string, compilingMixer bool) *tp.ScriptObject {
 	src, _ := readFile(projectPath, scriptPath, fileName)
-	return ParseScript(src, projectPath, scriptPath, fileName)
+	return ParseScript(src, projectPath, scriptPath, fileName, compilingMixer)
 }
 
-func ParseScript(src, projectPath, scriptPath, fileName string) *tp.ScriptObject {
-	return MakeParser(src, projectPath, scriptPath, fileName, false).Parse()
+func ParseScript(src, projectPath, scriptPath, fileName string, compilingMixer bool) *tp.ScriptObject {
+	return MakeParser(src, projectPath, scriptPath, fileName, false, compilingMixer).Parse()
 }
 
-func ParseRootScript(src, projectPath, scriptPath, fileName string) *tp.ScriptObject {
-	return MakeParser(src, projectPath, scriptPath, fileName, true).Parse()
+func ParseRootScript(src, projectPath, scriptPath, fileName string, compilingMixer bool) *tp.ScriptObject {
+	return MakeParser(src, projectPath, scriptPath, fileName, true, compilingMixer).Parse()
 }
 
-func ParseFileSet(projectPath, scriptPath, fileName string) []*tp.ScriptObject {
+func ParseFileSet(projectPath, scriptPath, fileName string, compilingMixer bool) []*tp.ScriptObject {
 	src, _ := readFile(projectPath, scriptPath, fileName)
-	return Parse(src, projectPath, scriptPath, fileName)
+	return Parse(src, projectPath, scriptPath, fileName, compilingMixer)
 }
 
-func Parse(src, projectPath, scriptPath, fileName string) []*tp.ScriptObject {
+func Parse(src, projectPath, scriptPath, fileName string, compilingMixer bool) []*tp.ScriptObject {
 	objs := make([]*tp.ScriptObject, 0)
 	files := make(map[string]int)
-	objs = append(objs, ParseRootScript(src, projectPath, scriptPath, fileName))
+	objs = append(objs, ParseRootScript(src, projectPath, scriptPath, fileName, compilingMixer))
 	// files[file] = 1 // Don't register the top-level mixer scripts!
 	for i := 0; i < len(objs); i++ {
 		obj := objs[i]
@@ -35,7 +35,7 @@ func Parse(src, projectPath, scriptPath, fileName string) []*tp.ScriptObject {
 			// importFile already is already prepended with the script path relative to the project folder
 			// fullPath := filepath.Join(filepath.Base(projectPath), importFile)
 			if files[importFile] == 0 {
-				objs = append(objs, ParseFile(projectPath, filepath.Dir(importFile), filepath.Base(importFile)))
+				objs = append(objs, ParseFile(projectPath, filepath.Dir(importFile), filepath.Base(importFile), compilingMixer))
 				// register the user-accessible scripts to avoid duplicate imports
 				files[importFile] = 1
 			}
