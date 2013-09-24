@@ -695,22 +695,48 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 }
 
 // takes an additional string argument containing the desired warning message
-func must_select_v1_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	returnValue = select_Text(ctx, scope, ins, args)
-	returnStr := returnValue.(string)
-	if returnStr == "0" {
-		var msg string
-		if loc := ctx.Env[isUserCalledEnvKey]; loc != "" {
-			msg = fmt.Sprintf("%s: %s`%s`", loc, args[1].(string), args[0].(string))
-		} else {
-			msg = fmt.Sprintf("%s`%s`", args[1].(string), args[0].(string))
-		}
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, msg)
-		ctx.Debugger.SendAssertionFailure(msg)
-		failureString := ctx.Env["ASSERTION_FAILURE_MESSAGES"]
-		ctx.Env["ASSERTION_FAILURE_MESSAGES"] = failureString + fmt.Sprintf("%s\n", msg)
-		ctx.AssertionsFailed++
-		ctx.Env["ASSERTION_FAILURE_COUNT"] = fmt.Sprintf("%d", ctx.AssertionsFailed)
+// func must_select_v1_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+// 	returnValue = select_Text(ctx, scope, ins, args)
+// 	returnStr := returnValue.(string)
+// 	if returnStr == "0" {
+// 		var msg string
+// 		if loc := ctx.Env[isUserCalledEnvKey]; loc != "" {
+// 			msg = fmt.Sprintf("%s: %s`%s`", loc, args[1].(string), args[0].(string))
+// 		} else {
+// 			msg = fmt.Sprintf("%s`%s`", args[1].(string), args[0].(string))
+// 		}
+// 		ctx.Debugger.LogErrorMessage(ctx.MessagePath, msg)
+// 		ctx.Debugger.SendAssertionFailure(msg)
+// 		failureString := ctx.Env["ASSERTION_FAILURE_MESSAGES"]
+// 		ctx.Env["ASSERTION_FAILURE_MESSAGES"] = failureString + fmt.Sprintf("%s\n", msg)
+// 		ctx.AssertionsFailed++
+// 		ctx.Env["ASSERTION_FAILURE_COUNT"] = fmt.Sprintf("%d", ctx.AssertionsFailed)
+// 	}
+// 	return
+// }
+
+func warn_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	var msg string
+	if loc := ctx.Env[isUserCalledEnvKey]; loc != "" {
+		msg = fmt.Sprintf("%s: %s", loc, args[0].(string))
+	} else {
+		msg = fmt.Sprintf("%s:%d: %s", ctx.Filename, ins.IGetLineNumber(), args[0].(string))
+	}
+	ctx.Debugger.LogErrorMessage(ctx.MessagePath, msg)
+	ctx.Debugger.SendWarning(msg)
+	ctx.Warnings++
+	returnValue = fmt.Sprintf("%d", ctx.Warnings)
+	return
+}
+
+func env_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	key := args[0].(string)
+	// TODO: replace this with a map when we have enough of these things
+	switch key {
+	case "dev":
+		returnValue = fmt.Sprintf("%v", !ctx.Debugger.IsProd())
+	default:
+		returnValue = ""
 	}
 	return
 }

@@ -49,7 +49,8 @@ type EngineContext struct {
 	MessagePath string
 	InDebug     bool
 	CurrentDoc  interface{}
-	AssertionsFailed int
+	Warnings int
+	Prod bool
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
