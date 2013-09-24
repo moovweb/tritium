@@ -555,7 +555,7 @@ func (p *Parser) call(funcName *Token) (node *tp.Instruction) {
 		node = tp.MakeFunctionCall(funcNameStr, ords, block, funcLineNo)
 	}
 	// if it's not a root file, we can assume that it's a user-called function
-	if p.RootFile == false && IncludeSelectorInfo == true {
+	if p.RootFile == false /* && IncludeSelectorInfo == true */ {
 		node.IsUserCalled = proto.Bool(true)
 	}
 	return node

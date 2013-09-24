@@ -49,6 +49,7 @@ type EngineContext struct {
 	MessagePath string
 	InDebug     bool
 	CurrentDoc  interface{}
+	AssertionsFailed int
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -244,6 +245,7 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 			curFile := ctx.Filename
 			ctx.Filename = fun.IGetFilename()
 			// if it's a user-called function, save the curfile:linenumber
+			// Are we going to need a stack here? --A.L.
 			if ins.IGetIsUserCalled() == true {
 				ctx.Env[isUserCalledEnvKey] = fmt.Sprintf("%s:%d", curFile, ins.IGetLineNumber())
 			}

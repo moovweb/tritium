@@ -21,6 +21,7 @@ import (
 	// tp "tritium/proto"
 	"tritium/protoface"
 	"tritium/constants"
+	"tritium/parser"
 )
 
 const isUserCalledEnvKey = "MtkIsUserCalled"
@@ -642,7 +643,7 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 	if len(nodes) == 0 {
 		returnValue = "0"
 		// add mtk attribute to zero-match node
-		if ctx.Env[isUserCalledEnvKey] != "" {
+		if parser.IncludeSelectorInfo && ctx.Env[isUserCalledEnvKey] != "" {
 			attrValue := ctx.Env[isUserCalledEnvKey]
 			attr := node.Attribute(moovhelper.MtkZeroMatchAttr)
 			if attr != nil {
@@ -671,7 +672,7 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 				}
 			}
 			// add mtk attribute to matched nodes
-			if ctx.Env[isUserCalledEnvKey] != "" {
+			if parser.IncludeSelectorInfo && ctx.Env[isUserCalledEnvKey] != "" {
 				attrValue := ctx.Env[isUserCalledEnvKey]
 				attr := node.Attribute(moovhelper.MtkSourceAttr)
 				if attr != nil {
@@ -693,21 +694,23 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 	return
 }
 
-// func must_select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-// 	returnValue = select_Text(ctx, scope, ins, args)
-// 	returnStr := returnValue.(string)
-// 	if returnStr == "0" {
-// 		ctx.AddLog("SELECTOR FAILED: " + args[0].(string))
-// 	}
-// 	return
-// }
-
 // takes an additional string argument containing the desired warning message
 func must_select_v1_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = select_Text(ctx, scope, ins, args)
 	returnStr := returnValue.(string)
 	if returnStr == "0" {
-		ctx.AddLog(args[1].(string) + args[0].(string))
+		var msg string
+		if loc := ctx.Env[isUserCalledEnvKey]; loc != "" {
+			msg = fmt.Sprintf("%s: %s`%s`", loc, args[1].(string), args[0].(string))
+		} else {
+			msg = fmt.Sprintf("%s`%s`", args[1].(string), args[0].(string))
+		}
+		ctx.Debugger.LogErrorMessage(ctx.MessagePath, msg)
+		ctx.Debugger.SendAssertionFailure(msg)
+		failureString := ctx.Env["ASSERTION_FAILURES"]
+		ctx.Env["ASSERTION_FAILURES"] = failureString + fmt.Sprintf("%s\n", msg)
+		ctx.AssertionsFailed++
+		ctx.Env["ASSERTION_FAILURE_COUNT"] = fmt.Sprintf("%d", ctx.AssertionsFailed)
 	}
 	return
 }
