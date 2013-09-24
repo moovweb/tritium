@@ -707,8 +707,8 @@ func must_select_v1_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.In
 		}
 		ctx.Debugger.LogErrorMessage(ctx.MessagePath, msg)
 		ctx.Debugger.SendAssertionFailure(msg)
-		failureString := ctx.Env["ASSERTION_FAILURES"]
-		ctx.Env["ASSERTION_FAILURES"] = failureString + fmt.Sprintf("%s\n", msg)
+		failureString := ctx.Env["ASSERTION_FAILURE_MESSAGES"]
+		ctx.Env["ASSERTION_FAILURE_MESSAGES"] = failureString + fmt.Sprintf("%s\n", msg)
 		ctx.AssertionsFailed++
 		ctx.Env["ASSERTION_FAILURE_COUNT"] = fmt.Sprintf("%d", ctx.AssertionsFailed)
 	}
