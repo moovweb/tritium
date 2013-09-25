@@ -247,7 +247,7 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 			ctx.Filename = fun.IGetFilename()
 			// if it's a user-called function, save the curfile:linenumber
 			// Are we going to need a stack here? --A.L.
-			if ins.IGetIsUserCalled() == true {
+			if !ctx.Debugger.IsProd() && ins.IGetIsUserCalled() == true {
 				ctx.Env[isUserCalledEnvKey] = fmt.Sprintf("%s:%d", curFile, ins.IGetLineNumber())
 			}
 			for i := 0; i < fun.IGetInstruction().INumChildren(); i++ {
