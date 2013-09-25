@@ -7,5 +7,5 @@ import (
 
 func TestParseRun(t *T) {
   wd, _ := os.Getwd()
-	ParseFile(wd, "scripts", "two.ts")
+	ParseFile(wd, "scripts", "two.ts", false)
 }
