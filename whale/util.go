@@ -94,3 +94,7 @@ func UpdateEnv(env map[string]string, export [][]string) {
 		}
 	}
 }
+
+func LogEngineError(ctx *EngineContext, errmsg string) {
+	ctx.Debugger.LogTritiumErrorMessage(ctx.Customer, ctx.Project, ctx.Env, ctx.MessagePath, errmsg)
+}

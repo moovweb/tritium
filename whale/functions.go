@@ -19,9 +19,9 @@ import (
 	"moovhelper"
 	"rubex"
 	// tp "tritium/proto"
-	"tritium/protoface"
 	"tritium/constants"
 	"tritium/parser"
+	"tritium/protoface"
 )
 
 const isUserCalledEnvKey = "MtkIsUserCalled"
@@ -48,7 +48,7 @@ func yield_(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []
 			returnValue = "false"
 		}
 	} else {
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "yield(): %s", "no block")
+		LogEngineError(ctx, "yield(): no block")
 	}
 	ctx.PushYieldBlock(myYieldBlock)
 	return
@@ -343,13 +343,13 @@ func xml_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, 
 	input := scope.Value.(string)
 	doc, err := xml.Parse([]byte(input), nil, nil, xml.DefaultParseOption, nil)
 	if err != nil {
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "xml err: %s", err.Error())
+		LogEngineError(ctx, "xml err: "+err.Error())
 		returnValue = "false"
 		return
 	}
 
 	if doc == nil {
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "xml err: %s", "nil doc")
+		LogEngineError(ctx, "xml err: nil doc")
 		returnValue = "false"
 		return
 	}
@@ -377,12 +377,12 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruct
 	input := scope.Value.(string)
 	doc, err := html.Parse([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
 	if err != nil {
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "html_doc err: %s", err.Error())
+		LogEngineError(ctx, "html_doc err: "+err.Error())
 		returnValue = "false"
 		return
 	}
 	if doc == nil {
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "html_doc err: %s", "nil doc")
+		LogEngineError(ctx, "html_doc err: nil doc")
 		returnValue = "false"
 		return
 	}
@@ -411,7 +411,7 @@ func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 	err := json.Unmarshal([]byte(jsonSrc), &jsonVal)
 	if err != nil {
 		// invalid JSON -- log an error message and keep going
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json_decoding err: %s", err.Error())
+		LogEngineError(ctx, "json_decoding err: "+err.Error())
 		returnValue = "null"
 		return
 	}
@@ -435,7 +435,7 @@ func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 	jsonOut, err := json.MarshalIndent(jsonVal, "", "  ")
 	if err != nil {
 		// invalid JSON -- log an error message and keep going
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json_encoding err: %s", err.Error())
+		LogEngineError(ctx, "json_encoding err: "+err.Error())
 		returnValue = "null"
 		return
 	}
@@ -454,7 +454,7 @@ func to_json_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction
 
 	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
 	if err != nil {
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "to_json err: %s", err.Error())
+		LogEngineError(ctx, "to_json err: "+err.Error())
 		return "{}"
 	}
 
@@ -463,7 +463,7 @@ func to_json_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction
 		if jsonStruct := NodeToJson(n); jsonStruct != nil {
 			jsonData, err := json.Marshal(jsonStruct)
 			if err != nil {
-				ctx.Debugger.LogErrorMessage(ctx.MessagePath, "json marshal err: %s", err.Error())
+				LogEngineError(ctx, "json marshal err: "+err.Error())
 				return "{ \"engine_error\": \"Internal engine error while converting to json, " +
 					"check logs for more details.\" }"
 			}
@@ -479,7 +479,7 @@ func url_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 	urlStr := args[0].(string)
 	urlParsed, err := url.Parse(urlStr)
 	if err != nil {
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "url parse err: %s", err.Error())
+		LogEngineError(ctx, "url parse err: "+err.Error())
 		returnValue = "false"
 		return
 	}
@@ -600,12 +600,12 @@ func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 	input := scope.Value.(string)
 	fragment, err := html.ParseFragment([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
 	if err != nil {
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "html_fragment err: %s", err.Error())
+		LogEngineError(ctx, "html_fragment err: "+err.Error())
 		returnValue = "false"
 		return
 	}
 	if fragment == nil {
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "html_fragment err: %s", "nil fragment")
+		LogEngineError(ctx, "html_fragment err: nil fragment")
 		returnValue = "false"
 		return
 	}
@@ -635,7 +635,7 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 	}
 	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
 	if err != nil {
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "select err: %s", err.Error())
+		LogEngineError(ctx, "select err: "+err.Error())
 		returnValue = "false"
 		return
 	}
@@ -647,7 +647,7 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 			attrValue := ctx.Env[isUserCalledEnvKey]
 			attr := node.Attribute(moovhelper.MtkZeroMatchAttr)
 			if attr != nil {
-				attrValue = attr.Value()+" "+attrValue
+				attrValue = attr.Value() + " " + attrValue
 			}
 			node.SetAttr(moovhelper.MtkZeroMatchAttr, attrValue)
 		}
@@ -676,7 +676,7 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 				attrValue := ctx.Env[isUserCalledEnvKey]
 				attr := node.Attribute(moovhelper.MtkSourceAttr)
 				if attr != nil {
-					attrValue = attr.Value()+" "+attrValue
+					attrValue = attr.Value() + " " + attrValue
 				}
 				node.SetAttr(moovhelper.MtkSourceAttr, attrValue)
 			}
@@ -705,7 +705,7 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 // 		} else {
 // 			msg = fmt.Sprintf("%s`%s`", args[1].(string), args[0].(string))
 // 		}
-// 		ctx.Debugger.LogErrorMessage(ctx.MessagePath, msg)
+// 		LogEngineError(ctx, msg)
 // 		ctx.Debugger.SendAssertionFailure(msg)
 // 		failureString := ctx.Env["ASSERTION_FAILURE_MESSAGES"]
 // 		ctx.Env["ASSERTION_FAILURE_MESSAGES"] = failureString + fmt.Sprintf("%s\n", msg)
@@ -722,7 +722,7 @@ func warn_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, a
 	} else {
 		msg = fmt.Sprintf("%s:%d: %s", ctx.Filename, ins.IGetLineNumber(), args[0].(string))
 	}
-	ctx.Debugger.LogErrorMessage(ctx.MessagePath, msg)
+	LogEngineError(ctx, msg)
 	ctx.Debugger.SendWarning(msg)
 	ctx.Warnings++
 	returnValue = fmt.Sprintf("%d", ctx.Warnings)
@@ -758,7 +758,7 @@ func remove_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 	}
 	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
 	if err != nil {
-		ctx.Debugger.LogErrorMessage(ctx.MessagePath, "select err: %s", err.Error())
+		LogEngineError(ctx, "select err: "+err.Error())
 		returnValue = "false"
 		return
 	}
@@ -962,7 +962,7 @@ func fetch_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, arg
 }
 
 func deprecated_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	ctx.Debugger.LogTritiumWarnMessage(ctx.MessagePath, "deprecated: %s", args[0].(string))
+	ctx.Debugger.LogTritiumWarnMessage(ctx.Customer, ctx.Project, ctx.Env, ctx.MessagePath, "deprecated: "+args[0].(string))
 	return
 }
 
@@ -1265,7 +1265,7 @@ func base64_v1_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruc
 	case "decode":
 		data, err := base64.StdEncoding.DecodeString(str)
 		if err != nil {
-			ctx.Debugger.LogErrorMessage(ctx.MessagePath, "String decode error: %s", err.Error())
+			LogEngineError(ctx, "String decode error: "+err.Error())
 			ns.Value = ""
 		} else {
 			ns.Value = string(data)

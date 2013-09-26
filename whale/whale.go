@@ -14,8 +14,8 @@ import (
 	"rubex"
 	"steno"
 	// tp "tritium/proto"
-	"tritium/protoface"
 	"tritium/constants"
+	"tritium/protoface"
 )
 
 type Whale struct {
@@ -47,10 +47,12 @@ type EngineContext struct {
 	Deadline    time.Time
 	Mobjects    []MemoryObject
 	MessagePath string
+	Customer    string
+	Project     string
 	InDebug     bool
 	CurrentDoc  interface{}
-	Warnings int
-	Prod bool
+	Warnings    int
+	Prod        bool
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -70,7 +72,7 @@ func NewEngine(debugger steno.Debugger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath string, inDebug bool) (ctx *EngineContext) {
+func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath, customer, project string, inDebug bool) (ctx *EngineContext) {
 	ctx = &EngineContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
@@ -86,6 +88,8 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		Deadline:    deadline,
 		Mobjects:    make([]MemoryObject, 0, defaultMobjects),
 		MessagePath: messagePath,
+		Customer:    customer,
+		Project:     project,
 		InDebug:     inDebug,
 	}
 	return
@@ -97,7 +101,7 @@ func (eng *Whale) Free() {
 }
 
 func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (output string, exports [][]string, logs []string) {
-	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, inDebug)
+	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, inDebug)
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.IGetPkg())
@@ -382,7 +386,7 @@ func (ctx *EngineContext) GetXpathExpr(p string) (e *xpath.Expression) {
 			//ctx.AddMemoryObject(e)
 			ctx.XPathCache.Set(p, &XpathExpObject{Expression: e})
 		} else {
-			ctx.Debugger.LogTritiumErrorMessage(ctx.MessagePath, "Invalid XPath used: %s", p)
+			ctx.Debugger.LogTritiumErrorMessage(ctx.Customer, ctx.Project, ctx.Env, ctx.MessagePath, "Invalid XPath used: "+p)
 		}
 		return e
 	}
