@@ -13,4 +13,5 @@ message Slug {
 	repeated RewriteRule rrules = 4;
 	repeated string ssl_whitelist = 5;
 	optional Credentials credentials = 6;
+	repeated string strings = 7;
 }

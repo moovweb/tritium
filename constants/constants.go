@@ -1,13 +1,14 @@
 package constants 
 
 const (
-	Instruction_BLOCK         int32 = 0
-	Instruction_FUNCTION_CALL int32 = 1
-	Instruction_IMPORT        int32 = 2
-	Instruction_TEXT          int32 = 3
-	Instruction_LOCAL_VAR     int32 = 4
-	Instruction_POSITION      int32 = 5
-	Instruction_COMMENT       int32 = 6
+	Instruction_BLOCK           int32 = 0
+	Instruction_FUNCTION_CALL   int32 = 1
+	Instruction_IMPORT          int32 = 2
+	Instruction_TEXT            int32 = 3
+	Instruction_LOCAL_VAR       int32 = 4
+	Instruction_POSITION        int32 = 5
+	Instruction_COMMENT         int32 = 6
+	Instruction_INTERNED_STRING int32 = 7
 )
 
 var Instruction_InstructionType_name = map[int32]string{
@@ -18,15 +19,17 @@ var Instruction_InstructionType_name = map[int32]string{
 	4: "LOCAL_VAR",
 	5: "POSITION",
 	6: "COMMENT",
+	7: "INTERNED_STRING",
 }
 var Instruction_InstructionType_value = map[string]int32{
-	"BLOCK":         0,
-	"FUNCTION_CALL": 1,
-	"IMPORT":        2,
-	"TEXT":          3,
-	"LOCAL_VAR":     4,
-	"POSITION":      5,
-	"COMMENT":       6,
+	"BLOCK":           0,
+	"FUNCTION_CALL":   1,
+	"IMPORT":          2,
+	"TEXT":            3,
+	"LOCAL_VAR":       4,
+	"POSITION":        5,
+	"COMMENT":         6,
+	"INTERNED_STRING": 7,
 }
 
 

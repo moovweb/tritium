@@ -43,3 +43,7 @@ func (m *Slug) IGetSslWhitelist() []string {
 func (m *Slug) IGetCredentials() protoface.Credentials {
 	return m.GetCredentials()
 }
+
+func (m *Slug) IGetStrings() []string {
+	return m.Strings
+}

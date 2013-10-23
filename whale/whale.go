@@ -41,6 +41,8 @@ type EngineContext struct {
 	InnerReplacer     *rubex.Regexp
 	HeaderContentType *rubex.Regexp
 
+	Strings []string
+
 	// Debug info
 	Filename    string
 	HadError    bool
@@ -100,7 +102,7 @@ func (eng *Whale) Free() {
 	eng.XPathCache.Reset()
 }
 
-func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (output string, exports [][]string, logs []string) {
+func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, stringTable []string, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (output string, exports [][]string, logs []string) {
 	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, inDebug)
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
@@ -185,6 +187,8 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 		}
 	case constants.Instruction_TEXT:
 		returnValue = ins.IGetValue()
+	case constants.Instruction_INTERNED_STRING:
+		returnValue = ctx.Strings[ins.IGetFunctionId()]
 	case constants.Instruction_LOCAL_VAR:
 		name := ins.IGetValue()
 		vars := ctx.Vars()
