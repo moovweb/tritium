@@ -269,6 +269,12 @@ func (p *Parser) statement() (node *tp.Instruction) {
 		}
 		node = tp.MakeImport(scriptLocationInProject, token.LineNumber)
 		// println("PROCESSED IMPORT", dir, base, scriptLocationInProject)
+	case LAYER:
+		if p.inFunc {
+			panic(fmt.Sprintf("|%s:%d -- layers not allowed inside function definitions", p.FileName, p.peek().LineNumber))
+		}
+		token := p.pop() // pop the "@layer" token
+		node = tp.MakeLayer(filepath.Clean(filepath.Join(p.ScriptPath, p.FileName)), token.LineNumber)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	case NAMESPACE:

@@ -73,6 +73,14 @@ func MakeImport(path string, lineNum int32) *Instruction {
 	}
 }
 
+func MakeLayer(path string, lineNum int32) *Instruction {
+	return &Instruction{
+		Type:       pb.Int32(constants.Instruction_LAYER),
+		Value:      pb.String(path),
+		LineNumber: pb.Int32(lineNum),
+	}
+}
+
 func MakeLocalVar(name string, val *Instruction, block []*Instruction, lineNum int32) *Instruction {
 	node := &Instruction{
 		Type:       pb.Int32(constants.Instruction_LOCAL_VAR),

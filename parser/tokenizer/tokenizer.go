@@ -33,6 +33,7 @@ const (
 	TYPE
 	PATH
 	IMPORT
+	LAYER
 	READ
 	EOF
 	ERROR
@@ -70,6 +71,7 @@ func init() {
 	LexemeName[TYPE] = "type name"
 	LexemeName[PATH] = "path"
 	LexemeName[IMPORT] = "`@import` directive"
+	LexemeName[LAYER] = "`@layer` directive"
 	LexemeName[READ] = "`read` macro"
 	LexemeName[EOF] = "end of file"
 	LexemeName[ERROR] = "lexical error"
@@ -372,6 +374,8 @@ func (t *Tokenizer) munch() *Token {
 		}
 	} else if c := string(matcher[TYPE].Find(src)); len(c) > 0 {
 		return t.popToken(TYPE, c, len(c))
+	} else if t.hasPrefix("@layer") {
+		return t.popToken(LAYER, "", 6)
 	} else if t.hasPrefix("@import") {
 		tok := t.popToken(IMPORT, "", 7)
 		t.discardWhitespaceAndComments()
