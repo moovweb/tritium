@@ -223,7 +223,7 @@ func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName s
 		// panic(msg)
 		return
 	}
-	definitions := parser.ParseFile(projectPath, scriptPath, fileName, false)
+	definitions := parser.ParseFile(projectPath, scriptPath, fileName, false, make([]string, 0))
 
 	// Create a map of pre-packaged function signatures
 	prepackaged := make(map[string]bool)
@@ -349,7 +349,7 @@ func (pkg *Package) readHeaderFile(location string) {
 		return
 	}
 
-	stubs := parser.ParseFile(location, ".", "headers.tf", false)
+	stubs := parser.ParseFile(location, ".", "headers.tf", false, make([]string, 0))
 	for _, function := range stubs.Functions {
 		// Verify that signatures for primitives refer to things that actually exist
 		// println("HEY, LINKING BUILTIN:", function.Stub(pkg.Package))

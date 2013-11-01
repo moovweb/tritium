@@ -6,13 +6,13 @@ import (
 	tp "tritium/proto"
 )
 
-func RunStringWithPackage(src, projectPath, scriptPath, fileName string, pkg *tp.Package) (*tp.Transform, error) {
-	objs := parser.Parse(src, projectPath, scriptPath, fileName, false)
+func RunStringWithPackage(src, projectPath, scriptPath, fileName string, pkg *tp.Package, layers []string) (*tp.Transform, error) {
+	objs := parser.Parse(src, projectPath, scriptPath, fileName, false, layers)
 	return runWithObjs(objs, pkg, projectPath, scriptPath)
 }
 
-func RunWithPackage(projectPath, scriptPath, fileName string, pkg *tp.Package) (*tp.Transform, error) {
-	objs := parser.ParseFileSet(projectPath, scriptPath, fileName, false)
+func RunWithPackage(projectPath, scriptPath, fileName string, pkg *tp.Package, layers []string) (*tp.Transform, error) {
+	objs := parser.ParseFileSet(projectPath, scriptPath, fileName, false, layers)
 	return runWithObjs(objs, pkg, projectPath, scriptPath)
 }
 

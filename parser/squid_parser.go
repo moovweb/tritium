@@ -27,6 +27,7 @@ type Parser struct {
 	Defspace    string
 	inFunc      bool
 	CompilingMixer bool
+	Layers      []string
 }
 
 var TritiumParserShowRewriterFileName = false
@@ -92,24 +93,25 @@ func (p *Parser) error(msg string) {
 	panic(fullMsg)
 }
 
-func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool, compilingMixer bool) *Parser {
+func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool, compilingMixer bool, layers []string) *Parser {
 	fullpath := filepath.Join(projectPath, scriptPath, fileName)
 	fullpath, _ = filepath.Abs(fullpath)
 	scriptPath = filepath.Clean(scriptPath)
 	projectPath = filepath.Clean(projectPath)
 	p := &Parser{
-		Tokenizer:   MakeTokenizer([]byte(src)),
-		ProjectPath: projectPath, // the project path (probably absolute)
-		ScriptPath:  scriptPath,  // the folder containing the script file being parsed (relative to the project path)
-		FileName:    fileName,    // the base-name of the script file being parsed
-		FullPath:    fullpath,
-		Lookahead:   nil,
-		counter:     0,
-		RootFile:    isRootFile,
-		Namespaces:  make([]string, 1),
-		Defspace:    "tritium",
-		inFunc:      false,
+		Tokenizer:      MakeTokenizer([]byte(src)),
+		ProjectPath:    projectPath, // the project path (probably absolute)
+		ScriptPath:     scriptPath,  // the folder containing the script file being parsed (relative to the project path)
+		FileName:       fileName,    // the base-name of the script file being parsed
+		FullPath:       fullpath,
+		Lookahead:      nil,
+		counter:        0,
+		RootFile:       isRootFile,
+		Namespaces:     make([]string, 1),
+		Defspace:       "tritium",
+		inFunc:         false,
 		CompilingMixer: compilingMixer,
+		Layers:         layers,
 	}
 	p.Namespaces[0] = "tritium"
 	p.pop()
@@ -274,7 +276,9 @@ func (p *Parser) statement() (node *tp.Instruction) {
 			panic(fmt.Sprintf("|%s:%d -- layers not allowed inside function definitions", p.FileName, p.peek().LineNumber))
 		}
 		token := p.pop() // pop the "@layer" token
-		node = tp.MakeLayer(filepath.Clean(filepath.Join(p.ScriptPath, p.FileName)), token.LineNumber)
+		resolvedPath := p.Layers[0] + ":" + filepath.Clean(filepath.Join(p.ScriptPath, p.FileName))
+		node = tp.MakeImport(resolvedPath, token.LineNumber)
+		// println("LAYER IMPORT:", node.GetValue())
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	case NAMESPACE:

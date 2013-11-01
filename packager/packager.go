@@ -398,7 +398,7 @@ func (pkgr *Packager) buildLib() {
 func (pkgr *Packager) resolveFunctions(dirName, fileName string) {
 	// the existence of `fileName` should be verified by the caller
 	relPath := filepath.Join(dirName, fileName)
-	defs := parser.ParseFile(pkgr.MixerDir, dirName, fileName, true)
+	defs := parser.ParseFile(pkgr.MixerDir, dirName, fileName, true, make([]string, 0))
 
 	for _, f := range defs.Functions {
 		// if it's an import stub ...
