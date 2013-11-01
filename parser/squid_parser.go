@@ -278,7 +278,6 @@ func (p *Parser) statement() (node *tp.Instruction) {
 		token := p.pop() // pop the "@layer" token
 		resolvedPath := p.Layers[0] + ":" + filepath.Clean(filepath.Join(p.ScriptPath, p.FileName))
 		node = tp.MakeImport(resolvedPath, token.LineNumber)
-		// println("LAYER IMPORT:", node.GetValue())
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	case NAMESPACE:

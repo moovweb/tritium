@@ -8,7 +8,6 @@ const (
 	Instruction_LOCAL_VAR     int32 = 4
 	Instruction_POSITION      int32 = 5
 	Instruction_COMMENT       int32 = 6
-	Instruction_LAYER         int32 = 7
 )
 
 var Instruction_InstructionType_name = map[int32]string{
@@ -19,7 +18,6 @@ var Instruction_InstructionType_name = map[int32]string{
 	4: "LOCAL_VAR",
 	5: "POSITION",
 	6: "COMMENT",
-	7: "LAYER",
 }
 var Instruction_InstructionType_value = map[string]int32{
 	"BLOCK":         0,
@@ -29,7 +27,6 @@ var Instruction_InstructionType_value = map[string]int32{
 	"LOCAL_VAR":     4,
 	"POSITION":      5,
 	"COMMENT":       6,
-	"LAYER":         7,
 }
 
 

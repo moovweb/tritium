@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"fmt"
+	// "fmt"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
@@ -28,19 +28,15 @@ func ParseFileSet(projectPath, scriptPath, fileName string, compilingMixer bool,
 }
 
 func ParseLayerFile(projectPath, scriptPath, fileName string, compilingMixer bool, layers, appliedLayers []string) *tp.ScriptObject {
-	// println("READING LAYER FROM", projectPath, scriptPath, fileName)
-	// fmt.Printf("layers: %v; applied: %v\n", layers, appliedLayers)
 	var fullScriptPath string
 	for _, layerName := range appliedLayers {
 		fullScriptPath = filepath.Join(fullScriptPath, "layers", layerName)
 	}
 	fullScriptPath = filepath.Join(fullScriptPath, scriptPath)
-	println("FULL LAYER PATH:", filepath.Join(projectPath, fullScriptPath, fileName))
 	src, _ := readFile(projectPath, fullScriptPath, fileName)
 	appliedLayers = reverse(appliedLayers) // re-reverse them
 	pathWithLayers := strings.Join(appliedLayers, ":")
 	pathWithLayers = pathWithLayers + ":" + scriptPath
-	fmt.Printf("CALLING PARSESCRIPT WITH %s; %s; %v\n", pathWithLayers, fileName, layers[len(appliedLayers):len(layers)])
 	return ParseScript(src, projectPath, pathWithLayers, fileName, compilingMixer, layers[len(appliedLayers):len(layers)])
 }
 
@@ -56,7 +52,6 @@ func Parse(src, projectPath, scriptPath, fileName string, compilingMixer bool, l
 			// fullPath := filepath.Join(filepath.Base(projectPath), importFile)
 			if files[importFile] == 0 {
 				if strings.Index(importFile, ":") != -1 {
-					println("HANDLING LAYER IMPORT", importFile)
 					components := strings.Split(importFile, ":")
 					actualPath := components[len(components)-1]
 					fileName := filepath.Base(actualPath)
