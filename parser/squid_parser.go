@@ -275,9 +275,49 @@ func (p *Parser) statement() (node *tp.Instruction) {
 		if p.inFunc {
 			panic(fmt.Sprintf("|%s:%d -- layers not allowed inside function definitions", p.FileName, p.peek().LineNumber))
 		}
+
+		var optional bool
 		token := p.pop() // pop the "@layer" token
-		resolvedPath := p.Layers[0] + ":" + filepath.Clean(filepath.Join(p.ScriptPath, p.FileName))
-		node = tp.MakeImport(resolvedPath, token.LineNumber)
+		if p.peek().Lexeme == LPAREN {
+			p.pop() // pop the lparen
+			if p.peek().Lexeme == ID {
+				arg := p.pop() // pop the optional/required arg
+				if arg.Value == "optional" {
+					optional = true
+				} else if arg.Value == "required" {
+					optional = false
+				} else {
+					p.error("argument to `@layer` directive must be either `optional` or `required`")
+				}
+			} else {
+				p.error("argument to `@layer` directive must be either `optional` or `required`")
+			}
+			if p.peek().Lexeme != RPAREN {
+				p.error("unclosed parentheses in `@layer` directive")
+			}
+			p.pop() // pop the rparen
+		}
+
+		if len(p.Layers) == 0 && !optional {
+			components := strings.Split(filepath.Join(p.ScriptPath, p.FileName), ":")
+			layerNames := components[0:len(components)-1]
+			layerNames = reverse(layerNames)
+			var layerPath string
+			for _, layerName := range layerNames {
+				layerPath = filepath.Join(layerPath, "layers", layerName)
+			}
+			resolvedPath := filepath.Join(layerPath, p.FileName)
+			panic(fmt.Sprintf("%s:%d -- required layer not provided; please make sure you've specified all necessary layers in the start-up options", resolvedPath, token.LineNumber))
+		}
+
+		if len(p.Layers) == 0 && optional {
+			// just insert a no-op node if we have an optional layer import and don't provide an actual layer for it
+			node = tp.MakeText("", token.LineNumber)
+			return
+		}
+
+		annotatedPath := p.Layers[0] + ":" + filepath.Clean(filepath.Join(p.ScriptPath, p.FileName))
+		node = tp.MakeImport(annotatedPath, token.LineNumber)
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	case NAMESPACE:
