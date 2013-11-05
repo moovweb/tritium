@@ -11,6 +11,7 @@ import (
 	tp "tritium/proto"
 	. "tritium/parser/tokenizer"
 	"tritium/constants"
+	"butler/fileutil"
 )
 
 type Parser struct {
@@ -298,26 +299,46 @@ func (p *Parser) statement() (node *tp.Instruction) {
 			p.pop() // pop the rparen
 		}
 
+		// get all the layer names and layer path sorted out
+		components := strings.Split(filepath.Join(p.ScriptPath, p.FileName), ":")
+		layerNames := components[0:len(components)-1]
+		layerNames = reverse(layerNames)
+		var layerPath string
+		for _, layerName := range layerNames {
+			layerPath = filepath.Join(layerPath, "layers", layerName)
+		}
+		resolvedPath := filepath.Join(layerPath, components[len(components)-1])
+
+		// if we require a layer and it hasn't been provided at startup ...
 		if len(p.Layers) == 0 && !optional {
-			components := strings.Split(filepath.Join(p.ScriptPath, p.FileName), ":")
-			layerNames := components[0:len(components)-1]
-			layerNames = reverse(layerNames)
-			var layerPath string
-			for _, layerName := range layerNames {
-				layerPath = filepath.Join(layerPath, "layers", layerName)
-			}
-			resolvedPath := filepath.Join(layerPath, p.FileName)
 			panic(fmt.Sprintf("%s:%d -- required layer not provided; please make sure you've specified all necessary layers in the start-up options", resolvedPath, token.LineNumber))
 		}
 
+		layerPath = filepath.Join(layerPath, "layers", p.Layers[0])
+		resolvedPath = filepath.Join(layerPath, components[len(components)-1])
+
+		// if we have an optional layer import and it hasn't been provided at startup ...
 		if len(p.Layers) == 0 && optional {
 			// just insert a no-op node if we have an optional layer import and don't provide an actual layer for it
 			node = tp.MakeText("", token.LineNumber)
 			return
 		}
 
+		// if we have an optional layer import and the provided layers don't match, or the desired file doesn't exist...
+		layerExists, exErr := fileutil.Exists(filepath.Join(p.ProjectPath, resolvedPath))
+		if optional && (!layerExists || exErr != nil) {
+			// again, insert a no-op node
+			node = tp.MakeText("", token.LineNumber)
+			return
+		}
+
 		annotatedPath := p.Layers[0] + ":" + filepath.Clean(filepath.Join(p.ScriptPath, p.FileName))
 		node = tp.MakeImport(annotatedPath, token.LineNumber)
+		var opt int32
+		if optional {
+			opt = 1
+		}
+		node.FunctionId = proto.Int32(opt) // re-use the function-id slot to record whether this import is optional
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	case NAMESPACE:
