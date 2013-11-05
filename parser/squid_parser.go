@@ -332,6 +332,8 @@ func (p *Parser) statement() (node *tp.Instruction) {
 			return
 		}
 
+		// TODO: eagerly check for !optional and !layerExists -- can provide a better error message here
+
 		annotatedPath := p.Layers[0] + ":" + filepath.Clean(filepath.Join(p.ScriptPath, p.FileName))
 		node = tp.MakeImport(annotatedPath, token.LineNumber)
 		var opt int32
