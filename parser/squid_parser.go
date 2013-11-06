@@ -314,15 +314,15 @@ func (p *Parser) statement() (node *tp.Instruction) {
 			panic(fmt.Sprintf("%s:%d -- required layer not provided; please make sure you've specified all necessary layers in the start-up options", resolvedPath, token.LineNumber))
 		}
 
-		layerPath = filepath.Join(layerPath, "layers", p.Layers[0])
-		resolvedPath = filepath.Join(layerPath, components[len(components)-1])
-
 		// if we have an optional layer import and it hasn't been provided at startup ...
 		if len(p.Layers) == 0 && optional {
 			// just insert a no-op node if we have an optional layer import and don't provide an actual layer for it
 			node = tp.MakeText("", token.LineNumber)
 			return
 		}
+
+		layerPath = filepath.Join(layerPath, "layers", p.Layers[0])
+		resolvedPath = filepath.Join(layerPath, components[len(components)-1])
 
 		// if we have an optional layer import and the provided layers don't match, or the desired file doesn't exist...
 		layerExists, exErr := fileutil.Exists(filepath.Join(p.ProjectPath, resolvedPath))
