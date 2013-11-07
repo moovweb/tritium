@@ -29,5 +29,5 @@ func (m *ScriptObject) IGetLinked() bool {
 }
 
 func (m *ScriptObject) IGetModule() string {
-	return ""
+	return m.GetModule()
 }

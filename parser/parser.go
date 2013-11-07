@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"strings"
+  "code.google.com/p/goprotobuf/proto"
 
 	tp "tritium/proto"
 )
@@ -37,7 +38,12 @@ func ParseLayerFile(projectPath, scriptPath, fileName string, compilingMixer boo
 	appliedLayers = reverse(appliedLayers) // re-reverse them
 	pathWithLayers := strings.Join(appliedLayers, ":")
 	pathWithLayers = pathWithLayers + ":" + scriptPath
-	return ParseScript(src, projectPath, pathWithLayers, fileName, compilingMixer, layers[len(appliedLayers):len(layers)])
+	remainingLayers := layers[len(appliedLayers):len(layers)]
+	layerScript := ParseScript(src, projectPath, pathWithLayers, fileName, compilingMixer, remainingLayers)
+	if len(appliedLayers) != 0 {
+		layerScript.Module = proto.String(appliedLayers[0]) // gah, just use this slot, since we ended up not using it for modules/namespaces
+	}
+	return layerScript
 }
 
 func Parse(src, projectPath, scriptPath, fileName string, compilingMixer bool, layers []string) []*tp.ScriptObject {

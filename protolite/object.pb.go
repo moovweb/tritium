@@ -16,6 +16,7 @@ var _ = math.Inf
 type ScriptObject struct {
 	Root             *Instruction `protobuf:"bytes,2,opt,name=root" json:"root,omitempty"`
 	ScopeTypeId      *int32       `protobuf:"varint,4,opt,name=scope_type_id" json:"scope_type_id,omitempty"`
+	Module           *string      `protobuf:"bytes,6,opt,name=module" json:"module,omitempty"`
 	XXX_unrecognized []byte       `json:"-"`
 }
 
@@ -35,6 +36,13 @@ func (m *ScriptObject) GetScopeTypeId() int32 {
 		return *m.ScopeTypeId
 	}
 	return 0
+}
+
+func (m *ScriptObject) GetModule() string {
+	if m != nil && m.Module != nil {
+		return *m.Module
+	}
+	return ""
 }
 
 func init() {

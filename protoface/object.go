@@ -9,6 +9,7 @@ type ScriptObject interface {
 	IGetScopeTypeId() int32
 	IGetLinked() bool
 	IGetModule() string
+	IGetLayer() string
 
 	Imports() []string
 }

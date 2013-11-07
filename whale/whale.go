@@ -34,6 +34,7 @@ type EngineContext struct {
 	MatchStack               []string
 	MatchShouldContinueStack []bool
 	Yields                   []*YieldBlock
+	LayerStack               []string
 	*Whale
 	protoface.Transform
 	Rrules []protoface.RewriteRule
@@ -83,6 +84,7 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		MatchStack:               make([]string, 0),
 		MatchShouldContinueStack: make([]bool, 0),
 		Yields:                   make([]*YieldBlock, 0),
+		LayerStack:               make([]string, 0),
 		HadError:                 false,
 
 		Deadline:    deadline,
@@ -206,9 +208,17 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 		ctx.Filename = obj.IGetName()
 		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, curFile, int(ins.IGetLineNumber()))
 		root := obj.IGetRoot()
+		pushedLayer := false
+		if layer := obj.IGetLayer(); layer != "" {
+			ctx.PushLayer(layer)
+			pushedLayer = true
+		}
 		for i := 0; i < root.INumChildren(); i++ {
 			child := root.IGetNthChild(i)
 			ctx.RunInstruction(scope, child)
+		}
+		if pushedLayer {
+			ctx.PopLayer()
 		}
 		ctx.Whale.Debugger.LogImportDone(ctx.MessagePath, ctx.Filename, curFile, int(ins.IGetLineNumber()))
 		ctx.Filename = curFile
@@ -480,4 +490,14 @@ func (ctx *EngineContext) SetShouldContinue(cont bool) {
 
 func (ctx *EngineContext) AddMemoryObject(o MemoryObject) {
 	ctx.Mobjects = append(ctx.Mobjects, o)
+}
+
+func (ctx *EngineContext) PushLayer(layer string) {
+	ctx.LayerStack = append(ctx.LayerStack, layer)
+}
+
+func (ctx *EngineContext) PopLayer() {
+	if l := len(ctx.LayerStack); l > 0 {
+		ctx.LayerStack = ctx.LayerStack[:l-1]
+	}
 }
