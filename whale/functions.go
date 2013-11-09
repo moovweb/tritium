@@ -736,12 +736,12 @@ func env_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args 
 	switch key {
 	case "dev":
 		returnValue = fmt.Sprintf("%v", !ctx.Debugger.IsProd())
-	case "layer":
+	case "asset-layer-path":
 		layerPath := ""
 		for _, layerName := range ctx.LayerStack {
 			layerPath = filepath.Join(layerPath, "layers", layerName)
 		}
-		returnValue = layerPath
+		returnValue = filepath.Join(layerPath, "assets")
 	default:
 		returnValue = ""
 	}
