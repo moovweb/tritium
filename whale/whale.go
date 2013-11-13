@@ -209,7 +209,7 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, curFile, int(ins.IGetLineNumber()))
 		root := obj.IGetRoot()
 		pushedLayer := false
-		if layer := obj.IGetLayer(); layer != "" {
+		if layer := obj.IGetLayer(); layer != "" && layer != ctx.CurrentLayer() {
 			ctx.PushLayer(layer)
 			pushedLayer = true
 		}
@@ -499,5 +499,13 @@ func (ctx *EngineContext) PushLayer(layer string) {
 func (ctx *EngineContext) PopLayer() {
 	if l := len(ctx.LayerStack); l > 0 {
 		ctx.LayerStack = ctx.LayerStack[:l-1]
+	}
+}
+
+func (ctx *EngineContext) CurrentLayer() string {
+	if l := len(ctx.LayerStack); l > 0 {
+		return ctx.LayerStack[l-1]
+	} else {
+		return ""
 	}
 }
