@@ -341,12 +341,24 @@ func (p *Parser) statement() (node *tp.Instruction) {
 				layerFile = layerFile[:dot]
 			}
 			layerFile = fmt.Sprintf("%s(%s).ts", layerFile, p.Layers[0])
+
+			layerThere, ltErr := fileutil.Exists(filepath.Join(p.ProjectPath, layerFile))
+			if !layerThere || ltErr != nil {
+				if optional {
+					node = tp.MakeText("", token.LineNumber)
+					return
+				} else {
+					panic(fmt.Sprintf("%s:%d -- required layer (%s) has no corresponding Tritium file (want %s)", p.FileName, p.LineNumber, p.Layers[0], layerFile))
+				}
+			}
+
 			node = tp.MakeImport(layerFile, token.LineNumber)
 			var opt int32
 			if optional {
 				opt = 1
 			}
 			node.FunctionId = proto.Int32(opt)
+			node.Namespace = proto.String(p.Layers[0])
 			return
 		}
 	case LAYER:
