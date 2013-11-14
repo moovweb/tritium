@@ -29,6 +29,7 @@ type Parser struct {
 	inFunc      bool
 	CompilingMixer bool
 	Layers      []string
+	AppliedLayers string
 }
 
 var TritiumParserShowRewriterFileName = false
@@ -243,20 +244,14 @@ func (p *Parser) statement() (node *tp.Instruction) {
 			panic(fmt.Sprintf("|%s:%d -- imports not allowed inside function definitions", p.FileName, p.peek().LineNumber))
 		}
 		token := p.pop() // pop the "@import" token (includes importee)
-		scriptLocationInProject := filepath.Clean(filepath.Join(p.ScriptPath, token.Value))
 
-		// extract the root script folder from the relative path of the importee
-		// (would be easier if filepath.FromSlash worked as advertised)
-		dir, base := filepath.Split(p.ScriptPath)
-		if len(dir) == 0 {
-			dir = base
-			base = ""
-		}
-		if dir[len(dir)-1] == os.PathSeparator {
-			dir = dir[0:len(dir)-1]
-		}
-		for len(base) > 0 {
-			dir, base = filepath.Split(dir)
+		// IF IT'S A NORMAL IMPORT
+		if token.Value != ":layer" {
+			scriptLocationInProject := filepath.Clean(filepath.Join(p.ScriptPath, token.Value))
+
+			// extract the root script folder from the relative path of the importee
+			// (would be easier if filepath.FromSlash worked as advertised)
+			dir, base := filepath.Split(p.ScriptPath)
 			if len(dir) == 0 {
 				dir = base
 				base = ""
@@ -264,14 +259,96 @@ func (p *Parser) statement() (node *tp.Instruction) {
 			if dir[len(dir)-1] == os.PathSeparator {
 				dir = dir[0:len(dir)-1]
 			}
+			for len(base) > 0 {
+				dir, base = filepath.Split(dir)
+				if len(dir) == 0 {
+					dir = base
+					base = ""
+				}
+				if dir[len(dir)-1] == os.PathSeparator {
+					dir = dir[0:len(dir)-1]
+				}
+			}
+			// make sure that the importee is under the right subfolder
+			if !strings.HasPrefix(scriptLocationInProject, dir) {
+				msg := fmt.Sprintf("%s:%d -- imported file must exist under the `%s` folder", p.FileName, token.LineNumber, dir)
+				panic(msg)
+			}
+			node = tp.MakeImport(scriptLocationInProject, token.LineNumber)
+			// println("PROCESSED IMPORT", dir, base, scriptLocationInProject)
+		} else {
+			// ELSE, IF IT'S A LAYER IMPORT
+			optional := false
+			customLayerFile := ""
+			layerFile := ""
+			p.pop() // pop the "layer" identifier
+			if p.peek().Lexeme == LPAREN {
+				p.pop() // pop the lparen
+				if p.peek().Lexeme == STRING {
+					customLayerFile = p.pop().Value
+					if p.peek().Lexeme == COMMA {
+						p.pop() // pop the comma
+						if p.peek().Lexeme == ID {
+							option := p.pop().Value
+							if option == "optional" {
+								optional = true
+							} else if option == "required" {
+								optional = false
+							} else {
+								p.error("second argument to `layer(...)` must be either `optional` or `required`")
+							}
+						} else {
+							p.error("second argument to `layer(...)` must be either `optional` or `required`")
+						}
+					} else {
+						optional = false
+					}
+				} else if p.peek().Lexeme == ID {
+					option := p.pop().Value
+					if option == "optional" {
+						optional = true
+					} else if option == "required" {
+						optional = false
+					} else {
+						p.error("argument to `layer(...)` must be either `optional`, `required`, or a quoted filename")
+					}
+				} else {
+					optional = false
+				}
+				if p.peek().Lexeme != RPAREN {
+					p.error("unclosed parentheses in argument list for `layer(...)`")
+				}
+				p.pop() // pop the rparen
+			} else {
+				p.error("`layer(...)` requires a parenthesized argument list")
+			}
+
+			if len(p.Layers) == 0 && optional {
+				node = tp.MakeText("", token.LineNumber)
+				return
+			}
+			if len(p.Layers) == 0 && !optional {
+				panic(fmt.Sprintf("%s:%d -- required layer not provided; please make sure you've specified all necessary layers in the start-up options", p.FileName, token.LineNumber))
+			}
+
+			if customLayerFile == "" {
+				layerFile = filepath.Join(p.ScriptPath, p.FileName)
+			} else {
+				layerFile = filepath.Join(p.ScriptPath, customLayerFile)
+			}
+			dot := strings.LastIndex(layerFile, ".")
+			if dot > -1 {
+				layerFile = layerFile[:dot]
+			}
+			layerFile = fmt.Sprintf("%s(%s).ts", layerFile, p.Layers[0])
+			node = tp.MakeImport(layerFile, token.LineNumber)
+			var opt int32
+			if optional {
+				opt = 1
+			}
+			node.FunctionId = proto.Int32(opt)
+			return
 		}
-		// make sure that the importee is under the right subfolder
-		if !strings.HasPrefix(scriptLocationInProject, dir) {
-			msg := fmt.Sprintf("%s:%d -- imported file must exist under the `%s` folder", p.FileName, token.LineNumber, dir)
-			panic(msg)
-		}
-		node = tp.MakeImport(scriptLocationInProject, token.LineNumber)
-		// println("PROCESSED IMPORT", dir, base, scriptLocationInProject)
 	case LAYER:
 		if p.inFunc {
 			panic(fmt.Sprintf("|%s:%d -- layers not allowed inside function definitions", p.FileName, p.peek().LineNumber))

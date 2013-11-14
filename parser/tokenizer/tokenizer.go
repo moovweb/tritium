@@ -379,7 +379,10 @@ func (t *Tokenizer) munch() *Token {
 	} else if t.hasPrefix("@import") {
 		tok := t.popToken(IMPORT, "", 7)
 		t.discardWhitespaceAndComments()
-		if c := string(matcher[PATH].Find(t.Source)); len(c) > 0 {
+		if c := string(matcher[ID].Find(t.Source)); c == "layer" {
+			// mark this import token as special, and let the parser handle the rest
+			tok.Value = ":layer"
+		} else if c := string(matcher[PATH].Find(t.Source)); len(c) > 0 {
 			tok.Value = c
 			t.Source = t.Source[len(c):]
 		} else if c := matcher[STRING].Find(t.Source); len(c) > 0 {
