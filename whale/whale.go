@@ -505,7 +505,6 @@ func (ctx *EngineContext) PopLayer() {
 func (ctx *EngineContext) CurrentLayer() string {
 	if l := len(ctx.LayerStack); l > 0 {
 		return ctx.LayerStack[l-1]
-	} else {
-		return ""
 	}
+	return ""
 }
