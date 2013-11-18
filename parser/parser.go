@@ -54,32 +54,12 @@ func Parse(src, projectPath, scriptPath, fileName string, compilingMixer bool, l
 	for i := 0; i < len(objs); i++ {
 		obj := objs[i]
 		for _, importFile := range obj.Imports() {
-			// importFile already is already prepended with the script path relative to the project folder
-			// fullPath := filepath.Join(filepath.Base(projectPath), importFile)
 			if files[importFile] == 0 {
-				if strings.Index(importFile, ":") != -1 {
-					components := strings.Split(importFile, ":")
-					actualPath := components[len(components)-1]
-					fileName := filepath.Base(actualPath)
-					actualPath = filepath.Dir(actualPath)
-					appliedLayers := components[0:len(components)-1]
-					appliedLayers = reverse(appliedLayers) // un-reverse them
-					objs = append(objs, ParseLayerFile(projectPath, actualPath, fileName, compilingMixer, layers, appliedLayers))
-					// objs = append(objs, ParseLayerFile(projectPath, actualPath, fileName, compilingMixer, layers, appliedLayers))
-				} else {
-					objs = append(objs, ParseFile(projectPath, filepath.Dir(importFile), filepath.Base(importFile), compilingMixer, layers))
-					// register the user-accessible scripts to avoid duplicate imports
-					files[importFile] = 1
-				}
+				objs = append(objs, ParseFile(projectPath, filepath.Dir(importFile), filepath.Base(importFile), compilingMixer, layers))
+				// register the user-accessible scripts to avoid duplicate imports
+				files[importFile] = 1
 			}
 		}
-
-		// for _, layerFile := range obj.Layers() {
-		// 	if files[layerFile] == 0 {
-		// 		objs = append(objs, ParseFile(projectPath, filepath.Dir(layerFile), filepath.Base(layerFile), compilingMixer, layers))
-		// 		files[layerFile] = 1
-		// 	}
-		// }
 	}
 	return objs
 }

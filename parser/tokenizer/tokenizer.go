@@ -33,7 +33,6 @@ const (
 	TYPE
 	PATH
 	IMPORT
-	LAYER
 	READ
 	EOF
 	ERROR
@@ -71,7 +70,6 @@ func init() {
 	LexemeName[TYPE] = "type name"
 	LexemeName[PATH] = "path"
 	LexemeName[IMPORT] = "`@import` directive"
-	LexemeName[LAYER] = "`@layer` directive"
 	LexemeName[READ] = "`read` macro"
 	LexemeName[EOF] = "end of file"
 	LexemeName[ERROR] = "lexical error"
@@ -101,7 +99,6 @@ func init() {
 	symbolLexeme["="] = EQUAL
 	symbolLexeme["+"] = PLUS
 	symbolPattern = rubex.MustCompile(`\A[\(\)\{\}\,\.=\+]`)
-
 	numberPattern = rubex.MustCompile(`\A\d+`)
 }
 
@@ -166,42 +163,6 @@ func (t *Tokenizer) discardBlockComment() {
 		t.unterminatedComment = true
 	}
 	t.Source = t.Source[terminator+2:]
-	// depth, i, length := 1, 2, len(t.Source)
-	// error := false
-	// for depth > 0 {
-	// 	if i >= length {
-	// 		error = true
-	// 		break
-	// 	}
-	// 	switch t.Source[i] {
-	// 	case '\n':
-	// 		t.LineNumber++
-	// 	case '/':
-	// 		i++
-	// 		if i >= length {
-	// 			error = true
-	// 			break
-	// 		}
-	// 		if t.Source[i] == '*' {
-	// 			depth++
-	// 		}
-	// 	case '*':
-	// 		i++
-	// 		if i >= length {
-	// 			error = true
-	// 			break
-	// 		}
-	// 		if t.Source[i] == '/' {
-	// 			depth--
-	// 		}
-	// 	}
-	// 	i++
-	// }
-	// t.Source = t.Source[i:]
-	// if error {
-	// 	t.Lookahead = &Token{Lexeme: ERROR, Value: "unterminated comment", ExtraValue: "", LineNumber: t.LineNumber}
-	// 	t.unterminatedComment = true
-	// }
 }
 
 // Discard all leading whitespace and comments from the source text. Need to
@@ -374,8 +335,6 @@ func (t *Tokenizer) munch() *Token {
 		}
 	} else if c := string(matcher[TYPE].Find(src)); len(c) > 0 {
 		return t.popToken(TYPE, c, len(c))
-	} else if t.hasPrefix("@layer") {
-		return t.popToken(LAYER, "", 6)
 	} else if t.hasPrefix("@import") {
 		tok := t.popToken(IMPORT, "", 7)
 		t.discardWhitespaceAndComments()
