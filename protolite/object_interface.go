@@ -31,3 +31,7 @@ func (m *ScriptObject) IGetLinked() bool {
 func (m *ScriptObject) IGetModule() string {
 	return m.GetModule()
 }
+
+func (m *ScriptObject) IGetLayer() string {
+	return m.GetModule()
+}
