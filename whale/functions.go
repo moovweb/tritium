@@ -741,7 +741,6 @@ func env_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args 
 		for _, layerName := range ctx.LayerStack {
 			layerPath = filepath.Join(layerPath, "layers", layerName)
 		}
-		returnValue = filepath.Join(layerPath, "assets")
 	default:
 		returnValue = ""
 	}
