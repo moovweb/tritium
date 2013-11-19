@@ -11,7 +11,7 @@ import (
 	tp "tritium/proto"
 	. "tritium/parser/tokenizer"
 	"tritium/constants"
-	"butler/fileutil"
+	// "butler/fileutil"
 )
 
 type Parser struct {
@@ -244,14 +244,32 @@ func (p *Parser) statement() (node *tp.Instruction) {
 			panic(fmt.Sprintf("|%s:%d -- imports not allowed inside function definitions", p.FileName, p.peek().LineNumber))
 		}
 		token := p.pop() // pop the "@import" token (includes importee)
+		importPath := token.Value
 
-		// IF IT'S A NORMAL IMPORT
-		if token.Value != ":layer" {
-			scriptLocationInProject := filepath.Clean(filepath.Join(p.ScriptPath, token.Value))
+		if strings.Index(importPath, "@") != -1 {
+			if len(p.Layers) == 0 {
+				panic(fmt.Sprintf("%s:%d -- required layer not provided; please make sure you've specified all necessary layers in the start-up options", p.FileName, token.LineNumber))
+			}
+			appliedLayers := filepath.Join(p.AppliedLayers, p.Layers[0])
+			importPath = strings.Replace(importPath, "@", appliedLayers, -1)
 
-			// extract the root script folder from the relative path of the importee
-			// (would be easier if filepath.FromSlash worked as advertised)
-			dir, base := filepath.Split(p.ScriptPath)
+			// TODO: more layer checking and stuff
+		}
+
+		scriptLocationInProject := filepath.Clean(filepath.Join(p.ScriptPath, importPath))
+
+		// extract the root script folder from the relative path of the importee
+		// (would be easier if filepath.FromSlash worked as advertised)
+		dir, base := filepath.Split(p.ScriptPath)
+		if len(dir) == 0 {
+			dir = base
+			base = ""
+		}
+		if dir[len(dir)-1] == os.PathSeparator {
+			dir = dir[0:len(dir)-1]
+		}
+		for len(base) > 0 {
+			dir, base = filepath.Split(dir)
 			if len(dir) == 0 {
 				dir = base
 				base = ""
@@ -259,24 +277,16 @@ func (p *Parser) statement() (node *tp.Instruction) {
 			if dir[len(dir)-1] == os.PathSeparator {
 				dir = dir[0:len(dir)-1]
 			}
-			for len(base) > 0 {
-				dir, base = filepath.Split(dir)
-				if len(dir) == 0 {
-					dir = base
-					base = ""
-				}
-				if dir[len(dir)-1] == os.PathSeparator {
-					dir = dir[0:len(dir)-1]
-				}
-			}
-			// make sure that the importee is under the right subfolder
-			if !strings.HasPrefix(scriptLocationInProject, dir) {
-				msg := fmt.Sprintf("%s:%d -- imported file must exist under the `%s` folder", p.FileName, token.LineNumber, dir)
-				panic(msg)
-			}
-			node = tp.MakeImport(scriptLocationInProject, token.LineNumber)
-			// println("PROCESSED IMPORT", dir, base, scriptLocationInProject)
-		} else {
+		}
+		// make sure that the importee is under the right subfolder
+		if !strings.HasPrefix(scriptLocationInProject, dir) {
+			msg := fmt.Sprintf("%s:%d -- imported file must exist under the `%s` folder", p.FileName, token.LineNumber, dir)
+			panic(msg)
+		}
+		node = tp.MakeImport(scriptLocationInProject, token.LineNumber)
+
+
+		/* else {
 			// ELSE, IF IT'S A LAYER IMPORT
 			optional := false
 			customLayerFile := ""
@@ -360,7 +370,7 @@ func (p *Parser) statement() (node *tp.Instruction) {
 			node.FunctionId = proto.Int32(opt)
 			node.Namespace = proto.String(p.Layers[0])
 			return
-		}
+		} */
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	case NAMESPACE:

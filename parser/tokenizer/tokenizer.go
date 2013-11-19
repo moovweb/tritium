@@ -33,6 +33,7 @@ const (
 	TYPE
 	PATH
 	IMPORT
+	OPTIONAL
 	READ
 	EOF
 	ERROR
@@ -70,6 +71,7 @@ func init() {
 	LexemeName[TYPE] = "type name"
 	LexemeName[PATH] = "path"
 	LexemeName[IMPORT] = "`@import` directive"
+	LexemeName[OPTIONAL] = "`@optional` directive"
 	LexemeName[READ] = "`read` macro"
 	LexemeName[EOF] = "end of file"
 	LexemeName[ERROR] = "lexical error"
@@ -338,10 +340,7 @@ func (t *Tokenizer) munch() *Token {
 	} else if t.hasPrefix("@import") {
 		tok := t.popToken(IMPORT, "", 7)
 		t.discardWhitespaceAndComments()
-		if c := string(matcher[ID].Find(t.Source)); c == "layer" {
-			// mark this import token as special, and let the parser handle the rest
-			tok.Value = ":layer"
-		} else if c := string(matcher[PATH].Find(t.Source)); len(c) > 0 {
+		if c := string(matcher[PATH].Find(t.Source)); len(c) > 0 {
 			tok.Value = c
 			t.Source = t.Source[len(c):]
 		} else if c := matcher[STRING].Find(t.Source); len(c) > 0 {
@@ -353,6 +352,23 @@ func (t *Tokenizer) munch() *Token {
 			t.Source = t.Source[len(c):]
 		} else {
 			tok = t.popError("malformed import")
+		}
+		return tok
+	} else if t.hasPrefix("@optional") {
+		tok := t.popToken(OPTIONAL, "", 9)
+		t.discardWhitespaceAndComments()
+		if c := string(matcher[PATH].Find(t.Source)); len(c) > 0 {
+			tok.Value = c
+			t.Source = t.Source[len(c):]
+		} else if c := matcher[STRING].Find(t.Source); len(c) > 0 {
+			var err bool
+			tok.Value, err = unquote(c)
+			if err {
+				tok = t.popError("illegal characters in import path")
+			}
+			t.Source = t.Source[len(c):]
+		} else {
+			tok = t.popError("malformed optional import")
 		}
 		return tok
 	} else if t.hasPrefix("@func") {
