@@ -11,7 +11,7 @@ import (
 	tp "tritium/proto"
 	. "tritium/parser/tokenizer"
 	"tritium/constants"
-	// "butler/fileutil"
+	"butler/fileutil"
 )
 
 type Parser struct {
@@ -239,21 +239,26 @@ func (p *Parser) Parse() *tp.ScriptObject {
 
 func (p *Parser) statement() (node *tp.Instruction) {
 	switch p.peek().Lexeme {
-	case IMPORT:
+	case IMPORT, OPTIONAL:
+		optional := false
+		if p.peek().Lexeme == OPTIONAL {
+			optional = true
+		}
 		if p.inFunc {
 			panic(fmt.Sprintf("|%s:%d -- imports not allowed inside function definitions", p.FileName, p.peek().LineNumber))
 		}
 		token := p.pop() // pop the "@import" token (includes importee)
 		importPath := token.Value
 
+		layered := false
+		appliedLayers := p.AppliedLayers
 		if strings.Index(importPath, "@") != -1 {
 			if len(p.Layers) == 0 {
 				panic(fmt.Sprintf("%s:%d -- required layer not provided; please make sure you've specified all necessary layers in the start-up options", p.FileName, token.LineNumber))
 			}
-			appliedLayers := filepath.Join(p.AppliedLayers, p.Layers[0])
+			appliedLayers = filepath.Join(appliedLayers, p.Layers[0])
 			importPath = strings.Replace(importPath, "@", appliedLayers, -1)
-
-			// TODO: more layer checking and stuff
+			layered = true
 		}
 
 		scriptLocationInProject := filepath.Clean(filepath.Join(p.ScriptPath, importPath))
@@ -283,94 +288,26 @@ func (p *Parser) statement() (node *tp.Instruction) {
 			msg := fmt.Sprintf("%s:%d -- imported file must exist under the `%s` folder", p.FileName, token.LineNumber, dir)
 			panic(msg)
 		}
-		node = tp.MakeImport(scriptLocationInProject, token.LineNumber)
 
-
-		/* else {
-			// ELSE, IF IT'S A LAYER IMPORT
-			optional := false
-			customLayerFile := ""
-			layerFile := ""
-			p.pop() // pop the "layer" identifier
-			if p.peek().Lexeme == LPAREN {
-				p.pop() // pop the lparen
-				if p.peek().Lexeme == STRING {
-					customLayerFile = p.pop().Value
-					if p.peek().Lexeme == COMMA {
-						p.pop() // pop the comma
-						if p.peek().Lexeme == ID {
-							option := p.pop().Value
-							if option == "optional" {
-								optional = true
-							} else if option == "required" {
-								optional = false
-							} else {
-								p.error("second argument to `layer(...)` must be either `optional` or `required`")
-							}
-						} else {
-							p.error("second argument to `layer(...)` must be either `optional` or `required`")
-						}
-					} else {
-						optional = false
-					}
-				} else if p.peek().Lexeme == ID {
-					option := p.pop().Value
-					if option == "optional" {
-						optional = true
-					} else if option == "required" {
-						optional = false
-					} else {
-						p.error("argument to `layer(...)` must be either `optional`, `required`, or a quoted filename")
-					}
-				} else {
-					optional = false
-				}
-				if p.peek().Lexeme != RPAREN {
-					p.error("unclosed parentheses in argument list for `layer(...)`")
-				}
-				p.pop() // pop the rparen
-			} else {
-				p.error("`layer(...)` requires a parenthesized argument list")
-			}
-
-			if len(p.Layers) == 0 && optional {
+		// now make sure the file exists and give a helpful message if it's a layer file
+		exists, exErr := fileutil.Exists(scriptLocationInProject)
+		if !exists || exErr != nil {
+			if optional {
+				// make a no-op if the import is optional
 				node = tp.MakeText("", token.LineNumber)
 				return
-			}
-			if len(p.Layers) == 0 && !optional {
-				panic(fmt.Sprintf("%s:%d -- required layer not provided; please make sure you've specified all necessary layers in the start-up options", p.FileName, token.LineNumber))
-			}
-
-			if customLayerFile == "" {
-				layerFile = filepath.Join(p.ScriptPath, p.FileName)
+			} else if layered {
+				panic(fmt.Sprintf("%s:%d -- required layer (%s) has no corresponding Tritium file (want %s)", p.FileName, p.LineNumber, p.Layers[0], scriptLocationInProject))
 			} else {
-				layerFile = filepath.Join(p.ScriptPath, customLayerFile)
+				panic(fmt.Sprintf("%s:%d -- file to import not found (%s)", p.FileName, p.LineNumber, scriptLocationInProject))
 			}
-			dot := strings.LastIndex(layerFile, ".")
-			if dot > -1 {
-				layerFile = layerFile[:dot]
-			}
-			layerFile = fmt.Sprintf("%s(%s).ts", layerFile, p.Layers[0])
+		}
 
-			layerThere, ltErr := fileutil.Exists(filepath.Join(p.ProjectPath, layerFile))
-			if !layerThere || ltErr != nil {
-				if optional {
-					node = tp.MakeText("", token.LineNumber)
-					return
-				} else {
-					panic(fmt.Sprintf("%s:%d -- required layer (%s) has no corresponding Tritium file (want %s)", p.FileName, p.LineNumber, p.Layers[0], layerFile))
-				}
-			}
+		node = tp.MakeImport(scriptLocationInProject, token.LineNumber)
+		if layered {
+			node.Namespace = proto.String(appliedLayers) // re-use this slot to specify which layer the import is targeting
+		}
 
-			node = tp.MakeImport(layerFile, token.LineNumber)
-			var opt int32
-			if optional {
-				opt = 1
-			}
-			node.FunctionId = proto.Int32(opt)
-			node.Namespace = proto.String(p.Layers[0])
-			return
-		} */
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()
 	case NAMESPACE:
