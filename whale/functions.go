@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"path/filepath"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -736,11 +735,8 @@ func env_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args 
 	switch key {
 	case "dev":
 		returnValue = fmt.Sprintf("%v", !ctx.Debugger.IsProd())
-	case "asset-layer-path":
-		layerPath := ""
-		for _, layerName := range ctx.LayerStack {
-			layerPath = filepath.Join(layerPath, "layers", layerName)
-		}
+	case "layer":
+		returnValue = ctx.CurrentLayer()
 	default:
 		returnValue = ""
 	}
