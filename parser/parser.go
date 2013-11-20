@@ -12,15 +12,15 @@ import (
 
 func ParseFile(projectPath, scriptPath, fileName string, compilingMixer bool, layers []string) *tp.ScriptObject {
 	src, _ := readFile(projectPath, scriptPath, fileName)
-	return ParseScript(src, projectPath, scriptPath, fileName, compilingMixer, layers)
+	return ParseScript(src, projectPath, scriptPath, fileName, compilingMixer, layers, "")
 }
 
-func ParseScript(src, projectPath, scriptPath, fileName string, compilingMixer bool, layers []string) *tp.ScriptObject {
-	return MakeParser(src, projectPath, scriptPath, fileName, false, compilingMixer, layers).Parse()
+func ParseScript(src, projectPath, scriptPath, fileName string, compilingMixer bool, layers []string, appliedLayers string) *tp.ScriptObject {
+	return MakeParser(src, projectPath, scriptPath, fileName, false, compilingMixer, layers, appliedLayers).Parse()
 }
 
 func ParseRootScript(src, projectPath, scriptPath, fileName string, compilingMixer bool, layers []string) *tp.ScriptObject {
-	return MakeParser(src, projectPath, scriptPath, fileName, true, compilingMixer, layers).Parse()
+	return MakeParser(src, projectPath, scriptPath, fileName, true, compilingMixer, layers, "").Parse()
 }
 
 func ParseFileSet(projectPath, scriptPath, fileName string, compilingMixer bool, layers []string) []*tp.ScriptObject {
@@ -28,20 +28,13 @@ func ParseFileSet(projectPath, scriptPath, fileName string, compilingMixer bool,
 	return Parse(src, projectPath, scriptPath, fileName, compilingMixer, layers)
 }
 
-func ParseLayerFile(projectPath, scriptPath, fileName string, compilingMixer bool, layers, appliedLayers []string) *tp.ScriptObject {
-	var fullScriptPath string
-	for _, layerName := range appliedLayers {
-		fullScriptPath = filepath.Join(fullScriptPath, "layers", layerName)
-	}
-	fullScriptPath = filepath.Join(fullScriptPath, scriptPath)
-	src, _ := readFile(projectPath, fullScriptPath, fileName)
-	appliedLayers = reverse(appliedLayers) // re-reverse them
-	pathWithLayers := strings.Join(appliedLayers, ":")
-	pathWithLayers = pathWithLayers + ":" + scriptPath
-	remainingLayers := layers[len(appliedLayers):len(layers)]
-	layerScript := ParseScript(src, projectPath, pathWithLayers, fileName, compilingMixer, remainingLayers)
-	if len(appliedLayers) != 0 {
-		layerScript.Module = proto.String(appliedLayers[0]) // gah, just use this slot, since we ended up not using it for modules/namespaces
+func ParseLayerFile(projectPath, scriptPath, fileName string, compilingMixer bool, layers []string, appliedLayers string) *tp.ScriptObject {
+	appliedLayersSlice := strings.Split(appliedLayers, "/")
+	remainingLayers := layers[len(appliedLayersSlice):len(layers)]
+	src, _ := readFile(projectPath, scriptPath, fileName)
+	layerScript := ParseScript(src, projectPath, scriptPath, fileName, compilingMixer, remainingLayers, appliedLayers)
+	if len(appliedLayersSlice) != 0 {
+		layerScript.Module = proto.String(appliedLayersSlice[0])
 	}
 	return layerScript
 }
@@ -53,9 +46,15 @@ func Parse(src, projectPath, scriptPath, fileName string, compilingMixer bool, l
 	// files[file] = 1 // Don't register the top-level mixer scripts!
 	for i := 0; i < len(objs); i++ {
 		obj := objs[i]
-		for _, importFile := range obj.Imports() {
+		for _, importNode := range obj.ImportInstructions() {
+			importFile := importNode.GetValue()
+			appliedLayers := importNode.GetNamespace()
 			if files[importFile] == 0 {
-				objs = append(objs, ParseFile(projectPath, filepath.Dir(importFile), filepath.Base(importFile), compilingMixer, layers))
+				if len(appliedLayers) == 0 {
+					objs = append(objs, ParseFile(projectPath, filepath.Dir(importFile), filepath.Base(importFile), compilingMixer, layers))
+				} else {
+					objs = append(objs, ParseLayerFile(projectPath, filepath.Dir(importFile), filepath.Base(importFile), compilingMixer, layers, appliedLayers))
+				}
 				// register the user-accessible scripts to avoid duplicate imports
 				files[importFile] = 1
 			}
@@ -68,6 +67,9 @@ func readFile(projectPath, scriptPath, fileName string) (src, fullpath string) {
 	scriptLocationInProject := filepath.Join(scriptPath, fileName)
 	fullpath = filepath.Join(projectPath, scriptPath, fileName)
 	fullpath, err := filepath.Abs(fullpath)
+
+	// The parser checks whether the file exists now, and provides a better error message.
+	// But might as well leave these here as failsafes.
 	if err != nil {
 		panic("No tritium file found at: " + scriptLocationInProject)
 	}

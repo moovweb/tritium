@@ -12,3 +12,14 @@ func (obj *ScriptObject) Imports() []string {
 	})
 	return list
 }
+
+func (obj *ScriptObject) ImportInstructions() []*Instruction {
+	list := make([]*Instruction, 0)
+	obj.Root.Iterate(func(ins *Instruction) {
+		if ins.GetType() == constants.Instruction_IMPORT {
+			list = append(list, ins)
+		}
+		//println(*ins.Type)
+	})
+	return list
+}

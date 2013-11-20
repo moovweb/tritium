@@ -95,7 +95,7 @@ func (p *Parser) error(msg string) {
 	panic(fullMsg)
 }
 
-func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool, compilingMixer bool, layers []string) *Parser {
+func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool, compilingMixer bool, layers []string, appliedLayers string) *Parser {
 	fullpath := filepath.Join(projectPath, scriptPath, fileName)
 	fullpath, _ = filepath.Abs(fullpath)
 	scriptPath = filepath.Clean(scriptPath)
@@ -114,6 +114,7 @@ func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool, 
 		inFunc:         false,
 		CompilingMixer: compilingMixer,
 		Layers:         layers,
+		AppliedLayers:  appliedLayers,
 	}
 	p.Namespaces[0] = "tritium"
 	p.pop()
@@ -247,17 +248,30 @@ func (p *Parser) statement() (node *tp.Instruction) {
 		if p.inFunc {
 			panic(fmt.Sprintf("|%s:%d -- imports not allowed inside function definitions", p.FileName, p.peek().LineNumber))
 		}
-		token := p.pop() // pop the "@import" token (includes importee)
+		token := p.pop() // pop the "@import" or "@optional" token (includes importee)
 		importPath := token.Value
 
 		layered := false
 		appliedLayers := p.AppliedLayers
 		if strings.Index(importPath, "@") != -1 {
 			if len(p.Layers) == 0 {
-				panic(fmt.Sprintf("%s:%d -- required layer not provided; please make sure you've specified all necessary layers in the start-up options", p.FileName, token.LineNumber))
+				if !optional {
+					panic(fmt.Sprintf("%s:%d -- required layer not provided; please make sure you've specified all necessary layers in the start-up options", p.FileName, token.LineNumber))
+				} else {
+					// make a no-op if the import is optional and no layer has been provided
+					node = tp.MakeText("", token.LineNumber)
+					return
+				}
 			}
-			appliedLayers = filepath.Join(appliedLayers, p.Layers[0])
-			importPath = strings.Replace(importPath, "@", appliedLayers, -1)
+			if len(appliedLayers) > 0 {
+				tmpSlice := make([]string, 2)
+				tmpSlice[0] = appliedLayers
+				tmpSlice[1] = p.Layers[0]
+				appliedLayers = strings.Join(tmpSlice, "/")
+			} else {
+				appliedLayers = p.Layers[0]
+			}
+			importPath = strings.Replace(importPath, "@", p.Layers[0], -1)
 			layered = true
 		}
 
