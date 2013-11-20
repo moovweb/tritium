@@ -311,7 +311,7 @@ func (p *Parser) statement() (node *tp.Instruction) {
 				node = tp.MakeText("", token.LineNumber)
 				return
 			} else if layered {
-				panic(fmt.Sprintf("%s:%d -- required layer (%s) has no corresponding Tritium file (want %s)", p.FileName, p.LineNumber, p.Layers[0], scriptLocationInProject))
+				panic(fmt.Sprintf("%s:%d -- required layer (%s) has no corresponding Tritium file (want %s)", p.FileName, p.LineNumber, appliedLayers, scriptLocationInProject))
 			} else {
 				panic(fmt.Sprintf("%s:%d -- file to import not found (%s)", p.FileName, p.LineNumber, scriptLocationInProject))
 			}
