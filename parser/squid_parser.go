@@ -304,7 +304,7 @@ func (p *Parser) statement() (node *tp.Instruction) {
 		}
 
 		// now make sure the file exists and give a helpful message if it's a layer file
-		exists, exErr := fileutil.Exists(scriptLocationInProject)
+		exists, exErr := fileutil.Exists(filepath.Join(p.ProjectPath, scriptLocationInProject))
 		if !exists || exErr != nil {
 			if optional {
 				// make a no-op if the import is optional
