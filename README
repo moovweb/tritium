@@ -4,7 +4,7 @@ Tritium is a magical language that functions as a document modifying language.
 It's JavaScript-like (except, without all that function() noise!) and simple to
 learn.
 
-It was designed by Hampton Catlin (@hcatlin), but its been heavily influenced
+It was designed by Hampton Catlin (@hcatlin), and has been heavily influenced
 by Aaron Leung (@ahkleung), the language's main engineer and author of all of the parsing
 code.
 
