@@ -1,6 +1,21 @@
+== Tritium ==
+
 Tritium is a magical language that functions as a document modifying language.
 It's JavaScript-like (except, without all that function() noise!) and simple to
 learn.
+
+It was designed by Hampton Catlin (@hcatlin), but its been heavily influenced
+by Aaron Leung (@ahkleung), the language's main engineer and author of all of the parsing
+code.
+
+== Status ==
+
+Tritium is proto-open source. We opened the source and changed the license.
+It's still not very usable outside of a Moovweb build/run environment. If you
+want to play around with the language, checkout http://tester.tritium.io
+
+We are going to continue working hard to get this in shape for other uses outside
+of Moovweb directly. 
 
 Currently, it focuses on modifying XML documents only (HTML and XHTML count too). 
 
@@ -29,5 +44,3 @@ You'd get back...
     </body>
   </html>
 
-Engines! The Reference, Debug, and Standard engine are bundled for now.
-Other engines must be managed seperately.
