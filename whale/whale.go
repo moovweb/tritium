@@ -54,6 +54,7 @@ type EngineContext struct {
 	CurrentDoc  interface{}
 	Warnings    int
 	Prod        bool
+	HtmlParsed  bool
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -118,6 +119,7 @@ func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteR
 	exhaust.Output = scope.Value.(string)
 	exhaust.Exports = ctx.Exports
 	exhaust.Logs = ctx.Logs
+	exhaust.HtmlParsed = ctx.HtmlParsed
 	return
 }
 

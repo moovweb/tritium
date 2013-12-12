@@ -370,6 +370,7 @@ func xml_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, 
 }
 
 func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
 	outputEncoding := args[1].(string)
@@ -593,6 +594,7 @@ func remove_param_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instru
 }
 
 func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
 	outputEncoding := args[1].(string)

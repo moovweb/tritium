@@ -7,9 +7,10 @@ import (
 )
 
 type Exhaust struct {
-	Output  string
-	Exports [][]string
-	Logs    []string
+	Output     string
+	Exports    [][]string
+	Logs       []string
+	HtmlParsed bool
 }
 
 type Engine interface {
