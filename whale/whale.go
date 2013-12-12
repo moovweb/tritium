@@ -13,7 +13,7 @@ import (
 	"gokogiri/xpath"
 	"rubex"
 	"steno"
-	// tp "tritium/proto"
+	"tritium"
 	"tritium/constants"
 	"tritium/protoface"
 )
@@ -83,9 +83,9 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		Rrules:                   rrules,
 		MatchStack:               make([]string, 0),
 		MatchShouldContinueStack: make([]bool, 0),
-		Yields:                   make([]*YieldBlock, 0),
-		LayerStack:               make([]string, 0),
-		HadError:                 false,
+		Yields:     make([]*YieldBlock, 0),
+		LayerStack: make([]string, 0),
+		HadError:   false,
 
 		Deadline:    deadline,
 		Mobjects:    make([]MemoryObject, 0, defaultMobjects),
@@ -102,8 +102,9 @@ func (eng *Whale) Free() {
 	eng.XPathCache.Reset()
 }
 
-func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (output string, exports [][]string, logs []string) {
+func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (exhaust *tritium.Exhaust) {
 	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, inDebug)
+	exhaust = &tritium.Exhaust{}
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.IGetPkg())
@@ -114,9 +115,9 @@ func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteR
 		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, ctx.Filename, int(obj.IGetRoot().IGetLineNumber()))
 	}
 	ctx.RunInstruction(scope, obj.IGetRoot())
-	output = scope.Value.(string)
-	exports = ctx.Exports
-	logs = ctx.Logs
+	exhaust.Output = scope.Value.(string)
+	exhaust.Exports = ctx.Exports
+	exhaust.Logs = ctx.Logs
 	return
 }
 

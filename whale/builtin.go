@@ -1,6 +1,5 @@
 package whale
 
-// import tp "tritium/proto"
 import "tritium/protoface"
 
 type builtInFunc func(*EngineContext, *Scope, protoface.Instruction, []interface{}) interface{}
