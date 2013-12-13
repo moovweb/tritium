@@ -1,6 +1,6 @@
 package proto
 
-import(
+import (
 	"tritium/protoface"
 )
 
@@ -14,4 +14,8 @@ func (m *Transform) ISetNthObject(n int, s protoface.ScriptObject) {
 
 func (m *Transform) IGetPkg() protoface.Package {
 	return m.GetPkg()
+}
+
+func (m *Transform) IGetLayers() string {
+	return m.GetLayers()
 }

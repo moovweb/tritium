@@ -16,6 +16,7 @@ var _ = math.Inf
 type Transform struct {
 	Objects          []*ScriptObject `protobuf:"bytes,1,rep,name=objects" json:"objects,omitempty"`
 	Pkg              *Package        `protobuf:"bytes,2,req,name=pkg" json:"pkg,omitempty"`
+	Layers           *string         `protobuf:"bytes,3,opt" json:"Layers,omitempty"`
 	XXX_unrecognized []byte          `json:"-"`
 }
 
@@ -35,6 +36,13 @@ func (m *Transform) GetPkg() *Package {
 		return m.Pkg
 	}
 	return nil
+}
+
+func (m *Transform) GetLayers() string {
+	if m != nil && m.Layers != nil {
+		return *m.Layers
+	}
+	return ""
 }
 
 func init() {
