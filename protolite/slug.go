@@ -77,6 +77,7 @@ type SlugInfo struct {
 	Timestamp time.Time
 	Customer  string
 	Project   string
+	Path      string
 }
 
 func (si *SlugInfo) Size() int {
@@ -113,4 +114,8 @@ func (si *SlugInfo) IGetCustomer() string {
 
 func (si *SlugInfo) IGetProject() string {
 	return si.Project
+}
+
+func (si *SlugInfo) IGetPath() string {
+	return si.Path
 }
