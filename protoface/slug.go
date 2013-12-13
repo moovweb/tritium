@@ -28,4 +28,5 @@ type SlugInfo interface {
 	IGetTimestamp() time.Time
 	IGetCustomer() string
 	IGetProject() string
+	IGetPath() string
 }
