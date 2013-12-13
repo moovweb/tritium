@@ -6,4 +6,5 @@ type Transform interface {
 	IGetNthObject(n int) ScriptObject
 	ISetNthObject(n int, s ScriptObject)
 	IGetPkg() Package
+	IGetLayers() string
 }

@@ -9,5 +9,6 @@ import "package.proto";
 message Transform {
 	repeated ScriptObject objects = 1;
 	required Package pkg = 2;
+	optional string Layers = 3;
 }
 

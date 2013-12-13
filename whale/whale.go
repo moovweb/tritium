@@ -56,7 +56,7 @@ type EngineContext struct {
 	Prod        bool
 	HtmlParsed  bool
 
-	Layers      string // all layers the project is running with
+	Layers string // all layers the project is running with
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -97,7 +97,7 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		Project:     project,
 		InDebug:     inDebug,
 
-		Layers:      layers,
+		Layers: layers,
 	}
 	return
 }
@@ -107,8 +107,8 @@ func (eng *Whale) Free() {
 	eng.XPathCache.Reset()
 }
 
-func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool, layers string) (exhaust *tritium.Exhaust) {
-	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, inDebug, layers)
+func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (exhaust *tritium.Exhaust) {
+	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, inDebug, transform.IGetLayers())
 	exhaust = &tritium.Exhaust{}
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
