@@ -739,6 +739,10 @@ func env_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args 
 		returnValue = fmt.Sprintf("%v", !ctx.Debugger.IsProd())
 	case "layer":
 		returnValue = ctx.CurrentLayer()
+	case "layers":
+		returnValue = ctx.Layers
+	case "project":
+		returnValue = ctx.Project
 	default:
 		returnValue = ""
 	}

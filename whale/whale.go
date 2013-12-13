@@ -55,6 +55,8 @@ type EngineContext struct {
 	Warnings    int
 	Prod        bool
 	HtmlParsed  bool
+
+	Layers      string // all layers the project is running with
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -74,7 +76,7 @@ func NewEngine(debugger steno.Debugger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath, customer, project string, inDebug bool) (ctx *EngineContext) {
+func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath, customer, project string, inDebug bool, layers string) (ctx *EngineContext) {
 	ctx = &EngineContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
@@ -94,6 +96,8 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		Customer:    customer,
 		Project:     project,
 		InDebug:     inDebug,
+
+		Layers:      layers,
 	}
 	return
 }
@@ -103,8 +107,8 @@ func (eng *Whale) Free() {
 	eng.XPathCache.Reset()
 }
 
-func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (exhaust *tritium.Exhaust) {
-	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, inDebug)
+func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool, layers string) (exhaust *tritium.Exhaust) {
+	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, inDebug, layers)
 	exhaust = &tritium.Exhaust{}
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
