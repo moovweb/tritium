@@ -219,7 +219,10 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 		// TODO(layer-track):  Currently we keep track of which layer we're in, but we
 		// don't expose that to the user.  If performance becomes an issue, we might
 		// want to consider removing this bit.  It would encompass removing the layer
-		// meta-data from the protobuf object as well.
+		// meta-data from the protobuf object as well.  The feature was introduce
+		// for the case where maybe we'd want styles/assets to be included at a per
+		// layer basis, but it was then decided that we don't want to do that anymore,
+		// so this feature is left usecase-less.
 		pushedLayer := false
 		if layer := obj.IGetLayer(); layer != "" && layer != ctx.CurrentLayer() {
 			ctx.PushLayer(layer)
