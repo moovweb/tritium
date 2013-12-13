@@ -34,7 +34,7 @@ type EngineContext struct {
 	MatchStack               []string
 	MatchShouldContinueStack []bool
 	Yields                   []*YieldBlock
-	LayerStack               []string
+	LayerStack               []string //TODO(layer-track): see other "layer-track" todos.
 	*Whale
 	protoface.Transform
 	Rrules []protoface.RewriteRule
@@ -87,7 +87,7 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		MatchStack:               make([]string, 0),
 		MatchShouldContinueStack: make([]bool, 0),
 		Yields:     make([]*YieldBlock, 0),
-		LayerStack: make([]string, 0),
+		LayerStack: make([]string, 0), //TODO(layer-track) see other layer-track todos
 		HadError:   false,
 
 		Deadline:    deadline,
@@ -215,18 +215,27 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 		ctx.Filename = obj.IGetName()
 		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, curFile, int(ins.IGetLineNumber()))
 		root := obj.IGetRoot()
+
+		// TODO(layer-track):  Currently we keep track of which layer we're in, but we
+		// don't expose that to the user.  If performance becomes an issue, we might
+		// want to consider removing this bit.  It would encompass removing the layer
+		// meta-data from the protobuf object as well.
 		pushedLayer := false
 		if layer := obj.IGetLayer(); layer != "" && layer != ctx.CurrentLayer() {
 			ctx.PushLayer(layer)
 			pushedLayer = true
 		}
+
 		for i := 0; i < root.INumChildren(); i++ {
 			child := root.IGetNthChild(i)
 			ctx.RunInstruction(scope, child)
 		}
+
+		//TODO(layer-track) -- see above
 		if pushedLayer {
 			ctx.PopLayer()
 		}
+
 		ctx.Whale.Debugger.LogImportDone(ctx.MessagePath, ctx.Filename, curFile, int(ins.IGetLineNumber()))
 		ctx.Filename = curFile
 	case constants.Instruction_FUNCTION_CALL:
@@ -499,16 +508,19 @@ func (ctx *EngineContext) AddMemoryObject(o MemoryObject) {
 	ctx.Mobjects = append(ctx.Mobjects, o)
 }
 
+//TODO(layer-track) -- see other "layer-track" todos.
 func (ctx *EngineContext) PushLayer(layer string) {
 	ctx.LayerStack = append(ctx.LayerStack, layer)
 }
 
+//TODO(layer-track) -- see other "layer-track" todos.
 func (ctx *EngineContext) PopLayer() {
 	if l := len(ctx.LayerStack); l > 0 {
 		ctx.LayerStack = ctx.LayerStack[:l-1]
 	}
 }
 
+//TODO(layer-track) -- see other "layer-track" todos.
 func (ctx *EngineContext) CurrentLayer() string {
 	if l := len(ctx.LayerStack); l > 0 {
 		return ctx.LayerStack[l-1]
