@@ -370,6 +370,7 @@ func xml_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, 
 }
 
 func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
 	outputEncoding := args[1].(string)
@@ -593,6 +594,7 @@ func remove_param_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instru
 }
 
 func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
 	outputEncoding := args[1].(string)
@@ -735,8 +737,20 @@ func env_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args 
 	switch key {
 	case "dev":
 		returnValue = fmt.Sprintf("%v", !ctx.Debugger.IsProd())
-	case "layer":
-		returnValue = ctx.CurrentLayer()
+
+	//TODO(layer-track): This bit is commented out because we're not sure if we
+	//want to expose the functionality to allow people to see which layer they're
+	//in.  It's something we're considering removing, but rather than get rid of
+	//all the code for it, we're just not giving the user a way to access it by
+	//commenting this case in the env.  See other 'layer-track' todos in whale.go.
+	//
+	//case "layer":
+	//	returnValue = ctx.CurrentLayer()
+
+	case "layers":
+		returnValue = ctx.Layers
+	case "project":
+		returnValue = ctx.Project
 	default:
 		returnValue = ""
 	}

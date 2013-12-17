@@ -2,12 +2,9 @@ package checker
 
 import (
 	"io/ioutil"
-	//"path/filepath"
 	"strings"
 	"time"
-)
 
-import (
 	"golog"
 	"goyaml"
 	"tritium/protoface"
@@ -108,8 +105,8 @@ func (result *CheckResult) run_tests(test_type string, engine *whale.Whale, tran
 		if test_type == "Cookie" {
 			req_cmd := "GET / HTTP/1.0\r\nHost: " + current_test.Host
 			// run the engine to populate the environment
-			_, exports, _ := engine.Run(req_transform, rrules, req_cmd, env, timeout, "test", "test", "test", false)
-			for _, arr := range exports {
+			exhaust := engine.Run(req_transform, rrules, req_cmd, env, timeout, "test", "test", "test", false)
+			for _, arr := range exhaust.Exports {
 				if len(arr) != 2 {
 				} else if arr[0] == "set-cookie" {
 					env[arr[0]] = env[arr[0]] + arr[1]
@@ -122,8 +119,8 @@ func (result *CheckResult) run_tests(test_type string, engine *whale.Whale, tran
 		}
 
 		http_cmd := create_cmd(current_test)
-		test_result, _, _ := engine.Run(transformer, rrules, http_cmd, env, timeout, "test", "test", "test", false)
-		test_output := read_result_cmd(test_result)
+		exhaust := engine.Run(transformer, rrules, http_cmd, env, timeout, "test", "test", "test", false)
+		test_output := read_result_cmd(exhaust.Output)
 
 		test_passed := test_output == current_test.Expected
 		//TODO cookie hax, omnimobile and simple mobile translate cookie domains
@@ -143,6 +140,7 @@ func (result *CheckResult) run_tests(test_type string, engine *whale.Whale, tran
 	}
 	return all_passed
 }
+
 /*
 func (result *CheckResult) CheckRewriters(req_tsf *proto.Transform, post_tsf *proto.Transform, rrules []*proto.RewriteRule, projectPath string, logger *golog.Logger) bool {
 	test_path := filepath.Join(projectPath, TEST_FILE)

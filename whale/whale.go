@@ -13,7 +13,7 @@ import (
 	"gokogiri/xpath"
 	"rubex"
 	"steno"
-	// tp "tritium/proto"
+	"tritium"
 	"tritium/constants"
 	"tritium/protoface"
 )
@@ -34,7 +34,7 @@ type EngineContext struct {
 	MatchStack               []string
 	MatchShouldContinueStack []bool
 	Yields                   []*YieldBlock
-	LayerStack               []string
+	LayerStack               []string //TODO(layer-track): see other "layer-track" todos.
 	*Whale
 	protoface.Transform
 	Rrules []protoface.RewriteRule
@@ -54,6 +54,9 @@ type EngineContext struct {
 	CurrentDoc  interface{}
 	Warnings    int
 	Prod        bool
+	HtmlParsed  bool
+
+	Layers string // all layers the project is running with
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -73,7 +76,7 @@ func NewEngine(debugger steno.Debugger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath, customer, project string, inDebug bool) (ctx *EngineContext) {
+func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath, customer, project string, inDebug bool, layers string) (ctx *EngineContext) {
 	ctx = &EngineContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
@@ -83,9 +86,9 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		Rrules:                   rrules,
 		MatchStack:               make([]string, 0),
 		MatchShouldContinueStack: make([]bool, 0),
-		Yields:                   make([]*YieldBlock, 0),
-		LayerStack:               make([]string, 0),
-		HadError:                 false,
+		Yields:     make([]*YieldBlock, 0),
+		LayerStack: make([]string, 0), //TODO(layer-track) see other layer-track todos
+		HadError:   false,
 
 		Deadline:    deadline,
 		Mobjects:    make([]MemoryObject, 0, defaultMobjects),
@@ -93,6 +96,8 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		Customer:    customer,
 		Project:     project,
 		InDebug:     inDebug,
+
+		Layers: layers,
 	}
 	return
 }
@@ -102,8 +107,9 @@ func (eng *Whale) Free() {
 	eng.XPathCache.Reset()
 }
 
-func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (output string, exports [][]string, logs []string) {
-	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, inDebug)
+func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (exhaust *tritium.Exhaust) {
+	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, inDebug, transform.IGetLayers())
+	exhaust = &tritium.Exhaust{}
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.IGetPkg())
@@ -114,9 +120,10 @@ func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteR
 		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, ctx.Filename, int(obj.IGetRoot().IGetLineNumber()))
 	}
 	ctx.RunInstruction(scope, obj.IGetRoot())
-	output = scope.Value.(string)
-	exports = ctx.Exports
-	logs = ctx.Logs
+	exhaust.Output = scope.Value.(string)
+	exhaust.Exports = ctx.Exports
+	exhaust.Logs = ctx.Logs
+	exhaust.HtmlParsed = ctx.HtmlParsed
 	return
 }
 
@@ -208,18 +215,30 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 		ctx.Filename = obj.IGetName()
 		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, curFile, int(ins.IGetLineNumber()))
 		root := obj.IGetRoot()
+
+		// TODO(layer-track):  Currently we keep track of which layer we're in, but we
+		// don't expose that to the user.  If performance becomes an issue, we might
+		// want to consider removing this bit.  It would encompass removing the layer
+		// meta-data from the protobuf object as well.  The feature was introduce
+		// for the case where maybe we'd want styles/assets to be included at a per
+		// layer basis, but it was then decided that we don't want to do that anymore,
+		// so this feature is left usecase-less.
 		pushedLayer := false
 		if layer := obj.IGetLayer(); layer != "" && layer != ctx.CurrentLayer() {
 			ctx.PushLayer(layer)
 			pushedLayer = true
 		}
+
 		for i := 0; i < root.INumChildren(); i++ {
 			child := root.IGetNthChild(i)
 			ctx.RunInstruction(scope, child)
 		}
+
+		//TODO(layer-track) -- see above
 		if pushedLayer {
 			ctx.PopLayer()
 		}
+
 		ctx.Whale.Debugger.LogImportDone(ctx.MessagePath, ctx.Filename, curFile, int(ins.IGetLineNumber()))
 		ctx.Filename = curFile
 	case constants.Instruction_FUNCTION_CALL:
@@ -492,16 +511,19 @@ func (ctx *EngineContext) AddMemoryObject(o MemoryObject) {
 	ctx.Mobjects = append(ctx.Mobjects, o)
 }
 
+//TODO(layer-track) -- see other "layer-track" todos.
 func (ctx *EngineContext) PushLayer(layer string) {
 	ctx.LayerStack = append(ctx.LayerStack, layer)
 }
 
+//TODO(layer-track) -- see other "layer-track" todos.
 func (ctx *EngineContext) PopLayer() {
 	if l := len(ctx.LayerStack); l > 0 {
 		ctx.LayerStack = ctx.LayerStack[:l-1]
 	}
 }
 
+//TODO(layer-track) -- see other "layer-track" todos.
 func (ctx *EngineContext) CurrentLayer() string {
 	if l := len(ctx.LayerStack); l > 0 {
 		return ctx.LayerStack[l-1]

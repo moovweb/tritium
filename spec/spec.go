@@ -2,11 +2,13 @@ package spec
 
 import (
 	. "fmt"
-	yaml "goyaml"
 	. "io/ioutil"
 	"log"
 	. "path/filepath"
 	"strings"
+
+	yaml "goyaml"
+	"tritium"
 	"tritium/linker"
 	tp "tritium/proto"
 	"tritium/transform"
@@ -98,11 +100,11 @@ func loadFile(dir, filename string) []byte {
 	return data
 }
 
-func (spec *Spec) Compare(data string, exports [][]string, logs []string) *Result {
+func (spec *Spec) Compare(exhaust *tritium.Exhaust) *Result {
 	result := NewResult()
-	result.Merge(spec.compareData(data))
-	result.Merge(spec.compareExports(exports))
-	result.Merge(spec.compareLogs(logs))
+	result.Merge(spec.compareData(exhaust.Output))
+	result.Merge(spec.compareExports(exhaust.Exports))
+	result.Merge(spec.compareLogs(exhaust.Logs))
 	return result
 }
 
