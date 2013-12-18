@@ -22,7 +22,7 @@ python -u "$TOOLS_DIR/build.py" tritium/tritium $GIT_BRANCH
 [ "$OS_NAME" == "linux" ] && export LD_LIBRARY_PATH="$MOOV_HOME/clibs/lib"
 [ "$OS_NAME" == "darwin" ] && export DYLD_LIBRARY_PATH="$MOOV_HOME/clibs/lib"
 if [ "$OS_NAME" == "windows" ]; then
-	clean_libs=`echo "$MOOV_HOME/clibs/bin" | awk '{sub(/^C:/,"/c"); print}'`
+	clean_libs=`echo "$MOOV_HOME/clibs/bin" | sed 's/\\/\//g' | sed -r 's/(^[^\/]):/\/\1/'`
 	export PATH="$clean_libs:$PATH"
 fi
 
@@ -37,8 +37,8 @@ LOCAL_TRITIUM_PATH="$MOOV_HOME/bin/$BUILD_NUMBER-tritium"
 LOCAL_MANIFEST_PATH="$MOOV_HOME/bin/$BUILD_NUMBER-tritium.MF"
 
 if [ $OS_NAME == "windows" ]; then
-	LOCAL_TRITIUM_PATH=`echo "$LOCAL_TRITIUM_PATH" | awk '{sub(/^C:/,"/c"); print}'`
-	LOCAL_MANIFEST_PATH=`echo "$LOCAL_MANIFEST_PATH" | awk '{sub(/^C:/,"/c"); print}'`
+	LOCAL_TRITIUM_PATH=`echo "$LOCAL_TRITIUM_PATH" | sed 's/\\/\//g' | sed -r 's/(^[^\/]):/\/\1/'`
+	LOCAL_MANIFEST_PATH=`echo "$LOCAL_MANIFEST_PATH" | sed 's/\\/\//g' | sed -r 's/(^[^\/]):/\/\1/'`
 fi
 
 ssh $MASTER_URL "rm $MASTER_TRITIUM_PATH"  # If fails, just means this is the first job for this num.
