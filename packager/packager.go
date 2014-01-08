@@ -255,8 +255,6 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 }
 
 func (pkgr *Packager) resolveTypeDeclarations() {
-	var typeDecs []string
-
 	// see whether a type declarations file exists; if so, read it
 	typeFilePath := filepath.Join(pkgr.MixerDir, pkgr.LibDir, TYPES_FILE)
 	there, _ := fileutil.Exists(typeFilePath)
@@ -267,7 +265,7 @@ func (pkgr *Packager) resolveTypeDeclarations() {
 	if readErr != nil {
 		panic(fmt.Sprintf("error reading type declarations file for `%s`", pkgr.Mixer.GetName()))
 	}
-	typeDecs = make([]string, 0)
+	typeDecs := make([]string, 0)
 	yaml.Unmarshal(data, &typeDecs)
 	if pkgr.TypeMap == nil {
 		pkgr.TypeMap = make(map[string]int)
