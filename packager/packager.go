@@ -293,7 +293,7 @@ func (pkgr *Packager) resolveTypeDeclarations() {
 
 			// else it's an extension
 		} else {
-			// parse the supertype and subtype
+			// parse the subtype and supertype
 			splitted := strings.Split(typeDec, "<")
 			if len(splitted) != 2 {
 				panic(fmt.Sprintf("invalid syntax in type declaration `%s`; only one extension is permitted per declaration", typeDec))
