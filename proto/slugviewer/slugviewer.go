@@ -71,18 +71,21 @@ func (cmd *SlugViewCmd) Execute(args []string) (err error) {
 		return errors.New("Problem opening the slug for reading.")
 	}
 
+	duration := time.Duration(0)
 	slug := &tp.Slug{}
-	startTime := time.Now()
-	err = pb.Unmarshal(data, slug)
-	duration := time.Now().Sub(startTime)
-	if err != nil {
-		return err
+	for i := 0; i < 1000; i++ {
+		startTime := time.Now()
+		err = pb.Unmarshal(data, slug)
+		duration += time.Now().Sub(startTime)
+		if err != nil {
+			return err
+		}
 	}
 
 	if !cmd.options.TimeOnly {
 		printSlug(slug, 0)
 	}
-	fmt.Printf("Duration of unmarshaling: %v\n", duration)
+	fmt.Printf("Duration of unmarshaling: %v\n", duration/time.Duration(100))
 
 	return nil
 }

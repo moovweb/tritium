@@ -13,6 +13,7 @@ var _ = proto1.Marshal
 var _ = &json.SyntaxError{}
 var _ = math.Inf
 
+// A post-linking object for execution
 type Transform struct {
 	Objects          []*ScriptObject `protobuf:"bytes,1,rep,name=objects" json:"objects,omitempty"`
 	Pkg              *Package        `protobuf:"bytes,2,req,name=pkg" json:"pkg,omitempty"`

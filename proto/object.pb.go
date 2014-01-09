@@ -13,6 +13,8 @@ var _ = proto1.Marshal
 var _ = &json.SyntaxError{}
 var _ = math.Inf
 
+// Object representing a script
+// Possibly linked or not
 type ScriptObject struct {
 	Name             *string      `protobuf:"bytes,1,opt,name=name,def=main" json:"name,omitempty"`
 	Root             *Instruction `protobuf:"bytes,2,opt,name=root" json:"root,omitempty"`

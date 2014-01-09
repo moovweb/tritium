@@ -14,21 +14,24 @@ var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Function struct {
-	Name             *string              `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Description      *string              `protobuf:"bytes,11,opt,name=description" json:"description,omitempty"`
-	Filename         *string              `protobuf:"bytes,12,opt,name=filename" json:"filename,omitempty"`
-	LineNumber       *int32               `protobuf:"varint,13,opt,name=line_number" json:"line_number,omitempty"`
-	Namespace        *string              `protobuf:"bytes,14,opt,name=namespace" json:"namespace,omitempty"`
-	ScopeTypeId      *int32               `protobuf:"varint,2,opt,name=scope_type_id" json:"scope_type_id,omitempty"`
-	ScopeType        *string              `protobuf:"bytes,8,opt,name=scope_type" json:"scope_type,omitempty"`
-	ReturnTypeId     *int32               `protobuf:"varint,3,opt,name=return_type_id" json:"return_type_id,omitempty"`
-	ReturnType       *string              `protobuf:"bytes,9,opt,name=return_type" json:"return_type,omitempty"`
-	OpensTypeId      *int32               `protobuf:"varint,4,opt,name=opens_type_id" json:"opens_type_id,omitempty"`
-	OpensType        *string              `protobuf:"bytes,10,opt,name=opens_type" json:"opens_type,omitempty"`
-	BuiltIn          *bool                `protobuf:"varint,5,opt,name=built_in" json:"built_in,omitempty"`
-	Args             []*Function_Argument `protobuf:"bytes,6,rep,name=args" json:"args,omitempty"`
-	Instruction      *Instruction         `protobuf:"bytes,7,opt,name=instruction" json:"instruction,omitempty"`
-	XXX_unrecognized []byte               `json:"-"`
+	Name        *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Description *string `protobuf:"bytes,11,opt,name=description" json:"description,omitempty"`
+	Filename    *string `protobuf:"bytes,12,opt,name=filename" json:"filename,omitempty"`
+	LineNumber  *int32  `protobuf:"varint,13,opt,name=line_number" json:"line_number,omitempty"`
+	Namespace   *string `protobuf:"bytes,14,opt,name=namespace" json:"namespace,omitempty"`
+	// Linked
+	ScopeTypeId  *int32  `protobuf:"varint,2,opt,name=scope_type_id" json:"scope_type_id,omitempty"`
+	ScopeType    *string `protobuf:"bytes,8,opt,name=scope_type" json:"scope_type,omitempty"`
+	ReturnTypeId *int32  `protobuf:"varint,3,opt,name=return_type_id" json:"return_type_id,omitempty"`
+	ReturnType   *string `protobuf:"bytes,9,opt,name=return_type" json:"return_type,omitempty"`
+	OpensTypeId  *int32  `protobuf:"varint,4,opt,name=opens_type_id" json:"opens_type_id,omitempty"`
+	OpensType    *string `protobuf:"bytes,10,opt,name=opens_type" json:"opens_type,omitempty"`
+	// Only informative post-linking
+	BuiltIn *bool                `protobuf:"varint,5,opt,name=built_in" json:"built_in,omitempty"`
+	Args    []*Function_Argument `protobuf:"bytes,6,rep,name=args" json:"args,omitempty"`
+	// Only for non-built-in functions
+	Instruction      *Instruction `protobuf:"bytes,7,opt,name=instruction" json:"instruction,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
 }
 
 func (m *Function) Reset()         { *m = Function{} }
