@@ -29,6 +29,6 @@ message Package {
 	optional string path = 5;
 
 	// specify which chunk of functions to export
-	optional int32 num_exports = 7;
+	optional int32 num_exports = 6;
 
 }

@@ -43,7 +43,7 @@ type Package struct {
 	Types            []*Type     `protobuf:"bytes,3,rep,name=types" json:"types,omitempty"`
 	Dependencies     []string    `protobuf:"bytes,4,rep,name=dependencies" json:"dependencies,omitempty"`
 	Path             *string     `protobuf:"bytes,5,opt,name=path" json:"path,omitempty"`
-	NumExports       *int32      `protobuf:"varint,7,opt,name=num_exports" json:"num_exports,omitempty"`
+	NumExports       *int32      `protobuf:"varint,6,opt,name=num_exports" json:"num_exports,omitempty"`
 	XXX_unrecognized []byte      `json:"-"`
 }
 
