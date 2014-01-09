@@ -14,16 +14,13 @@ var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Mixer struct {
-	Name      *string  `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
-	Version   *string  `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
-	Rewriters []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
-	Package   *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
-	// For the new packaging system -- AL 2013/03/21
-	PackagerVersion   *int32 `protobuf:"varint,5,opt,name=packager_version" json:"packager_version,omitempty"`
-	IsHttpTransformer *bool  `protobuf:"varint,6,opt,name=is_http_transformer" json:"is_http_transformer,omitempty"`
-	// For dependency exporting changes -- GP 2014/01/08
-	NumExports       *int32 `protobuf:"varint,7,opt,name=num_exports" json:"num_exports,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
+	Name              *string  `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
+	Version           *string  `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
+	Rewriters         []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
+	Package           *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
+	PackagerVersion   *int32   `protobuf:"varint,5,opt,name=packager_version" json:"packager_version,omitempty"`
+	IsHttpTransformer *bool    `protobuf:"varint,6,opt,name=is_http_transformer" json:"is_http_transformer,omitempty"`
+	XXX_unrecognized  []byte   `json:"-"`
 }
 
 func (m *Mixer) Reset()         { *m = Mixer{} }
@@ -70,13 +67,6 @@ func (m *Mixer) GetIsHttpTransformer() bool {
 		return *m.IsHttpTransformer
 	}
 	return false
-}
-
-func (m *Mixer) GetNumExports() int32 {
-	if m != nil && m.NumExports != nil {
-		return *m.NumExports
-	}
-	return 0
 }
 
 type SubmixerInfo struct {

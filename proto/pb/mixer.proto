@@ -15,9 +15,9 @@ message Mixer {
   // For the new packaging system -- AL 2013/03/21
   optional int32 packager_version = 5; // if > 0, then we're using the new system!
   optional bool is_http_transformer = 6;
-
-  // For dependency exporting changes -- GP 2014/01/08
-  optional int32 num_exports = 7;
+  // eventually need this information for function relocation and elimination of redundant dependencies
+  // but not just yet!
+  // repeated SubmixerInfo submixers = 7;
 }
 
 message SubmixerInfo {
