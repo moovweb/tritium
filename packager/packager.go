@@ -35,13 +35,16 @@ type Packager struct {
 	NowVisiting              map[string]bool // to prevent circular dependencies
 	TypeMap                  map[string]int
 	SuperclassOf             map[string]string
-	// SubclassesOf      map[string][]string       // might not need this
-	// Extensions        []string                  // type extensions in *this* mixer, not dependencies
-	// FunctionsWith     map[string][]*tp.Function // for each type, maintain a list of functions that use it
 	TypeList   []string
 	Logger     *golog.Logger
 	downloader downloader
 	*tp.Mixer
+	Ranges     []Range
+}
+
+type Range struct {
+	Start int
+	End   int
 }
 
 const (
@@ -92,6 +95,8 @@ func New(relSrcDir, libDir string, mayBuildHttpTransformers bool, logger *golog.
 		}
 	}
 
+	pkgr.Ranges = make([]Range, 0)
+
 	return pkgr
 }
 
@@ -114,22 +119,8 @@ func NewFromCompiledMixer(mxr *tp.Mixer) *Packager {
 			}
 			nameOfSuper := pkgr.TypeList[super]
 			pkgr.SuperclassOf[t.GetName()] = nameOfSuper
-			// pkgr.Extensions = append(pkgr.Extensions, fmt.Sprintf("%s < %s", t.GetName(), nameOfSuper))
 		}
 	}
-
-	// Set up the submixer tables for relocation in legacy mixers -- not enough
-	// metadata in legacy mixers, so the whole thing will be one submixer, and
-	// we won't try to eliminate redundant submixers.
-	// if pkgr.GetPackagerVersion() == 0 {
-	// 	pkgr.Mixer.Submixers    = make([]*tp.SubmixerInfo, 1)
-	// 	pkgr.Mixer.Submixers[0] = &tp.SubmixerInfo{
-	// 		Name:    proto.String(pkgr.GetName()),
-	// 		Version: proto.String(pkgr.GetVersion()),
-	// 		Offset:  proto.Int32(int32(0)),
-	// 		Length:  proto.Int32(int32(len(pkgr.Mixer.Package.Functions))),
-	// 	}
-	// }
 
 	return pkgr
 }
@@ -141,10 +132,6 @@ func NewDependencyOf(relSrcDir, libDir string, pkgr *Packager) *Packager {
 	dep.AlreadyLoaded = pkgr.AlreadyLoaded
 	dep.TypeMap = pkgr.TypeMap
 	dep.SuperclassOf = pkgr.SuperclassOf
-	// dep.SubclassesOf            = pkgr.SubclassesOf
-	// dep.Extensions              = pkgr.Extensions
-	// dep.FunctionsWith           = pkgr.FunctionsWith
-	// dep.Mixer.Submixers         = pkgr.Mixer.Submixers
 	dep.Mixer.Package.Functions = pkgr.Mixer.Package.Functions
 	return dep
 }
@@ -157,10 +144,6 @@ func (pkgr *Packager) mergeWith(dep *Packager) {
 	pkgr.NowVisiting = dep.NowVisiting
 	pkgr.TypeMap = dep.TypeMap
 	pkgr.SuperclassOf = dep.SuperclassOf
-	// pkgr.SubclassesOf            = dep.SubclassesOf
-	// pkgr.Extensions              = dep.Extensions
-	// pkgr.FunctionsWith           = dep.FunctionsWith
-	// pkgr.Mixer.Submixers         = dep.Mixer.Submixers
 	pkgr.Mixer.Package.Functions = dep.Mixer.Package.Functions
 }
 
@@ -181,20 +164,11 @@ func (pkgr *Packager) readDependenciesFile() {
 func (pkgr *Packager) Build() {
 	pkgr.resolveDependencies()
 
-	// add the submixer boundary info
-	// thisOffset := int32(len(pkgr.Mixer.Package.Functions))
-	// info := &tp.SubmixerInfo{
-	// 	Name: proto.String(pkgr.GetName()),
-	// 	Version: proto.String(pkgr.GetVersion()),
-	// 	Offset: proto.Int32(thisOffset),
-	// 	// set the length below
-	// }
+	lenDeps := len(pkgr.Package.Functions)
+
 	pkgr.resolveTypeDeclarations()
 	pkgr.populateTypeList()
 	pkgr.buildLib()
-	// length of Functions array has changed; recompute it and subtract the last offset to get the length of this component
-	// info.Length = proto.Int32(int32(len(pkgr.Mixer.Package.Functions))-thisOffset)
-	// pkgr.Mixer.Submixers = append(pkgr.Mixer.Submixers, info)
 
 	if pkgr.IsHttpTransformer {
 		pkgr.Mixer.IsHttpTransformer = proto.Bool(true)
@@ -206,6 +180,8 @@ func (pkgr *Packager) Build() {
 			pkgr.Mixer.Package.Dependencies = append(pkgr.Mixer.Package.Dependencies, fmt.Sprintf("%s:%s", name, version))
 		}
 	}
+
+	pkgr.Mixer.NumExports = proto.Int32(int32(len(pkgr.Package.Functions) - lenDeps))
 }
 
 func (pkgr *Packager) resolveDependencies() {
@@ -262,6 +238,10 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		// don't need to pass it back up because maps are shared, and extending
 		// them doesn't invalidate references to them (unlike slices)
 		pkgr.Logger.Infof("  - built dependency `%s` (%s) from source", name, specifiedVersion)
+		newRange := Range{}
+		newRange.End = len(pkgr.Package.Functions)
+		newRange.Start = newRange.End - int(needed.Mixer.GetNumExports())
+		pkgr.Ranges = append(pkgr.Ranges, newRange)
 		return
 	}
 
@@ -272,6 +252,10 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		needed := NewFromCompiledMixer(mxr)
 		pkgr.MergeCompiled(needed)
 		pkgr.Logger.Infof("  - loaded dependency `%s` (%s) from local compiled mixer", name, specifiedVersion)
+		newRange := Range{}
+		newRange.End = len(pkgr.Package.Functions)
+		newRange.Start = newRange.End - int(needed.Mixer.GetNumExports())
+		pkgr.Ranges = append(pkgr.Ranges, newRange)
 		return
 	}
 
@@ -282,6 +266,10 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		needed := NewFromCompiledMixer(mxr)
 		pkgr.MergeCompiled(needed)
 		pkgr.Logger.Infof("  - loaded dependency `%s` (%s) from downloaded mixer", name, specifiedVersion)
+		newRange := Range{}
+		newRange.End = len(pkgr.Package.Functions)
+		newRange.Start = newRange.End - int(needed.Mixer.GetNumExports())
+		pkgr.Ranges = append(pkgr.Ranges, newRange)
 		return
 	}
 
@@ -387,12 +375,6 @@ func (pkgr *Packager) buildLib() {
 	}
 
 	pkgr.resolveFunctions(pkgr.LibDir, ENTRY_FILE)
-
-	// legacyPackage := &legacy.Package{}
-	// legacyPackage.Package = pkgr.Package
-	// for _, f := range pkgr.Package.Functions {
-	// 	legacyPackage.ResolveFunctionDescendants(f)
-	// }
 }
 
 func (pkgr *Packager) resolveFunctions(dirName, fileName string) {
