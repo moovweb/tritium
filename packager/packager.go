@@ -373,7 +373,10 @@ func (pkgr *Packager) buildLib() {
 	if !there {
 		return
 	}
-
+	// push another export range onto the list of export ranges -- we need to do
+	// this to ensure that any given function can reference other functions that
+	// are defined before it in the current mixer
+	pkgr.Ranges = append(pkgr.Ranges, Range{Start: len(pkgr.Package.Functions), End: len(pkgr.Package.Functions)})
 	pkgr.resolveFunctions(pkgr.LibDir, ENTRY_FILE)
 }
 
@@ -405,6 +408,9 @@ func (pkgr *Packager) resolveFunctions(dirName, fileName string) {
 		}
 
 		pkgr.Package.Functions = append(pkgr.Package.Functions, f)
+		// now extend the last export range so that it includes the newly-resolved function
+		lastRange := pkgr.Ranges[len(pkgr.Ranges)-1]
+		pkgr.Ranges[len(pkgr.Ranges)-1] = Range{Start: lastRange.Start, End: lastRange.End+1}
 	}
 }
 
