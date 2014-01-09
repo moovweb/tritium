@@ -181,7 +181,7 @@ func (pkgr *Packager) Build() {
 		}
 	}
 
-	pkgr.Mixer.NumExports = proto.Int32(int32(len(pkgr.Package.Functions) - lenDeps))
+	pkgr.Package.NumExports = proto.Int32(int32(len(pkgr.Package.Functions) - lenDeps))
 }
 
 func (pkgr *Packager) resolveDependencies() {
@@ -240,7 +240,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		pkgr.Logger.Infof("  - built dependency `%s` (%s) from source", name, specifiedVersion)
 		newRange := Range{}
 		newRange.End = len(pkgr.Package.Functions)
-		newRange.Start = newRange.End - int(needed.Mixer.GetNumExports())
+		newRange.Start = newRange.End - int(needed.Package.GetNumExports())
 		pkgr.Ranges = append(pkgr.Ranges, newRange)
 		return
 	}
@@ -254,7 +254,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		pkgr.Logger.Infof("  - loaded dependency `%s` (%s) from local compiled mixer", name, specifiedVersion)
 		newRange := Range{}
 		newRange.End = len(pkgr.Package.Functions)
-		newRange.Start = newRange.End - int(needed.Mixer.GetNumExports())
+		newRange.Start = newRange.End - int(needed.Package.GetNumExports())
 		pkgr.Ranges = append(pkgr.Ranges, newRange)
 		return
 	}
@@ -268,7 +268,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		pkgr.Logger.Infof("  - loaded dependency `%s` (%s) from downloaded mixer", name, specifiedVersion)
 		newRange := Range{}
 		newRange.End = len(pkgr.Package.Functions)
-		newRange.Start = newRange.End - int(needed.Mixer.GetNumExports())
+		newRange.Start = newRange.End - int(needed.Package.GetNumExports())
 		pkgr.Ranges = append(pkgr.Ranges, newRange)
 		return
 	}

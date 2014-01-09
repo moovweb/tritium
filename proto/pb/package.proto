@@ -28,4 +28,7 @@ message Package {
 	// The following field is for nicer error messages
 	optional string path = 5;
 
+	// specify which chunk of functions to export
+	optional int32 num_exports = 7;
+
 }
