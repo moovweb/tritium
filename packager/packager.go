@@ -19,6 +19,7 @@ import (
 	"tritium/packager/legacy"
 	"tritium/parser"
 	tp "tritium/proto"
+	. "tritium/util"
 	"tritium/whale"
 )
 
@@ -40,11 +41,6 @@ type Packager struct {
 	downloader downloader
 	*tp.Mixer
 	Ranges     []Range
-}
-
-type Range struct {
-	Start int
-	End   int
 }
 
 const (
@@ -133,6 +129,7 @@ func NewDependencyOf(relSrcDir, libDir string, pkgr *Packager) *Packager {
 	dep.TypeMap = pkgr.TypeMap
 	dep.SuperclassOf = pkgr.SuperclassOf
 	dep.Mixer.Package.Functions = pkgr.Mixer.Package.Functions
+	dep.Ranges = pkgr.Ranges
 	return dep
 }
 
@@ -145,6 +142,7 @@ func (pkgr *Packager) mergeWith(dep *Packager) {
 	pkgr.TypeMap = dep.TypeMap
 	pkgr.SuperclassOf = dep.SuperclassOf
 	pkgr.Mixer.Package.Functions = dep.Mixer.Package.Functions
+	pkgr.Ranges = dep.Ranges
 }
 
 func (pkgr *Packager) readDependenciesFile() {
@@ -446,7 +444,7 @@ func (pkgr *Packager) resolveNativeDeclaration(f *tp.Function, path string) {
 }
 
 func (pkgr *Packager) resolveUserDefinition(f *tp.Function, path string) {
-	legacy.ResolveDefinition(pkgr.Package, f, path)
+	legacy.ResolveDefinition(pkgr.Package, f, path, pkgr.Ranges...)
 }
 
 func (pkgr *Packager) MergeCompiled(dep *Packager) {

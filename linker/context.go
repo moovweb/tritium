@@ -12,6 +12,7 @@ import (
 	proto "code.google.com/p/goprotobuf/proto"
 	tp "tritium/proto"
 	"tritium/constants"
+	. "tritium/util"
 )
 
 type FuncMap map[string]int
@@ -46,7 +47,14 @@ func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject, projectPa
 	return ctx
 }
 
-func NewLinkingContext(pkg *tp.Package) *LinkingContext {
+func NewLinkingContext(pkg *tp.Package, ranges ...Range) *LinkingContext {
+	if len(ranges) == 0 {
+		ranges = make([]Range, 1)
+		newRange := Range{}
+		newRange.Start = 0
+		newRange.End = len(pkg.Functions)
+		ranges[0] = newRange
+	}
 	// Setup the function map!
 	functionLookup := make([]FuncMap, len(pkg.Types))
 	types := make([]string, len(pkg.Types))
@@ -55,17 +63,39 @@ func NewLinkingContext(pkg *tp.Package) *LinkingContext {
 		funcMap := make(FuncMap)
 		types[typeId] = typeObj.GetName()
 		implements := functionLookup[typeObj.GetImplements()]
-		for index, fun := range pkg.Functions {
-			stub := fun.Stub(pkg)
 
-			funScopeId := fun.GetScopeTypeId()
-			inherited := false
-			// funScopeId is ancestor of typeId
-			if (implements != nil) && pkg.AncestorOf(funScopeId, int32(typeId)) {
-				_, inherited = implements[stub]
-			}
-			if (funScopeId == int32(typeId)) || inherited {
-				funcMap[stub] = index
+
+
+		// for index, fun := range pkg.Functions {
+		// 	stub := fun.Stub(pkg)
+
+		// 	funScopeId := fun.GetScopeTypeId()
+		// 	inherited := false
+		// 	// funScopeId is ancestor of typeId
+		// 	if (implements != nil) && pkg.AncestorOf(funScopeId, int32(typeId)) {
+		// 		_, inherited = implements[stub]
+		// 	}
+		// 	if (funScopeId == int32(typeId)) || inherited {
+		// 		funcMap[stub] = index
+		// 	}
+		// }
+
+
+
+		for _, r := range ranges {
+			fmt.Printf("%v\n", r)
+			for index, fun := range pkg.Functions[r.Start:r.End] {
+				stub := fun.Stub(pkg)
+
+				funScopeId := fun.GetScopeTypeId()
+				inherited := false
+				// funScopeId is ancestor of typeId
+				if (implements != nil) && pkg.AncestorOf(funScopeId, int32(typeId)) {
+					_, inherited = implements[stub]
+				}
+				if (funScopeId == int32(typeId)) || inherited {
+					funcMap[stub] = index + r.Start
+				}
 			}
 		}
 		functionLookup[typeId] = funcMap

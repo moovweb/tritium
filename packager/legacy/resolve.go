@@ -16,12 +16,13 @@ import (
 	linker "tritium/linker"
 	parser "tritium/parser"
 	tp "tritium/proto"
+	. "tritium/util"
 	whale "tritium/whale"
 	"tritium/constants"
 )
 
-func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string) {
-	linkingContext := linker.NewLinkingContext(pkg)
+func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string, ranges ...Range) {
+	linkingContext := linker.NewLinkingContext(pkg, ranges...)
 
 	//	pkg.Log.Infof("\t -- Resolving --\n")
 	//	pkg.Log.Infof("\t\t -- function: %v\n", fun)
@@ -101,8 +102,8 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string) {
 }
 
 // export so it can be re-used by the new packager
-func ResolveDefinition(pkg *tp.Package, fn *tp.Function, path string) {
-	resolveDefinition(pkg, fn, path)
+func ResolveDefinition(pkg *tp.Package, fn *tp.Function, path string, ranges ...Range) {
+	resolveDefinition(pkg, fn, path, ranges...)
 }
 
 func (pkg *Package) inheritFunctions() {
