@@ -515,7 +515,6 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 	var legacyMixerName string
 	var first *Packager
 	var rest []*Packager
-	exportRanges = make([]Range, len(packagersFromMixers))
 	for i, pkgr := range packagersFromMixers {
 		if pkgr.GetPackagerVersion() == 0 {
 			legacyMixerName = fmt.Sprintf("`%s` (%s)", pkgr.GetName(), pkgr.GetVersion())
@@ -542,6 +541,8 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 			"       Visit https://console.moovweb.com/learn/docs/local/mixers#The+Core+Mixer for more info.")
 		return
 	}
+
+	exportRanges = make([]Range, len(packagersFromMixers))
 	// stash a copy of the mixer that has the transformers
 	if transformerRequired {
 		httpTransformer = first.Mixer.Clone()
@@ -549,7 +550,7 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 		numExports := int(first.Package.GetNumExports())
 		numFunctions := len(first.Package.Functions)
 		exportRanges[0] = Range{ numFunctions-numExports, numFunctions }
-		println("setting range for the rewriter", first.GetName(), exportRanges[0].Start, exportRanges[0].End)
+		// println("setting range for the rewriter", first.GetName(), exportRanges[0].Start, exportRanges[0].End)
 	}
 	if len(rest) == 0 && first == nil && !transformerRequired {
 		first = packagersFromMixers[0]
@@ -564,7 +565,7 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 		numFunctions := len(first.Package.Functions)
 		numExports := int(pkgr.Package.GetNumExports())
 		exportRanges[i+1] = Range{ numFunctions-numExports, numFunctions }
-		println("setting range for mixer", i+1, pkgr.GetName(), exportRanges[i+1].Start, exportRanges[i+1].End)
+		// println("setting range for mixer", i+1, pkgr.GetName(), exportRanges[i+1].Start, exportRanges[i+1].End)
 	}
 	combinedMixer = first.Mixer
 	return
