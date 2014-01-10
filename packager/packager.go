@@ -504,19 +504,23 @@ func (pkgr *Packager) mergeAndRelocateCalls(dep *Packager) {
 	pkgr.Mixer.Package.Functions = append(pkgr.Mixer.Package.Functions, dep.Mixer.Package.Functions...)
 }
 
-func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransformer, combinedMixer *tp.Mixer, successMsg string, err error) {
+func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransformer, combinedMixer *tp.Mixer, exportRanges []Range, successMsg string, err error) {
 	// convert mixers to packagers, fish out the http transformers so we can
 	// compile them separately, and guard agains multiple transformers
-	packagesFromMixers := make([]*Packager, len(mixers))
+	packagersFromMixers := make([]*Packager, len(mixers))
 	for i, mxr := range mixers {
-		packagesFromMixers[i] = NewFromCompiledMixer(mxr)
+		packagersFromMixers[i] = NewFromCompiledMixer(mxr)
 	}
 	foundTransformer := false
 	foundLegacyMixer := false
 	var legacyMixerName string
 	var first *Packager
 	var rest []*Packager
-	for i, pkgr := range packagesFromMixers {
+	exportRanges = make([]Range, len(packagersFromMixers))
+	for i, pkgr := range packagersFromMixers {
+		numFunctions := len(packagersFromMixers[i].Package.Functions)
+		numExports := int(packagersFromMixers[i].Package.GetNumExports())
+		exportRanges[i] = Range{ numFunctions-numExports, numFunctions }
 		if pkgr.GetPackagerVersion() == 0 {
 			legacyMixerName = fmt.Sprintf("`%s` (%s)", pkgr.GetName(), pkgr.GetVersion())
 			foundLegacyMixer = true
@@ -527,7 +531,7 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 				return
 			}
 			first = pkgr
-			rest = append(packagesFromMixers[:i], packagesFromMixers[i+1:]...)
+			rest = append(packagersFromMixers[:i], packagersFromMixers[i+1:]...)
 			foundTransformer = true
 		}
 	}
@@ -536,7 +540,7 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 			err = errors.New(fmt.Sprintf("Legacy mixer %s may not be used with other mixers.", legacyMixerName))
 			return
 		}
-		first = packagesFromMixers[0]
+		first = packagersFromMixers[0]
 	} else if !foundTransformer && transformerRequired {
 		err = errors.New("Your project must specify an HTTP transformer mixer in the Mixer.lock file.\n" +
 			"       Visit https://console.moovweb.com/learn/docs/local/mixers#The+Core+Mixer for more info.")
@@ -547,10 +551,10 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 		httpTransformer = first.Mixer.Clone()
 		successMsg = fmt.Sprintf("Mixer %s (%s) successfully loaded.", first.GetName(), first.GetVersion())
 	}
-	if len(rest) == 0 && first == nil && transformerRequired == false {
-		first = packagesFromMixers[0]
-		if len(packagesFromMixers) > 1 {
-			rest = packagesFromMixers[1:]
+	if len(rest) == 0 && first == nil && !transformerRequired {
+		first = packagersFromMixers[0]
+		if len(packagersFromMixers) > 1 {
+			rest = packagersFromMixers[1:]
 		}
 	}
 	// now merge the rest of the mixers into the transformer mixer!
