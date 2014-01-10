@@ -28,7 +28,7 @@ func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string, ranges ..
 	//	pkg.Log.Infof("\t\t -- function: %v\n", fun)
 
 	// Re-uses linker's logic to resolve function definitions
-	if null.GetBool(fun.BuiltIn) == false {
+	if !fun.GetBuiltIn() {
 		typeName := null.GetString(fun.ScopeType)
 
 		// DON'T DO THE FOLLOWING HERE -- NEED TO RESOLVE INHERITANCE FIRST
@@ -212,7 +212,7 @@ func (pkg *Package) ResolveFunctionDescendants(fn *tp.Function) {
 	pkg.resolveFunctionDescendants(fn)
 }
 
-func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName string) {
+func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName string, ranges ...Range) []Range {
 	//pkg.Println(" -- reading definitions")
 	_, err := ioutil.ReadFile(filepath.Join(projectPath, scriptPath, fileName))
 	//()("READING DEFINITIONS:", location)
@@ -222,7 +222,7 @@ func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName s
 		// msg := fmt.Sprintf("unable to open function definition file: %s", location)
 		// println(msg)
 		// panic(msg)
-		return
+		return ranges
 	}
 	definitions := parser.ParseFile(projectPath, scriptPath, fileName, false, make([]string, 0))
 
@@ -255,10 +255,10 @@ func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName s
 				msg := fmt.Sprintf("\n********\nin file %s:\nattempting to import nonexistent file %s\nPlease consult %s for more information about this error.\n********\n", filepath.Join(scriptPath, fileName), importPath, errURL)
 				panic(msg)
 			}
-			ReadPackageDefinitions(pkg, projectPath, filepath.Dir(importPath), filepath.Base(importPath))
+			ranges = ReadPackageDefinitions(pkg, projectPath, filepath.Dir(importPath), filepath.Base(importPath), ranges...)
 		} else { // otherwise if it's not an import stub ...
 			//pkg.Log.Infof("\t -- function: %v", function)
-			resolveDefinition(pkg, function, filepath.Join(scriptPath, fileName))
+			resolveDefinition(pkg, function, filepath.Join(scriptPath, fileName), ranges...)
 
 			// After resolving a user-defined function, see if its fully resolved signature
 			// is the same as the signature of a prepackaged function. If so, throw an error.
@@ -279,9 +279,11 @@ func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName s
 			// }
 
 			pkg.Functions = append(pkg.Functions, function)
+			ranges[len(ranges) - 1].End += 1
 		}
 	}
 
+	return ranges
 }
 
 func (pkg *Package) Marshal() []byte {

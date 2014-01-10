@@ -6,11 +6,12 @@ import (
 
 	parser "tritium/parser"
 	tp "tritium/proto"
+	. "tritium/util"
 )
 
-func RunStringWithPackage(src, projectPath, scriptPath, fileName string, pkg *tp.Package, layers []string) (*tp.Transform, error) {
+func RunStringWithPackage(src, projectPath, scriptPath, fileName string, pkg *tp.Package, layers []string, ranges ...Range) (*tp.Transform, error) {
 	objs := parser.Parse(src, projectPath, scriptPath, fileName, false, layers)
-	return runWithObjs(objs, pkg, projectPath, scriptPath, layers)
+	return runWithObjs(objs, pkg, projectPath, scriptPath, layers, ranges...)
 }
 
 func RunWithPackage(projectPath, scriptPath, fileName string, pkg *tp.Package, layers []string) (*tp.Transform, error) {
@@ -18,8 +19,8 @@ func RunWithPackage(projectPath, scriptPath, fileName string, pkg *tp.Package, l
 	return runWithObjs(objs, pkg, projectPath, scriptPath, layers)
 }
 
-func runWithObjs(objs []*tp.ScriptObject, pkg *tp.Package, projectPath, scriptPath string, layers []string) (*tp.Transform, error) {
-	ctx := NewObjectLinkingContext(pkg, objs, projectPath, scriptPath)
+func runWithObjs(objs []*tp.ScriptObject, pkg *tp.Package, projectPath, scriptPath string, layers []string, ranges ...Range) (*tp.Transform, error) {
+	ctx := NewObjectLinkingContext(pkg, objs, projectPath, scriptPath, ranges...)
 	ctx.Link()
 	if ctx.HasErrors() {
 		message := ""

@@ -32,13 +32,13 @@ type LinkingContext struct {
 
 type LocalDef map[string]int
 
-func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject, projectPath, scriptPath string) *LinkingContext {
+func NewObjectLinkingContext(pkg *tp.Package, objs []*tp.ScriptObject, projectPath, scriptPath string, ranges ...Range) *LinkingContext {
 	// Setup object lookup map!
 	objScriptLookup := make(map[string]int, len(objs))
 	for index, obj := range objs {
 		objScriptLookup[null.GetString(obj.Name)] = index
 	}
-	ctx := NewLinkingContext(pkg)
+	ctx := NewLinkingContext(pkg, ranges...)
 	ctx.objMap = objScriptLookup
 	ctx.Objects = objs
 	ctx.ProjectFolder = projectPath
