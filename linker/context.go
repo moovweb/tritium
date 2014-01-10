@@ -83,7 +83,6 @@ func NewLinkingContext(pkg *tp.Package, ranges ...Range) *LinkingContext {
 
 
 		for _, r := range ranges {
-			fmt.Printf("%v\n", r)
 			for index, fun := range pkg.Functions[r.Start:r.End] {
 				stub := fun.Stub(pkg)
 
