@@ -503,6 +503,7 @@ func (pkgr *Packager) mergeAndRelocateCalls(dep *Packager) {
 }
 
 func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransformer, combinedMixer *tp.Mixer, exportRanges []Range, successMsg string, err error) {
+	println("MERGING THE MIXERS SPECIFIED IN MIXER.LOCK")
 	// convert mixers to packagers, fish out the http transformers so we can
 	// compile them separately, and guard agains multiple transformers
 	packagersFromMixers := make([]*Packager, len(mixers))
@@ -516,9 +517,6 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 	var rest []*Packager
 	exportRanges = make([]Range, len(packagersFromMixers))
 	for i, pkgr := range packagersFromMixers {
-		numFunctions := len(packagersFromMixers[i].Package.Functions)
-		numExports := int(packagersFromMixers[i].Package.GetNumExports())
-		exportRanges[i] = Range{ numFunctions-numExports, numFunctions }
 		if pkgr.GetPackagerVersion() == 0 {
 			legacyMixerName = fmt.Sprintf("`%s` (%s)", pkgr.GetName(), pkgr.GetVersion())
 			foundLegacyMixer = true
@@ -548,6 +546,10 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 	if transformerRequired {
 		httpTransformer = first.Mixer.Clone()
 		successMsg = fmt.Sprintf("Mixer %s (%s) successfully loaded.", first.GetName(), first.GetVersion())
+		numExports := int(first.Package.GetNumExports())
+		numFunctions := len(first.Package.Functions)
+		exportRanges[0] = Range{ numFunctions-numExports, numFunctions }
+		println("setting range for the rewriter", first.GetName(), exportRanges[0].Start, exportRanges[0].End)
 	}
 	if len(rest) == 0 && first == nil && !transformerRequired {
 		first = packagersFromMixers[0]
@@ -556,10 +558,16 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 		}
 	}
 	// now merge the rest of the mixers into the transformer mixer!
-	for _, pkgr := range rest {
+	for i, pkgr := range rest {
 		first.MergeCompiled(pkgr)
 		successMsg += fmt.Sprintf("\nMixer %s (%s) successfully loaded.", pkgr.GetName(), pkgr.GetVersion())
+		numFunctions := len(pkgr.Package.Functions)
+		numExports := int(pkgr.Package.GetNumExports())
+		exportRanges[i+1] = Range{ numFunctions-numExports, numFunctions }
+		println("setting range for mixer", i+1, pkgr.GetName(), exportRanges[i+1].Start, exportRanges[i+1].End)
 	}
 	combinedMixer = first.Mixer
 	return
 }
+
+
