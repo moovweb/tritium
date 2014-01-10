@@ -279,8 +279,6 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 }
 
 func (pkgr *Packager) resolveTypeDeclarations() {
-	var typeDecs []string
-
 	// see whether a type declarations file exists; if so, read it
 	typeFilePath := filepath.Join(pkgr.MixerDir, pkgr.LibDir, TYPES_FILE)
 	there, _ := fileutil.Exists(typeFilePath)
@@ -291,7 +289,7 @@ func (pkgr *Packager) resolveTypeDeclarations() {
 	if readErr != nil {
 		panic(fmt.Sprintf("error reading type declarations file for `%s`", pkgr.Mixer.GetName()))
 	}
-	typeDecs = make([]string, 0)
+	typeDecs := make([]string, 0)
 	yaml.Unmarshal(data, &typeDecs)
 	if pkgr.TypeMap == nil {
 		pkgr.TypeMap = make(map[string]int)
@@ -319,7 +317,7 @@ func (pkgr *Packager) resolveTypeDeclarations() {
 
 			// else it's an extension
 		} else {
-			// parse the supertype and subtype
+			// parse the subtype and supertype
 			splitted := strings.Split(typeDec, "<")
 			if len(splitted) != 2 {
 				panic(fmt.Sprintf("invalid syntax in type declaration `%s`; only one extension is permitted per declaration", typeDec))
