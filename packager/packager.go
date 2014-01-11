@@ -549,6 +549,9 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 		successMsg = fmt.Sprintf("Mixer %s (%s) successfully loaded.", first.GetName(), first.GetVersion())
 		numExports := int(first.Package.GetNumExports())
 		numFunctions := len(first.Package.Functions)
+		if numExports == 0 {
+			numExports = numFunctions
+		}
 		exportRanges[0] = Range{ numFunctions-numExports, numFunctions }
 		// println("setting range for the rewriter", first.GetName(), exportRanges[0].Start, exportRanges[0].End)
 	}
@@ -564,7 +567,11 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 		successMsg += fmt.Sprintf("\nMixer %s (%s) successfully loaded.", pkgr.GetName(), pkgr.GetVersion())
 		numFunctions := len(first.Package.Functions)
 		numExports := int(pkgr.Package.GetNumExports())
-		exportRanges[i+1] = Range{ numFunctions-numExports, numFunctions }
+		newRange := Range{ numFunctions-numExports, numFunctions }
+		if numExports == 0 {
+			newRange.Start = numFunctions - len(pkgr.Package.Functions)
+		}
+		exportRanges[i+1] = newRange
 		// println("setting range for mixer", i+1, pkgr.GetName(), exportRanges[i+1].Start, exportRanges[i+1].End)
 	}
 	combinedMixer = first.Mixer
