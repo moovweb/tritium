@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"sort"
+	// "sort"
 	"strings"
 )
 
@@ -25,13 +25,18 @@ import (
 
 type downloader func(string, string) (*tp.Mixer, error)
 
+type NameAndVersion struct {
+	Name    string
+	Version string
+}
+
 type Packager struct {
 	MixerDir                 string
 	LibDir                   string
 	IncludePaths             []string
 	IsHttpTransformer        bool
 	MayBuildHttpTransformers bool
-	Dependencies             map[string]string
+	Dependencies             []NameAndVersion
 	AlreadyLoaded            map[string]bool // to avoid redundant loading of dependencies
 	NowVisiting              map[string]bool // to prevent circular dependencies
 	TypeMap                  map[string]int
@@ -156,12 +161,6 @@ func (pkgr *Packager) mergeWith(dep *Packager) {
 	pkgr.SuperclassOf = dep.SuperclassOf
 	pkgr.Mixer.Package.Functions = dep.Mixer.Package.Functions
 	pkgr.CachedDependencies = dep.CachedDependencies
-	// the current mixer should only access the exports of its immediate
-	// dependencies -- therefore, only merge the dependency's last export range
-	// println("merging source mixer")
-	// println(pkgr.GetName(), "now has", len(pkgr.Ranges), "ranges")
-	// pkgr.Ranges = append(pkgr.Ranges, dep.Ranges[len(dep.Ranges)-1])
-	// println("appending last export range of", dep.GetName(), "onto", pkgr.GetName())
 }
 
 func (pkgr *Packager) MergeCompiled(dep *Packager) {
@@ -173,13 +172,6 @@ func (pkgr *Packager) MergeCompiled(dep *Packager) {
 	}
 	pkgr.mergeAndRelocateTypes(dep)
 	pkgr.mergeAndRelocateCalls(dep)
-	// the current mixer should only access the exports of its immediate
-	// dependencies -- therefore, only merge the dependency's last export range
-	// (which, for compiled mixers, should be the only export range)
-	// println("merging compiled mixer")
-	// println(pkgr.GetName(), "now has", len(pkgr.Ranges), "ranges")
-	// pkgr.Ranges = append(pkgr.Ranges, dep.Ranges[len(dep.Ranges)-1])
-	// println("appending last export range of", dep.GetName(), "onto", pkgr.GetName())
 }
 
 func (pkgr *Packager) readDependenciesFile() {
@@ -192,8 +184,24 @@ func (pkgr *Packager) readDependenciesFile() {
 	if readErr != nil {
 		panic(fmt.Sprintf("error reading dependencies file for `%s`", pkgr.Mixer.GetName()))
 	}
-	pkgr.Dependencies = make(map[string]string)
-	yaml.Unmarshal(data, &pkgr.Dependencies)
+	// Don't use yaml.Unmarshal here -- we don't want to store the dependencies
+	// as a hash table because it removes the original ordering. We need to load
+	// dependencies in the order specified in `dependencies.yml` to avoid
+	// unintuitive behavior in case the dependencies override each other's
+	// functions.
+	depStr := strings.TrimSpace(string(data))
+	depLines := strings.Split(depStr, "\n")
+	pkgr.Dependencies = make([]NameAndVersion, len(depLines))
+	for i, line := range depLines {
+		fields := strings.Split(line, ":")
+		if len(fields) != 2 {
+			panic(fmt.Sprintf("error parsing dependencies file for `%s` -- each dependency must take the form of `name: version`", pkgr.GetName()))
+		}
+		pkgr.Dependencies[i] = NameAndVersion{
+			Name: strings.TrimSpace(fields[0]),
+			Version: strings.TrimSpace(fields[1]),
+		}
+	}
 }
 
 func (pkgr *Packager) Build() {
@@ -209,10 +217,11 @@ func (pkgr *Packager) Build() {
 		pkgr.Mixer.IsHttpTransformer = proto.Bool(true)
 		pkgr.Mixer.Rewriters = tp.CollectFiles(filepath.Join(pkgr.MixerDir, SCRIPTS_DIR))
 		if pkgr.Mixer.Package.Dependencies == nil {
-			pkgr.Mixer.Package.Dependencies = make([]string, 0)
+			pkgr.Mixer.Package.Dependencies = make([]string, len(pkgr.Dependencies))
 		}
-		for name, version := range pkgr.Dependencies {
-			pkgr.Mixer.Package.Dependencies = append(pkgr.Mixer.Package.Dependencies, fmt.Sprintf("%s:%s", name, version))
+		for i, nameAndVersion := range pkgr.Dependencies {
+			name, version := nameAndVersion.Name, nameAndVersion.Version
+			pkgr.Mixer.Package.Dependencies[i] = fmt.Sprintf("%s:%s", name, version)
 		}
 	}
 
@@ -222,16 +231,10 @@ func (pkgr *Packager) Build() {
 }
 
 func (pkgr *Packager) resolveDependencies() {
-	// sort the dependencies by name to guarantee a deterministic resolution order
-	depList, i := make([]string, len(pkgr.Dependencies)), 0
-	for name, _ := range pkgr.Dependencies {
-		depList[i] = name
-		i++
-	}
-	sort.Strings(depList)
-	for _, name := range depList {
+	for _, nameAndVersion := range pkgr.Dependencies {
+		name, version := nameAndVersion.Name, nameAndVersion.Version
 		if !pkgr.AlreadyLoaded[name] {
-			pkgr.loadDependency(name, pkgr.Dependencies[name])
+			pkgr.loadDependency(name, version)
 			pkgr.AlreadyLoaded[name] = true
 		} else {
 			// if this dependency has already been loaded, we still need to grab its export range
@@ -312,7 +315,8 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		}
 	}
 
-	// for all cases, if there's no error, set the export range and return
+	// for all cases, if there's no error, add the export range of this dependency
+	// to the current mixer and return
 	if mxErr == nil {
 		newRange := Range{}
 		newRange.End = len(pkgr.Package.Functions)
