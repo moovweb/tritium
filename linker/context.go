@@ -64,8 +64,6 @@ func NewLinkingContext(pkg *tp.Package, ranges ...Range) *LinkingContext {
 		types[typeId] = typeObj.GetName()
 		implements := functionLookup[typeObj.GetImplements()]
 
-
-
 		// for index, fun := range pkg.Functions {
 		// 	stub := fun.Stub(pkg)
 
@@ -80,8 +78,7 @@ func NewLinkingContext(pkg *tp.Package, ranges ...Range) *LinkingContext {
 		// 	}
 		// }
 
-
-
+		// loop over the export ranges and build a lookup table for only the exported functions
 		for _, r := range ranges {
 			for index, fun := range pkg.Functions[r.Start:r.End] {
 				stub := fun.Stub(pkg)

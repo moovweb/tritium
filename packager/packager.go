@@ -36,11 +36,12 @@ type Packager struct {
 	NowVisiting              map[string]bool // to prevent circular dependencies
 	TypeMap                  map[string]int
 	SuperclassOf             map[string]string
-	TypeList   []string
-	Logger     *golog.Logger
-	downloader downloader
+	TypeList                 []string
+	Logger                   *golog.Logger
+	downloader               downloader
 	*tp.Mixer
-	Ranges     []Range
+	Ranges                   []Range
+	CachedDependencies       map[string]*Packager
 }
 
 const (
@@ -92,6 +93,7 @@ func New(relSrcDir, libDir string, mayBuildHttpTransformers bool, logger *golog.
 	}
 
 	pkgr.Ranges = make([]Range, 0)
+	pkgr.CachedDependencies = make(map[string]*Packager)
 
 	return pkgr
 }
@@ -118,6 +120,17 @@ func NewFromCompiledMixer(mxr *tp.Mixer) *Packager {
 		}
 	}
 
+	pkgr.Ranges = make([]Range, 1)
+	numFunctions := len(pkgr.Package.Functions)
+	numExports := int(pkgr.Package.GetNumExports())
+	rangeStart := numFunctions - numExports
+	if numExports == 0 {
+		rangeStart = 0
+	}
+	newRange := Range{ Start: rangeStart, End: numFunctions }
+	pkgr.Ranges[0] = newRange
+	pkgr.CachedDependencies = make(map[string]*Packager)
+
 	return pkgr
 }
 
@@ -129,20 +142,44 @@ func NewDependencyOf(relSrcDir, libDir string, pkgr *Packager) *Packager {
 	dep.TypeMap = pkgr.TypeMap
 	dep.SuperclassOf = pkgr.SuperclassOf
 	dep.Mixer.Package.Functions = pkgr.Mixer.Package.Functions
-	dep.Ranges = pkgr.Ranges
+	dep.CachedDependencies = pkgr.CachedDependencies
 	return dep
 }
 
 func (pkgr *Packager) mergeWith(dep *Packager) {
 	// Dependency loading is cumulative; tables are passed down and populated on
-	// the way back up, then passed down again. So the tables that percolate up
-	// are the most populated versions; just use those.
+	// the way back up, then passed down again. The tables that percolate up
+	// are the most up-to-date versions; just use those.
 	pkgr.AlreadyLoaded = dep.AlreadyLoaded
 	pkgr.NowVisiting = dep.NowVisiting
 	pkgr.TypeMap = dep.TypeMap
 	pkgr.SuperclassOf = dep.SuperclassOf
 	pkgr.Mixer.Package.Functions = dep.Mixer.Package.Functions
-	pkgr.Ranges = dep.Ranges
+	pkgr.CachedDependencies = dep.CachedDependencies
+	// the current mixer should only access the exports of its immediate
+	// dependencies -- therefore, only merge the dependency's last export range
+	// println("merging source mixer")
+	// println(pkgr.GetName(), "now has", len(pkgr.Ranges), "ranges")
+	// pkgr.Ranges = append(pkgr.Ranges, dep.Ranges[len(dep.Ranges)-1])
+	// println("appending last export range of", dep.GetName(), "onto", pkgr.GetName())
+}
+
+func (pkgr *Packager) MergeCompiled(dep *Packager) {
+	errMsg := "may not combine legacy mixer %s (%s) with other mixers"
+	if pkgr.GetPackagerVersion() == 0 {
+		panic(fmt.Sprintf(errMsg, pkgr.GetName(), pkgr.GetVersion()))
+	} else if dep.GetPackagerVersion() == 0 {
+		panic(fmt.Sprintf(errMsg, dep.GetName(), dep.GetVersion()))
+	}
+	pkgr.mergeAndRelocateTypes(dep)
+	pkgr.mergeAndRelocateCalls(dep)
+	// the current mixer should only access the exports of its immediate
+	// dependencies -- therefore, only merge the dependency's last export range
+	// (which, for compiled mixers, should be the only export range)
+	// println("merging compiled mixer")
+	// println(pkgr.GetName(), "now has", len(pkgr.Ranges), "ranges")
+	// pkgr.Ranges = append(pkgr.Ranges, dep.Ranges[len(dep.Ranges)-1])
+	// println("appending last export range of", dep.GetName(), "onto", pkgr.GetName())
 }
 
 func (pkgr *Packager) readDependenciesFile() {
@@ -179,6 +216,8 @@ func (pkgr *Packager) Build() {
 		}
 	}
 
+	// Let NumExports potentially be zero -- it's up to the user to check and set
+	// the export range to the whole package if it is actually zero.
 	pkgr.Package.NumExports = proto.Int32(int32(len(pkgr.Package.Functions) - lenDeps))
 }
 
@@ -194,6 +233,15 @@ func (pkgr *Packager) resolveDependencies() {
 		if !pkgr.AlreadyLoaded[name] {
 			pkgr.loadDependency(name, pkgr.Dependencies[name])
 			pkgr.AlreadyLoaded[name] = true
+		} else {
+			// if this dependency has already been loaded, we still need to grab its export range
+			needed := pkgr.CachedDependencies[name]
+			newRange := needed.Ranges[len(needed.Ranges)-1]
+			// if the mixer doesn't export anything, make it export EVERYTHING
+			if newRange.End - newRange.Start == 0 {
+				newRange.Start = newRange.End - len(needed.Package.Functions)
+			}
+			pkgr.Ranges = append(pkgr.Ranges, newRange)
 		}
 	}
 }
@@ -201,6 +249,7 @@ func (pkgr *Packager) resolveDependencies() {
 func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 	foundMixerSrc := false
 	foundCompiledMixer := false
+	var needed *Packager
 	// loop through the include paths and build the first dependency that we
 	// find, then merge that dependency into the current mixer
 	for _, incPath := range pkgr.IncludePaths {
@@ -210,7 +259,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 			continue
 		}
 		foundMixerSrc = true
-		needed := NewDependencyOf(depPath, "lib", pkgr)
+		needed = NewDependencyOf(depPath, "lib", pkgr)
 
 		if needed.GetVersion() != specifiedVersion {
 			continue
@@ -236,41 +285,49 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		// don't need to pass it back up because maps are shared, and extending
 		// them doesn't invalidate references to them (unlike slices)
 		pkgr.Logger.Infof("  - built dependency `%s` (%s) from source", name, specifiedVersion)
-		newRange := Range{}
-		newRange.End = len(pkgr.Package.Functions)
-		newRange.Start = newRange.End - int(needed.Package.GetNumExports())
-		pkgr.Ranges = append(pkgr.Ranges, newRange)
-		return
+		break
 	}
 
+	var mxr *tp.Mixer
+	var mxErr error
 	// if a mixer src dir isn't found, try to grab a compiled version locally
-	mxr, mxErr := mixer.GetMixer(name, specifiedVersion)
-	if mxErr == nil {
-		foundCompiledMixer = true
-		needed := NewFromCompiledMixer(mxr)
-		pkgr.MergeCompiled(needed)
-		pkgr.Logger.Infof("  - loaded dependency `%s` (%s) from local compiled mixer", name, specifiedVersion)
-		newRange := Range{}
-		newRange.End = len(pkgr.Package.Functions)
-		newRange.Start = newRange.End - int(needed.Package.GetNumExports())
-		pkgr.Ranges = append(pkgr.Ranges, newRange)
-		return
+	if !foundMixerSrc {
+		mxr, mxErr = mixer.GetMixer(name, specifiedVersion)
+		if mxErr == nil {
+			foundCompiledMixer = true
+			needed = NewFromCompiledMixer(mxr)
+			pkgr.MergeCompiled(needed)
+			pkgr.Logger.Infof("  - loaded dependency `%s` (%s) from local compiled mixer", name, specifiedVersion)
+		}
 	}
 
 	// otherwise, try to download a compiled version from apollo
-	mxr, mxErr = pkgr.downloader(name, specifiedVersion)
+	if !foundMixerSrc && !foundCompiledMixer {
+		mxr, mxErr = pkgr.downloader(name, specifiedVersion)
+		if mxErr == nil {
+			foundCompiledMixer = true
+			needed = NewFromCompiledMixer(mxr)
+			pkgr.MergeCompiled(needed)
+			pkgr.Logger.Infof("  - loaded dependency `%s` (%s) from downloaded mixer", name, specifiedVersion)
+		}
+	}
+
+	// for all cases, if there's no error, set the export range and return
 	if mxErr == nil {
-		foundCompiledMixer = true
-		needed := NewFromCompiledMixer(mxr)
-		pkgr.MergeCompiled(needed)
-		pkgr.Logger.Infof("  - loaded dependency `%s` (%s) from downloaded mixer", name, specifiedVersion)
 		newRange := Range{}
 		newRange.End = len(pkgr.Package.Functions)
 		newRange.Start = newRange.End - int(needed.Package.GetNumExports())
+		// if the mixer doesn't export anything, make it export EVERYTHING
+		if newRange.End - newRange.Start == 0 {
+			newRange.Start = newRange.End - len(needed.Package.Functions)
+		}
 		pkgr.Ranges = append(pkgr.Ranges, newRange)
+		// store this in case we need to grab some metadata from an already-loaded mixer
+		pkgr.CachedDependencies[needed.GetName()] = needed
 		return
 	}
 
+	// if we get to this point, there is an error
 	if foundMixerSrc || foundCompiledMixer {
 		panic(fmt.Sprintf("version %s needed for dependency `%s` of `%s`",
 			specifiedVersion, name, pkgr.GetName()))
@@ -369,10 +426,13 @@ func (pkgr *Packager) buildLib() {
 	if !there {
 		return
 	}
-	// push another export range onto the list of export ranges -- we need to do
+	// Push another export range onto the list of export ranges -- we need to do
 	// this to ensure that any given function can reference other functions that
-	// are defined before it in the current mixer
+	// are defined before it in the current mixer. Also, this needs to be outside
+	// resolveFunctions because the latter is recursive, and we don't want to
+	// push more than one export range for the current mixer.
 	pkgr.Ranges = append(pkgr.Ranges, Range{Start: len(pkgr.Package.Functions), End: len(pkgr.Package.Functions)})
+
 	pkgr.resolveFunctions(pkgr.LibDir, ENTRY_FILE)
 }
 
@@ -445,17 +505,6 @@ func (pkgr *Packager) resolveUserDefinition(f *tp.Function, path string) {
 	legacy.ResolveDefinition(pkgr.Package, f, path, pkgr.Ranges...)
 }
 
-func (pkgr *Packager) MergeCompiled(dep *Packager) {
-	errMsg := "may not combine legacy mixer %s (%s) with other mixers"
-	if pkgr.GetPackagerVersion() == 0 {
-		panic(fmt.Sprintf(errMsg, pkgr.GetName(), pkgr.GetVersion()))
-	} else if dep.GetPackagerVersion() == 0 {
-		panic(fmt.Sprintf(errMsg, dep.GetName(), dep.GetVersion()))
-	}
-	pkgr.mergeAndRelocateTypes(dep)
-	pkgr.mergeAndRelocateCalls(dep)
-}
-
 func (pkgr *Packager) mergeAndRelocateTypes(dep *Packager) {
 	typeRelocations := make(map[int]int)
 	typeRelocations[-1] = -1
@@ -503,7 +552,6 @@ func (pkgr *Packager) mergeAndRelocateCalls(dep *Packager) {
 }
 
 func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransformer, combinedMixer *tp.Mixer, exportRanges []Range, successMsg string, err error) {
-	println("MERGING THE MIXERS SPECIFIED IN MIXER.LOCK")
 	// convert mixers to packagers, fish out the http transformers so we can
 	// compile them separately, and guard agains multiple transformers
 	packagersFromMixers := make([]*Packager, len(mixers))
@@ -553,7 +601,6 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 			numExports = numFunctions
 		}
 		exportRanges[0] = Range{ numFunctions-numExports, numFunctions }
-		// println("setting range for the rewriter", first.GetName(), exportRanges[0].Start, exportRanges[0].End)
 	}
 	if len(rest) == 0 && first == nil && !transformerRequired {
 		first = packagersFromMixers[0]
@@ -572,7 +619,6 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 			newRange.Start = numFunctions - len(pkgr.Package.Functions)
 		}
 		exportRanges[i+1] = newRange
-		// println("setting range for mixer", i+1, pkgr.GetName(), exportRanges[i+1].Start, exportRanges[i+1].End)
 	}
 	combinedMixer = first.Mixer
 	return
