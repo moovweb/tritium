@@ -1,6 +1,6 @@
 package proto
 
-import (
+import(
 	"tritium/protoface"
 )
 
@@ -42,8 +42,4 @@ func (m *Slug) IGetSslWhitelist() []string {
 
 func (m *Slug) IGetCredentials() protoface.Credentials {
 	return m.GetCredentials()
-}
-
-func (m *Slug) IGetTls10Domains() []string {
-	return m.GetTls10Domains()
 }
