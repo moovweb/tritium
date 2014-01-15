@@ -15,7 +15,6 @@ type Slug interface {
 	IGetRrules() []RewriteRule
 	IGetSslWhitelist() []string
 	IGetCredentials() Credentials
-	IGetTls10Domains() []string
 
 	WriteFile(string) error
 	FindInstruction(string, int) int
