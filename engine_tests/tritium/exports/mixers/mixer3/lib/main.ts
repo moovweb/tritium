@@ -1,4 +1,6 @@
-// to make sure it uses the set defined in its dependecny, but later make sure it's not exported
+# This should use the older version of set defined in its dependency,
+# but that dependency should not be re-exported and erroneously shadow the
+# newer version.
 @func Text.somefunc(Text %val) {
-	set("not blah " + %val)
+	set(%val)
 }

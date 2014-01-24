@@ -1,4 +1,4 @@
-// overwrite set
+# a newer, overriden `set` function
 @func Text.set(Text %value) {
-  set("blah " + %value)
+  set("ENHANCED SET: " + %value)
 }
