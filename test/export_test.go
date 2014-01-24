@@ -68,6 +68,8 @@ func TestExports(t *testing.T) {
 	if exhaust.Output != getFileString(OUTPUT_FILE, t) {
 		t.Errorf("Got Unexpected output:\n" + exhaust.Output)
 	}
+
+	print(".")
 }
 
 func getFileString(filename string, t *testing.T) string {
