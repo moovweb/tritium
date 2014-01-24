@@ -279,7 +279,9 @@ func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName s
 			// }
 
 			pkg.Functions = append(pkg.Functions, function)
-			ranges[len(ranges) - 1].End += 1
+			if len(ranges) > 0 {
+				ranges[len(ranges) - 1].End += 1
+			}
 		}
 	}
 
