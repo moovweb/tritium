@@ -1,0 +1,70 @@
+SYNTAX
+======
+
+program			     := leading-stmt* statement*
+                 := leading-stmt* (signature | definition)*
+
+leading-stmt     := ns-directive
+
+ns-directive     := "@namespace" IDENT
+                 := "@open" IDENT
+
+statement        := import-directive
+                 := expression
+
+import_directive := "@import" PATH
+                 := "@require" PATH
+                 := "@required" PATH
+                 := "@optional" PATH
+
+expression       := term ("+" term)*
+
+term             := function_call
+                 := assignment
+                 := GVAR
+                 := LVAR
+                 := STRING
+                 := NUMBER
+                 := REGEXP
+                 := POSITION
+                 := "(" expression ")"
+
+function_call    := func_name "(" arg_list? ")" block?
+
+func_name        := IDENT
+                 := TYPE "." IDENT
+                 := ns-name "." IDENT
+                 := ns-name "." TYPE "." IDENT
+
+ns-name          := IDENT
+
+arg_list         := arg ("," arg)*
+
+arg              := ATTR-NAME ":" expression
+                 := expression
+
+block            := "{" leading-stmt* statement* "}"
+
+assignment       := (GVAR | LVAR) "=" expression
+
+signature        := "@func" (TYPE ".")? IDENT "(" param_list? ")"
+
+definition       := signature "TYPE" body
+
+body             := "{" leading-stmt* expression* "}"
+
+
+LEXEMES
+=======
+
+IDENT := [_a-zA-Z](?:\w|\$)*
+
+PATH  := STRING
+      := [-+.*?:\/\w]+
+
+STRING := "(\\.|[^"\\])*"|'(\\.|[^'\\])*'
+
+GVAR := \$\w+
+
+LVAR := %\w+
+
