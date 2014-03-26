@@ -11,6 +11,7 @@ import (
 	tp "tritium/proto"
 	. "tritium/parser/tokenizer"
 	"tritium/constants"
+	. "tritium/strings"
 	"butler/fileutil"
 )
 
@@ -256,7 +257,7 @@ func (p *Parser) statement() (node *tp.Instruction) {
 		if strings.Index(importPath, "@") != -1 {
 			if len(p.Layers) == 0 {
 				if !optional {
-					panic(fmt.Sprintf("%s:%d -- required layer not provided; please make sure you've specified all necessary layers in the start-up options", p.FileName, token.LineNumber))
+					panic(fmt.Sprintf(SQUID_PARSER_LAYER_NOT_GIVEN_ERR, p.FileName, token.LineNumber))
 				} else {
 					// make a no-op if the import is optional and no layer has been provided
 					node = tp.MakeText("", token.LineNumber)
@@ -311,7 +312,7 @@ func (p *Parser) statement() (node *tp.Instruction) {
 				node = tp.MakeText("", token.LineNumber)
 				return
 			} else if layered {
-				panic(fmt.Sprintf("%s:%d -- required layer (%s) has no corresponding Tritium file (want %s)", p.FileName, p.LineNumber, appliedLayers, scriptLocationInProject))
+				panic(fmt.Sprintf(SQUID_PARSER_LAYER_FILE_NOT_FOUND_ERR, p.FileName, p.LineNumber, appliedLayers, scriptLocationInProject))
 			} else {
 				panic(fmt.Sprintf("%s:%d -- file to import not found (%s)", p.FileName, p.LineNumber, scriptLocationInProject))
 			}
