@@ -11,7 +11,7 @@ import (
 	tp "tritium/proto"
 	. "tritium/parser/tokenizer"
 	"tritium/constants"
-	. "tritium/strings"
+	. "tritium/tritstrings"
 	"butler/fileutil"
 )
 
