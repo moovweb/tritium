@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Newer versions of git/jenkins plugin return "origin/master" instead of "master"
+# for the GIT_BRANCH variable.  Most of our infra depends on it being just "master"
+# so we have to compensate for that.
+export GIT_BRANCH=`echo $GIT_BRANCH | cut -d'/' -f 2`
+
 ##############################################################################
 # Source jenkins-env to get some common vars setup
 #
