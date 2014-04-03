@@ -27,11 +27,10 @@ const (
 
 func TestExports(t *testing.T) {
 	var ok bool
-	baseDir, ok = relativeDirectory(filepath.Join("engine_tests", "tritium", "export_test"))
+	baseDir, ok = relativeDirectory(filepath.Join("engine_tests", "tritium", "exports"))
 	if !ok {
 		t.Fatalf("Can't find the files to test.")
 	}
-
 	mixerNames, _, err := mixer.ParseMultiMixerLock(baseDir)
 	if err != nil {
 		t.Fatalf(err.Error())
