@@ -599,12 +599,6 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 	if transformerRequired {
 		httpTransformer = first.Mixer.Clone()
 		successMsg = fmt.Sprintf("Mixer %s (%s) successfully loaded.", first.GetName(), first.GetVersion())
-		numExports := int(first.Package.GetNumExports())
-		numFunctions := len(first.Package.Functions)
-		if numExports == 0 {
-			numExports = numFunctions
-		}
-		exportRanges[0] = Range{ numFunctions-numExports, numFunctions }
 	}
 	if len(rest) == 0 && first == nil && !transformerRequired {
 		first = packagersFromMixers[0]
@@ -612,6 +606,14 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 			rest = packagersFromMixers[1:]
 		}
 	}
+
+	numExports := int(first.Package.GetNumExports())
+	numFunctions := len(first.Package.Functions)
+	if numExports == 0 {
+		numExports = numFunctions
+	}
+	exportRanges[0] = Range{ numFunctions-numExports, numFunctions }
+
 	// now merge the rest of the mixers into the transformer mixer!
 	for i, pkgr := range rest {
 		first.MergeCompiled(pkgr)

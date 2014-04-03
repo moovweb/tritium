@@ -46,12 +46,12 @@ func TestExports(t *testing.T) {
 	}
 
 	// combine mixers...
-	_, mixer, _, _, err := packager.GetPkgdMixers(mixers, false)
+	_, mixer, exportRanges, _, err := packager.GetPkgdMixers(mixers, false)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
 
-	transform, err := tf.CompileString(getFileString(ENTRY_FILE, t), "", "", "", mixer.Package, make([]string, 0))
+	transform, err := tf.CompileString(getFileString(ENTRY_FILE, t), "", "", "", mixer.Package, make([]string, 0), exportRanges...)
 	if err != nil {
 		t.Fatalf("Building the transform failed.")
 	}
