@@ -424,18 +424,22 @@ func (pkgr *Packager) populateTypeList() {
 }
 
 func (pkgr *Packager) buildLib() {
+	// Push another export range onto the list of export ranges -- we need to do
+	// this to ensure that any given function can reference other functions that
+	// are defined before it in the current mixer. Also, this needs to be outside
+	// resolveFunctions because the latter is recursive, and we don't want to
+	// push more than one export range for the current mixer. Also also, we need
+	// to do this even if there are no implementation files -- that way we push
+	// an empty range that tells the downstream functions that this package
+	// should export everything.
+	pkgr.Ranges = append(pkgr.Ranges, Range{Start: len(pkgr.Package.Functions), End: len(pkgr.Package.Functions)})
+
 	// tritium libraries are optional -- compile them if they're there, otherwise do nothing
 	libPath := filepath.Join(pkgr.MixerDir, pkgr.LibDir, ENTRY_FILE)
 	there, _ := fileutil.Exists(libPath)
 	if !there {
 		return
 	}
-	// Push another export range onto the list of export ranges -- we need to do
-	// this to ensure that any given function can reference other functions that
-	// are defined before it in the current mixer. Also, this needs to be outside
-	// resolveFunctions because the latter is recursive, and we don't want to
-	// push more than one export range for the current mixer.
-	pkgr.Ranges = append(pkgr.Ranges, Range{Start: len(pkgr.Package.Functions), End: len(pkgr.Package.Functions)})
 
 	pkgr.resolveFunctions(pkgr.LibDir, ENTRY_FILE)
 }
