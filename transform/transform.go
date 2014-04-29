@@ -8,7 +8,7 @@ import (
 	. "tritium/util"
 )
 
-func CompileString(data, projectPath, scriptPath, fileName string, pkg *tp.Package, activeLayers map[string]bool, ranges ...Range) (*tp.Transform, error) {
+func CompileString(data, projectPath, scriptPath, fileName string, pkg *tp.Package, activeLayers []string, ranges ...Range) (*tp.Transform, error) {
 	return linker.RunStringWithPackage(data, projectPath, scriptPath, fileName, pkg, activeLayers, ranges...)
 }
 

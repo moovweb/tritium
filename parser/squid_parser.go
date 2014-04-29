@@ -95,7 +95,7 @@ func (p *Parser) error(msg string) {
 	panic(fullMsg)
 }
 
-func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool, compilingMixer bool, activeLayers map[string]bool) *Parser {
+func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool, compilingMixer bool, activeLayers []string) *Parser {
 	fullpath := filepath.Join(projectPath, scriptPath, fileName)
 	fullpath, _ = filepath.Abs(fullpath)
 	scriptPath = filepath.Clean(scriptPath)
@@ -113,7 +113,10 @@ func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool, 
 		Defspace:       "tritium",
 		inFunc:         false,
 		CompilingMixer: compilingMixer,
-		ActiveLayers:   activeLayers,
+		ActiveLayers:   make(map[string]bool),
+	}
+	for _, name := range activeLayers {
+		p.ActiveLayers[name] = true
 	}
 	p.Namespaces[0] = "tritium"
 	p.pop()

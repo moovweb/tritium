@@ -8,17 +8,17 @@ import (
 	. "tritium/util"
 )
 
-func RunStringWithPackage(src, projectPath, scriptPath, fileName string, pkg *tp.Package, activeLayers map[string]bool, ranges ...Range) (*tp.Transform, error) {
+func RunStringWithPackage(src, projectPath, scriptPath, fileName string, pkg *tp.Package, activeLayers []string, ranges ...Range) (*tp.Transform, error) {
 	objs := parser.Parse(src, projectPath, scriptPath, fileName, false, activeLayers)
-	return runWithObjs(objs, pkg, projectPath, scriptPath, activeLayers, ranges...)
+	return runWithObjs(objs, pkg, projectPath, scriptPath, ranges...)
 }
 
-func RunWithPackage(projectPath, scriptPath, fileName string, pkg *tp.Package, activeLayers map[string]bool) (*tp.Transform, error) {
+func RunWithPackage(projectPath, scriptPath, fileName string, pkg *tp.Package, activeLayers []string) (*tp.Transform, error) {
 	objs := parser.ParseFileSet(projectPath, scriptPath, fileName, false, activeLayers)
-	return runWithObjs(objs, pkg, projectPath, scriptPath, activeLayers)
+	return runWithObjs(objs, pkg, projectPath, scriptPath)
 }
 
-func runWithObjs(objs []*tp.ScriptObject, pkg *tp.Package, projectPath, scriptPath string, activeLayers map[string]bool, ranges ...Range) (*tp.Transform, error) {
+func runWithObjs(objs []*tp.ScriptObject, pkg *tp.Package, projectPath, scriptPath string, ranges ...Range) (*tp.Transform, error) {
 	ctx := NewObjectLinkingContext(pkg, objs, projectPath, scriptPath, ranges...)
 	ctx.Link()
 	if ctx.HasErrors() {

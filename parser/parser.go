@@ -8,25 +8,25 @@ import (
 	tp "tritium/proto"
 )
 
-func ParseFile(projectPath, scriptPath, fileName string, compilingMixer bool, activeLayers map[string]bool) *tp.ScriptObject {
+func ParseFile(projectPath, scriptPath, fileName string, compilingMixer bool, activeLayers []string) *tp.ScriptObject {
 	src, _ := readFile(projectPath, scriptPath, fileName)
 	return ParseScript(src, projectPath, scriptPath, fileName, compilingMixer, activeLayers)
 }
 
-func ParseScript(src, projectPath, scriptPath, fileName string, compilingMixer bool, activeLayers map[string]bool) *tp.ScriptObject {
+func ParseScript(src, projectPath, scriptPath, fileName string, compilingMixer bool, activeLayers []string) *tp.ScriptObject {
 	return MakeParser(src, projectPath, scriptPath, fileName, false, compilingMixer, activeLayers).Parse()
 }
 
-func ParseRootScript(src, projectPath, scriptPath, fileName string, compilingMixer bool, activeLayers map[string]bool) *tp.ScriptObject {
+func ParseRootScript(src, projectPath, scriptPath, fileName string, compilingMixer bool, activeLayers []string) *tp.ScriptObject {
 	return MakeParser(src, projectPath, scriptPath, fileName, true, compilingMixer, activeLayers).Parse()
 }
 
-func ParseFileSet(projectPath, scriptPath, fileName string, compilingMixer bool, activeLayers map[string]bool) []*tp.ScriptObject {
+func ParseFileSet(projectPath, scriptPath, fileName string, compilingMixer bool, activeLayers []string) []*tp.ScriptObject {
 	src, _ := readFile(projectPath, scriptPath, fileName)
 	return Parse(src, projectPath, scriptPath, fileName, compilingMixer, activeLayers)
 }
 
-func Parse(src, projectPath, scriptPath, fileName string, compilingMixer bool, activeLayers map[string]bool) []*tp.ScriptObject {
+func Parse(src, projectPath, scriptPath, fileName string, compilingMixer bool, activeLayers []string) []*tp.ScriptObject {
 	objs := make([]*tp.ScriptObject, 0)
 	files := make(map[string]int)
 	objs = append(objs, ParseRootScript(src, projectPath, scriptPath, fileName, compilingMixer, activeLayers))
