@@ -34,7 +34,6 @@ type EngineContext struct {
 	MatchStack               []string
 	MatchShouldContinueStack []bool
 	Yields                   []*YieldBlock
-	LayerStack               []string //TODO(layer-track): see other "layer-track" todos.
 	*Whale
 	protoface.Transform
 	Rrules []protoface.RewriteRule
@@ -219,27 +218,9 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, curFile, int(ins.IGetLineNumber()))
 		root := obj.IGetRoot()
 
-		// TODO(layer-track):  Currently we keep track of which layer we're in, but we
-		// don't expose that to the user.  If performance becomes an issue, we might
-		// want to consider removing this bit.  It would encompass removing the layer
-		// meta-data from the protobuf object as well.  The feature was introduce
-		// for the case where maybe we'd want styles/assets to be included at a per
-		// layer basis, but it was then decided that we don't want to do that anymore,
-		// so this feature is left usecase-less.
-		pushedLayer := false
-		if layer := obj.IGetLayer(); layer != "" && layer != ctx.CurrentLayer() {
-			ctx.PushLayer(layer)
-			pushedLayer = true
-		}
-
 		for i := 0; i < root.INumChildren(); i++ {
 			child := root.IGetNthChild(i)
 			ctx.RunInstruction(scope, child)
-		}
-
-		//TODO(layer-track) -- see above
-		if pushedLayer {
-			ctx.PopLayer()
 		}
 
 		ctx.Whale.Debugger.LogImportDone(ctx.MessagePath, ctx.Filename, curFile, int(ins.IGetLineNumber()))
@@ -512,24 +493,4 @@ func (ctx *EngineContext) SetShouldContinue(cont bool) {
 
 func (ctx *EngineContext) AddMemoryObject(o MemoryObject) {
 	ctx.Mobjects = append(ctx.Mobjects, o)
-}
-
-//TODO(layer-track) -- see other "layer-track" todos.
-func (ctx *EngineContext) PushLayer(layer string) {
-	ctx.LayerStack = append(ctx.LayerStack, layer)
-}
-
-//TODO(layer-track) -- see other "layer-track" todos.
-func (ctx *EngineContext) PopLayer() {
-	if l := len(ctx.LayerStack); l > 0 {
-		ctx.LayerStack = ctx.LayerStack[:l-1]
-	}
-}
-
-//TODO(layer-track) -- see other "layer-track" todos.
-func (ctx *EngineContext) CurrentLayer() string {
-	if l := len(ctx.LayerStack); l > 0 {
-		return ctx.LayerStack[l-1]
-	}
-	return ""
 }
