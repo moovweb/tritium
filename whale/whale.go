@@ -56,7 +56,8 @@ type EngineContext struct {
 	Prod        bool
 	HtmlParsed  bool
 
-	Layers string // all layers the project is running with
+	ActiveLayers map[string]bool
+	ActiveLayersString string
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -76,7 +77,7 @@ func NewEngine(debugger steno.Debugger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath, customer, project string, inDebug bool, layers string) (ctx *EngineContext) {
+func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath, customer, project string, activeLayers []string, inDebug bool) (ctx *EngineContext) {
 	ctx = &EngineContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
@@ -87,7 +88,6 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		MatchStack:               make([]string, 0),
 		MatchShouldContinueStack: make([]bool, 0),
 		Yields:     make([]*YieldBlock, 0),
-		LayerStack: make([]string, 0), //TODO(layer-track) see other layer-track todos
 		HadError:   false,
 
 		Deadline:    deadline,
@@ -96,9 +96,12 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		Customer:    customer,
 		Project:     project,
 		InDebug:     inDebug,
-
-		Layers: layers,
 	}
+	ctx.ActiveLayers = make(map[string]bool)
+	for _, name := range activeLayers {
+		ctx.ActiveLayers[name] = true
+	}
+	ctx.ActiveLayersString = strings.Join(activeLayers, ",")
 	return
 }
 
@@ -107,8 +110,8 @@ func (eng *Whale) Free() {
 	eng.XPathCache.Reset()
 }
 
-func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (exhaust *tritium.Exhaust) {
-	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, inDebug, transform.IGetLayers())
+func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, activeLayers []string, inDebug bool) (exhaust *tritium.Exhaust) {
+	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, activeLayers, inDebug)
 	exhaust = &tritium.Exhaust{}
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})

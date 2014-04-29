@@ -20,6 +20,7 @@ type Slug struct {
 	Rrules           []*RewriteRule `protobuf:"bytes,4,rep,name=rrules" json:"rrules,omitempty"`
 	SslWhitelist     []string       `protobuf:"bytes,5,rep,name=ssl_whitelist" json:"ssl_whitelist,omitempty"`
 	Credentials      *Credentials   `protobuf:"bytes,6,opt,name=credentials" json:"credentials,omitempty"`
+	ActiveLayers     []string       `protobuf:"bytes,7,rep,name=active_layers" json:"active_layers,omitempty"`
 	XXX_unrecognized []byte         `json:"-"`
 }
 
@@ -65,6 +66,13 @@ func (m *Slug) GetSslWhitelist() []string {
 func (m *Slug) GetCredentials() *Credentials {
 	if m != nil {
 		return m.Credentials
+	}
+	return nil
+}
+
+func (m *Slug) GetActiveLayers() []string {
+	if m != nil {
+		return m.ActiveLayers
 	}
 	return nil
 }

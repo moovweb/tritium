@@ -50,6 +50,10 @@ func (slug *Slug) FindInstruction(fileName string, lineNumber int) int {
 	return 0
 }
 
+func (slug *Slug) IGetActiveLayers() []string {
+	return slug.ActiveLayers
+}
+
 func findNearestInstruction(ins *Instruction, target int) int {
 	current := int32(ins.GetLineNumber())
 

@@ -2,6 +2,25 @@
 // source: credentials.proto
 // DO NOT EDIT!
 
+/*
+Package proto is a generated protocol buffer package.
+
+It is generated from these files:
+	credentials.proto
+	file.proto
+	function.proto
+	instruction.proto
+	mixer.proto
+	object.proto
+	package.proto
+	rewriter.proto
+	rewrite_rule.proto
+	slug.proto
+	tritium.proto
+
+It has these top-level messages:
+	Credentials
+*/
 package proto
 
 import proto1 "code.google.com/p/goprotobuf/proto"

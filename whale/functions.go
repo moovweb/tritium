@@ -747,8 +747,8 @@ func env_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args 
 	//case "layer":
 	//	returnValue = ctx.CurrentLayer()
 
-	case "layers":
-		returnValue = ctx.Layers
+	case "layers": // TODO: DEPRECATE
+		returnValue = ctx.ActiveLayersString
 	case "project":
 		returnValue = ctx.Project
 	default:
