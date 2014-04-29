@@ -737,22 +737,25 @@ func env_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args 
 	switch key {
 	case "dev":
 		returnValue = fmt.Sprintf("%v", !ctx.Debugger.IsProd())
-
-	//TODO(layer-track): This bit is commented out because we're not sure if we
-	//want to expose the functionality to allow people to see which layer they're
-	//in.  It's something we're considering removing, but rather than get rid of
-	//all the code for it, we're just not giving the user a way to access it by
-	//commenting this case in the env.  See other 'layer-track' todos in whale.go.
-	//
-	//case "layer":
-	//	returnValue = ctx.CurrentLayer()
-
-	case "layers":
-		returnValue = ctx.Layers
 	case "project":
 		returnValue = ctx.Project
 	default:
 		returnValue = ""
+	}
+	return
+}
+
+func active_layers_(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	returnValue = ctx.ActiveLayersString
+	return
+}
+
+func query_layer_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	name := args[0].(string)
+	if ctx.ActiveLayers[name] {
+		returnValue = "1"
+	} else {
+		returnValue = "0"
 	}
 	return
 }

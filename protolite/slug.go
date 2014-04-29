@@ -34,6 +34,10 @@ func (slug *Slug) WriteFile(filename string) (err error) {
 	return
 }
 
+func (slug *Slug) IGetActiveLayers() []string {
+	return slug.ActiveLayers
+}
+
 func (slug *Slug) FindInstruction(fileName string, lineNumber int) int {
 	for _, tf := range slug.Transformers {
 		for _, obj := range tf.Objects {

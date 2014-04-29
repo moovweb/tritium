@@ -5,8 +5,8 @@ import (
 	tp "tritium/proto"
 )
 
-func CheckFile(projectPath, scriptPath, fileName string, layers []string) *CheckResult {
-	objs := parser.ParseFileSet(projectPath, scriptPath, fileName, false, layers)
+func CheckFile(projectPath, scriptPath, fileName string, activeLayers []string) *CheckResult {
+	objs := parser.ParseFileSet(projectPath, scriptPath, fileName, false, activeLayers)
 	return CheckBeforeLinking(objs)
 }
 

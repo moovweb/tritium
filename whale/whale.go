@@ -34,7 +34,6 @@ type EngineContext struct {
 	MatchStack               []string
 	MatchShouldContinueStack []bool
 	Yields                   []*YieldBlock
-	LayerStack               []string //TODO(layer-track): see other "layer-track" todos.
 	*Whale
 	protoface.Transform
 	Rrules []protoface.RewriteRule
@@ -56,7 +55,8 @@ type EngineContext struct {
 	Prod        bool
 	HtmlParsed  bool
 
-	Layers string // all layers the project is running with
+	ActiveLayers map[string]bool
+	ActiveLayersString string
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -76,7 +76,7 @@ func NewEngine(debugger steno.Debugger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath, customer, project string, inDebug bool, layers string) (ctx *EngineContext) {
+func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath, customer, project string, activeLayers []string, inDebug bool) (ctx *EngineContext) {
 	ctx = &EngineContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
@@ -87,7 +87,6 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		MatchStack:               make([]string, 0),
 		MatchShouldContinueStack: make([]bool, 0),
 		Yields:     make([]*YieldBlock, 0),
-		LayerStack: make([]string, 0), //TODO(layer-track) see other layer-track todos
 		HadError:   false,
 
 		Deadline:    deadline,
@@ -96,9 +95,12 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		Customer:    customer,
 		Project:     project,
 		InDebug:     inDebug,
-
-		Layers: layers,
 	}
+	ctx.ActiveLayers = make(map[string]bool)
+	for _, name := range activeLayers {
+		ctx.ActiveLayers[name] = true
+	}
+	ctx.ActiveLayersString = strings.Join(activeLayers, ",")
 	return
 }
 
@@ -107,8 +109,8 @@ func (eng *Whale) Free() {
 	eng.XPathCache.Reset()
 }
 
-func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, inDebug bool) (exhaust *tritium.Exhaust) {
-	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, inDebug, transform.IGetLayers())
+func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, activeLayers []string, inDebug bool) (exhaust *tritium.Exhaust) {
+	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, activeLayers, inDebug)
 	exhaust = &tritium.Exhaust{}
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
@@ -216,27 +218,9 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 		ctx.Whale.Debugger.LogImport(ctx.MessagePath, ctx.Filename, curFile, int(ins.IGetLineNumber()))
 		root := obj.IGetRoot()
 
-		// TODO(layer-track):  Currently we keep track of which layer we're in, but we
-		// don't expose that to the user.  If performance becomes an issue, we might
-		// want to consider removing this bit.  It would encompass removing the layer
-		// meta-data from the protobuf object as well.  The feature was introduce
-		// for the case where maybe we'd want styles/assets to be included at a per
-		// layer basis, but it was then decided that we don't want to do that anymore,
-		// so this feature is left usecase-less.
-		pushedLayer := false
-		if layer := obj.IGetLayer(); layer != "" && layer != ctx.CurrentLayer() {
-			ctx.PushLayer(layer)
-			pushedLayer = true
-		}
-
 		for i := 0; i < root.INumChildren(); i++ {
 			child := root.IGetNthChild(i)
 			ctx.RunInstruction(scope, child)
-		}
-
-		//TODO(layer-track) -- see above
-		if pushedLayer {
-			ctx.PopLayer()
 		}
 
 		ctx.Whale.Debugger.LogImportDone(ctx.MessagePath, ctx.Filename, curFile, int(ins.IGetLineNumber()))
@@ -509,24 +493,4 @@ func (ctx *EngineContext) SetShouldContinue(cont bool) {
 
 func (ctx *EngineContext) AddMemoryObject(o MemoryObject) {
 	ctx.Mobjects = append(ctx.Mobjects, o)
-}
-
-//TODO(layer-track) -- see other "layer-track" todos.
-func (ctx *EngineContext) PushLayer(layer string) {
-	ctx.LayerStack = append(ctx.LayerStack, layer)
-}
-
-//TODO(layer-track) -- see other "layer-track" todos.
-func (ctx *EngineContext) PopLayer() {
-	if l := len(ctx.LayerStack); l > 0 {
-		ctx.LayerStack = ctx.LayerStack[:l-1]
-	}
-}
-
-//TODO(layer-track) -- see other "layer-track" todos.
-func (ctx *EngineContext) CurrentLayer() string {
-	if l := len(ctx.LayerStack); l > 0 {
-		return ctx.LayerStack[l-1]
-	}
-	return ""
 }

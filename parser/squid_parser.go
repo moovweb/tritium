@@ -28,9 +28,8 @@ type Parser struct {
 	Namespaces  []string
 	Defspace    string
 	inFunc      bool
-	CompilingMixer bool
-	Layers      []string
-	AppliedLayers string
+	CompilingMixer bool // Am I compiling a mixer?
+	ActiveLayers map[string]bool
 }
 
 var TritiumParserShowRewriterFileName = false
@@ -96,7 +95,7 @@ func (p *Parser) error(msg string) {
 	panic(fullMsg)
 }
 
-func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool, compilingMixer bool, layers []string, appliedLayers string) *Parser {
+func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool, compilingMixer bool, activeLayers []string) *Parser {
 	fullpath := filepath.Join(projectPath, scriptPath, fileName)
 	fullpath, _ = filepath.Abs(fullpath)
 	scriptPath = filepath.Clean(scriptPath)
@@ -114,8 +113,10 @@ func MakeParser(src, projectPath, scriptPath, fileName string, isRootFile bool, 
 		Defspace:       "tritium",
 		inFunc:         false,
 		CompilingMixer: compilingMixer,
-		Layers:         layers,
-		AppliedLayers:  appliedLayers,
+		ActiveLayers:   make(map[string]bool),
+	}
+	for _, name := range activeLayers {
+		p.ActiveLayers[name] = true
 	}
 	p.Namespaces[0] = "tritium"
 	p.pop()
@@ -253,9 +254,10 @@ func (p *Parser) statement() (node *tp.Instruction) {
 		importPath := token.Value
 
 		layered := false
-		appliedLayers := p.AppliedLayers
+		theOnlyLayer := ""
 		if strings.Index(importPath, "@") != -1 {
-			if len(p.Layers) == 0 {
+
+			if len(p.ActiveLayers) == 0 {
 				if !optional {
 					panic(fmt.Sprintf(SQUID_PARSER_LAYER_NOT_GIVEN_ERR, p.FileName, token.LineNumber))
 				} else {
@@ -264,15 +266,16 @@ func (p *Parser) statement() (node *tp.Instruction) {
 					return
 				}
 			}
-			if len(appliedLayers) > 0 {
-				tmpSlice := make([]string, 2)
-				tmpSlice[0] = appliedLayers
-				tmpSlice[1] = p.Layers[0]
-				appliedLayers = strings.Join(tmpSlice, "/")
-			} else {
-				appliedLayers = p.Layers[0]
+
+			if len(p.ActiveLayers) > 1 {
+				panic(fmt.Sprintf(SQUID_PARSER_AMBIGUOUS_LAYER_IMPORT_ERR, p.FileName, token.LineNumber))
 			}
-			importPath = strings.Replace(importPath, "@", p.Layers[0], -1)
+
+			for only, _ := range p.ActiveLayers {
+				theOnlyLayer = only
+				break
+			}
+			importPath = strings.Replace(importPath, "@", theOnlyLayer, -1)
 			layered = true
 		}
 
@@ -312,16 +315,16 @@ func (p *Parser) statement() (node *tp.Instruction) {
 				node = tp.MakeText("", token.LineNumber)
 				return
 			} else if layered {
-				panic(fmt.Sprintf(SQUID_PARSER_LAYER_FILE_NOT_FOUND_ERR, p.FileName, p.LineNumber, appliedLayers, scriptLocationInProject))
+				panic(fmt.Sprintf(SQUID_PARSER_LAYER_FILE_NOT_FOUND_ERR, p.FileName, p.LineNumber, theOnlyLayer, scriptLocationInProject))
 			} else {
 				panic(fmt.Sprintf("%s:%d -- file to import not found (%s)", p.FileName, p.LineNumber, scriptLocationInProject))
 			}
 		}
 
 		node = tp.MakeImport(scriptLocationInProject, token.LineNumber)
-		if layered {
-			node.Namespace = proto.String(appliedLayers) // re-use this slot to specify which layer the import is targeting
-		}
+		// if layered {
+		// 	node.Namespace = proto.String(p.ActiveLayers[0]) // re-use this slot to specify which layer the import is targeting
+		// }
 
 	case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 		node = p.expression()

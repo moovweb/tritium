@@ -8,8 +8,8 @@ import (
 	. "tritium/util"
 )
 
-func CompileString(data, projectPath, scriptPath, fileName string, pkg *tp.Package, layers []string, ranges ...Range) (*tp.Transform, error) {
-	return linker.RunStringWithPackage(data, projectPath, scriptPath, fileName, pkg, layers, ranges...)
+func CompileString(data, projectPath, scriptPath, fileName string, pkg *tp.Package, activeLayers []string, ranges ...Range) (*tp.Transform, error) {
+	return linker.RunStringWithPackage(data, projectPath, scriptPath, fileName, pkg, activeLayers, ranges...)
 }
 
 func LoadFunctions(projectPath, functionsPath, functionsFile string, pack *tp.Package, ranges ...Range) {
