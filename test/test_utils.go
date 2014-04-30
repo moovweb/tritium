@@ -47,7 +47,7 @@ func RunTest(path string) (result *spec.Result) {
 	debugger := &dummy.DummyDebugger{}
 	eng := whale.NewEngine(debugger)
 	d, _ := time.ParseDuration("1m")
-	result.Merge(spec.Compare(eng.Run(spec.Script, nil, spec.Input, spec.Vars, time.Now().Add(d), "test", "test", "test", false)))
+	result.Merge(spec.Compare(eng.Run(spec.Script, nil, spec.Input, spec.Vars, time.Now().Add(d), "test", "test", "test", make([]string, 0), false)))
 
 	return
 }

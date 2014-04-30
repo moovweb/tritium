@@ -62,7 +62,7 @@ func TestExports(t *testing.T) {
 	eng := whale.NewEngine(debugger)
 	d, _ := time.ParseDuration("1m")
 
-	exhaust := eng.Run(transform, nil, getFileString(INPUT_FILE, t), env, time.Now().Add(d), "", "", "", false)
+	exhaust := eng.Run(transform, nil, getFileString(INPUT_FILE, t), env, time.Now().Add(d), "", "", "", make([]string, 0), false)
 
 	if exhaust.Output != getFileString(OUTPUT_FILE, t) {
 		t.Errorf("Got Unexpected output:\n" + exhaust.Output)

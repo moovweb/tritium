@@ -124,7 +124,7 @@ func RunSpec(dir string, pkg *tp.Package, eng tritium.Engine, logger *golog.Logg
 		result.Error(dir, err.Error())
 	} else {
 		d, _ := time.ParseDuration("1m")
-		result.Merge(spec.Compare(eng.Run(spec.Script, nil, spec.Input, spec.Vars, time.Now().Add(d), "test", "test", "test", false)))
+		result.Merge(spec.Compare(eng.Run(spec.Script, nil, spec.Input, spec.Vars, time.Now().Add(d), "test", "test", "test", make([]string, 0), false)))
 	}
 	return
 }
