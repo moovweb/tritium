@@ -15,8 +15,8 @@ func TestBlah(t *testing.T) {
 	a, _ := ioutil.ReadFile("instructions.ts")
 	b, _ := ioutil.ReadFile("functions.ts")
 
-	p := MakeParser(string(a), wd, "scripts", "instructions.ts", false, false, make(map[string]bool), "")
-	q := MakeParser(string(b), wd, "scripts", "instructions.ts", false, false, make(map[string]bool), "")
+	p := MakeParser(string(a), wd, "scripts", "instructions.ts", false, false, make([]string, 0))
+	q := MakeParser(string(b), wd, "scripts", "instructions.ts", false, false, make([]string, 0))
 
 	script1 := p.Parse()
 	//fmt.Println("OUTPUT FOR INSTRUCTIONS:")
