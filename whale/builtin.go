@@ -98,6 +98,10 @@ func init() {
 	// core-rewriter/header_primitives
 	builtInFunctions["tritium.parse_headers_v1"] = parse_headers_v1
 	builtInFunctions["tritium.header_comp_v1.Text"] = header_comp_v1_Text
+
+	// layers/layer_primitives
+	builtInFunctions["tritium.active_layers"] = active_layers_
+	builtInFunctions["tritium.query_layer.Text"] = query_layer_Text
 }
 
 func LookupBuiltIn(name string) builtInFunc {
