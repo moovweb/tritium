@@ -126,7 +126,12 @@ func with_Regexp(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 	returnValue = "false"
 	if ctx.ShouldContinue() {
 		//println(matcher.MatchAgainst, matchWith)
-		if (args[0].(*rubex.Regexp)).Match([]uint8(ctx.MatchTarget())) {
+		before := time.Now()
+		x := (args[0].(*rubex.Regexp)).Match([]uint8(ctx.MatchTarget()))
+		after := time.Now()
+		diff := after.Sub(before)
+		ctx.TimeInRegex += diff.Nanoseconds()
+		if x {
 			for i := 0; i < ins.INumChildren(); i++ {
 				child := ins.IGetNthChild(i)
 				ctx.RunInstruction(scope, child)
@@ -157,7 +162,12 @@ func not_Regexp(ctx *EngineContext, scope *Scope, ins protoface.Instruction, arg
 	returnValue = "false"
 	if ctx.ShouldContinue() {
 		//println(matcher.MatchAgainst, matchWith)
-		if !(args[0].(*rubex.Regexp)).Match([]uint8(ctx.MatchTarget())) {
+		before := time.Now()
+		x := (args[0].(*rubex.Regexp)).Match([]uint8(ctx.MatchTarget()))
+		after := time.Now()
+		diff := after.Sub(before)
+		ctx.TimeInRegex += diff.Nanoseconds()
+		if !x {
 			ctx.SetShouldContinue(false)
 			for i := 0; i < ins.INumChildren(); i++ {
 				child := ins.IGetNthChild(i)
@@ -185,7 +195,11 @@ func else_(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []i
 func regexp_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	pattern := args[0].(string)
 	options := args[1].(string)
+	before := time.Now()
 	returnValue = ctx.GetRegexp(pattern, options)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInRegex += diff.Nanoseconds()
 	return
 }
 
@@ -264,7 +278,12 @@ func replace_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, a
 }
 
 func replace_Regexp(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	before := time.Now()
 	regexp := args[0].(*rubex.Regexp)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInRegex += diff.Nanoseconds()
+	before = time.Now()
 	scope.Value = regexp.GsubFunc(scope.Value.(string), func(match string, captures map[string]string) string {
 		usesGlobal := (ctx.GetEnv("use_global_replace_vars") == "true")
 
@@ -295,12 +314,20 @@ func replace_Regexp(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 			return val
 		})
 	})
+	after = time.Now()
+	diff = after.Sub(before)
+	ctx.TimeInRegex += diff.Nanoseconds()
 	returnValue = scope.Value
 	return
 }
 
 func capture_Regexp(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	before := time.Now()
 	regexp := args[0].(*rubex.Regexp)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInRegex += diff.Nanoseconds()
+	before = time.Now()
 	scope.Value = regexp.GsubFunc(scope.Value.(string), func(match string, captures map[string]string) string {
 		usesGlobal := (ctx.GetEnv("use_global_replace_vars") == "true")
 
@@ -319,6 +346,9 @@ func capture_Regexp(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 
 		return replacementScope.Value.(string)
 	})
+	after = time.Now()
+	diff = after.Sub(before)
+	ctx.TimeInRegex += diff.Nanoseconds()
 	returnValue = scope.Value
 	return
 }
@@ -341,7 +371,12 @@ func convert_encoding_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.
 
 func xml_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	input := scope.Value.(string)
+	before := time.Now()
 	doc, err := xml.Parse([]byte(input), nil, nil, xml.DefaultParseOption, nil)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+
 	if err != nil {
 		LogEngineError(ctx, "xml err: "+err.Error())
 		returnValue = "false"
@@ -376,7 +411,14 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruct
 	outputEncoding := args[1].(string)
 	outputEncodingBytes := []byte(outputEncoding)
 	input := scope.Value.(string)
+	before := time.Now()
 	doc, err := html.Parse([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	if err != nil {
 		LogEngineError(ctx, "html_doc err: "+err.Error())
 		returnValue = "false"
@@ -418,7 +460,15 @@ func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 	}
 
 	// convert to an xml doc and run the supplied block on it
+	before := time.Now()
 	newDoc := xml.CreateEmptyDocument(nil, nil)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
+
 	ctx.AddMemoryObject(newDoc)
 	jsonNodes := json_to_node(jsonVal, newDoc)
 	// put the jsonNodes under a new root node to get the xpath searches to be correctly scoped
@@ -453,7 +503,14 @@ func to_json_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction
 		return "{}"
 	}
 
+	before := time.Now()
 	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	if err != nil {
 		LogEngineError(ctx, "to_json err: "+err.Error())
 		return "{}"
@@ -600,7 +657,14 @@ func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 	outputEncoding := args[1].(string)
 	outputEncodingBytes := []byte(outputEncoding)
 	input := scope.Value.(string)
+	before := time.Now()
 	fragment, err := html.ParseFragment([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	if err != nil {
 		LogEngineError(ctx, "html_fragment err: "+err.Error())
 		returnValue = "false"
@@ -619,7 +683,14 @@ func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 		ctx.RunInstruction(ns, child)
 	}
 	//output is always utf-8 because the content is internal to Doc.
+	before = time.Now()
 	scope.Value = ns.Value.(*xml.DocumentFragment).String()
+	after = time.Now()
+	diff = after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	//TODO(NOJ): Why are we setting currentdoc to nil instead of what it used to be?
 	ctx.CurrentDoc = nil
 	returnValue = scope.Value
@@ -635,7 +706,14 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 		returnValue = "false"
 		return
 	}
+	before := time.Now()
 	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	if err != nil {
 		LogEngineError(ctx, "select err: "+err.Error())
 		returnValue = "false"
@@ -647,19 +725,49 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 		// add mtk attribute to zero-match node
 		if parser.IncludeSelectorInfo && ctx.Env[isUserCalledEnvKey] != "" {
 			attrValue := ctx.Env[isUserCalledEnvKey]
+			before = time.Now()
 			attr := node.Attribute(moovhelper.MtkZeroMatchAttr)
+			after = time.Now()
+			diff = after.Sub(before)
+			ctx.TimeInXML += diff.Nanoseconds()
+			
+			
+			
 			if attr != nil {
 				attrValue = attr.Value() + " " + attrValue
 			}
+			before = time.Now()
 			node.SetAttr(moovhelper.MtkZeroMatchAttr, attrValue)
+			after = time.Now()
+			diff = after.Sub(before)
+			ctx.TimeInXML += diff.Nanoseconds()
+			
+			
+			
 		}
 	} else {
 		returnValue = fmt.Sprintf("%d", len(nodes))
 	}
 
 	for index, node := range nodes {
-		if node != nil && node.IsValid() {
+		before = time.Now()
+		x := node.IsValid()
+		after = time.Now()
+		diff = after.Sub(before)
+		ctx.TimeInXML += diff.Nanoseconds()
+		
+		
+		
+
+		if node != nil && x {
+			before = time.Now()
 			t := node.NodeType()
+			after = time.Now()
+			diff = after.Sub(before)
+			ctx.TimeInXML += diff.Nanoseconds()
+			
+			
+			
 			if t == xml.XML_DOCUMENT_NODE || t == xml.XML_HTML_DOCUMENT_NODE {
 				// We need to create a new temp variable to assign the Root() to because
 				// if we assign it directly to the node interface, we can't know whether
@@ -667,20 +775,48 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 				// regardless of whether the actual value is nil or not.
 				// More info:
 				// http://stackoverflow.com/questions/11023593/inconsistent-nil-for-pointer-receiver-go-bug
+				before = time.Now()
 				enode := node.MyDocument().Root()
+				after = time.Now()
+				diff = after.Sub(before)
+				ctx.TimeInXML += diff.Nanoseconds()
+				
+				
+				
 				if enode != nil {
 					node = enode
+					before = time.Now()
 					t = node.NodeType()
+					after = time.Now()
+					diff = after.Sub(before)
+					ctx.TimeInXML += diff.Nanoseconds()
+					
+					
+					
 				}
 			}
 			// add mtk attribute to matched nodes
 			if parser.IncludeSelectorInfo && ctx.Env[isUserCalledEnvKey] != "" {
 				attrValue := ctx.Env[isUserCalledEnvKey]
+				before = time.Now()
 				attr := node.Attribute(moovhelper.MtkSourceAttr)
+				after = time.Now()
+				diff = after.Sub(before)
+				ctx.TimeInXML += diff.Nanoseconds()
+				
+				
+				
 				if attr != nil {
 					attrValue = attr.Value() + " " + attrValue
 				}
+				before = time.Now()
 				node.SetAttr(moovhelper.MtkSourceAttr, attrValue)
+				after = time.Now()
+				diff = after.Sub(before)
+				ctx.TimeInXML += diff.Nanoseconds()
+				
+				
+				
 			}
 			if t == xml.XML_ELEMENT_NODE {
 				ns := &Scope{Value: node, Index: index}
@@ -762,7 +898,14 @@ func query_layer_Text(ctx *EngineContext, scope *Scope, ins protoface.Instructio
 
 func remove_(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
+	before := time.Now()
 	node.Remove()
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	return
 }
 
@@ -775,7 +918,14 @@ func remove_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 		returnValue = "0"
 		return
 	}
+	before := time.Now()
 	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	if err != nil {
 		LogEngineError(ctx, "select err: "+err.Error())
 		returnValue = "false"
@@ -790,7 +940,14 @@ func remove_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 
 	for _, node := range nodes {
 		if node != nil {
+			before = time.Now()
 			node.Remove()
+			after = time.Now()
+			diff = after.Sub(before)
+			ctx.TimeInXML += diff.Nanoseconds()
+			
+			
+			
 		}
 	}
 
@@ -806,7 +963,14 @@ func insert_at_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.Ins
 	node := scope.Value.(xml.Node)
 	position := args[0].(Position)
 	tagName := args[1].(string)
+	before := time.Now()
 	element := node.MyDocument().CreateElementNode(tagName)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	MoveFunc(element, node, position)
 	ns := &Scope{Value: element}
 	for i := 0; i < ins.INumChildren(); i++ {
@@ -822,8 +986,23 @@ func attribute_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 	name := args[0].(string)
 	attr := node.Attribute(name)
 	if attr == nil {
+		before := time.Now()
 		node.SetAttr(name, "")
+		after := time.Now()
+		diff := after.Sub(before)
+		ctx.TimeInXML += diff.Nanoseconds()
+		
+		
+		
+
+		before = time.Now()
 		attr = node.Attribute(name)
+		after = time.Now()
+		diff = after.Sub(before)
+		ctx.TimeInXML += diff.Nanoseconds()
+		
+		
+		
 	}
 	if attr != nil {
 		as := &Scope{Value: attr}
@@ -841,7 +1020,14 @@ func attribute_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 
 func value(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
+	before := time.Now()
 	ts := &Scope{Value: node.Content()}
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ts, child)
@@ -862,13 +1048,27 @@ func move_XMLNode_XMLNode_Position(ctx *EngineContext, scope *Scope, ins protofa
 
 func inner(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
+	before := time.Now()
 	ts := &Scope{Value: node.InnerHtml()}
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ts, child)
 	}
 	val := ts.Value.(string)
+	before = time.Now()
 	node.SetInnerHtml(val)
+	after = time.Now()
+	diff = after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	returnValue = val
 	return
 }
@@ -877,7 +1077,26 @@ func equal_XMLNode_XMLNode(ctx *EngineContext, scope *Scope, ins protoface.Instr
 	returnValue = "false"
 	node1 := args[0].(xml.Node)
 	node2 := args[1].(xml.Node)
-	if node1.NodePtr() == node2.NodePtr() {
+
+	before := time.Now()
+	node1ptr := node1.NodePtr()
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
+
+	before = time.Now()
+	node2ptr := node2.NodePtr()
+	after = time.Now()
+	diff = after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
+
+	if node1ptr == node2ptr {
 		returnValue = "true"
 	}
 	return
@@ -886,11 +1105,54 @@ func equal_XMLNode_XMLNode(ctx *EngineContext, scope *Scope, ins protoface.Instr
 func move_children_to_XMLNode_Position(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
 	destNode := args[0].(xml.Node)
-	if destNode.NodeType() == xml.XML_ELEMENT_NODE {
+
+	before := time.Now()
+	destNodeType := destNode.NodeType()
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
+
+	if destNodeType == xml.XML_ELEMENT_NODE {
+		before = time.Now()
 		child := node.FirstChild()
+		after = time.Now()
+		diff = after.Sub(before)
+		ctx.TimeInXML += diff.Nanoseconds()
+		
+		
+		
 		for child != nil {
+			before = time.Now()
 			nextChild := child.NextSibling()
-			if child.NodePtr() != destNode.NodePtr() {
+			after = time.Now()
+			diff = after.Sub(before)
+			ctx.TimeInXML += diff.Nanoseconds()
+			
+			
+			
+
+			before = time.Now()
+			childptr := child.NodePtr()
+			after = time.Now()
+			diff = after.Sub(before)
+			ctx.TimeInXML += diff.Nanoseconds()
+			
+			
+			
+
+			before = time.Now()
+			destNodePtr := destNode.NodePtr()
+			after = time.Now()
+			diff = after.Sub(before)
+			ctx.TimeInXML += diff.Nanoseconds()
+			
+			
+			
+
+			if childptr != destNodePtr {
 				returnValue = "true"
 				MoveFunc(child, destNode, args[1].(Position))
 			}
@@ -902,45 +1164,94 @@ func move_children_to_XMLNode_Position(ctx *EngineContext, scope *Scope, ins pro
 
 func name(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
+	before := time.Now()
 	ts := &Scope{Value: node.Name()}
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ts, child)
 	}
+	before = time.Now()
 	node.SetName(ts.Value.(string))
+	after = time.Now()
+	diff = after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	returnValue = ts.Value.(string)
 	return
 }
 
 func text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
+	before := time.Now()
 	ts := &Scope{Value: node.Content()}
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ts, child)
 	}
 	val := ts.Value.(string)
+	before = time.Now()
 	node.SetContent(val)
+	after = time.Now()
+	diff = after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	returnValue = val
 	return
 }
 
 func inner_text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
+	before := time.Now()
 	ts := &Scope{Value: node.Content()}
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ts, child)
 	}
 	val := ts.Value.(string)
+	before = time.Now()
 	node.SetInnerHtml(val)
+	after = time.Now()
+	diff = after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	returnValue = val
 	return
 }
 
 func dup(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
+	before := time.Now()
 	newNode := node.Duplicate(1)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	if newNode.NodeType() == xml.XML_ELEMENT_NODE {
 		MoveFunc(newNode, node, AFTER)
 	}
@@ -961,10 +1272,24 @@ func fetch_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, arg
 		return
 	}
 
+	before := time.Now()
 	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	if err == nil && len(nodes) > 0 {
 		node := nodes[0]
+		before = time.Now()
 		returnValue = node.String()
+		after = time.Now()
+		diff = after.Sub(before)
+		ctx.TimeInXML += diff.Nanoseconds()
+		
+		
+		
 	}
 	if returnValue == nil {
 		returnValue = ""
@@ -987,14 +1312,52 @@ func deprecated_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction
 
 func cdata_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(xml.Node)
-	if node.NodeType() == xml.XML_ELEMENT_NODE {
+
+	before := time.Now()
+	nodeType := node.NodeType()
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
+
+	if nodeType == xml.XML_ELEMENT_NODE {
 		content := args[0].(string)
+		before = time.Now()
 		cdata := node.MyDocument().CreateCDataNode(content)
+		after = time.Now()
+		diff = after.Sub(before)
+		ctx.TimeInXML += diff.Nanoseconds()
+		
+		
+		
+		before = time.Now()
 		first := node.FirstChild()
+		after = time.Now()
+		diff = after.Sub(before)
+		ctx.TimeInXML += diff.Nanoseconds()
+		
+		
+		
 		if first != nil {
+			before = time.Now()
 			node.ResetChildren()
+			after = time.Now()
+			diff = after.Sub(before)
+			ctx.TimeInXML += diff.Nanoseconds()
+			
+			
+			
 		}
+		before = time.Now()
 		node.AddChild(cdata)
+		after = time.Now()
+		diff = after.Sub(before)
+		ctx.TimeInXML += diff.Nanoseconds()
+		
+		
+		
 	}
 	return
 }
@@ -1007,7 +1370,14 @@ func inject_at_v1_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.
 	position := args[0].(Position)
 	input := args[1].(string)
 
+	before := time.Now()
 	nodes, err := node.Coerce(input)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	if err == nil {
 		if position == BOTTOM || position == BEFORE {
 			for _, n := range nodes {
@@ -1021,7 +1391,15 @@ func inject_at_v1_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.
 	}
 	if len(nodes) > 0 {
 		first := nodes[0]
-		if first.NodeType() == xml.XML_ELEMENT_NODE {
+		before = time.Now()
+		firstnodetype := first.NodeType()
+		after = time.Now()
+		diff = after.Sub(before)
+		ctx.TimeInXML += diff.Nanoseconds()
+		
+		
+		
+		if firstnodetype == xml.XML_ELEMENT_NODE {
 			// successfully ran scope
 			returnValue = "true"
 			ns := &Scope{Value: first}
@@ -1043,7 +1421,14 @@ func inject_at_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.Ins
 	position := args[0].(Position)
 	input := args[1].(string)
 
+	before := time.Now()
 	nodes, err := node.Coerce(input)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	if err == nil {
 		for _, n := range nodes {
 			MoveFunc(n, node, position)
@@ -1051,7 +1436,15 @@ func inject_at_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.Ins
 	}
 	if len(nodes) > 0 {
 		first := nodes[0]
-		if first.NodeType() == xml.XML_ELEMENT_NODE {
+		before = time.Now()
+		firstnodetype := first.NodeType()
+		after = time.Now()
+		diff = after.Sub(before)
+		ctx.TimeInXML += diff.Nanoseconds()
+		
+		
+		
+		if firstnodetype == xml.XML_ELEMENT_NODE {
 			// successfully ran scope
 			returnValue = "true"
 			ns := &Scope{Value: first}
@@ -1072,19 +1465,48 @@ func path(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []in
 }
 
 func css_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	before := time.Now()
 	returnValue = css.Convert(args[0].(string), css.LOCAL)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
 	return
 }
 
 func wrap_text_children_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	returnValue = "false"
 	node := scope.Value.(xml.Node)
-	if textNodes, err := node.SearchByDeadline("./text()", &ctx.Deadline); err == nil {
+	before := time.Now()
+	textNodes, err := node.SearchByDeadline("./text()", &ctx.Deadline)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInXML += diff.Nanoseconds()
+	
+	
+	
+	if err == nil {
 		tagName := args[0].(string)
 		tag := fmt.Sprintf("<%s />", tagName)
 		for index, textNode := range textNodes {
+			before = time.Now()
 			textNode.Wrap(tag)
+			after = time.Now()
+			diff = after.Sub(before)
+			ctx.TimeInXML += diff.Nanoseconds()
+			
+			
+			
+			before = time.Now()
 			parent := textNode.Parent()
+			after = time.Now()
+			diff = after.Sub(before)
+			ctx.TimeInXML += diff.Nanoseconds()
+			
+			
+			
 			if parent == nil {
 				continue
 			}
@@ -1307,7 +1729,11 @@ func parse_headers_v1(ctx *EngineContext, scope *Scope, ins protoface.Instructio
 	// remove \r (will add them back later)
 	httpStr = strings.Replace(httpStr, "\r", "", -1)
 
+	before := time.Now()
 	headersRegex := regexp.MustCompile(`(?m)^\S+?:\s?[^\n]+`)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInRegex += diff.Nanoseconds()
 	// replace headers with result of eval'd instructions
 	newHttpStr := headersRegex.ReplaceAllStringFunc(httpStr, func(header string) string {
 		ns := &Scope{Value: header}
@@ -1319,7 +1745,11 @@ func parse_headers_v1(ctx *EngineContext, scope *Scope, ins protoface.Instructio
 	})
 
 	// remove empty lines (in the case that a header is blanked)
+	before = time.Now()
 	replaceEmptyLinesRegex := regexp.MustCompile(`\n+`)
+	after = time.Now()
+	diff = after.Sub(before)
+	ctx.TimeInRegex += diff.Nanoseconds()
 	newHttpStr = replaceEmptyLinesRegex.ReplaceAllString(newHttpStr, "\n")
 
 	// trim leading/trailing spaces (e.g. if last header is removed)
@@ -1336,7 +1766,11 @@ func parse_headers_v1(ctx *EngineContext, scope *Scope, ins protoface.Instructio
 func header_comp_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	header := scope.Value.(string)
 	attr := args[0].(string)
+	before := time.Now()
 	headersRegex := regexp.MustCompile(`(?m)^(\S+?):\s+(.+?)$`)
+	after := time.Now()
+	diff := after.Sub(before)
+	ctx.TimeInRegex += diff.Nanoseconds()
 	headerParsed := headersRegex.FindStringSubmatch(header)
 	replaceMe := ""
 	if len(headerParsed) != 3 {

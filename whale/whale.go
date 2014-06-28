@@ -57,6 +57,9 @@ type EngineContext struct {
 
 	ActiveLayers map[string]bool
 	ActiveLayersString string
+
+	TimeInXML int64
+	TimeInRegex int64
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -95,6 +98,8 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		Customer:    customer,
 		Project:     project,
 		InDebug:     inDebug,
+		TimeInXML:  0,
+		TimeInRegex: 0,
 	}
 	ctx.ActiveLayers = make(map[string]bool)
 	for _, name := range activeLayers {
@@ -126,6 +131,8 @@ func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteR
 	exhaust.Exports = ctx.Exports
 	exhaust.Logs = ctx.Logs
 	exhaust.HtmlParsed = ctx.HtmlParsed
+	exhaust.TimeInXML = (ctx.TimeInXML / 1000000)
+	exhaust.TimeInRegex = (ctx.TimeInRegex / 1000000)
 	return
 }
 

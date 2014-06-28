@@ -11,6 +11,8 @@ type Exhaust struct {
 	Exports    [][]string
 	Logs       []string
 	HtmlParsed bool
+  TimeInXML int64
+  TimeInRegex int64
 }
 
 type Engine interface {
