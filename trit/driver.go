@@ -6,6 +6,7 @@ import "runtime"
 import "fmt"
 import tp "tritium/proto"
 import "tritium/packager/legacy"
+import "tritium/packager"
 import "golog"
 import "time"
 import "steno/dummy"
@@ -56,12 +57,16 @@ func initializePackage() {
 }
 
 func main() {
-  initializePackage()
+  // initializePackage()
+  logger := golog.NewLogger("tritium")
+  logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO, true))
+
+  pkgr := packager.New("../mixers/tritium", "lib", false, logger, func(name, version string) (mxr *tp.Mixer, err error) {return nil, nil})
+  pkgr.Build()
+  pkg = pkgr.Mixer.Package
   // copied from spec.go
   script, _ := linker.RunWithPackage(".", ".", os.Args[1], pkg, make([]string, 0))
 
-  logger := golog.NewLogger("tritium")
-  logger.AddProcessor("info", golog.NewConsoleProcessor(golog.LOG_INFO, true))
 
   input := readFile(os.Args[2])
 
