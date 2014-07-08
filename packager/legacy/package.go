@@ -86,8 +86,9 @@ func buildPackage(path string, options PackageOptions) *Package {
 	rootName := "tritium"
 
 	pkg.Name = proto.String(rootName)
+	println(*pkg.Name)
 	pkg.Load(rootName)
-
+	println("hi")
 	return pkg
 }
 
@@ -159,16 +160,20 @@ func newLog() *golog.Logger {
 }
 
 func (pkg *Package) Load(packageName string) {
-
+	println("in Package.Load")
 	err := pkg.LoadFromPath(filepath.Join(pkg.LoadPath, packageName), packageName)
 
 	if err != nil && len(pkg.FallbackPath) != 0 {
+		println("first err check")
 		err = pkg.LoadFromPath(filepath.Join(pkg.FallbackPath, packageName), packageName)
 	}
 
 	if err != nil {
+		println("second err check")
 		panic(err.Message)
 	}
+
+	println("end of Load function")
 
 }
 
@@ -272,6 +277,7 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 
 	pkg.Println(" -- done")
 	pkg.Log.Close()
+	println(" -- done")
 
 	return nil
 }
