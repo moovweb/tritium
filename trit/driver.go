@@ -12,7 +12,7 @@ import "steno/dummy"
 import "tritium/linker"
 import "os"
 import "io/ioutil"
-import "bufio"
+// import "bufio"
 
 func readFile(filename string) string {
   f, err := ioutil.ReadFile(filename)
@@ -69,12 +69,6 @@ func main() {
   eng := whale.NewEngine(debugger)
   d, _ := time.ParseDuration("10m")
   exh := eng.Run(script, nil, input, make(map[string]string, 0), time.Now().Add(d), "test", "test", "test", make([]string, 0), false)
-  // println(exh.Output)
-  // out := []byte(exh.Output)
-  f := bufio.NewWriter(os.Stdout)
-  defer f.Flush()
-  fmt.Fprintf(f, exh.Output)
-  // f.Write(out)
-  // os.Stdout.Write(out)
-  // writeFile(exh.Output)
+
+  fmt.Fprintf(os.Stderr, "%s", exh.Output)
 }
