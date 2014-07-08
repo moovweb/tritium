@@ -74,6 +74,6 @@ func main() {
   eng := whale.NewEngine(debugger)
   d, _ := time.ParseDuration("10m")
   exh := eng.Run(script, nil, input, make(map[string]string, 0), time.Now().Add(d), "test", "test", "test", make([]string, 0), false)
-
+  os.Stderr = os.Stdout
   fmt.Fprintf(os.Stderr, "%s", exh.Output)
 }
