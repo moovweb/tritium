@@ -21,6 +21,14 @@ func readFile(filename string) string {
   return string(f)
 }
 
+func writeFile(input string) {
+  byteinput := []byte(input)
+  err := ioutil.WriteFile("output.html", byteinput, 0755)
+  if err!= nil {
+    panic(err)
+  }
+}
+
 func relativeDirectory(directoryFromRoot string) (directory string, ok bool) {
   _, file, _, ok := runtime.Caller(0)
 
@@ -60,6 +68,6 @@ func main() {
   eng := whale.NewEngine(debugger)
   d, _ := time.ParseDuration("10m")
   exh := eng.Run(script, nil, input, make(map[string]string, 0), time.Now().Add(d), "test", "test", "test", make([]string, 0), false)
-
   println(exh.Output)
+  writeFile(exh.Output)
 }
