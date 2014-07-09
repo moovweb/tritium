@@ -4,3 +4,5 @@
 @import "node.ts"
 @import "libxml_primitives.ts"
 @import "libxml.ts"
+@import "util.ts"
+@import "stdlib-impl.ts"

@@ -5,7 +5,7 @@
 # @category Create,Modify,Move,Misc
 # @scope XMLNode
 # @args Text %css_selector
-# @description 
+# @description
 # `$$` selects an element of HTML using a CSS-style selector. It is used as an alternative selector to the single-dollar sign (which selects via XPath).
 # The function takes one argument, which is the item to be selected.
 # People usually find the `$$` easier to use - at least in the beginning - as it requires no knowledge of XPath.
@@ -15,15 +15,15 @@
 # ### Common Uses
 # * Selecting many element types based on attributes rather than tag names
 # * Selecting items without being familiar with XPath
-# 
+#
 # The following example selects every item with the `ID` "one".
 # [1]: #css(Text%20%25selector)%20Text%20Text
 # @example
 # $$("#one")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/css_selector
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func XMLNode.$$(Text %css_selector) {
   $(css(%css_selector)) {
     yield()
@@ -36,7 +36,7 @@
 # @category Modify
 # @scope XMLNode
 # @args Text %class
-# @description 
+# @description
 # The `add_class` function is used to add a class to the current node.
 # The function takes one argument - the `%class` to be added.
 # What the function does is takes the current node and appends any existing classes with a space, followed by the class specified.
@@ -44,7 +44,7 @@
 # ### Common Uses
 # * Adding a class to the body of the page for page-specific styling
 # * Keeping existing classes (and associated styles) while adding your own on top
-# 
+#
 # The example below will take the selected `div` and add a class of "one" to it.
 # @example
 # $("./div") {
@@ -76,7 +76,7 @@
 # ### Common Uses
 # * Wrapping all interior content into an anchor tag
 # * Wrapping a mixture of text and nodes into one tag
-# 
+#
 # The following example will take the contents of the `div` and wrap them in a `span`.
 # @example
 # $("./div") {
@@ -84,8 +84,8 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/inner_wrap
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func XMLNode.inner_wrap(Text %tag_name) {
 
   insert_top(%tag_name) {
@@ -102,13 +102,13 @@
 # @name remove_text_nodes
 # @category Modify
 # @scope XMLNode
-# @args 
+# @args
 # @description
 # The `remove_text_nodes` function takes all text that is a direct child of the current node and removes it.
 # Any non-text nodes (e.g. anchor tags, image tags, etc.) will remain intact.
 # ### Common Uses
 # * Removing blank text nodes in between elements
-# 
+#
 # The following example will remove only text nodes from the `div`.
 # @example
 # $("./div") {
@@ -116,8 +116,8 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/remove_text_nodes
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func XMLNode.remove_text_nodes() {
   remove("./text()")
 }
@@ -135,7 +135,7 @@
 # ### Common Uses
 # * Overwriting existing classes with your own class
 # * Adding attributes to enable Uranium
-# 
+#
 # The following example will add an `href` of `http://example.com` to the selected `a` tag.
 # @example
 # $("./a") {
@@ -160,10 +160,9 @@
 # @category Attribute,Modify
 # @scope Attribute
 # @args Text %value
-# @description 
+# @description
 # The `value` function allows you to modify the value of an attribute.
 # The function takes one argument - the `%value` for the attribute.
-# An example of the `value` function being used on an attribute can be found in the `functions/main.ts` file in the `rewrite_links` function.
 # In this case, the value function is used to modify the `href`s of `a` tags.
 # In the following example, the `href` attribute of the selected `a` tag will be given a new value of `http://example.com`.
 # @example
@@ -174,8 +173,8 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/attribute/value
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func Attribute.value(Text %value) {
   value() {
     set(%value)
@@ -189,7 +188,7 @@
 # @category Attribute,Modify
 # @scope Attribute
 # @args Text %name
-# @description 
+# @description
 # The `name` function allows you to change the name of an attribute.
 # It takes one argument, which is the new `%name` for the attribute.
 # A use case for this function is found in the `lateload` function in the `functions/main.ts` file of a Moovweb project.
@@ -203,8 +202,8 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/attribute/name
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func Attribute.name(Text %name) {
   name() {
     set(%name)
@@ -218,7 +217,7 @@
 # @category Misc
 # @scope Base
 # @args Text %filename
-# @description 
+# @description
 # The `sass` function points to the stylesheets directory of your project, allowing for easy reference to your stylesheets.
 # The function takes one argument, which is the `%filename` of the stylesheet. The file should be referenced in relation to the `assets/stylesheets` folder.
 # As the function is mainly used to reference stylesheets in the project, this function is usually only found once. Most projects only inject one stylesheet.
@@ -230,8 +229,8 @@
 # insert("link", rel: "stylesheet", type: "text/css", href: sass("main")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/sass
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func sass(Text %filename) {
   asset("stylesheets/.css/" + %filename + ".css") {
     yield()
@@ -244,7 +243,7 @@
 # @category Modify
 # @scope XMLNode
 # @args Text %name,Text %value
-# @description 
+# @description
 # The `set` function allows you to set an attribute on an element.
 # The function takes two arguments. The first is the `%name` of the attribute and the second is the `%value` for that attribute.
 # *Related functions*: [attribute(name, value)][1]
@@ -270,15 +269,15 @@
 # @name attributes
 # @category Attribute,Modify
 # @scope attribute
-# @args 
-# @description 
+# @args
+# @description
 # The `attributes` function allows you to set multiple attributes for an element.
 # It is commonly used instead of the `attribute` function, as it leaves open the possibility to add more attributes later on.
 # The function can take an arbitrary number of arguments in the format `name: "value"`
 # ### Common Uses
 # * Assigning multiple attributes for Uranium - such as a `data-ur-id` and a `data-ur-component` type.
 # * Adding a class while also setting the value of an input.
-# 
+#
 # The following example gives the selected `div` two attributes - a `class` of "one" and an `id` of "two".
 # @example
 # $("./div") {
@@ -297,7 +296,7 @@
 # @name text
 # @category Modify
 # @scope XMLNode
-# @args 
+# @args
 # @description
 # The `text` function opens up the text scope or retrieves the text contained within the current scope.
 # Without any further functions, the `text` function - when performed on an XMLNode - will return any text within that node, removing all the HTML tags.
@@ -306,7 +305,7 @@
 # * Grabbing text from unnecessarily-nested nodes
 # * Opening a text scope to then replace a word in a paragraph
 # * Fetching text from a tag to put into a variable
-# 
+#
 # The example below will set the inside of the div to be "NewText".
 # @example
 # $("./div") {
@@ -330,7 +329,7 @@
 # @category Modify
 # @scope XMLNode
 # @args Text %value
-# @description 
+# @description
 # The `text` function behaves slightly differently when an argument is passed into it.
 # The function takes one argument, which is the `%value` that will appear in the element.
 # Important to note is that anything within the argument will be inserted as text. So using `text("<a></a>")` will insert the *text* rather than the HTML tag.
@@ -357,7 +356,7 @@
 # @category Modify,Environment
 # @scope XMLNode
 # @args Text %xpath*,Text %attribute*
-# @description 
+# @description
 # The `absolutize` function takes paths of sources for images and scripts and ensures that they contain a hostname.
 # Instead of the source being `/images/icon.png`, it would be `http://example.com/images/icon.png`. This ensures that no unnecessary files are directed through the proxy, increasing performance.
 # The function can be used in three ways:
@@ -375,10 +374,10 @@
 #     absolutize(".//img", "data-src") # also absolutize the `data-src` attribute of all images within the `body` node
 #   }
 # }
-# @exampletext 
-# @examplelink 
-# @guidetext 
-# @guidelink 
+# @exampletext
+# @examplelink
+# @guidetext
+# @guidelink
 @func XMLNode.absolutize(Text %xpath, Text %attribute) {
 
   # Absolutize IMG and SCRIPT SRCs
@@ -426,13 +425,13 @@
 # @category Modify,Environment
 # @scope XMLNode
 # @args Text %xpath
-# @description 
+# @description
 # @example
 # absolutize("//img")
-# @exampletext 
-# @examplelink 
-# @guidetext 
-# @guidelink 
+# @exampletext
+# @examplelink
+# @guidetext
+# @guidelink
 @func XMLNode.absolutize(Text %xpath) {
   absolutize(%xpath, "src") {
     yield()
@@ -445,8 +444,8 @@
 # @name absolutize
 # @category Modify,Environment
 # @scope XMLNode
-# @args 
-# @description 
+# @args
+# @description
 # The `absolutize` function takes paths of sources for images and scripts and ensures that they contain a host.
 # Instead of the source being "/images/icon.png", it would be "http://example.com/images/icon.png". This ensures that no unnecessary files are directed through the proxy, increasing performance.
 # The function can be used in three ways. Without any arguments, the function will take all `img` and `script` tags and absolutize their `src` attribute.
@@ -455,10 +454,10 @@
 # Absolutizing URLs is often done in projects at the top of the scripts/html.ts file.
 # @example
 # absolutize()
-# @exampletext 
-# @examplelink 
-# @guidetext 
-# @guidelink 
+# @exampletext
+# @examplelink
+# @guidetext
+# @guidelink
 @func XMLNode.absolutize() {
   absolutize(".//img|.//script") {
     yield()
@@ -471,7 +470,7 @@
 # @category Create,Javascript
 # @scope XMLNode
 # @args Position %pos,Text %js
-# @description 
+# @description
 # The `insert_javascript_at` function wraps the specified JavaScript (`%js`) in a `script` tag and inserts it in the specified position (`%pos`) of the current node.
 # **Things to note**: the first argument has to be in the *position* scope, meaning that plain text is not valid. You must place the text within the position function, as in the example.
 # Acceptable positions: `top`, `bottom`, `before` and `after`.
@@ -480,8 +479,8 @@
 # insert_javascript_at(position("top"), "alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert_javascript
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func XMLNode.insert_javascript_at(Position %pos, Text %js) {
   insert_at(%pos, "script") {
     attribute("type", "text/javascript")
@@ -496,7 +495,7 @@
 # @category Create,Javascript
 # @scope XMLNode
 # @args Text %pos,Text %js
-# @description 
+# @description
 # The `insert_javascript_at` function wraps the specified JavaScript (`%js`) in a `script` tag and inserts it in the specified position (`%pos`) of the current node.
 # **Things to note**: this version of the function accepts a text argument denoting the position.
 # Acceptable positions: `top`, `bottom`, `before` and `after`.
@@ -505,8 +504,8 @@
 # insert_javascript_at("top", "alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert_javascript
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func XMLNode.insert_javascript_at(Text %pos, Text %js) {
   insert_at(position(%pos), "script") {
     attribute("type", "text/javascript")
@@ -521,7 +520,7 @@
 # @category Create,Javascript
 # @scope XMLNode
 # @args Text %js
-# @description 
+# @description
 # The `insert_javascript` function inserts javascript into the currently-selected node. It wraps the specified JavaScript (`%js`) in a `script` tag and inserts it into the current node.
 # By default, the script is inserted in the bottom of the node.
 # There are a number of comparable functions that perform similar functions and specify a position in their name:
@@ -529,17 +528,17 @@
 # * `insert_javascript_bottom(Text %js)`
 # * `insert_javascript_before(Text %js)`
 # * `insert_javascript_after(Text %js)`
-# 
+#
 # ### Common use examples include:
 # * Javascript needs to be added to a specific node rather than globally
-# 
+#
 # In the following example, the JavaScript `alert('Boo')` will be inserted at the bottom of the current node.
 # @example
 # insert_javascript("alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert_javascript
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func XMLNode.insert_javascript(Text %js) {
   insert_javascript_at(position(), %js) {
     yield()
@@ -552,14 +551,14 @@
 # @category Modify
 # @scope XMLNode
 # @args Text %html
-# @description 
+# @description
 # The `inner` function replaces the inside of the current node with the specified `%html`.
 # **Things to note**: the interior of the current node will be obliterated and replaced with the input.
 # If the `%html` contains tags, these will be rendered as HTML elements.
 # Compare to the `text()` function, which replaces the content with text only.
 # ### Common uses cases:
 # * Setting the inside of a node with both text and a new node
-# 
+#
 # The example below will replace all of the content of the current div with "New Content".
 # @example
 # $("./div") {
@@ -582,14 +581,14 @@
 # @category Modify
 # @scope XMLNode
 # @args Text %tag
-# @description 
+# @description
 # The `wrap` function takes the current node and wraps it in a new tag.
 # The function requires one argument - the new `%tag`. It also takes an arbitrary number of additional arguments specifying attributes and their values.
 # For example, you can specify a class using `class: "my_class"` as a second argument.
 # ### Common Uses
 # * Wrapping elements in an `li` tag to form a list
 # * Wrapping an element in an `a` tag to make a link
-# 
+#
 # The example below will wrap the selected `a` tag in a div with the class "one".
 # @example
 # $("./a") {
@@ -597,8 +596,8 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/wrap
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func XMLNode.wrap(Text %tag) {
   %parent_node = this()
   insert_at(position("before"), %tag) {
@@ -624,13 +623,13 @@
 # @category Environment
 # @scope Text
 # @args Text %from_enc*,Text %to_enc*
-# @description 
+# @description
 # The `html` function parses the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
 # The `html` function can take from 0-2 arguments:
 # * 0 arguments: the function guesses the HTML encoding when parsing it, then opens it.
 # * 1 argument: the function parses the HTML with the specified encoding, then opens it.
 # * 2 arguments: the function converts the HTML from `%from_enc` to `%to_enc`, then opens it.
-# 
+#
 # **Things to note**: as part of the parsing, the function will add `<html>` tags and a `DOCTYPE` to the document. If you only want to parse a fragment of HTML, use the [html_framgment()][1] function.
 # An example of the `html` function can be found in the `scripts/main.ts` file of your project, where it parses every page as HTML.
 # The following example will parse the HTML as `gbk`, convert it to `utf-8`, then print a `log` statement if there is a root `HTML` node with a `body` child.
@@ -641,10 +640,10 @@
 #     log("found an /html/body tag!")
 #   }
 # }
-# @exampletext 
-# @examplelink 
-# @guidetext 
-# @guidelink 
+# @exampletext
+# @examplelink
+# @guidetext
+# @guidelink
 @func Text.html(Text %from_enc, Text %to_enc) {
   html_doc(%from_enc, %to_enc) {
     yield()
@@ -659,18 +658,18 @@
 # @name keep_only_this
 # @category Modify
 # @scope XMLNode
-# @args 
+# @args
 # @description
 # `keep_only_this` will preserve the currently selected XMLNode and descendants. It will strip literally everything else away from the html that is returned upon exiting the html scope (i.e., headers, parent nodes, siblings). Note that you can no longer mutate a selection saved by keep_only_this and that later calls to keep_only_this will overwrite the saved selection.
 # The example below will save the first unordered list within a div when the encapsulating html scope closes, obliterating all other html that would have been returned.
 # @example
 # $("(//div//ul)[1]") {
-#   keep_only_this() 
+#   keep_only_this()
 # }
-# @exampletext 
-# @examplelink 
-# @guidetext 
-# @guidelink 
+# @exampletext
+# @examplelink
+# @guidetext
+# @guidelink
 @func XMLNode.keep_only_this() {
   $__preservedSectionOfText__ = fetch(path())
 }
@@ -682,13 +681,13 @@
 # @category Environment
 # @scope Text
 # @args Text %enc
-# @description 
+# @description
 # @example
 # html("utf-8")
-# @exampletext 
-# @examplelink 
-# @guidetext 
-# @guidelink 
+# @exampletext
+# @examplelink
+# @guidetext
+# @guidelink
 @func Text.html(Text %enc) {
   $charset_determined = %enc
   html(%enc, %enc) {
@@ -702,7 +701,7 @@
 # @name html
 # @category Environment
 # @scope Text
-# @args 
+# @args
 # @description
 # The `html` function parses the document as HTML. This means the document - which is plain text - is converted into a tree-like structure. At this point, we can use XPath and other selectors to navigate the document.
 # Used in its basic sense, the function guesses the HTML encoding. The encoding can also be specified with up to two arguments.
@@ -714,10 +713,10 @@
 # html() {
 #   $("/html/body")
 # }
-# @exampletext 
-# @examplelink 
-# @guidetext 
-# @guidelink 
+# @exampletext
+# @examplelink
+# @guidetext
+# @guidelink
 @func Text.html() {
   match($charset_determined) {
     with("") {
@@ -738,16 +737,16 @@
 # @category Environment
 # @scope Text
 # @args Text %from_enc,Text %to_enc
-# @description 
+# @description
 # The `html_fragment` function parses a fragment of the document as HTML. It converts raw html-as-text into a document fragment, which is searchable by Xpath.
 # One thing to note is that this fragment is 'floating' -- its not attached to the root document at all. For this reason selectors that operate from a document
 # root (e.g. `//div` or `/html/body/div`) won't return any results.
 # This particular function parses the document with the `%from_enc` encoding, converts it to the `%to_enc` encoding, then opens it.
 # ### Common Uses
 # * Only a small section of the request being processed is HTML, and that fragment must be parsed without adding an `HTML` tag and a `DOCTYPE`.
-# 
+#
 # The example below will parse a `gbk`-encoded  fragment of HTML, convert it to `utf-8`, then find all `div` nodes within the document.
-# @example 
+# @example
 # html_fragment("gbk", "utf-8") {
 #   $(".//div") {
 #     log("found a div tag!")
@@ -755,8 +754,8 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink mixers/tritium/tests/two_arg_fragment
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func Text.html_fragment(Text %from_enc, Text %to_enc) {
   html_fragment_doc(%from_enc, %to_enc) {
     yield()
@@ -770,14 +769,14 @@
 # @category Environment
 # @scope Text
 # @args Text %enc
-# @description 
+# @description
 # Same as the 2-argument version of html_fragment(), except this version parses the document with the specified encoding, then opens it for modification.
-# @example 
+# @example
 # html_fragment("utf-8")
 # @exampletext Tritium Tester Example
 # @examplelink mixers/tritium/tests/single_arg_fragment
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func Text.html_fragment(Text %enc) {
   $charset_determined = %enc
   html_fragment(%enc, %enc) {
@@ -790,17 +789,17 @@
 # @name html_fragment
 # @category Environment
 # @scope Text
-# @args 
-# @description 
+# @args
+# @description
 # Same as the 1-argument version of html_fragment(), except this version guesses the HTML encoding.
-# @example 
+# @example
 # html_fragment() {
 #   $("/div")
 # }
 # @exampletext Tritium Tester Example
 # @examplelink mixers/tritium/tests/fragment
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func Text.html_fragment() {
   $encoding = guess_encoding()
   html_fragment($encoding, $encoding) {
@@ -818,7 +817,7 @@
 # @category Create
 # @scope XMLNode
 # @args Position %pos,Text %tag,Text %content
-# @description 
+# @description
 # @example
 # insert_at(position(top), "div", "Content")
 # @exampletext Tritium Tester Example
@@ -838,13 +837,13 @@
 # @category Create
 # @scope XMLNode
 # @args Text %pos,Text %tag,Text %content*
-# @description 
+# @description
 # The `insert_at` function inserts a new node of type `%tag` into the document at the position `%pos` containing `%content`. The `%content` parameter is optional.
 # **Things to note**: the position (`%pos`) is relative to the current node.
 # There can also be an arbitrary number of extra arguments, specifying attributes for the new element: for example, `insert_at("top", "div", "Hello, Tritium!", class: "one")` will add a class of "one" to the new `div` node.
 # ### Common use examples include:
 # * Creating a button/content element for Uranium
-# 
+#
 # The following example will insert a `div` tag at the top of the current node. The tag will have the content "Hello, Tritium!".
 # @example
 # insert_at("top", "div", "Hello, Tritium!")
@@ -865,7 +864,7 @@
 # @category Create
 # @scope XMLNode
 # @args Text %tag,Text %inner*
-# @description 
+# @description
 # The `insert` function adds the specified `%tag` into the currently-selected node.
 # The function has one obligatory argument - the `%tag` name - and one optional argument - the `%content`.
 # There can also be an arbitrary number of extra arguments, specifying attributes for the new element: `insert("div", "Content", class: "one")` will add a class of "one" to the new `div` node.
@@ -874,11 +873,11 @@
 # * `insert_bottom(Text %tag, Text %inner)`
 # * `insert_before(Text %tag, Text %inner)`
 # * `insert_after(Text %tag, Text %inner)`
-# 
+#
 # ### Common use examples include:
 # * Adding an `a` tag to link to the desktop site
 # * Inserting a header or footer on a page
-# 
+#
 # The example below will insert a `div` with the content "Content" into the bottom of the current node.
 # @example
 # insert("div", "Content")
@@ -900,7 +899,7 @@
 # @category Create
 # @scope XMLNode
 # @args Text %tag,Text %inner
-# @description 
+# @description
 # @example
 # insert_bottom("div", "Content")
 # @exampletext Tritium Tester Example
@@ -921,7 +920,7 @@
 # @category Create
 # @scope XMLNode
 # @args Text %tag,Text %inner
-# @description 
+# @description
 # @example
 # insert_top("div", "Content")
 # @exampletext Tritium Tester Example
@@ -942,7 +941,7 @@
 # @category Create
 # @scope XMLNode
 # @args Text %tag,Text %inner
-# @description 
+# @description
 # @example
 # insert_after("div", "Content")
 # @exampletext Tritium Tester Example
@@ -963,7 +962,7 @@
 # @category Create
 # @scope XMLNode
 # @args Text %tag,Text %inner
-# @description 
+# @description
 # @example
 # insert_before("div", "Content")
 # @exampletext Tritium Tester Example
@@ -984,13 +983,13 @@
 # @category Create
 # @scope XMLNode
 # @args Text %js
-# @description 
+# @description
 # @example
 # insert_javascript_bottom("alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert_javascript
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func XMLNode.insert_javascript_bottom(Text %js) {
   insert_javascript_at(position("bottom"), %js) {
     yield()
@@ -1004,13 +1003,13 @@
 # @category Create
 # @scope XMLNode
 # @args Text %js
-# @description 
+# @description
 # @example
 # insert_javascript_top("alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert_javascript
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func XMLNode.insert_javascript_top(Text %js) {
   insert_javascript_at(position("top"), %js) {
     yield()
@@ -1024,13 +1023,13 @@
 # @category Create
 # @scope XMLNode
 # @args Text %js
-# @description 
+# @description
 # @example
 # insert_javascript_after("alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert_javascript
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func XMLNode.insert_javascript_after(Text %js) {
   insert_javascript_at(position("after"), %js) {
     yield()
@@ -1044,13 +1043,13 @@
 # @category Create
 # @scope XMLNode
 # @args Text %js
-# @description 
+# @description
 # @example
 # insert_javascript_before"alert('Boo')")
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/insert_javascript
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func XMLNode.insert_javascript_before(Text %js) {
   insert_javascript_at(position("before"), %js) {
     yield()

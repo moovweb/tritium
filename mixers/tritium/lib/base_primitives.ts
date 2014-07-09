@@ -11,7 +11,7 @@
 # * True/False logic
 # * Storing fetched text and attributes
 # * Using stored values in a `match()` statement to run different Tritium scripts.
-# 
+#
 # The following example simply illustrates how to set a variable manually to whatever `%name` and value you desire.
 # @example
 # var("my_var") {
@@ -20,8 +20,8 @@
 # log($my_var)
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/var
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func var(Text %name) Text Text
 
 " Allows you to set global variables. Equivalent to `$`. @example `var(\"txt1\", \"MYTEXT\")` sets the variable of 'txt1' to 'MYTEXT'."
@@ -36,15 +36,15 @@
 # * True/False logic
 # * Storing fetched text and attributes
 # * Using stored values in a `match()` statement to run different Tritium scripts.
-# 
+#
 # The following example simply illustrates how to set a variable manually to whatever `%name` and `%value` you desire.
 # @example
 # var("my_var", "is set")
 # log($my_var)
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/var
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func var(Text %name, Text %value) Text Text
 
 " Returns the time-to-execute (time units vary by implementation). @example `log(time())` will log the time taken to reach that point in the server logs. "
@@ -52,20 +52,20 @@
 # @name time
 # @category Environment
 # @scope Global
-# @args 
-# @description 
+# @args
+# @description
 # The `time` function returns the time-to-execute the Tritium code up until it hits the function call.
 # **Things to note**: The time taken varies for each implementation, so to have an accurate sense of time, several trials should be run.
 # ### Common Uses
 # * Optimizing Tritium script performance.
-# 
+#
 # In the following example, we display how to log the `time()` output to the terminal using the `log()` function.
 # @example
 # log(time())
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/time
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func time() Text
 
 " Specifies a target (specified by **%target**) to be searched. To be used in conjunction with `with()` - [click for example](http://console.moovweb.com/learn/training/function_guides/match). @example `match($path) { with(/product/) }` will match the path of the url to see if the regular expression 'product' matches."
@@ -82,7 +82,7 @@
 # * Matching attributes with certain content to determine if they need to be changed in some way.
 # * Simulating `if-then-else` statements and boolean (`true-false`) logic to run differing Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming headers.
-# 
+#
 # In the following example, we match the `$path` variable to see if it matches the regular expression `/product/`. Since it does, the log "Match successful!" will output to the terminal.
 # @example
 # $path = "product"
@@ -112,7 +112,7 @@
 # * Checking the value of environment variables
 # * Displaying status messages as the result of certain matches or logic
 # * Debugging Tritium that isn't working in development
-# 
+#
 # The following example shows the typical use case for debugging Tritium that isn't working. This is often done by setting logs throughout your code to see if you selectors and logic is executing the proper statements.
 # @example
 # log("I've reached this point in the code!")
@@ -136,7 +136,7 @@
 # ### Common Uses
 # * When the page is structured such that you only know which scripts you want to run when certain content does not exist.
 # * When you are mapping URL paths to page types and you know what content must not exist in the path to fulfill a mapping requirement.
-# 
+#
 # In the following example, we match the variable `$var` with the `not()` statement of "Match You". Since that statement does not exist in the variable, the `log` inside the `not` statement will be executed.
 # @example
 # $var = "Match Me"
@@ -162,7 +162,7 @@
 # Common Uses
 # * When the page is structured such that you only know what scripts you want to run when certain content does not exist.
 # * When you are mapping URL paths to page types and you know what content must not exist in the path to fulfill a mapping requirement.
-# 
+#
 # In the following example, we match the variable `$var` with the `not()` regular expression "Match You". Since that statement does not exist in the variable, the `log` inside the `not` statement will be executed.
 # @example
 # $var = "Match Me"
@@ -191,7 +191,7 @@
 # * Matching attributes with certain content to determine if they need to be changed in some way.
 # * Simulating `if-then-else` statements and boolean (`true-false`) logic to run differing Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming headers.
-# 
+#
 # In this example, we match the `$var` variable with the string "Match Me". Since the match is successful, the `log` is then executed.
 # @example
 # $var = "Match Me"
@@ -220,7 +220,7 @@
 # * Matching attributes with certain content to determine if they need to be changed in some way.
 # * Simulating `if-then-else` statements and boolean (`true-false`) logic to run differing Tritium.
 # * Matching the `$status`, `$content-type`, or other information from the incoming headers.
-# 
+#
 # In this example, we match the `$var` variable with the regular expression "Match Me". Since the match is successful, the `log` is then executed.
 # @example
 # $var = "Match Me"
@@ -245,7 +245,7 @@
 # The `convert_encoding` function is used to convert text from one encoding to another.
 # ### Common Uses
 # * Converting incorrectly encoded text
-# 
+#
 # In this example, we convert from `gbk` to `utf-8` encoding.
 # @example
 # text() {
@@ -253,8 +253,8 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/convert_encoding
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func Text.convert_encoding(Text %from, Text %to) Text
 
 " Guess the encoding from the input, the response header and html meta tag. "
@@ -262,12 +262,12 @@
 # @name guess_encoding
 # @category Text
 # @scope Text
-# @args 
+# @args
 # @description
 # The `guess_encoding` function is used to guess the text encoding of the current scope. The function uses information from the input, the response header, and the HTML `meta` tags.
 # ### Common Uses
 # * When you need to figure out the current encoding.
-# 
+#
 # In this example, we guess the encoding of the current text node.
 # @example
 # text() {
@@ -276,8 +276,8 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/guess_encoding
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func Text.guess_encoding() Text
 
 " Returns the length of the **%input**. @example `log(length(\"text\"))` will return '4' in the server logs."
@@ -286,12 +286,12 @@
 # @category Text
 # @scope Text
 # @args Text %input
-# @description 
+# @description
 # The `length` function is used to return the length of the current text node or the provided `%input` string.
 # ### Common Uses
 # * Validating an `%input` string to make sure it is either a minimum or maximum number of characters.
 # * Finding the length of a string.
-# 
+#
 # In this example, we `log` the length of the `%input` string "text".
 # @example
 # $$("#my_div") {
@@ -301,8 +301,8 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/length
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func length(Text %input) Text
 
 " Completes the pseudo-logic of `with()`, allowing the specification of an alternative. @example `match($path) { with(/product/) else() { log(\"Not selecting product\")} }` will only log the message if 'product' is not in the path."
@@ -310,14 +310,14 @@
 # @name else
 # @category Environment,Text
 # @scope Global
-# @args 
-# @description 
+# @args
+# @description
 # The `else()` function is used inside your `match()` statements to serve as a catchall for when none of your `with()` statements find a successful match. The `else()` function will then serve as your default behavior for unanticipated match cases.
 # ### Common Uses
 # * Serving as a catchall for common errors, such as unrecognized URL mappings.
 # * Completing `if-else` pseudo logic when `match`ing variables, attributes, and other traits of the current DOM.
 # * Generally providing a default behavior for your Tritium scripts.
-# 
+#
 # In the following example, the `$var` value does not match the existing `with()` statement, which means the `else()` statement will run its inner code block.
 # @example
 # $var = "Match me."
@@ -340,25 +340,25 @@
 # @name yield
 # @category Environment
 # @scope Global
-# @args 
-# @description 
+# @args
+# @description
 # The yield() function is used to tell Moovweb where you want a new scope to be opened when using this function.
 # This allows you to execute Tritium in the function even after the user has opened a scope and executed several other functions.
 # To learn more, check out [our helpdesk post on how yield works](http://help.moovweb.com/entries/21633781-what-does-the-yield-function-do).
 # Common uses include:
-# * Any time you need to execute code after someone uses your function. 
-# * Error checking your function's use cases. 
-# 
+# * Any time you need to execute code after someone uses your function.
+# * Error checking your function's use cases.
+#
 # In this example, we first define a function that yields to a scope before our log() statement. This means if the user changes the $a variable, then the log statement will change as well.
 # However, in our second example, we log our variable $a before yielding, which means that even though the user's changes will take place. The variable will be logged before it is changed. So in our second example we will see "dog" rather than "dogcat".
 # @example
-# # first example 
+# # first example
 #   @func XMLNode.foo {
 #     $a = "dog"
 #     yield()
 #     log($a)
 #   }
-# # second example 
+# # second example
 #   foo() {
 #    $a = $a + "cat"
 #   }
@@ -371,9 +371,9 @@
 #     $a = $a + "cat"
 #   }
 # @exampletext Tritium Tester Example
-# @examplelink 
+# @examplelink
 # @guidetext Function Guide
-# @guidelink 
+# @guidelink
 @func yield() Text
 
 " Returns the current text value. @example `text() { log(this()) }` will log all the text in the DOM into the server logs. "
@@ -381,18 +381,18 @@
 # @name this
 # @category misc
 # @scope Text
-# @args 
-# @description 
+# @args
+# @description
 # The `this` function is used to point to the current value of the text scope.
 # This is handy when you want to save / output the currently selected text scope.
-# @example 
-# text() { 
-#   log(this()) 
+# @example
+# text() {
+#   log(this())
 # }
 # @exampletext If you put this code into main.ts it will log the whole raw HTML as text into the server logs
 # @examplelink test/examples/this_text
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func Text.this() Text
 
 " Parses regular expressions. (Use hard-coded regex if you can. This is much slower than hard-coding regex.) The **%options** text allows [Ruby modifiers](http://www.regular-expressions.info/ruby.html) to be included. @example `regexp(\"dog\", \"i\")` uses the `/i` modifier to make the expression case-insensitive, so the regex will match both 'DOG' and 'dog' (plus 'Dog', 'dOg', etc.). "
@@ -401,7 +401,7 @@
 # @category Environment,Modify,Text
 # @scope Global
 # @args Text %expression,Text %options
-# @description 
+# @description
 # The `regexp` function is used to parse `%expressions` and turn them into regular expressions. Regular Expressions are incredibly powerful for selecting and modifying groups of text.
 # **Things to note**: The `%options` input provides flags for the regular expression such as `i`, which indicates it should be case insensitive.
 # ### Common Uses
@@ -409,7 +409,7 @@
 # * Modifying text to be more clear and concise to fit a smaller viewport.
 # * Changing instructions such as "click" to "tap" for mobile devices.
 # * Fixing malformed HTML before the document is parsed so your selectors work properly.
-# 
+#
 # In the following example, we use the string "true" and turn it into a regular expression to use in a `match-with` statement. We are also accepting any combination of upper and lower case because of the `i` flag. If the string "true" is anywhere in the text we are matching, the code in the `with()` statement will run.
 # @example
 # $var = "123456"
@@ -431,14 +431,14 @@
 # @category Text
 # @scope Global
 # @args Text %a,Text %b
-# @description 
+# @description
 # The concat function is used to combine two or more strings into a single string.
 # **Things to note**: The concat function takes at least two strings and up to ten strings as input parameters. These parameters will be combined in the order in which they are provided.
 # ### Common Uses
 # * In `log` statements when outputting some combination of variables and description of those variables.
 # * When selecting elements based on variables or attributes, they may need to be formatted properly using the concat function.
 # * When manipulating text scopes and combining the content of several scopes.
-# 
+#
 # In this example, we fetch the `ID` of the div with the `ID` "my_div", then we `log` a `concat` statement to the terminal output.
 # @example
 # $$("#my_div") {
@@ -457,14 +457,14 @@
 # @category Environment
 # @scope Global
 # @args Text %key,Text %value
-# @description 
+# @description
 # The `export` function is used when you want to change the outgoing response header.
 # **Things to note**: You cannot currently export the status of the response header (i.e. 200, 302, etc.).
 # ### Common Uses
 # * Malformed HTML or Javascript with the wrong `content-type` set.
 # * Setting the `Cache-Time` of the page.
 # * Setting the `Location` for a redirect.
-# 
+#
 # In this example, we are setting the `Content-Type` to "text/html".
 # @example
 # html() {
@@ -482,11 +482,11 @@
 # @category Text,Modify
 # @scope Text
 # @args Text %input_string
-# @description 
+# @description
 # The `upcase` function is used to return the provided `%input_string` in all uppercase letters.
 # ### Common Uses
 # * Making buttons more prominent such as SIGN IN or SIGN UP NOW.
-# 
+#
 # In this example, we fetch the `ID` of the div with the `ID` "my_div", then we `log` a `concat` statement using uppercase letters for the name of the div.
 # @example
 # $$("#my_div") {
@@ -495,8 +495,8 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/upcase
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func upcase(Text %input_string) Text
 
 " Returns **%input_string** in lower case. @example `downcase(\"DOG\")` will return 'dog'. "
@@ -505,11 +505,11 @@
 # @category Text,Modify
 # @scope Text
 # @args Text %input_string
-# @description 
+# @description
 # The `downcase` function is used to return the provided `%input_string` in all lowercase letters.
 # ### Common Uses
 # * Making text less prominent.
-# 
+#
 # In this example, we fetch the `ID` of the div with the `ID` "my_div", then we `log` a `concat` statement using lowercase letters for the name of the div.
 # @example
 # $$("#my_div") {
@@ -518,8 +518,8 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/downcase
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func downcase(Text %input_string) Text
 
 //" Returns the current text scope as a string. Useful to pass the current Text as an argument. "
@@ -531,13 +531,13 @@
 # @category Text,Modify
 # @scope Text
 # @args Text %value
-# @description 
+# @description
 # The `set` function is used to override any existing content in the current scope and set it to the `%value` provided.
 # **Things to note**: when used in an XMLNode scope, the entire inner HTML will be set -- overriding any child nodes and content.
 # ### Common Uses
 # * Setting the content of text scopes
 # * Setting the value of attribute scopes
-# 
+#
 # In this example, we set the text node inside "my_div" to "I've been set!".
 # @example
 # $$("#my_div") {
@@ -547,8 +547,8 @@
 # }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/set
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func Text.set(Text %value) Text
 
 " Replaces all instances of the regular expression **%search**. This yields to a Text scope that allows you to set the replacement string using `set()` - [click for example](http://console.moovweb.com/learn/training/function_guides/replace). @example `replace(/bad/) { set(\"good\") }`."
@@ -557,14 +557,14 @@
 # @category Modify,Text
 # @scope Text
 # @args Regexp %search
-# @description 
+# @description
 # The `replace` function is used to alter existing text nodes by replacing them based on either regular expressions or specific strings.
 # **Things to note**: Unless otherwise specified by the Regular Expression, all matches found by the `%search` parameter will be replaced.
 # ### Common Uses
 # * Replacing desktop instructions like "click" to mobile instructions like "tap"
 # * Removing extra or unnecessary text
 # * Rewriting attributes based on some standard `set` via a regular expression.
-# 
+#
 # In this example we are replacing the text "Replace Me" inside `#my_div` with the text "Replaced!".
 # @example
 # $$("#my_div") {
@@ -593,7 +593,7 @@
 # * Replacing desktop instructions like "click" to mobile instructions like "tap"
 # * Removing extra or unnecessary text
 # * Rewriting attributes based on some standard `set` via a regular expression.
-# 
+#
 # In this example we are replacing the text "Replace Me" inside `#my_div` with the text "Replaced!".
 # @example
 # $$("#my_div") {
@@ -615,12 +615,12 @@
 # @category Modify,Text
 # @scope Text
 # @args Text %text_to_prepend
-# @description 
+# @description
 # The prepend function is used to insert text at the beginning of a text scope.
 # ### Common Uses
 # * Categorizing content by attaching labels or other forms of organized tags.
 # * Numbering content using the prepend() function in combination with the index() function.
-# 
+#
 # In this example, we prepend a sentence onto the beginning of the text node inside "my_div".
 # @example
   $$("#my_div") {
@@ -630,8 +630,8 @@
   }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/prepend
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func Text.prepend(Text %text_to_prepend) Text
 
 " Adds **%text_to_append** to the end of the text. @example Given `<div>Dog</div>`, `$(\"./div\") { text() { append(\"Fish\") } }` will change the text to 'DogFish'."
@@ -640,12 +640,12 @@
 # @category Modify,Text
 # @scope Text
 # @args Text %text_to_append
-# @description 
+# @description
 # The `append` function is used to insert text at the end of a text scope.
 # ### Common Uses
 # * Adding instructions following content.
 # * Elaborating on content without resetting it.
-# 
+#
 # In this example, we append a sentence onto the end of the text node inside `my_div`.
 # @example
   $$("#my_div") {
@@ -655,8 +655,8 @@
   }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/append
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func Text.append(Text %text_to_append) Text
 
 " Captures all instances of the regular expression **%search**. "
@@ -665,12 +665,12 @@
 # @category Modify,Text
 # @scope Text
 # @args Regexp %search
-# @description 
+# @description
 # The `capture` function is used to grab a specific block of text, which is matched via a regular expression.
 # ### Common Uses
 # * Grabbing specific items from a string of text
 # * Separating out capture groups in a regular expression
-# 
+#
 # In this example, the capture function will grab any string of 8 characters and log it the terminal.
 # @example
   $$("#my_div") {
@@ -682,21 +682,9 @@
   }
 # @exampletext Tritium Tester Example
 # @examplelink test/examples/text/capture
-# @guidetext 
-# @guidelink 
+# @guidetext
+# @guidelink
 @func Text.capture(Regexp %search) Text Text
-
-" Rewrite a host/referer/origin from proxy to upstream "
-@func Text.rewrite_to_upstream(Text %from_proxy, Text %secure, Text %catchall) Text
-
-" Rewrite a link from upstream to proxy "
-@func Text.rewrite_to_proxy(Text %secure, Text %catchall) Text
-
-" Rewrite a cookie domain from upstream to proxy "
-@func Text.rewrite_cookie_domain(Text %host, Text %secure, Text %catchall) Text
-
-" Rewrite a link from upstream to proxy, where **%secure** is either 'true' or 'false' and **%catchall** is a catchall suffix. @example `rewrite_link(\"true\", \".moovapp.com\")` will rewrite secure links to include the catchall '.moovapp.com' at the end."
-@func Text.rewrite_link(Text %secure, Text %catchall) Text
 
 @func base64_v1(Text %method, Text %str) Text Text
 
