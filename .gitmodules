@@ -1,0 +1,3 @@
+[submodule "gokogiri"]
+	path = gokogiri
+	url = git@github.com:moovweb/gokogiri.git
