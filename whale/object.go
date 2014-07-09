@@ -1,7 +1,7 @@
 package whale
 
 import "rubex"
-import "gokogiri/xpath"
+import "tritium/dependencies/gokogiri/xpath"
 import "go-cache"
 
 type MemoryObject interface {

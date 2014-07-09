@@ -12,7 +12,7 @@ import (
 )
 
 import (
-	"butler/null"
+	"tritium/dependencies/butler/null"
 	"manhattan/project"
 	"rubex"
 	tp "tritium/proto"

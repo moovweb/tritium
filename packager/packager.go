@@ -11,8 +11,8 @@ import (
 )
 
 import (
-	fileutil "butler/fileutil"
-	"butler/mixer"
+	fileutil "tritium/dependencies/butler/fileutil"
+	"tritium/dependencies/butler/mixer"
 	proto "code.google.com/p/goprotobuf/proto"
 	"golog"
 	yaml "goyaml"

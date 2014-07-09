@@ -12,9 +12,9 @@ import (
 	"unicode/utf8"
 
 	"goconv"
-	"gokogiri/css"
-	"gokogiri/html"
-	"gokogiri/xml"
+	"tritium/dependencies/gokogiri/css"
+	"tritium/dependencies/gokogiri/html"
+	"tritium/dependencies/gokogiri/xml"
 	"icu4go"
 	"moovhelper"
 	"rubex"

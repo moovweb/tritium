@@ -7,8 +7,8 @@ import (
 )
 
 import (
-	mixers "butler/mixer"
-	xmlhelp "gokogiri/help"
+	mixers "tritium/dependencies/butler/mixer"
+	xmlhelp "tritium/github.com/moovweb/gokogiri/help"
 	"golog"
 	"runtime/debug"
 	"steno/dummy"
@@ -55,7 +55,7 @@ func All(command string, directory string, options ...string) {
 	globalResult := NewResult()
 	globalResult.all(directory, pkg, eng, logger)
 
-	// TODO : Walk over the results here and print errors. 
+	// TODO : Walk over the results here and print errors.
 
 	var foundError = false
 

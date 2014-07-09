@@ -10,7 +10,7 @@ import (
 import (
 	"go-cache"
 	"go-cache/arc"
-	"gokogiri/xpath"
+	"tritium/dependencies/gokogiri/xpath"
 	"rubex"
 	"steno"
 	"tritium"

@@ -9,7 +9,7 @@ import (
 	"time"
 
 	// TODO: remove this and replace with something else when whale no longer needs to use steno loggers
-	"butler/mixer"
+	"tritium/dependencies/butler/mixer"
 	"steno/dummy"
 	tf "tritium/transform"
 	tp "tritium/proto"

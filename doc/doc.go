@@ -10,7 +10,7 @@ import (
 )
 
 import (
-	"butler/null"
+	"tritium/dependencies/butler/null"
 	yaml "goyaml"
 	"tritium/packager"
 	tp "tritium/proto"

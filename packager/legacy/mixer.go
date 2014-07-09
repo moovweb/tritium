@@ -10,8 +10,8 @@ import (
 )
 
 import (
-	"butler/mixer"
-	"butler/null"
+	"tritium/dependencies/butler/mixer"
+	"tritium/dependencies/butler/null"
 	proto "code.google.com/p/goprotobuf/proto"
 	yaml "goyaml"
 	tp "tritium/proto"
