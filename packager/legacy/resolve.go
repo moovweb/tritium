@@ -12,7 +12,7 @@ import (
 import (
 	"tritium/dependencies/butler/null"
 	proto "code.google.com/p/goprotobuf/proto"
-	yaml "goyaml"
+	yaml "tritium/dependencies/goyaml"
 	linker "tritium/linker"
 	parser "tritium/parser"
 	tp "tritium/proto"

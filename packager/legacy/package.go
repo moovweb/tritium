@@ -3,7 +3,7 @@ package legacy
 import (
 	proto "code.google.com/p/goprotobuf/proto"
 	// "fmt"
-	"golog"
+	"tritium/dependencies/golog"
 	"os"
 	"path/filepath"
 	"strings"

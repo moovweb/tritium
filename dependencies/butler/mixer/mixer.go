@@ -40,7 +40,7 @@ func GetMixerPath(name, versionPattern string) (string, error) {
     return "", err
   }
 
-  //mixerPath, err := versions.FindByNameAndVersionLatest(mixerRoot, name, versionPattern)
+  mixerPath, err := versions.FindByNameAndVersionLatest(mixerRoot, name, versionPattern)
   if err != nil {
     return "", err
   }

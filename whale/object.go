@@ -1,8 +1,8 @@
 package whale
 
-import "rubex"
+import "tritium/dependencies/rubex"
 import "tritium/dependencies/gokogiri/xpath"
-import "go-cache"
+import "tritium/dependencies/go-cache"
 
 type MemoryObject interface {
   Free()
