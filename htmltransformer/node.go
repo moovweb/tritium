@@ -54,6 +54,14 @@ import (
 // 	Uri    string
 // }
 
+// type Node interface {
+
+// 	GetAttribute(string)
+// 	SetAttribute(string)
+// 	RemoveAttribute(string) bool
+
+// }
+
 type Node interface {
 	// NodePtr() unsafe.Pointer
 	// ResetNodePtr()
@@ -97,7 +105,7 @@ type Node interface {
 	// Attr(string) string
 	// SetAttr(string, string) string
 	// SetNsAttr(string, string, string) string
-	// Attribute(string) Node //*AttributeNode
+	Attribute(string) Node //*AttributeNode
 
 	// Path() string
 
