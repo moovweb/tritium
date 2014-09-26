@@ -1,8 +1,8 @@
 package htmltransformer
 
 import (
-	// 	"gokogiri/xml"
-	// 	"unsafe"
+	// 	// 	"gokogiri/xml"
+	// 	// 	"unsafe"
 	"time"
 )
 
@@ -54,90 +54,99 @@ import (
 // 	Uri    string
 // }
 
-// type Node interface {
-
-// 	GetAttribute(string)
-// 	SetAttribute(string)
-// 	RemoveAttribute(string) bool
-
-// }
-
 type Node interface {
-	// NodePtr() unsafe.Pointer
-	// ResetNodePtr()
-	// MyDocument() Document
-
-	// IsValid() bool
-
-	// // ParseFragment([]byte, []byte, ParseOption) (*DocumentFragment, error)
-	// LineNumber() int
-
-	// //
-	// NodeType() NodeType
-	// NextSibling() Node
-	// PreviousSibling() Node
-
-	// Parent() Node
-	// FirstChild() Node
-	// LastChild() Node
-	// CountChildren() int
-	// Attributes() map[string]Node //*AttributeNode
-
-	// Coerce(interface{}) ([]Node, error)
-
-	// AddChild(interface{}) error
-	// AddPreviousSibling(interface{}) error
-	// AddNextSibling(interface{}) error
-	// InsertBefore(interface{}) error
-	// InsertAfter(interface{}) error
-	// InsertBegin(interface{}) error
-	// InsertEnd(interface{}) error
-	// SetInnerHtml(interface{}) error
-	// SetChildren(interface{}) error
-	// Replace(interface{}) error
-	// Wrap(string) error
-
-	// SetContent(interface{}) error
-
-	// Name() string
-	// SetName(string)
-
-	// Attr(string) string
-	// SetAttr(string, string) string
-	// SetNsAttr(string, string, string) string
-	Attribute(string) Node //*AttributeNode
-
-	// Path() string
-
-	// Duplicate(int) Node
-	// DuplicateTo(Document, int) Node
-
-	// Search(interface{}) ([]Node, error)
-	// // SearchWithVariables(interface{}, xpath.VariableScope) ([]Node, error)
-	SearchByDeadline(interface{}, *time.Time) ([]Node, error)
-	// // EvalXPath(interface{}, xpath.VariableScope) (interface{}, error)
-	// // EvalXPathAsBoolean(interface{}, xpath.VariableScope) bool
-
-	// Unlink()
-	// Remove()
-	// ResetChildren()
-
-	// SerializeWithFormat(SerializationOption, []byte, []byte) ([]byte, int)
-	// ToXml([]byte, []byte) ([]byte, int)
-	// ToUnformattedXml() string
-	// ToHtml([]byte, []byte) ([]byte, int)
-	// ToBuffer([]byte) []byte
-	// String() string
-	// Content() string
-	// InnerHtml() string
-
-	// RecursivelyRemoveNamespaces() error
-	// Namespace() string
-	// SetNamespace(string, string)
-	// DeclareNamespace(string, string)
-	// RemoveDefaultNamespace()
-	// DeclaredNamespaces() []NamespaceDeclaration
+	GetAttribute(string) Node
+	SetAttribute(string, string) Node
+	RemoveAttribute(string) Node
+	InsertBefore(interface{}) error
+	InsertAfter(interface{}) error
+	InsertTop(interface{}) error
+	InsertBottom(interface{}) error
+	GetContent() string
+	SetContent(interface{}) error
+	SelectXPath(interface{}) ([]Node, error)
+	SelectXPathByDeadline(interface{}, *time.Time) ([]Node, error)
+	String() string
+	UnderlyingNode() interface{}
+	// SelectCSS(string) []Node
 }
+
+// type Node interface {
+// NodePtr() unsafe.Pointer
+// ResetNodePtr()
+// MyDocument() Document
+
+// IsValid() bool
+
+// // ParseFragment([]byte, []byte, ParseOption) (*DocumentFragment, error)
+// LineNumber() int
+
+// //
+// NodeType() NodeType
+// NextSibling() Node
+// PreviousSibling() Node
+
+// Parent() Node
+// FirstChild() Node
+// LastChild() Node
+// CountChildren() int
+// Attributes() map[string]Node //*AttributeNode
+
+// Coerce(interface{}) ([]Node, error)
+
+// AddChild(interface{}) error
+// AddPreviousSibling(interface{}) error
+// AddNextSibling(interface{}) error
+// InsertBefore(interface{}) error
+// InsertAfter(interface{}) error
+// InsertBegin(interface{}) error
+// InsertEnd(interface{}) error
+// SetInnerHtml(interface{}) error
+// SetChildren(interface{}) error
+// Replace(interface{}) error
+// Wrap(string) error
+
+// SetContent(interface{}) error
+
+// Name() string
+// SetName(string)
+
+// Attr(string) string
+// SetAttr(string, string) string
+// SetNsAttr(string, string, string) string
+// Attribute(string) Node //*AttributeNode
+
+// Path() string
+
+// Duplicate(int) Node
+// DuplicateTo(Document, int) Node
+
+// Search(interface{}) ([]Node, error)
+// // SearchWithVariables(interface{}, xpath.VariableScope) ([]Node, error)
+// SearchByDeadline(interface{}, *time.Time) ([]Node, error)
+// // EvalXPath(interface{}, xpath.VariableScope) (interface{}, error)
+// // EvalXPathAsBoolean(interface{}, xpath.VariableScope) bool
+
+// Unlink()
+// Remove()
+// ResetChildren()
+
+// SerializeWithFormat(SerializationOption, []byte, []byte) ([]byte, int)
+// ToXml([]byte, []byte) ([]byte, int)
+// ToUnformattedXml() string
+// ToHtml([]byte, []byte) ([]byte, int)
+// ToBuffer([]byte) []byte
+// String() string
+// Content() string
+// InnerHtml() string
+
+// RecursivelyRemoveNamespaces() error
+// Namespace() string
+// SetNamespace(string, string)
+// DeclareNamespace(string, string)
+// RemoveDefaultNamespace()
+// DeclaredNamespaces() []NamespaceDeclaration
+// }
 
 // type XmlNode struct {
 // 	xml.XmlNode
