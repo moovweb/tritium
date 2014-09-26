@@ -9,6 +9,10 @@ type GokogiriXmlDocument struct {
 	xml.XmlDocument
 }
 
+type GokogiriXmlDocumentFragment struct {
+	xml.DocumentFragment
+}
+
 func (doc *GokogiriXmlDocument) CreateElementNode(tag string) ht.Node {
 	return &GokogiriXmlNode{doc.XmlDocument.CreateElementNode(tag)}
 }

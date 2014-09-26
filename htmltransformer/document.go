@@ -9,3 +9,6 @@ type Document interface {
 	String() string
 	Root() Node // *ElementNode
 }
+
+type DocumentFragment interface {
+}

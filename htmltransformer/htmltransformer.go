@@ -1,12 +1,20 @@
 package htmltransformer
 
-// type HtmlTransformer interface {
-// 	HtmlParse([]byte, []byte, []byte, XmlParseOption, []byte) (*HtmlDocument, error)
-// 	HtmlParseFragment([]byte, []byte, []byte, XmlParseOption, []byte) (*xml.DocumentFragment, error)
-// 	XmlParse([]byte, []byte, []byte, XmlParseOption, []byte) (*XmlDocument, error)
-// 	XmlCreateEmptyDocument([]byte, []byte) *XmlDocument
-// 	Check(string) error
-// }
+type HtmlTransformer interface {
+	Parse([]byte, []byte, []byte, XmlParseOption, []byte) (Document, error)                 // (*HtmlDocument, error)
+	ParseFragment([]byte, []byte, []byte, XmlParseOption, []byte) (DocumentFragment, error) // (*xml.DocumentFragment, error)
+}
+
+type XmlTransformer interface {
+	Parse([]byte, []byte, []byte, XmlParseOption, []byte) (Document, error) // (*XmlDocument, error)
+	CreateEmptyDocument([]byte, []byte) Document                            // *XmlDocument
+}
+
+type XPathTransformer interface {
+	Check(string) error
+}
+
+type XmlParseOption int
 
 // type HtmlTransformerLegacy struct {
 // }
