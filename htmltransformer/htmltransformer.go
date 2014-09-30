@@ -12,5 +12,7 @@ type HtmlTransformer interface {
 	ParseFragment([]byte, []byte, []byte, []byte) error // (*xml.DocumentFragment, error)
 	ParseXML([]byte, []byte, []byte, []byte) error      // (*XmlDocument, error)
 	CreateEmptyDocument([]byte, []byte)                 // *XmlDocument
+
 	CheckXPath(string) error
+	CompileXPath(string) Expression
 }

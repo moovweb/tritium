@@ -63,3 +63,7 @@ func (xform *GokogiriHtmlTransformer) CreateEmptyDocument(inEncoding, outEncodin
 func (xform *GokogiriHtmlTransformer) CheckXPath(path string) (err error) {
 	return xpath.Check(path)
 }
+
+func (xform *GokogiriHtmlTransformer) Compile(path string) (expr ht.Expression) {
+	return &GokogiriXPathExpression{*xpath.Compile(path)}
+}

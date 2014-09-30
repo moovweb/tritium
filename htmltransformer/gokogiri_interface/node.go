@@ -3,6 +3,7 @@ package gokogiri_interface
 import (
 	"gokogiri/css"
 	"gokogiri/xml"
+	"gokogiri/xpath"
 	"time"
 	ht "tritium/htmltransformer"
 )
@@ -166,7 +167,23 @@ func (node *GokogiriXmlNode) SetContent(content interface{}) (err error) {
 
 func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, err error) {
 	//copy for now, may need to rethink
-	res, err := node.Search(data)
+	var res []xml.Node
+	switch xptype := data.(type) {
+	case ht.Expression:
+		underlying := xptype.UnderlyingExpression()
+		switch typecasted := underlying.(type) {
+		case xpath.Expression:
+			res, err = node.Search(&typecasted)
+		default:
+		}
+	case GokogiriXPathExpression:
+		res, err = node.Search(&xptype.Expression)
+	default:
+	}
+
+	if err != nil {
+		println(err.Error())
+	}
 
 	results = make([]ht.Node, len(res))
 	for i := 0; i < len(res); i++ {
@@ -177,7 +194,19 @@ func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, e
 
 func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *time.Time) (results []ht.Node, err error) {
 	//copy for now, may need to rethink
-	res, err := node.SearchByDeadline(data, deadline)
+	var res []xml.Node
+	switch xptype := data.(type) {
+	case ht.Expression:
+		underlying := xptype.UnderlyingExpression()
+		switch typecasted := underlying.(type) {
+		case xpath.Expression:
+			res, err = node.SearchByDeadline(&typecasted, deadline)
+		default:
+		}
+	case GokogiriXPathExpression:
+		res, err = node.SearchByDeadline(&xptype.Expression, deadline)
+	default:
+	}
 
 	results = make([]ht.Node, len(res))
 	for i := 0; i < len(res); i++ {
