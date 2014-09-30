@@ -1,60 +1,16 @@
 package htmltransformer
 
 type HtmlTransformer interface {
-	Parse([]byte, []byte, []byte, XmlParseOption, []byte) (Document, error)                 // (*HtmlDocument, error)
-	ParseFragment([]byte, []byte, []byte, XmlParseOption, []byte) (DocumentFragment, error) // (*xml.DocumentFragment, error)
+	//document functions
+	CreateElementNode(string) Node //*ElementNode
+	CreateCDataNode(string) Node   // *CDataNode
+	String() string
+	Root() Node // *ElementNode
+
+	// parsing functions
+	ParseHTML([]byte, []byte, []byte, []byte) error     // (*HtmlDocument, error)
+	ParseFragment([]byte, []byte, []byte, []byte) error // (*xml.DocumentFragment, error)
+	ParseXML([]byte, []byte, []byte, []byte) error      // (*XmlDocument, error)
+	CreateEmptyDocument([]byte, []byte)                 // *XmlDocument
+	CheckXPath(string) error
 }
-
-type XmlTransformer interface {
-	Parse([]byte, []byte, []byte, XmlParseOption, []byte) (Document, error) // (*XmlDocument, error)
-	CreateEmptyDocument([]byte, []byte) Document                            // *XmlDocument
-}
-
-type XPathTransformer interface {
-	Check(string) error
-}
-
-type XmlParseOption int
-
-// type HtmlTransformerLegacy struct {
-// }
-
-// // type HtmlTransformerCurrent struct {
-
-// // }
-
-// func (ht *HtmlTransformerLegacy) HtmlParse(content, inEncoding, url []byte, options xml.ParseOption, outEncoding []byte) (doc *HtmlDocument, err error) {
-// 	// gokogiri/html/document.go
-// }
-
-// // func (ht *HtmlTransformerCurrent) HtmlParse(content, inEncoding, url []byte, options xml.ParseOption, outEncoding []byte) (doc *HtmlDocument, err error) {
-// //   // gokogiri/html/document.go
-// // }
-
-// func (ht *HtmlTransformerLegacy) HtmlParseFragment(content, inEncoding, url []byte, options xml.ParseOption, outEncoding []byte) (fragment *xml.DocumentFragment, err error) {
-// 	// gokogiri/html/fragment.go
-// }
-
-// // func (ht *HtmlTransformerCurrent) HtmlParseFragment(content, inEncoding, url []byte, options xml.ParseOption, outEncoding []byte) (fragment *xml.DocumentFragment, err error) {
-// //   // gokogiri/html/fragment.go
-// // }
-
-// func (ht *HtmlTransformerLegacy) XmlParse(content, inEncoding, url []byte, options ParseOption, outEncoding []byte) (doc *XmlDocument, err error) {
-// 	// gokogiri/xml/document.go
-// }
-
-// // func (ht *HtmlTransformerCurrent) XmlParse(content, inEncoding, url []byte, options ParseOption, outEncoding []byte) (doc *XmlDocument, err error) {
-// //   // gokogiri/xml/document.go
-// // }
-
-// func (ht *HtmlTransformerLegacy) XmlCreateEmptyDocument(inEncoding, outEncoding []byte) (doc *XmlDocument) {
-// 	// gokogiri/xml/document.go
-// }
-
-// // func (ht *HtmlTransformerCurrent) XmlCreateEmptyDocument(inEncoding, outEncoding []byte) (doc *XmlDocument) {
-// //   // gokogiri/xml/document.go
-// // }
-
-// func (ht *HtmlTransformerLegacy) Check(path string) (err error) {
-// 	// gokogiri/xpath/expressions.go
-// }
