@@ -13,7 +13,7 @@ import (
 
 	"goconv"
 	"gokogiri/css"
-	"gokogiri/html"
+	// "gokogiri/html"
 	"gokogiri/xml"
 	"icu4go"
 	"moovhelper"
@@ -22,6 +22,9 @@ import (
 	"tritium/constants"
 	"tritium/parser"
 	"tritium/protoface"
+
+	hx "tritium/htmltransformer"
+	goku "tritium/htmltransformer/gokogiri_interface"
 )
 
 const isUserCalledEnvKey = "MtkIsUserCalled"
@@ -370,36 +373,71 @@ func xml_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, 
 }
 
 func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	return html_doc_libxml_legacy_Text_Text(ctx, scope, ins, args)
+	// ctx.HtmlParsed = true
+	// inputEncoding := args[0].(string)
+	// inputEncodingBytes := []byte(inputEncoding)
+	// outputEncoding := args[1].(string)
+	// outputEncodingBytes := []byte(outputEncoding)
+	// input := scope.Value.(string)
+	// doc, err := html.Parse([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
+	// if err != nil {
+	// 	LogEngineError(ctx, "html_doc err: "+err.Error())
+	// 	returnValue = "false"
+	// 	return
+	// }
+	// if doc == nil {
+	// 	LogEngineError(ctx, "html_doc err: nil doc")
+	// 	returnValue = "false"
+	// 	return
+	// }
+	// ctx.AddMemoryObject(doc)
+	// ctx.CurrentDoc = doc
+	// ns := &Scope{Value: doc}
+
+	// for i := 0; i < ins.INumChildren(); i++ {
+	// 	child := ins.IGetNthChild(i)
+	// 	ctx.RunInstruction(ns, child)
+	// }
+	// if err := doc.SetMetaEncoding(outputEncoding); err != nil {
+	// 	//ctx.Log.Warn("executing html:" + err.Error())
+	// }
+	// scope.Value = doc.String()
+	// ctx.CurrentDoc = nil
+	// returnValue = scope.Value
+	// //doc.Free()
+	// return
+}
+
+func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	xform := goku.NewXForm()
+
 	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
 	outputEncoding := args[1].(string)
 	outputEncodingBytes := []byte(outputEncoding)
 	input := scope.Value.(string)
-	doc, err := html.Parse([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
+	err := xform.ParseHTML([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
 	if err != nil {
 		LogEngineError(ctx, "html_doc err: "+err.Error())
 		returnValue = "false"
 		return
 	}
-	if doc == nil {
-		LogEngineError(ctx, "html_doc err: nil doc")
-		returnValue = "false"
-		return
-	}
-	ctx.AddMemoryObject(doc)
-	ctx.CurrentDoc = doc
-	ns := &Scope{Value: doc}
+	ctx.AddMemoryObject(xform)
+
+	ns := &Scope{Value: xform.Root()}
 
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
 	}
-	if err := doc.SetMetaEncoding(outputEncoding); err != nil {
-		//ctx.Log.Warn("executing html:" + err.Error())
-	}
-	scope.Value = doc.String()
-	ctx.CurrentDoc = nil
+	// TODO: need to do this by hand:
+	// if err := doc.SetMetaEncoding(outputEncoding); err != nil {
+	// 	//ctx.Log.Warn("executing html:" + err.Error())
+	// }
+	scope.Value = xform.String()
+	// ctx.CurrentDoc = nil
 	returnValue = scope.Value
 	//doc.Free()
 	return
@@ -594,49 +632,152 @@ func remove_param_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instru
 }
 
 func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	return html_fragment_doc_libxml_legacy_Text_Text(ctx, scope, ins, args)
+	// ctx.HtmlParsed = true
+	// inputEncoding := args[0].(string)
+	// inputEncodingBytes := []byte(inputEncoding)
+	// outputEncoding := args[1].(string)
+	// outputEncodingBytes := []byte(outputEncoding)
+	// input := scope.Value.(string)
+	// fragment, err := html.ParseFragment([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
+	// if err != nil {
+	// 	LogEngineError(ctx, "html_fragment err: "+err.Error())
+	// 	returnValue = "false"
+	// 	return
+	// }
+	// if fragment == nil {
+	// 	LogEngineError(ctx, "html_fragment err: nil fragment")
+	// 	returnValue = "false"
+	// 	return
+	// }
+	// ctx.AddMemoryObject(fragment.Node.MyDocument())
+	// ctx.CurrentDoc = fragment
+	// ns := &Scope{Value: fragment}
+	// for i := 0; i < ins.INumChildren(); i++ {
+	// 	child := ins.IGetNthChild(i)
+	// 	ctx.RunInstruction(ns, child)
+	// }
+	// //output is always utf-8 because the content is internal to Doc.
+	// scope.Value = ns.Value.(*xml.DocumentFragment).String()
+	// //TODO(NOJ): Why are we setting currentdoc to nil instead of what it used to be?
+	// ctx.CurrentDoc = nil
+	// returnValue = scope.Value
+	// //fragment.Node.MyDocument().Free()
+	// return
+}
+
+func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	xform := goku.NewXForm()
+
 	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
 	outputEncoding := args[1].(string)
 	outputEncodingBytes := []byte(outputEncoding)
 	input := scope.Value.(string)
-	fragment, err := html.ParseFragment([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
+	err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
 	if err != nil {
 		LogEngineError(ctx, "html_fragment err: "+err.Error())
 		returnValue = "false"
 		return
 	}
-	if fragment == nil {
-		LogEngineError(ctx, "html_fragment err: nil fragment")
-		returnValue = "false"
-		return
-	}
-	ctx.AddMemoryObject(fragment.Node.MyDocument())
-	ctx.CurrentDoc = fragment
-	ns := &Scope{Value: fragment}
+	ctx.AddMemoryObject(xform)
+	// ctx.CurrentDoc = fragment
+	ns := &Scope{Value: xform.Root()}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
 	}
 	//output is always utf-8 because the content is internal to Doc.
-	scope.Value = ns.Value.(*xml.DocumentFragment).String()
+	scope.Value = ns.Value.(hx.Node).String()
 	//TODO(NOJ): Why are we setting currentdoc to nil instead of what it used to be?
-	ctx.CurrentDoc = nil
+	// ctx.CurrentDoc = nil
 	returnValue = scope.Value
 	//fragment.Node.MyDocument().Free()
 	return
 }
 
 func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	node := scope.Value.(xml.Node)
+	return select_libxml_legacy_Text(ctx, scope, ins, args)
+	// node := scope.Value.(xml.Node)
+	// xpathStr := args[0].(string)
+	// expr := ctx.GetXpathExpr(xpathStr)
+	// if expr == nil {
+	// 	returnValue = "false"
+	// 	return
+	// }
+	// nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
+	// if err != nil {
+	// 	LogEngineError(ctx, "select err: "+err.Error())
+	// 	returnValue = "false"
+	// 	return
+	// }
+
+	// if len(nodes) == 0 {
+	// 	returnValue = "0"
+	// 	// add mtk attribute to zero-match node
+	// 	if parser.IncludeSelectorInfo && ctx.Env[isUserCalledEnvKey] != "" {
+	// 		attrValue := ctx.Env[isUserCalledEnvKey]
+	// 		attr := node.Attribute(moovhelper.MtkZeroMatchAttr)
+	// 		if attr != nil {
+	// 			attrValue = attr.Value() + " " + attrValue
+	// 		}
+	// 		node.SetAttr(moovhelper.MtkZeroMatchAttr, attrValue)
+	// 	}
+	// } else {
+	// 	returnValue = fmt.Sprintf("%d", len(nodes))
+	// }
+
+	// for index, node := range nodes {
+	// 	if node != nil && node.IsValid() {
+	// 		t := node.NodeType()
+	// 		if t == xml.XML_DOCUMENT_NODE || t == xml.XML_HTML_DOCUMENT_NODE {
+	// 			// We need to create a new temp variable to assign the Root() to because
+	// 			// if we assign it directly to the node interface, we can't know whether
+	// 			// it is nil or not because the interface will contain the type info
+	// 			// regardless of whether the actual value is nil or not.
+	// 			// More info:
+	// 			// http://stackoverflow.com/questions/11023593/inconsistent-nil-for-pointer-receiver-go-bug
+	// 			enode := node.MyDocument().Root()
+	// 			if enode != nil {
+	// 				node = enode
+	// 				t = node.NodeType()
+	// 			}
+	// 		}
+	// 		// add mtk attribute to matched nodes
+	// 		if parser.IncludeSelectorInfo && ctx.Env[isUserCalledEnvKey] != "" {
+	// 			attrValue := ctx.Env[isUserCalledEnvKey]
+	// 			attr := node.Attribute(moovhelper.MtkSourceAttr)
+	// 			if attr != nil {
+	// 				attrValue = attr.Value() + " " + attrValue
+	// 			}
+	// 			node.SetAttr(moovhelper.MtkSourceAttr, attrValue)
+	// 		}
+	// 		if t == xml.XML_ELEMENT_NODE {
+	// 			ns := &Scope{Value: node, Index: index}
+	// 			for i := 0; i < ins.INumChildren(); i++ {
+	// 				child := ins.IGetNthChild(i)
+	// 				ctx.RunInstruction(ns, child)
+	// 			}
+	// 		} else if t == xml.XML_TEXT_NODE {
+	// 			ctx.AddLog("You have just selected a text() node... THIS IS A TERRIBLE IDEA. Please run 'moov check' and sort it out!")
+	// 		}
+	// 	}
+	// }
+	// return
+}
+
+func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
-	expr := ctx.GetXpathExpr(xpathStr)
-	if expr == nil {
-		returnValue = "false"
-		return
-	}
-	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
+	// expr := ctx.GetXpathExpr(xpathStr)
+	// if expr == nil {
+	// 	returnValue = "false"
+	// 	return
+	// }
+	nodes, err := node.SelectXPathByDeadline(xpathStr, &ctx.Deadline)
 	if err != nil {
+		println("error:", err.Error())
 		LogEngineError(ctx, "select err: "+err.Error())
 		returnValue = "false"
 		return
@@ -647,11 +788,11 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 		// add mtk attribute to zero-match node
 		if parser.IncludeSelectorInfo && ctx.Env[isUserCalledEnvKey] != "" {
 			attrValue := ctx.Env[isUserCalledEnvKey]
-			attr := node.Attribute(moovhelper.MtkZeroMatchAttr)
+			attr := node.GetAttribute(moovhelper.MtkZeroMatchAttr)
 			if attr != nil {
-				attrValue = attr.Value() + " " + attrValue
+				attrValue = attr.GetContent() + " " + attrValue
 			}
-			node.SetAttr(moovhelper.MtkZeroMatchAttr, attrValue)
+			node.SetAttribute(moovhelper.MtkZeroMatchAttr, attrValue)
 		}
 	} else {
 		returnValue = fmt.Sprintf("%d", len(nodes))
@@ -659,36 +800,28 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 
 	for index, node := range nodes {
 		if node != nil && node.IsValid() {
-			t := node.NodeType()
-			if t == xml.XML_DOCUMENT_NODE || t == xml.XML_HTML_DOCUMENT_NODE {
-				// We need to create a new temp variable to assign the Root() to because
-				// if we assign it directly to the node interface, we can't know whether
-				// it is nil or not because the interface will contain the type info
-				// regardless of whether the actual value is nil or not.
-				// More info:
-				// http://stackoverflow.com/questions/11023593/inconsistent-nil-for-pointer-receiver-go-bug
-				enode := node.MyDocument().Root()
-				if enode != nil {
-					node = enode
-					t = node.NodeType()
-				}
+
+			if node.IsDocument() {
+				// ?
 			}
+
 			// add mtk attribute to matched nodes
 			if parser.IncludeSelectorInfo && ctx.Env[isUserCalledEnvKey] != "" {
 				attrValue := ctx.Env[isUserCalledEnvKey]
-				attr := node.Attribute(moovhelper.MtkSourceAttr)
+				attr := node.GetAttribute(moovhelper.MtkSourceAttr)
 				if attr != nil {
-					attrValue = attr.Value() + " " + attrValue
+					attrValue = attr.GetContent() + " " + attrValue
 				}
-				node.SetAttr(moovhelper.MtkSourceAttr, attrValue)
+				node.SetAttribute(moovhelper.MtkSourceAttr, attrValue)
 			}
-			if t == xml.XML_ELEMENT_NODE {
+			if node.IsElement() {
+
 				ns := &Scope{Value: node, Index: index}
 				for i := 0; i < ins.INumChildren(); i++ {
 					child := ins.IGetNthChild(i)
 					ctx.RunInstruction(ns, child)
 				}
-			} else if t == xml.XML_TEXT_NODE {
+			} else if node.IsText() {
 				ctx.AddLog("You have just selected a text() node... THIS IS A TERRIBLE IDEA. Please run 'moov check' and sort it out!")
 			}
 		}

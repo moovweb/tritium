@@ -6,6 +6,7 @@ type HtmlTransformer interface {
 	CreateCDataNode(string) Node   // *CDataNode
 	String() string
 	Root() Node // *ElementNode
+	Free()
 
 	// parsing functions
 	ParseHTML([]byte, []byte, []byte, []byte) error     // (*HtmlDocument, error)

@@ -179,6 +179,7 @@ func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, e
 	case GokogiriXPathExpression:
 		res, err = node.Search(&xptype.Expression)
 	default:
+		res, err = node.SearchByDeadline(data, deadline)
 	}
 
 	if err != nil {
@@ -206,6 +207,7 @@ func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *t
 	case GokogiriXPathExpression:
 		res, err = node.SearchByDeadline(&xptype.Expression, deadline)
 	default:
+		res, err = node.SearchByDeadline(data, deadline)
 	}
 
 	results = make([]ht.Node, len(res))
