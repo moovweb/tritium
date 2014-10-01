@@ -411,7 +411,6 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruct
 
 func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	xform := goku.NewXForm()
-
 	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
@@ -425,6 +424,8 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 		return
 	}
 	ctx.AddMemoryObject(xform)
+	prevxform := ctx.HtmlTransformer
+	ctx.HtmlTransformer = xform
 
 	ns := &Scope{Value: xform.Root()}
 
@@ -439,6 +440,7 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 	scope.Value = xform.String()
 	// ctx.CurrentDoc = nil
 	returnValue = scope.Value
+	ctx.HtmlTransformer = prevxform
 	//doc.Free()
 	return
 }
@@ -668,7 +670,6 @@ func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 
 func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	xform := goku.NewXForm()
-
 	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
@@ -682,6 +683,8 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 		return
 	}
 	ctx.AddMemoryObject(xform)
+	prevxform := ctx.HtmlTransformer
+	ctx.HtmlTransformer = xform
 	// ctx.CurrentDoc = fragment
 	ns := &Scope{Value: xform.Root()}
 	for i := 0; i < ins.INumChildren(); i++ {
@@ -693,6 +696,8 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 	//TODO(NOJ): Why are we setting currentdoc to nil instead of what it used to be?
 	// ctx.CurrentDoc = nil
 	returnValue = scope.Value
+	ctx.HtmlTransformer = prevxform
+
 	//fragment.Node.MyDocument().Free()
 	return
 }
@@ -770,6 +775,7 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
+	// TODO: fix this?
 	// expr := ctx.GetXpathExpr(xpathStr)
 	// if expr == nil {
 	// 	returnValue = "false"
@@ -894,21 +900,22 @@ func query_layer_Text(ctx *EngineContext, scope *Scope, ins protoface.Instructio
 }
 
 func remove_(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	node := scope.Value.(xml.Node)
+	node := scope.Value.(hx.Node)
 	node.Remove()
 	return
 }
 
 func remove_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	node := scope.Value.(xml.Node)
+	node := scope.Value.(hx.Node)
 
 	xpathStr := args[0].(string)
-	expr := ctx.GetXpathExpr(xpathStr)
-	if expr == nil {
-		returnValue = "0"
-		return
-	}
-	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
+	// TODO: fix this?
+	// expr := ctx.GetXpathExpr(xpathStr)
+	// if expr == nil {
+	// 	returnValue = "0"
+	// 	return
+	// }
+	nodes, err := node.SelectXPathByDeadline(xpathStr, &ctx.Deadline)
 	if err != nil {
 		LogEngineError(ctx, "select err: "+err.Error())
 		returnValue = "false"
@@ -936,11 +943,12 @@ func position_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, 
 }
 
 func insert_at_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	node := scope.Value.(xml.Node)
+	node := scope.Value.(hx.Node)
 	position := args[0].(Position)
 	tagName := args[1].(string)
-	element := node.MyDocument().CreateElementNode(tagName)
+	element := ctx.HtmlTransformer.CreateElementNode(tagName)
 	MoveFunc(element, node, position)
+
 	ns := &Scope{Value: element}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
@@ -951,12 +959,12 @@ func insert_at_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.Ins
 }
 
 func attribute_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	node := scope.Value.(xml.Node)
+	node := scope.Value.(hx.Node)
 	name := args[0].(string)
-	attr := node.Attribute(name)
+	attr := node.GetAttribute(name)
 	if attr == nil {
-		node.SetAttr(name, "")
-		attr = node.Attribute(name)
+		node.SetAttribute(name, "")
+		attr = node.GetAttribute(name)
 	}
 	if attr != nil {
 		as := &Scope{Value: attr}
@@ -964,7 +972,7 @@ func attribute_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 			child := ins.IGetNthChild(i)
 			ctx.RunInstruction(as, child)
 		}
-		if attr.Value() == "" {
+		if attr.GetContent() == "" {
 			attr.Remove()
 		}
 		returnValue = "true"
@@ -973,23 +981,23 @@ func attribute_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 }
 
 func value(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	node := scope.Value.(xml.Node)
-	ts := &Scope{Value: node.Content()}
+	node := scope.Value.(hx.Node)
+	ts := &Scope{Value: node.GetContent()}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ts, child)
 	}
 
 	val := ts.Value.(string)
-	if attr, ok := node.(*xml.AttributeNode); ok {
-		attr.SetValue(val)
+	if attr, ok := node.(hx.Node); ok {
+		attr.SetContent(val)
 	}
 	returnValue = val
 	return
 }
 
 func move_XMLNode_XMLNode_Position(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	MoveFunc(args[0].(xml.Node), args[1].(xml.Node), args[2].(Position))
+	MoveFunc(args[0].(hx.Node), args[1].(hx.Node), args[2].(Position))
 	return
 }
 
@@ -1017,19 +1025,32 @@ func equal_XMLNode_XMLNode(ctx *EngineContext, scope *Scope, ins protoface.Instr
 }
 
 func move_children_to_XMLNode_Position(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	node := scope.Value.(xml.Node)
-	destNode := args[0].(xml.Node)
-	if destNode.NodeType() == xml.XML_ELEMENT_NODE {
+	node := scope.Value.(hx.Node)
+	destNode := args[0].(hx.Node)
+	if destNode.IsElement() {
 		child := node.FirstChild()
 		for child != nil {
 			nextChild := child.NextSibling()
-			if child.NodePtr() != destNode.NodePtr() {
+			if !child.Is(destNode) {
 				returnValue = "true"
 				MoveFunc(child, destNode, args[1].(Position))
 			}
 			child = nextChild
 		}
 	}
+
+	// if destNode.NodeType() == xml.XML_ELEMENT_NODE {
+	// 	child := node.FirstChild()
+	// 	for child != nil {
+	// 		nextChild := child.NextSibling()
+	// 		if child.NodePtr() != destNode.NodePtr() {
+	// 			returnValue = "true"
+	// 			MoveFunc(child, destNode, args[1].(Position))
+	// 		}
+	// 		child = nextChild
+	// 	}
+	// }
+
 	return
 }
 
@@ -1072,11 +1093,12 @@ func inner_text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, arg
 }
 
 func dup(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	node := scope.Value.(xml.Node)
-	newNode := node.Duplicate(1)
-	if newNode.NodeType() == xml.XML_ELEMENT_NODE {
+	node := scope.Value.(hx.Node)
+	newNode := node.Duplicate()
+	if newNode.IsElement() {
 		MoveFunc(newNode, node, AFTER)
 	}
+
 	ns := &Scope{Value: newNode}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
@@ -1086,15 +1108,16 @@ func dup(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []int
 }
 
 func fetch_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	node := scope.Value.(xml.Node)
+	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
-	expr := ctx.GetXpathExpr(xpathStr)
-	if expr == nil {
-		returnValue = "false"
-		return
-	}
+	// TODO: fix this?
+	// expr := ctx.GetXpathExpr(xpathStr)
+	// if expr == nil {
+	// 	returnValue = "false"
+	// 	return
+	// }
 
-	nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
+	nodes, err := node.SelectXPathByDeadline(xpathStr, &ctx.Deadline)
 	if err == nil && len(nodes) > 0 {
 		node := nodes[0]
 		returnValue = node.String()
@@ -1136,11 +1159,12 @@ func cdata_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, arg
 // are added in reverse order.
 func inject_at_v1_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 
-	node := scope.Value.(xml.Node)
+	node := scope.Value.(hx.Node)
 	position := args[0].(Position)
 	input := args[1].(string)
 
 	nodes, err := node.Coerce(input)
+
 	if err == nil {
 		if position == BOTTOM || position == BEFORE {
 			for _, n := range nodes {

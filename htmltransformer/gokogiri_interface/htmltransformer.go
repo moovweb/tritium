@@ -50,12 +50,6 @@ func (xform *GokogiriHtmlTransformer) ParseHTML(content, inEncoding, url, outEnc
 		return errors.New("nil doc")
 	}
 	xform.document = result.XmlDocument
-	// println()
-	// println()
-	// println()
-	// println(xform.document.String())
-	// println()
-
 	return nil
 }
 
@@ -89,6 +83,6 @@ func (xform *GokogiriHtmlTransformer) CheckXPath(path string) (err error) {
 	return xpath.Check(path)
 }
 
-func (xform *GokogiriHtmlTransformer) Compile(path string) (expr ht.Expression) {
+func (xform *GokogiriHtmlTransformer) CompileXPath(path string) (expr ht.Expression) {
 	return &GokogiriXPathExpression{*xpath.Compile(path)}
 }

@@ -15,6 +15,7 @@ import (
 	"steno"
 	"tritium"
 	"tritium/constants"
+	hx "tritium/htmltransformer"
 	"tritium/protoface"
 )
 
@@ -55,8 +56,9 @@ type EngineContext struct {
 	Prod        bool
 	HtmlParsed  bool
 
-	ActiveLayers map[string]bool
+	ActiveLayers       map[string]bool
 	ActiveLayersString string
+	HtmlTransformer    hx.HtmlTransformer
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -86,8 +88,8 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		Rrules:                   rrules,
 		MatchStack:               make([]string, 0),
 		MatchShouldContinueStack: make([]bool, 0),
-		Yields:     make([]*YieldBlock, 0),
-		HadError:   false,
+		Yields:   make([]*YieldBlock, 0),
+		HadError: false,
 
 		Deadline:    deadline,
 		Mobjects:    make([]MemoryObject, 0, defaultMobjects),
