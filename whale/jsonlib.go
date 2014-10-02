@@ -6,7 +6,6 @@ import (
 )
 
 import (
-	// "gokogiri/xml"
 	hx "tritium/htmltransformer"
 )
 

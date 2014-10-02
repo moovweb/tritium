@@ -13,8 +13,6 @@ import (
 
 	"goconv"
 	"gokogiri/css"
-	// "gokogiri/html"
-	// "gokogiri/xml"
 	"icu4go"
 	"moovhelper"
 	"rubex"

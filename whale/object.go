@@ -2,7 +2,6 @@ package whale
 
 import "rubex"
 
-// import "gokogiri/xpath"
 import hx "tritium/htmltransformer"
 import "go-cache"
 
