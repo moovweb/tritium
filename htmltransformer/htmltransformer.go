@@ -9,10 +9,10 @@ type HtmlTransformer interface {
 	Free()
 
 	// parsing functions
-	ParseHTML([]byte, []byte, []byte, []byte) error     // (*HtmlDocument, error)
-	ParseFragment([]byte, []byte, []byte, []byte) error // (*xml.DocumentFragment, error)
-	ParseXML([]byte, []byte, []byte, []byte) error      // (*XmlDocument, error)
-	CreateEmptyDocument([]byte, []byte)                 // *XmlDocument
+	ParseHTML([]byte, []byte, []byte, []byte) error             // (*HtmlDocument, error)
+	ParseFragment([]byte, []byte, []byte, []byte) (Node, error) // (*xml.DocumentFragment, error)
+	ParseXML([]byte, []byte, []byte, []byte) error              // (*XmlDocument, error)
+	CreateEmptyDocument([]byte, []byte)                         // *XmlDocument
 
 	CheckXPath(string) error
 	CompileXPath(string) Expression

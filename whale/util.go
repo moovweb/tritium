@@ -1,7 +1,7 @@
 package whale
 
 import (
-	"gokogiri/xml"
+	// "gokogiri/xml"
 	"strings"
 	hx "tritium/htmltransformer"
 )

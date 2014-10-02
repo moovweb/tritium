@@ -53,28 +53,37 @@ func (xform *GokogiriHtmlTransformer) ParseHTML(content, inEncoding, url, outEnc
 	return nil
 }
 
-func (xform *GokogiriHtmlTransformer) ParseFragment(content, inEncoding, url, outEncoding []byte) (err error) {
-	result, err := html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
+func (xform *GokogiriHtmlTransformer) ParseFragment(content, inEncoding, url, outEncoding []byte) (frag ht.Node, err error) {
+	var fragment *xml.DocumentFragment
+	if xform.document != nil {
+		fragment, err = xform.document.ParseFragment(content, url, xml.DefaultParseOption)
+	} else {
+		fragment, err = html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
+	}
 	if err != nil {
-		return err
+		return &GokogiriXmlNode{fragment}, err
 	}
-	if result == nil {
-		return errors.New("nil fragment")
+	if fragment == nil {
+		return &GokogiriXmlNode{fragment}, errors.New("nil fragment")
 	}
-	xform.fragment = result
-	return err
+	// xform.fragment = frag
+	return &GokogiriXmlNode{fragment}, nil
 }
 
 func (xform *GokogiriHtmlTransformer) ParseXML(content, inEncoding, url, outEncoding []byte) (err error) {
 	result, err := xml.Parse(content, inEncoding, url, xml.DefaultParseOption, outEncoding)
-	// doc = &GokogiriXmlDocument{*result}
+	if err != nil {
+		return err
+	}
+	if result == nil {
+		return errors.New("nil doc")
+	}
 	xform.document = result
 	return err
 }
 
 func (xform *GokogiriHtmlTransformer) CreateEmptyDocument(inEncoding, outEncoding []byte) {
 	result := xml.CreateEmptyDocument(inEncoding, outEncoding)
-	// doc = &GokogiriXmlDocument{*result}
 	xform.document = result
 	return
 }

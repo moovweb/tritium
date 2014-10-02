@@ -30,10 +30,11 @@ type Node interface {
 	IsDocument() bool
 	IsElement() bool
 	IsText() bool
-	InnerHtml() string
+	GetInnerHtml() string
 	SetInnerHtml(interface{}) error
 	Is(Node) bool
 	GetName() string
 	SetName(string)
 	Duplicate() Node
+	Path() string
 }

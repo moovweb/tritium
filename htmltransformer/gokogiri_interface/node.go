@@ -15,8 +15,9 @@ type GokogiriXmlNode struct {
 func (node *GokogiriXmlNode) GetAttribute(name string) (attribute ht.Node) {
 	attr := node.Attribute(name)
 	if attr == nil {
-		node.SetAttr(name, "")
-		attr = node.Attribute(name)
+		return nil
+		// node.SetAttr(name, "")
+		// attr = node.Attribute(name)
 	}
 	return &GokogiriXmlNode{attr}
 }
@@ -43,19 +44,14 @@ func (node *GokogiriXmlNode) InsertBefore(data interface{}) (err error) {
 		underlying := nodified.UnderlyingNode()
 		switch typecasted := underlying.(type) {
 		case xml.Node:
-			println("it's an xml.node")
 			err = node.Node.InsertBefore(typecasted)
 		default:
 			println(nodified)
-			println("nested default")
 			return
 		}
 	case GokogiriXmlNode:
-		println("gokogirixmlnode")
 		err = node.Node.InsertBefore(nodified.Node)
 	default:
-		println(nodified)
-		println("default")
 		return
 	}
 
@@ -70,19 +66,14 @@ func (node *GokogiriXmlNode) InsertAfter(data interface{}) (err error) {
 		underlying := nodified.UnderlyingNode()
 		switch typecasted := underlying.(type) {
 		case xml.Node:
-			println("it's an xml.node")
 			err = node.Node.InsertAfter(typecasted)
 		default:
 			println(nodified)
-			println("nested default")
 			return
 		}
 	case GokogiriXmlNode:
-		println("gokogirixmlnode")
 		err = node.Node.InsertAfter(nodified.Node)
 	default:
-		println(nodified)
-		println("default")
 		return
 	}
 
@@ -137,23 +128,43 @@ func (node *GokogiriXmlNode) InsertBottom(data interface{}) (err error) {
 }
 
 func (node *GokogiriXmlNode) FirstChild() (result ht.Node) {
-	return &GokogiriXmlNode{node.Node.FirstChild()}
+	if node.Node.FirstChild() != nil {
+		return &GokogiriXmlNode{node.Node.FirstChild()}
+	} else {
+		return nil
+	}
 }
 
 func (node *GokogiriXmlNode) LastChild() (result ht.Node) {
-	return &GokogiriXmlNode{node.Node.LastChild()}
+	if node.Node.LastChild() != nil {
+		return &GokogiriXmlNode{node.Node.LastChild()}
+	} else {
+		return nil
+	}
 }
 
 func (node *GokogiriXmlNode) PreviousSibling() (result ht.Node) {
-	return &GokogiriXmlNode{node.Node.PreviousSibling()}
+	if node.Node.PreviousSibling() != nil {
+		return &GokogiriXmlNode{node.Node.PreviousSibling()}
+	} else {
+		return nil
+	}
 }
 
 func (node *GokogiriXmlNode) NextSibling() (result ht.Node) {
-	return &GokogiriXmlNode{node.Node.NextSibling()}
+	if node.Node.NextSibling() != nil {
+		return &GokogiriXmlNode{node.Node.NextSibling()}
+	} else {
+		return nil
+	}
 }
 
 func (node *GokogiriXmlNode) Parent() (result ht.Node) {
-	return &GokogiriXmlNode{node.Node.Parent()}
+	if node.Node.Parent() != nil {
+		return &GokogiriXmlNode{node.Node.Parent()}
+	} else {
+		return nil
+	}
 }
 
 func (node *GokogiriXmlNode) GetContent() (content string) {
@@ -289,7 +300,7 @@ func (node *GokogiriXmlNode) IsText() (result bool) {
 	return
 }
 
-func (node *GokogiriXmlNode) InnerHtml() (result string) {
+func (node *GokogiriXmlNode) GetInnerHtml() (result string) {
 	return node.Node.InnerHtml()
 }
 
@@ -321,4 +332,8 @@ func (node *GokogiriXmlNode) SetName(name string) {
 
 func (node *GokogiriXmlNode) Duplicate() (dup ht.Node) {
 	return &GokogiriXmlNode{node.Node.Duplicate(1)}
+}
+
+func (node *GokogiriXmlNode) Path() (path string) {
+	return node.Node.Path()
 }
