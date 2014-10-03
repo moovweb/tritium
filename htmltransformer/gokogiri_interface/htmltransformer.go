@@ -21,23 +21,31 @@ func (xform *GokogiriHtmlTransformer) CreateElementNode(tag string) ht.Node {
 	return &GokogiriXmlNode{xform.document.CreateElementNode(tag)}
 }
 
+// func (xform *GokogiriHtmlTransformer) Document() ht.Node {
+// 	return &GokogiriXmlNode{xform.document}
+// }
+
+// func (xform *GokogiriHtmlTransformer) Fragment() ht.Node {
+// 	return &GokogiriXmlNode{xform.fragment}
+// }
+
 func (xform *GokogiriHtmlTransformer) CreateCDataNode(data string) ht.Node {
 	return &GokogiriXmlNode{xform.document.CreateCDataNode(data)}
 }
 
 func (xform *GokogiriHtmlTransformer) String() string {
-	if xform.fragment != nil {
-		return xform.fragment.String()
-	} else {
+	if xform.document != nil {
 		return xform.document.String()
+	} else {
+		return xform.fragment.String()
 	}
 }
 
 func (xform *GokogiriHtmlTransformer) Root() ht.Node {
-	if xform.fragment != nil {
-		return &GokogiriXmlNode{xform.fragment}
-	} else {
+	if xform.document != nil {
 		return &GokogiriXmlNode{xform.document}
+	} else {
+		return &GokogiriXmlNode{xform.fragment}
 	}
 }
 
@@ -65,24 +73,21 @@ func (xform *GokogiriHtmlTransformer) ParseHTML(content, inEncoding, url, outEnc
 func (xform *GokogiriHtmlTransformer) ParseFragment(content, inEncoding, url, outEncoding []byte) (frag ht.Node, err error) {
 	var fragment *xml.DocumentFragment
 	if xform.document != nil {
-		println("foo")
-		fragment, err = xform.document.ParseFragment(content, url, xml.DefaultParseOption)
+		newdoc := html.HtmlDocument{xform.document}
+		fragment, err = newdoc.ParseFragment(content, url, xml.DefaultParseOption)
+		// xform.document = newdoc.XmlDocument
 	} else {
-		println("bar")
-		xform.document = xml.CreateEmptyDocument(inEncoding, outEncoding)
-		// fragment, err = html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
-		fragment, err = xform.document.ParseFragment(content, url, xml.DefaultParseOption)
+		// xform.document = xml.CreateEmptyDocument(inEncoding, outEncoding)
+		fragment, err = html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
+		// fragment, err = xform.document.ParseFragment(content, url, xml.DefaultParseOption)
 	}
 	xform.fragment = fragment
 	if err != nil {
-		println("1")
 		return &GokogiriXmlNode{fragment}, err
 	}
 	if fragment == nil {
-		println("2")
 		return &GokogiriXmlNode{fragment}, errors.New("nil fragment")
 	}
-	println("3")
 	return &GokogiriXmlNode{fragment}, nil
 }
 

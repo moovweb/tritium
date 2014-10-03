@@ -8,6 +8,9 @@ type HtmlTransformer interface {
 	Root() Node // *ElementNode
 	Free()
 
+	// Document() Node
+	// Fragment() Node
+
 	// parsing functions
 	ParseHTML([]byte, []byte, []byte, []byte) error             // (*HtmlDocument, error)
 	ParseFragment([]byte, []byte, []byte, []byte) (Node, error) // (*xml.DocumentFragment, error)

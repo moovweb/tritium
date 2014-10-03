@@ -1192,7 +1192,7 @@ func cdata_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, arg
 // Fixes a bug in inject_at where if position is AFTER or TOP, the elements
 // are added in reverse order.
 func inject_at_v1_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-
+	// println("inject_at_v1_Position_Text")
 	node := scope.Value.(hx.Node)
 	position := args[0].(Position)
 	input := args[1].(string)
@@ -1204,6 +1204,10 @@ func inject_at_v1_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.
 		for child := f.FirstChild(); child != nil; child = child.NextSibling() {
 			nodes = append(nodes, child)
 		}
+		// println("~~FAKE COERCE NODES:")
+		// for _, n := range nodes {
+		// 	println(n.String())
+		// }
 		if position == BOTTOM || position == BEFORE {
 			for _, n := range nodes {
 				MoveFunc(n, node, position)
@@ -1218,6 +1222,7 @@ func inject_at_v1_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.
 	if len(nodes) > 0 {
 		first := nodes[0]
 		if first.IsElement() {
+			// println("successfully ran scope")
 			// successfully ran scope
 			returnValue = "true"
 			ns := &Scope{Value: first}
@@ -1229,6 +1234,11 @@ func inject_at_v1_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.
 	} else {
 		returnValue = "false"
 	}
+	// println("document")
+	// println(ctx.HtmlTransformer.Document().String())
+	// println("fragment")
+	// println(ctx.HtmlTransformer.Fragment().String())
+
 	return
 }
 
