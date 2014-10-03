@@ -214,10 +214,14 @@ func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *t
 		case xpath.Expression:
 			res, err = node.SearchByDeadline(&typecasted, deadline)
 		default:
+			// println("******* ht.Expression default: In SelectXPathByDeadline in gokogiri interface- default data thingy****")
 		}
 	case GokogiriXPathExpression:
 		res, err = node.SearchByDeadline(&xptype.Expression, deadline)
+	case string:
+		res, err = node.SearchByDeadline(data, deadline)
 	default:
+		// println("******* In SelectXPathByDeadline in gokogiri interface- default data thingy****")
 	}
 
 	results = make([]ht.Node, len(res))
