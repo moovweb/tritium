@@ -218,7 +218,6 @@ func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *t
 	case GokogiriXPathExpression:
 		res, err = node.SearchByDeadline(&xptype.Expression, deadline)
 	default:
-		res, err = node.SearchByDeadline(data, deadline)
 	}
 
 	results = make([]ht.Node, len(res))
@@ -301,7 +300,14 @@ func (node *GokogiriXmlNode) IsText() (result bool) {
 }
 
 func (node *GokogiriXmlNode) GetInnerHtml() (result string) {
-	return node.Node.InnerHtml()
+	// return node.Node.InnerHtml()
+	underlying := node.UnderlyingNode()
+	switch typecasted := underlying.(type) {
+	case xml.Node:
+		return typecasted.InnerHtml()
+	default:
+		return
+	}
 }
 
 func (node *GokogiriXmlNode) SetInnerHtml(data interface{}) (err error) {
