@@ -18,19 +18,35 @@ func NewXForm() *GokogiriHtmlTransformer {
 }
 
 func (xform *GokogiriHtmlTransformer) CreateElementNode(tag string) ht.Node {
-	return &GokogiriXmlNode{xform.document.CreateElementNode(tag)}
+	if xform.document != nil {
+		return &GokogiriXmlNode{xform.document.CreateElementNode(tag)}
+	} else {
+		return &GokogiriXmlNode{xform.fragment.Node.MyDocument().CreateElementNode(tag)}
+	}
 }
 
 // func (xform *GokogiriHtmlTransformer) Document() ht.Node {
-// 	return &GokogiriXmlNode{xform.document}
+// 	if xform.document == nil {
+// 		return nil
+// 	} else {
+// 		return &GokogiriXmlNode{xform.document}
+// 	}
 // }
 
 // func (xform *GokogiriHtmlTransformer) Fragment() ht.Node {
-// 	return &GokogiriXmlNode{xform.fragment}
+// 	if xform.fragment == nil {
+// 		return nil
+// 	} else {
+// 		return &GokogiriXmlNode{xform.fragment}
+// 	}
 // }
 
 func (xform *GokogiriHtmlTransformer) CreateCDataNode(data string) ht.Node {
-	return &GokogiriXmlNode{xform.document.CreateCDataNode(data)}
+	if xform.document != nil {
+		return &GokogiriXmlNode{xform.document.CreateCDataNode(data)}
+	} else {
+		return &GokogiriXmlNode{xform.fragment.Node.MyDocument().CreateCDataNode(data)}
+	}
 }
 
 func (xform *GokogiriHtmlTransformer) String() string {

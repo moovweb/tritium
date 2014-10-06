@@ -1047,9 +1047,7 @@ func value(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []i
 	}
 
 	val := ts.Value.(string)
-	if attr, ok := node.(hx.Node); ok {
-		attr.SetContent(val)
-	}
+	node.SetContent(val)
 	returnValue = val
 	return
 }

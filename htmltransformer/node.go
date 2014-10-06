@@ -5,6 +5,7 @@ import (
 )
 
 type Node interface {
+	// Document()
 	GetAttribute(string) Node
 	SetAttribute(string, string) Node
 	RemoveAttribute(string) Node

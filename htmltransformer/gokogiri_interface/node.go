@@ -12,6 +12,10 @@ type GokogiriXmlNode struct {
 	xml.Node
 }
 
+// func (node *GokogiriXmlNode) Document() {
+// 	println(node.Node.MyDocument().String())
+// }
+
 func (node *GokogiriXmlNode) GetAttribute(name string) (attribute ht.Node) {
 	attr := node.Attribute(name)
 	if attr == nil {
