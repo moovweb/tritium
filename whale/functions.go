@@ -386,7 +386,9 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 	prevxform := ctx.HtmlTransformer
 	ctx.HtmlTransformer = xform
 
-	ns := &Scope{Value: xform.Root()}
+	xmldoc, _ := xform.Root()
+
+	ns := &Scope{Value: xmldoc}
 
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
@@ -456,7 +458,9 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 	prevxform := ctx.HtmlTransformer
 	ctx.HtmlTransformer = xform
 
-	ns := &Scope{Value: xform.Root()}
+	htmldoc, _ := xform.Root()
+
+	ns := &Scope{Value: htmldoc}
 
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
@@ -522,6 +526,11 @@ func to_json_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction
 	// if expr == nil {
 	// 	return "{}"
 	// }
+
+	if xpathStr == "" {
+		returnValue = "false"
+		return
+	}
 
 	nodes, err := node.SelectXPathByDeadline(xpathStr, &ctx.Deadline)
 	if err != nil {
@@ -716,7 +725,9 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 	prevxform := ctx.HtmlTransformer
 	ctx.HtmlTransformer = xform
 	// ctx.CurrentDoc = fragment
-	ns := &Scope{Value: xform.Root()}
+	frag, _ := xform.Root()
+
+	ns := &Scope{Value: frag}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
@@ -812,6 +823,10 @@ func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.I
 	// 	returnValue = "false"
 	// 	return
 	// }
+	if xpathStr == "" {
+		returnValue = "false"
+		return
+	}
 	nodes, err := node.SelectXPathByDeadline(xpathStr, &ctx.Deadline)
 	if err != nil {
 		println("error:", err.Error())
@@ -837,9 +852,17 @@ func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.I
 
 	for index, node := range nodes {
 		if node != nil && node.IsValid() {
-
 			if node.IsDocument() {
-				// ?
+				// We need to create a new temp variable to assign the Root() to because
+				// if we assign it directly to the node interface, we can't know whether
+				// it is nil or not because the interface will contain the type info
+				// regardless of whether the actual value is nil or not.
+				// More info:
+				// http://stackoverflow.com/questions/11023593/inconsistent-nil-for-pointer-receiver-go-bug
+				_, root := ctx.HtmlTransformer.Root()
+				if root != nil {
+					node = root
+				}
 			}
 
 			// add mtk attribute to matched nodes
@@ -852,7 +875,7 @@ func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.I
 				node.SetAttribute(moovhelper.MtkSourceAttr, attrValue)
 			}
 			if node.IsElement() {
-
+				// println(node.String())
 				ns := &Scope{Value: node, Index: index}
 				for i := 0; i < ins.INumChildren(); i++ {
 					child := ins.IGetNthChild(i)
@@ -946,6 +969,10 @@ func remove_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 	// 	returnValue = "0"
 	// 	return
 	// }
+	if xpathStr == "" {
+		returnValue = "false"
+		return
+	}
 	nodes, err := node.SelectXPathByDeadline(xpathStr, &ctx.Deadline)
 	if err != nil {
 		LogEngineError(ctx, "select err: "+err.Error())
@@ -1148,6 +1175,11 @@ func fetch_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, arg
 	// 	return
 	// }
 
+	if xpathStr == "" {
+		returnValue = "false"
+		return
+	}
+
 	nodes, err := node.SelectXPathByDeadline(xpathStr, &ctx.Deadline)
 	if err == nil && len(nodes) > 0 {
 		node := nodes[0]
@@ -1204,10 +1236,6 @@ func inject_at_v1_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.
 		for child := f.FirstChild(); child != nil; child = child.NextSibling() {
 			nodes = append(nodes, child)
 		}
-		// println("~~FAKE COERCE NODES:")
-		// for _, n := range nodes {
-		// 	println(n.String())
-		// }
 		if position == BOTTOM || position == BEFORE {
 			for _, n := range nodes {
 				MoveFunc(n, node, position)
@@ -1222,7 +1250,6 @@ func inject_at_v1_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.
 	if len(nodes) > 0 {
 		first := nodes[0]
 		if first.IsElement() {
-			// println("successfully ran scope")
 			// successfully ran scope
 			returnValue = "true"
 			ns := &Scope{Value: first}
@@ -1234,10 +1261,6 @@ func inject_at_v1_Position_Text(ctx *EngineContext, scope *Scope, ins protoface.
 	} else {
 		returnValue = "false"
 	}
-	// println("document")
-	// println(ctx.HtmlTransformer.Document().String())
-	// println("fragment")
-	// println(ctx.HtmlTransformer.Fragment().String())
 
 	return
 }

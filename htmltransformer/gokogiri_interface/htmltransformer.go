@@ -41,11 +41,11 @@ func (xform *GokogiriHtmlTransformer) String() string {
 	}
 }
 
-func (xform *GokogiriHtmlTransformer) Root() ht.Node {
+func (xform *GokogiriHtmlTransformer) Root() (doc ht.Node, docroot ht.Node) {
 	if xform.document != nil {
-		return &GokogiriXmlNode{xform.document}
+		return &GokogiriXmlNode{xform.document}, &GokogiriXmlNode{xform.document.Root()}
 	} else {
-		return &GokogiriXmlNode{xform.fragment}
+		return &GokogiriXmlNode{xform.fragment}, nil
 	}
 }
 

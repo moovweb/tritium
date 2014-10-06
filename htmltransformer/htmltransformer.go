@@ -5,7 +5,7 @@ type HtmlTransformer interface {
 	CreateElementNode(string) Node //*ElementNode
 	CreateCDataNode(string) Node   // *CDataNode
 	String() string
-	Root() Node // *ElementNode
+	Root() (Node, Node) // *ElementNode
 	Free()
 
 	// Document() Node

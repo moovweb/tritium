@@ -46,7 +46,7 @@ func (node *GokogiriXmlNode) InsertBefore(data interface{}) (err error) {
 		case xml.Node:
 			err = node.Node.InsertBefore(typecasted)
 		default:
-			println(nodified)
+			// println(nodified)
 			return
 		}
 	case GokogiriXmlNode:
@@ -68,7 +68,7 @@ func (node *GokogiriXmlNode) InsertAfter(data interface{}) (err error) {
 		case xml.Node:
 			err = node.Node.InsertAfter(typecasted)
 		default:
-			println(nodified)
+			// println(nodified)
 			return
 		}
 	case GokogiriXmlNode:
