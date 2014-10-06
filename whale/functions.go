@@ -1172,7 +1172,6 @@ func fetch_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, arg
 	// 	returnValue = "false"
 	// 	return
 	// }
-
 	if xpathStr == "" {
 		returnValue = "false"
 		return
@@ -1182,6 +1181,10 @@ func fetch_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, arg
 	if err == nil && len(nodes) > 0 {
 		node := nodes[0]
 		returnValue = node.String()
+	}
+	if err != nil {
+		returnValue = "false"
+		return
 	}
 	if returnValue == nil {
 		returnValue = ""
