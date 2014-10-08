@@ -130,5 +130,10 @@ func (xform *GokogiriHtmlTransformer) CheckXPath(path string) (err error) {
 }
 
 func (xform *GokogiriHtmlTransformer) CompileXPath(path string) (expr ht.Expression) {
-	return &GokogiriXPathExpression{*xpath.Compile(path)}
+	exp := xpath.Compile(path)
+	if exp != nil {
+		return &GokogiriXPathExpression{*exp}
+	} else {
+		return nil
+	}
 }

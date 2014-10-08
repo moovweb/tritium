@@ -522,17 +522,17 @@ func to_json_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
 	// TODO: fix this?
-	// expr := ctx.GetXpathExpr(xpathStr)
-	// if expr == nil {
-	// 	return "{}"
-	// }
+	expr := ctx.GetXpathExpr(xpathStr)
+	if expr == nil {
+		return "{}"
+	}
 
 	if xpathStr == "" {
 		returnValue = "false"
 		return
 	}
 
-	nodes, err := node.SelectXPathByDeadline(xpathStr, &ctx.Deadline)
+	nodes, err := node.SelectXPathByDeadline(expr, &ctx.Deadline)
 	if err != nil {
 		LogEngineError(ctx, "to_json err: "+err.Error())
 		return "{}"
@@ -818,16 +818,16 @@ func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.I
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
 	// TODO: fix this?
-	// expr := ctx.GetXpathExpr(xpathStr)
-	// if expr == nil {
-	// 	returnValue = "false"
-	// 	return
-	// }
+	expr := ctx.GetXpathExpr(xpathStr)
+	if expr == nil {
+		returnValue = "false"
+		return
+	}
 	if xpathStr == "" {
 		returnValue = "false"
 		return
 	}
-	nodes, err := node.SelectXPathByDeadline(xpathStr, &ctx.Deadline)
+	nodes, err := node.SelectXPathByDeadline(expr, &ctx.Deadline)
 	if err != nil {
 		println("error:", err.Error())
 		LogEngineError(ctx, "select err: "+err.Error())
@@ -964,16 +964,16 @@ func remove_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 
 	xpathStr := args[0].(string)
 	// TODO: fix this?
-	// expr := ctx.GetXpathExpr(xpathStr)
-	// if expr == nil {
-	// 	returnValue = "0"
-	// 	return
-	// }
+	expr := ctx.GetXpathExpr(xpathStr)
+	if expr == nil {
+		returnValue = "0"
+		return
+	}
 	if xpathStr == "" {
 		returnValue = "false"
 		return
 	}
-	nodes, err := node.SelectXPathByDeadline(xpathStr, &ctx.Deadline)
+	nodes, err := node.SelectXPathByDeadline(expr, &ctx.Deadline)
 	if err != nil {
 		LogEngineError(ctx, "select err: "+err.Error())
 		returnValue = "false"
@@ -1167,17 +1167,16 @@ func fetch_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, arg
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
 	// TODO: fix this?
-	// expr := ctx.GetXpathExpr(xpathStr)
-	// if expr == nil {
-	// 	returnValue = "false"
-	// 	return
-	// }
+	expr := ctx.GetXpathExpr(xpathStr)
+	if expr == nil {
+		returnValue = "false"
+		return
+	}
 	if xpathStr == "" {
 		returnValue = "false"
 		return
 	}
-
-	nodes, err := node.SelectXPathByDeadline(xpathStr, &ctx.Deadline)
+	nodes, err := node.SelectXPathByDeadline(expr, &ctx.Deadline)
 	if err == nil && len(nodes) > 0 {
 		node := nodes[0]
 		returnValue = node.String()
