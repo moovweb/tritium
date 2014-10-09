@@ -12,7 +12,6 @@ import (
 	"unicode/utf8"
 
 	"goconv"
-	"gokogiri/css"
 	"icu4go"
 	"moovhelper"
 	"rubex"
@@ -1308,7 +1307,11 @@ func path(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []in
 }
 
 func css_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	returnValue = css.Convert(args[0].(string), css.LOCAL)
+	if ctx.HtmlTransformer == nil {
+		xform := goku.NewXForm()
+		ctx.HtmlTransformer = xform
+	}
+	returnValue = ctx.HtmlTransformer.ConvertCSS(args[0].(string))
 	return
 }
 

@@ -2,6 +2,7 @@ package gokogiri_interface
 
 import (
 	"errors"
+	"gokogiri/css"
 	"gokogiri/html"
 	"gokogiri/xml"
 	"gokogiri/xpath"
@@ -136,4 +137,8 @@ func (xform *GokogiriHtmlTransformer) CompileXPath(path string) (expr ht.Express
 	} else {
 		return nil
 	}
+}
+
+func (xform *GokogiriHtmlTransformer) ConvertCSS(input string) (xpath string) {
+	return css.Convert(input, css.LOCAL)
 }
