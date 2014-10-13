@@ -21,7 +21,7 @@ import (
 	"tritium/protoface"
 
 	hx "tritium/htmltransformer"
-	goku "tritium/htmltransformer/gokogiri_interface"
+	goku "tritium/htmltransformer/gokogiri_interface_legacy"
 )
 
 const isUserCalledEnvKey = "MtkIsUserCalled"
