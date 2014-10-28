@@ -739,6 +739,12 @@ func env_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args 
 		returnValue = fmt.Sprintf("%v", !ctx.Debugger.IsProd())
 	case "project":
 		returnValue = ctx.Project
+	case "mode_id":
+		returnValue = ctx.Constants["moov_mode_id"]
+	case "mode_name":
+		returnValue = ctx.Constants["moov_mode_name"]
+	case "mode_status":
+		returnValue = ctx.Constants["moov_mode_status"]
 	default:
 		returnValue = ""
 	}
