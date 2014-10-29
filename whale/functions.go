@@ -531,7 +531,6 @@ func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 func to_json_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
-	// TODO: fix this?
 	expr := ctx.GetXpathExpr(xpathStr)
 	if expr == nil {
 		return "{}"
@@ -762,78 +761,11 @@ func html_fragment_doc_libxml_current_Text_Text(ctx *EngineContext, scope *Scope
 
 func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	return select_libxml_legacy_Text(ctx, scope, ins, args)
-	// node := scope.Value.(xml.Node)
-	// xpathStr := args[0].(string)
-	// expr := ctx.GetXpathExpr(xpathStr)
-	// if expr == nil {
-	// 	returnValue = "false"
-	// 	return
-	// }
-	// nodes, err := node.SearchByDeadline(expr, &ctx.Deadline)
-	// if err != nil {
-	// 	LogEngineError(ctx, "select err: "+err.Error())
-	// 	returnValue = "false"
-	// 	return
-	// }
-
-	// if len(nodes) == 0 {
-	// 	returnValue = "0"
-	// 	// add mtk attribute to zero-match node
-	// 	if parser.IncludeSelectorInfo && ctx.Env[isUserCalledEnvKey] != "" {
-	// 		attrValue := ctx.Env[isUserCalledEnvKey]
-	// 		attr := node.Attribute(moovhelper.MtkZeroMatchAttr)
-	// 		if attr != nil {
-	// 			attrValue = attr.Value() + " " + attrValue
-	// 		}
-	// 		node.SetAttr(moovhelper.MtkZeroMatchAttr, attrValue)
-	// 	}
-	// } else {
-	// 	returnValue = fmt.Sprintf("%d", len(nodes))
-	// }
-
-	// for index, node := range nodes {
-	// 	if node != nil && node.IsValid() {
-	// 		t := node.NodeType()
-	// 		if t == xml.XML_DOCUMENT_NODE || t == xml.XML_HTML_DOCUMENT_NODE {
-	// 			// We need to create a new temp variable to assign the Root() to because
-	// 			// if we assign it directly to the node interface, we can't know whether
-	// 			// it is nil or not because the interface will contain the type info
-	// 			// regardless of whether the actual value is nil or not.
-	// 			// More info:
-	// 			// http://stackoverflow.com/questions/11023593/inconsistent-nil-for-pointer-receiver-go-bug
-	// 			enode := node.MyDocument().Root()
-	// 			if enode != nil {
-	// 				node = enode
-	// 				t = node.NodeType()
-	// 			}
-	// 		}
-	// 		// add mtk attribute to matched nodes
-	// 		if parser.IncludeSelectorInfo && ctx.Env[isUserCalledEnvKey] != "" {
-	// 			attrValue := ctx.Env[isUserCalledEnvKey]
-	// 			attr := node.Attribute(moovhelper.MtkSourceAttr)
-	// 			if attr != nil {
-	// 				attrValue = attr.Value() + " " + attrValue
-	// 			}
-	// 			node.SetAttr(moovhelper.MtkSourceAttr, attrValue)
-	// 		}
-	// 		if t == xml.XML_ELEMENT_NODE {
-	// 			ns := &Scope{Value: node, Index: index}
-	// 			for i := 0; i < ins.INumChildren(); i++ {
-	// 				child := ins.IGetNthChild(i)
-	// 				ctx.RunInstruction(ns, child)
-	// 			}
-	// 		} else if t == xml.XML_TEXT_NODE {
-	// 			ctx.AddLog("You have just selected a text() node... THIS IS A TERRIBLE IDEA. Please run 'moov check' and sort it out!")
-	// 		}
-	// 	}
-	// }
-	// return
 }
 
 func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
-	// TODO: fix this?
 	expr := ctx.GetXpathExpr(xpathStr)
 	if expr == nil {
 		returnValue = "false"
@@ -979,7 +911,6 @@ func remove_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 	node := scope.Value.(hx.Node)
 
 	xpathStr := args[0].(string)
-	// TODO: fix this?
 	expr := ctx.GetXpathExpr(xpathStr)
 	if expr == nil {
 		returnValue = "0"
@@ -1182,7 +1113,6 @@ func dup(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []int
 func fetch_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
-	// TODO: fix this?
 	expr := ctx.GetXpathExpr(xpathStr)
 	if expr == nil {
 		returnValue = "false"
