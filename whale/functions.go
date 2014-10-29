@@ -21,7 +21,8 @@ import (
 	"tritium/protoface"
 
 	hx "tritium/htmltransformer"
-	goku "tritium/htmltransformer/gokogiri_interface_legacy"
+	goku "tritium/htmltransformer/gokogiri_interface"
+	goku_legacy "tritium/htmltransformer/gokogiri_interface_legacy"
 )
 
 const isUserCalledEnvKey = "MtkIsUserCalled"
@@ -341,36 +342,41 @@ func convert_encoding_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.
 
 func xml_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	return xml_libxml_legacy_Text_Text(ctx, scope, ins, args)
-	// input := scope.Value.(string)
-	// doc, err := xml.Parse([]byte(input), nil, nil, xml.DefaultParseOption, nil)
-	// if err != nil {
-	// 	LogEngineError(ctx, "xml err: "+err.Error())
-	// 	returnValue = "false"
-	// 	return
-	// }
-
-	// if doc == nil {
-	// 	LogEngineError(ctx, "xml err: nil doc")
-	// 	returnValue = "false"
-	// 	return
-	// }
-	// ctx.AddMemoryObject(doc)
-	// ctx.CurrentDoc = doc
-	// ns := &Scope{Value: doc}
-
-	// for i := 0; i < ins.INumChildren(); i++ {
-	// 	child := ins.IGetNthChild(i)
-	// 	ctx.RunInstruction(ns, child)
-	// }
-
-	// scope.Value = doc.String()
-	// ctx.CurrentDoc = nil
-	// returnValue = scope.Value
-	// //doc.Free()
-	// return
 }
 
 func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	input := scope.Value.(string)
+
+	xform := goku_legacy.NewXForm()
+	err := xform.ParseXML([]byte(input), nil, nil, nil)
+	if err != nil {
+		LogEngineError(ctx, "html_doc err: "+err.Error())
+		returnValue = "false"
+		return
+	}
+
+	ctx.AddMemoryObject(xform)
+	prevxform := ctx.HtmlTransformer
+	ctx.HtmlTransformer = xform
+
+	xmldoc, _ := xform.Root()
+
+	ns := &Scope{Value: xmldoc}
+
+	for i := 0; i < ins.INumChildren(); i++ {
+		child := ins.IGetNthChild(i)
+		ctx.RunInstruction(ns, child)
+	}
+
+	scope.Value = xform.String()
+	// ctx.CurrentDoc = nil
+	returnValue = scope.Value
+	ctx.HtmlTransformer = prevxform
+	//doc.Free()
+	return
+}
+
+func xml_libxml_current_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	input := scope.Value.(string)
 
 	xform := goku.NewXForm()
@@ -404,42 +410,47 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 
 func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	return html_doc_libxml_legacy_Text_Text(ctx, scope, ins, args)
-	// ctx.HtmlParsed = true
-	// inputEncoding := args[0].(string)
-	// inputEncodingBytes := []byte(inputEncoding)
-	// outputEncoding := args[1].(string)
-	// outputEncodingBytes := []byte(outputEncoding)
-	// input := scope.Value.(string)
-	// doc, err := html.Parse([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
-	// if err != nil {
-	// 	LogEngineError(ctx, "html_doc err: "+err.Error())
-	// 	returnValue = "false"
-	// 	return
-	// }
-	// if doc == nil {
-	// 	LogEngineError(ctx, "html_doc err: nil doc")
-	// 	returnValue = "false"
-	// 	return
-	// }
-	// ctx.AddMemoryObject(doc)
-	// ctx.CurrentDoc = doc
-	// ns := &Scope{Value: doc}
-
-	// for i := 0; i < ins.INumChildren(); i++ {
-	// 	child := ins.IGetNthChild(i)
-	// 	ctx.RunInstruction(ns, child)
-	// }
-	// if err := doc.SetMetaEncoding(outputEncoding); err != nil {
-	// 	//ctx.Log.Warn("executing html:" + err.Error())
-	// }
-	// scope.Value = doc.String()
-	// ctx.CurrentDoc = nil
-	// returnValue = scope.Value
-	// //doc.Free()
-	// return
 }
 
 func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	xform := goku_legacy.NewXForm()
+	ctx.HtmlParsed = true
+	inputEncoding := args[0].(string)
+	inputEncodingBytes := []byte(inputEncoding)
+	outputEncoding := args[1].(string)
+	outputEncodingBytes := []byte(outputEncoding)
+	input := scope.Value.(string)
+	err := xform.ParseHTML([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
+	if err != nil {
+		LogEngineError(ctx, "html_doc err: "+err.Error())
+		returnValue = "false"
+		return
+	}
+	ctx.AddMemoryObject(xform)
+	prevxform := ctx.HtmlTransformer
+	ctx.HtmlTransformer = xform
+
+	htmldoc, _ := xform.Root()
+
+	ns := &Scope{Value: htmldoc}
+
+	for i := 0; i < ins.INumChildren(); i++ {
+		child := ins.IGetNthChild(i)
+		ctx.RunInstruction(ns, child)
+	}
+	// TODO: need to do this by hand:
+	// if err := doc.SetMetaEncoding(outputEncoding); err != nil {
+	// 	//ctx.Log.Warn("executing html:" + err.Error())
+	// }
+	scope.Value = xform.String()
+	// ctx.CurrentDoc = nil
+	returnValue = scope.Value
+	ctx.HtmlTransformer = prevxform
+	//doc.Free()
+	return
+}
+
+func html_doc_libxml_current_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	xform := goku.NewXForm()
 	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
@@ -673,40 +684,46 @@ func remove_param_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instru
 
 func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	return html_fragment_doc_libxml_legacy_Text_Text(ctx, scope, ins, args)
-	// ctx.HtmlParsed = true
-	// inputEncoding := args[0].(string)
-	// inputEncodingBytes := []byte(inputEncoding)
-	// outputEncoding := args[1].(string)
-	// outputEncodingBytes := []byte(outputEncoding)
-	// input := scope.Value.(string)
-	// fragment, err := html.ParseFragment([]byte(input), inputEncodingBytes, nil, html.DefaultParseOption, outputEncodingBytes)
-	// if err != nil {
-	// 	LogEngineError(ctx, "html_fragment err: "+err.Error())
-	// 	returnValue = "false"
-	// 	return
-	// }
-	// if fragment == nil {
-	// 	LogEngineError(ctx, "html_fragment err: nil fragment")
-	// 	returnValue = "false"
-	// 	return
-	// }
-	// ctx.AddMemoryObject(fragment.Node.MyDocument())
-	// ctx.CurrentDoc = fragment
-	// ns := &Scope{Value: fragment}
-	// for i := 0; i < ins.INumChildren(); i++ {
-	// 	child := ins.IGetNthChild(i)
-	// 	ctx.RunInstruction(ns, child)
-	// }
-	// //output is always utf-8 because the content is internal to Doc.
-	// scope.Value = ns.Value.(*xml.DocumentFragment).String()
-	// //TODO(NOJ): Why are we setting currentdoc to nil instead of what it used to be?
-	// ctx.CurrentDoc = nil
-	// returnValue = scope.Value
-	// //fragment.Node.MyDocument().Free()
-	// return
 }
 
 func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	xform := goku_legacy.NewXForm()
+	ctx.HtmlParsed = true
+	inputEncoding := args[0].(string)
+	inputEncodingBytes := []byte(inputEncoding)
+	outputEncoding := args[1].(string)
+	outputEncodingBytes := []byte(outputEncoding)
+	input := scope.Value.(string)
+	_, err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
+	if err != nil {
+		LogEngineError(ctx, "html_fragment err: "+err.Error())
+		returnValue = "false"
+		return
+	}
+	ctx.AddMemoryObject(xform)
+	prevxform := ctx.HtmlTransformer
+	ctx.HtmlTransformer = xform
+	// ctx.CurrentDoc = fragment
+	frag, _ := xform.Root()
+
+	ns := &Scope{Value: frag}
+	for i := 0; i < ins.INumChildren(); i++ {
+		child := ins.IGetNthChild(i)
+		ctx.RunInstruction(ns, child)
+	}
+	//output is always utf-8 because the content is internal to Doc.
+	scope.Value = ns.Value.(hx.Node).String()
+	// scope.Value = fragment.String()
+	//TODO(NOJ): Why are we setting currentdoc to nil instead of what it used to be?
+	// ctx.CurrentDoc = nil
+	returnValue = scope.Value
+	ctx.HtmlTransformer = prevxform
+
+	//fragment.Node.MyDocument().Free()
+	return
+}
+
+func html_fragment_doc_libxml_current_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	xform := goku.NewXForm()
 	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
@@ -1307,6 +1324,19 @@ func path(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []in
 }
 
 func css_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	return css_libxml_legacy_Text(ctx, scope, ins, args)
+}
+
+func css_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	if ctx.HtmlTransformer == nil {
+		xform := goku_legacy.NewXForm()
+		ctx.HtmlTransformer = xform
+	}
+	returnValue = ctx.HtmlTransformer.ConvertCSS(args[0].(string))
+	return
+}
+
+func css_libxml_current_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	if ctx.HtmlTransformer == nil {
 		xform := goku.NewXForm()
 		ctx.HtmlTransformer = xform
