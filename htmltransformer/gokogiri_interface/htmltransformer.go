@@ -75,6 +75,14 @@ func (xform *GokogiriHtmlTransformer) Free() {
 	}
 }
 
+func (xform *GokogiriHtmlTransformer) SetMetaEncoding(encoding string) (err error) {
+	if xform.document != nil {
+		newdoc := html.HtmlDocument{xform.document}
+		err = newdoc.SetMetaEncoding(encoding)
+	}
+	return
+}
+
 func (xform *GokogiriHtmlTransformer) ParseHTML(content, inEncoding, url, outEncoding []byte) (err error) {
 	result, err := html.Parse(content, inEncoding, url, html.DefaultParseOption, outEncoding)
 	if err != nil {

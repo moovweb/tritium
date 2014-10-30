@@ -438,10 +438,9 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
 	}
-	// TODO: need to do this by hand:
-	// if err := doc.SetMetaEncoding(outputEncoding); err != nil {
-	// 	//ctx.Log.Warn("executing html:" + err.Error())
-	// }
+	if err := xform.SetMetaEncoding(outputEncoding); err != nil {
+		// ctx.Log.Warn("executing html:" + err.Error())
+	}
 	scope.Value = xform.String()
 	// ctx.CurrentDoc = nil
 	returnValue = scope.Value
@@ -476,10 +475,9 @@ func html_doc_libxml_current_Text_Text(ctx *EngineContext, scope *Scope, ins pro
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
 	}
-	// TODO: need to do this by hand:
-	// if err := doc.SetMetaEncoding(outputEncoding); err != nil {
-	// 	//ctx.Log.Warn("executing html:" + err.Error())
-	// }
+	if err := xform.SetMetaEncoding(outputEncoding); err != nil {
+		// ctx.Log.Warn("executing html:" + err.Error())
+	}
 	scope.Value = xform.String()
 	// ctx.CurrentDoc = nil
 	returnValue = scope.Value

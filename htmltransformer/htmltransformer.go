@@ -7,6 +7,7 @@ type HtmlTransformer interface {
 	String() string
 	Root() (Node, Node) // *ElementNode
 	Free()
+	SetMetaEncoding(string) error
 
 	// Document() Node
 	// Fragment() Node
