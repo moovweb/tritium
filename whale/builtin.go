@@ -71,6 +71,10 @@ func init() {
 	builtInFunctions["tritium.xml"] = xml_Text_Text
 	builtInFunctions["tritium.html_doc.Text.Text"] = html_doc_Text_Text
 	builtInFunctions["tritium.html_fragment_doc.Text.Text"] = html_fragment_doc_Text_Text
+	builtInFunctions["tritium.css_libxml_current.Text"] = css_libxml_current_Text
+	builtInFunctions["tritium.xml_libxml_current"] = xml_libxml_current_Text_Text
+	builtInFunctions["tritium.html_doc_libxml_current.Text.Text"] = html_doc_libxml_current_Text_Text
+	builtInFunctions["tritium.html_fragment_doc_libxml_current.Text.Text"] = html_fragment_doc_libxml_current_Text_Text
 	builtInFunctions["tritium.cdata.Text"] = cdata_Text
 	builtInFunctions["tritium.remove"] = remove_
 	builtInFunctions["tritium.inner"] = inner
