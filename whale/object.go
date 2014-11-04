@@ -14,7 +14,7 @@ type RegexpObject struct {
 }
 
 type XpathExpObject struct {
-	hx.Expression
+	hx.Selector
 }
 
 func (o *RegexpObject) Size() int {

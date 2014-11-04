@@ -12,27 +12,21 @@ type GokogiriXmlNode struct {
 	xml.Node
 }
 
-// func (node *GokogiriXmlNode) Document() {
-// 	println(node.Node.MyDocument().String())
-// }
-
-func (node *GokogiriXmlNode) GetAttribute(name string) (attribute ht.Node) {
+func (node *GokogiriXmlNode) GetAttribute(name string) ht.Node {
 	attr := node.Attribute(name)
 	if attr == nil {
 		return nil
-		// node.SetAttr(name, "")
-		// attr = node.Attribute(name)
 	}
 	return &GokogiriXmlNode{attr}
 }
 
-func (node *GokogiriXmlNode) SetAttribute(name, value string) (attribute ht.Node) {
+func (node *GokogiriXmlNode) SetAttribute(name, value string) ht.Node {
 	node.SetAttr(name, value)
 	attr := node.Attribute(name)
 	return &GokogiriXmlNode{attr}
 }
 
-func (node *GokogiriXmlNode) RemoveAttribute(name string) (result ht.Node) {
+func (node *GokogiriXmlNode) RemoveAttribute(name string) ht.Node {
 	attr := node.Attribute(name)
 	if attr != nil {
 		attr.Remove()
@@ -41,7 +35,6 @@ func (node *GokogiriXmlNode) RemoveAttribute(name string) (result ht.Node) {
 }
 
 func (node *GokogiriXmlNode) InsertBefore(data interface{}) (err error) {
-	// err = node.Node.InsertBefore(data)
 
 	switch nodified := data.(type) {
 	case ht.Node:
@@ -50,7 +43,6 @@ func (node *GokogiriXmlNode) InsertBefore(data interface{}) (err error) {
 		case xml.Node:
 			err = node.Node.InsertBefore(typecasted)
 		default:
-			// println(nodified)
 			return
 		}
 	case GokogiriXmlNode:
@@ -63,7 +55,6 @@ func (node *GokogiriXmlNode) InsertBefore(data interface{}) (err error) {
 }
 
 func (node *GokogiriXmlNode) InsertAfter(data interface{}) (err error) {
-	// err = node.Node.InsertAfter(data)
 
 	switch nodified := data.(type) {
 	case ht.Node:
@@ -72,7 +63,6 @@ func (node *GokogiriXmlNode) InsertAfter(data interface{}) (err error) {
 		case xml.Node:
 			err = node.Node.InsertAfter(typecasted)
 		default:
-			// println(nodified)
 			return
 		}
 	case GokogiriXmlNode:
@@ -131,7 +121,7 @@ func (node *GokogiriXmlNode) InsertBottom(data interface{}) (err error) {
 	return
 }
 
-func (node *GokogiriXmlNode) FirstChild() (result ht.Node) {
+func (node *GokogiriXmlNode) FirstChild() ht.Node {
 	if node.Node.FirstChild() != nil {
 		return &GokogiriXmlNode{node.Node.FirstChild()}
 	} else {
@@ -139,7 +129,7 @@ func (node *GokogiriXmlNode) FirstChild() (result ht.Node) {
 	}
 }
 
-func (node *GokogiriXmlNode) LastChild() (result ht.Node) {
+func (node *GokogiriXmlNode) LastChild() ht.Node {
 	if node.Node.LastChild() != nil {
 		return &GokogiriXmlNode{node.Node.LastChild()}
 	} else {
@@ -147,7 +137,7 @@ func (node *GokogiriXmlNode) LastChild() (result ht.Node) {
 	}
 }
 
-func (node *GokogiriXmlNode) PreviousSibling() (result ht.Node) {
+func (node *GokogiriXmlNode) PreviousSibling() ht.Node {
 	if node.Node.PreviousSibling() != nil {
 		return &GokogiriXmlNode{node.Node.PreviousSibling()}
 	} else {
@@ -155,7 +145,7 @@ func (node *GokogiriXmlNode) PreviousSibling() (result ht.Node) {
 	}
 }
 
-func (node *GokogiriXmlNode) NextSibling() (result ht.Node) {
+func (node *GokogiriXmlNode) NextSibling() ht.Node {
 	if node.Node.NextSibling() != nil {
 		return &GokogiriXmlNode{node.Node.NextSibling()}
 	} else {
@@ -163,7 +153,7 @@ func (node *GokogiriXmlNode) NextSibling() (result ht.Node) {
 	}
 }
 
-func (node *GokogiriXmlNode) Parent() (result ht.Node) {
+func (node *GokogiriXmlNode) Parent() ht.Node {
 	if node.Node.Parent() != nil {
 		return &GokogiriXmlNode{node.Node.Parent()}
 	} else {
@@ -171,27 +161,26 @@ func (node *GokogiriXmlNode) Parent() (result ht.Node) {
 	}
 }
 
-func (node *GokogiriXmlNode) GetContent() (content string) {
+func (node *GokogiriXmlNode) GetContent() string {
 	return node.Content()
 }
 
-func (node *GokogiriXmlNode) SetContent(content interface{}) (err error) {
-	err = node.Node.SetContent(content)
-	return
+func (node *GokogiriXmlNode) SetContent(content interface{}) error {
+	return node.Node.SetContent(content)
 }
 
 func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, err error) {
 	//copy for now, may need to rethink
 	var res []xml.Node
 	switch xptype := data.(type) {
-	case ht.Expression:
+	case ht.Selector:
 		underlying := xptype.UnderlyingExpression()
 		switch typecasted := underlying.(type) {
 		case xpath.Expression:
 			res, err = node.Search(&typecasted)
 		default:
 		}
-	case GokogiriXPathExpression:
+	case GokogiriXPathSelector:
 		res, err = node.Search(&xptype.Expression)
 	default:
 		res, err = node.Search(data)
@@ -205,34 +194,32 @@ func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, e
 	for i := 0; i < len(res); i++ {
 		results[i] = &GokogiriXmlNode{res[i]}
 	}
-	return results, err
+	return
 }
 
 func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *time.Time) (results []ht.Node, err error) {
 	//copy for now, may need to rethink
 	var res []xml.Node
 	switch xptype := data.(type) {
-	case ht.Expression:
+	case ht.Selector:
 		underlying := xptype.UnderlyingExpression()
 		switch typecasted := underlying.(type) {
 		case xpath.Expression:
 			res, err = node.SearchByDeadline(&typecasted, deadline)
 		default:
-			// println("******* ht.Expression default: In SelectXPathByDeadline in gokogiri interface- default data thingy****")
 		}
-	case GokogiriXPathExpression:
+	case GokogiriXPathSelector:
 		res, err = node.SearchByDeadline(&xptype.Expression, deadline)
 	case string:
 		res, err = node.SearchByDeadline(data, deadline)
 	default:
-		// println("******* In SelectXPathByDeadline in gokogiri interface- default data thingy****")
 	}
 
 	results = make([]ht.Node, len(res))
 	for i := 0; i < len(res); i++ {
 		results[i] = &GokogiriXmlNode{res[i]}
 	}
-	return results, err
+	return
 }
 
 func (node *GokogiriXmlNode) SelectCSS(data string) (results []ht.Node, err error) {
@@ -245,7 +232,7 @@ func (node *GokogiriXmlNode) SelectCSS(data string) (results []ht.Node, err erro
 	for i := 0; i < len(res); i++ {
 		results[i] = &GokogiriXmlNode{res[i]}
 	}
-	return results, err
+	return
 }
 
 func (node *GokogiriXmlNode) SelectCSSByDeadline(data string, deadline *time.Time) (results []ht.Node, err error) {
@@ -258,18 +245,18 @@ func (node *GokogiriXmlNode) SelectCSSByDeadline(data string, deadline *time.Tim
 	for i := 0; i < len(res); i++ {
 		results[i] = &GokogiriXmlNode{res[i]}
 	}
-	return results, err
+	return
 }
 
-func (node *GokogiriXmlNode) String() (result string) {
+func (node *GokogiriXmlNode) String() string {
 	return node.Node.String()
 }
 
-func (node *GokogiriXmlNode) UnderlyingNode() (result interface{}) {
+func (node *GokogiriXmlNode) UnderlyingNode() interface{} {
 	return node.Node
 }
 
-func (node *GokogiriXmlNode) IsValid() (result bool) {
+func (node *GokogiriXmlNode) IsValid() bool {
 	return node.Node.IsValid()
 }
 
@@ -308,7 +295,6 @@ func (node *GokogiriXmlNode) IsText() (result bool) {
 }
 
 func (node *GokogiriXmlNode) GetInnerHtml() (result string) {
-	// return node.Node.InnerHtml()
 	underlying := node.UnderlyingNode()
 	switch typecasted := underlying.(type) {
 	case xml.Node:
@@ -318,9 +304,8 @@ func (node *GokogiriXmlNode) GetInnerHtml() (result string) {
 	}
 }
 
-func (node *GokogiriXmlNode) SetInnerHtml(data interface{}) (err error) {
-	err = node.Node.SetInnerHtml(data)
-	return
+func (node *GokogiriXmlNode) SetInnerHtml(data interface{}) error {
+	return node.Node.SetInnerHtml(data)
 }
 
 func (node *GokogiriXmlNode) Is(cmp ht.Node) (result bool) {
@@ -336,7 +321,7 @@ func (node *GokogiriXmlNode) Is(cmp ht.Node) (result bool) {
 	return
 }
 
-func (node *GokogiriXmlNode) GetName() (name string) {
+func (node *GokogiriXmlNode) GetName() string {
 	return node.Name()
 }
 
@@ -344,10 +329,10 @@ func (node *GokogiriXmlNode) SetName(name string) {
 	node.Node.SetName(name)
 }
 
-func (node *GokogiriXmlNode) Duplicate() (dup ht.Node) {
+func (node *GokogiriXmlNode) Duplicate() ht.Node {
 	return &GokogiriXmlNode{node.Node.Duplicate(1)}
 }
 
-func (node *GokogiriXmlNode) Path() (path string) {
+func (node *GokogiriXmlNode) Path() string {
 	return node.Node.Path()
 }

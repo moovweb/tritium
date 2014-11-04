@@ -1,6 +1,6 @@
 package htmltransformer
 
-type Expression interface {
+type Selector interface {
 	String() string
 	Free()
 	UnderlyingExpression() interface{}

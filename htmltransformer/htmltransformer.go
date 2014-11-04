@@ -2,25 +2,23 @@ package htmltransformer
 
 type HtmlTransformer interface {
 	//document functions
-	CreateElementNode(string) Node //*ElementNode
-	CreateCDataNode(string) Node   // *CDataNode
+	CreateElementNode(string) Node
+	CreateCDataNode(string) Node
 	String() string
-	Root() (Node, Node) // *ElementNode
+	Root() (Node, Node)
 	Free()
 	SetMetaEncoding(string) error
 
-	// Document() Node
-	// Fragment() Node
-
 	// parsing functions
-	ParseHTML([]byte, []byte, []byte, []byte) error             // (*HtmlDocument, error)
-	ParseFragment([]byte, []byte, []byte, []byte) (Node, error) // (*xml.DocumentFragment, error)
-	ParseXML([]byte, []byte, []byte, []byte) error              // (*XmlDocument, error)
-	CreateEmptyDocument([]byte, []byte)                         // *XmlDocument
+	ParseHTML([]byte, []byte, []byte, []byte) error
+	ParseFragment([]byte, []byte, []byte, []byte) (Node, error)
+	ParseXML([]byte, []byte, []byte, []byte) error
+	CreateEmptyDocument([]byte, []byte)
+
 	// xpath functions
 	CheckXPath(string) error
-	CompileXPath(string) Expression
+	CompileXPath(string) Selector
 
-	// css function
+	// css functions
 	ConvertCSS(string) string
 }

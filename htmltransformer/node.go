@@ -5,37 +5,49 @@ import (
 )
 
 type Node interface {
-	// Document()
+	// attributes
 	GetAttribute(string) Node
 	SetAttribute(string, string) Node
 	RemoveAttribute(string) Node
+
+	// insertion
 	InsertBefore(interface{}) error
 	InsertAfter(interface{}) error
 	InsertTop(interface{}) error
 	InsertBottom(interface{}) error
+
+	// axis
 	FirstChild() Node
 	LastChild() Node
 	PreviousSibling() Node
 	NextSibling() Node
 	Parent() Node
-	GetContent() string
-	SetContent(interface{}) error
+
+	//selection
 	SelectXPath(interface{}) ([]Node, error)
 	SelectXPathByDeadline(interface{}, *time.Time) ([]Node, error)
 	SelectCSS(string) ([]Node, error)
 	SelectCSSByDeadline(string, *time.Time) ([]Node, error)
+
+	//content
 	String() string
+	GetContent() string
+	SetContent(interface{}) error
+	GetInnerHtml() string
+	SetInnerHtml(interface{}) error
+	GetName() string
+	SetName(string)
+
+	// introspetion
 	UnderlyingNode() interface{}
 	IsValid() bool
-	Remove()
 	IsDocument() bool
 	IsElement() bool
 	IsText() bool
-	GetInnerHtml() string
-	SetInnerHtml(interface{}) error
 	Is(Node) bool
-	GetName() string
-	SetName(string)
-	Duplicate() Node
 	Path() string
+
+	// maintenance
+	Remove()
+	Duplicate() Node
 }

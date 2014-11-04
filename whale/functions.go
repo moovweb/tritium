@@ -369,10 +369,8 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 	}
 
 	scope.Value = xform.String()
-	// ctx.CurrentDoc = nil
 	returnValue = scope.Value
 	ctx.HtmlTransformer = prevxform
-	//doc.Free()
 	return
 }
 
@@ -401,10 +399,8 @@ func xml_libxml_current_Text_Text(ctx *EngineContext, scope *Scope, ins protofac
 	}
 
 	scope.Value = xform.String()
-	// ctx.CurrentDoc = nil
 	returnValue = scope.Value
 	ctx.HtmlTransformer = prevxform
-	//doc.Free()
 	return
 }
 
@@ -438,14 +434,10 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
 	}
-	if err := xform.SetMetaEncoding(outputEncoding); err != nil {
-		// ctx.Log.Warn("executing html:" + err.Error())
-	}
+	xform.SetMetaEncoding(outputEncoding)
 	scope.Value = xform.String()
-	// ctx.CurrentDoc = nil
 	returnValue = scope.Value
 	ctx.HtmlTransformer = prevxform
-	//doc.Free()
 	return
 }
 
@@ -475,14 +467,10 @@ func html_doc_libxml_current_Text_Text(ctx *EngineContext, scope *Scope, ins pro
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
 	}
-	if err := xform.SetMetaEncoding(outputEncoding); err != nil {
-		// ctx.Log.Warn("executing html:" + err.Error())
-	}
+	xform.SetMetaEncoding(outputEncoding)
 	scope.Value = xform.String()
-	// ctx.CurrentDoc = nil
 	returnValue = scope.Value
 	ctx.HtmlTransformer = prevxform
-	//doc.Free()
 	return
 }
 

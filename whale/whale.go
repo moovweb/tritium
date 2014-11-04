@@ -392,7 +392,7 @@ func (ctx *EngineContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 	return object.(*RegexpObject).Regexp
 }
 
-func (ctx *EngineContext) GetXpathExpr(p string) (e hx.Expression) {
+func (ctx *EngineContext) GetXpathExpr(p string) (e hx.Selector) {
 	object, err := ctx.XPathCache.Get(p)
 	if err != nil {
 		e = ctx.HtmlTransformer.CompileXPath(p)

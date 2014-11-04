@@ -4,18 +4,18 @@ import (
 	"gokogiri/xpath"
 )
 
-type GokogiriXPathExpression struct {
+type GokogiriXPathSelector struct {
 	xpath.Expression
 }
 
-func (xp *GokogiriXPathExpression) String() (result string) {
+func (xp *GokogiriXPathSelector) String() string {
 	return xp.Expression.String()
 }
 
-func (xp *GokogiriXPathExpression) Free() {
+func (xp *GokogiriXPathSelector) Free() {
 	xp.Expression.Free()
 }
 
-func (xp *GokogiriXPathExpression) UnderlyingExpression() (result interface{}) {
+func (xp *GokogiriXPathSelector) UnderlyingExpression() interface{} {
 	return xp.Expression
 }
