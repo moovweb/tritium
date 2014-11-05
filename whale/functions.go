@@ -374,7 +374,7 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 	return
 }
 
-func xml_libxml_current_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+func xml_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	input := scope.Value.(string)
 
 	xform := goku.NewXForm()
@@ -441,7 +441,7 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 	return
 }
 
-func html_doc_libxml_current_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	xform := goku.NewXForm()
 	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
@@ -708,7 +708,7 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 	return
 }
 
-func html_fragment_doc_libxml_current_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	xform := goku.NewXForm()
 	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
@@ -1252,7 +1252,7 @@ func css_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.Inst
 	return
 }
 
-func css_libxml_current_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+func css_libxml_292_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	if ctx.HtmlTransformer == nil {
 		xform := goku.NewXForm()
 		ctx.HtmlTransformer = xform
