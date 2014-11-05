@@ -356,7 +356,10 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 	}
 
 	ctx.AddMemoryObject(xform)
+
 	prevxform := ctx.HtmlTransformer
+	defer func() { ctx.HtmlTransformer = prevxform }()
+
 	ctx.HtmlTransformer = xform
 
 	xmldoc, _ := xform.Root()
@@ -370,7 +373,7 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 
 	scope.Value = xform.String()
 	returnValue = scope.Value
-	ctx.HtmlTransformer = prevxform
+
 	return
 }
 
@@ -386,7 +389,10 @@ func xml_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.In
 	}
 
 	ctx.AddMemoryObject(xform)
+
 	prevxform := ctx.HtmlTransformer
+	defer func() { ctx.HtmlTransformer = prevxform }()
+
 	ctx.HtmlTransformer = xform
 
 	xmldoc, _ := xform.Root()
@@ -400,7 +406,7 @@ func xml_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.In
 
 	scope.Value = xform.String()
 	returnValue = scope.Value
-	ctx.HtmlTransformer = prevxform
+
 	return
 }
 
@@ -423,7 +429,10 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 		return
 	}
 	ctx.AddMemoryObject(xform)
+
 	prevxform := ctx.HtmlTransformer
+	defer func() { ctx.HtmlTransformer = prevxform }()
+
 	ctx.HtmlTransformer = xform
 
 	htmldoc, _ := xform.Root()
@@ -437,7 +446,7 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 	xform.SetMetaEncoding(outputEncoding)
 	scope.Value = xform.String()
 	returnValue = scope.Value
-	ctx.HtmlTransformer = prevxform
+
 	return
 }
 
@@ -456,7 +465,10 @@ func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protofa
 		return
 	}
 	ctx.AddMemoryObject(xform)
+
 	prevxform := ctx.HtmlTransformer
+	defer func() { ctx.HtmlTransformer = prevxform }()
+
 	ctx.HtmlTransformer = xform
 
 	htmldoc, _ := xform.Root()
@@ -470,7 +482,7 @@ func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protofa
 	xform.SetMetaEncoding(outputEncoding)
 	scope.Value = xform.String()
 	returnValue = scope.Value
-	ctx.HtmlTransformer = prevxform
+
 	return
 }
 
@@ -686,9 +698,11 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 		return
 	}
 	ctx.AddMemoryObject(xform)
+
 	prevxform := ctx.HtmlTransformer
+	defer func() { ctx.HtmlTransformer = prevxform }()
+
 	ctx.HtmlTransformer = xform
-	// ctx.CurrentDoc = fragment
 	frag, _ := xform.Root()
 
 	ns := &Scope{Value: frag}
@@ -700,11 +714,8 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 	scope.Value = ns.Value.(hx.Node).String()
 	// scope.Value = fragment.String()
 	//TODO(NOJ): Why are we setting currentdoc to nil instead of what it used to be?
-	// ctx.CurrentDoc = nil
 	returnValue = scope.Value
-	ctx.HtmlTransformer = prevxform
 
-	//fragment.Node.MyDocument().Free()
 	return
 }
 
@@ -723,9 +734,11 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 		return
 	}
 	ctx.AddMemoryObject(xform)
+
 	prevxform := ctx.HtmlTransformer
+	defer func() { ctx.HtmlTransformer = prevxform }()
+
 	ctx.HtmlTransformer = xform
-	// ctx.CurrentDoc = fragment
 	frag, _ := xform.Root()
 
 	ns := &Scope{Value: frag}
@@ -737,11 +750,8 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 	scope.Value = ns.Value.(hx.Node).String()
 	// scope.Value = fragment.String()
 	//TODO(NOJ): Why are we setting currentdoc to nil instead of what it used to be?
-	// ctx.CurrentDoc = nil
 	returnValue = scope.Value
-	ctx.HtmlTransformer = prevxform
 
-	//fragment.Node.MyDocument().Free()
 	return
 }
 
