@@ -21,24 +21,30 @@ func NewXForm() *GokogiriHtmlTransformer {
 func (xform *GokogiriHtmlTransformer) CreateElementNode(tag string) ht.Node {
 	if xform.document != nil {
 		return &GokogiriXmlNode{xform.document.CreateElementNode(tag)}
-	} else {
+	} else if xform.fragment != nil {
 		return &GokogiriXmlNode{xform.fragment.Node.MyDocument().CreateElementNode(tag)}
+	} else {
+		return &GokogiriXmlNode{}
 	}
 }
 
 func (xform *GokogiriHtmlTransformer) CreateCDataNode(data string) ht.Node {
 	if xform.document != nil {
 		return &GokogiriXmlNode{xform.document.CreateCDataNode(data)}
-	} else {
+	} else if xform.fragment != nil {
 		return &GokogiriXmlNode{xform.fragment.Node.MyDocument().CreateCDataNode(data)}
+	} else {
+		return &GokogiriXmlNode{}
 	}
 }
 
 func (xform *GokogiriHtmlTransformer) String() string {
 	if xform.document != nil {
 		return xform.document.String()
-	} else {
+	} else if xform.fragment != nil {
 		return xform.fragment.String()
+	} else {
+		return
 	}
 }
 
@@ -46,6 +52,7 @@ func (xform *GokogiriHtmlTransformer) Root() (ht.Node, ht.Node) {
 	if xform.document != nil {
 		return &GokogiriXmlNode{xform.document}, &GokogiriXmlNode{xform.document.Root()}
 	} else {
+		// we don't care if it's nil here
 		return &GokogiriXmlNode{xform.fragment}, nil
 	}
 }
@@ -89,7 +96,7 @@ func (xform *GokogiriHtmlTransformer) ParseFragment(content, inEncoding, url, ou
 	}
 	xform.fragment = fragment
 	if err != nil {
-		return &GokogiriXmlNode{fragment}, err
+		return &GokogiriXmlNode{}, err
 	}
 	if fragment == nil {
 		return &GokogiriXmlNode{}, errors.New("nil fragment")
