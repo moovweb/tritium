@@ -38,7 +38,7 @@ func (xform *GokogiriHtmlTransformer) CreateCDataNode(data string) ht.Node {
 	}
 }
 
-func (xform *GokogiriHtmlTransformer) String() string {
+func (xform *GokogiriHtmlTransformer) String() (str string) {
 	if xform.document != nil {
 		return xform.document.String()
 	} else if xform.fragment != nil {

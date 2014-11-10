@@ -88,14 +88,12 @@ func node_to_json(node hx.Node) interface{} {
 		object := make(map[string]interface{})
 		for member := node.FirstChild(); member != nil; member = member.NextSibling() {
 			if member.GetName() != "member" || member.GetAttribute("name") == nil {
-				// TODO: log a debugging message here
 				continue // just skip nodes that aren't name-value pairs
 			}
 			object[member.GetAttribute("name").GetContent()] = node_to_json(member.FirstChild())
 		}
 		return object
 	}
-	// TODO: log a debugging message if we get to this point
 	return nil
 }
 
