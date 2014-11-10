@@ -6,12 +6,12 @@ import (
 )
 
 import (
-	"gokogiri/xml"
+	hx "tritium/htmltransformer"
 )
 
 // Converting JSON to XML nodes
 
-func json_to_node(jsonVal interface{}, jsonDoc *xml.XmlDocument) (jsonNode xml.Node) {
+func json_to_node(jsonVal interface{}, jsonDoc hx.HtmlTransformer) (jsonNode hx.Node) {
 	switch jsonVal.(type) {
 	case nil:
 		// generates <null />
@@ -36,17 +36,17 @@ func json_to_node(jsonVal interface{}, jsonDoc *xml.XmlDocument) (jsonNode xml.N
 		jsonNode = jsonDoc.CreateElementNode("array")
 		for _, elem := range jsonVal.([]interface{}) {
 			elemNode := json_to_node(elem, jsonDoc)
-			jsonNode.AddChild(elemNode)
+			jsonNode.InsertTop(elemNode)
 		}
 	case map[string]interface{}:
 		// generates <object><member name="key1">[json node]</member>...</object>
 		jsonNode = jsonDoc.CreateElementNode("object")
 		for name, value := range jsonVal.(map[string]interface{}) {
 			memberNode := jsonDoc.CreateElementNode("member")
-			memberNode.SetAttr("name", name)
+			memberNode.SetAttribute("name", name)
 			valueNode := json_to_node(value, jsonDoc)
-			memberNode.AddChild(valueNode)
-			jsonNode.AddChild(memberNode)
+			memberNode.InsertTop(valueNode)
+			jsonNode.InsertTop(memberNode)
 		}
 	}
 	return
@@ -54,11 +54,11 @@ func json_to_node(jsonVal interface{}, jsonDoc *xml.XmlDocument) (jsonNode xml.N
 
 // Converting XML nodes back to JSON (goes with the preceding json_to_node function)
 
-func node_to_json(node xml.Node) interface{} {
+func node_to_json(node hx.Node) interface{} {
 	if node == nil {
 		return nil
 	}
-	switch node.Name() {
+	switch node.GetName() {
 	case "null":
 		return nil
 	case "false":
@@ -66,15 +66,19 @@ func node_to_json(node xml.Node) interface{} {
 	case "true":
 		return true
 	case "number":
-		f, err := strconv.ParseFloat(node.Content(), 64)
+		f, err := strconv.ParseFloat(node.GetContent(), 64)
 		if err != nil {
 			return nil
 		}
 		return f
 	case "string":
-		return node.Content()
+		return node.GetContent()
 	case "array":
-		length := node.CountChildren()
+		length := 0
+		for first := node.FirstChild(); first != nil; first = first.NextSibling() {
+			length = length + 1
+		}
+
 		array := make([]interface{}, length)
 		for elem, i := node.FirstChild(), 0; elem != nil; elem, i = elem.NextSibling(), i+1 {
 			array[i] = node_to_json(elem)
@@ -83,67 +87,65 @@ func node_to_json(node xml.Node) interface{} {
 	case "object":
 		object := make(map[string]interface{})
 		for member := node.FirstChild(); member != nil; member = member.NextSibling() {
-			if member.Name() != "member" || member.Attribute("name") == nil {
-				// TODO: log a debugging message here
+			if member.GetName() != "member" || member.GetAttribute("name") == nil {
 				continue // just skip nodes that aren't name-value pairs
 			}
-			object[member.Attr("name")] = node_to_json(member.FirstChild())
+			object[member.GetAttribute("name").GetContent()] = node_to_json(member.FirstChild())
 		}
 		return object
 	}
-	// TODO: log a debugging message if we get to this point
 	return nil
 }
 
 // Converting XML to JSON (version 1; will deprecate)
 
-func NodeToJson(node xml.Node) (retVal interface{}) {
+func NodeToJson(node hx.Node) (retVal interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
 			retVal = WrapJsonError(err)
 		}
 	}()
 
-	if node.Name() == "array" {
+	if node.GetName() == "array" {
 		retVal = NodeToJsonArray(node, make([]interface{}, 0))
-	} else if node.Name() == "hash" {
+	} else if node.GetName() == "hash" {
 		retVal = NodeToJsonHash(node, make(map[string]interface{}))
 	}
 	return
 }
 
-func NodeToJsonHash(node xml.Node, json map[string]interface{}) map[string]interface{} {
-	if node.Name() != "hash" {
-		panic("Incorrect JSON format, trying to serialize a " + node.Name() + " into a json hash.")
+func NodeToJsonHash(node hx.Node, json map[string]interface{}) map[string]interface{} {
+	if node.GetName() != "hash" {
+		panic("Incorrect JSON format, trying to serialize a " + node.GetName() + " into a json hash.")
 	}
 	for n := node.FirstChild(); n != nil; n = n.NextSibling() {
-		if n.Name() == "elem" && len(n.Attr("key")) > 0 {
+		if n.GetName() == "elem" && len(n.GetAttribute("key").GetContent()) > 0 {
 			child := n.FirstChild()
-			if child != nil && child.Name() == "array" {
-				json[n.Attr("key")] = NodeToJsonArray(child, make([]interface{}, 0))
-			} else if child != nil && child.Name() == "hash" {
-				json[n.Attr("key")] = NodeToJsonHash(child, make(map[string]interface{}))
+			if child != nil && child.GetName() == "array" {
+				json[n.GetAttribute("key").GetContent()] = NodeToJsonArray(child, make([]interface{}, 0))
+			} else if child != nil && child.GetName() == "hash" {
+				json[n.GetAttribute("key").GetContent()] = NodeToJsonHash(child, make(map[string]interface{}))
 			} else {
-				json[n.Attr("key")] = n.InnerHtml()
+				json[n.GetAttribute("key").GetContent()] = n.GetInnerHtml()
 			}
 		}
 	}
 	return json
 }
 
-func NodeToJsonArray(node xml.Node, json []interface{}) []interface{} {
-	if node.Name() != "array" {
-		panic("Incorrect JSON format, trying to serialize a " + node.Name() + " into a json array.")
+func NodeToJsonArray(node hx.Node, json []interface{}) []interface{} {
+	if node.GetName() != "array" {
+		panic("Incorrect JSON format, trying to serialize a " + node.GetName() + " into a json array.")
 	}
 	for n := node.FirstChild(); n != nil; n = n.NextSibling() {
-		if n.Name() == "elem" {
+		if n.GetName() == "elem" {
 			child := n.FirstChild()
-			if child != nil && child.Name() == "array" {
+			if child != nil && child.GetName() == "array" {
 				json = append(json, NodeToJsonArray(child, make([]interface{}, 0)))
-			} else if child != nil && child.Name() == "hash" {
+			} else if child != nil && child.GetName() == "hash" {
 				json = append(json, NodeToJsonHash(child, make(map[string]interface{})))
 			} else {
-				json = append(json, n.InnerHtml())
+				json = append(json, n.GetInnerHtml())
 			}
 		}
 	}
