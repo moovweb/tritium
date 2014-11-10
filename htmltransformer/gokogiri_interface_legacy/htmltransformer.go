@@ -44,7 +44,7 @@ func (xform *GokogiriHtmlTransformer) String() (str string) {
 	} else if xform.fragment != nil {
 		return xform.fragment.String()
 	} else {
-		return
+		return ""
 	}
 }
 
