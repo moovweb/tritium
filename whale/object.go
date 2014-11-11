@@ -1,12 +1,11 @@
 package whale
 
 import "rubex"
-
-import hx "tritium/htmltransformer"
+import "gokogiri/xpath"
 import "go-cache"
 
 type MemoryObject interface {
-	Free()
+  Free()
 }
 
 type RegexpObject struct {
@@ -14,7 +13,7 @@ type RegexpObject struct {
 }
 
 type XpathExpObject struct {
-	hx.Selector
+	*xpath.Expression
 }
 
 func (o *RegexpObject) Size() int {
@@ -37,10 +36,11 @@ func CleanRegexpObject(object cache.CacheObject) error {
 
 func CleanXpathExpObject(object cache.CacheObject) error {
 	if o, ok := object.(*XpathExpObject); ok {
-		if o != nil {
-			o.Free()
-			o = nil
+		if o.Expression != nil {
+			o.Expression.Free()
+			o.Expression = nil
 		}
 	}
 	return nil
 }
+
