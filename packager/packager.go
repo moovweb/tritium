@@ -198,7 +198,7 @@ func (pkgr *Packager) readDependenciesFile() {
 			panic(fmt.Sprintf("error parsing dependencies file for `%s` -- each dependency must take the form of `name: version`", pkgr.GetName()))
 		}
 		pkgr.Dependencies[i] = NameAndVersion{
-			Name: strings.TrimSpace(fields[0]),
+			Name:    strings.TrimSpace(fields[0]),
 			Version: strings.TrimSpace(fields[1]),
 		}
 	}
@@ -261,12 +261,20 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		if !there || err != nil {
 			continue
 		}
+
+		version, err := ioutil.ReadFile(filepath.Join(depPath, "VERSION"))
+		if err != nil {
+			panic("Couldn't find a version for mixer:" + depPath + ":" + err.Error())
+		}
+		versionStr := strings.TrimSpace(string(version))
+
+		if versionStr != specifiedVersion {
+			continue
+		}
+
 		foundMixerSrc = true
 		needed = NewDependencyOf(depPath, "lib", pkgr)
 
-		if needed.GetVersion() != specifiedVersion {
-			continue
-		}
 		// circular dependency check
 		if pkgr.NowVisiting == nil {
 			pkgr.NowVisiting = make(map[string]bool)
@@ -616,7 +624,7 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 	if numExports == 0 {
 		numExports = numFunctions
 	}
-	exportRanges[0] = Range{ numFunctions-numExports, numFunctions }
+	exportRanges[0] = Range{ numFunctions - numExports, numFunctions }
 
 	// now merge the rest of the mixers into the transformer mixer!
 	for i, pkgr := range rest {
@@ -633,5 +641,3 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 	combinedMixer = first.Mixer
 	return
 }
-
-
