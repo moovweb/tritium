@@ -5,12 +5,10 @@
 package proto
 
 import proto1 "code.google.com/p/goprotobuf/proto"
-import json "encoding/json"
 import math "math"
 
-// Reference proto, json, and math imports to suppress error if they are not otherwise used.
+// Reference imports to suppress errors if they are not otherwise used.
 var _ = proto1.Marshal
-var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Slug struct {
@@ -21,6 +19,7 @@ type Slug struct {
 	SslWhitelist     []string       `protobuf:"bytes,5,rep,name=ssl_whitelist" json:"ssl_whitelist,omitempty"`
 	Credentials      *Credentials   `protobuf:"bytes,6,opt,name=credentials" json:"credentials,omitempty"`
 	ActiveLayers     []string       `protobuf:"bytes,7,rep,name=active_layers" json:"active_layers,omitempty"`
+	JavaScript       *string        `protobuf:"bytes,8,opt,name=java_script" json:"java_script,omitempty"`
 	XXX_unrecognized []byte         `json:"-"`
 }
 
@@ -75,6 +74,13 @@ func (m *Slug) GetActiveLayers() []string {
 		return m.ActiveLayers
 	}
 	return nil
+}
+
+func (m *Slug) GetJavaScript() string {
+	if m != nil && m.JavaScript != nil {
+		return *m.JavaScript
+	}
+	return ""
 }
 
 func init() {

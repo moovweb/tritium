@@ -13,8 +13,8 @@ It is generated from these files:
 	mixer.proto
 	object.proto
 	package.proto
-	rewriter.proto
 	rewrite_rule.proto
+	rewriter.proto
 	slug.proto
 	tritium.proto
 
@@ -24,12 +24,10 @@ It has these top-level messages:
 package proto
 
 import proto1 "code.google.com/p/goprotobuf/proto"
-import json "encoding/json"
 import math "math"
 
-// Reference proto, json, and math imports to suppress error if they are not otherwise used.
+// Reference imports to suppress errors if they are not otherwise used.
 var _ = proto1.Marshal
-var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Credentials struct {

@@ -14,4 +14,5 @@ message Slug {
 	repeated string ssl_whitelist = 5;
 	optional Credentials credentials = 6;
   repeated string active_layers = 7;
+  optional string java_script = 8;
 }
