@@ -7,6 +7,16 @@ import (
 )
 
 func MoveFunc(what, where xml.Node, position Position) {
+
+	ancestor := where.Parent()
+	for ancestor != nil {
+		if what.NodePtr() == ancestor.NodePtr() {
+			// @ZC: Should we warn or err silently?
+			return
+		}
+		ancestor = ancestor.Parent()
+	}
+
 	switch position {
 	case BOTTOM:
 		where.AddChild(what)
