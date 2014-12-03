@@ -99,6 +99,7 @@ func printSlug(s *tp.Slug, indLvl int) {
 	indLvl += 1
 	printIndent("Name -> %v", indLvl, s.GetName())
 	printIndent("Version -> %v", indLvl, s.GetVersion())
+	printIndent("Active Layer(s) -> %v", indLvl, s.GetActiveLayers())
 	printIndent("Rewriter Rules:", indLvl)
 	for ind, item := range s.GetRrules() {
 		printIndent("Rrule[%d] -> %v", indLvl+1, ind, item)
