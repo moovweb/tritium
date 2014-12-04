@@ -441,7 +441,7 @@ func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 		return
 	}
 	scope.Value = string(jsonOut)
-	returnValue = string(jsonOut)
+	returnValue = scope.Value
 	return
 }
 
