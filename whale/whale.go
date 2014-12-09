@@ -54,6 +54,7 @@ type EngineContext struct {
 	Warnings    int
 	Prod        bool
 	HtmlParsed  bool
+	Constants   map[string]string
 
 	ActiveLayers       map[string]bool
 	ActiveLayersString string
@@ -77,7 +78,7 @@ func NewEngine(debugger steno.Debugger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath, customer, project string, activeLayers []string, inDebug bool) (ctx *EngineContext) {
+func NewEngineCtx(eng *Whale, vars, constants map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath, customer, project string, activeLayers []string, inDebug bool) (ctx *EngineContext) {
 	ctx = &EngineContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
@@ -96,6 +97,7 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		Customer:    customer,
 		Project:     project,
 		InDebug:     inDebug,
+		Constants:   constants,
 	}
 	ctx.ActiveLayers = make(map[string]bool)
 	for _, name := range activeLayers {
@@ -110,8 +112,8 @@ func (eng *Whale) Free() {
 	eng.XPathCache.Reset()
 }
 
-func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, activeLayers []string, inDebug bool) (exhaust *tritium.Exhaust) {
-	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, activeLayers, inDebug)
+func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars, constants map[string]string, deadline time.Time, customer, project, messagePath string, activeLayers []string, inDebug bool) (exhaust *tritium.Exhaust) {
+	ctx := NewEngineCtx(eng, vars, constants, transform, rrules, deadline, messagePath, customer, project, activeLayers, inDebug)
 	exhaust = &tritium.Exhaust{}
 	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})

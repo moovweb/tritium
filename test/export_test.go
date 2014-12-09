@@ -11,18 +11,18 @@ import (
 	// TODO: remove this and replace with something else when whale no longer needs to use steno loggers
 	"butler/mixer"
 	"steno/dummy"
-	tf "tritium/transform"
-	tp "tritium/proto"
 	"tritium/packager"
+	tp "tritium/proto"
+	tf "tritium/transform"
 	"tritium/whale"
 )
 
 var baseDir string
 
 const (
-	ENTRY_FILE                  = "main.ts"
-	INPUT_FILE					= "input.html"
-	OUTPUT_FILE					= "output.html"
+	ENTRY_FILE  = "main.ts"
+	INPUT_FILE  = "input.html"
+	OUTPUT_FILE = "output.html"
 )
 
 func TestExports(t *testing.T) {
@@ -35,7 +35,6 @@ func TestExports(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-
 
 	logger := golog.NewLogger("")
 	mixers := make([]*tp.Mixer, 0)
@@ -62,7 +61,7 @@ func TestExports(t *testing.T) {
 	eng := whale.NewEngine(debugger)
 	d, _ := time.ParseDuration("1m")
 
-	exhaust := eng.Run(transform, nil, getFileString(INPUT_FILE, t), env, time.Now().Add(d), "", "", "", make([]string, 0), false)
+	exhaust := eng.Run(transform, nil, getFileString(INPUT_FILE, t), env, map[string]string{}, time.Now().Add(d), "", "", "", make([]string, 0), false)
 
 	if exhaust.Output != getFileString(OUTPUT_FILE, t) {
 		t.Errorf("Got Unexpected output:\n" + exhaust.Output)
@@ -83,4 +82,3 @@ func getFileString(filename string, t *testing.T) string {
 func placeholder(name, version string) (mxr *tp.Mixer, err error) {
 	return nil, fmt.Errorf("Error.")
 }
-
