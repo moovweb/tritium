@@ -6,7 +6,7 @@ import (
 
 import (
 	pb "code.google.com/p/goprotobuf/proto"
-	"butler/null"
+	"tritium/dependencies/butler/null"
 	"tritium/protoface"
 	"tritium/constants"
 )
@@ -59,7 +59,7 @@ func (f *Function) BaseSignature(pkg2 protoface.Package) string {
 }
 
 
-// We need this for inherited function resolution. 
+// We need this for inherited function resolution.
 // - for now we just make duplicated functions for the package w the types changed
 // - this way, the engine can play dumb
 

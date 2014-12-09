@@ -2,12 +2,12 @@ package legacy
 
 import (
 	proto "code.google.com/p/goprotobuf/proto"
-	"fmt"
-	"golog"
+	// "fmt"
+	"tritium/dependencies/golog"
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
+	// "time"
 	tp "tritium/proto"
 )
 
@@ -87,7 +87,6 @@ func buildPackage(path string, options PackageOptions) *Package {
 
 	pkg.Name = proto.String(rootName)
 	pkg.Load(rootName)
-
 	return pkg
 }
 
@@ -159,7 +158,6 @@ func newLog() *golog.Logger {
 }
 
 func (pkg *Package) Load(packageName string) {
-
 	err := pkg.LoadFromPath(filepath.Join(pkg.LoadPath, packageName), packageName)
 
 	if err != nil && len(pkg.FallbackPath) != 0 {
@@ -169,6 +167,7 @@ func (pkg *Package) Load(packageName string) {
 	if err != nil {
 		panic(err.Message)
 	}
+
 
 }
 
@@ -194,11 +193,11 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 		}
 	}
 
-	s := time.Now()
+	// s := time.Now()
 	info, err := ReadPackageInfoFile(loadPath)
-	f := time.Now()
-	d := float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to read package info: %0.6fs\n", d)
+	// f := time.Now()
+	// d := float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
+	// fmt.Printf("Time to read package info: %0.6fs\n", d)
 
 	if err != nil {
 		return &Error{
@@ -207,18 +206,18 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 		}
 	}
 
-	s = time.Now()
+	// s = time.Now()
 	if len(info.Dependencies) > 0 {
 		for _, dependency := range info.Dependencies {
 			pkg.loadPackageDependency(dependency)
 		}
 	}
 
-	f = time.Now()
-	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to load dependencies: %0.6fs\n", d)
+	// f = time.Now()
+	// d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
+	// fmt.Printf("Time to load dependencies: %0.6fs\n", d)
 
-	s = time.Now()
+	// s = time.Now()
 	for _, typeName := range info.Types {
 		split := strings.Split(typeName, " < ")
 		typeObj := &tp.Type{}
@@ -231,17 +230,17 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 		typeObj.Name = proto.String(typeName)
 		pkg.Types = append(pkg.Types, typeObj)
 	}
-	f = time.Now()
-	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to resolve types: %0.6fs\n", d)
+	// f = time.Now()
+	// d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
+	// fmt.Printf("Time to resolve types: %0.6fs\n", d)
 
-	s = time.Now()
+	// s = time.Now()
 	pkg.readHeaderFile(loadPath)
-	f = time.Now()
-	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to load header: %0.6fs\n", d)
+	// f = time.Now()
+	// d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
+	// fmt.Printf("Time to load header: %0.6fs\n", d)
 
-	s = time.Now()
+	// s = time.Now()
 	entryPoint := filepath.Join(loadPath, "functions.ts")
 	pkg.Path = proto.String(entryPoint)
 
@@ -256,15 +255,15 @@ func (pkg *Package) LoadFromPath(loadPath string, name string) *Error {
 		pkg.CollectFunctionDocs()
 	}
 
-	f = time.Now()
-	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to load definitions: %0.6fs\n", d)
+	// f = time.Now()
+	// d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
+	// fmt.Printf("Time to load definitions: %0.6fs\n", d)
 
-	s = time.Now()
+	// s = time.Now()
 	pkg.inheritFunctions()
-	f = time.Now()
-	d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
-	fmt.Printf("Time to resolve inheritances: %0.6fs\n", d)
+	// f = time.Now()
+	// d = float64(f.Sub(s)) / 1000.0 / 1000.0 / 1000.0
+	// fmt.Printf("Time to resolve inheritances: %0.6fs\n", d)
 
 	if pkg.Options["output_tpkg"] {
 		pkg.write()

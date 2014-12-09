@@ -8,7 +8,7 @@ import (
 )
 
 import (
-	"butler/null"
+	"tritium/dependencies/butler/null"
 	proto "code.google.com/p/goprotobuf/proto"
 	tp "tritium/proto"
 	"tritium/constants"
@@ -365,6 +365,6 @@ func readableStub(stub string) string {
 		betterStub += ")"
 	} else {
 		betterStub += "()"
-	} 
+	}
 	return betterStub
 }

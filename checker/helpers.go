@@ -1,7 +1,7 @@
 package checker
 
 import (
-	"butler/null"
+	"tritium/dependencies/butler/null"
 	tp "tritium/proto"
 )
 

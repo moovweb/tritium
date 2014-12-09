@@ -1,7 +1,7 @@
 package proto
 
 import (
-	"butler/null"
+	"tritium/dependencies/butler/null"
 	pb "code.google.com/p/goprotobuf/proto"
 )
 

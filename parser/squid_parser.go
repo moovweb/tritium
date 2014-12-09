@@ -12,7 +12,7 @@ import (
 	. "tritium/parser/tokenizer"
 	"tritium/constants"
 	. "tritium/tritstrings"
-	"butler/fileutil"
+	"tritium/dependencies/butler/fileutil"
 )
 
 type Parser struct {

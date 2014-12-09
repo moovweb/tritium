@@ -1,8 +1,8 @@
 package checker
 
 import (
-	"butler/null"
-	"gokogiri/xpath"
+	"tritium/dependencies/butler/null"
+	"tritium/github.com/moovweb/gokogiri/xpath"
 	tp "tritium/proto"
 	"tritium/constants"
 )

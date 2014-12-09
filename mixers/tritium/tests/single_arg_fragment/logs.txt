@@ -1,0 +1,3 @@
+should see this log
+should see this other log
+should see this log too

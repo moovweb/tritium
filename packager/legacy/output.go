@@ -7,8 +7,8 @@ import (
 )
 
 import (
-	"butler/crypto"
-	"butler/null"
+	"tritium/dependencies/butler/crypto"
+	"tritium/dependencies/butler/null"
 	proto "code.google.com/p/goprotobuf/proto"
 	tp "tritium/proto"
 )

@@ -7,8 +7,8 @@ import (
 )
 
 import (
-	mixers "butler/mixer"
-	xmlhelp "gokogiri/help"
+	mixers "tritium/dependencies/butler/mixer"
+	xmlhelp "tritium/github.com/moovweb/gokogiri/help"
 	"golog"
 	"runtime/debug"
 	"steno/dummy"

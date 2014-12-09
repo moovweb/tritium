@@ -8,11 +8,11 @@ import (
 )
 
 import (
-	"go-cache"
-	"go-cache/arc"
-	"gokogiri/xpath"
-	"rubex"
-	"steno"
+	"tritium/dependencies/go-cache"
+	"tritium/dependencies/go-cache/arc"
+	"tritium/dependencies/gokogiri/xpath"
+	"tritium/dependencies/rubex"
+	"tritium/dependencies/steno"
 	"tritium"
 	"tritium/constants"
 	"tritium/protoface"

@@ -3,7 +3,7 @@ package tokenizer
 import (
 	"bytes"
 	"fmt"
-	"rubex"
+	"tritium/dependencies/rubex"
 	"strings"
 	"strconv"
 )

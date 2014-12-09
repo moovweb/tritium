@@ -11,11 +11,11 @@ import (
 )
 
 import (
-	fileutil "butler/fileutil"
-	"butler/mixer"
+	fileutil "tritium/dependencies/butler/fileutil"
+	"tritium/dependencies/butler/mixer"
 	proto "code.google.com/p/goprotobuf/proto"
-	"golog"
-	yaml "goyaml"
+	"tritium/dependencies/golog"
+	yaml "tritium/dependencies/goyaml"
 	"tritium/packager/legacy"
 	"tritium/parser"
 	tp "tritium/proto"
