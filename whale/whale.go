@@ -59,6 +59,8 @@ type EngineContext struct {
 	ActiveLayers       map[string]bool
 	ActiveLayersString string
 	HtmlTransformer    hx.HtmlTransformer
+
+	RegexVars []int32
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -78,7 +80,7 @@ func NewEngine(debugger steno.Debugger) *Whale {
 	return e
 }
 
-func NewEngineCtx(eng *Whale, vars, constants map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath, customer, project string, activeLayers []string, inDebug bool) (ctx *EngineContext) {
+func NewEngineCtx(eng *Whale, vars, constants map[string]string, transform protoface.Transform, rrules []protoface.RewriteRule, deadline time.Time, messagePath, customer, project string, activeLayers []string, inDebug bool, regexvars []int32) (ctx *EngineContext) {
 	ctx = &EngineContext{
 		Whale:                    eng,
 		Exports:                  make([][]string, 0),
@@ -98,6 +100,7 @@ func NewEngineCtx(eng *Whale, vars, constants map[string]string, transform proto
 		Project:     project,
 		InDebug:     inDebug,
 		Constants:   constants,
+		RegexVars:   regexvars,
 	}
 	ctx.ActiveLayers = make(map[string]bool)
 	for _, name := range activeLayers {
@@ -112,11 +115,11 @@ func (eng *Whale) Free() {
 	eng.XPathCache.Reset()
 }
 
-func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars, constants map[string]string, deadline time.Time, customer, project, messagePath string, activeLayers []string, inDebug bool) (exhaust *tritium.Exhaust) {
-	ctx := NewEngineCtx(eng, vars, constants, transform, rrules, deadline, messagePath, customer, project, activeLayers, inDebug)
+func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars, constants map[string]string, deadline time.Time, customer, project, messagePath string, activeLayers []string, inDebug bool, regexvars []int32) (exhaust *tritium.Exhaust) {
+	ctx := NewEngineCtx(eng, vars, constants, transform, rrules, deadline, messagePath, customer, project, activeLayers, inDebug, regexvars)
 	exhaust = &tritium.Exhaust{}
 	defer ctx.Free()
-	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
+	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[int32]interface{})})
 	ctx.UsePackage(transform.IGetPkg())
 	scope := &Scope{Value: input.(string)}
 	obj := transform.IGetNthObject(0)
@@ -200,7 +203,9 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 	case constants.Instruction_TEXT:
 		returnValue = ins.IGetValue()
 	case constants.Instruction_LOCAL_VAR:
-		name := ins.IGetValue()
+		name := ins.IGetObjectId()
+		println("Inside RunInstruction:", name)
+		println("Filename", ctx.Filename)
 		vars := ctx.Vars()
 		if ins.INumArgs() > 0 {
 			vars[name] = ctx.RunInstruction(scope, ins.IGetNthArgument(0))
@@ -251,10 +256,10 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 			// We are using a user-defined function
 			//println("Resetting localvar")
 			// Setup the new local var
-			vars := make(map[string]interface{}, len(args))
+			vars := make(map[int32]interface{}, len(args))
 			for i := 0; i < fun.INumArgs(); i++ {
 				arg := fun.IGetNthArg(i)
-				vars[arg.IGetName()] = args[i]
+				vars[arg.IGetId()] = args[i]
 			}
 			yieldBlock := &YieldBlock{
 				Ins:      ins,
@@ -325,7 +330,7 @@ func (ctx *EngineContext) TopYieldBlock() (b *YieldBlock) {
 	return
 }
 
-func (ctx *EngineContext) Vars() map[string]interface{} {
+func (ctx *EngineContext) Vars() map[int32]interface{} {
 	b := ctx.TopYieldBlock()
 	if b != nil {
 		return b.Vars
@@ -436,14 +441,14 @@ func (ctx *EngineContext) GetEnv(key string) (val string) {
 	return
 }
 
-func (ctx *EngineContext) SetVar(key string, val interface{}) {
+func (ctx *EngineContext) SetVar(key int32, val interface{}) {
 	b := ctx.TopYieldBlock()
 	if b != nil {
 		b.Vars[key] = val
 	}
 }
 
-func (ctx *EngineContext) GetVar(key string) (val interface{}) {
+func (ctx *EngineContext) GetVar(key int32) (val interface{}) {
 	b := ctx.TopYieldBlock()
 	if b != nil {
 		val = b.Vars[key]

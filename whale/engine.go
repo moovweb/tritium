@@ -23,8 +23,8 @@ var Positions = map[string]Position{
 }
 
 type YieldBlock struct {
-	Ins  protoface.Instruction
-	Vars map[string]interface{}
+	Ins      protoface.Instruction
+	Vars     map[int32]interface{}
 	Filename string
 }
 

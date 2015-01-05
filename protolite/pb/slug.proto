@@ -14,4 +14,6 @@ message Slug {
 	repeated string ssl_whitelist = 5;
 	optional Credentials credentials = 6;
   repeated string active_layers = 7;
+  repeated string variable_names = 8;
+  repeated int32 regex_vars = 9;
 }

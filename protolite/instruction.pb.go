@@ -5,22 +5,23 @@
 package proto
 
 import proto1 "code.google.com/p/goprotobuf/proto"
-import json "encoding/json"
 import math "math"
 
-// Reference proto, json, and math imports to suppress error if they are not otherwise used.
+// Reference imports to suppress errors if they are not otherwise used.
 var _ = proto1.Marshal
-var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Instruction struct {
-	Type             *int32         `protobuf:"varint,1,req,name=type" json:"type,omitempty"`
-	Value            *string        `protobuf:"bytes,2,opt,name=value" json:"value,omitempty"`
-	ObjectId         *int32         `protobuf:"varint,3,opt,name=object_id" json:"object_id,omitempty"`
-	Children         []*Instruction `protobuf:"bytes,4,rep,name=children" json:"children,omitempty"`
-	Arguments        []*Instruction `protobuf:"bytes,5,rep,name=arguments" json:"arguments,omitempty"`
-	FunctionId       *int32         `protobuf:"varint,6,opt,name=function_id" json:"function_id,omitempty"`
-	XXX_unrecognized []byte         `json:"-"`
+	Type  *int32  `protobuf:"varint,1,req,name=type" json:"type,omitempty"`
+	Value *string `protobuf:"bytes,2,opt,name=value" json:"value,omitempty"`
+	// only used if we are an import and we're all linked into an Transform
+	ObjectId  *int32         `protobuf:"varint,3,opt,name=object_id" json:"object_id,omitempty"`
+	Children  []*Instruction `protobuf:"bytes,4,rep,name=children" json:"children,omitempty"`
+	Arguments []*Instruction `protobuf:"bytes,5,rep,name=arguments" json:"arguments,omitempty"`
+	// Linked: Function Reference
+	// Until this happens, value says the function call name
+	FunctionId       *int32 `protobuf:"varint,6,opt,name=function_id" json:"function_id,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *Instruction) Reset()         { *m = Instruction{} }

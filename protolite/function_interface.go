@@ -1,6 +1,6 @@
 package proto
 
-import(
+import (
 	"tritium/protoface"
 )
 
@@ -19,7 +19,6 @@ func (m *Function) IGetFilename() string {
 func (m *Function) IGetLineNumber() int32 {
 	return 0
 }
-
 
 func (m *Function) IGetNamespace() string {
 	return ""
@@ -81,7 +80,11 @@ func (m *Function_Argument) IGetName() string {
 	return m.GetName()
 }
 
-func (m *FunctionArray) GetNthFunction(index int) protoface.Function{
+func (m *Function_Argument) IGetId() int32 {
+	return m.GetId()
+}
+
+func (m *FunctionArray) GetNthFunction(index int) protoface.Function {
 	return m.GetFunctions()[index]
 }
 

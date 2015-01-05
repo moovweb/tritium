@@ -303,6 +303,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 	var mxErr error
 	// if a mixer src dir isn't found, try to grab a compiled version locally
 	if !foundMixerSrc {
+		println("trying to grab a compiled version locally")
 		mxr, mxErr = mixer.GetMixer(name, specifiedVersion)
 		if mxErr == nil {
 			foundCompiledMixer = true
@@ -314,6 +315,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 
 	// otherwise, try to download a compiled version from apollo
 	if !foundMixerSrc && !foundCompiledMixer {
+		println("trying to download a compiled version from apollo")
 		mxr, mxErr = pkgr.downloader(name, specifiedVersion)
 		if mxErr == nil {
 			foundCompiledMixer = true

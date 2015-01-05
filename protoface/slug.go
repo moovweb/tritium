@@ -16,6 +16,7 @@ type Slug interface {
 	IGetSslWhitelist() []string
 	IGetCredentials() Credentials
 	IGetActiveLayers() []string
+	IGetRegexVars() []int32
 
 	WriteFile(string) error
 	FindInstruction(string, int) int

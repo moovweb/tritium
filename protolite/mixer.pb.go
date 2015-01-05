@@ -5,22 +5,21 @@
 package proto
 
 import proto1 "code.google.com/p/goprotobuf/proto"
-import json "encoding/json"
 import math "math"
 
-// Reference proto, json, and math imports to suppress error if they are not otherwise used.
+// Reference imports to suppress errors if they are not otherwise used.
 var _ = proto1.Marshal
-var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Mixer struct {
-	Name              *string  `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
-	Version           *string  `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
-	Rewriters         []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
-	Package           *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
-	PackagerVersion   *int32   `protobuf:"varint,5,opt,name=packager_version" json:"packager_version,omitempty"`
-	IsHttpTransformer *bool    `protobuf:"varint,6,opt,name=is_http_transformer" json:"is_http_transformer,omitempty"`
-	XXX_unrecognized  []byte   `json:"-"`
+	Name      *string  `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
+	Version   *string  `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
+	Rewriters []*File  `protobuf:"bytes,3,rep,name=rewriters" json:"rewriters,omitempty"`
+	Package   *Package `protobuf:"bytes,4,opt,name=package" json:"package,omitempty"`
+	// For the new packaging system -- AL 2013/03/21
+	PackagerVersion   *int32 `protobuf:"varint,5,opt,name=packager_version" json:"packager_version,omitempty"`
+	IsHttpTransformer *bool  `protobuf:"varint,6,opt,name=is_http_transformer" json:"is_http_transformer,omitempty"`
+	XXX_unrecognized  []byte `json:"-"`
 }
 
 func (m *Mixer) Reset()         { *m = Mixer{} }

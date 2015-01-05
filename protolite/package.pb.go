@@ -5,14 +5,13 @@
 package proto
 
 import proto1 "code.google.com/p/goprotobuf/proto"
-import json "encoding/json"
 import math "math"
 
-// Reference proto, json, and math imports to suppress error if they are not otherwise used.
+// Reference imports to suppress errors if they are not otherwise used.
 var _ = proto1.Marshal
-var _ = &json.SyntaxError{}
 var _ = math.Inf
 
+// Core data types must be enumerated in the message
 type Type struct {
 	Name             *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	Implements       *int32  `protobuf:"varint,2,opt,name=implements" json:"implements,omitempty"`
@@ -37,13 +36,21 @@ func (m *Type) GetImplements() int32 {
 	return 0
 }
 
+//
+// Structure representing a package of Tritium
+// types and functions.
+//
+// This is both used to store different packages headers and info (base, libxml, node, etc)
+// and is used in an Transform to bundle together needed headers, functions, etc
 type Package struct {
-	Name             *string     `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Functions        []*Function `protobuf:"bytes,2,rep,name=functions" json:"functions,omitempty"`
-	Types            []*Type     `protobuf:"bytes,3,rep,name=types" json:"types,omitempty"`
-	Dependencies     []string    `protobuf:"bytes,4,rep,name=dependencies" json:"dependencies,omitempty"`
-	Path             *string     `protobuf:"bytes,5,opt,name=path" json:"path,omitempty"`
-	XXX_unrecognized []byte      `json:"-"`
+	Name      *string     `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Functions []*Function `protobuf:"bytes,2,rep,name=functions" json:"functions,omitempty"`
+	Types     []*Type     `protobuf:"bytes,3,rep,name=types" json:"types,omitempty"`
+	// Only used in non-linked combined packages
+	Dependencies []string `protobuf:"bytes,4,rep,name=dependencies" json:"dependencies,omitempty"`
+	// The following field is for nicer error messages
+	Path             *string `protobuf:"bytes,5,opt,name=path" json:"path,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *Package) Reset()         { *m = Package{} }

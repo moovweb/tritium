@@ -37,6 +37,7 @@ type Function_Argument interface {
 	IGetTypeId() int32
 	IGetTypeString() string
 	IGetName() string
+	IGetId() int32
 }
 
 type Function_Array interface {

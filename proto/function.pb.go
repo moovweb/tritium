@@ -5,30 +5,31 @@
 package proto
 
 import proto1 "code.google.com/p/goprotobuf/proto"
-import json "encoding/json"
 import math "math"
 
-// Reference proto, json, and math imports to suppress error if they are not otherwise used.
+// Reference imports to suppress errors if they are not otherwise used.
 var _ = proto1.Marshal
-var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Function struct {
-	Name             *string              `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Description      *string              `protobuf:"bytes,11,opt,name=description" json:"description,omitempty"`
-	Filename         *string              `protobuf:"bytes,12,opt,name=filename" json:"filename,omitempty"`
-	LineNumber       *int32               `protobuf:"varint,13,opt,name=line_number" json:"line_number,omitempty"`
-	Namespace        *string              `protobuf:"bytes,14,opt,name=namespace" json:"namespace,omitempty"`
-	ScopeTypeId      *int32               `protobuf:"varint,2,opt,name=scope_type_id" json:"scope_type_id,omitempty"`
-	ScopeType        *string              `protobuf:"bytes,8,opt,name=scope_type" json:"scope_type,omitempty"`
-	ReturnTypeId     *int32               `protobuf:"varint,3,opt,name=return_type_id" json:"return_type_id,omitempty"`
-	ReturnType       *string              `protobuf:"bytes,9,opt,name=return_type" json:"return_type,omitempty"`
-	OpensTypeId      *int32               `protobuf:"varint,4,opt,name=opens_type_id" json:"opens_type_id,omitempty"`
-	OpensType        *string              `protobuf:"bytes,10,opt,name=opens_type" json:"opens_type,omitempty"`
-	BuiltIn          *bool                `protobuf:"varint,5,opt,name=built_in" json:"built_in,omitempty"`
-	Args             []*Function_Argument `protobuf:"bytes,6,rep,name=args" json:"args,omitempty"`
-	Instruction      *Instruction         `protobuf:"bytes,7,opt,name=instruction" json:"instruction,omitempty"`
-	XXX_unrecognized []byte               `json:"-"`
+	Name        *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Description *string `protobuf:"bytes,11,opt,name=description" json:"description,omitempty"`
+	Filename    *string `protobuf:"bytes,12,opt,name=filename" json:"filename,omitempty"`
+	LineNumber  *int32  `protobuf:"varint,13,opt,name=line_number" json:"line_number,omitempty"`
+	Namespace   *string `protobuf:"bytes,14,opt,name=namespace" json:"namespace,omitempty"`
+	// Linked
+	ScopeTypeId  *int32  `protobuf:"varint,2,opt,name=scope_type_id" json:"scope_type_id,omitempty"`
+	ScopeType    *string `protobuf:"bytes,8,opt,name=scope_type" json:"scope_type,omitempty"`
+	ReturnTypeId *int32  `protobuf:"varint,3,opt,name=return_type_id" json:"return_type_id,omitempty"`
+	ReturnType   *string `protobuf:"bytes,9,opt,name=return_type" json:"return_type,omitempty"`
+	OpensTypeId  *int32  `protobuf:"varint,4,opt,name=opens_type_id" json:"opens_type_id,omitempty"`
+	OpensType    *string `protobuf:"bytes,10,opt,name=opens_type" json:"opens_type,omitempty"`
+	// Only informative post-linking
+	BuiltIn *bool                `protobuf:"varint,5,opt,name=built_in" json:"built_in,omitempty"`
+	Args    []*Function_Argument `protobuf:"bytes,6,rep,name=args" json:"args,omitempty"`
+	// Only for non-built-in functions
+	Instruction      *Instruction `protobuf:"bytes,7,opt,name=instruction" json:"instruction,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
 }
 
 func (m *Function) Reset()         { *m = Function{} }
@@ -137,6 +138,7 @@ type Function_Argument struct {
 	TypeId           *int32  `protobuf:"varint,1,opt,name=type_id" json:"type_id,omitempty"`
 	TypeString       *string `protobuf:"bytes,2,opt,name=type_string" json:"type_string,omitempty"`
 	Name             *string `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
+	Id               *int32  `protobuf:"varint,4,opt,name=id" json:"id,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
 
@@ -163,6 +165,13 @@ func (m *Function_Argument) GetName() string {
 		return *m.Name
 	}
 	return ""
+}
+
+func (m *Function_Argument) GetId() int32 {
+	if m != nil && m.Id != nil {
+		return *m.Id
+	}
+	return 0
 }
 
 type FunctionArray struct {
