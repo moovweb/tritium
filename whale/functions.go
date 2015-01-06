@@ -274,7 +274,6 @@ func replace_Regexp(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 				//println("setting $", name, "to", capture)
 				ctx.SetEnv(name, capture)
 			}
-			println("name", name)
 			key, _ := strconv.Atoi(name)
 			ctx.SetVar(ctx.RegexVars[key], capture)
 		}
@@ -293,7 +292,6 @@ func replace_Regexp(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 			if usesGlobal {
 				val = ctx.GetEnv(capture)
 			} else {
-				println("capture", capture)
 				key, _ := strconv.Atoi(capture)
 				val = ctx.GetVar(ctx.RegexVars[key]).(string)
 			}
@@ -313,12 +311,7 @@ func capture_Regexp(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 			if usesGlobal {
 				ctx.SetEnv(name, capture)
 			}
-			println("name", name)
-			key, err := strconv.Atoi(name)
-			if err != nil {
-				println("capture error", err.Error())
-			}
-			println("setting regex key", key)
+			key, _ := strconv.Atoi(name)
 			ctx.SetVar(ctx.RegexVars[key], capture)
 		}
 

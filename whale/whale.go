@@ -204,8 +204,6 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 		returnValue = ins.IGetValue()
 	case constants.Instruction_LOCAL_VAR:
 		name := ins.IGetObjectId()
-		println("Inside RunInstruction:", name)
-		println("Filename", ctx.Filename)
 		vars := ctx.Vars()
 		if ins.INumArgs() > 0 {
 			vars[name] = ctx.RunInstruction(scope, ins.IGetNthArgument(0))
