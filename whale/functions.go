@@ -499,10 +499,14 @@ func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 	}
 
 	// convert to an xml doc and run the supplied block on it
-	ctx.HtmlTransformer.CreateEmptyDocument(nil, nil)
-	jsonNodes := json_to_node(jsonVal, ctx.HtmlTransformer)
+
+	newxform := goku.NewXForm()
+	newxform.CreateEmptyDocument(nil, nil)
+	ctx.AddMemoryObject(newxform)
+
+	jsonNodes := json_to_node(jsonVal, newxform)
 	// put the jsonNodes under a new root node to get the xpath searches to be correctly scoped
-	jsonRoot := ctx.HtmlTransformer.CreateElementNode("json")
+	jsonRoot := newxform.CreateElementNode("json")
 	jsonRoot.InsertTop(jsonNodes)
 	newScope := &Scope{Value: jsonRoot}
 
