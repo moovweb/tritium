@@ -487,10 +487,10 @@ func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protofa
 }
 
 func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	return json_to_xml_v1_libxml_legacy(ctx, scope, ins, args)
+	return json_to_xml_libxml_legacy(ctx, scope, ins, args)
 }
 
-func json_to_xml_v1_libxml_legacy(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+func json_to_xml_libxml_legacy(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	// unmarshal the json
 	jsonSrc := scope.Value.(string)
 	var jsonVal interface{}
@@ -533,7 +533,7 @@ func json_to_xml_v1_libxml_legacy(ctx *EngineContext, scope *Scope, ins protofac
 	return
 }
 
-func json_to_xml_v1_libxml_292(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+func json_to_xml_libxml_292(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	// unmarshal the json
 	jsonSrc := scope.Value.(string)
 	var jsonVal interface{}
