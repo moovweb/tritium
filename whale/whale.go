@@ -10,11 +10,11 @@ import (
 import (
 	"go-cache"
 	"go-cache/arc"
-	"gokogiri/xpath"
 	"rubex"
 	"steno"
 	"tritium"
 	"tritium/constants"
+	hx "tritium/htmltransformer"
 	"tritium/protoface"
 )
 
@@ -58,6 +58,7 @@ type EngineContext struct {
 
 	ActiveLayers       map[string]bool
 	ActiveLayersString string
+	HtmlTransformer    hx.HtmlTransformer
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -393,19 +394,19 @@ func (ctx *EngineContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 	return object.(*RegexpObject).Regexp
 }
 
-func (ctx *EngineContext) GetXpathExpr(p string) (e *xpath.Expression) {
+func (ctx *EngineContext) GetXpathExpr(p string) (e hx.Selector) {
 	object, err := ctx.XPathCache.Get(p)
 	if err != nil {
-		e = xpath.Compile(p)
+		e = ctx.HtmlTransformer.CompileXPath(p)
 		if e != nil {
 			//ctx.AddMemoryObject(e)
-			ctx.XPathCache.Set(p, &XpathExpObject{Expression: e})
+			ctx.XPathCache.Set(p, &XpathExpObject{e})
 		} else {
 			ctx.Debugger.LogTritiumErrorMessage(ctx.Customer, ctx.Project, ctx.Env, ctx.MessagePath, "Invalid XPath used: "+p)
 		}
 		return e
 	}
-	return object.(*XpathExpObject).Expression
+	return object.(*XpathExpObject)
 }
 
 func (ctx *EngineContext) AddExport(exports []string) {

@@ -2,21 +2,15 @@ package whale
 
 import (
 	"strings"
-
-	"gokogiri/xml"
+	hx "tritium/htmltransformer"
 )
 
-func MoveFunc(what, where xml.Node, position Position) {
+func MoveFunc(what, where hx.Node, position Position) {
 	switch position {
 	case BOTTOM:
-		where.AddChild(what)
+		where.InsertBottom(what)
 	case TOP:
-		firstChild := where.FirstChild()
-		if firstChild == nil {
-			where.AddChild(what)
-		} else {
-			firstChild.InsertBefore(what)
-		}
+		where.InsertTop(what)
 	case BEFORE:
 		where.InsertBefore(what)
 	case AFTER:
