@@ -2,6 +2,7 @@ package whale
 
 import (
 	"fmt"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -15,6 +16,9 @@ import (
 	"tritium"
 	"tritium/constants"
 	hx "tritium/htmltransformer"
+	goku "tritium/htmltransformer/gokogiri_interface"
+	goku_legacy "tritium/htmltransformer/gokogiri_interface_legacy"
+
 	"tritium/protoface"
 )
 
@@ -113,9 +117,30 @@ func (eng *Whale) Free() {
 }
 
 func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars, constants map[string]string, deadline time.Time, customer, project, messagePath string, activeLayers []string, inDebug bool) (exhaust *tritium.Exhaust) {
+	memstats := runtime.MemStats{}
+
+	runtime.ReadMemStats(&memstats)
+	println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> BEFORE RUN")
+	println("GO LIVE ALLOCATIONS:", memstats.Alloc)
+	println("GO TOTAL ALLOCATIONS:", memstats.TotalAlloc)
+	println("GO HEAP IN USE:", memstats.HeapInuse)
+	goku.GetLibXMLMemInfo()
+	goku_legacy.GetLibXMLMemInfo()
+
 	ctx := NewEngineCtx(eng, vars, constants, transform, rrules, deadline, messagePath, customer, project, activeLayers, inDebug)
 	exhaust = &tritium.Exhaust{}
-	defer ctx.Free()
+	defer func() {
+		ctx.Free()
+
+		runtime.ReadMemStats(&memstats)
+		println("\n<<<<<<<<<<<<<<<<<<<<<<<<<< AFTER FREE")
+		println("GO LIVE ALLOCATIONS:", memstats.Alloc)
+		println("GO TOTAL ALLOCATIONS:", memstats.TotalAlloc)
+		println("GO HEAP IN USE:", memstats.HeapInuse)
+		goku.GetLibXMLMemInfo()
+		goku_legacy.GetLibXMLMemInfo()
+
+	}()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.IGetPkg())
 	scope := &Scope{Value: input.(string)}
@@ -129,6 +154,14 @@ func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteR
 	exhaust.Exports = ctx.Exports
 	exhaust.Logs = ctx.Logs
 	exhaust.HtmlParsed = ctx.HtmlParsed
+
+	runtime.ReadMemStats(&memstats)
+	println("\n########################## BEFORE FREE")
+	println("GO LIVE ALLOCATIONS:", memstats.Alloc)
+	println("GO TOTAL ALLOCATIONS:", memstats.TotalAlloc)
+	println("GO HEAP IN USE:", memstats.HeapInuse)
+	goku.GetLibXMLMemInfo()
+	goku_legacy.GetLibXMLMemInfo()
 	return
 }
 

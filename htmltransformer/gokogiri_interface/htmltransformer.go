@@ -4,6 +4,7 @@ import (
 	"errors"
 	"gokogiri/css"
 	"gokogiri/html"
+	"gokogiri/mem"
 	"gokogiri/xml"
 	"gokogiri/xpath"
 	ht "tritium/htmltransformer"
@@ -136,4 +137,8 @@ func (xform *GokogiriHtmlTransformer) CompileXPath(path string) ht.Selector {
 
 func (xform *GokogiriHtmlTransformer) ConvertCSS(input string) string {
 	return css.Convert(input, css.LOCAL)
+}
+
+func GetLibXMLMemInfo() {
+	mem.FunctionThatDoesSomething()
 }
