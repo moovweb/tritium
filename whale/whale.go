@@ -2,6 +2,7 @@ package whale
 
 import (
 	"fmt"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -10,6 +11,7 @@ import (
 import (
 	"go-cache"
 	"go-cache/arc"
+	"gokogiri/mem"
 	"gokogiri/xpath"
 	"rubex"
 	"steno"
@@ -55,7 +57,7 @@ type EngineContext struct {
 	Prod        bool
 	HtmlParsed  bool
 
-	ActiveLayers map[string]bool
+	ActiveLayers       map[string]bool
 	ActiveLayersString string
 }
 
@@ -86,8 +88,8 @@ func NewEngineCtx(eng *Whale, vars map[string]string, transform protoface.Transf
 		Rrules:                   rrules,
 		MatchStack:               make([]string, 0),
 		MatchShouldContinueStack: make([]bool, 0),
-		Yields:     make([]*YieldBlock, 0),
-		HadError:   false,
+		Yields:   make([]*YieldBlock, 0),
+		HadError: false,
 
 		Deadline:    deadline,
 		Mobjects:    make([]MemoryObject, 0, defaultMobjects),
@@ -110,9 +112,27 @@ func (eng *Whale) Free() {
 }
 
 func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars map[string]string, deadline time.Time, customer, project, messagePath string, activeLayers []string, inDebug bool) (exhaust *tritium.Exhaust) {
+	memstats := runtime.MemStats{}
+
+	runtime.ReadMemStats(&memstats)
+	println("\n>>>>>>>>>>>>>>>>>>>>>>>>>> BEFORE RUN")
+	println("GO LIVE ALLOCATIONS:", memstats.Alloc)
+	println("GO TOTAL ALLOCATIONS:", memstats.TotalAlloc)
+	println("GO HEAP IN USE:", memstats.HeapInuse)
+	mem.FunctionThatDoesSomething()
+
 	ctx := NewEngineCtx(eng, vars, transform, rrules, deadline, messagePath, customer, project, activeLayers, inDebug)
 	exhaust = &tritium.Exhaust{}
-	defer ctx.Free()
+	defer func() {
+		ctx.Free()
+
+		runtime.ReadMemStats(&memstats)
+		println("\n<<<<<<<<<<<<<<<<<<<<<<<<<< AFTER FREE")
+		println("GO LIVE ALLOCATIONS:", memstats.Alloc)
+		println("GO TOTAL ALLOCATIONS:", memstats.TotalAlloc)
+		println("GO HEAP IN USE:", memstats.HeapInuse)
+		mem.FunctionThatDoesSomething()
+	}()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.IGetPkg())
 	scope := &Scope{Value: input.(string)}
@@ -126,6 +146,14 @@ func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteR
 	exhaust.Exports = ctx.Exports
 	exhaust.Logs = ctx.Logs
 	exhaust.HtmlParsed = ctx.HtmlParsed
+
+	runtime.ReadMemStats(&memstats)
+	println("\n########################## BEFORE FREE")
+	println("GO LIVE ALLOCATIONS:", memstats.Alloc)
+	println("GO TOTAL ALLOCATIONS:", memstats.TotalAlloc)
+	println("GO HEAP IN USE:", memstats.HeapInuse)
+	mem.FunctionThatDoesSomething()
+
 	return
 }
 
