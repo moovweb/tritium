@@ -702,7 +702,6 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 	defer func() { ctx.HtmlTransformer = prevxform }()
 
 	ctx.HtmlTransformer = xform
-	// _, frag := xform.Root()
 
 	ns := &Scope{Value: frag}
 	for i := 0; i < ins.INumChildren(); i++ {
@@ -736,7 +735,6 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 	defer func() { ctx.HtmlTransformer = prevxform }()
 
 	ctx.HtmlTransformer = xform
-	// _, frag := xform.Root()
 
 	ns := &Scope{Value: frag}
 	for i := 0; i < ins.INumChildren(); i++ {
