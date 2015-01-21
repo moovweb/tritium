@@ -1246,6 +1246,7 @@ func css_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.Inst
 	if ctx.HtmlTransformer == nil {
 		xform := goku_legacy.NewXForm()
 		ctx.HtmlTransformer = xform
+		ctx.AddMemoryObject(xform)
 	}
 	returnValue = ctx.HtmlTransformer.ConvertCSS(args[0].(string))
 	return
@@ -1255,6 +1256,7 @@ func css_libxml_292_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruc
 	if ctx.HtmlTransformer == nil {
 		xform := goku.NewXForm()
 		ctx.HtmlTransformer = xform
+		ctx.AddMemoryObject(xform)
 	}
 	returnValue = ctx.HtmlTransformer.ConvertCSS(args[0].(string))
 	return
