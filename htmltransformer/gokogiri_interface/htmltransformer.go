@@ -142,3 +142,7 @@ func (xform *GokogiriHtmlTransformer) ConvertCSS(input string) string {
 func GetLibXMLMemInfo() {
 	mem.FunctionThatDoesSomething()
 }
+
+func DumpLibXMLMemory() {
+	mem.Dump()
+}
