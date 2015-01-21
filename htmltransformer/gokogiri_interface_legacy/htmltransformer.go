@@ -88,12 +88,18 @@ func (xform *GokogiriHtmlTransformer) ParseHTML(content, inEncoding, url, outEnc
 }
 
 func (xform *GokogiriHtmlTransformer) ParseFragment(content, inEncoding, url, outEncoding []byte) (frag ht.Node, err error) {
+	// println("~~~~~~~~~ legacy gokogiri interfact fragment function ~~~~~~~")
 	var fragment *xml.DocumentFragment
 	if xform.document != nil {
 		newdoc := html.HtmlDocument{xform.document}
 		fragment, err = newdoc.ParseFragment(content, url, xml.DefaultParseOption)
 	} else {
-		fragment, err = html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
+		// println("xform.document == nil")
+		xform.CreateEmptyDocument(nil, nil)
+		newdoc := html.HtmlDocument{xform.document}
+		fragment, err = newdoc.ParseFragment(content, url, xml.DefaultParseOption)
+
+		// fragment, err = html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
 	}
 	xform.fragment = fragment
 	if err != nil {
