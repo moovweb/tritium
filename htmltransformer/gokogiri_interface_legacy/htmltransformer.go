@@ -4,7 +4,6 @@ import (
 	"errors"
 	"gokogiri_legacy/css"
 	"gokogiri_legacy/html"
-	"gokogiri_legacy/mem"
 	"gokogiri_legacy/xml"
 	"gokogiri_legacy/xpath"
 	ht "tritium/htmltransformer"
@@ -88,12 +87,18 @@ func (xform *GokogiriHtmlTransformer) ParseHTML(content, inEncoding, url, outEnc
 }
 
 func (xform *GokogiriHtmlTransformer) ParseFragment(content, inEncoding, url, outEncoding []byte) (frag ht.Node, err error) {
+	// println("~~~~~~~~~ legacy gokogiri interfact fragment function ~~~~~~~")
 	var fragment *xml.DocumentFragment
 	if xform.document != nil {
 		newdoc := html.HtmlDocument{xform.document}
 		fragment, err = newdoc.ParseFragment(content, url, xml.DefaultParseOption)
 	} else {
-		fragment, err = html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
+		// println("xform.document == nil")
+		xform.CreateEmptyDocument(nil, nil)
+		newdoc := html.HtmlDocument{xform.document}
+		fragment, err = newdoc.ParseFragment(content, url, xml.DefaultParseOption)
+
+		// fragment, err = html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
 	}
 	xform.fragment = fragment
 	if err != nil {
@@ -137,12 +142,4 @@ func (xform *GokogiriHtmlTransformer) CompileXPath(path string) ht.Selector {
 
 func (xform *GokogiriHtmlTransformer) ConvertCSS(input string) string {
 	return css.Convert(input, css.LOCAL)
-}
-
-func GetLibXMLMemInfo() {
-	mem.FunctionThatDoesSomething()
-}
-
-func DumpLibXMLMemory() {
-	mem.Dump()
 }
