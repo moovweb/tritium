@@ -93,10 +93,11 @@ func (xform *GokogiriHtmlTransformer) ParseFragment(content, inEncoding, url, ou
 		newdoc := html.HtmlDocument{xform.document}
 		fragment, err = newdoc.ParseFragment(content, url, xml.DefaultParseOption)
 	} else {
-		xform.CreateEmptyDocument(nil, nil)
-		newdoc := html.HtmlDocument{xform.document}
-		fragment, err = newdoc.ParseFragment(content, url, xml.DefaultParseOption)
-		// fragment, err = html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
+		// xform.CreateEmptyDocument(nil, nil)
+		// newdoc := html.HtmlDocument{xform.document}
+		// fragment, err = newdoc.ParseFragment(content, url, xml.DefaultParseOption)
+		fragment, err = html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
+		xform.document = xml.NewDocument(fragment.Node.MyDocument().DocPtr(), len(content), inEncoding, outEncoding)
 	}
 	xform.fragment = fragment
 	if err != nil {

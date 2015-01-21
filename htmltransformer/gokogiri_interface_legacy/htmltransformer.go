@@ -12,6 +12,7 @@ import (
 
 type GokogiriHtmlTransformer struct {
 	document *xml.XmlDocument
+	// document xml.Document
 	fragment *xml.DocumentFragment
 }
 
@@ -54,7 +55,8 @@ func (xform *GokogiriHtmlTransformer) Root() (ht.Node, ht.Node) {
 		return &GokogiriXmlNode{xform.document}, &GokogiriXmlNode{xform.document.Root()}
 	} else {
 		// we don't care if it's nil here
-		return &GokogiriXmlNode{xform.fragment}, nil
+		return &GokogiriXmlNode{xform.document}, &GokogiriXmlNode{xform.fragment}
+		// return &GokogiriXmlNode{xform.fragment}, nil
 	}
 }
 
@@ -88,18 +90,25 @@ func (xform *GokogiriHtmlTransformer) ParseHTML(content, inEncoding, url, outEnc
 }
 
 func (xform *GokogiriHtmlTransformer) ParseFragment(content, inEncoding, url, outEncoding []byte) (frag ht.Node, err error) {
-	// println("~~~~~~~~~ legacy gokogiri interfact fragment function ~~~~~~~")
 	var fragment *xml.DocumentFragment
 	if xform.document != nil {
 		newdoc := html.HtmlDocument{xform.document}
 		fragment, err = newdoc.ParseFragment(content, url, xml.DefaultParseOption)
 	} else {
-		// println("xform.document == nil")
-		xform.CreateEmptyDocument(nil, nil)
-		newdoc := html.HtmlDocument{xform.document}
-		fragment, err = newdoc.ParseFragment(content, url, xml.DefaultParseOption)
+		// xform.CreateEmptyDocument(nil, nil)
 
-		// fragment, err = html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
+		// newdoc := html.HtmlDocument{nil}
+		// newdoc := xml.CreateEmptyDocument(inEncoding, outEncoding)
+		// xform.document = newdoc
+
+		// fragment, err = xform.document.ParseFragment(content, url, xml.DefaultParseOption)
+
+		// println("fragment.parent", fragment.Node.Parent().String())
+		// fmt.Printf("%#v", fragment)
+		fragment, err = html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
+		xform.document = xml.NewDocument(fragment.Node.MyDocument().DocPtr(), len(content), inEncoding, outEncoding)
+		// xform.document.Me = fragment.Node.MyDocument()
+		// xform.document = &xml.XmlDocument{Me: fragment.Node.MyDocument()}
 	}
 	xform.fragment = fragment
 	if err != nil {
