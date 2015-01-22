@@ -100,6 +100,8 @@ func (xform *GokogiriHtmlTransformer) ParseFragment(content, inEncoding, url, ou
 		switch doctype := fragment.Node.MyDocument().(type) {
 		case *html.HtmlDocument:
 			xform.document = doctype.XmlDocument
+		case *xml.XmlDocument:
+			xform.document = doctype
 		default:
 			xform.mydoc = doctype
 		}
