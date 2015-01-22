@@ -11,6 +11,7 @@ import (
 
 type GokogiriHtmlTransformer struct {
 	document *xml.XmlDocument
+	mydoc    xml.Document
 	fragment *xml.DocumentFragment
 }
 
@@ -64,6 +65,9 @@ func (xform *GokogiriHtmlTransformer) Free() {
 	if xform.fragment != nil {
 		xform.fragment.Remove()
 	}
+	if xform.mydoc != nil {
+		xform.mydoc.Free()
+	}
 }
 
 func (xform *GokogiriHtmlTransformer) SetMetaEncoding(encoding string) (err error) {
@@ -93,7 +97,13 @@ func (xform *GokogiriHtmlTransformer) ParseFragment(content, inEncoding, url, ou
 		fragment, err = newdoc.ParseFragment(content, url, xml.DefaultParseOption)
 	} else {
 		fragment, err = html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
-		xform.document = xml.NewDocument(fragment.Node.MyDocument().DocPtr(), len(content), inEncoding, outEncoding)
+		// xform.document = xml.NewDocument(fragment.Node.MyDocument().DocPtr(), len(content), inEncoding, outEncoding)
+		switch doctype := fragment.Node.MyDocument().(type) {
+		case *html.HtmlDocument:
+			xform.document = doctype.XmlDocument
+		default:
+			xform.mydoc = doctype
+		}
 	}
 	xform.fragment = fragment
 	if err != nil {
