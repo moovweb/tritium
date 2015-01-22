@@ -113,7 +113,6 @@ func (eng *Whale) Free() {
 }
 
 func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars, constants map[string]string, deadline time.Time, customer, project, messagePath string, activeLayers []string, inDebug bool) (exhaust *tritium.Exhaust) {
-
 	ctx := NewEngineCtx(eng, vars, constants, transform, rrules, deadline, messagePath, customer, project, activeLayers, inDebug)
 	exhaust = &tritium.Exhaust{}
 	defer ctx.Free()
@@ -130,7 +129,6 @@ func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteR
 	exhaust.Exports = ctx.Exports
 	exhaust.Logs = ctx.Logs
 	exhaust.HtmlParsed = ctx.HtmlParsed
-
 	return
 }
 
