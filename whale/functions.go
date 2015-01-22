@@ -690,7 +690,7 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 	outputEncoding := args[1].(string)
 	outputEncodingBytes := []byte(outputEncoding)
 	input := scope.Value.(string)
-	frag, err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
+	fragment, err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
 	if err != nil {
 		LogEngineError(ctx, "html_fragment err: "+err.Error())
 		returnValue = "false"
@@ -703,7 +703,7 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 
 	ctx.HtmlTransformer = xform
 
-	ns := &Scope{Value: frag}
+	ns := &Scope{Value: fragment}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
@@ -723,7 +723,7 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 	outputEncoding := args[1].(string)
 	outputEncodingBytes := []byte(outputEncoding)
 	input := scope.Value.(string)
-	frag, err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
+	fragment, err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
 	if err != nil {
 		LogEngineError(ctx, "html_fragment err: "+err.Error())
 		returnValue = "false"
@@ -736,7 +736,7 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 
 	ctx.HtmlTransformer = xform
 
-	ns := &Scope{Value: frag}
+	ns := &Scope{Value: fragment}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
