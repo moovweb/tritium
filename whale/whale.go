@@ -116,10 +116,7 @@ func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteR
 
 	ctx := NewEngineCtx(eng, vars, constants, transform, rrules, deadline, messagePath, customer, project, activeLayers, inDebug)
 	exhaust = &tritium.Exhaust{}
-	defer func() {
-		ctx.Free()
-
-	}()
+	defer ctx.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.IGetPkg())
 	scope := &Scope{Value: input.(string)}
