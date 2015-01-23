@@ -487,6 +487,10 @@ func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protofa
 }
 
 func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	return json_to_xml_libxml_legacy(ctx, scope, ins, args)
+}
+
+func json_to_xml_libxml_legacy(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	// unmarshal the json
 	jsonSrc := scope.Value.(string)
 	var jsonVal interface{}
@@ -499,10 +503,57 @@ func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 	}
 
 	// convert to an xml doc and run the supplied block on it
-	ctx.HtmlTransformer.CreateEmptyDocument(nil, nil)
-	jsonNodes := json_to_node(jsonVal, ctx.HtmlTransformer)
+	newxform := goku_legacy.NewXForm()
+
+	newxform.CreateEmptyDocument(nil, nil)
+	ctx.AddMemoryObject(newxform)
+
+	jsonNodes := json_to_node(jsonVal, newxform)
 	// put the jsonNodes under a new root node to get the xpath searches to be correctly scoped
-	jsonRoot := ctx.HtmlTransformer.CreateElementNode("json")
+	jsonRoot := newxform.CreateElementNode("json")
+	jsonRoot.InsertTop(jsonNodes)
+	newScope := &Scope{Value: jsonRoot}
+
+	for i := 0; i < ins.INumChildren(); i++ {
+		child := ins.IGetNthChild(i)
+		ctx.RunInstruction(newScope, child)
+	}
+
+	// convert back to native Go data structures and re-marshal
+	jsonVal = node_to_json(jsonRoot.FirstChild())
+	jsonOut, err := json.MarshalIndent(jsonVal, "", "  ")
+	if err != nil {
+		// invalid JSON -- log an error message and keep going
+		LogEngineError(ctx, "json_encoding err: "+err.Error())
+		returnValue = "null"
+		return
+	}
+	scope.Value = string(jsonOut)
+	returnValue = scope.Value
+	return
+}
+
+func json_to_xml_libxml_292(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	// unmarshal the json
+	jsonSrc := scope.Value.(string)
+	var jsonVal interface{}
+	err := json.Unmarshal([]byte(jsonSrc), &jsonVal)
+	if err != nil {
+		// invalid JSON -- log an error message and keep going
+		LogEngineError(ctx, "json_decoding err: "+err.Error())
+		returnValue = "null"
+		return
+	}
+
+	// convert to an xml doc and run the supplied block on it
+	newxform := goku.NewXForm()
+
+	newxform.CreateEmptyDocument(nil, nil)
+	ctx.AddMemoryObject(newxform)
+
+	jsonNodes := json_to_node(jsonVal, newxform)
+	// put the jsonNodes under a new root node to get the xpath searches to be correctly scoped
+	jsonRoot := newxform.CreateElementNode("json")
 	jsonRoot.InsertTop(jsonNodes)
 	newScope := &Scope{Value: jsonRoot}
 
@@ -690,7 +741,7 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 	outputEncoding := args[1].(string)
 	outputEncodingBytes := []byte(outputEncoding)
 	input := scope.Value.(string)
-	_, err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
+	fragment, err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
 	if err != nil {
 		LogEngineError(ctx, "html_fragment err: "+err.Error())
 		returnValue = "false"
@@ -702,9 +753,8 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 	defer func() { ctx.HtmlTransformer = prevxform }()
 
 	ctx.HtmlTransformer = xform
-	frag, _ := xform.Root()
 
-	ns := &Scope{Value: frag}
+	ns := &Scope{Value: fragment}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
@@ -724,7 +774,7 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 	outputEncoding := args[1].(string)
 	outputEncodingBytes := []byte(outputEncoding)
 	input := scope.Value.(string)
-	_, err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
+	fragment, err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
 	if err != nil {
 		LogEngineError(ctx, "html_fragment err: "+err.Error())
 		returnValue = "false"
@@ -736,9 +786,8 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 	defer func() { ctx.HtmlTransformer = prevxform }()
 
 	ctx.HtmlTransformer = xform
-	frag, _ := xform.Root()
 
-	ns := &Scope{Value: frag}
+	ns := &Scope{Value: fragment}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
@@ -1246,6 +1295,7 @@ func css_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.Inst
 	if ctx.HtmlTransformer == nil {
 		xform := goku_legacy.NewXForm()
 		ctx.HtmlTransformer = xform
+		ctx.AddMemoryObject(xform)
 	}
 	returnValue = ctx.HtmlTransformer.ConvertCSS(args[0].(string))
 	return
@@ -1255,6 +1305,7 @@ func css_libxml_292_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruc
 	if ctx.HtmlTransformer == nil {
 		xform := goku.NewXForm()
 		ctx.HtmlTransformer = xform
+		ctx.AddMemoryObject(xform)
 	}
 	returnValue = ctx.HtmlTransformer.ConvertCSS(args[0].(string))
 	return

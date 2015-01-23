@@ -98,6 +98,7 @@ func init() {
 	// jsonlib/jsonlib_primitives
 	builtInFunctions["tritium.to_json_v1.Text"] = to_json_v1_Text
 	builtInFunctions["tritium.json_to_xml_v1"] = json_to_xml_v1
+	builtInFunctions["tritium.json_to_xml_libxml_292"] = json_to_xml_libxml_292
 
 	// core-rewriter/header_primitives
 	builtInFunctions["tritium.parse_headers_v1"] = parse_headers_v1
