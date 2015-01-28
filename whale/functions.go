@@ -1316,11 +1316,16 @@ func wrap_text_children_Text(ctx *EngineContext, scope *Scope, ins protoface.Ins
 	node := scope.Value.(hx.Node)
 	if textNodes, err := node.SelectXPathByDeadline("./text()", &ctx.Deadline); err == nil {
 		tagName := args[0].(string)
+		tag := fmt.Sprintf("<%s />", tagName)
 		for index, textNode := range textNodes {
 			//wrapping:
-			newParent := ctx.HtmlTransformer.CreateElementNode(tagName)
-			textNode.InsertAfter(newParent)
-			newParent.InsertTop(textNode)
+			// abstracting out the stuff in node.Wrap
+			f, err := ctx.HtmlTransformer.ParseFragment([]byte(tag), nil, nil, nil)
+			if err == nil && f.FirstChild() != nil {
+				newParent := f.FirstChild()
+				textNode.InsertAfter(newParent)
+				newParent.InsertTop(textNode)
+			}
 			parent := textNode.Parent()
 			if parent == nil {
 				continue
