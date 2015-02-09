@@ -11,6 +11,7 @@ import (
 
 type GokogiriHtmlTransformer struct {
 	document *xml.XmlDocument
+	mydoc    xml.Document
 	fragment *xml.DocumentFragment
 }
 
@@ -53,7 +54,7 @@ func (xform *GokogiriHtmlTransformer) Root() (ht.Node, ht.Node) {
 		return &GokogiriXmlNode{xform.document}, &GokogiriXmlNode{xform.document.Root()}
 	} else {
 		// we don't care if it's nil here
-		return &GokogiriXmlNode{xform.fragment}, nil
+		return &GokogiriXmlNode{xform.document}, &GokogiriXmlNode{xform.fragment}
 	}
 }
 
@@ -63,6 +64,9 @@ func (xform *GokogiriHtmlTransformer) Free() {
 	}
 	if xform.fragment != nil {
 		xform.fragment.Remove()
+	}
+	if xform.mydoc != nil {
+		xform.mydoc.Free()
 	}
 }
 
@@ -93,6 +97,14 @@ func (xform *GokogiriHtmlTransformer) ParseFragment(content, inEncoding, url, ou
 		fragment, err = newdoc.ParseFragment(content, url, xml.DefaultParseOption)
 	} else {
 		fragment, err = html.ParseFragment(content, inEncoding, url, html.DefaultParseOption, outEncoding)
+		switch doctype := fragment.Node.MyDocument().(type) {
+		case *html.HtmlDocument:
+			xform.document = doctype.XmlDocument
+		case *xml.XmlDocument:
+			xform.document = doctype
+		default:
+			xform.mydoc = doctype
+		}
 	}
 	xform.fragment = fragment
 	if err != nil {

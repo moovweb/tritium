@@ -741,7 +741,7 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 	outputEncoding := args[1].(string)
 	outputEncodingBytes := []byte(outputEncoding)
 	input := scope.Value.(string)
-	_, err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
+	fragment, err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
 	if err != nil {
 		LogEngineError(ctx, "html_fragment err: "+err.Error())
 		returnValue = "false"
@@ -753,9 +753,8 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 	defer func() { ctx.HtmlTransformer = prevxform }()
 
 	ctx.HtmlTransformer = xform
-	frag, _ := xform.Root()
 
-	ns := &Scope{Value: frag}
+	ns := &Scope{Value: fragment}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
@@ -775,7 +774,7 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 	outputEncoding := args[1].(string)
 	outputEncodingBytes := []byte(outputEncoding)
 	input := scope.Value.(string)
-	_, err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
+	fragment, err := xform.ParseFragment([]byte(input), inputEncodingBytes, nil, outputEncodingBytes)
 	if err != nil {
 		LogEngineError(ctx, "html_fragment err: "+err.Error())
 		returnValue = "false"
@@ -787,9 +786,8 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 	defer func() { ctx.HtmlTransformer = prevxform }()
 
 	ctx.HtmlTransformer = xform
-	frag, _ := xform.Root()
 
-	ns := &Scope{Value: frag}
+	ns := &Scope{Value: fragment}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
@@ -1297,6 +1295,7 @@ func css_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.Inst
 	if ctx.HtmlTransformer == nil {
 		xform := goku_legacy.NewXForm()
 		ctx.HtmlTransformer = xform
+		ctx.AddMemoryObject(xform)
 	}
 	returnValue = ctx.HtmlTransformer.ConvertCSS(args[0].(string))
 	return
@@ -1306,6 +1305,7 @@ func css_libxml_292_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruc
 	if ctx.HtmlTransformer == nil {
 		xform := goku.NewXForm()
 		ctx.HtmlTransformer = xform
+		ctx.AddMemoryObject(xform)
 	}
 	returnValue = ctx.HtmlTransformer.ConvertCSS(args[0].(string))
 	return
@@ -1316,11 +1316,16 @@ func wrap_text_children_Text(ctx *EngineContext, scope *Scope, ins protoface.Ins
 	node := scope.Value.(hx.Node)
 	if textNodes, err := node.SelectXPathByDeadline("./text()", &ctx.Deadline); err == nil {
 		tagName := args[0].(string)
+		tag := fmt.Sprintf("<%s />", tagName)
 		for index, textNode := range textNodes {
 			//wrapping:
-			newParent := ctx.HtmlTransformer.CreateElementNode(tagName)
-			textNode.InsertAfter(newParent)
-			newParent.InsertTop(textNode)
+			// abstracting out the stuff in node.Wrap
+			f, err := ctx.HtmlTransformer.ParseFragment([]byte(tag), nil, nil, nil)
+			if err == nil && f.FirstChild() != nil {
+				newParent := f.FirstChild()
+				textNode.InsertAfter(newParent)
+				newParent.InsertTop(textNode)
+			}
 			parent := textNode.Parent()
 			if parent == nil {
 				continue
