@@ -20,6 +20,7 @@ type Slug struct {
 	Credentials      *Credentials   `protobuf:"bytes,6,opt,name=credentials" json:"credentials,omitempty"`
 	ActiveLayers     []string       `protobuf:"bytes,7,rep,name=active_layers" json:"active_layers,omitempty"`
 	JavaScript       *string        `protobuf:"bytes,8,opt,name=java_script" json:"java_script,omitempty"`
+	Config           *string        `protobuf:"bytes,9,opt,name=config" json:"config,omitempty"`
 	XXX_unrecognized []byte         `json:"-"`
 }
 
@@ -79,6 +80,13 @@ func (m *Slug) GetActiveLayers() []string {
 func (m *Slug) GetJavaScript() string {
 	if m != nil && m.JavaScript != nil {
 		return *m.JavaScript
+	}
+	return ""
+}
+
+func (m *Slug) GetConfig() string {
+	if m != nil && m.Config != nil {
+		return *m.Config
 	}
 	return ""
 }
