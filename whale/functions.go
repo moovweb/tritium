@@ -366,11 +366,11 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 
 	ctx.HtmlTransformer = xform
 
-	// xmldoc, _ := xform.Root()
-	xmldoc, xmlfrag := xform.Root()
+	xmldoc, _ := xform.Root()
+	// xmldoc, xmlfrag := xform.Root()
 	debug += "\t\tbefore RunInstruction:\n"
-	debug += "\t\t\txform.Root():\n"
-	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", xmldoc.String(), xmlfrag.String())
+	debug += "\t\t\txmldoc.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", xmldoc.String())
 
 	ns := &Scope{Value: xmldoc}
 
@@ -379,10 +379,9 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 		ctx.RunInstruction(ns, child)
 	}
 
-	xmldoc, xmlfrag = xform.Root()
 	debug += "\t\tafter RunInstruction:\n"
-	debug += "\t\t\txform.Root():\n"
-	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", xmldoc.String(), xmlfrag.String())
+	debug += "\t\t\txmldoc.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", xmldoc.String())
 	debug += "\t\t\txform.String() (becomes returnValue) :\n"
 	debug += fmt.Sprintf("\t\t\t\t*%s* \n", xform.String())
 	debug += "\n\n\n"
@@ -427,11 +426,11 @@ func xml_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.In
 
 	ctx.HtmlTransformer = xform
 
-	// xmldoc, _ := xform.Root()
-	xmldoc, xmlfrag := xform.Root()
+	xmldoc, _ := xform.Root()
+	// xmldoc, xmlfrag := xform.Root()
 	debug += "\t\tbefore RunInstruction:\n"
-	debug += "\t\t\txform.Root():\n"
-	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", xmldoc.String(), xmlfrag.String())
+	debug += "\t\t\txmldoc.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", xmldoc.String())
 
 	ns := &Scope{Value: xmldoc}
 
@@ -440,10 +439,10 @@ func xml_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.In
 		ctx.RunInstruction(ns, child)
 	}
 
-	xmldoc, xmlfrag = xform.Root()
+	// xmldoc, xmlfrag = xform.Root()
 	debug += "\t\tafter RunInstruction:\n"
-	debug += "\t\t\txform.Root():\n"
-	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", xmldoc.String(), xmlfrag.String())
+	debug += "\t\t\txmldoc.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", xmldoc.String())
 	debug += "\t\t\txform.String() (becomes returnValue) :\n"
 	debug += fmt.Sprintf("\t\t\t\t*%s* \n", xform.String())
 	debug += "\n\n\n"
@@ -495,11 +494,11 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 
 	ctx.HtmlTransformer = xform
 
-	// htmldoc, _ := xform.Root()
-	htmldoc, htmlfrag := xform.Root()
+	htmldoc, _ := xform.Root()
+	// htmldoc, htmlfrag := xform.Root()
 	debug += "\t\tbefore RunInstruction:\n"
-	debug += "\t\t\txform.Root():\n"
-	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", htmldoc.String(), htmlfrag.String())
+	debug += "\t\t\thtmldoc.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", htmldoc.String())
 
 	ns := &Scope{Value: htmldoc}
 
@@ -509,10 +508,10 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 	}
 	xform.SetMetaEncoding(outputEncoding)
 
-	htmldoc, htmlfrag = xform.Root()
+	// htmldoc, htmlfrag = xform.Root()
 	debug += "\t\tafter RunInstruction:\n"
-	debug += "\t\t\txform.Root():\n"
-	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", htmldoc.String(), htmlfrag.String())
+	debug += "\t\t\thtmldoc.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", htmldoc.String())
 	debug += "\t\t\txform.String() (becomes returnValue) :\n"
 	debug += fmt.Sprintf("\t\t\t\t*%s* \n", xform.String())
 	debug += "\n\n\n"
@@ -560,11 +559,11 @@ func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protofa
 
 	ctx.HtmlTransformer = xform
 
-	// htmldoc, _ := xform.Root()
-	htmldoc, htmlfrag := xform.Root()
+	htmldoc, _ := xform.Root()
+	// htmldoc, htmlfrag := xform.Root()
 	debug += "\t\tbefore RunInstruction:\n"
-	debug += "\t\t\txform.Root():\n"
-	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", htmldoc.String(), htmlfrag.String())
+	debug += "\t\t\thtmldoc.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", htmldoc.String())
 
 	ns := &Scope{Value: htmldoc}
 
@@ -574,10 +573,10 @@ func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protofa
 	}
 	xform.SetMetaEncoding(outputEncoding)
 
-	htmldoc, htmlfrag = xform.Root()
+	// htmldoc, htmlfrag = xform.Root()
 	debug += "\t\tafter RunInstruction:\n"
-	debug += "\t\t\txform.Root():\n"
-	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", htmldoc.String(), htmlfrag.String())
+	debug += "\t\t\thtmldoc.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", htmldoc.String())
 	debug += "\t\t\txform.String() (becomes returnValue) :\n"
 	debug += fmt.Sprintf("\t\t\t\t*%s* \n", xform.String())
 	debug += "\n\n\n"
@@ -902,6 +901,9 @@ func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 }
 
 func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
+	debug += "\thtml_fragment_doc_libxml_legacy_Text_Text\n"
+
 	xform := goku_legacy.NewXForm()
 	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
@@ -922,11 +924,36 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 
 	ctx.HtmlTransformer = xform
 
+	debug += "\t\tbefore RunInstruction:\n"
+	debug += "\t\t\tfragment.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", fragment.String())
+
 	ns := &Scope{Value: fragment}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
 	}
+
+	debug += "\t\tafter RunInstruction:\n"
+	debug += "\t\t\tfragment.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", fragment.String())
+	debug += "\t\t\tns.Value.(hx.Node).String() (becomes returnValue) :\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n", ns.Value.(hx.Node).String())
+	debug += "\n\n\n"
+
+	debugfileExists, _ := fileutil.Exists("/tmp/debug.log")
+	if !debugfileExists {
+		_, _ = os.Create("/tmp/debug.log")
+	}
+	f, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer f.Close()
+	if _, err := f.WriteString(debug); err != nil {
+		println(err.Error())
+	}
+
 	//output is always utf-8 because the content is internal to Doc.
 	scope.Value = ns.Value.(hx.Node).String()
 	returnValue = scope.Value
@@ -935,6 +962,9 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 }
 
 func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
+	debug += "\thtml_fragment_doc_libxml_legacy_Text_Text\n"
+
 	xform := goku.NewXForm()
 	ctx.HtmlParsed = true
 	inputEncoding := args[0].(string)
@@ -955,11 +985,36 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 
 	ctx.HtmlTransformer = xform
 
+	debug += "\t\tbefore RunInstruction:\n"
+	debug += "\t\t\tfragment.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", fragment.String())
+
 	ns := &Scope{Value: fragment}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
 	}
+
+	debug += "\t\tafter RunInstruction:\n"
+	debug += "\t\t\tfragment.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", fragment.String())
+	debug += "\t\t\tns.Value.(hx.Node).String() (becomes returnValue) :\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n", ns.Value.(hx.Node).String())
+	debug += "\n\n\n"
+
+	debugfileExists, _ := fileutil.Exists("/tmp/debug.log")
+	if !debugfileExists {
+		_, _ = os.Create("/tmp/debug.log")
+	}
+	f, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer f.Close()
+	if _, err := f.WriteString(debug); err != nil {
+		println(err.Error())
+	}
+
 	//output is always utf-8 because the content is internal to Doc.
 	scope.Value = ns.Value.(hx.Node).String()
 	returnValue = scope.Value
