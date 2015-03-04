@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 	"unicode/utf8"
 
+	"butler/fileutil"
 	"goconv"
 	"icu4go"
 	"moovhelper"
@@ -345,6 +347,8 @@ func xml_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, 
 }
 
 func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
+	debug += "\txml_libxml_legacy_Text_Text\n"
 	input := scope.Value.(string)
 
 	xform := goku_legacy.NewXForm()
@@ -362,13 +366,38 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 
 	ctx.HtmlTransformer = xform
 
-	xmldoc, _ := xform.Root()
+	// xmldoc, _ := xform.Root()
+	xmldoc, xmlfrag := xform.Root()
+	debug += "\t\tbefore RunInstruction:\n"
+	debug += "\t\t\txform.Root():\n"
+	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", xmldoc.String(), xmlfrag.String())
 
 	ns := &Scope{Value: xmldoc}
 
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
+	}
+
+	xmldoc, xmlfrag = xform.Root()
+	debug += "\t\tafter RunInstruction:\n"
+	debug += "\t\t\txform.Root():\n"
+	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", xmldoc.String(), xmlfrag.String())
+	debug += "\t\t\txform.String() (becomes returnValue) :\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n", xform.String())
+	debug += "\n\n\n"
+
+	debugfileExists, _ := fileutil.Exists("/tmp/debug.log")
+	if !debugfileExists {
+		_, _ = os.Create("/tmp/debug.log")
+	}
+	f, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer f.Close()
+	if _, err := f.WriteString(debug); err != nil {
+		println(err.Error())
 	}
 
 	scope.Value = xform.String()
@@ -378,6 +407,9 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 }
 
 func xml_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
+	debug += "\txml_libxml_292_Text_Text\n"
+
 	input := scope.Value.(string)
 
 	xform := goku.NewXForm()
@@ -395,13 +427,38 @@ func xml_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.In
 
 	ctx.HtmlTransformer = xform
 
-	xmldoc, _ := xform.Root()
+	// xmldoc, _ := xform.Root()
+	xmldoc, xmlfrag := xform.Root()
+	debug += "\t\tbefore RunInstruction:\n"
+	debug += "\t\t\txform.Root():\n"
+	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", xmldoc.String(), xmlfrag.String())
 
 	ns := &Scope{Value: xmldoc}
 
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
+	}
+
+	xmldoc, xmlfrag = xform.Root()
+	debug += "\t\tafter RunInstruction:\n"
+	debug += "\t\t\txform.Root():\n"
+	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", xmldoc.String(), xmlfrag.String())
+	debug += "\t\t\txform.String() (becomes returnValue) :\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n", xform.String())
+	debug += "\n\n\n"
+
+	debugfileExists, _ := fileutil.Exists("/tmp/debug.log")
+	if !debugfileExists {
+		_, _ = os.Create("/tmp/debug.log")
+	}
+	f, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer f.Close()
+	if _, err := f.WriteString(debug); err != nil {
+		println(err.Error())
 	}
 
 	scope.Value = xform.String()
@@ -415,6 +472,9 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruct
 }
 
 func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
+	debug += "\thtml_doc_libxml_legacy_Text_Text\n"
+
 	xform := goku_legacy.NewXForm()
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
@@ -435,7 +495,11 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 
 	ctx.HtmlTransformer = xform
 
-	htmldoc, _ := xform.Root()
+	// htmldoc, _ := xform.Root()
+	htmldoc, htmlfrag := xform.Root()
+	debug += "\t\tbefore RunInstruction:\n"
+	debug += "\t\t\txform.Root():\n"
+	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", htmldoc.String(), htmlfrag.String())
 
 	ns := &Scope{Value: htmldoc}
 
@@ -444,6 +508,28 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 		ctx.RunInstruction(ns, child)
 	}
 	xform.SetMetaEncoding(outputEncoding)
+
+	htmldoc, htmlfrag = xform.Root()
+	debug += "\t\tafter RunInstruction:\n"
+	debug += "\t\t\txform.Root():\n"
+	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", htmldoc.String(), htmlfrag.String())
+	debug += "\t\t\txform.String() (becomes returnValue) :\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n", xform.String())
+	debug += "\n\n\n"
+
+	debugfileExists, _ := fileutil.Exists("/tmp/debug.log")
+	if !debugfileExists {
+		_, _ = os.Create("/tmp/debug.log")
+	}
+	f, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer f.Close()
+	if _, err := f.WriteString(debug); err != nil {
+		println(err.Error())
+	}
+
 	scope.Value = xform.String()
 	returnValue = scope.Value
 
@@ -451,6 +537,9 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 }
 
 func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
+	debug += "\thtml_doc_libxml_292_Text_Text\n"
+
 	xform := goku.NewXForm()
 	inputEncoding := args[0].(string)
 	inputEncodingBytes := []byte(inputEncoding)
@@ -471,7 +560,11 @@ func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protofa
 
 	ctx.HtmlTransformer = xform
 
-	htmldoc, _ := xform.Root()
+	// htmldoc, _ := xform.Root()
+	htmldoc, htmlfrag := xform.Root()
+	debug += "\t\tbefore RunInstruction:\n"
+	debug += "\t\t\txform.Root():\n"
+	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", htmldoc.String(), htmlfrag.String())
 
 	ns := &Scope{Value: htmldoc}
 
@@ -480,6 +573,28 @@ func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protofa
 		ctx.RunInstruction(ns, child)
 	}
 	xform.SetMetaEncoding(outputEncoding)
+
+	htmldoc, htmlfrag = xform.Root()
+	debug += "\t\tafter RunInstruction:\n"
+	debug += "\t\t\txform.Root():\n"
+	debug += fmt.Sprintf("\t\t\t\t(1): *%s* \n************\n\t\t\t\t(2): *%s* \n", htmldoc.String(), htmlfrag.String())
+	debug += "\t\t\txform.String() (becomes returnValue) :\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n", xform.String())
+	debug += "\n\n\n"
+
+	debugfileExists, _ := fileutil.Exists("/tmp/debug.log")
+	if !debugfileExists {
+		_, _ = os.Create("/tmp/debug.log")
+	}
+	f, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer f.Close()
+	if _, err := f.WriteString(debug); err != nil {
+		println(err.Error())
+	}
+
 	scope.Value = xform.String()
 	returnValue = scope.Value
 
@@ -491,6 +606,9 @@ func json_to_xml_v1(ctx *EngineContext, scope *Scope, ins protoface.Instruction,
 }
 
 func json_to_xml_libxml_legacy(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
+	debug += "\tjson_to_xml_libxml_legacy\n"
+
 	// unmarshal the json
 	jsonSrc := scope.Value.(string)
 	var jsonVal interface{}
@@ -512,6 +630,11 @@ func json_to_xml_libxml_legacy(ctx *EngineContext, scope *Scope, ins protoface.I
 	// put the jsonNodes under a new root node to get the xpath searches to be correctly scoped
 	jsonRoot := newxform.CreateElementNode("json")
 	jsonRoot.InsertTop(jsonNodes)
+
+	debug += "\t\tbefore RunInstruction:\n"
+	debug += "\t\t\tjsonRoot.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t *%s* \n************\n", jsonRoot.String())
+
 	newScope := &Scope{Value: jsonRoot}
 
 	for i := 0; i < ins.INumChildren(); i++ {
@@ -528,12 +651,33 @@ func json_to_xml_libxml_legacy(ctx *EngineContext, scope *Scope, ins protoface.I
 		returnValue = "null"
 		return
 	}
+
+	debug += "\t\tafter RunInstruction:\n"
+	debug += "\t\t\tjsonRoot.String() (becomes returnValue) :\n"
+	debug += fmt.Sprintf("\t\t\t\t *%s* \n************\n", jsonRoot.String())
+	debug += "\n\n\n"
+
+	debugfileExists, _ := fileutil.Exists("/tmp/debug.log")
+	if !debugfileExists {
+		_, _ = os.Create("/tmp/debug.log")
+	}
+	f, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer f.Close()
+	if _, err := f.WriteString(debug); err != nil {
+		println(err.Error())
+	}
+
 	scope.Value = string(jsonOut)
 	returnValue = scope.Value
 	return
 }
 
 func json_to_xml_libxml_292(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
+	debug += "\tjson_to_xml_libxml_292\n"
 	// unmarshal the json
 	jsonSrc := scope.Value.(string)
 	var jsonVal interface{}
@@ -555,6 +699,11 @@ func json_to_xml_libxml_292(ctx *EngineContext, scope *Scope, ins protoface.Inst
 	// put the jsonNodes under a new root node to get the xpath searches to be correctly scoped
 	jsonRoot := newxform.CreateElementNode("json")
 	jsonRoot.InsertTop(jsonNodes)
+
+	debug += "\t\tbefore RunInstruction:\n"
+	debug += "\t\t\tjsonRoot.String():\n"
+	debug += fmt.Sprintf("\t\t\t\t *%s* \n************\n", jsonRoot.String())
+
 	newScope := &Scope{Value: jsonRoot}
 
 	for i := 0; i < ins.INumChildren(); i++ {
@@ -571,6 +720,25 @@ func json_to_xml_libxml_292(ctx *EngineContext, scope *Scope, ins protoface.Inst
 		returnValue = "null"
 		return
 	}
+
+	debug += "\t\tafter RunInstruction:\n"
+	debug += "\t\t\tjsonRoot.String() (becomes returnValue) :\n"
+	debug += fmt.Sprintf("\t\t\t\t *%s* \n************\n", jsonRoot.String())
+	debug += "\n\n\n"
+
+	debugfileExists, _ := fileutil.Exists("/tmp/debug.log")
+	if !debugfileExists {
+		_, _ = os.Create("/tmp/debug.log")
+	}
+	f, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer f.Close()
+	if _, err := f.WriteString(debug); err != nil {
+		println(err.Error())
+	}
+
 	scope.Value = string(jsonOut)
 	returnValue = scope.Value
 	return
