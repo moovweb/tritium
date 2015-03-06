@@ -367,11 +367,6 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 	ctx.HtmlTransformer = xform
 
 	xmldoc, _ := xform.Root()
-	// xmldoc, xmlfrag := xform.Root()
-	debug += "\t\tbefore RunInstruction:\n"
-	debug += "\t\t\txmldoc.String():\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", xmldoc.String())
-
 	ns := &Scope{Value: xmldoc}
 
 	for i := 0; i < ins.INumChildren(); i++ {
@@ -380,11 +375,13 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 	}
 
 	debug += "\t\tafter RunInstruction:\n"
-	debug += "\t\t\txmldoc.String():\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", xmldoc.String())
-	debug += "\t\t\txform.String() (becomes returnValue) :\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n", xform.String())
-	debug += "\n\n\n"
+	document, mydoc, fragment := xform.Inspect()
+	debug += "\t\t\txform.document:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", document)
+	debug += "\t\t\txform.mydoc:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", mydoc)
+	debug += "\t\t\txform.fragment:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", fragment)
 
 	debugfileExists, _ := fileutil.Exists("/tmp/debug.log")
 	if !debugfileExists {
@@ -427,11 +424,6 @@ func xml_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.In
 	ctx.HtmlTransformer = xform
 
 	xmldoc, _ := xform.Root()
-	// xmldoc, xmlfrag := xform.Root()
-	debug += "\t\tbefore RunInstruction:\n"
-	debug += "\t\t\txmldoc.String():\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", xmldoc.String())
-
 	ns := &Scope{Value: xmldoc}
 
 	for i := 0; i < ins.INumChildren(); i++ {
@@ -441,11 +433,13 @@ func xml_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.In
 
 	// xmldoc, xmlfrag = xform.Root()
 	debug += "\t\tafter RunInstruction:\n"
-	debug += "\t\t\txmldoc.String():\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", xmldoc.String())
-	debug += "\t\t\txform.String() (becomes returnValue) :\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n", xform.String())
-	debug += "\n\n\n"
+	document, mydoc, fragment := xform.Inspect()
+	debug += "\t\t\txform.document:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", document)
+	debug += "\t\t\txform.mydoc:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", mydoc)
+	debug += "\t\t\txform.fragment:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", fragment)
 
 	debugfileExists, _ := fileutil.Exists("/tmp/debug.log")
 	if !debugfileExists {
@@ -495,11 +489,6 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 	ctx.HtmlTransformer = xform
 
 	htmldoc, _ := xform.Root()
-	// htmldoc, htmlfrag := xform.Root()
-	debug += "\t\tbefore RunInstruction:\n"
-	debug += "\t\t\thtmldoc.String():\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", htmldoc.String())
-
 	ns := &Scope{Value: htmldoc}
 
 	for i := 0; i < ins.INumChildren(); i++ {
@@ -510,11 +499,13 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 
 	// htmldoc, htmlfrag = xform.Root()
 	debug += "\t\tafter RunInstruction:\n"
-	debug += "\t\t\thtmldoc.String():\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", htmldoc.String())
-	debug += "\t\t\txform.String() (becomes returnValue) :\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n", xform.String())
-	debug += "\n\n\n"
+	document, mydoc, fragment := xform.Inspect()
+	debug += "\t\t\txform.document:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", document)
+	debug += "\t\t\txform.mydoc:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", mydoc)
+	debug += "\t\t\txform.fragment:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", fragment)
 
 	debugfileExists, _ := fileutil.Exists("/tmp/debug.log")
 	if !debugfileExists {
@@ -560,11 +551,6 @@ func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protofa
 	ctx.HtmlTransformer = xform
 
 	htmldoc, _ := xform.Root()
-	// htmldoc, htmlfrag := xform.Root()
-	debug += "\t\tbefore RunInstruction:\n"
-	debug += "\t\t\thtmldoc.String():\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", htmldoc.String())
-
 	ns := &Scope{Value: htmldoc}
 
 	for i := 0; i < ins.INumChildren(); i++ {
@@ -575,11 +561,13 @@ func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protofa
 
 	// htmldoc, htmlfrag = xform.Root()
 	debug += "\t\tafter RunInstruction:\n"
-	debug += "\t\t\thtmldoc.String():\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", htmldoc.String())
-	debug += "\t\t\txform.String() (becomes returnValue) :\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n", xform.String())
-	debug += "\n\n\n"
+	document, mydoc, fragment := xform.Inspect()
+	debug += "\t\t\txform.document:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", document)
+	debug += "\t\t\txform.mydoc:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", mydoc)
+	debug += "\t\t\txform.fragment:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", fragment)
 
 	debugfileExists, _ := fileutil.Exists("/tmp/debug.log")
 	if !debugfileExists {
@@ -629,10 +617,6 @@ func json_to_xml_libxml_legacy(ctx *EngineContext, scope *Scope, ins protoface.I
 	// put the jsonNodes under a new root node to get the xpath searches to be correctly scoped
 	jsonRoot := newxform.CreateElementNode("json")
 	jsonRoot.InsertTop(jsonNodes)
-
-	debug += "\t\tbefore RunInstruction:\n"
-	debug += "\t\t\tjsonRoot.String():\n"
-	debug += fmt.Sprintf("\t\t\t\t *%s* \n************\n", jsonRoot.String())
 
 	newScope := &Scope{Value: jsonRoot}
 
@@ -698,10 +682,6 @@ func json_to_xml_libxml_292(ctx *EngineContext, scope *Scope, ins protoface.Inst
 	// put the jsonNodes under a new root node to get the xpath searches to be correctly scoped
 	jsonRoot := newxform.CreateElementNode("json")
 	jsonRoot.InsertTop(jsonNodes)
-
-	debug += "\t\tbefore RunInstruction:\n"
-	debug += "\t\t\tjsonRoot.String():\n"
-	debug += fmt.Sprintf("\t\t\t\t *%s* \n************\n", jsonRoot.String())
 
 	newScope := &Scope{Value: jsonRoot}
 
@@ -924,10 +904,6 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 
 	ctx.HtmlTransformer = xform
 
-	debug += "\t\tbefore RunInstruction:\n"
-	debug += "\t\t\tfragment.String():\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", fragment.String())
-
 	ns := &Scope{Value: fragment}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
@@ -935,6 +911,13 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 	}
 
 	debug += "\t\tafter RunInstruction:\n"
+	document, mydoc, frag := xform.Inspect()
+	debug += "\t\t\txform.document:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", document)
+	debug += "\t\t\txform.mydoc:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", mydoc)
+	debug += "\t\t\txform.fragment:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", frag)
 	debug += "\t\t\tfragment.String():\n"
 	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", fragment.String())
 	debug += "\t\t\tns.Value.(hx.Node).String() (becomes returnValue) :\n"
@@ -985,10 +968,6 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 
 	ctx.HtmlTransformer = xform
 
-	debug += "\t\tbefore RunInstruction:\n"
-	debug += "\t\t\tfragment.String():\n"
-	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", fragment.String())
-
 	ns := &Scope{Value: fragment}
 	for i := 0; i < ins.INumChildren(); i++ {
 		child := ins.IGetNthChild(i)
@@ -996,6 +975,13 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 	}
 
 	debug += "\t\tafter RunInstruction:\n"
+	document, mydoc, frag := xform.Inspect()
+	debug += "\t\t\txform.document:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", document)
+	debug += "\t\t\txform.mydoc:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", mydoc)
+	debug += "\t\t\txform.fragment:\n"
+	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", frag)
 	debug += "\t\t\tfragment.String():\n"
 	debug += fmt.Sprintf("\t\t\t\t*%s* \n************\n\n", fragment.String())
 	debug += "\t\t\tns.Value.(hx.Node).String() (becomes returnValue) :\n"

@@ -49,6 +49,17 @@ func (xform *GokogiriHtmlTransformer) String() (str string) {
 	}
 }
 
+func (xform *GokogiriHtmlTransformer) Inspect() (document, mydoc, fragment string) {
+	if xform.document != nil {
+		document = xform.document.String()
+	} else if xform.fragment != nil {
+		fragment = xform.fragment.String()
+	} else if xform.mydoc != nil {
+		mydoc = xform.mydoc.String()
+	}
+	return
+}
+
 func (xform *GokogiriHtmlTransformer) Root() (ht.Node, ht.Node) {
 	if xform.document != nil {
 		return &GokogiriXmlNode{xform.document}, &GokogiriXmlNode{xform.document.Root()}
