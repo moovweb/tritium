@@ -4,6 +4,7 @@ import (
 	"gokogiri_legacy/css"
 	"gokogiri_legacy/xml"
 	"gokogiri_legacy/xpath"
+	"os"
 	"time"
 	ht "tritium/htmltransformer"
 )
@@ -173,6 +174,15 @@ func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, e
 }
 
 func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *time.Time) (results []ht.Node, err error) {
+	debugfuncs := "\tLegacy Gokogiri: SelectXPathByDeadline\n"
+	ff, err := os.OpenFile("/tmp/debugfuncs.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer ff.Close()
+	if _, err := ff.WriteString(debugfuncs); err != nil {
+		println(err.Error())
+	}
 	//copy for now, may need to rethink
 	var res []xml.Node
 	switch xptype := data.(type) {

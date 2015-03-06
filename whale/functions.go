@@ -349,6 +349,8 @@ func xml_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, 
 func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
 	debug += "\txml_libxml_legacy_Text_Text\n"
+	debugfuncs := "\txml_libxml_legacy_Text_Text\n"
+
 	input := scope.Value.(string)
 
 	xform := goku_legacy.NewXForm()
@@ -396,6 +398,19 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 		println(err.Error())
 	}
 
+	funcfileExists, _ := fileutil.Exists("/tmp/debugfuncs.log")
+	if !funcfileExists {
+		_, _ = os.Create("/tmp/debugfuncs.log")
+	}
+	ff, err := os.OpenFile("/tmp/debugfuncs.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer ff.Close()
+	if _, err := ff.WriteString(debugfuncs); err != nil {
+		println(err.Error())
+	}
+
 	scope.Value = xform.String()
 	returnValue = scope.Value
 
@@ -405,6 +420,7 @@ func xml_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 func xml_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
 	debug += "\txml_libxml_292_Text_Text\n"
+	debugfuncs := "\txml_libxml_292_Text_Text\n"
 
 	input := scope.Value.(string)
 
@@ -454,6 +470,19 @@ func xml_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.In
 		println(err.Error())
 	}
 
+	funcfileExists, _ := fileutil.Exists("/tmp/debugfuncs.log")
+	if !funcfileExists {
+		_, _ = os.Create("/tmp/debugfuncs.log")
+	}
+	ff, err := os.OpenFile("/tmp/debugfuncs.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer ff.Close()
+	if _, err := ff.WriteString(debugfuncs); err != nil {
+		println(err.Error())
+	}
+
 	scope.Value = xform.String()
 	returnValue = scope.Value
 
@@ -467,6 +496,7 @@ func html_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruct
 func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
 	debug += "\thtml_doc_libxml_legacy_Text_Text\n"
+	debugfuncs := "\thtml_doc_libxml_legacy_Text_Text\n"
 
 	xform := goku_legacy.NewXForm()
 	inputEncoding := args[0].(string)
@@ -495,7 +525,10 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
 	}
-	xform.SetMetaEncoding(outputEncoding)
+	err = xform.SetMetaEncoding(outputEncoding)
+	if err != nil {
+		debugfuncs += "SetMetaEncoding err: " + err.Error() + "\n"
+	}
 
 	// htmldoc, htmlfrag = xform.Root()
 	debug += "\t\tafter RunInstruction:\n"
@@ -520,6 +553,19 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 		println(err.Error())
 	}
 
+	funcfileExists, _ := fileutil.Exists("/tmp/debugfuncs.log")
+	if !funcfileExists {
+		_, _ = os.Create("/tmp/debugfuncs.log")
+	}
+	ff, err := os.OpenFile("/tmp/debugfuncs.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer ff.Close()
+	if _, err := ff.WriteString(debugfuncs); err != nil {
+		println(err.Error())
+	}
+
 	scope.Value = xform.String()
 	returnValue = scope.Value
 
@@ -529,6 +575,7 @@ func html_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins prot
 func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
 	debug += "\thtml_doc_libxml_292_Text_Text\n"
+	debugfuncs := "\thtml_doc_libxml_292_Text_Text\n"
 
 	xform := goku.NewXForm()
 	inputEncoding := args[0].(string)
@@ -557,7 +604,10 @@ func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protofa
 		child := ins.IGetNthChild(i)
 		ctx.RunInstruction(ns, child)
 	}
-	xform.SetMetaEncoding(outputEncoding)
+	err = xform.SetMetaEncoding(outputEncoding)
+	if err != nil {
+		debugfuncs += "SetMetaEncoding err: " + err.Error() + "\n"
+	}
 
 	// htmldoc, htmlfrag = xform.Root()
 	debug += "\t\tafter RunInstruction:\n"
@@ -579,6 +629,19 @@ func html_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protofa
 	}
 	defer f.Close()
 	if _, err := f.WriteString(debug); err != nil {
+		println(err.Error())
+	}
+
+	funcfileExists, _ := fileutil.Exists("/tmp/debugfuncs.log")
+	if !funcfileExists {
+		_, _ = os.Create("/tmp/debugfuncs.log")
+	}
+	ff, err := os.OpenFile("/tmp/debugfuncs.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer ff.Close()
+	if _, err := ff.WriteString(debugfuncs); err != nil {
 		println(err.Error())
 	}
 
@@ -883,6 +946,7 @@ func html_fragment_doc_Text_Text(ctx *EngineContext, scope *Scope, ins protoface
 func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
 	debug += "\thtml_fragment_doc_libxml_legacy_Text_Text\n"
+	debugfuncs := "\thtml_fragment_doc_libxml_legacy_Text_Text\n"
 
 	xform := goku_legacy.NewXForm()
 	ctx.HtmlParsed = true
@@ -936,6 +1000,18 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 	if _, err := f.WriteString(debug); err != nil {
 		println(err.Error())
 	}
+	funcfileExists, _ := fileutil.Exists("/tmp/debugfuncs.log")
+	if !funcfileExists {
+		_, _ = os.Create("/tmp/debugfuncs.log")
+	}
+	ff, err := os.OpenFile("/tmp/debugfuncs.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer ff.Close()
+	if _, err := ff.WriteString(debugfuncs); err != nil {
+		println(err.Error())
+	}
 
 	//output is always utf-8 because the content is internal to Doc.
 	scope.Value = ns.Value.(hx.Node).String()
@@ -947,6 +1023,7 @@ func html_fragment_doc_libxml_legacy_Text_Text(ctx *EngineContext, scope *Scope,
 func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	debug := "Project: " + ctx.Project + " Customer: " + ctx.Customer + " Filename: " + ctx.Filename + "\n"
 	debug += "\thtml_fragment_doc_libxml_legacy_Text_Text\n"
+	debugfuncs := "\thtml_fragment_doc_libxml_legacy_Text_Text\n"
 
 	xform := goku.NewXForm()
 	ctx.HtmlParsed = true
@@ -1000,6 +1077,18 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 	if _, err := f.WriteString(debug); err != nil {
 		println(err.Error())
 	}
+	funcfileExists, _ := fileutil.Exists("/tmp/debugfuncs.log")
+	if !funcfileExists {
+		_, _ = os.Create("/tmp/debugfuncs.log")
+	}
+	ff, err := os.OpenFile("/tmp/debugfuncs.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer ff.Close()
+	if _, err := ff.WriteString(debugfuncs); err != nil {
+		println(err.Error())
+	}
 
 	//output is always utf-8 because the content is internal to Doc.
 	scope.Value = ns.Value.(hx.Node).String()
@@ -1013,8 +1102,11 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 }
 
 func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
+	debugfuncs := "\tselect_libxml_legacy_Text (the only one..???)\n"
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
+	debugfuncs += "\txpathStr: " + xpathStr + "\n"
+
 	expr := ctx.GetXpathExpr(xpathStr)
 	if expr == nil {
 		returnValue = "false"
@@ -1024,12 +1116,16 @@ func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.I
 		returnValue = "false"
 		return
 	}
+	debugfuncs += "\texpr.String(): " + expr.String() + "\n"
+
 	nodes, err := node.SelectXPathByDeadline(expr, &ctx.Deadline)
 	if err != nil {
 		LogEngineError(ctx, "select err: "+err.Error())
 		returnValue = "false"
 		return
 	}
+
+	debugfuncs += "\texpr.String(): " + expr.String() + "\n"
 
 	if len(nodes) == 0 {
 		returnValue = "0"
@@ -1049,6 +1145,7 @@ func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.I
 	for index, node := range nodes {
 		if node != nil && node.IsValid() {
 			if node.IsDocument() {
+				debugfuncs += "\tnode.IsDocument() is true\n"
 				// We need to create a new temp variable to assign the Root() to because
 				// if we assign it directly to the node interface, we can't know whether
 				// it is nil or not because the interface will contain the type info
@@ -1057,12 +1154,14 @@ func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.I
 				// http://stackoverflow.com/questions/11023593/inconsistent-nil-for-pointer-receiver-go-bug
 				_, root := ctx.HtmlTransformer.Root()
 				if root != nil {
+					debugfuncs += "\t_, root is not nil, setting node to root\n"
 					node = root
 				}
 			}
 
 			// add mtk attribute to matched nodes
 			if parser.IncludeSelectorInfo && ctx.Env[isUserCalledEnvKey] != "" {
+				debugfuncs += "\tmtk attribute something or other\n"
 				attrValue := ctx.Env[isUserCalledEnvKey]
 				attr := node.GetAttribute(moovhelper.MtkSourceAttr)
 				if attr != nil {
@@ -1071,16 +1170,28 @@ func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.I
 				node.SetAttribute(moovhelper.MtkSourceAttr, attrValue)
 			}
 			if node.IsElement() {
+				debugfuncs += "\tnode.IsElement() is true\n"
 				ns := &Scope{Value: node, Index: index}
 				for i := 0; i < ins.INumChildren(); i++ {
 					child := ins.IGetNthChild(i)
 					ctx.RunInstruction(ns, child)
 				}
 			} else if node.IsText() {
+				debugfuncs += "\tnode.IsText() is true\n"
 				ctx.AddLog("You have just selected a text() node... THIS IS A TERRIBLE IDEA. Please run 'moov check' and sort it out!")
 			}
 		}
 	}
+
+	ff, err := os.OpenFile("/tmp/debugfuncs.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer ff.Close()
+	if _, err := ff.WriteString(debugfuncs); err != nil {
+		println(err.Error())
+	}
+
 	return
 }
 
