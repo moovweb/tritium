@@ -4,14 +4,14 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"strings"
 	"io/ioutil"
+	"strings"
 	"time"
 )
 
 import (
-	"manhattan/commands"
 	pb "code.google.com/p/goprotobuf/proto"
+	"manhattan/commands"
 	tp "tritium/proto"
 )
 
@@ -28,7 +28,7 @@ func New() *SlugViewCmd {
 	cmd.options = &Options{}
 
 	cmd.options.SetDefaults()
-	cmd.options.SetupFlags(cmd.flags) 
+	cmd.options.SetupFlags(cmd.flags)
 	return &cmd
 }
 
@@ -63,6 +63,10 @@ func (cmd *SlugViewCmd) Execute(args []string) (err error) {
 	if err != nil {
 		return commands.MakeHelpError(err)
 	}
+
+	println("**************")
+	println("PROTO!!!!")
+	println("**************")
 
 	var data []byte
 
@@ -109,7 +113,7 @@ func printSlug(s *tp.Slug, indLvl int) {
 		printIndent("whitelist[%d] -> %v", indLvl+1, ind, item)
 	}
 	printIndent("Credentials -> %v", indLvl, s.GetCredentials())
-	printIndent("Transforms:",indLvl)
+	printIndent("Transforms:", indLvl)
 	for ind, item := range s.GetTransformers() {
 		printIndent("transform[%d]:", indLvl+1, ind)
 		printTransform(item, indLvl+2)
@@ -196,25 +200,3 @@ func printInstruction(i *tp.Instruction, indLvl int) {
 		printInstruction(item, indLvl+2)
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
