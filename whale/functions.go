@@ -1098,14 +1098,10 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 }
 
 func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	return select_libxml_legacy_Text(ctx, scope, ins, args)
-}
+	debugfuncs := "\tselect_Text (path: " + ctx.GetEnv("path") + ")\n"
 
-func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	debugfuncs := "\tselect_libxml_legacy_Text (the only one..???)\n"
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
-	debugfuncs += "\txpathStr: " + xpathStr + "\n"
 
 	expr := ctx.GetXpathExpr(xpathStr)
 	if expr == nil {
@@ -1125,9 +1121,8 @@ func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.I
 		return
 	}
 
-	debugfuncs += "\texpr.String(): " + expr.String() + "\n"
-
 	if len(nodes) == 0 {
+		debugfuncs += "\tlen(nodes) == 0\n"
 		returnValue = "0"
 		// add mtk attribute to zero-match node
 		if parser.IncludeSelectorInfo && ctx.Env[isUserCalledEnvKey] != "" {
