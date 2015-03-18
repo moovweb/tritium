@@ -2,7 +2,6 @@ package whale
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -133,19 +132,6 @@ func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteR
 	exhaust.Exports = ctx.Exports
 	exhaust.Logs = ctx.Logs
 	exhaust.HtmlParsed = ctx.HtmlParsed
-	debug := fmt.Sprintf("~~~Number of xpaths in run: %d~~~\n", len(ctx.xpathTable))
-	funcfileExists, _ := fileutil.Exists("/tmp/debug.log")
-	if !funcfileExists {
-		_, _ = os.Create("/tmp/debug.log")
-	}
-	ff, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
-	if err != nil {
-		println(err.Error())
-	}
-	defer ff.Close()
-	if _, err := ff.WriteString(debug); err != nil {
-		println(err.Error())
-	}
 	return
 }
 
@@ -415,23 +401,12 @@ func (ctx *EngineContext) GetXpathExpr(p string) (e hx.Selector) {
 	ctx.xpathTable[p] = true
 	object, err := ctx.XPathCache.Get(p)
 	if err != nil {
-		debug := "Cache Miss! Compiling from scratch.\n"
 		e = ctx.HtmlTransformer.CompileXPath(p)
 		if e != nil {
 			//ctx.AddMemoryObject(e)
-			debug += "Caching " + p + "\n"
 			ctx.XPathCache.Set(p, &XpathExpObject{e})
 		} else {
-			debug += "Error compiling xpath expression " + p + "\n"
 			ctx.Debugger.LogTritiumErrorMessage(ctx.Customer, ctx.Project, ctx.Env, ctx.MessagePath, "Invalid XPath used: "+p)
-		}
-		ff, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
-		if err != nil {
-			println(err.Error())
-		}
-		defer ff.Close()
-		if _, err := ff.WriteString(debug); err != nil {
-			println(err.Error())
 		}
 		return e
 	}

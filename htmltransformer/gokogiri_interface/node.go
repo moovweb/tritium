@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
+	"butler/fileutil"
 	"gokogiri/css"
 	"gokogiri/xml"
 	"gokogiri/xpath"
@@ -177,12 +178,11 @@ func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, e
 }
 
 func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *time.Time) (results []ht.Node, err error) {
-	debug := "\tNew Gokogiri: SelectXPathByDeadline\n"
+	debug := ""
 	//copy for now, may need to rethink
 	var res []xml.Node
 	switch xptype := data.(type) {
 	case ht.Selector:
-		debug += "\tXpath expression: " + xptype.String() + "\n"
 		underlying := xptype.UnderlyingExpression()
 		switch typecasted := underlying.(type) {
 		case xpath.Expression:
@@ -190,6 +190,7 @@ func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *t
 		default:
 			st := fmt.Sprintf("%v", reflect.TypeOf(data))
 			ut := fmt.Sprintf("%v", reflect.TypeOf(underlying))
+			debug += "\tNew Gokogiri: SelectXPathByDeadline\n"
 			debug += "\t\tFirst default path being taken. data type is " + st + ", underlying type is " + ut + "\n"
 		}
 	case GokogiriXPathSelector:
@@ -198,19 +199,22 @@ func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *t
 		res, err = node.innernode.SearchByDeadline(data, deadline)
 	default:
 		st := fmt.Sprintf("%v", reflect.TypeOf(data))
+		debug += "\tNew Gokogiri: SelectXPathByDeadline\n"
 		debug += "\t\tSecond default path being taken. data type is " + st + "\n"
 	}
-	funcfileExists, _ := fileutil.Exists("/tmp/debug.log")
-	if !funcfileExists {
-		_, _ = os.Create("/tmp/debug.log")
-	}
-	ff, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
-	if err != nil {
-		println(err.Error())
-	}
-	defer ff.Close()
-	if _, err := ff.WriteString(debug); err != nil {
-		println(err.Error())
+	if debug != "" {
+		funcfileExists, _ := fileutil.Exists("/tmp/debug.log")
+		if !funcfileExists {
+			_, _ = os.Create("/tmp/debug.log")
+		}
+		ff, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
+		if err != nil {
+			println(err.Error())
+		}
+		defer ff.Close()
+		if _, err := ff.WriteString(debug); err != nil {
+			println(err.Error())
+		}
 	}
 
 	results = make([]ht.Node, len(res))
