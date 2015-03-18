@@ -200,6 +200,10 @@ func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *t
 		st := fmt.Sprintf("%v", reflect.TypeOf(data))
 		debug += "\t\tSecond default path being taken. data type is " + st + "\n"
 	}
+	funcfileExists, _ := fileutil.Exists("/tmp/debug.log")
+	if !funcfileExists {
+		_, _ = os.Create("/tmp/debug.log")
+	}
 	ff, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
 	if err != nil {
 		println(err.Error())

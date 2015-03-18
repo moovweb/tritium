@@ -134,6 +134,10 @@ func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteR
 	exhaust.Logs = ctx.Logs
 	exhaust.HtmlParsed = ctx.HtmlParsed
 	debug := fmt.Sprintf("~~~Number of xpaths in run: %d~~~\n", len(ctx.xpathTable))
+	funcfileExists, _ := fileutil.Exists("/tmp/debug.log")
+	if !funcfileExists {
+		_, _ = os.Create("/tmp/debug.log")
+	}
 	ff, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
 	if err != nil {
 		println(err.Error())
