@@ -415,7 +415,7 @@ func (ctx *EngineContext) GetXpathExpr(p string) (e hx.Selector) {
 		e = ctx.HtmlTransformer.CompileXPath(p)
 		if e != nil {
 			//ctx.AddMemoryObject(e)
-			debug += "Setting " + p + " to &XpathExpObject{" + e.String() + "} in the cache.\n"
+			debug += "Caching " + p + "\n"
 			ctx.XPathCache.Set(p, &XpathExpObject{e})
 		} else {
 			debug += "Error compiling xpath expression " + p + "\n"

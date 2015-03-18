@@ -178,11 +178,11 @@ func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, e
 
 func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *time.Time) (results []ht.Node, err error) {
 	debug := "\tNew Gokogiri: SelectXPathByDeadline\n"
-	debug += "\tXpath expression: " + data.(ht.Selector).String() + "\n"
 	//copy for now, may need to rethink
 	var res []xml.Node
 	switch xptype := data.(type) {
 	case ht.Selector:
+		debug += "\tXpath expression: " + xptype.String() + "\n"
 		underlying := xptype.UnderlyingExpression()
 		switch typecasted := underlying.(type) {
 		case xpath.Expression:
