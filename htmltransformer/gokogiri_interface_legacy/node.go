@@ -1,9 +1,13 @@
 package gokogiri_interface_legacy
 
 import (
+	"fmt"
+	"reflect"
+
 	"gokogiri_legacy/css"
 	"gokogiri_legacy/xml"
 	"gokogiri_legacy/xpath"
+	"os"
 	"time"
 	ht "tritium/htmltransformer"
 )
@@ -173,6 +177,8 @@ func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, e
 }
 
 func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *time.Time) (results []ht.Node, err error) {
+	debug := "\tLegacy Gokogiri: SelectXPathByDeadline\n"
+	debug += "\tXpath expression: " + data.(ht.Selector).String() + "\n"
 	//copy for now, may need to rethink
 	var res []xml.Node
 	switch xptype := data.(type) {
@@ -182,12 +188,25 @@ func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *t
 		case xpath.Expression:
 			res, err = node.innernode.SearchByDeadline(&typecasted, deadline)
 		default:
+			st := fmt.Sprintf("%v", reflect.TypeOf(data))
+			ut := fmt.Sprintf("%v", reflect.TypeOf(underlying))
+			debug += "\t\tFirst default path being taken. data type is " + st + ", underlying type is " + ut + "\n"
 		}
 	case GokogiriXPathSelector:
 		res, err = node.innernode.SearchByDeadline(&xptype.Expression, deadline)
 	case string:
 		res, err = node.innernode.SearchByDeadline(data, deadline)
 	default:
+		st := fmt.Sprintf("%v", reflect.TypeOf(data))
+		debug += "\t\tSecond default path being taken. data type is " + st + "\n"
+	}
+	ff, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer ff.Close()
+	if _, err := ff.WriteString(debug); err != nil {
+		println(err.Error())
 	}
 
 	results = make([]ht.Node, len(res))

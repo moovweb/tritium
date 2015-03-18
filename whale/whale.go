@@ -2,6 +2,7 @@ package whale
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -397,12 +398,23 @@ func (ctx *EngineContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 func (ctx *EngineContext) GetXpathExpr(p string) (e hx.Selector) {
 	object, err := ctx.XPathCache.Get(p)
 	if err != nil {
+		debug := "Cache Miss! Compiling from scratch.\n"
 		e = ctx.HtmlTransformer.CompileXPath(p)
 		if e != nil {
 			//ctx.AddMemoryObject(e)
+			debug += "Setting " + p + " to &XpathExpObject{" + e.String() + "} in the cache.\n"
 			ctx.XPathCache.Set(p, &XpathExpObject{e})
 		} else {
+			debug += "Error compiling xpath expression " + p + "\n"
 			ctx.Debugger.LogTritiumErrorMessage(ctx.Customer, ctx.Project, ctx.Env, ctx.MessagePath, "Invalid XPath used: "+p)
+		}
+		ff, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
+		if err != nil {
+			println(err.Error())
+		}
+		defer ff.Close()
+		if _, err := ff.WriteString(debug); err != nil {
+			println(err.Error())
 		}
 		return e
 	}
