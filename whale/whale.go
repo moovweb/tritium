@@ -60,6 +60,8 @@ type EngineContext struct {
 	ActiveLayers       map[string]bool
 	ActiveLayersString string
 	HtmlTransformer    hx.HtmlTransformer
+
+	xpathTable map[string]bool
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -99,6 +101,7 @@ func NewEngineCtx(eng *Whale, vars, constants map[string]string, transform proto
 		Project:     project,
 		InDebug:     inDebug,
 		Constants:   constants,
+		xpathTable:  make(map[string]bool),
 	}
 	ctx.ActiveLayers = make(map[string]bool)
 	for _, name := range activeLayers {
@@ -130,6 +133,15 @@ func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteR
 	exhaust.Exports = ctx.Exports
 	exhaust.Logs = ctx.Logs
 	exhaust.HtmlParsed = ctx.HtmlParsed
+	debug := fmt.Sprintf("~~~Number of xpaths in run: %d~~~\n", len(ctx.xpathTable))
+	ff, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer ff.Close()
+	if _, err := ff.WriteString(debug); err != nil {
+		println(err.Error())
+	}
 	return
 }
 
@@ -396,6 +408,7 @@ func (ctx *EngineContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 }
 
 func (ctx *EngineContext) GetXpathExpr(p string) (e hx.Selector) {
+	ctx.xpathTable[p] = true
 	object, err := ctx.XPathCache.Get(p)
 	if err != nil {
 		debug := "Cache Miss! Compiling from scratch.\n"
