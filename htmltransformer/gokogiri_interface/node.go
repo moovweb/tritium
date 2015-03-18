@@ -1,6 +1,9 @@
 package gokogiri_interface
 
 import (
+	"fmt"
+	"reflect"
+
 	"gokogiri/css"
 	"gokogiri/xml"
 	"gokogiri/xpath"
@@ -175,14 +178,6 @@ func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, e
 
 func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *time.Time) (results []ht.Node, err error) {
 	debugfuncs := "\tNew Gokogiri: SelectXPathByDeadline\n"
-	ff, err := os.OpenFile("/tmp/debugfuncs.log", os.O_APPEND|os.O_WRONLY, 0666)
-	if err != nil {
-		println(err.Error())
-	}
-	defer ff.Close()
-	if _, err := ff.WriteString(debugfuncs); err != nil {
-		println(err.Error())
-	}
 	//copy for now, may need to rethink
 	var res []xml.Node
 	switch xptype := data.(type) {
@@ -192,12 +187,25 @@ func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *t
 		case xpath.Expression:
 			res, err = node.innernode.SearchByDeadline(&typecasted, deadline)
 		default:
+			st := fmt.Sprintf("%v", reflect.TypeOf(data))
+			ut := fmt.Sprintf("%v", reflect.TypeOf(underlying))
+			debugfuncs += "\t\tFirst default path being taken. data type is " + st + ", underlying type is " + ut + "\n"
 		}
 	case GokogiriXPathSelector:
 		res, err = node.innernode.SearchByDeadline(&xptype.Expression, deadline)
 	case string:
 		res, err = node.innernode.SearchByDeadline(data, deadline)
 	default:
+		st := fmt.Sprintf("%v", reflect.TypeOf(data))
+		debugfuncs += "\t\tSecond default path being taken. data type is " + st + "\n"
+	}
+	ff, err := os.OpenFile("/tmp/debugfuncs.log", os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		println(err.Error())
+	}
+	defer ff.Close()
+	if _, err := ff.WriteString(debugfuncs); err != nil {
+		println(err.Error())
 	}
 
 	results = make([]ht.Node, len(res))

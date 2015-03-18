@@ -1103,7 +1103,8 @@ func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
 
-	expr := ctx.GetXpathExpr(xpathStr)
+	// expr := ctx.GetXpathExpr(xpathStr)
+	expr := ctx.HtmlTransformer.CompileXPath(xpathStr)
 	if expr == nil {
 		returnValue = "false"
 		return
