@@ -800,10 +800,6 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 }
 
 func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	return select_libxml_legacy_Text(ctx, scope, ins, args)
-}
-
-func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
 	expr := ctx.GetXpathExpr(xpathStr)

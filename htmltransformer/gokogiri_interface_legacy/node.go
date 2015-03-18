@@ -1,10 +1,12 @@
 package gokogiri_interface_legacy
 
 import (
+	"errors"
+	"time"
+
 	"gokogiri_legacy/css"
 	"gokogiri_legacy/xml"
 	"gokogiri_legacy/xpath"
-	"time"
 	ht "tritium/htmltransformer"
 )
 
@@ -158,6 +160,7 @@ func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, e
 		case xpath.Expression:
 			res, err = node.innernode.Search(&typecasted)
 		default:
+			return nil, errors.New("Unexpected xpath type!")
 		}
 	case GokogiriXPathSelector:
 		res, err = node.innernode.Search(&xptype.Expression)
@@ -182,12 +185,14 @@ func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *t
 		case xpath.Expression:
 			res, err = node.innernode.SearchByDeadline(&typecasted, deadline)
 		default:
+			return nil, errors.New("Unexpected xpath type!")
 		}
 	case GokogiriXPathSelector:
 		res, err = node.innernode.SearchByDeadline(&xptype.Expression, deadline)
 	case string:
 		res, err = node.innernode.SearchByDeadline(data, deadline)
 	default:
+		return nil, errors.New("Unexpected xpath type!")
 	}
 
 	results = make([]ht.Node, len(res))
