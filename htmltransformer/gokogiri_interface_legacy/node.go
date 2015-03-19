@@ -1,15 +1,12 @@
 package gokogiri_interface_legacy
 
 import (
-	"fmt"
-	"reflect"
+	"errors"
+	"time"
 
-	"butler/fileutil"
 	"gokogiri_legacy/css"
 	"gokogiri_legacy/xml"
 	"gokogiri_legacy/xpath"
-	"os"
-	"time"
 	ht "tritium/htmltransformer"
 )
 
@@ -163,6 +160,7 @@ func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, e
 		case xpath.Expression:
 			res, err = node.innernode.Search(&typecasted)
 		default:
+			return nil, errors.New("Unexpected xpath type!")
 		}
 	case GokogiriXPathSelector:
 		res, err = node.innernode.Search(&xptype.Expression)
@@ -178,7 +176,6 @@ func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, e
 }
 
 func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *time.Time) (results []ht.Node, err error) {
-	debug := ""
 	//copy for now, may need to rethink
 	var res []xml.Node
 	switch xptype := data.(type) {
@@ -188,33 +185,14 @@ func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *t
 		case xpath.Expression:
 			res, err = node.innernode.SearchByDeadline(&typecasted, deadline)
 		default:
-			st := fmt.Sprintf("%v", reflect.TypeOf(data))
-			ut := fmt.Sprintf("%v", reflect.TypeOf(underlying))
-			debug += "\tLegacy Gokogiri: SelectXPathByDeadline\n"
-			debug += "\t\tFirst default path being taken. data type is " + st + ", underlying type is " + ut + "\n"
+			return nil, errors.New("Unexpected xpath type!")
 		}
 	case GokogiriXPathSelector:
 		res, err = node.innernode.SearchByDeadline(&xptype.Expression, deadline)
 	case string:
 		res, err = node.innernode.SearchByDeadline(data, deadline)
 	default:
-		st := fmt.Sprintf("%v", reflect.TypeOf(data))
-		debug += "\tLegacy Gokogiri: SelectXPathByDeadline\n"
-		debug += "\t\tSecond default path being taken. data type is " + st + "\n"
-	}
-	if debug != "" {
-		funcfileExists, _ := fileutil.Exists("/tmp/debug.log")
-		if !funcfileExists {
-			_, _ = os.Create("/tmp/debug.log")
-		}
-		ff, err := os.OpenFile("/tmp/debug.log", os.O_APPEND|os.O_WRONLY, 0666)
-		if err != nil {
-			println(err.Error())
-		}
-		defer ff.Close()
-		if _, err := ff.WriteString(debug); err != nil {
-			println(err.Error())
-		}
+		return nil, errors.New("Unexpected xpath type!")
 	}
 
 	results = make([]ht.Node, len(res))

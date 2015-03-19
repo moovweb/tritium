@@ -21,7 +21,8 @@ import (
 type Whale struct {
 	Debugger    steno.Debugger
 	RegexpCache cache.Cache
-	XPathCache  cache.Cache
+	XPathCache  map[string]hx.Selector
+	// XPathCache  cache.Cache
 }
 
 type EngineContext struct {
@@ -59,8 +60,6 @@ type EngineContext struct {
 	ActiveLayers       map[string]bool
 	ActiveLayersString string
 	HtmlTransformer    hx.HtmlTransformer
-
-	xpathTable map[string]bool
 }
 
 const OutputBufferSize = 500 * 1024 //500KB
@@ -73,10 +72,9 @@ func NewEngine(debugger steno.Debugger) *Whale {
 	e := &Whale{
 		Debugger:    debugger,
 		RegexpCache: arc.NewARCache(1000),
-		XPathCache:  arc.NewARCache(1000),
+		XPathCache:  make(map[string]hx.Selector),
 	}
 	e.RegexpCache.SetCleanFunc(CleanRegexpObject)
-	e.XPathCache.SetCleanFunc(CleanXpathExpObject)
 	return e
 }
 
@@ -100,7 +98,6 @@ func NewEngineCtx(eng *Whale, vars, constants map[string]string, transform proto
 		Project:     project,
 		InDebug:     inDebug,
 		Constants:   constants,
-		xpathTable:  make(map[string]bool),
 	}
 	ctx.ActiveLayers = make(map[string]bool)
 	for _, name := range activeLayers {
@@ -112,13 +109,19 @@ func NewEngineCtx(eng *Whale, vars, constants map[string]string, transform proto
 
 func (eng *Whale) Free() {
 	eng.RegexpCache.Reset()
-	eng.XPathCache.Reset()
+	for k, e := range eng.XPathCache {
+		if e != nil {
+			e.Free()
+		}
+		eng.XPathCache[k] = nil
+		delete(eng.XPathCache, k)
+	}
 }
 
 func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars, constants map[string]string, deadline time.Time, customer, project, messagePath string, activeLayers []string, inDebug bool) (exhaust *tritium.Exhaust) {
 	ctx := NewEngineCtx(eng, vars, constants, transform, rrules, deadline, messagePath, customer, project, activeLayers, inDebug)
 	exhaust = &tritium.Exhaust{}
-	defer ctx.Free()
+	defer ctx.Whale.Free()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.IGetPkg())
 	scope := &Scope{Value: input.(string)}
@@ -135,8 +138,8 @@ func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteR
 	return
 }
 
-func (eng *Whale) GetCacheStats() (int, int, int, int) {
-	return eng.RegexpCache.GetHitRate(), eng.RegexpCache.GetUsageRate(), eng.XPathCache.GetHitRate(), eng.XPathCache.GetUsageRate()
+func (eng *Whale) GetCacheStats() (int, int) {
+	return eng.RegexpCache.GetHitRate(), eng.RegexpCache.GetUsageRate()
 }
 
 func (ctx *EngineContext) Free() {
@@ -398,19 +401,18 @@ func (ctx *EngineContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 }
 
 func (ctx *EngineContext) GetXpathExpr(p string) (e hx.Selector) {
-	ctx.xpathTable[p] = true
-	object, err := ctx.XPathCache.Get(p)
-	if err != nil {
+	object, there := ctx.XPathCache[p]
+	if !there {
 		e = ctx.HtmlTransformer.CompileXPath(p)
 		if e != nil {
 			//ctx.AddMemoryObject(e)
-			ctx.XPathCache.Set(p, &XpathExpObject{e})
+			ctx.XPathCache[p] = e
 		} else {
 			ctx.Debugger.LogTritiumErrorMessage(ctx.Customer, ctx.Project, ctx.Env, ctx.MessagePath, "Invalid XPath used: "+p)
 		}
 		return e
 	}
-	return object.(*XpathExpObject)
+	return object
 }
 
 func (ctx *EngineContext) AddExport(exports []string) {

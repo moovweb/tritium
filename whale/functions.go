@@ -579,8 +579,7 @@ func json_to_xml_libxml_292(ctx *EngineContext, scope *Scope, ins protoface.Inst
 func to_json_v1_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
-	// expr := ctx.GetXpathExpr(xpathStr)
-	expr := ctx.HtmlTransformer.CompileXPath(xpathStr)
+	expr := ctx.GetXpathExpr(xpathStr)
 	if expr == nil {
 		return "{}"
 	}
@@ -801,14 +800,9 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 }
 
 func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	return select_libxml_legacy_Text(ctx, scope, ins, args)
-}
-
-func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
-	// expr := ctx.GetXpathExpr(xpathStr)
-	expr := ctx.HtmlTransformer.CompileXPath(xpathStr)
+	expr := ctx.GetXpathExpr(xpathStr)
 	if expr == nil {
 		returnValue = "false"
 		return
@@ -957,8 +951,7 @@ func remove_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, ar
 	node := scope.Value.(hx.Node)
 
 	xpathStr := args[0].(string)
-	// expr := ctx.GetXpathExpr(xpathStr)
-	expr := ctx.HtmlTransformer.CompileXPath(xpathStr)
+	expr := ctx.GetXpathExpr(xpathStr)
 	if expr == nil {
 		returnValue = "0"
 		return
@@ -1148,8 +1141,7 @@ func dup(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []int
 func fetch_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
-	// expr := ctx.GetXpathExpr(xpathStr)
-	expr := ctx.HtmlTransformer.CompileXPath(xpathStr)
+	expr := ctx.GetXpathExpr(xpathStr)
 	if expr == nil {
 		returnValue = "false"
 		return
