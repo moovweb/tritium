@@ -8,6 +8,7 @@ import (
 	"gokogiri/xml"
 	"gokogiri/xpath"
 	ht "tritium/htmltransformer"
+	"tritium/tritstrings"
 )
 
 type GokogiriXmlNode struct {
@@ -160,7 +161,7 @@ func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, e
 		case xpath.Expression:
 			res, err = node.innernode.Search(&typecasted)
 		default:
-			return nil, errors.New("Unexpected xpath type!")
+			return nil, errors.New(tritstrings.UNKNOWN_XPATH_TYPE_ERR)
 		}
 	case GokogiriXPathSelector:
 		res, err = node.innernode.Search(&xptype.Expression)
@@ -185,14 +186,14 @@ func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *t
 		case xpath.Expression:
 			res, err = node.innernode.SearchByDeadline(&typecasted, deadline)
 		default:
-			return nil, errors.New("Unexpected xpath type!")
+			return nil, errors.New(tritstrings.UNKNOWN_XPATH_TYPE_ERR)
 		}
 	case GokogiriXPathSelector:
 		res, err = node.innernode.SearchByDeadline(&xptype.Expression, deadline)
 	case string:
 		res, err = node.innernode.SearchByDeadline(data, deadline)
 	default:
-		return nil, errors.New("Unexpected xpath type!")
+		return nil, errors.New(tritstrings.UNKNOWN_XPATH_TYPE_ERR)
 	}
 
 	results = make([]ht.Node, len(res))
