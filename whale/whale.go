@@ -121,7 +121,10 @@ func (eng *Whale) Free() {
 func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars, constants map[string]string, deadline time.Time, customer, project, messagePath string, activeLayers []string, inDebug bool) (exhaust *tritium.Exhaust) {
 	ctx := NewEngineCtx(eng, vars, constants, transform, rrules, deadline, messagePath, customer, project, activeLayers, inDebug)
 	exhaust = &tritium.Exhaust{}
-	defer ctx.Whale.Free()
+	defer func() {
+		ctx.Whale.Free()
+		ctx.Free()
+	}()
 	ctx.Yields = append(ctx.Yields, &YieldBlock{Vars: make(map[string]interface{})})
 	ctx.UsePackage(transform.IGetPkg())
 	scope := &Scope{Value: input.(string)}
