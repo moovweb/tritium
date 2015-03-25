@@ -122,6 +122,7 @@ func (eng *Whale) Run(transform protoface.Transform, rrules []protoface.RewriteR
 	ctx := NewEngineCtx(eng, vars, constants, transform, rrules, deadline, messagePath, customer, project, activeLayers, inDebug)
 	exhaust = &tritium.Exhaust{}
 	defer func() {
+		// don't forget to call both of these! free all the things
 		ctx.Whale.Free()
 		ctx.Free()
 	}()
