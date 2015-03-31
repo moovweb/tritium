@@ -1,6 +1,6 @@
 package rewriter
 
-import "rubex"
+import "github.com/moovweb/rubex"
 import "errors"
 import "strings"
 import "fmt"

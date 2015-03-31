@@ -3,7 +3,7 @@ package tritium
 import (
 	"time"
 
-	"tritium/protoface"
+	"github.com/moovweb/tritium/protoface"
 )
 
 type Exhaust struct {

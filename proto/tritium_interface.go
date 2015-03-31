@@ -1,7 +1,7 @@
 package proto
 
 import (
-	"tritium/protoface"
+	"github.com/moovweb/tritium/protoface"
 )
 
 func (m *Transform) IGetNthObject(n int) protoface.ScriptObject {

@@ -8,11 +8,11 @@ import (
 )
 
 import (
-	"butler/null"
 	proto "code.google.com/p/goprotobuf/proto"
-	tp "tritium/proto"
-	"tritium/constants"
-	. "tritium/util"
+	"github.com/moovweb/butler/null"
+	"github.com/moovweb/tritium/constants"
+	tp "github.com/moovweb/tritium/proto"
+	. "github.com/moovweb/tritium/util"
 )
 
 type FuncMap map[string]int
@@ -27,7 +27,7 @@ type LinkingContext struct {
 	ProjectFolder string
 	ScriptsFolder string
 	*tp.Transform
-	Visiting      map[string]bool
+	Visiting map[string]bool
 }
 
 type LocalDef map[string]int
@@ -187,7 +187,7 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			// Make sure this object is linked with the right scopeType
 			ctx.link(importId, scopeType)
 
-		// otherwise just set the script object's scope type
+			// otherwise just set the script object's scope type
 		} else {
 			ctx.Objects[importId].ScopeTypeId = proto.Int(scopeType)
 		}
@@ -264,14 +264,14 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 		var funcId int
 		var ok bool
 		for _, ns := range namespaces {
-			funcId, ok = ctx.funList[scopeType][ns + "." + stub]
+			funcId, ok = ctx.funList[scopeType][ns+"."+stub]
 			if ok {
 				break
 			}
 		}
 
 		if !ok {
-      readableCalleeStub := readableStub(stub)
+			readableCalleeStub := readableStub(stub)
 			readableCallerStub := readableStub(caller)
 
 			location := ""
@@ -301,7 +301,6 @@ func (ctx *LinkingContext) ProcessInstructionWithLocalScope(ins *tp.Instruction,
 			// 	}
 			// }
 			// log.Printf("%s\n", message)
-
 
 			// ctx.error(ins, "%s:%d: could not find function %s.%s.%s (called from %s.%s.%s)", location, ins.GetLineNumber(), ns, ctx.types[scopeType], readableCalleeStub, callerNamespace, ctx.types[scopeType], readableCallerStub)
 
@@ -365,6 +364,6 @@ func readableStub(stub string) string {
 		betterStub += ")"
 	} else {
 		betterStub += "()"
-	} 
+	}
 	return betterStub
 }

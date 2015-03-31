@@ -7,8 +7,8 @@ import (
 )
 
 import (
-	yaml "goyaml"
-	tp "tritium/proto"
+	tp "github.com/moovweb/tritium/proto"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type TritiumTest_Hash struct {

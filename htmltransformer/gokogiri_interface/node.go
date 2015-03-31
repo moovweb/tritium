@@ -2,13 +2,12 @@ package gokogiri_interface
 
 import (
 	"errors"
+	"github.com/moovweb/gokogiri/css"
+	"github.com/moovweb/gokogiri/xml"
+	"github.com/moovweb/gokogiri/xpath"
+	ht "github.com/moovweb/tritium/htmltransformer"
+	"github.com/moovweb/tritium/tritstrings"
 	"time"
-
-	"gokogiri/css"
-	"gokogiri/xml"
-	"gokogiri/xpath"
-	ht "tritium/htmltransformer"
-	"tritium/tritstrings"
 )
 
 type GokogiriXmlNode struct {

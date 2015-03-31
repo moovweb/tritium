@@ -7,11 +7,11 @@ import (
 	. "path/filepath"
 	"strings"
 
-	yaml "goyaml"
-	"tritium"
-	"tritium/linker"
-	tp "tritium/proto"
-	"tritium/transform"
+	"github.com/moovweb/tritium"
+	"github.com/moovweb/tritium/linker"
+	tp "github.com/moovweb/tritium/proto"
+	"github.com/moovweb/tritium/transform"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type Spec struct {

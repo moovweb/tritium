@@ -1,7 +1,7 @@
 package whale
 
 import (
-	"tritium/protoface"
+	"github.com/moovweb/tritium/protoface"
 )
 
 type Position int
@@ -23,8 +23,8 @@ var Positions = map[string]Position{
 }
 
 type YieldBlock struct {
-	Ins  protoface.Instruction
-	Vars map[string]interface{}
+	Ins      protoface.Instruction
+	Vars     map[string]interface{}
 	Filename string
 }
 

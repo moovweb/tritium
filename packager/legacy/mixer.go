@@ -10,11 +10,11 @@ import (
 )
 
 import (
-	"butler/mixer"
-	"butler/null"
 	proto "code.google.com/p/goprotobuf/proto"
-	yaml "goyaml"
-	tp "tritium/proto"
+	"github.com/moovweb/butler/mixer"
+	"github.com/moovweb/butler/null"
+	tp "github.com/moovweb/tritium/proto"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type Mixer struct {

@@ -7,16 +7,17 @@ import (
 )
 
 import (
-	mixers "butler/mixer"
-	xmlhelp "gokogiri/help"
-	"golog"
 	"runtime/debug"
-	"steno/dummy"
 	"time"
-	"tritium"
-	"tritium/packager/legacy"
-	tp "tritium/proto"
-	"tritium/whale"
+
+	mixers "github.com/moovweb/butler/mixer"
+	xmlhelp "github.com/moovweb/gokogiri/help"
+	"github.com/moovweb/golog"
+	"github.com/moovweb/steno/dummy"
+	"github.com/moovweb/tritium"
+	"github.com/moovweb/tritium/packager/legacy"
+	tp "github.com/moovweb/tritium/proto"
+	"github.com/moovweb/tritium/whale"
 )
 
 func All(command string, directory string, options ...string) {

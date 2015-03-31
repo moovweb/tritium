@@ -1,6 +1,5 @@
 package protoface
 
-
 type RewriteRule interface {
 	ProtoBuff
 	IGetProxy() string

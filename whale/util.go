@@ -1,8 +1,8 @@
 package whale
 
 import (
+	hx "github.com/moovweb/tritium/htmltransformer"
 	"strings"
-	hx "tritium/htmltransformer"
 )
 
 func MoveFunc(what, where hx.Node, position Position) {

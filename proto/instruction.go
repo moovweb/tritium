@@ -6,8 +6,8 @@ import (
 
 import (
 	pb "code.google.com/p/goprotobuf/proto"
-	"tritium/protoface"
-	"tritium/constants"
+	"github.com/moovweb/tritium/constants"
+	"github.com/moovweb/tritium/protoface"
 )
 
 func (ins *Instruction) Iterate(itFunc func(*Instruction)) {

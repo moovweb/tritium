@@ -8,14 +8,14 @@ import (
 )
 
 import (
-	"go-cache"
-	"go-cache/arc"
-	"rubex"
-	"steno"
-	"tritium"
-	"tritium/constants"
-	hx "tritium/htmltransformer"
-	"tritium/protoface"
+	"github.com/moovweb/go-cache"
+	"github.com/moovweb/go-cache/arc"
+	"github.com/moovweb/rubex"
+	"github.com/moovweb/steno"
+	"github.com/moovweb/tritium"
+	"github.com/moovweb/tritium/constants"
+	hx "github.com/moovweb/tritium/htmltransformer"
+	"github.com/moovweb/tritium/protoface"
 )
 
 type Whale struct {

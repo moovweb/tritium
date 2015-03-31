@@ -6,8 +6,8 @@ import (
 
 import (
 	pb "code.google.com/p/goprotobuf/proto"
-	"tritium/protoface"
-	"tritium/constants"
+	"github.com/moovweb/tritium/constants"
+	"github.com/moovweb/tritium/protoface"
 )
 
 func (ins *Instruction) Iterate(itFunc func(*Instruction)) {
@@ -44,41 +44,41 @@ func FoldLeft(funcName string, base *Instruction, seq []*Instruction) (acc *Inst
 
 func MakeText(text string, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       pb.Int32(constants.Instruction_TEXT),
-		Value:      pb.String(text),
+		Type:  pb.Int32(constants.Instruction_TEXT),
+		Value: pb.String(text),
 		// LineNumber: pb.Int32(lineNum),
 	}
 }
 
 func MakePosition(pos string, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       pb.Int32(constants.Instruction_POSITION),
-		Value:      pb.String(pos),
+		Type:  pb.Int32(constants.Instruction_POSITION),
+		Value: pb.String(pos),
 		// LineNumber: pb.Int32(lineNum),
 	}
 }
 
 func MakeComment(comment string, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       pb.Int32(constants.Instruction_COMMENT),
-		Value:      pb.String(comment),
+		Type:  pb.Int32(constants.Instruction_COMMENT),
+		Value: pb.String(comment),
 		// LineNumber: pb.Int32(lineNum),
 	}
 }
 
 func MakeImport(path string, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       pb.Int32(constants.Instruction_IMPORT),
-		Value:      pb.String(path),
+		Type:  pb.Int32(constants.Instruction_IMPORT),
+		Value: pb.String(path),
 		// LineNumber: pb.Int32(lineNum),
 	}
 }
 
 func MakeLocalVar(name string, val *Instruction, block []*Instruction, lineNum int32) *Instruction {
 	node := &Instruction{
-		Type:       pb.Int32(constants.Instruction_LOCAL_VAR),
-		Value:      pb.String(name),
-		Children:   block,
+		Type:     pb.Int32(constants.Instruction_LOCAL_VAR),
+		Value:    pb.String(name),
+		Children: block,
 		// LineNumber: pb.Int32(lineNum),
 	}
 	if val == nil {
@@ -91,18 +91,18 @@ func MakeLocalVar(name string, val *Instruction, block []*Instruction, lineNum i
 
 func MakeFunctionCall(name string, args []*Instruction, block []*Instruction, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       pb.Int32(constants.Instruction_FUNCTION_CALL),
-		Value:      pb.String(name),
-		Arguments:  args,
-		Children:   block,
+		Type:      pb.Int32(constants.Instruction_FUNCTION_CALL),
+		Value:     pb.String(name),
+		Arguments: args,
+		Children:  block,
 		// LineNumber: pb.Int32(lineNum),
 	}
 }
 
 func MakeBlock(children []*Instruction, lineNum int32) *Instruction {
 	return &Instruction{
-		Type:       pb.Int32(constants.Instruction_BLOCK),
-		Children:   children,
+		Type:     pb.Int32(constants.Instruction_BLOCK),
+		Children: children,
 		// LineNumber: pb.Int32(lineNum),
 	}
 }

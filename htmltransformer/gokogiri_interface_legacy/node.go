@@ -2,13 +2,12 @@ package gokogiri_interface_legacy
 
 import (
 	"errors"
+	"github.com/moovweb/gokogiri_legacy/css"
+	"github.com/moovweb/gokogiri_legacy/xml"
+	"github.com/moovweb/gokogiri_legacy/xpath"
+	ht "github.com/moovweb/tritium/htmltransformer"
+	"github.com/moovweb/tritium/tritstrings"
 	"time"
-
-	"gokogiri_legacy/css"
-	"gokogiri_legacy/xml"
-	"gokogiri_legacy/xpath"
-	ht "tritium/htmltransformer"
-	"tritium/tritstrings"
 )
 
 type GokogiriXmlNode struct {

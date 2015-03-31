@@ -11,18 +11,17 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"goconv"
-	"icu4go"
-	"moovhelper"
-	"rubex"
+	"github.com/moovweb/goconv"
+	"github.com/moovweb/icu4go"
+	"github.com/moovweb/moovhelper"
+	"github.com/moovweb/rubex"
 	// tp "tritium/proto"
-	"tritium/constants"
-	"tritium/parser"
-	"tritium/protoface"
-
-	hx "tritium/htmltransformer"
-	goku "tritium/htmltransformer/gokogiri_interface"
-	goku_legacy "tritium/htmltransformer/gokogiri_interface_legacy"
+	"github.com/moovweb/tritium/constants"
+	hx "github.com/moovweb/tritium/htmltransformer"
+	goku "github.com/moovweb/tritium/htmltransformer/gokogiri_interface"
+	goku_legacy "github.com/moovweb/tritium/htmltransformer/gokogiri_interface_legacy"
+	"github.com/moovweb/tritium/parser"
+	"github.com/moovweb/tritium/protoface"
 )
 
 const isUserCalledEnvKey = "MtkIsUserCalled"

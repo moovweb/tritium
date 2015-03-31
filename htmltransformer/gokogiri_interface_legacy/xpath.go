@@ -1,7 +1,7 @@
 package gokogiri_interface_legacy
 
 import (
-	"gokogiri_legacy/xpath"
+	"github.com/moovweb/gokogiri_legacy/xpath"
 )
 
 type GokogiriXPathSelector struct {

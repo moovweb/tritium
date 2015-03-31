@@ -7,10 +7,10 @@ import (
 )
 
 import (
-	"butler/crypto"
-	"butler/null"
 	proto "code.google.com/p/goprotobuf/proto"
-	tp "tritium/proto"
+	"github.com/moovweb/butler/crypto"
+	"github.com/moovweb/butler/null"
+	tp "github.com/moovweb/tritium/proto"
 )
 
 func (pkg *Package) write() {

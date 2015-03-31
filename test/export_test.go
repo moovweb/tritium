@@ -2,19 +2,20 @@ package test
 
 import (
 	"fmt"
-	"golog"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
 	"time"
 
+	"github.com/moovweb/golog"
+
 	// TODO: remove this and replace with something else when whale no longer needs to use steno loggers
-	"butler/mixer"
-	"steno/dummy"
-	"tritium/packager"
-	tp "tritium/proto"
-	tf "tritium/transform"
-	"tritium/whale"
+	"github.com/moovweb/butler/mixer"
+	"github.com/moovweb/steno/dummy"
+	"github.com/moovweb/tritium/packager"
+	tp "github.com/moovweb/tritium/proto"
+	tf "github.com/moovweb/tritium/transform"
+	"github.com/moovweb/tritium/whale"
 )
 
 var baseDir string

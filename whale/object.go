@@ -1,9 +1,9 @@
 package whale
 
-import "rubex"
+import "github.com/moovweb/rubex"
 
-import hx "tritium/htmltransformer"
-import "go-cache"
+import hx "github.com/moovweb/tritium/htmltransformer"
+import "github.com/moovweb/go-cache"
 
 type MemoryObject interface {
 	Free()

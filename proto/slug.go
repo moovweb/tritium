@@ -2,10 +2,10 @@ package proto
 
 import (
 	pb "code.google.com/p/goprotobuf/proto"
+	"github.com/moovweb/tritium/protoface"
 	"io/ioutil"
 	"strings"
 	"time"
-	"tritium/protoface"
 )
 
 func NewSlug(name string, version string, stages int) (slug *Slug, err error) {

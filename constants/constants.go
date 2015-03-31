@@ -1,4 +1,4 @@
-package constants 
+package constants
 
 const (
 	Instruction_BLOCK         int32 = 0
@@ -28,7 +28,6 @@ var Instruction_InstructionType_value = map[string]int32{
 	"POSITION":      5,
 	"COMMENT":       6,
 }
-
 
 const (
 	RewriteRule_BIDIRECTIONAL     int32 = 0

@@ -1,7 +1,7 @@
 package proto
 
-import(
-	"tritium/protoface"
+import (
+	"github.com/moovweb/tritium/protoface"
 )
 
 func (m *Function) IGetName() string {
@@ -19,7 +19,6 @@ func (m *Function) IGetFilename() string {
 func (m *Function) IGetLineNumber() int32 {
 	return m.GetLineNumber()
 }
-
 
 func (m *Function) IGetNamespace() string {
 	return m.GetNamespace()
@@ -81,7 +80,7 @@ func (m *Function_Argument) IGetName() string {
 	return m.GetName()
 }
 
-func (m *FunctionArray) GetNthFunction(index int) protoface.Function{
+func (m *FunctionArray) GetNthFunction(index int) protoface.Function {
 	return m.GetFunctions()[index]
 }
 

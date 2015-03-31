@@ -1,10 +1,10 @@
 package util
 
-import(
+import (
 	"fmt"
 	"regexp"
 
-	. "tritium/tritstrings"
+	. "github.com/moovweb/tritium/tritstrings"
 )
 
 type Range struct {
@@ -13,10 +13,10 @@ type Range struct {
 }
 
 func ValidateLayerName(name string) error {
-  // TODO: actually validate the name
-  var validID = regexp.MustCompile(`^-?([a-zA-Z_]|[^\x00-\x7F])([-a-zA-Z0-9_]|[^\x00-\x7F])*$`)
-  if validID.MatchString(name) {
-  	return nil
-  }
-  return fmt.Errorf(UTIL_INVALID_LAYER_NAME_ERR, name)
+	// TODO: actually validate the name
+	var validID = regexp.MustCompile(`^-?([a-zA-Z_]|[^\x00-\x7F])([-a-zA-Z0-9_]|[^\x00-\x7F])*$`)
+	if validID.MatchString(name) {
+		return nil
+	}
+	return fmt.Errorf(UTIL_INVALID_LAYER_NAME_ERR, name)
 }

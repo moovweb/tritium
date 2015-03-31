@@ -9,10 +9,10 @@ import (
 )
 
 import (
-	"butler/crypto"
-	"butler/fileutil"
-	"butler/null"
 	pb "code.google.com/p/goprotobuf/proto"
+	"github.com/moovweb/butler/crypto"
+	"github.com/moovweb/butler/fileutil"
+	"github.com/moovweb/butler/null"
 )
 
 func NewMixer(path string) *Mixer {

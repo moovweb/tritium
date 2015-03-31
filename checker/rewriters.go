@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"golog"
-	"goyaml"
-	"tritium/protoface"
-	"tritium/whale"
+	"github.com/moovweb/golog"
+	"github.com/moovweb/tritium/protoface"
+	"github.com/moovweb/tritium/whale"
+	yaml "gopkg.in/yaml.v2"
 )
 
 const TEST_FILE = "test/rewrite_test.yml"
@@ -31,7 +31,7 @@ func read_test_cases(test_file string) (ProjectTests, error) {
 	if err != nil {
 		return tests, err
 	}
-	err = goyaml.Unmarshal([]byte(fileinfo), &tests)
+	err = yaml.Unmarshal([]byte(fileinfo), &tests)
 	return tests, err
 }
 

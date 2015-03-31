@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	tp "tritium/proto"
+	tp "github.com/moovweb/tritium/proto"
 )
 
 func ParseFile(projectPath, scriptPath, fileName string, compilingMixer bool, activeLayers []string) *tp.ScriptObject {
@@ -63,7 +63,6 @@ func readFile(projectPath, scriptPath, fileName string) (src, fullpath string) {
 	src = string(srcBytes)
 	return
 }
-
 
 func reverse(seq []string) []string {
 	res := make([]string, len(seq))

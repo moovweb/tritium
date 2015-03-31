@@ -1,6 +1,6 @@
 package proto
 
-import "tritium/constants"
+import "github.com/moovweb/tritium/constants"
 
 func (obj *ScriptObject) Imports() []string {
 	list := make([]string, 0)

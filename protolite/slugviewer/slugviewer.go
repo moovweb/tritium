@@ -4,15 +4,15 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"strings"
 	"io/ioutil"
+	"strings"
 	"time"
 )
 
 import (
-	"manhattan/commands"
 	pb "code.google.com/p/goprotobuf/proto"
-	tp "tritium/proto"
+	"github.com/moovweb/manhattan/commands"
+	tp "github.com/moovweb/tritium/proto"
 )
 
 const CmdName = "slugviewer"
@@ -28,7 +28,7 @@ func New() *SlugViewCmd {
 	cmd.options = &Options{}
 
 	cmd.options.SetDefaults()
-	cmd.options.SetupFlags(cmd.flags) 
+	cmd.options.SetupFlags(cmd.flags)
 	return &cmd
 }
 
@@ -105,7 +105,7 @@ func printSlug(s *tp.Slug, indLvl int) {
 		printIndent("whitelist[%d] -> %v", indLvl+1, ind, item)
 	}
 	printIndent("Credentials -> %v", indLvl, s.GetCredentials())
-	printIndent("Transforms:",indLvl)
+	printIndent("Transforms:", indLvl)
 	for ind, item := range s.GetTransformers() {
 		printIndent("transform[%d]:", indLvl+1, ind)
 		printTransform(item, indLvl+2)
@@ -192,25 +192,3 @@ func printInstruction(i *tp.Instruction, indLvl int) {
 		printInstruction(item, indLvl+2)
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
