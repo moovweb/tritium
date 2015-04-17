@@ -11,18 +11,17 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"goconv"
-	"icu4go"
-	"moovhelper"
-	"rubex"
+	"github.com/moovweb/goconv"
+	"github.com/moovweb/icu4go"
+	"github.com/moovweb/moovhelper"
+	"github.com/moovweb/rubex"
 	// tp "tritium/proto"
-	"tritium/constants"
-	"tritium/parser"
-	"tritium/protoface"
-
-	hx "tritium/htmltransformer"
-	goku "tritium/htmltransformer/gokogiri_interface"
-	goku_legacy "tritium/htmltransformer/gokogiri_interface_legacy"
+	"github.com/moovweb/tritium/constants"
+	hx "github.com/moovweb/tritium/htmltransformer"
+	goku "github.com/moovweb/tritium/htmltransformer/gokogiri_interface"
+	goku_legacy "github.com/moovweb/tritium/htmltransformer/gokogiri_interface_legacy"
+	"github.com/moovweb/tritium/parser"
+	"github.com/moovweb/tritium/protoface"
 )
 
 const isUserCalledEnvKey = "MtkIsUserCalled"
@@ -800,10 +799,6 @@ func html_fragment_doc_libxml_292_Text_Text(ctx *EngineContext, scope *Scope, in
 }
 
 func select_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
-	return select_libxml_legacy_Text(ctx, scope, ins, args)
-}
-
-func select_libxml_legacy_Text(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []interface{}) (returnValue interface{}) {
 	node := scope.Value.(hx.Node)
 	xpathStr := args[0].(string)
 	expr := ctx.GetXpathExpr(xpathStr)

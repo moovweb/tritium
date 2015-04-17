@@ -1,11 +1,13 @@
 package gokogiri_interface
 
 import (
-	"gokogiri/css"
-	"gokogiri/xml"
-	"gokogiri/xpath"
+	"errors"
+	"github.com/moovweb/gokogiri/css"
+	"github.com/moovweb/gokogiri/xml"
+	"github.com/moovweb/gokogiri/xpath"
+	ht "github.com/moovweb/tritium/htmltransformer"
+	"github.com/moovweb/tritium/tritstrings"
 	"time"
-	ht "tritium/htmltransformer"
 )
 
 type GokogiriXmlNode struct {
@@ -158,6 +160,7 @@ func (node *GokogiriXmlNode) SelectXPath(data interface{}) (results []ht.Node, e
 		case xpath.Expression:
 			res, err = node.innernode.Search(&typecasted)
 		default:
+			return nil, errors.New(tritstrings.UNKNOWN_XPATH_TYPE_ERR)
 		}
 	case GokogiriXPathSelector:
 		res, err = node.innernode.Search(&xptype.Expression)
@@ -182,12 +185,14 @@ func (node *GokogiriXmlNode) SelectXPathByDeadline(data interface{}, deadline *t
 		case xpath.Expression:
 			res, err = node.innernode.SearchByDeadline(&typecasted, deadline)
 		default:
+			return nil, errors.New(tritstrings.UNKNOWN_XPATH_TYPE_ERR)
 		}
 	case GokogiriXPathSelector:
 		res, err = node.innernode.SearchByDeadline(&xptype.Expression, deadline)
 	case string:
 		res, err = node.innernode.SearchByDeadline(data, deadline)
 	default:
+		return nil, errors.New(tritstrings.UNKNOWN_XPATH_TYPE_ERR)
 	}
 
 	results = make([]ht.Node, len(res))

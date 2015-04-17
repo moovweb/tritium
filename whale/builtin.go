@@ -1,6 +1,6 @@
 package whale
 
-import "tritium/protoface"
+import "github.com/moovweb/tritium/protoface"
 
 type builtInFunc func(*EngineContext, *Scope, protoface.Instruction, []interface{}) interface{}
 

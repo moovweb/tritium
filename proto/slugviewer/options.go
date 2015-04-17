@@ -4,7 +4,7 @@ import "flag"
 import "errors"
 
 type Options struct {
-	SlugLoc string
+	SlugLoc  string
 	TimeOnly bool
 }
 

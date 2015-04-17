@@ -3,9 +3,9 @@ package linker
 import (
 	"errors"
 
-	parser "tritium/parser"
-	tp "tritium/proto"
-	. "tritium/util"
+	parser "github.com/moovweb/tritium/parser"
+	tp "github.com/moovweb/tritium/proto"
+	. "github.com/moovweb/tritium/util"
 )
 
 func RunStringWithPackage(src, projectPath, scriptPath, fileName string, pkg *tp.Package, activeLayers []string, ranges ...Range) (*tp.Transform, error) {

@@ -10,15 +10,15 @@ import (
 )
 
 import (
-	"butler/null"
 	proto "code.google.com/p/goprotobuf/proto"
-	yaml "goyaml"
-	linker "tritium/linker"
-	parser "tritium/parser"
-	tp "tritium/proto"
-	. "tritium/util"
-	whale "tritium/whale"
-	"tritium/constants"
+	"github.com/moovweb/butler/null"
+	"github.com/moovweb/tritium/constants"
+	linker "github.com/moovweb/tritium/linker"
+	parser "github.com/moovweb/tritium/parser"
+	tp "github.com/moovweb/tritium/proto"
+	. "github.com/moovweb/tritium/util"
+	whale "github.com/moovweb/tritium/whale"
+	yaml "gopkg.in/yaml.v2"
 )
 
 func resolveDefinition(pkg *tp.Package, fun *tp.Function, path string, ranges ...Range) {
@@ -280,7 +280,7 @@ func ReadPackageDefinitions(pkg *tp.Package, projectPath, scriptPath, fileName s
 
 			pkg.Functions = append(pkg.Functions, function)
 			if len(ranges) > 0 {
-				ranges[len(ranges) - 1].End += 1
+				ranges[len(ranges)-1].End += 1
 			}
 		}
 	}

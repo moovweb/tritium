@@ -3,9 +3,9 @@ package tokenizer
 import (
 	"bytes"
 	"fmt"
-	"rubex"
-	"strings"
+	"github.com/moovweb/rubex"
 	"strconv"
+	"strings"
 )
 
 // Type tags so we know what kind of token we have
@@ -204,73 +204,73 @@ func (t *Tokenizer) popError(message string) *Token {
 // exclusively double-quoted, so single-quoted strings need to be converted
 // before being passed to strconv.Unquote(...).
 func unEscape(chars string) rune {
-  var converted byte
-  if chars[0] == '\\' {
-    switch chars[1] {
-    case 'n':
-      converted = '\n'
-    case 't':
-      converted = '\t'
-    case 'b':
-      converted = '\b'
-    case 'r':
-      converted = '\r'
-    case 'f':
-      converted = '\f'
-    case 'v':
-      converted = '\v'
-    case 'a':
-      converted = '\a'
-    case '\\':
-      converted = '\\'
-    default:
-      converted = chars[1]
-    }
-  } else {
-    converted = chars[0]
-  }
-  return rune(converted)
+	var converted byte
+	if chars[0] == '\\' {
+		switch chars[1] {
+		case 'n':
+			converted = '\n'
+		case 't':
+			converted = '\t'
+		case 'b':
+			converted = '\b'
+		case 'r':
+			converted = '\r'
+		case 'f':
+			converted = '\f'
+		case 'v':
+			converted = '\v'
+		case 'a':
+			converted = '\a'
+		case '\\':
+			converted = '\\'
+		default:
+			converted = chars[1]
+		}
+	} else {
+		converted = chars[0]
+	}
+	return rune(converted)
 }
 
 // A better string unquoter that handles unicode sequences. Can't use Go's
 // standard unquoter because we need to handle single-quoted strings too.
 func unquote(chars []byte) (string, bool) {
-  if !(chars[0] == '"' || chars[0] == '\'') { // it's not quoted
-  	return string(chars), false
-  }
-  if len(chars) == 2 { // it's just the quotes
-    return "", false
-  }
+	if !(chars[0] == '"' || chars[0] == '\'') { // it's not quoted
+		return string(chars), false
+	}
+	if len(chars) == 2 { // it's just the quotes
+		return "", false
+	}
 
-  remainder := string(chars[1:len(chars)-1])
-  quotemark := chars[0]
-  result    := make([]rune, 0)
+	remainder := string(chars[1 : len(chars)-1])
+	quotemark := chars[0]
+	result := make([]rune, 0)
 
-  var unquotedRune rune
-  var err error
-  if remainder[0] == '\\' && remainder[1] != 'u' {
-    result = append(result, unEscape(remainder[0:2]))
-    remainder = remainder[2:len(remainder)]
-  } else {
-	  unquotedRune, _, remainder, err = strconv.UnquoteChar(remainder, quotemark)
-	  if err != nil {
-	    return "", true
-	  }
-  	result = append(result, unquotedRune)
-  }
-  for len(remainder) > 0 {
-    if remainder[0] == '\\' && remainder[1] != 'u' {
-      result = append(result, unEscape(remainder[0:2]))
-      remainder = remainder[2:len(remainder)]
-    } else {
-	    unquotedRune, _, remainder, err = strconv.UnquoteChar(remainder, quotemark)
-	    if err != nil {
-	      return "", true
-	    }
-	    result = append(result, unquotedRune)
-	  }
-  }
-  return string(result), false
+	var unquotedRune rune
+	var err error
+	if remainder[0] == '\\' && remainder[1] != 'u' {
+		result = append(result, unEscape(remainder[0:2]))
+		remainder = remainder[2:len(remainder)]
+	} else {
+		unquotedRune, _, remainder, err = strconv.UnquoteChar(remainder, quotemark)
+		if err != nil {
+			return "", true
+		}
+		result = append(result, unquotedRune)
+	}
+	for len(remainder) > 0 {
+		if remainder[0] == '\\' && remainder[1] != 'u' {
+			result = append(result, unEscape(remainder[0:2]))
+			remainder = remainder[2:len(remainder)]
+		} else {
+			unquotedRune, _, remainder, err = strconv.UnquoteChar(remainder, quotemark)
+			if err != nil {
+				return "", true
+			}
+			result = append(result, unquotedRune)
+		}
+	}
+	return string(result), false
 }
 
 // The heart of the tokenizer. This function tries to munch off a token from

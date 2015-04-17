@@ -1,12 +1,12 @@
 package test
 
-import "tritium/whale"
+import "github.com/moovweb/tritium/whale"
 import "testing"
 import "fmt"
-import "tritium/spec"
-import "golog"
+import "github.com/moovweb/tritium/spec"
+import "github.com/moovweb/golog"
 import "time"
-import "steno/dummy"
+import "github.com/moovweb/steno/dummy"
 
 func RunBenchmarkSuite(directoryFromRoot string, b *testing.B) {
 	b.StopTimer()

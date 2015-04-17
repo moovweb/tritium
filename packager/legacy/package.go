@@ -1,14 +1,15 @@
 package legacy
 
 import (
-	proto "code.google.com/p/goprotobuf/proto"
 	"fmt"
-	"golog"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
-	tp "tritium/proto"
+
+	proto "code.google.com/p/goprotobuf/proto"
+	"github.com/moovweb/golog"
+	tp "github.com/moovweb/tritium/proto"
 )
 
 type Error struct {

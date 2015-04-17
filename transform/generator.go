@@ -6,16 +6,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"path/filepath"
 	"text/template"
-	"io/ioutil"
 )
 
 import (
-	"butler/null"
-	"manhattan/project"
-	"rubex"
-	tp "tritium/proto"
+	"github.com/moovweb/butler/null"
+	"github.com/moovweb/manhattan/project"
+	"github.com/moovweb/rubex"
+	tp "github.com/moovweb/tritium/proto"
 )
 
 var WriteRewritersToProjectDir = false

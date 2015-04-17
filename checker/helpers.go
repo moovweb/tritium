@@ -1,8 +1,8 @@
 package checker
 
 import (
-	"butler/null"
-	tp "tritium/proto"
+	"github.com/moovweb/butler/null"
+	tp "github.com/moovweb/tritium/proto"
 )
 
 type CheckResult struct {

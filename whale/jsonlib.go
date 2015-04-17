@@ -6,7 +6,7 @@ import (
 )
 
 import (
-	hx "tritium/htmltransformer"
+	hx "github.com/moovweb/tritium/htmltransformer"
 )
 
 // Converting JSON to XML nodes

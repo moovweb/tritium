@@ -11,16 +11,16 @@ import (
 )
 
 import (
-	fileutil "butler/fileutil"
-	"butler/mixer"
 	proto "code.google.com/p/goprotobuf/proto"
-	"golog"
-	yaml "goyaml"
-	"tritium/packager/legacy"
-	"tritium/parser"
-	tp "tritium/proto"
-	. "tritium/util"
-	"tritium/whale"
+	fileutil "github.com/moovweb/butler/fileutil"
+	"github.com/moovweb/butler/mixer"
+	"github.com/moovweb/golog"
+	"github.com/moovweb/tritium/packager/legacy"
+	"github.com/moovweb/tritium/parser"
+	tp "github.com/moovweb/tritium/proto"
+	. "github.com/moovweb/tritium/util"
+	"github.com/moovweb/tritium/whale"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type downloader func(string, string) (*tp.Mixer, error)
@@ -45,8 +45,8 @@ type Packager struct {
 	Logger                   *golog.Logger
 	downloader               downloader
 	*tp.Mixer
-	Ranges                   []Range
-	CachedDependencies       map[string]*Packager
+	Ranges             []Range
+	CachedDependencies map[string]*Packager
 }
 
 const (
@@ -132,7 +132,7 @@ func NewFromCompiledMixer(mxr *tp.Mixer) *Packager {
 	if numExports == 0 {
 		rangeStart = 0
 	}
-	newRange := Range{ Start: rangeStart, End: numFunctions }
+	newRange := Range{Start: rangeStart, End: numFunctions}
 	pkgr.Ranges[0] = newRange
 	pkgr.CachedDependencies = make(map[string]*Packager)
 
@@ -241,7 +241,7 @@ func (pkgr *Packager) resolveDependencies() {
 			needed := pkgr.CachedDependencies[name]
 			newRange := needed.Ranges[len(needed.Ranges)-1]
 			// if the mixer doesn't export anything, make it export EVERYTHING
-			if newRange.End - newRange.Start == 0 {
+			if newRange.End-newRange.Start == 0 {
 				newRange.Start = newRange.End - len(needed.Package.Functions)
 			}
 			pkgr.Ranges = append(pkgr.Ranges, newRange)
@@ -330,7 +330,7 @@ func (pkgr *Packager) loadDependency(name, specifiedVersion string) {
 		newRange.End = len(pkgr.Package.Functions)
 		newRange.Start = newRange.End - int(needed.Package.GetNumExports())
 		// if the mixer doesn't export anything, make it export EVERYTHING
-		if newRange.End - newRange.Start == 0 {
+		if newRange.End-newRange.Start == 0 {
 			newRange.Start = newRange.End - len(needed.Package.Functions)
 		}
 		pkgr.Ranges = append(pkgr.Ranges, newRange)
@@ -482,7 +482,7 @@ func (pkgr *Packager) resolveFunctions(dirName, fileName string) {
 		pkgr.Package.Functions = append(pkgr.Package.Functions, f)
 		// now extend the last export range so that it includes the newly-resolved function
 		lastRange := pkgr.Ranges[len(pkgr.Ranges)-1]
-		pkgr.Ranges[len(pkgr.Ranges)-1] = Range{Start: lastRange.Start, End: lastRange.End+1}
+		pkgr.Ranges[len(pkgr.Ranges)-1] = Range{Start: lastRange.Start, End: lastRange.End + 1}
 	}
 }
 
@@ -624,7 +624,7 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 	if numExports == 0 {
 		numExports = numFunctions
 	}
-	exportRanges[0] = Range{ numFunctions - numExports, numFunctions }
+	exportRanges[0] = Range{numFunctions - numExports, numFunctions}
 
 	// now merge the rest of the mixers into the transformer mixer!
 	for i, pkgr := range rest {
@@ -632,7 +632,7 @@ func GetPkgdMixers(mixers []*tp.Mixer, transformerRequired bool) (httpTransforme
 		successMsg += fmt.Sprintf("\nMixer %s (%s) successfully loaded.", pkgr.GetName(), pkgr.GetVersion())
 		numFunctions := len(first.Package.Functions)
 		numExports := int(pkgr.Package.GetNumExports())
-		newRange := Range{ numFunctions-numExports, numFunctions }
+		newRange := Range{numFunctions - numExports, numFunctions}
 		if numExports == 0 {
 			newRange.Start = numFunctions - len(pkgr.Package.Functions)
 		}

@@ -1,8 +1,8 @@
 package proto
 
 import (
-	"butler/null"
 	pb "code.google.com/p/goprotobuf/proto"
+	"github.com/moovweb/butler/null"
 )
 
 func (pkg *Package) GetTypeId(name string) int {

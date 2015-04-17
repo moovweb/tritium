@@ -9,8 +9,8 @@ import (
 )
 
 import (
-	"butler/null"
 	pb "code.google.com/p/goprotobuf/proto"
+	"github.com/moovweb/butler/null"
 )
 
 type FileList struct {

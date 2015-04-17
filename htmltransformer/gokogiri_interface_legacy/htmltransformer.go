@@ -2,11 +2,11 @@ package gokogiri_interface_legacy
 
 import (
 	"errors"
-	"gokogiri_legacy/css"
-	"gokogiri_legacy/html"
-	"gokogiri_legacy/xml"
-	"gokogiri_legacy/xpath"
-	ht "tritium/htmltransformer"
+	"github.com/moovweb/gokogiri_legacy/css"
+	"github.com/moovweb/gokogiri_legacy/html"
+	"github.com/moovweb/gokogiri_legacy/xml"
+	"github.com/moovweb/gokogiri_legacy/xpath"
+	ht "github.com/moovweb/tritium/htmltransformer"
 )
 
 type GokogiriHtmlTransformer struct {

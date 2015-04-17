@@ -1,8 +1,8 @@
 package checker
 
 import (
-	"tritium/parser"
-	tp "tritium/proto"
+	"github.com/moovweb/tritium/parser"
+	tp "github.com/moovweb/tritium/proto"
 )
 
 func CheckFile(projectPath, scriptPath, fileName string, activeLayers []string) *CheckResult {

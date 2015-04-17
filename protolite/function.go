@@ -6,9 +6,9 @@ import (
 
 import (
 	pb "code.google.com/p/goprotobuf/proto"
-	"butler/null"
-	"tritium/protoface"
-	"tritium/constants"
+	"github.com/moovweb/butler/null"
+	"github.com/moovweb/tritium/constants"
+	"github.com/moovweb/tritium/protoface"
 )
 
 func (f *Function) Stub(pkg2 protoface.Package) string {
@@ -58,8 +58,7 @@ func (f *Function) BaseSignature(pkg2 protoface.Package) string {
 	return fmt.Sprintf("%s.%s%s)", pkg.GetTypeName(f.IGetScopeTypeId()), f.IGetName(), args)
 }
 
-
-// We need this for inherited function resolution. 
+// We need this for inherited function resolution.
 // - for now we just make duplicated functions for the package w the types changed
 // - this way, the engine can play dumb
 
@@ -115,7 +114,7 @@ func (f *Function) RelocateCallsBy(offset int) {
 	if f.Instruction == nil {
 		return
 	}
-	f.Instruction.IterateAll(func (ins *Instruction) {
+	f.Instruction.IterateAll(func(ins *Instruction) {
 		if ins.GetType() != constants.Instruction_FUNCTION_CALL {
 			return
 		}

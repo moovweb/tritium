@@ -1,8 +1,8 @@
 package proto
 
 import (
-	"tritium/constants"
 	pb "code.google.com/p/goprotobuf/proto"
+	"github.com/moovweb/tritium/constants"
 )
 
 const (

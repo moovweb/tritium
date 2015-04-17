@@ -1,35 +1,36 @@
 package parser
 
 import (
-	"code.google.com/p/goprotobuf/proto"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
-	tp "tritium/proto"
-	. "tritium/parser/tokenizer"
-	"tritium/constants"
-	. "tritium/tritstrings"
-	"butler/fileutil"
+
+	"code.google.com/p/goprotobuf/proto"
+	"github.com/moovweb/butler/fileutil"
+	"github.com/moovweb/tritium/constants"
+	. "github.com/moovweb/tritium/parser/tokenizer"
+	tp "github.com/moovweb/tritium/proto"
+	. "github.com/moovweb/tritium/tritstrings"
 )
 
 type Parser struct {
 	*Tokenizer
-	ProjectPath string // the project path (probably absolute)
-	ScriptPath  string // the folder containing the script file being parsed (relative to the project path)
-	FileName    string // the base-name of the script file being parsed
-	FullPath    string
-	Lookahead   *Token
-	counter     int
-	header      bool
-	RootFile    bool
-	Namespaces  []string
-	Defspace    string
-	inFunc      bool
+	ProjectPath    string // the project path (probably absolute)
+	ScriptPath     string // the folder containing the script file being parsed (relative to the project path)
+	FileName       string // the base-name of the script file being parsed
+	FullPath       string
+	Lookahead      *Token
+	counter        int
+	header         bool
+	RootFile       bool
+	Namespaces     []string
+	Defspace       string
+	inFunc         bool
 	CompilingMixer bool // Am I compiling a mixer?
-	ActiveLayers map[string]bool
+	ActiveLayers   map[string]bool
 }
 
 var TritiumParserShowRewriterFileName = false
@@ -133,7 +134,7 @@ func (p *Parser) pushNamespace(ns string) string {
 }
 
 func (p *Parser) popNamespace() string {
-	last := len(p.Namespaces)-1
+	last := len(p.Namespaces) - 1
 	ns := p.Namespaces[last]
 	p.Namespaces = p.Namespaces[:last]
 	p.updateDefspace()
@@ -170,10 +171,10 @@ func (p *Parser) namespaces() {
 
 func (p *Parser) open(dup bool) {
 	inclusions := p.collectNamespaces()
-	top := len(p.Namespaces)-1
+	top := len(p.Namespaces) - 1
 	if dup {
 		p.pushNamespace(p.Namespaces[top]) // dup the topmost namespace set
-		top = len(p.Namespaces)-1 // length has changed
+		top = len(p.Namespaces) - 1        // length has changed
 	}
 	// the included namespaces should be searched first, so put them at the front of the list
 	p.Namespaces[top] = inclusions + "," + p.Namespaces[top]
@@ -289,7 +290,7 @@ func (p *Parser) statement() (node *tp.Instruction) {
 			base = ""
 		}
 		if dir[len(dir)-1] == os.PathSeparator {
-			dir = dir[0:len(dir)-1]
+			dir = dir[0 : len(dir)-1]
 		}
 		for len(base) > 0 {
 			dir, base = filepath.Split(dir)
@@ -298,7 +299,7 @@ func (p *Parser) statement() (node *tp.Instruction) {
 				base = ""
 			}
 			if dir[len(dir)-1] == os.PathSeparator {
-				dir = dir[0:len(dir)-1]
+				dir = dir[0 : len(dir)-1]
 			}
 		}
 		// make sure that the importee is under the right subfolder
@@ -343,9 +344,9 @@ func (p *Parser) expression() (node *tp.Instruction) {
 		switch p.peek().Lexeme {
 		case STRING, REGEXP, POS, READ, ID, TYPE, GVAR, LVAR, LPAREN:
 			rhs := p.term()
-			last := len(terms)-1
+			last := len(terms) - 1
 			if terms[last].GetType() == constants.Instruction_TEXT && rhs.GetType() == constants.Instruction_TEXT {
-				terms[last] = tp.MakeText(terms[last].GetValue() + rhs.GetValue(), terms[last].GetLineNumber())
+				terms[last] = tp.MakeText(terms[last].GetValue()+rhs.GetValue(), terms[last].GetLineNumber())
 			} else {
 				terms = append(terms, rhs)
 			}
@@ -371,21 +372,21 @@ func (p *Parser) term() (node *tp.Instruction) {
 		names := p.name()
 		next := p.peek().Lexeme
 		/*
-		if only one name:
-			if followed by var:
-				it's module.var
-			else if followed by paren:
-				it's funcall(...) or typecast(...)
-		else if [type, id]:
-			it's Type.funcall(...)
-		else if [id, id]:
-			it's module.funcall(...)
-		else if [id, type]:
-			it's module.typecast(...)
-		else if [id, type, id]:
-			it's module.type.funcall(...)
-		else:
-			error
+			if only one name:
+				if followed by var:
+					it's module.var
+				else if followed by paren:
+					it's funcall(...) or typecast(...)
+			else if [type, id]:
+				it's Type.funcall(...)
+			else if [id, id]:
+				it's module.funcall(...)
+			else if [id, type]:
+				it's module.typecast(...)
+			else if [id, type, id]:
+				it's module.type.funcall(...)
+			else:
+				error
 		*/
 		switch len(names) {
 		case 1:
@@ -414,7 +415,7 @@ func (p *Parser) term() (node *tp.Instruction) {
 				node = p.call(n1)
 				node.Namespace = proto.String(p.Module)
 				node.TypeQualifier = proto.String(n0.Value)
-			} else */ if n0.Lexeme == ID && n1.Lexeme == ID {
+			} else */if n0.Lexeme == ID && n1.Lexeme == ID {
 				node = p.call(n1)
 				node.Namespace = proto.String(n0.Value)
 			} else if n0.Lexeme == ID && n1.Lexeme == TYPE {
@@ -424,15 +425,15 @@ func (p *Parser) term() (node *tp.Instruction) {
 				p.error("invalid name resolution (only namespaces may be used as qualifiers")
 			}
 		/*
-		case 3:
-			n0, n1, n2 := names[0], names[1], names[2]
-			if n0.Lexeme == ID && n1.Lexeme == TYPE && n2.Lexeme == ID {
-				node = p.call(n2)
-				node.Namespace = proto.String(n0.Value)
-				node.TypeQualifier = proto.String(n1.Value)
-			} else {
-				p.error("invalid name resolution (should be `moduleName.TypeName.functionName`)")
-			}
+			case 3:
+				n0, n1, n2 := names[0], names[1], names[2]
+				if n0.Lexeme == ID && n1.Lexeme == TYPE && n2.Lexeme == ID {
+					node = p.call(n2)
+					node.Namespace = proto.String(n0.Value)
+					node.TypeQualifier = proto.String(n1.Value)
+				} else {
+					p.error("invalid name resolution (should be `moduleName.TypeName.functionName`)")
+				}
 		*/
 		default:
 			p.error("invalid name resolution (too many qualifiers)")
@@ -486,7 +487,7 @@ func (p *Parser) read() (node *tp.Instruction) {
 		p.error("`read` requires a literal string argument")
 	}
 	readPath := p.pop().Value
-	readDir  := ""
+	readDir := ""
 	if p.peek().Lexeme == COMMA {
 		p.pop()
 		if p.peek().Lexeme != STRING {
@@ -550,7 +551,7 @@ func (p *Parser) name() (names []*Token) {
 
 func (p *Parser) call(funcName *Token) (node *tp.Instruction) {
 	funcNameStr := funcName.Value // grab the function name
-	funcLineNo  := funcName.LineNumber
+	funcLineNo := funcName.LineNumber
 	if p.peek().Lexeme != LPAREN {
 		p.error("parenthesized argument list expected in call to " + funcNameStr)
 	}
@@ -662,7 +663,7 @@ func (p *Parser) arguments(funcName string) (ords []*tp.Instruction, kwdnames []
 
 func (p *Parser) cast(typeName *Token) (node *tp.Instruction) {
 	typeNameStr := typeName.Value // grab the function name
-	typeLineNo  := typeName.LineNumber
+	typeLineNo := typeName.LineNumber
 	if p.peek().Lexeme != LPAREN {
 		p.error("parenthesized argument needed for typecast to " + typeNameStr)
 	}

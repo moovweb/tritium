@@ -3,7 +3,7 @@ package tritium
 import (
 	"time"
 
-	"tritium/protoface"
+	"github.com/moovweb/tritium/protoface"
 )
 
 type Exhaust struct {
@@ -15,6 +15,6 @@ type Exhaust struct {
 
 type Engine interface {
 	Run(transform protoface.Transform, rrules []protoface.RewriteRule, input interface{}, vars, constants map[string]string, deadline time.Time, customer, project, messagePath string, activeLayers []string, inDebug bool) *Exhaust
-	GetCacheStats() (int, int, int, int)
+	GetCacheStats() (int, int)
 	Free()
 }

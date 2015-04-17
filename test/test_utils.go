@@ -1,19 +1,19 @@
 package test
 
 import "path/filepath"
-import "tritium/whale"
+import "github.com/moovweb/tritium/whale"
 import "testing"
 
 //import "log4go"
 //import "runtime/debug"
 import "runtime"
 import "fmt"
-import "tritium/spec"
-import tp "tritium/proto"
-import "tritium/packager/legacy"
-import "golog"
+import "github.com/moovweb/tritium/spec"
+import tp "github.com/moovweb/tritium/proto"
+import "github.com/moovweb/tritium/packager/legacy"
+import "github.com/moovweb/golog"
 import "time"
-import "steno/dummy"
+import "github.com/moovweb/steno/dummy"
 
 func RunTest(path string) (result *spec.Result) {
 	result = spec.NewResult()

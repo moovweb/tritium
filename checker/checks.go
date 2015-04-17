@@ -1,10 +1,10 @@
 package checker
 
 import (
-	"butler/null"
-	. "rubex"
-	tp "tritium/proto"
-	"tritium/constants"
+	"github.com/moovweb/butler/null"
+	. "github.com/moovweb/rubex"
+	"github.com/moovweb/tritium/constants"
+	tp "github.com/moovweb/tritium/proto"
 )
 
 func (result *CheckResult) CheckForSelectText(script *tp.ScriptObject) {

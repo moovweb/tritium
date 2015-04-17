@@ -1,7 +1,7 @@
 package proto
 
-import(
-	"tritium/protoface"
+import (
+	"github.com/moovweb/tritium/protoface"
 )
 
 func (m *Slug) IGetName() string {
