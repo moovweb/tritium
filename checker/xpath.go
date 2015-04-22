@@ -2,7 +2,7 @@ package checker
 
 import (
 	"github.com/moovweb/butler/null"
-	"github.com/moovweb/gokogiri/xpath"
+	"github.com/moovweb/gokogiri_internal/xpath"
 	"github.com/moovweb/tritium/constants"
 	tp "github.com/moovweb/tritium/proto"
 )

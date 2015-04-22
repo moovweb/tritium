@@ -11,7 +11,7 @@ import (
 	"time"
 
 	mixers "github.com/moovweb/butler/mixer"
-	xmlhelp "github.com/moovweb/gokogiri/help"
+	xmlhelp "github.com/moovweb/gokogiri_internal/help"
 	"github.com/moovweb/golog"
 	"github.com/moovweb/steno/dummy"
 	"github.com/moovweb/tritium"
