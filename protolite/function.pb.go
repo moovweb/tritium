@@ -5,20 +5,20 @@
 package proto
 
 import proto1 "code.google.com/p/goprotobuf/proto"
-import json "encoding/json"
 import math "math"
 
-// Reference proto, json, and math imports to suppress error if they are not otherwise used.
+// Reference imports to suppress errors if they are not otherwise used.
 var _ = proto1.Marshal
-var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Function struct {
-	Name             *string              `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	BuiltIn          *bool                `protobuf:"varint,5,opt,name=built_in" json:"built_in,omitempty"`
-	Args             []*Function_Argument `protobuf:"bytes,6,rep,name=args" json:"args,omitempty"`
-	Instruction      *Instruction         `protobuf:"bytes,7,opt,name=instruction" json:"instruction,omitempty"`
-	XXX_unrecognized []byte               `json:"-"`
+	Name *string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	// Only informative post-linking
+	BuiltIn *bool                `protobuf:"varint,5,opt,name=built_in" json:"built_in,omitempty"`
+	Args    []*Function_Argument `protobuf:"bytes,6,rep,name=args" json:"args,omitempty"`
+	// Only for non-built-in functions
+	Instruction      *Instruction `protobuf:"bytes,7,opt,name=instruction" json:"instruction,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
 }
 
 func (m *Function) Reset()         { *m = Function{} }

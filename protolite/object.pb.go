@@ -5,19 +5,22 @@
 package proto
 
 import proto1 "code.google.com/p/goprotobuf/proto"
-import json "encoding/json"
 import math "math"
 
-// Reference proto, json, and math imports to suppress error if they are not otherwise used.
+// Reference imports to suppress errors if they are not otherwise used.
 var _ = proto1.Marshal
-var _ = &json.SyntaxError{}
 var _ = math.Inf
 
+// Object representing a script
+// Possibly linked or not
 type ScriptObject struct {
-	Root             *Instruction `protobuf:"bytes,2,opt,name=root" json:"root,omitempty"`
-	ScopeTypeId      *int32       `protobuf:"varint,4,opt,name=scope_type_id" json:"scope_type_id,omitempty"`
-	Module           *string      `protobuf:"bytes,6,opt,name=module" json:"module,omitempty"`
-	XXX_unrecognized []byte       `json:"-"`
+	// optional string name = 1 [default='main'];
+	Root *Instruction `protobuf:"bytes,2,opt,name=root" json:"root,omitempty"`
+	// repeated Function functions = 3;
+	ScopeTypeId *int32 `protobuf:"varint,4,opt,name=scope_type_id" json:"scope_type_id,omitempty"`
+	// optional bool linked = 5;
+	Module           *string `protobuf:"bytes,6,opt,name=module" json:"module,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *ScriptObject) Reset()         { *m = ScriptObject{} }

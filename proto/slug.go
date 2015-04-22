@@ -54,6 +54,22 @@ func (slug *Slug) IGetActiveLayers() []string {
 	return slug.ActiveLayers
 }
 
+func (slug *Slug) IGetJavaScript() string {
+	return slug.GetJavaScript()
+}
+
+func (slug *Slug) ISetJavaScript(js string) {
+	slug.JavaScript = pb.String(js)
+}
+
+func (slug *Slug) IGetConfig() string {
+	return slug.GetConfig()
+}
+
+func (slug *Slug) ISetConfig(config string) {
+	slug.Config = pb.String(config)
+}
+
 func findNearestInstruction(ins *Instruction, target int) int {
 	current := int32(ins.GetLineNumber())
 

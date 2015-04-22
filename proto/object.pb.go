@@ -5,14 +5,14 @@
 package proto
 
 import proto1 "code.google.com/p/goprotobuf/proto"
-import json "encoding/json"
 import math "math"
 
-// Reference proto, json, and math imports to suppress error if they are not otherwise used.
+// Reference imports to suppress errors if they are not otherwise used.
 var _ = proto1.Marshal
-var _ = &json.SyntaxError{}
 var _ = math.Inf
 
+// Object representing a script
+// Possibly linked or not
 type ScriptObject struct {
 	Name             *string      `protobuf:"bytes,1,opt,name=name,def=main" json:"name,omitempty"`
 	Root             *Instruction `protobuf:"bytes,2,opt,name=root" json:"root,omitempty"`

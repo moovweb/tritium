@@ -10,6 +10,10 @@ type Slug interface {
 	IGetVersion() string
 	IGetNthTransformer(index int) Transform
 	ISetNthTransformer(index int, value Transform)
+	IGetJavaScript() string
+	ISetJavaScript(string)
+	IGetConfig() string
+	ISetConfig(string)
 	IGetNthRrule(index int) RewriteRule
 	ISetNthRrule(index int, value RewriteRule)
 	IGetRrules() []RewriteRule

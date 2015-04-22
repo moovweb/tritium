@@ -38,6 +38,22 @@ func (slug *Slug) IGetActiveLayers() []string {
 	return slug.ActiveLayers
 }
 
+func (slug *Slug) IGetJavaScript() string {
+	return slug.GetJavaScript()
+}
+
+func (slug *Slug) ISetJavaScript(js string) {
+	slug.JavaScript = pb.String(js)
+}
+
+func (slug *Slug) IGetConfig() string {
+	return slug.GetConfig()
+}
+
+func (slug *Slug) ISetConfig(config string) {
+	slug.Config = pb.String(config)
+}
+
 func (slug *Slug) FindInstruction(fileName string, lineNumber int) int {
 	for _, tf := range slug.Transformers {
 		for _, obj := range tf.Objects {
