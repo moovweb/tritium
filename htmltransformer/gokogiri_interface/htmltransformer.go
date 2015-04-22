@@ -2,10 +2,11 @@ package gokogiri_interface
 
 import (
 	"errors"
-	"github.com/moovweb/gokogiri/css"
-	"github.com/moovweb/gokogiri/html"
-	"github.com/moovweb/gokogiri/xml"
-	"github.com/moovweb/gokogiri/xpath"
+
+	"github.com/moovweb/gokogiri_internal/css"
+	"github.com/moovweb/gokogiri_internal/html"
+	"github.com/moovweb/gokogiri_internal/xml"
+	"github.com/moovweb/gokogiri_internal/xpath"
 	ht "github.com/moovweb/tritium/htmltransformer"
 )
 
