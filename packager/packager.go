@@ -11,7 +11,7 @@ import (
 )
 
 import (
-	proto "code.google.com/p/goprotobuf/proto"
+	proto "github.com/golang/protobuf/proto"
 	fileutil "github.com/moovweb/butler/fileutil"
 	"github.com/moovweb/butler/mixer"
 	"github.com/moovweb/golog"

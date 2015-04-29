@@ -9,7 +9,7 @@ import (
 )
 
 import (
-	pb "code.google.com/p/goprotobuf/proto"
+	pb "github.com/golang/protobuf/proto"
 	"github.com/moovweb/butler/null"
 )
 

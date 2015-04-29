@@ -7,7 +7,7 @@ import (
 )
 
 import (
-	proto "code.google.com/p/goprotobuf/proto"
+	proto "github.com/golang/protobuf/proto"
 	"github.com/moovweb/butler/crypto"
 	"github.com/moovweb/butler/null"
 	tp "github.com/moovweb/tritium/proto"
