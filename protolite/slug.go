@@ -1,11 +1,12 @@
 package proto
 
 import (
-	pb "code.google.com/p/goprotobuf/proto"
-	"github.com/moovweb/tritium/protoface"
 	"io/ioutil"
 	"strings"
 	"time"
+
+	pb "github.com/golang/protobuf/proto"
+	"github.com/moovweb/tritium/protoface"
 )
 
 func NewSlug(name string, version string, stages int) (slug *Slug, err error) {

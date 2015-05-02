@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"code.google.com/p/goprotobuf/proto"
+	"github.com/golang/protobuf/proto"
 	"github.com/moovweb/butler/fileutil"
 	"github.com/moovweb/tritium/constants"
 	. "github.com/moovweb/tritium/parser/tokenizer"
