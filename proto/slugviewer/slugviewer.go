@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 	"time"
 )
@@ -25,6 +26,7 @@ type SlugViewCmd struct {
 func New() *SlugViewCmd {
 	cmd := SlugViewCmd{}
 	cmd.flags = flag.NewFlagSet(CmdName, flag.ContinueOnError)
+	cmd.flags.SetOutput(os.Stdout)
 	cmd.options = &Options{}
 
 	cmd.options.SetDefaults()
