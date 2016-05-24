@@ -259,7 +259,6 @@ func (ctx *EngineContext) RunInstruction(scope *Scope, ins protoface.Instruction
 			ctx.Filename = curFile
 		} else {
 			// We are using a user-defined function
-			//println("Resetting localvar")
 			// Setup the new local var
 			vars := make(map[string]interface{}, len(args))
 			for i := 0; i < fun.INumArgs(); i++ {
@@ -394,7 +393,6 @@ func (ctx *EngineContext) GetRegexp(pattern, options string) (r *rubex.Regexp) {
 		var err error
 		r, err = rubex.NewRegexp(pattern, mode)
 		if err == nil {
-			//ctx.AddMemoryObject(r)
 			ctx.RegexpCache.Set(sig, &RegexpObject{Regexp: r})
 		} else {
 			panic(fmt.Sprintf("%s: /%s/%s", err.Error(), pattern, options))
@@ -438,6 +436,9 @@ func (ctx *EngineContext) UpdateLog(index int, log string) {
 }
 
 func (ctx *EngineContext) SetEnv(key, val string) {
+	if _, ok := ctx.Env[key]; ok && key == "source_host" {
+		return
+	}
 	ctx.Env[key] = val
 }
 
