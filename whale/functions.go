@@ -40,6 +40,10 @@ func yield_(ctx *EngineContext, scope *Scope, ins protoface.Instruction, args []
 			child := myYieldBlock.Ins.IGetNthChild(i)
 			returnValue = ctx.RunInstruction(scope, child)
 		}
+		// for _, child := range myYieldBlock.Ins.Children {
+		// 	returnValue = ctx.RunInstruction(scope, child)
+		// }
+
 		if returnValue == nil {
 			returnValue = "false"
 		}
